@@ -1,6 +1,6 @@
 <div class="page-container">
 	<img src="../img/logo.png">
-	<form action="/sigesec25/users/login" id="UserLoginForm" method="post" accept-charset="utf-8">
+	<form action="/contasynfotech/users/login" id="UserLoginForm" method="post" accept-charset="utf-8">
 		<div style="display:none;">
 			<input type="hidden" name="_method" value="POST">
 		</div>

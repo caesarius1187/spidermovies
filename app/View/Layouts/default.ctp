@@ -24,7 +24,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 	<?php
 		echo $this->Html->meta(
 			    'icon',
-			    '/img/SIGESEC.png',
+			    '/img/sigesec.png',
 			    array('type' => 'icon')
 			);
 		
@@ -43,10 +43,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 		echo $this->fetch('script');
 	?>
 	<SCRIPT TYPE="text/javascript">
-
-	var serverLayoutURL = "/sigesec25";
-	
-	
+	var serverLayoutURL = "/contasynfotech";
 		function callAlertPopint(message){
 			location.hash ="#PopupMessage";
 			jQuery(document).ready(function($) {
