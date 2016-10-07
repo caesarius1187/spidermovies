@@ -76,6 +76,7 @@
 			$encuadreAlicuotaId=0;
 			$encuadreAlicuotaAlicuota=0;
 			$encuadreAlicuotaConcepto=0;
+			$encuadreAlicuotaMinimo=0;
 			$actividadClienteId=$actividadcliente['Actividadcliente']['id'];
 			$actividadClienteCodigo=$actividadcliente['Actividade']['descripcion'];
 			$actividadClienteNombre=$actividadcliente['Actividade']['nombre'];
@@ -89,6 +90,7 @@
 							$actividadClienteNombre = $actividadcliente['Actividade']['nombre'];
 							$encuadreAlicuotaAlicuota = $encuadrealicuota['alicuota'];
 							$encuadreAlicuotaConcepto = $encuadrealicuota['concepto'];
+							$encuadreAlicuotaMinimo = $encuadrealicuota['minimo'];
 							$precargado = 1;
 							echo $this->Form->input('Encuadrealicuota.'.$key.'.precargado',array('type'=>'hidden','value'=>1));
 						}
@@ -110,6 +112,14 @@
 			));
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota_id',array('type' => 'select','label'=>'Sugerida'));
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota',array('value'=>$encuadreAlicuotaAlicuota));
+			if($impuestoid==21/*Actividades Economicas*/){
+                $title = "Para actividades no conexas: cargar un minimo para cada actividad.</br>
+                          Para actividades conexas: solo cargar el minimo cuyo importe sea mayor, el resto en 0";
+				echo $this->Form->input('Encuadrealicuota.'.$key.'.minimo',array(
+                    'value'=>$encuadreAlicuotaMinimo,
+                    'title'=>$title
+                ));
+			}
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.concepto',array(
 					'precargado'=>$precargado,
 					'style'=>'width:400px',

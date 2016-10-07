@@ -14,7 +14,6 @@
 	<div class="tabsTareaImpuesto" onClick="showPagos()" id="tab_Pagos"><h2>Pagos</h2></div>
 </div>
 <div id="divPrepararPapelesDeTrabajo" class="tareapapeldetrabajo index">
-
     <div id="form_prepararPapeles" class="prepararPapeles"  style="float: left;">
         <?php
         //Aca vamos a personalizar distintos formularios dependiendo de que impuesto sea el que necesitamos ejecutar, ya que si bien son parecidos algunos de ellos tienen particularidades
@@ -22,7 +21,6 @@
         <div style="width: 100%;">
             <?php
             //aca vamos a mostrar informacion sobre las ventas,compras y retenciones cargadas
-
             $mostrarAlertaVentasComprasConceptos = false;
             switch ($impuesto['id']) {
                 case 4/*Monotributo*/:
@@ -241,7 +239,7 @@
                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.fchvto', array(
                                                               'class'=>'hiddendatepicker',
                                                               'type'=>'text',
-                                                              'label'=>'Fch. Vto.',
+                                                              'label'=>$eventoPos==0?'Fch. Vto.':'',
                                                               'readonly','readonly',
                                                               'style'=>'width:80px',
                                                               'value'=>date('d-m-Y',strtotime($fchvto)),
@@ -385,7 +383,7 @@
                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.fchvto', array(
                                                               'class'=>'hiddendatepicker',
                                                               'type'=>'text',
-                                                              'label'=>'Fch. Vto.',
+                                                              'label'=>$eventoPos==0?'Fch. Vto.':'',
                                                               'readonly','readonly',
                                                               'style'=>'width:80px',
                                                               'value'=>date('d-m-Y',strtotime($fchvto)),
@@ -493,7 +491,7 @@
                     );
                     echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.fchvto', array(	'class'=>'hiddendatepicker',
                                                                 'type'=>'hidden',
-                                                                'label'=>'Fch. Vto.',
+                                                                'label'=>$eventoPos==0?'Fch. Vto.':'',
                                                                 'readonly','readonly',
                                                                 'style'=>'width:80px',
                                                                 'value'=>date('d-m-Y',strtotime($fchvto)),

@@ -3,36 +3,35 @@
 <div class="plandepagos index">
 	<h2><?php echo __('Planes de pago'); ?></h2>
 	<div class="plandepagos form">
-		<?php		
-		echo $this->Form->create('Plandepago',array('class'=>'formTareaCarga','action'=>'index')); 
+		<?php
+		echo $this->Form->create('Plandepago',array('class'=>'formTareaCarga','action'=>'index'));
 				echo $this->Form->input('cliente_id');
 				echo $this->Form->input('organismo',array('type'=>'select','options'=>$misorganismos));
 				echo $this->Form->input('plan',array('required'=>true,'label'=>'N. Plan'));
-				echo $this->Form->input('cuotas',array('required'=>true));		
+				echo $this->Form->input('cuotas',array('required'=>true));
 				echo $this->Form->input('dia', array(
 											'required'=>true,
-                                            'class'=>'datepicker', 
+                                            'class'=>'datepicker',
                                             'type'=>'text',
                                             'readonly'=>'readonly',
                                             'label' => 'Fecha',
                                             'size' => '16')
-                                 );		
-				echo $this->Form->input('montocuota',array('required'=>true,'label'=>'Total'));		
+                                 );
+				echo $this->Form->input('montocuota',array('required'=>true,'label'=>'Total'));
 				echo $this->Form->input('cbu',array('label'=>'CBU'));
 
-				
+
                 $options = array(
                     'label' => 'Crear plan de pago',
                     'div' => array('class' => 'btn_acept'),
                     'style' => 'width:180px; margin-top:12px'
                 );
-            
-				echo $this->Form->end($options); 
+
+				echo $this->Form->end($options);
 		if(isset($cuotas)){
 			echo '<div id="divPlandepagoAddForm">';
 			echo $this->Form->create('Plandepago',array('action'=>'add','class'=>'formTareaCarga','inputDefaults' => array('label' => false))); ;?>
 			</br>
-			
 				<h3><?php echo __('Agregar Plan de pago'); ?></h3>
 				<table class="tbl_planpago" cellpadding="0" cellspacing="0" >
 					<tr>
@@ -44,15 +43,16 @@
 						<?php echo $this->Form->input('Plandepago.0.user_id',array('type'=>'hidden','value'=>$user));?>
 						<td><?php echo $this->Form->input('Plandepago.0.item',array('label'=>'Item','value'=>"1/".$cuotas));?></td>
 						<td><?php echo $this->Form->input('Plandepago.0.periodo', array(
-	                                            'label'=>'Periodo', 
-	                                            'class'=>'datepicker-day-month', 
+	                                            'label'=>'Periodo',
+	                                            'class'=>'datepicker-month-year',
 	                                            'type'=>'text',
 	                                            'readonly'=>'readonly',
-	                                            'value'=>date('m-Y',strtotime($dia)))
+	                                            'value'=>date('m-Y',strtotime("-1 months",strtotime($dia)))
+										)
 	                                 );?></td>
 						<td><?php echo $this->Form->input('Plandepago.0.fchvto', array(
-	                                            'label'=>'Vencimiento', 
-	                                            'class'=>'datepicker', 
+	                                            'label'=>'Vencimiento',
+	                                            'class'=>'datepicker',
 	                                            'type'=>'text',
 	                                            'readonly'=>'readonly',
 	                                            'value'=>date('d-m-Y',strtotime($dia))
@@ -71,14 +71,14 @@
 						<?php	echo $this->Form->input('Plandepago.'.$j.'.user_id',array('type'=>'hidden','value'=>$user));?>
 						<td><?php	echo $this->Form->input('Plandepago.'.$j.'.item',array('value'=>($j+1)."/".$cuotas));?></td>
 						<td><?php	echo $this->Form->input('Plandepago.'.$j.'.periodo', array(
-			                                            'class'=>'datepicker-day-month', 
+			                                            'class'=>'datepicker-month-year',
 			                                            'type'=>'text',
 			                                            'readonly'=>'readonly',
-			                                            'value'=>date('m-Y',strtotime("+".$j." months",strtotime($dia)))
+			                                            'value'=>date('m-Y',strtotime("+".($j-1)." months",strtotime($dia)))
 			                                            )
 			                                 );?></td>
 						<td><?php	echo $this->Form->input('Plandepago.'.$j.'.fchvto', array(
-			                                            'class'=>'datepicker', 
+			                                            'class'=>'datepicker',
 			                                            'type'=>'text',
 			                                            'readonly'=>'readonly',
 			                                            'value'=>date('d-m-Y',strtotime("+".$j." months",strtotime($dia)))
@@ -90,20 +90,20 @@
 					<?php	;} ?>
 					<tr>
 						<td colspan="4">&nbsp;</td>
-						<?php 
+						<?php
 						 	$options = array(
                     		'label' => 'Guardar',
                     		'div' => array('class' => 'btn_acept'),
-                    		'style' => 'margin-top:12px' 
-                			); 
+                    		'style' => 'margin-top:12px'
+                			);
                 		?>
 						<td><?php echo $this->Form->end($options);?></td>
 					</tr>
 				</table>
 			<?php echo '</div>';
 		}else{
-			
-		}?> 
+
+		}?>
 	</div>
 	<div class="planpagos_dt">
 		<table cellpadding="0" cellspacing="0" id="TablaListaPlanesDePago">
@@ -152,11 +152,11 @@
 <a href="#x" class="overlay" id="popinPagarPlandePago"></a>
 
 <div class="popup">
-        <div id="divPagarPlandePago" class="form" style="width: 400px;height: 318px; overflow: auto;">             
-           
+        <div id="divPagarPlandePago" class="form" style="width: 400px;height: 318px; overflow: auto;">
+
         </div>
     <a class="close" href="#close"></a>
 </div>
-    <!-- Fin Popin Pagar Plan De Pago --> 
+    <!-- Fin Popin Pagar Plan De Pago -->
 
 

@@ -340,6 +340,9 @@ $(document).ready(function() {
     function verPapelDeTrabajoSindicato(periodo,impcliid){
         var win = window.open(serverLayoutURL+'/impclis/papeldetrabajosindicatos/'+impcliid+'/'+periodo , '_blank');
     }
+    function verPapelDeTrabajoIVA(periodo,impcliid){
+        var win = window.open(serverLayoutURL+'/papelesdetrabajos/iva/'+impcliid+'/'+periodo , '_blank');
+    }
 /* 5  agregar Papel de Trabajo -- ejecutar la funcion que agrega el papel de trabajo cargado en el formulario*/
   /*function agregarPapeldeTrabajo(){
     clienteid = $('#form_prepararPapeles #EventosimpuestoClienteid').val();

@@ -100,6 +100,7 @@
             //Contrib SS
             $ContribSSjubilacionsipa=0;$INSSJP=0;
             $ContribSScontribtareadif=0;$FNE=0;$ContribSSANSSAL=0;$asignacionfamiliar=0;$totalContribucionesSS=0;
+            $ContribSScontribtareadifAux=0;
             //RENATEA
             $contribucionrenatea = 0;
             $trabajadorAgrario = false;
@@ -213,6 +214,8 @@
                 ){
                     $rem2 += $valorrecibo['valor'];
                 }
+                //Remuneracion 3
+                $rem3 = $rem1;
                 //Seguridad Social Aporte Adicional
                 if (
                 in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -310,6 +313,13 @@
                 ){
                     $TotalRemCD += $valorrecibo['valor'];
                 }
+                //calculo Auxiliar para Contribucion Tarea Diff
+                if (
+                in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    array('123'/*Contribucion tarea Diff*/), true )
+                ){
+                    $seguridadsocialcontribtareadif = $valorrecibo['valor'];
+                }
             }
             //Remuneracion 4 Segunda Parte
             if($AporteOSaporteadicionalos>0){
@@ -344,19 +354,20 @@
                 $INSSJP+=$rem2*0.01500*0.75;
             }
             //Contrib Tarea Dif
-            if($empleado['codigoafip']=='0'){
-                $ContribSScontribtareadif+=$rem1*0;
-            }
+            $ContribSScontribtareadif = $rem1*($seguridadsocialcontribtareadif/100);
+
             //Jubilacion FNE
-            if($empleado['codigoafip']=='0'){
-                $FNE+=$rem1*0.0089;
-            }
-            if($empleado['codigoafip']=='1'){
-                $FNE+=$rem1*0.0089*0.5;
-            }
-            if($empleado['codigoafip']=='2'){
-                $FNE+=$rem1*0.0089*0.75;
-            }
+            if(!$trabajadorAgrario){
+                if($empleado['codigoafip']=='0'){
+                    $FNE+=$rem1*0.0089;
+                }
+                if($empleado['codigoafip']=='1'){
+                    $FNE+=$rem1*0.0089*0.5;
+                }
+                if($empleado['codigoafip']=='2'){
+                    $FNE+=$rem1*0.0089*0.75;
+                }
+            }else{}
             //Contrib Seg Soc ANSSAL
             $minimoANSSAL = 2400;
             if($rem8<$minimoANSSAL){
@@ -432,11 +443,11 @@
             //ART
             //Debugger::dump($rem9);
             if($coberturaart){
-                $ARTart = (($rem9 * 2.48) / 100) + $empleado['alicuotaart'];
+                $ARTart = (($rem9 *$impcli['Cliente']['alicuotaart']) / 100) + $impcli['Cliente']['fijoart'];
             }
             //Seguro de Vida obligatorio Seguro de Vida
             If($segurodevida){
-                $SeguroDeVidaObligatorio = $empleado['segurodevida'];
+                $SeguroDeVidaObligatorio = $impcli['Cliente']['segurodevida'];
             }
             $codigoafip = $empleado['codigoafip'];
             $miempleado['horasDias']=$horasDias;
@@ -452,12 +463,12 @@
             $miempleado['conceptosnorem']=$conceptosnorem;
             $miempleado['remtotal']=$remtotal;
             $miempleado['rem1']=$rem1;
-            $miempleado['rem2']=$rem2;
-            $miempleado['rem3']=$rem2;
+            $miempleado['rem2']=$rem1;
+            $miempleado['rem3']=$rem1;
             $miempleado['rem4']=$rem4;
-            $miempleado['rem5']=$rem2;
-            $miempleado['rem6']=$rem2;
-            $miempleado['rem7']=$rem2;
+            $miempleado['rem5']=$rem1;
+            $miempleado['rem6']=$rem1;
+            $miempleado['rem7']=$rem1;
             $miempleado['rem8']=$rem4;
             $miempleado['rem9']=$rem9;
             $miempleado['seguridadsocialaporteadicional']=$seguridadsocialaporteadicional;
@@ -501,6 +512,10 @@
         }
         unset($miempleado);
         //Debugger::dump($empleadoDatos);
+        $styleForTotalTd = "
+                    color: white;
+                    background-color: grey;
+                    ";
         ?>
         <table id="tblDatosAIngresar" class="tbl_border" cellspacing="0">
             <tr>
@@ -897,7 +912,8 @@
                 <?php
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                     echo "<td>";
-                    echo "0</td>";
+                    $empleadoid = $empleado['id'];
+                    echo number_format($empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif'], 2, ",", ".")."</td>";
                 }
                 ?>
                 <td><?php echo number_format($seguridadsocialcontribtareadif, 2, ",", "."); ?></td>
@@ -1020,7 +1036,7 @@
                 ?>
                 <td><?php echo number_format($asignacionfamiliar, 2, ",", "."); ?></td>
             </tr>
-            <tr>
+            <tr style="<?php echo  $styleForTotalTd; ?>">
                 <td>Total Contribuciones SS</td>
                 <?php
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
@@ -1042,7 +1058,7 @@
                     ?>
                 </td>
             </tr>
-            <tr>
+            <tr style="<?php echo  $styleForTotalTd; ?>">
                 <td rowspan="2" style=" vertical-align:middle!important;">
                     <div >
                         RENATEA
@@ -1066,7 +1082,7 @@
                         )
                     );?></td>
             </tr>
-            <tr>
+            <tr style="<?php echo  $styleForTotalTd; ?>">
                 <td>Aporte</td>
                 <?php
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
@@ -1134,7 +1150,7 @@
                 ?>
                 <td><?php echo number_format($AporteSSANSSAL, 2, ",", "."); ?></td>
             </tr>
-            <tr>
+            <tr style="<?php echo  $styleForTotalTd; ?>">
                 <td>Total Aportes SS</td>
                 <?php
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
@@ -1196,7 +1212,7 @@
                 ?>
                 <td><?php echo number_format($ContribucionesOSANSSAL, 2, ",", "."); ?></td>
             </tr>
-            <tr>
+            <tr style="<?php echo  $styleForTotalTd; ?>">
                 <td>Total Contribuciones OS</td>
                 <?php
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
@@ -1264,7 +1280,7 @@
                 ?>
                 <td><?php echo number_format($AporteOSadicionaladherente, 2, ",", "."); ?></td>
             </tr>
-            <tr>
+            <tr style="<?php echo  $styleForTotalTd; ?>">
                 <td>Total Aporte OS</td>
                 <?php
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
@@ -1283,7 +1299,7 @@
                         )
                     );?></td>
             </tr>
-            <tr>
+            <tr style="<?php echo  $styleForTotalTd; ?>">
                 <td style=" vertical-align:middle!important;">
                     <div >
                         ART
@@ -1307,7 +1323,7 @@
                         )
                     );?></td>
             </tr>
-            <tr>
+            <tr style="<?php echo  $styleForTotalTd; ?>">
                 <td style=" vertical-align:middle!important;">
                     <div >
                         Seguro de Vida Oblig.
