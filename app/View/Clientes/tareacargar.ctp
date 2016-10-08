@@ -159,14 +159,14 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
             //Aca tenemos que sacar los tipos de comprobantes que el cliente puede emitir                              
             echo $this->Form->input('comprobante_id', array(
                 'label'=>'Comprobante',
-                'style'=>'width:150px',
+                'style'=>'width:71px',
                 'class' => 'chosen-select',  
               )                              
             ); 
             echo $this->Form->input('puntosdeventa_id', array(
                 'label'=>'&nbsp',
                 //'label'=> false,
-                'style'=>'width:100px',
+                'style'=>'width:73px',
                 'options' => $puntosdeventas,  
                 'class' => 'chosen-select',                              
                 )
@@ -222,7 +222,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
             echo $this->Form->input('localidade_id',array(
               'label'=>'Localidad',
               'class'=>"chosen-select",
-              'style' => 'width:150px' 
+              'style' => 'width:100px'
               ));    
             
             if($tieneMonotributo){                
@@ -230,7 +230,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
               'options' => $tipodebitos,
               'label' => 'Tipo Debito',
               'class' => 'chosen-select',  
-              'style' => 'width:150px' 
+              'style' => 'width:80px'
                 ));
               echo $this->Form->input('alicuota',array(
               'options' => $alicuotas,
@@ -316,7 +316,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                 );  
             echo $this->Form->end();  ?>  
     </div>        
-    <div style="overflow-x:auto;width:96%; float:left;margin-left: 5px;margin-top:10px" class="tareaCargarIndexTable tabVentas index">
+    <div style="overflow-x:auto;width:96%; float:left;margin-left: 5px;margin-top:10px;min-height: 1400px" class="tareaCargarIndexTable tabVentas index">
       <table class="tbl_vtas_det" style="border:1px solid white" id="tablaVentas" cellspacing="0" cellpadding="0" >
         <thead>
           <tr>
@@ -368,11 +368,11 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
             $tdClass = "tdViewVenta".$venta["id"];
             $titleComprobante = $venta["Comprobante"]['nombre']."-".$venta["Puntosdeventa"]['nombre']."-".$venta["numerocomprobante"];?>
             <tr id="rowventa<?php echo $venta["id"]?>">
-              <td class="<?php echo $tdClass?>"><?php echo date('d',strtotime($venta["fecha"]))?></td><!--1-->
-              <td class="<?php echo $tdClass?>" title="<?php echo $titleComprobante; ?>" > <?php echo $titleComprobante; ?> </td><!--2-->
-              <td class="<?php echo $tdClass?>"><?php echo $venta["Subcliente"]["cuit"]?></td><!--3-->
-              <td class="<?php echo $tdClass?>" title="<?php echo $venta["Subcliente"]["nombre"]?>"><?php echo $venta["Subcliente"]["nombre"]?></td><!--4-->
-              <td class="<?php echo $tdClass?>"><?php 
+              <td class="<?php echo $tdClass ?>"><?php echo date('d',strtotime($venta["fecha"]))?></td><!--1-->
+              <td class="<?php echo $tdClass ?>" title="<?php echo $titleComprobante; ?>" > <?php echo $titleComprobante; ?> </td><!--2-->
+              <td class="<?php echo $tdClass ?>"><?php echo $venta["Subcliente"]["cuit"]?></td><!--3-->
+              <td class="<?php echo $tdClass ?>" title="<?php echo $venta["Subcliente"]["nombre"]?>"><?php echo $venta["Subcliente"]["nombre"]?></td><!--4-->
+              <td class="<?php echo $tdClass ?>"><?php
                   switch ($venta["condicioniva"]) {
                     case 'monotributista':
                       echo 'Monotribut.';

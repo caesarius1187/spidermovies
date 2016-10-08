@@ -9,17 +9,17 @@
 	Periodo: <?php echo $periodo; ?>	
 	<h1>Tabla para Recategorizar Monotributistas</h1>
 
-	<table class="tbl_tareas" style="border-collapse: collapse;">
+	<table class="tbl_tareas" style="border-collapse: collapse; width:50%;">
 		<thead>
 			<tr>
 				<td>Periodo</td>
-				<td>Ingresos Brutos Locaciones y Servicios</td>
-				<td>Ingresos Brutos Venta de cosas Muebles</td>
-				<td>Ingresos Brutos Total</td>
-				<td>Ingresos Brutos del Cuatrimestre</td>
-				<td>Superficie Afectada</td>
+				<td>Locaciones y Ss</td>
+				<td>Venta de cosas Muebles</td>
+				<td>Total</td>
+				<td>Cuatrimestre</td>
+				<td>Sup.</td>
 				<td>KW</td>
-				<td>Alquiler Devengado</td>
+				<td>Alquiler</td>
 			</tr>
 		</thead>
 		<tbody>
@@ -189,7 +189,7 @@
 		</tbody>
 	</table> 
 	<h1>Tabla Indicativa de la Categoria en la cual quedará encuadrado el Monotibutista para el cuatrimestre siguiente (siempre se encuadra en la categoria con parámetro superior).</h1>
-	<table id="categoriamonotributo" class="tbl_tareas" style="border-collapse: collapse;">
+	<table id="categoriamonotributo" class="tbl_tareas" style="border-collapse: collapse; width:50%">
 		<thead>
 			<td>Categoria</td>
 			<td>Ingreso Bruto</td>
@@ -248,7 +248,7 @@
 		</tbody>
 	</table>
 	<h1>Tabla indicativa del importe a facturar en el cuatrimestre siguiente y en el mes siguiente del cuatrimestre considerando una identica facturación para cada mes</h1>
-	<table class="tbl_tareas" style="border-collapse: collapse;">
+	<table class="tbl_tareas" style="border-collapse: collapse; width:50%">
 		<tr>
 			<td>Categoria al: <?php echo $periodo; ?></td>
 			<td>Ingresos Brutos</td>

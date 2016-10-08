@@ -1388,11 +1388,12 @@ transition: all 0.4s ease-in-out;
 }
 
 .tbl_tareas tr td {
-	padding: 0px;
+	padding: 1px;
 	text-align: center;
 	vertical-align: middle;
 	border-bottom:1px solid #FFF;
 	border:1px solid #000;
+	font-size: 12px;
 }
 
 .tbl_tareas img {
@@ -2252,3 +2253,31 @@ transition: all 0.4s ease-in-out;
 .inputAControlar{
 	background-color: #FFA500;
 }
+
+/*CM*/
+
+/*para probar*/
+.tabla td{
+	border: 1px solid #000;
+
+}
+.cuadro{
+	border: 1px solid red;
+	border: 1px solid red;
+}
+
+.cursor{
+	cursor: default;
+}
+
+/*para probar*/
+
+.div_view{
+	float:right;
+	width: 98%;
+	border:1px solid red; 
+	padding:10px 1%;
+	background-color: #FFF;
+	margin: 0px 1%;
+}
+
