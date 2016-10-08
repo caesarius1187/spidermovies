@@ -99,9 +99,6 @@ class PapelesdetrabajosController extends AppController {
 													'Actividadcliente' => array(																				
 																				'Actividade'
 																				)
-													//'actividades' => array(
-													//						'conditions' => array('Actividade.id' => 'Actividadcliente.actividade_id')
-													//					   )
 												  )
 							  );
 		$ventas = $this->Venta->find('all', $opcionesVenta);

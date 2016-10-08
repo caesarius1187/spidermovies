@@ -61,6 +61,16 @@
                         'escape' => false
                     ));
                     break;
+                case 19/*IVA*/:
+                    echo $this->Form->button('Papel de Trabajo', array(
+                        'id' => 'buttonPDT',
+                        'type' => 'button',
+                        'class'=>'buttonImpcli',
+                        'onClick' => 'verPapelDeTrabajoIVA('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')',
+                        'escape' => false
+                    ));
+                    break;
+
                 case 21/*Actividades Economicas*/:
                 case 174/*Convenio Multilateral*/:
                     $mostrarAlertaVentasComprasConceptos = true;
