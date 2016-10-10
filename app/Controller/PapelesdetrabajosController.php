@@ -39,6 +39,8 @@ class PapelesdetrabajosController extends AppController {
 	    			),												            		
 	    		)
 		);
+		$timePeriodo = strtotime("01-".$periodo ." -1 months");
+		$periodoPrev = date("m-Y",$timePeriodo);
 		$options = 
 			array(
 				'conditions' => array('Cliente.' . $this->Cliente->primaryKey => $ClienteId),
@@ -46,8 +48,7 @@ class PapelesdetrabajosController extends AppController {
 						'Impcli'=>array(
 							'Eventosimpuesto'=>array(
 								'conditions'=>array(
-									"SUBSTRING(Eventosimpuesto.periodo,4,7) = ".$añoPeriodo."*1",//que tengan el mismo año
-									$esMenorQuePeriodo,
+									"Eventosimpuesto.periodo"=>$periodoPrev,//monto a favor del periodo anterior
 									),
 								),
 							'conditions'=>array(

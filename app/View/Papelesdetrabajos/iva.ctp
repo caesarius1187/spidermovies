@@ -1261,66 +1261,66 @@
 				{	
 					if ($compra['Compra']['tipoiva'] == 'directo')
 					{
-						$TotalBsGral_Directo = $TotalBsGral_Directo + $compra['Compra']['neto'];
+						$TotalBsGral_Directo = $TotalBsGral_Directo + $compra['Compra']['iva'];
 					}
 					if ($compra['Compra']['tipoiva'] == 'prorateable')
 					{
-						$TotalBsGral_Prorateable = $TotalBsGral_Prorateable + $compra['Compra']['neto'];
+						$TotalBsGral_Prorateable = $TotalBsGral_Prorateable + $compra['Compra']['iva'];
 					}					
 				}
 				if ($compra['Compra']['imputacion'] == 'Locaciones')
 				{	
 					if ($compra['Compra']['tipoiva'] == 'directo')
 					{
-						$TotalLocaciones_Directo = $TotalLocaciones_Directo + $compra['Compra']['neto'];
+						$TotalLocaciones_Directo = $TotalLocaciones_Directo + $compra['Compra']['iva'];
 					}
 					if ($compra['Compra']['tipoiva'] == 'prorateable')
 					{
-						$TotalLocaciones_Prorateable = $TotalLocaciones_Prorateable + $compra['Compra']['neto'];
+						$TotalLocaciones_Prorateable = $TotalLocaciones_Prorateable + $compra['Compra']['iva'];
 					}					
 				}
 				if ($compra['Compra']['imputacion'] == 'Prest. Servicios')			
 				{	
 					if ($compra['Compra']['tipoiva'] == 'directo')
 					{
-						$TotalPresServ_Directo = $TotalPresServ_Directo + $compra['Compra']['neto'];
+						$TotalPresServ_Directo = $TotalPresServ_Directo + $compra['Compra']['iva'];
 					}
 					if ($compra['Compra']['tipoiva'] == 'prorateable')
 					{
-						$TotalPresServ_Prorateable = $TotalPresServ_Prorateable + $compra['Compra']['neto'];
+						$TotalPresServ_Prorateable = $TotalPresServ_Prorateable + $compra['Compra']['iva'];
 					}						
 				}
 				if ($compra['Compra']['imputacion'] == 'Bs Uso')			
 				{	
 					if ($compra['Compra']['tipoiva'] == 'directo')
 					{
-						$TotalBsUso_Directo = $TotalBsUso_Directo + $compra['Compra']['neto'];
+						$TotalBsUso_Directo = $TotalBsUso_Directo + $compra['Compra']['iva'];
 					}
 					if ($compra['Compra']['tipoiva'] == 'prorateable')
 					{
-						$TotalBsUso_Prorateable = $TotalBsUso_Prorateable + $compra['Compra']['neto'];
+						$TotalBsUso_Prorateable = $TotalBsUso_Prorateable + $compra['Compra']['iva'];
 					}	
 				}
 				if ($compra['Compra']['imputacion'] == 'Otros Conceptos')			
 				{	
 					if ($compra['Compra']['tipoiva'] == 'directo')
 					{
-						$TotalOtrosConceptos_Directo = $TotalOtrosConceptos_Directo + $compra['Compra']['neto'];
+						$TotalOtrosConceptos_Directo = $TotalOtrosConceptos_Directo + $compra['Compra']['iva'];
 					}
 					if ($compra['Compra']['tipoiva'] == 'prorateable')
 					{
-						$TotalOtrosConceptos_Prorateable = $TotalOtrosConceptos_Prorateable + $compra['Compra']['neto'];
+						$TotalOtrosConceptos_Prorateable = $TotalOtrosConceptos_Prorateable + $compra['Compra']['iva'];
 					}	
 				}
 				if ($compra['Compra']['imputacion'] == 'Dcto 814')	
 				{	
 					if ($compra['Compra']['tipoiva'] == 'directo')
 					{
-						$TotalDcto814_Directo = $TotalDcto814_Directo + $compra['Compra']['neto'];
+						$TotalDcto814_Directo = $TotalDcto814_Directo + $compra['Compra']['iva'];
 					}
 					if ($compra['Compra']['tipoiva'] == 'prorateable')
 					{
-						$TotalDcto814_Prorateable = $TotalDcto814_Prorateable + $compra['Compra']['neto'];
+						$TotalDcto814_Prorateable = $TotalDcto814_Prorateable + $compra['Compra']['iva'];
 					}	
 				}
 			}			
@@ -1890,7 +1890,49 @@
 
 	<div id="divContenedorLiquidacion" style="margin-top:10px">
 		<div>
-		
+            <?php
+            $TotalSaldoTecnicoAFavorRespPeriodoAnterior=0;
+            $TotalSaldoTecnicoAFavorRespPeriodo=0;
+            $TotalSaldoTecnicoAPagarPeriodo=0;
+            $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior=0;
+            $TotalSaldoLibreDisponibilidadAFavorRespPeriodo=0;
+            $TotalPagosACuenta = 0;
+            foreach ($cliente['Impcli'] as $key => $impcli) {
+                foreach ($impcli['Eventosimpuesto'] as $key => $eventosimpuesto) {
+                    /*
+                    'Saldo Tecnico' => 'Saldo Tecnico',
+                    'Saldo de Libre Disponibilidad'=>'Saldo de Libre Disponibilidad' ,
+                    */
+                    if($eventosimpuesto['item']=='Saldo Tecnico'){//aca controlamos que el ITEM a sumar sea el correspondiente a Saldos Tecnicos
+                        $TotalSaldoTecnicoAFavorRespPeriodoAnterior += $eventosimpuesto['monc'];
+                    }
+                }
+            }
+
+            foreach ($cliente['Conceptosrestante'] as $key => $conceptosrestante) {
+                if($conceptosrestante['conceptostipo_id']=='1'){
+                    $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $conceptosrestante['montoretenido'];
+                }else{
+                    $TotalPagosACuenta += $conceptosrestante['montoretenido'];
+                }
+                //echo $TotalPagosACuenta ."//";
+            }
+            $CreditoGeneral = 0;
+            $CreditoGeneral = $TotalCreditoFiscal_SumaTotal +  $TotalSaldoTecnicoAFavorRespPeriodoAnterior;
+            if($TotalDebitoFiscal_SumaTotal<$CreditoGeneral){
+                $TotalSaldoTecnicoAFavorRespPeriodo = $CreditoGeneral - $TotalDebitoFiscal_SumaTotal ;
+            }else{
+                $TotalSaldoTecnicoAFavorRespPeriodo = 0;
+            }
+            if($TotalDebitoFiscal_SumaTotal>$TotalCreditoFiscal_SumaTotal){
+                $TotalSaldoTecnicoAPagarPeriodo = $TotalDebitoFiscal_SumaTotal - $CreditoGeneral;
+            }else{
+                $TotalSaldoTecnicoAPagarPeriodo = 0;
+            }
+            $TotalSaldoLibreDisponibilidadAFavorRespPeriodo = $TotalPagosACuenta + $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior - $TotalSaldoTecnicoAPagarPeriodo;
+            $TotalSaldoImpuestoAFavorAFIP = 0;
+            $TotalSaldoImpuestoAFavorAFIP = $TotalSaldoTecnicoAPagarPeriodo - $TotalSaldoLibreDisponibilidadAFavorRespPeriodo - $TotalSaldoTecnicoAFavorRespPeriodo;
+            ?>
 		<table border="1px solid">
 			<tr style='background-color:#f0f0f0'>
 				<td>Descripción</td>
@@ -1925,76 +1967,22 @@
 			<tr>
 				<td>Saldo Técnico a Favor del Responsable del Periodo anterior</td>
 				<td style="width:180px">
-					<?php 
-					$TotalSaldoTecnicoAFavorRespPeriodoAnterior=0;
-					$TotalPagosACuenta=0;
-					foreach ($cliente['Impcli'] as $key => $impcli) {
-						foreach ($impcli['Eventosimpuesto'] as $key => $eventosimpuesto) {
-							/*
-							'Saldo Tecnico' => 'Saldo Tecnico',
-							'Saldo de Libre Disponibilidad'=>'Saldo de Libre Disponibilidad' , 
-							*/
-							if($eventosimpuesto['item']=='Saldo Tecnico'){//aca controlamos que el ITEM a sumar sea el correspondiente a Saldos Tecnicos
-								$TotalSaldoTecnicoAFavorRespPeriodoAnterior += $eventosimpuesto['monc'];
-							}
-						}
-					}
-					foreach ($cliente['Conceptosrestante'] as $key => $conceptosrestante) {
-						$TotalPagosACuenta += $conceptosrestante['montoretenido'];
-						//echo $TotalPagosACuenta ."//";
-					}
-					$subtotalsaldoAFavorAFIP=0;
-					$subtotalsaldoAFavorDelContribuyente=0;
-					$subtotalsaldoLibreDisponibilidad=0;
-					$subtotalCreditoGeneral = 0;
-					$subtotalCreditoGeneral = $TotalCreditoFiscal_SumaTotal +  $TotalSaldoTecnicoAFavorRespPeriodoAnterior;
-					if($TotalDebitoFiscal_SumaTotal<$subtotalCreditoGeneral){
-						$subtotalsaldoAFavorDelContribuyente = $subtotalCreditoGeneral - $TotalDebitoFiscal_SumaTotal ;
-					}else{
-						$subtotalsaldoAFavorDelContribuyente = 0;
-					}
-					if($TotalDebitoFiscal_SumaTotal>$TotalCreditoFiscal_SumaTotal){
-						$subtotalsaldoAFavorAFIP = $TotalDebitoFiscal_SumaTotal - $subtotalCreditoGeneral;
-					}else{
-						$subtotalsaldoAFavorAFIP = 0;
-					}
-
-					/*$subtotalDiferencia = $TotalDebitoFiscal_SumaTotal - $TotalCreditoFiscal_SumaTotal;
-					if($subtotalDiferencia>=0){
-						$TotalSaldoTecnicoAFavorRespAcumulado = $TotalPagosACuenta + $TotalSaldoTecnicoAFavorRespPeriodoAnterior;
-						echo "TotalSaldoTecnicoAFavorRespAcumulado:".$TotalSaldoTecnicoAFavorRespAcumulado."//";
-						if($subtotalDiferencia<=$TotalSaldoTecnicoAFavorRespAcumulado){
-							$subtotalsaldoLibreDisponibilidad = $TotalSaldoTecnicoAFavorRespAcumulado - $subtotalDiferencia;
-						}else{
-							$subtotalsaldoAFavorAFIP = $subtotalDiferencia - $TotalSaldoTecnicoAFavorRespAcumulado;
-						}
-					}else{
-						$subtotalsaldoAFavorDelContribuyente=$subtotalDiferencia;
-						$subtotalsaldoLibreDisponibilidad=$TotalPagosACuenta;
-					}*/
-					?>
 					<input id="txtSaldoAFavorPeriodoAnt" onchange="calcularSaldotecnicoPeriodo()" type="text" style="width:180px" value="<?php echo $TotalSaldoTecnicoAFavorRespPeriodoAnterior;?>">
 				</td>
 			</tr>
-			<tr>
-				<td>Total Retenciones y percepciones</td>
-				<td style="width:180px">
-					<span id="spnTotalRetencionesyPercepciones"><?php echo $TotalPagosACuenta;?></span>
-				</td>
-			</tr>
-			<tr>
-				<td>Saldo Técnico a Favor del Responsable del Periodo</td>
-				<td style="width:180px">
-					<span id="spnTotalSaldoTecnicoAFavorResp"><?php echo $subtotalsaldoAFavorDelContribuyente;?></span>
-				</td>
-			</tr>
-			<tr>
-				<td>Subtotal Saldo Técnico a favor de la AFIP del Periodo</td>
-				<td style="width:180px">
+            <tr>
+                <td>Saldo Técnico a Favor del Responsable del Periodo</td>
+                <td style="width:180px">
+                    <span id="spnTotalSaldoTecnicoAFavorResp"><?php echo $TotalSaldoTecnicoAFavorRespPeriodo;?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Subtotal Saldo Técnico a favor de la AFIP del Periodo</td>
+                <td style="width:180px">
 
-					<span id="spnTotalSaldoTecnicoAFavorAFIP"><?php echo $subtotalsaldoAFavorAFIP?></span>
-				</td>
-			</tr>
+                    <span id="spnTotalSaldoTecnicoAFavorAFIP"><?php echo $TotalSaldoTecnicoAPagarPeriodo?></span>
+                </td>
+            </tr>
 			<tr>
 				<td>Diferimiento F. 518</td>
 				<td style="width:180px">
@@ -2010,21 +1998,43 @@
 			<tr>
 				<td>Saldo Técnico a Favor de la AFIP del Periodo</td>
 				<td style="width:180px">
-					<span id="spnSaldoAfavorAFIPPeriodo"><?php echo $subtotalsaldoAFavorAFIP;?></span>
+					<span id="spnSaldoTecnicoAFavorAFIPPeriodo">
+                        <?php echo $TotalSaldoTecnicoAPagarPeriodo;?>
+                    </span>
 				</td>
 			</tr>
 			<tr>
-				<td>Saldo Tecnico a Favor del contribuyente del Periodo</td>
+				<td>Saldo Tecnico a Favor del Responsable del Periodo</td>
 				<td style="width:180px">
-					<span id="spnSaldoAfavorContribuyentePeriodo"><?php echo $subtotalsaldoAFavorDelContribuyente;?></span>
+					<span id="spnSaldoTecnicoAfavorContribuyentePeriodo">
+                        <?php echo $TotalSaldoTecnicoAFavorRespPeriodo;?>
+                    </span>
 				</td>
 			</tr>
-			<tr>
-				<td>Saldo a favor de libre disponibilidad del periodo anterior neto de usos</td>
-				<td style="width:180px">
-					<input id="txtSaldoAFavorLibreDispNetousos" onchange="" type="text" style="width:180px" value="<?php echo $subtotalsaldoLibreDisponibilidad; ?>">
-				</td>
-			</tr>			
+            <tr>
+                <td>Saldo a favor de libre disponibilidad del periodo anterior neto de usos</td>
+                <td style="width:180px">
+                    <input id="txtSaldoAFavorLibreDispPeriodoAnteriorNetousos" onchange="" type="text" style="width:180px" value="<?php echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior:0; ?>">
+                </td>
+            </tr>
+            <tr>
+                <td>Total Retenciones, Percepciones y Pagos a cuenta computables en el periodo neto de restituciones</td>
+                <td style="width:180px">
+                    <span id="spnTotalRetencionesyPercepciones"><?php echo $TotalPagosACuenta>0?$TotalPagosACuenta:0;?></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Saldo a favor de libre disponibilidad del periodo</td>
+                <td style="width:180px">
+                    <input id="txtSaldoAFavorLibreDispNetousos" onchange="" type="text" style="width:180px" value="<?php echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0; ?>">
+                </td>
+            </tr>
+            <tr>
+                <td>Saldo del Impuesto a Favor de la AFIP</td>
+                <td style="width:180px">
+                    <input id="txtSaldoAFavorLibreDispNetousos" onchange="" type="text" style="width:180px" value="<?php echo $TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0; ?>">
+                </td>
+            </tr>
 		</table>
 		</div>
 		

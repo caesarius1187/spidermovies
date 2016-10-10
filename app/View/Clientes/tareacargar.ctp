@@ -126,36 +126,34 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                   'style'=> ''
               )
           );
-      echo $this->Form->create('Venta',array(
+        echo $this->Form->create('Venta',array(
             'id'=>'saveVentasForm',
             'action'=>'addajax',
             'class'=>'formTareaCarga formAddVenta',
             $cliente["Cliente"]['id'],
             $periodo
             )
-          ); 
-          echo $this->Form->input('cliente_id',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
-          //Vamos a enviar la situacion del cliente para no recalcularla en el controlador cada ves que guardemos una venta
-          /*AFIP*/
-          echo $this->Form->input('tieneMonotributo',array('value'=>$tieneMonotributo,'type'=>'hidden'));
-          echo $this->Form->input('tieneIVA',array('value'=>$tieneIVA,'type'=>'hidden'));
-          echo $this->Form->input('tieneIVAPercepciones',array('value'=>$tieneIVAPercepciones,'type'=>'hidden'));
-          echo $this->Form->input('tieneImpuestoInterno',array('value'=>$tieneImpuestoInterno,'type'=>'hidden'));
-          /*DGR*/
-          echo $this->Form->input('tieneAgenteDePercepcionIIBB',array('value'=>$tieneAgenteDePercepcionIIBB,'type'=>'hidden'));
-          /*DGRM*/
-          echo $this->Form->input('tieneAgenteDePercepcionActividadesVarias',array('value'=>$tieneAgenteDePercepcionActividadesVarias,'type'=>'hidden'));
-       ?> 
-        <?php
-            echo $this->Form->input('fecha', array(
-                    'class'=>'datepicker-dia', 
-                    'style'=>'width:40px', 
-                    'type'=>'text',
-                    'default'=>"",
-                    'readonly'=>'readonly',
-                    'required'=>true
-                    )
-             );           
+          );
+        echo $this->Form->input('cliente_id',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
+        //Vamos a enviar la situacion del cliente para no recalcularla en el controlador cada ves que guardemos una venta
+        /*AFIP*/
+        echo $this->Form->input('tieneMonotributo',array('value'=>$tieneMonotributo,'type'=>'hidden'));
+        echo $this->Form->input('tieneIVA',array('value'=>$tieneIVA,'type'=>'hidden'));
+        echo $this->Form->input('tieneIVAPercepciones',array('value'=>$tieneIVAPercepciones,'type'=>'hidden'));
+        echo $this->Form->input('tieneImpuestoInterno',array('value'=>$tieneImpuestoInterno,'type'=>'hidden'));
+        /*DGR*/
+        echo $this->Form->input('tieneAgenteDePercepcionIIBB',array('value'=>$tieneAgenteDePercepcionIIBB,'type'=>'hidden'));
+        /*DGRM*/
+        echo $this->Form->input('tieneAgenteDePercepcionActividadesVarias',array('value'=>$tieneAgenteDePercepcionActividadesVarias,'type'=>'hidden'));
+        echo $this->Form->input('fecha', array(
+                'class'=>'datepicker-dia',
+                'style'=>'width:40px',
+                'type'=>'text',
+                'default'=>"",
+                'readonly'=>'readonly',
+                'required'=>true
+                )
+         );
             //Aca tenemos que sacar los tipos de comprobantes que el cliente puede emitir                              
             echo $this->Form->input('comprobante_id', array(
                 'label'=>'Comprobante',
