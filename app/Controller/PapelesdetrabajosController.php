@@ -51,15 +51,16 @@ class PapelesdetrabajosController extends AppController {
 									"Eventosimpuesto.periodo"=>$periodoPrev,//monto a favor del periodo anterior
 									),
 								),
+							'Conceptosrestante'=>array(
+								'conditions'=>array(
+									'Conceptosrestante.periodo' => $periodo,
+								),
+							),
 							'conditions'=>array(
 								'Impcli.impuesto_id'=>19//IVA
 								)
 							),
-						'Conceptosrestante'=>array(
-							'conditions'=>array(
-								'Conceptosrestante.periodo' => $periodo,
-							),
-						),	 
+						 
 						'Actividadcliente' => array(
 							'Actividade',
 							)
@@ -68,6 +69,7 @@ class PapelesdetrabajosController extends AppController {
 
 		$Cliente = $this->Cliente->find('first', $options);
 		$this->set('cliente', $Cliente);
+        $this->set('periodo', $periodo);
 
 		$opcionesActividad = array(
 								   'conditions'=>array('Actividadcliente.cliente_id' => $ClienteId),

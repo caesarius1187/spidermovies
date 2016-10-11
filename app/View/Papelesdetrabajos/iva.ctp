@@ -5,7 +5,8 @@
 
     	$("#tabVentas_Iva").attr("class", "cliente_view_tab_active");  
     	$("#tabCompras_Iva").attr("class", "cliente_view_tab");
-	});
+        papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+    });
 	function CambiarTab(sTab)
 	{
 		$("#tabVentas_Iva").attr("class", "cliente_view_tab");
@@ -100,7 +101,8 @@
 			$("#"+oObj.id).attr("onclick", "MostrarOperaciones(this,'ventas');");
 		}
 	}
-	function calcularSaldotecnicoPeriodo(){
+	function calcularSaldotecnicoPeriodo()
+    {
 		var saldoPeriodoAnt = $("#txtSaldoAFavorPeriodoAnt").val();
 		saldoPeriodoAnt = (saldoPeriodoAnt != "") ? parseFloat(saldoPeriodoAnt) : 0;
 
@@ -137,7 +139,84 @@
 		$("#spnTotalSaldoTecnicoAFavorAFIP").html(TotalSaldoTecnicoAFavorAFIP);
 		$("#spnSaldoAfavorAFIPPeriodo").html(TotalSaldoTecnicoAFavorAFIP);
 	}
+    function papelesDeTrabajo(periodo,impcli){
+        var data = "";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/eventosimpuestos/getpapelestrabajo/"+periodo+"/"+impcli, // URL to request
+            data: data,  // post data
+            success: function(response) {
+                //alert(response);
+                $('#divLiquidarIVA').html(response);
+                //esconder elementos que no necesitamos en este momento
+                $('#tabsTareaImpuesto').hide();
+                $('#divPagar').hide();
+                $('#buttonPDT').hide();
+                $('.btn_cancelar').hide();
+                /*var cantLocalidade = $('#Eventosimpuesto0CantProvincias').val();
+                for (var i = 0 ; i < cantLocalidade; i++) {
+                    if($('#Eventosimpuesto'+i+'Id').val()==0){//El Evento Impuesto no a sido creado previamente entonces vamos a guardar el monto que calculamos
+                        var localidad = $('#Eventosimpuesto'+i+'LocalidadeId').val();
+                        var apagar = $('#apagar'+localidad).val();
+                        var afavor = $('#afavor'+localidad).val();
+                        $('#Eventosimpuesto'+i+'Montovto').val(apagar);
+                        $('#Eventosimpuesto'+i+'Monc').val(afavor);
+                    }
+                };*/
+                $(document).ready(function() {
+                    $( "input.datepicker" ).datepicker({
+                        yearRange: "-100:+50",
+                        changeMonth: true,
+                        changeYear: true,
+                        constrainInput: false,
+                        dateFormat: 'dd-mm-yy',
+                    });
+                });
+                $( "#vencimientogeneral" ).change(function(){
+                    $('#EventosimpuestoRealizartarea5Form .hiddendatepicker').val( $( "#vencimientogeneral" ).val());
+                });
+                $( "#vencimientogeneral" ).trigger( "change" );
+                $('#EventosimpuestoRealizartarea5Form').submit(function(){
+                    //serialize form data 
+                    var formData = $(this).serialize();
+                    //get form action 
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(data,textStatus,xhr){
+                            var respuesta = jQuery.parseJSON(data);
+                            var resp = respuesta.respuesta;
+                            var error=respuesta.error;
+                            if(error!=0){
+                                alert(respuesta.validationErrors);
+                                alert(respuesta.invalidFields);
+                            }else{
+                                $('#divLiquidarActividadesVariar').hide();
+                            }
+                        },
+                        error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                            return false;
+                        }
+                    });
+                    return false;
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+
+            }
+        });
+        return false;
+    }
+
 </script>
+<?php
+echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
+echo $this->Form->input('impcliidPDT',array('value'=>$cliente['Impcli'][0]['id'],'type'=>'hidden'));
+echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre'],'type'=>'hidden'));?>
 <div class="eventosclientes index">	
 	<div>
 		<label>INFORME IVA</label>
@@ -1031,12 +1110,12 @@
 		
 		<?php 		
 			$TotalBsGral = 0;	
-			$TotalLocaciones = 0;	
-			$TotalPresServ = 0;		
+			$TotalLocaciones = 0;
+			$TotalPresServ = 0;
 			$TotalBsUso = 0;
 			$TotalOtrosConceptos = 0;
 			$TotalDcto814 = 0;
-
+           
 			foreach ($compras as $compra): 
 			
 			if($compra['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
@@ -1061,10 +1140,13 @@
 				{	
 					$TotalOtrosConceptos = $TotalOtrosConceptos + $compra['Compra']['neto'];				
 				}
-				if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Dcto 814')			
-				{	
+				/*
+				 * No vamos a agrgar el Dcto 814 como una compra por que afectara otros impuestos, ahroa se agrega como un pago a cuenta
+				 * if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Dcto 814')
+				{
+				    //Aca se debe sumar solo si el Dcto814 es del Tipo Restitucion Credito Fiscal
 					$TotalDcto814 = $TotalDcto814 + $compra['Compra']['neto'];				
-				}
+				}*/
 			}			
 
 			endforeach;	
@@ -1312,8 +1394,9 @@
 						$TotalOtrosConceptos_Prorateable = $TotalOtrosConceptos_Prorateable + $compra['Compra']['iva'];
 					}	
 				}
-				if ($compra['Compra']['imputacion'] == 'Dcto 814')	
-				{	
+
+				/*if ($compra['Compra']['imputacion'] == 'Dcto 814')	
+				{
 					if ($compra['Compra']['tipoiva'] == 'directo')
 					{
 						$TotalDcto814_Directo = $TotalDcto814_Directo + $compra['Compra']['iva'];
@@ -1322,10 +1405,19 @@
 					{
 						$TotalDcto814_Prorateable = $TotalDcto814_Prorateable + $compra['Compra']['iva'];
 					}	
-				}
-			}			
+				}*/
+			}
 
-			endforeach;	
+			endforeach;
+        foreach ($cliente['Impcli'][0]['Conceptosrestante'] as $key => $conceptosrestante) {
+            if($conceptosrestante['conceptostipo_id']=='12'/*Decreto 814*/){
+                //tenemos que agregar campos como
+//                directo
+//                prorrateable
+//                creditofiscal/restirucioncreditofiscal
+                $TotalDcto814_Directo += $conceptosrestante['montoretenido'];
+            }
+        }
 		?>
 		<tr>
 			<td colspan="5" style='background-color:#87cfeb'>
@@ -1897,6 +1989,10 @@
             $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior=0;
             $TotalSaldoLibreDisponibilidadAFavorRespPeriodo=0;
             $TotalPagosACuenta = 0;
+            $AjusteAnualAFavorResponsable = 0;
+            $AjusteAnualAFavorAFIP = 0;
+            $Diferimiento518 = 0;
+            $BonosFiscales = 0;
             foreach ($cliente['Impcli'] as $key => $impcli) {
                 foreach ($impcli['Eventosimpuesto'] as $key => $eventosimpuesto) {
                     /*
@@ -1909,23 +2005,35 @@
                 }
             }
 
-            foreach ($cliente['Conceptosrestante'] as $key => $conceptosrestante) {
-                if($conceptosrestante['conceptostipo_id']=='1'){
+            foreach ($cliente['Impcli'][0]['Conceptosrestante'] as $key => $conceptosrestante) {
+                if($conceptosrestante['conceptostipo_id']=='1'/*Saldo A Favor*/){
                     $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $conceptosrestante['montoretenido'];
+                }else if($conceptosrestante['conceptostipo_id']=='14'/*Ajuste anual a favor Responable*/){
+                    $AjusteAnualAFavorResponsable += $conceptosrestante['montoretenido'];
+                }else if($conceptosrestante['conceptostipo_id']=='15'/*Ajuste anual a favor AFIP*/){
+                    $AjusteAnualAFavorAFIP += $conceptosrestante['montoretenido'];
+                }else if($conceptosrestante['conceptostipo_id']=='16'/*Diferimiento 518*/){
+                    $Diferimiento518 += $conceptosrestante['montoretenido'];
+                }else if($conceptosrestante['conceptostipo_id']=='17'/*Bonos Fiscales - Decreto 1145/09 y/o Decreto 852/14*/){
+                    $BonosFiscales += $conceptosrestante['montoretenido'];
+                }else if($conceptosrestante['conceptostipo_id']=='12'/**Decreto 814**/){
+                    //$BonosFiscales += $conceptosrestante['montoretenido'];
                 }else{
                     $TotalPagosACuenta += $conceptosrestante['montoretenido'];
                 }
                 //echo $TotalPagosACuenta ."//";
             }
             $CreditoGeneral = 0;
-            $CreditoGeneral = $TotalCreditoFiscal_SumaTotal +  $TotalSaldoTecnicoAFavorRespPeriodoAnterior;
+            $CreditoGeneral = $TotalCreditoFiscal_SumaTotal +  $TotalSaldoTecnicoAFavorRespPeriodoAnterior + $AjusteAnualAFavorResponsable ;
+            $DebitoGeneral = 0;
+
             if($TotalDebitoFiscal_SumaTotal<$CreditoGeneral){
                 $TotalSaldoTecnicoAFavorRespPeriodo = $CreditoGeneral - $TotalDebitoFiscal_SumaTotal ;
             }else{
                 $TotalSaldoTecnicoAFavorRespPeriodo = 0;
             }
-            if($TotalDebitoFiscal_SumaTotal>$TotalCreditoFiscal_SumaTotal){
-                $TotalSaldoTecnicoAPagarPeriodo = $TotalDebitoFiscal_SumaTotal - $CreditoGeneral;
+            if($TotalDebitoFiscal_SumaTotal>$CreditoGeneral){
+                $TotalSaldoTecnicoAPagarPeriodo = $TotalDebitoFiscal_SumaTotal + $AjusteAnualAFavorAFIP - $CreditoGeneral ;
             }else{
                 $TotalSaldoTecnicoAPagarPeriodo = 0;
             }
@@ -1948,51 +2056,64 @@
 				<td>Total del Crédito Fiscal</td>
 				<td style="width:180px">
 					<span id="spnTotalCreditoFiscal">
-					<?php echo $TotalCreditoFiscal_SumaTotal; ?>
+					    <?php echo $TotalCreditoFiscal_SumaTotal; ?>
 					</span>
 				</td>
 			</tr>
 			<tr>
 				<td>Ajuste Anual de Crédito Fiscal por Operaciones Exentas - A favor del Responsable</td>
 				<td style="width:180px">
-					<input id="txtCredFiscalxOpExcResp" onchange="calcularSaldotecnicoPeriodo()" type="text" style="width:180px" >
+                    <span id="spnCredFiscalxOpExcResp">
+					    <?php echo $AjusteAnualAFavorResponsable; ?>
+					</span>
 				</td>
 			</tr>
 			<tr>
 				<td>Ajuste Anual de Crédito Fiscal por Operaciones Exentas - A favor de AFIP</td>
 				<td style="width:180px">
-					<input id="txtCredFiscalxOpExcAFIP" onchange="calcularSaldotecnicoPeriodo()" type="text" style="width:180px" >
+                     <span id=spnCredFiscalxOpExcAFIP">
+					    <?php echo $AjusteAnualAFavorAFIP; ?>
+					</span>
 				</td>
 			</tr>
 			<tr>
 				<td>Saldo Técnico a Favor del Responsable del Periodo anterior</td>
 				<td style="width:180px">
-					<input id="txtSaldoAFavorPeriodoAnt" onchange="calcularSaldotecnicoPeriodo()" type="text" style="width:180px" value="<?php echo $TotalSaldoTecnicoAFavorRespPeriodoAnterior;?>">
+                    <span id="spnSaldoAFavorPeriodoAnt">
+					    <?php echo $TotalSaldoTecnicoAFavorRespPeriodoAnterior; ?>
+					</span>
 				</td>
 			</tr>
             <tr>
                 <td>Saldo Técnico a Favor del Responsable del Periodo</td>
                 <td style="width:180px">
-                    <span id="spnTotalSaldoTecnicoAFavorResp"><?php echo $TotalSaldoTecnicoAFavorRespPeriodo;?></span>
+                    <span id="spnTotalSaldoTecnicoAFavorResp">
+                        <?php echo $TotalSaldoTecnicoAFavorRespPeriodo;?>
+                    </span>
                 </td>
             </tr>
             <tr>
                 <td>Subtotal Saldo Técnico a favor de la AFIP del Periodo</td>
                 <td style="width:180px">
-
-                    <span id="spnTotalSaldoTecnicoAFavorAFIP"><?php echo $TotalSaldoTecnicoAPagarPeriodo?></span>
+                    <span id="spnTotalSaldoTecnicoAFavorAFIP">
+                        <?php echo $TotalSaldoTecnicoAPagarPeriodo?>
+                    </span>
                 </td>
             </tr>
 			<tr>
 				<td>Diferimiento F. 518</td>
 				<td style="width:180px">
-					<input id="txtDiferimientoF518" onchange="" type="text" style="width:180px" value="0">
+                    <span id="spnDiferimientoF518">
+                        <?php echo $Diferimiento518?>
+                    </span>
 				</td>
 			</tr>
 			<tr>
 				<td>Bonos Fiscales - Decreto 1145/09 y/o Decreto 852/14</td>
 				<td style="width:180px">
-					<input id="txtBonosFiscales" onchange="" type="text" style="width:180px" value="0">
+                     <span id="spnBonosFiscales">
+                        <?php echo $BonosFiscales?>
+                    </span>
 				</td>
 			</tr>
 			<tr>
@@ -2014,7 +2135,9 @@
             <tr>
                 <td>Saldo a favor de libre disponibilidad del periodo anterior neto de usos</td>
                 <td style="width:180px">
-                    <input id="txtSaldoAFavorLibreDispPeriodoAnteriorNetousos" onchange="" type="text" style="width:180px" value="<?php echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior:0; ?>">
+                    <span id="spnSaldoAFavorLibreDispPeriodoAnteriorNetousos">
+                        <?php echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior:0;?>
+                    </span>
                 </td>
             </tr>
             <tr>
@@ -2026,18 +2149,24 @@
             <tr>
                 <td>Saldo a favor de libre disponibilidad del periodo</td>
                 <td style="width:180px">
-                    <input id="txtSaldoAFavorLibreDispNetousos" onchange="" type="text" style="width:180px" value="<?php echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0; ?>">
+                    <span id="spnSaldoAFavorLibreDispNetousos">
+                        <?php echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0;?>
+                    </span>
                 </td>
             </tr>
             <tr>
                 <td>Saldo del Impuesto a Favor de la AFIP</td>
                 <td style="width:180px">
-                    <input id="txtSaldoAFavorLibreDispNetousos" onchange="" type="text" style="width:180px" value="<?php echo $TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0; ?>">
+                    <span id="spnSaldoAFavorLibreDispNetousos">
+                        <?php echo $TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0;?>
+                    </span>
                 </td>
             </tr>
 		</table>
 		</div>
-		
+        <div id="divLiquidarIVA">
+
+        </div>
 	</div>
 
 </div>
