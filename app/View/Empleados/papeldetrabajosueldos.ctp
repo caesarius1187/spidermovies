@@ -1,5 +1,4 @@
-<div class="index">
-    <h3>Liquidacion: </h3>
+<h3>Liquidacion: </h3>
     <?php
     /*
      * 1: quincena 1;
@@ -25,12 +24,12 @@
     }
     //Vamos a mostrar los botones solo si los empleados tienen Liquidaciones Activadas
     if($empleado['Empleado']['liquidaprimeraquincena']){
-        $classAMostrar="buttonImpcli";
+        $classAMostrar="btn_cargarliq";
         if($liquidacionesActivas['1']){
-            $classAMostrar="buttonImpcli4";
+            $classAMostrar="btn_cargarliq_liq";
         }
         if($tipoliquidacion==1){
-            $classAMostrar = " buttonImpcliSelected ".$classAMostrar;
+            $classAMostrar = " btn_cargarliq_selected ".$classAMostrar;
         }
         echo $this->Form->button(
             "Primera Quincena",
@@ -43,12 +42,12 @@
         );
     }
     if($empleado['Empleado']['liquidasegundaquincena']){
-        $classAMostrar="buttonImpcli";
+        $classAMostrar="btn_cargarliq";
         if($liquidacionesActivas['2']){
-            $classAMostrar="buttonImpcli4";
+            $classAMostrar="btn_cargarliq_liq";
         }
         if($tipoliquidacion==2){
-            $classAMostrar = " buttonImpcliSelected ".$classAMostrar;
+            $classAMostrar = " btn_cargarliq_selected ".$classAMostrar;
         }
         echo $this->Form->button(
             "Segunda Quincena",
@@ -61,12 +60,12 @@
         );
     }
     if($empleado['Empleado']['liquidamensual']) {
-        $classAMostrar = "buttonImpcli";
+        $classAMostrar = "btn_cargarliq";
         if ($liquidacionesActivas['3']) {
-            $classAMostrar = "buttonImpcli4";
+            $classAMostrar = "btn_cargarliq_liq";
         }
         if ($tipoliquidacion == 3) {
-            $classAMostrar = " buttonImpcliSelected " . $classAMostrar;
+            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
         }
         echo $this->Form->button(
             "Mensual",
@@ -79,12 +78,12 @@
         );
     }
     if($empleado['Empleado']['liquidapresupuestoprimera']) {
-        $classAMostrar = "buttonImpcli";
+        $classAMostrar = "btn_cargarliq";
         if ($liquidacionesActivas['4']) {
-            $classAMostrar = "buttonImpcli4";
+            $classAMostrar = "btn_cargarliq_liq";
         }
         if ($tipoliquidacion == 4) {
-            $classAMostrar = " buttonImpcliSelected " . $classAMostrar;
+            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
         }
         echo $this->Form->button(
             "Presupuesto 1",
@@ -97,12 +96,12 @@
         );
     }
     if($empleado['Empleado']['liquidapresupuestoprimera']) {
-        $classAMostrar = "buttonImpcli";
+        $classAMostrar = "btn_cargarliq";
         if ($liquidacionesActivas['5']) {
-            $classAMostrar = "buttonImpcli4";
+            $classAMostrar = "btn_cargarliq_liq";
         }
         if ($tipoliquidacion == 5) {
-            $classAMostrar = " buttonImpcliSelected " . $classAMostrar;
+            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
         }
         echo $this->Form->button(
             "Presupuesto 2",
@@ -115,12 +114,12 @@
         );
     }
     if($empleado['Empleado']['liquidapresupuestomensual']) {
-        $classAMostrar = "buttonImpcli";
+        $classAMostrar = "btn_cargarliq";
         if ($liquidacionesActivas['6']) {
-            $classAMostrar = "buttonImpcli4";
+            $classAMostrar = "btn_cargarliq_liq";
         }
         if ($tipoliquidacion == 6) {
-            $classAMostrar = " buttonImpcliSelected " . $classAMostrar;
+            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
         }
         echo $this->Form->button(
             "Presupuesto 3",
@@ -135,7 +134,7 @@
     echo $this->Form->button(
         "Libro de Sueldo",
         array(
-            'class'=>'buttonImpcli',
+            'class'=>'btn_sueldo',
             'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."')",
             'id'=>'buttonQuincena1',
         ),
@@ -144,7 +143,7 @@
     echo $this->Form->button(
         "Recibo de Sueldo",
         array(
-            'class'=>'buttonImpcli',
+            'class'=>'btn_sueldo',
             'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."')",
             'id'=>'buttonQuincena1',
         ),
@@ -159,7 +158,7 @@
      );
     ?>
     <div id="sueldoContent">
-        <table class="tbl_border tbl_sueldo" style="/*width: 1200px;*/" cellspacing="0">
+        <table class="tbl_border tbl_sueldo" style="width:100%" cellspacing="0" cellpadding="0">
     <tr>
         <td colspan="7">
             <?php
@@ -189,7 +188,7 @@
     </tr>
     <?php if(!is_null($empleado['Conveniocolectivotrabajo']['nombre'])) { ?>
         <tr>
-            <td style="width:100px">
+            <td>
 
             </td>
             <td style="width:250px;">
@@ -202,7 +201,7 @@
                 Codigo
             </td>
             <td>
-                Porcentaje
+                %
             </td>
             <td>
                 Codigo
@@ -222,7 +221,7 @@
             if($conceptoobligatorio['Concepto']['estotal']){
                 $styleForTd = "
                     color: white;
-                    background-color: grey;
+                    background-color: #9E9E9E;
                     ";
             }
             ?>
@@ -249,9 +248,11 @@
                 }else{
                     $miseccionamostrar=$conceptoobligatorio['seccionpersonalizada'];
                 }
-                if($miseccionamostrada!=$miseccionamostrar){?>
-                    <td rowspan="<?php echo $cantSecciones[$miseccionamostrar];?>" style="font-size: 13px; vertical-align:middle!important; width:100px">
-                        <div style="transform: rotate(270deg); width: 100px">
+                if($miseccionamostrada!=$miseccionamostrar){
+
+                    ?>
+                    <td rowspan="<?php echo $cantSecciones[$miseccionamostrar];?>" style="font-size: 13px; vertical-align:middle!important;">
+                        <div style="transform: rotate(270deg); float:left;">
                             <?php
                             $miseccionamostrada = $miseccionamostrar;
                             echo $miseccionamostrar;?>
@@ -384,6 +385,7 @@
                                             'type'=>'text',
                                             'value'=>$conceptoobligatorio['porcentaje'],
                                             'data-cell'=>$porcentajeDataCell ,
+                                            'style' => 'width:28px'
                                         )
                                     );
                             }
@@ -399,7 +401,7 @@
                                 'value'=>$conceptoobligatorio['funcionaaplicar'],
                                 'posicion'=>$i,
                                 'class'=>'funcionAAplicar',
-                                'style'=>'width:600px'
+                                'style'=>'width:600px; padding: 0px'
                             )
                         );
                     }
@@ -430,4 +432,4 @@
         </tr>
     </table>
     </div>
-</div>
+

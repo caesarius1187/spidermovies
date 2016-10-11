@@ -1835,10 +1835,13 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion){
         url: serverLayoutURL+"/empleados/papeldetrabajosueldos/"+clienteid+"/"+periodo+"/"+empid+"/"+liquidacion, // URL to request
         data: data,  // post data
         success: function(response) {
-            $(".buttonEmpleadoSueldo").each(function(){
-                $(this).removeClass("buttonImpcliSelected");
+            $(".btn_empleados_liq ").each(function(){
+                $(this).removeClass("btn_empleados_selected");
             });
-            $("#buttonEmpleado"+empid).addClass("buttonImpcliSelected");
+            $(".btn_empleados").each(function(){
+                $(this).removeClass("btn_empleados_selected");
+            });
+            $("#buttonEmpleado"+empid).addClass("btn_empleados_selected");
             $("#divSueldoForm").html(response);
             activarCalXOnSueldos();
         },
@@ -1892,7 +1895,7 @@ function activarCalXOnSueldos(){
                 callAlertPopint("Sueldo guardado, los totales se han recalculado.");
                 $("#divSueldoForm").html(data);
                 var empid = $("#Valorrecibo0EmpleadoId").val();
-                $("#buttonEmpleado"+empid).addClass("buttonImpcli4");
+                $("#buttonEmpleado"+empid).addClass("btn_empleados_liq");
                 activarCalXOnSueldos();
             },
             error: function(xhr,textStatus,error){
