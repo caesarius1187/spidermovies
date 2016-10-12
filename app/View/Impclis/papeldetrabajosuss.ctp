@@ -436,7 +436,7 @@
             }
             //Seguro de Vida obligatorio Seguro de Vida
             If($segurodevida){
-                $SeguroDeVidaObligatorio = $empleado['segurodevida'];
+                $SeguroDeVidaObligatorio = $impcli['Cliente']['segurodevida'];
             }
             $codigoafip = $empleado['codigoafip'];
             $miempleado['horasDias']=$horasDias;

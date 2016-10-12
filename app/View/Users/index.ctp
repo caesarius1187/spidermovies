@@ -41,29 +41,30 @@
 </script>
 <div class="index">
 	<table>
-	<tr>
-		<td style="text-align: left;">
-			<h2><?php echo __('Usuarios'); ?></h2>
-		</td>	
-		<td style="text-align: right; cursor:pointer;" title="Agregar Usuario">
-		
-		<div class="fab blue">
-            <core-icon icon="add" align="center">
-                
-                <?php echo $this->Form->button('+', 
-                                            array('type' => 'button',
-                                                'class' =>"btn_add",
-                                                'onClick' => "agregarUsuario()"
-                                                )
-                        );?> 
-            </core-icon>
-            <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
-       	</div>
+		<tr>
+			<td style="text-align: left;">
+				<h2><?php echo __('Usuarios'); ?></h2>
+			</td>	
+			<td style="text-align: right; cursor:pointer;" title="Agregar Usuario">
+			
+			<div class="fab blue">
+	            <core-icon icon="add" align="center">
+	                
+	                <?php echo $this->Form->button('+', 
+	                                            array('type' => 'button',
+	                                                'class' =>"btn_add",
+	                                                'onClick' => "agregarUsuario()"
+	                                                )
+	                        );?> 
+	            </core-icon>
+	            <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
+	       	</div>
 
 
-		</td>
-	</tr>
-	</table>	
+			</td>
+		</tr>
+	</table>
+
 	<table id="tblListaUsuarios" cellpadding="0" cellspacing="0" border="0" class="display">
 		<thead>
 			<tr>
@@ -118,13 +119,10 @@
 <!-- Inicio Popin Agregar Usuario-->
 <a href="#x" class="overlay" id="agregar_usuario"></a>
 <div class="popup">
-    
         <div id="form_agregar_usuario">
 
 			<?php echo $this->Form->create('User',array('action'=>'add')); ?>
-				
-				<h3><?php echo __('Agregar Usuario'); ?></h3>
-				
+				<h3><?php echo __('Agregar Usuario'); ?></h3>			
 				<table style="width:85%;margin-bottom:0px">
 				<tr>
 					<td><?php echo $this->Form->input('nombre', array('style' => 'width:200px')); ?></td>
@@ -173,12 +171,7 @@
 						</table>
 					</td>	
 				</tr>			
-				</table>
-				
-
-				
-
-        
+				</table> 
     </div>
     <a class="close" href="#close"></a>
 </div>
