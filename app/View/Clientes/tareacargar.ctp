@@ -991,7 +991,15 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                         echo $conceptorestante['Localidade']['Partido']["nombre"]."-". $conceptorestante['Localidade']["nombre"];
                     }?>
                 </td>
-                <td class="<?php echo $tdClass?>"><?php echo $conceptorestante['Conceptostipo']["nombre"]?></td>
+                <td class="<?php echo $tdClass?>"><?php
+                    if(
+                        $conceptorestante['Impcli']['impuesto_id']=='19'/*IVA*/ &&
+                        $conceptorestante['Conceptostipo']['id']==1 )
+                    {
+                        $conceptorestante['Conceptostipo']["nombre"] = "Saldo de Libre Disponibilidad";
+                    }
+                    echo $conceptorestante['Conceptostipo']["nombre"]
+                    ?></td>
                 <td class="<?php echo $tdClass?>">
                     <?php if(isset($conceptorestante['Comprobante']["nombre"])){
                         echo $conceptorestante["Comprobante"]["nombre"];

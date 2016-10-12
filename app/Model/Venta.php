@@ -33,6 +33,7 @@ class Venta extends AppModel {
  *
  * @var array
  */
+	
 	public $belongsTo = array(
 		'Cliente' => array(
 			'className' => 'Cliente',

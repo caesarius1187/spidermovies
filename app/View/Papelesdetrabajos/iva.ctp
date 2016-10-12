@@ -1,3 +1,4 @@
+<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));?>
 <script type="text/javascript">
 	$(document).ready(function() {   
     	$("#divContenedorCompras").hide();  
@@ -153,16 +154,66 @@
                 $('#divPagar').hide();
                 $('#buttonPDT').hide();
                 $('.btn_cancelar').hide();
-                /*var cantLocalidade = $('#Eventosimpuesto0CantProvincias').val();
-                for (var i = 0 ; i < cantLocalidade; i++) {
-                    if($('#Eventosimpuesto'+i+'Id').val()==0){//El Evento Impuesto no a sido creado previamente entonces vamos a guardar el monto que calculamos
-                        var localidad = $('#Eventosimpuesto'+i+'LocalidadeId').val();
-                        var apagar = $('#apagar'+localidad).val();
-                        var afavor = $('#afavor'+localidad).val();
-                        $('#Eventosimpuesto'+i+'Montovto').val(apagar);
-                        $('#Eventosimpuesto'+i+'Monc').val(afavor);
+                //Cargar Resultados de Saldo Tecnico A Favor Resp y Saldo Tecnico A Favor AFIP
+                if($('#Eventosimpuesto0Id').val()==0){
+                    //El Evento Impuesto no a sido creado previamente entonces vamos a guardar el monto que calculamos
+                    var apagar = $('#apagar').val();
+                    var saldotecnico = $('#saldoTecnico').val();
+                    $('#Eventosimpuesto0Montovto').val(apagar);
+                    $('#Eventosimpuesto0Monc').val(saldotecnico);
+                }
+                //Cargar Resultado Saldo Libre Disponibilidad
+                var saldoLD = $('#saldoLD').val();
+                if($('#Eventosimpuesto0Conceptosrestante0Id').length<=0){
+                    if(saldoLD*1>0){
+                        $('<input>').attr({
+                            type: 'hidden',
+                            id: 'Eventosimpuesto0Conceptosrestante0ClienteId',
+                            value: $('#cliid').val(),
+                            name: 'data[Eventosimpuesto][0][Conceptosrestante][0][cliente_id]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            id: 'Eventosimpuesto0Conceptosrestante0ImpcliId',
+                            value: $('#impcliidPDT').val(),
+                            name: 'data[Eventosimpuesto][0][Conceptosrestante][0][impcli_id]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            id: 'Eventosimpuesto0Conceptosrestante0ConceptostipoId',
+                            value: 1,
+                            name: 'data[Eventosimpuesto][0][Conceptosrestante][0][conceptostipo_id]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            id: 'Eventosimpuesto0Conceptosrestante0Periodo',
+                            value: $('#periodoPDT').val(),
+                            name: 'data[Eventosimpuesto][0][Conceptosrestante][0][periodo]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<label>').html("Saldo Libre Disponibilidad").appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<img>').attr({
+                            src: serverLayoutURL+'/img/ii.png',
+                            style: 'width:15px;height:15px',
+                            title: 'Este campo se cargara como un Pago a Cuenta del tipo Saldo de Libre Disponibilidad' +
+                            ' en el periodo '+$('#periodoPDT').val(),
+                            alt: ''
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<input>').attr({
+                            type: 'text',
+                            id: 'Eventosimpuesto0Conceptosrestante0Montoretenido',
+                            value: saldoLD,
+                            name: 'data[Eventosimpuesto][0][Conceptosrestante][0][montoretenido]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            id: 'Eventosimpuesto0Conceptosrestante0Fecha',
+                            value: $.datepicker.formatDate('yy/mm/dd', new Date()),
+                            name: 'data[Eventosimpuesto][0][Conceptosrestante][0][fecha]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
                     }
-                };*/
+                }else{
+                    $('#Eventosimpuesto0Conceptosrestante0Montoretenido').val(saldoLD);
+                }
                 $(document).ready(function() {
                     $( "input.datepicker" ).datepicker({
                         yearRange: "-100:+50",
@@ -216,8 +267,9 @@
 <?php
 echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
 echo $this->Form->input('impcliidPDT',array('value'=>$cliente['Impcli'][0]['id'],'type'=>'hidden'));
-echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre'],'type'=>'hidden'));?>
-<div class="eventosclientes index">	
+echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre'],'type'=>'hidden'));
+echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=>'hidden'));?>
+<div class="eventosclientes index">
 	<div>
 		<label>INFORME IVA</label>
 		<label>Contribuyente: <?php echo $cliente['Cliente']['nombre']; ?> </label>
@@ -225,324 +277,324 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
 	</div>
 	<div style="width:100%;height:30px;">
 		<div id="tabVentas_Iva" class="cliente_view_tab_active" onclick="CambiarTab('ventas');" style="width:25%;">
-			<label style="text-align:center;margin-top:5px;cursor:pointer" for="">VENTAS</label>
+			<label style="text-align:center;margin-top:5px;cursor:pointer" for="">Debito</label>
 		</div>
 		<div id="tabCompras_Iva" class="cliente_view_tab" onclick="CambiarTab('compras');" style="width:25%;">
-			<label style="text-align:center;margin-top:5px;cursor:pointer" for="">COMPRAS</label>
+			<label style="text-align:center;margin-top:5px;cursor:pointer" for="">Credito</label>
 		</div>
 		<div id="tabLiquidacion_Iva" class="cliente_view_tab" onclick="CambiarTab('liquidacion');" style="width:25%;">
-			<label style="text-align:center;margin-top:5px;cursor:pointer" for="">LIQUIDACION</label>
+			<label style="text-align:center;margin-top:5px;cursor:pointer" for="">Liquidacion</label>
 		</div>
 	</div>
 	<div style="width:100%; border-bottom: 1px solid; padding-top:5px"></div>
 	<div id="divContenedorVentas">
-	<?php 	
-		$TotalDebitoFiscal_SumaTotal = 0;
-		$TotalCreditoFiscal_SumaTotal = 0;
-	?>
-	<?php foreach ($actividades as $actividad): ?>	
-	<div style="width:100%; height: 10px"></div>
-	<?php 	
+        <?php
+            $TotalDebitoFiscal_SumaTotal = 0;
+            $TotalCreditoFiscal_SumaTotal = 0;
+        ?>
+	    <?php foreach ($actividades as $actividad){ ?>
+	    <div style="width:100%; height: 10px"></div>
+	    <?php
 		$ActividadCliente_id = $actividad['Actividadcliente']['actividade_id'];
-	?>
-	<div id='divContenedorTablaActividad_<?php echo $ActividadCliente_id; ?>'>
-		<table id='divTituloActividad_<?php echo $ActividadCliente_id; ?>' border="1px solid" style="margin-bottom:0; cursor: pointer" onclick="MostrarTabla(this, 'ventas');">
-			<tr>
-				<td colspan="5" style='background-color:#76b5cd'>
-				<b>
-				<?php 
-					echo 'ACTIVIDAD: '. $actividad['Actividade']['nombre']; 			
-				?>
-				</b>
-				</td>
-			</tr>	
-		</table>
-		<div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_DebitoFiscal' style="display:none">
-			<table id='divTablaActividad_DebitoFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')" border="1px solid" style="margin-bottom:0; cursor: pointer">
-			<!---------- TIPO DEBITo: Debito Fiscal ---------->
-			<tr>
-				<td colspan="5" style='background-color:#76b5cd'>
-					> TIPO DEBITO: Debito Fiscal
-				</td>
-			</tr>
-			</table>
-			<?php
-			$Alicuota2_5 = false;
-			$TotalAlicuota2_5 = 0;
-			$Alicuota5_0 = false;
-			$TotalAlicuota5_0 = 0;
-			$Alicuota10_5 = false;
-			$TotalAlicuota10_5 = 0;
-			$Alicuota21_0 = false;
-			$TotalAlicuota21_0 = 0;
-			$Alicuota27_0 = false;
-			$TotalAlicuota27_0 = 0;
-			foreach ($ventas as $venta){
-				if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
-				{
-					if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
-					{
-						if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
-						{
-							$Alicuota2_5 = true;
-							$TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
-						}
-						if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
-						{
-							$Alicuota5_0 = true;
-							$TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
-						}
-						if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
-						{
-							$Alicuota10_5 = true;
-							$TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
-						}
-						if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
-						{
-							$Alicuota21_0 = true;
-							$TotalAlicuota21_0 = $TotalAlicuota21_0 + + $venta['Venta']['neto'];
-						}
-						if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
-						{
-							$Alicuota27_0 = true;
-							$TotalAlicuota27_0 = $TotalAlicuota27_0 + + $venta['Venta']['neto'];
-						}
-					}
-				}
+	    ?>
+	    <div id='divContenedorTablaActividad_<?php echo $ActividadCliente_id; ?>'>
+            <table id='divTituloActividad_<?php echo $ActividadCliente_id; ?>' border="1px solid" style="margin-bottom:0; cursor: pointer" onclick="MostrarTabla(this, 'ventas');">
+                <tr>
+                    <td colspan="5" style='background-color:#76b5cd'>
+                    <b>
+                    <?php
+                        echo 'ACTIVIDAD: '. $actividad['Actividade']['nombre'];
+                    ?>
+                    </b>
+                    </td>
+                </tr>
+            </table>
+		    <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_DebitoFiscal' style="display:none">
+			    <table id='divTablaActividad_DebitoFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')" border="1px solid" style="margin-bottom:0; cursor: pointer">
+                    <!---------- TIPO DEBITo: Debito Fiscal ---------->
+                    <tr>
+                        <td colspan="5" style='background-color:#76b5cd'>
+                            > TIPO DEBITO: Debito Fiscal
+                        </td>
+                    </tr>
+			    </table>
+                <?php
+                $Alicuota2_5 = false;
+                $TotalAlicuota2_5 = 0;
+                $Alicuota5_0 = false;
+                $TotalAlicuota5_0 = 0;
+                $Alicuota10_5 = false;
+                $TotalAlicuota10_5 = 0;
+                $Alicuota21_0 = false;
+                $TotalAlicuota21_0 = 0;
+                $Alicuota27_0 = false;
+                $TotalAlicuota27_0 = 0;
+                foreach ($ventas as $venta){
+                    if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
+                    {
+                        if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
+                        {
+                            if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
+                            {
+                                $Alicuota2_5 = true;
+                                $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
+                            {
+                                $Alicuota5_0 = true;
+                                $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
+                            {
+                                $Alicuota10_5 = true;
+                                $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
+                            {
+                                $Alicuota21_0 = true;
+                                $TotalAlicuota21_0 = $TotalAlicuota21_0 + + $venta['Venta']['neto'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
+                            {
+                                $Alicuota27_0 = true;
+                                $TotalAlicuota27_0 = $TotalAlicuota27_0 + + $venta['Venta']['neto'];
+                            }
+                        }
+                    }
 
-			};
+                };
 
-			if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
-			{ ?>
-			<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_RespInsc' style="display:none">
-				<table  border="1px solid" >
-					<tr>
-						<td colspan="5" style='background-color:#87cfeb'>
-							> > OPERACION: Responsable Inscripto
-						</td>
-					</tr>
-					<tr style='background-color:#f0f0f0'>
-						<td style="width:20%">Alicuota</td>
-						<td style="width:20%">Monto Neto Grabado</td>
-						<td style="width:20%">Debito Fiscal</td>
-						<td style="width:20%">Debito Fiscal Facturado</td>
-						<td style="width:20%">Debito Fiscal - Operaciones dación en pago decreto 1145/09</td>
-					</tr>
-					<tr>
-						<?php
-							if($Alicuota2_5)
-							{
-								echo '<tr>
-									  <td style="width:20%">2.5</td>
-									  <td style="width:20%">'.$TotalAlicuota2_5.'</td>
-									  <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
-									  <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
-									  <td style="width:20%">0</td>
-									  </tr>
-								';
-							}
-							if($Alicuota5_0)
-							{
-								echo '<tr>
-									  <td style="width:20%">5.0</td>
-									  <td style="width:20%">'.$TotalAlicuota5_0.'</td>
-									  <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
-									  <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
-									  <td style="width:20%">0</td>
-									  </tr>
-								';
-							}
-							if($Alicuota10_5)
-							{
-								echo '<tr>
-									  <td style="width:20%">10.5</td>
-									  <td style="width:20%">'.$TotalAlicuota10_5.'</td>
-									  <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
-									  <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
-									  <td style="width:20%">0</td>
-									  </tr>
-								';
-							}
-							if($Alicuota21_0)
-							{
-								echo '<tr>
-									  <td style="width:20%">21.0</td>
-									  <td style="width:20%">'.$TotalAlicuota21_0.'</td>
-									  <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
-									  <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
-									  <td style="width:20%">0</td>
-									  </tr>
-								';
-							}
-							if($Alicuota27_0)
-							{
-								echo '<tr>
-									  <td style="width:20%">27.0</td>
-									  <td style="width:20%">'.$TotalAlicuota27_0.'</td>
-									  <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
-									  <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
-									  <td style="width:20%">0</td>
-									  </tr>
-								';
-							}
-							if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
-							{
-								$TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-								$TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
-								echo '<tr>
-									  <td style="width:20%">Totales</td>
-									  <td style="width:20%">'.$TotalNeto.'</td>
-									  <td style="width:20%">'.$TotalDebitoFiscal.'</td>
-									  <td style="width:20%">'.$TotalDebitoFiscal.'</td>
-									  <td style="width:20%">0</td>
-									</tr>
-								';
-								$TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
-							}
-						?>
-						</tr>
-				</table>
-			</div>
-			<?php }
-			$Alicuota2_5 = false;
-			$TotalAlicuota2_5 = 0;
-			$Alicuota5_0 = false;
-			$TotalAlicuota5_0 = 0;
-			$Alicuota10_5 = false;
-			$TotalAlicuota10_5 = 0;
-			$Alicuota21_0 = false;
-			$TotalAlicuota21_0 = 0;
-			$Alicuota27_0 = false;
-			$TotalAlicuota27_0 = 0;
-			foreach ($ventas as $venta){
-				//endforeach;
-				//echo $venta['Actividadcliente']['actividade_id']. ' - '.$ActividadCliente_id;
-				if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
-				{
-					if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'monotributista')
-					{
-						if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
-						{
-							$Alicuota2_5 = true;
-							$TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
-						}
-						if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
-						{
-							$Alicuota5_0 = true;
-							$TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
-						}
-						if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
-						{
-							$Alicuota10_5 = true;
-							$TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
-						}
-						if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
-						{
-							$Alicuota21_0 = true;
-							$TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
-						}
-						if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
-						{
-							$Alicuota27_0 = true;
-							$TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
-						}
-					}
-				}
-			};
-			if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0){
-			?>
-				<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_Monotributista' style="display:none">
-					<table  border="1px solid" >
-						<tr>
-							<td colspan="5" style='background-color:#87cfeb'>
-								> > OPERACION: Monotributista
-							</td>
-						</tr>
-						<tr style='background-color:#f0f0f0'>
-							<td style="width:20%">Alicuota</td>
-							<td style="width:20%">Monto total facturado</td>
-							<td style="width:20%">Debito Fiscal</td>
-							<td style="width:20%"></td>
-							<td style="width:20%"></td>
-						</tr>
-						<tr>
+                if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
+                { ?>
+                    <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_RespInsc' style="display:none">
+                        <table  border="1px solid" >
+                            <tr>
+                                <td colspan="5" style='background-color:#87cfeb'>
+                                    > > OPERACION: Responsable Inscripto
+                                </td>
+                            </tr>
+                            <tr style='background-color:#f0f0f0'>
+                                <td style="width:20%">Alicuota</td>
+                                <td style="width:20%">Monto Neto Grabado</td>
+                                <td style="width:20%">Debito Fiscal</td>
+                                <td style="width:20%">Debito Fiscal Facturado</td>
+                                <td style="width:20%">Debito Fiscal - Operaciones dación en pago decreto 1145/09</td>
+                            </tr>
+                            <tr>
+                                <?php
+                                    if($Alicuota2_5)
+                                    {
+                                        echo '<tr>
+                                              <td style="width:20%">2.5</td>
+                                              <td style="width:20%">'.$TotalAlicuota2_5.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
+                                              <td style="width:20%">0</td>
+                                              </tr>
+                                        ';
+                                    }
+                                    if($Alicuota5_0)
+                                    {
+                                        echo '<tr>
+                                              <td style="width:20%">5.0</td>
+                                              <td style="width:20%">'.$TotalAlicuota5_0.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
+                                              <td style="width:20%">0</td>
+                                              </tr>
+                                        ';
+                                    }
+                                    if($Alicuota10_5)
+                                    {
+                                        echo '<tr>
+                                              <td style="width:20%">10.5</td>
+                                              <td style="width:20%">'.$TotalAlicuota10_5.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
+                                              <td style="width:20%">0</td>
+                                              </tr>
+                                        ';
+                                    }
+                                    if($Alicuota21_0)
+                                    {
+                                        echo '<tr>
+                                              <td style="width:20%">21.0</td>
+                                              <td style="width:20%">'.$TotalAlicuota21_0.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
+                                              <td style="width:20%">0</td>
+                                              </tr>
+                                        ';
+                                    }
+                                    if($Alicuota27_0)
+                                    {
+                                        echo '<tr>
+                                              <td style="width:20%">27.0</td>
+                                              <td style="width:20%">'.$TotalAlicuota27_0.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
+                                              <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
+                                              <td style="width:20%">0</td>
+                                              </tr>
+                                        ';
+                                    }
+                                    if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
+                                    {
+                                        $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
+                                        $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                        echo '<tr>
+                                              <td style="width:20%">Totales</td>
+                                              <td style="width:20%">'.$TotalNeto.'</td>
+                                              <td style="width:20%">'.$TotalDebitoFiscal.'</td>
+                                              <td style="width:20%">'.$TotalDebitoFiscal.'</td>
+                                              <td style="width:20%">0</td>
+                                            </tr>
+                                        ';
+                                        $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
+                                    }
+                                ?>
+                                </tr>
+                        </table>
+                    </div>
+                <?php }
+                $Alicuota2_5 = false;
+                $TotalAlicuota2_5 = 0;
+                $Alicuota5_0 = false;
+                $TotalAlicuota5_0 = 0;
+                $Alicuota10_5 = false;
+                $TotalAlicuota10_5 = 0;
+                $Alicuota21_0 = false;
+                $TotalAlicuota21_0 = 0;
+                $Alicuota27_0 = false;
+                $TotalAlicuota27_0 = 0;
+                foreach ($ventas as $venta){
+                    //endforeach;
+                    //echo $venta['Actividadcliente']['actividade_id']. ' - '.$ActividadCliente_id;
+                    if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
+                    {
+                        if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'monotributista')
+                        {
+                            if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
+                            {
+                                $Alicuota2_5 = true;
+                                $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
+                            {
+                                $Alicuota5_0 = true;
+                                $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
+                            {
+                                $Alicuota10_5 = true;
+                                $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
+                            {
+                                $Alicuota21_0 = true;
+                                $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
+                            {
+                                $Alicuota27_0 = true;
+                                $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                            }
+                        }
+                    }
+                };
+                if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0){
+                ?>
+                    <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_Monotributista' style="display:none">
+                        <table  border="1px solid" >
+                            <tr>
+                                <td colspan="5" style='background-color:#87cfeb'>
+                                    > > OPERACION: Monotributista
+                                </td>
+                            </tr>
+                            <tr style='background-color:#f0f0f0'>
+                                <td style="width:20%">Alicuota</td>
+                                <td style="width:20%">Monto total facturado</td>
+                                <td style="width:20%">Debito Fiscal</td>
+                                <td style="width:20%"></td>
+                                <td style="width:20%"></td>
+                            </tr>
+                            <tr>
 
-						<?php
-							if($Alicuota2_5)
-							{
-								echo '<tr>
-									  <td style="width:20%">2.5</td>
-									  <td style="width:20%">'.$TotalAlicuota2_5.'</td>
-									  <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
-									  <td style="width:20%"></td>
-									  <td style="width:20%"></td>
-									  </tr>
-								';
-							}
-							if($Alicuota5_0)
-							{
-								echo '<tr>
-									  <td style="width:20%">5.0</td>
-									  <td style="width:20%">'.$TotalAlicuota5_0.'</td>
-									  <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
-									  <td style="width:20%"></td>
-									  <td style="width:20%"></td>
-									  </tr>
-								';
-							}
-							if($Alicuota10_5)
-							{
-								echo '<tr>
-									  <td style="width:20%">10.5</td>
-									  <td style="width:20%">'.$TotalAlicuota10_5.'</td>
-									  <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
-									  <td style="width:20%"></td>
-									  <td style="width:20%"></td>
-									  </tr>
-								';
-							}
-							if($Alicuota21_0)
-							{
-								echo '<tr>
-									  <td style="width:20%">21.0</td>
-									  <td style="width:20%">'.$TotalAlicuota21_0.'</td>
-									  <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
-									  <td style="width:20%"></td>
-									  <td style="width:20%"></td>
-									  </tr>
-								';
-							}
-							if($Alicuota27_0)
-							{
-								echo '<tr>
-									  <td style="width:20%">27.0</td>
-									  <td style="width:20%">'.$TotalAlicuota27_0.'</td>
-									  <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
-									  <td style="width:20%"></td>
-									  <td style="width:20%"></td>
-									  </tr>
-								';
-							}
-							if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
-							{
-								$TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-								$TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
-								echo '<tr>
-									  <td style="width:20%">Totales</td>
-									  <td style="width:20%">'.$TotalNeto.'</td>
-									  <td style="width:20%">'.$TotalDebitoFiscal.'</td>
-									  <td style="width:20%"></td>
-									  <td style="width:20%"></td>
-									</tr>
-								';
-								$TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
-							}
-						?>
-						</tr>
-					</table>
-				</div>
-			<?php
-			}
+                            <?php
+                                if($Alicuota2_5)
+                                {
+                                    echo '<tr>
+                                          <td style="width:20%">2.5</td>
+                                          <td style="width:20%">'.$TotalAlicuota2_5.'</td>
+                                          <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
+                                          <td style="width:20%"></td>
+                                          <td style="width:20%"></td>
+                                          </tr>
+                                    ';
+                                }
+                                if($Alicuota5_0)
+                                {
+                                    echo '<tr>
+                                          <td style="width:20%">5.0</td>
+                                          <td style="width:20%">'.$TotalAlicuota5_0.'</td>
+                                          <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
+                                          <td style="width:20%"></td>
+                                          <td style="width:20%"></td>
+                                          </tr>
+                                    ';
+                                }
+                                if($Alicuota10_5)
+                                {
+                                    echo '<tr>
+                                          <td style="width:20%">10.5</td>
+                                          <td style="width:20%">'.$TotalAlicuota10_5.'</td>
+                                          <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
+                                          <td style="width:20%"></td>
+                                          <td style="width:20%"></td>
+                                          </tr>
+                                    ';
+                                }
+                                if($Alicuota21_0)
+                                {
+                                    echo '<tr>
+                                          <td style="width:20%">21.0</td>
+                                          <td style="width:20%">'.$TotalAlicuota21_0.'</td>
+                                          <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
+                                          <td style="width:20%"></td>
+                                          <td style="width:20%"></td>
+                                          </tr>
+                                    ';
+                                }
+                                if($Alicuota27_0)
+                                {
+                                    echo '<tr>
+                                          <td style="width:20%">27.0</td>
+                                          <td style="width:20%">'.$TotalAlicuota27_0.'</td>
+                                          <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
+                                          <td style="width:20%"></td>
+                                          <td style="width:20%"></td>
+                                          </tr>
+                                    ';
+                                }
+                                if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
+                                {
+                                    $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
+                                    $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                    echo '<tr>
+                                          <td style="width:20%">Totales</td>
+                                          <td style="width:20%">'.$TotalNeto.'</td>
+                                          <td style="width:20%">'.$TotalDebitoFiscal.'</td>
+                                          <td style="width:20%"></td>
+                                          <td style="width:20%"></td>
+                                        </tr>
+                                    ';
+                                    $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
+                                }
+                            ?>
+                            </tr>
+                        </table>
+                    </div>
+                <?php
+                }
 			$Alicuota2_5 = false;
 			$TotalAlicuota2_5 = 0;
 			$Alicuota5_0 = false;
@@ -679,433 +731,433 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
 		</div>
 		<!---------- FIN TIPO DEBITo: Debito Fiscal ---------->		
 		<!---------- TIPO DEBITo: Bines de Uso ---------->
-		<div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_BsUso' style="display:none">	
-		<table id='divTablaActividad_BsUso_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')" border="1px solid" style="margin-bottom:0; cursor: pointer" >
-		<tr>
-			<td colspan="5" style='background-color:#76b5cd'>
-				> TIPO DEBITO: Bienes de Uso
-			</td>
-		</tr>
-		</table>
-		<?php
-		$Alicuota2_5 = false;
-		$TotalAlicuota2_5 = 0;
-		$Alicuota5_0 = false;
-		$TotalAlicuota5_0 = 0;
-		$Alicuota10_5 = false;
-		$TotalAlicuota10_5 = 0;
-		$Alicuota21_0 = false;
-		$TotalAlicuota21_0 = 0;
-		$Alicuota27_0 = false;
-		$TotalAlicuota27_0 = 0;
-		foreach ($ventas as $venta){
-			if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
-			{
-				if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
-				{
-					if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
-					{
-						$Alicuota2_5 = true;
-						$TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
-					{
-						$Alicuota5_0 = true;
-						$TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
-					{
-						$Alicuota10_5 = true;
-						$TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
-					{
-						$Alicuota21_0 = true;
-						$TotalAlicuota21_0 = $TotalAlicuota21_0 + + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
-					{
-						$Alicuota27_0 = true;
-						$TotalAlicuota27_0 = $TotalAlicuota27_0 + + $venta['Venta']['neto'];
-					}
-				}
-			}
-		};
-		if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
-			?>
-			<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_RespInsc' style="display:none">
-				<table border="1px solid">
-					<tr>
-						<td colspan="5" style='background-color:#87cfeb'>
-							> > OPERACION: Responsable Inscripto
-						</td>
-					</tr>
-					<tr style='background-color:#f0f0f0'>
-						<td style="width:20%">Alicuota</td>
-						<td style="width:20%">Monto Neto Grabado</td>
-						<td style="width:20%">Debito Fiscal</td>
-						<td style="width:20%">Debito Fiscal Facturado</td>
-						<td style="width:20%">Debito Fiscal - Operaciones dación en pago decreto 1145/09</td>
-					</tr>
-					<tr>
-
-						<?php
-						if ($Alicuota2_5) {
-							echo '<tr>
-							  <td style="width:20%">2.5</td>
-							  <td style="width:20%">' . $TotalAlicuota2_5 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota2_5 * 0.025 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota2_5 * 0.025 . '</td>
-							  <td style="width:20%">0</td>
-							  </tr>
-						';
-						}
-						if ($Alicuota5_0) {
-							echo '<tr>
-							  <td style="width:20%">5.0</td>
-							  <td style="width:20%">' . $TotalAlicuota5_0 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota5_0 * 0.05 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota5_0 * 0.05 . '</td>
-							  <td style="width:20%">0</td>
-							  </tr>
-						';
-						}
-						if ($Alicuota10_5) {
-							echo '<tr>
-							  <td style="width:20%">10.5</td>
-							  <td style="width:20%">' . $TotalAlicuota10_5 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota10_5 * 0.105 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota10_5 * 0.105 . '</td>
-							  <td style="width:20%">0</td>
-							  </tr>
-						';
-						}
-						if ($Alicuota21_0) {
-							echo '<tr>
-							  <td style="width:20%">21.0</td>
-							  <td style="width:20%">' . $TotalAlicuota21_0 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota21_0 * 0.21 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota21_0 * 0.21 . '</td>
-							  <td style="width:20%">0</td>
-							  </tr>
-						';
-						}
-						if ($Alicuota27_0) {
-							echo '<tr>
-							  <td style="width:20%">27.0</td>
-							  <td style="width:20%">' . $TotalAlicuota27_0 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota27_0 * 0.27 . '</td>
-							  <td style="width:20%">' . $TotalAlicuota27_0 * 0.27 . '</td>
-							  <td style="width:20%">0</td>
-							  </tr>
-						';
-						}
-						if ($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
-							$TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-							$TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
-							echo '<tr>
-							  <td style="width:20%">Totales</td>
-							  <td style="width:20%">' . $TotalNeto . '</td>
-							  <td style="width:20%">' . $TotalDebitoFiscal . '</td>
-							  <td style="width:20%">' . $TotalDebitoFiscal . '</td>
-							  <td style="width:20%">0</td>
-							</tr>
-						';
-							$TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
-						}
-						?>
-					</tr>
-				</table>
-			</div>
-			<?php
-		}
-		$Alicuota2_5 = false;
-		$TotalAlicuota2_5 = 0;
-		$Alicuota5_0 = false;
-		$TotalAlicuota5_0 = 0;
-		$Alicuota10_5 = false;
-		$TotalAlicuota10_5 = 0;
-		$Alicuota21_0 = false;
-		$TotalAlicuota21_0 = 0;
-		$Alicuota27_0 = false;
-		$TotalAlicuota27_0 = 0;
-		foreach ($ventas as $venta){
-			if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
-			{
-				if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'monotributista')
-				{
-					if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
-					{
-						$Alicuota2_5 = true;
-						$TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
-					{
-						$Alicuota5_0 = true;
-						$TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
-					{
-						$Alicuota10_5 = true;
-						$TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
-					{
-						$Alicuota21_0 = true;
-						$TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
-					{
-						$Alicuota27_0 = true;
-						$TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
-					}
-				}
-			}
-		};
-		if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
-		?>
-			<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_Monotributista' style="display:none">
-				<table  border="1px solid" >
-					<tr>
-						<td colspan="5" style='background-color:#87cfeb'>
-							> > OPERACION: Monotributista
-						</td>
-					</tr>
-					<tr style='background-color:#f0f0f0'>
-						<td style="width:20%">Alicuota</td>
-						<td style="width:20%">Monto total facturado</td>
-						<td style="width:20%">Debito Fiscal</td>
-						<td style="width:20%"></td>
-						<td style="width:20%"></td>
-					</tr>
-					<tr>
-
-					<?php
-						if($Alicuota2_5)
-						{
-							echo '<tr>
-								 <td>2.5</td>
-								  <td>'.$TotalAlicuota2_5.'</td>
-								  <td>'.$TotalAlicuota2_5 * 0.025.'</td>
-								  <td></td>
-								  <td></td>
-								  </tr>
-							';
-						}
-						if($Alicuota5_0)
-						{
-							echo '<tr>
-								  <td style="width:20%">5.0</td>
-								  <td style="width:20%">'.$TotalAlicuota5_0.'</td>
-								  <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
-								  <td style="width:20%"></td>
-								  <td style="width:20%"></td>
-								  </tr>
-							';
-						}
-						if($Alicuota10_5)
-						{
-							echo '<tr>
-								  <td style="width:20%">10.5</td>
-								  <td style="width:20%">'.$TotalAlicuota10_5.'</td>
-								  <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
-								  <td style="width:20%"></td>
-								  <td style="width:20%"></td>
-								  </tr>
-							';
-						}
-						if($Alicuota21_0)
-						{
-							echo '<tr>
-								  <td style="width:20%">21.0</td>
-								  <td style="width:20%">'.$TotalAlicuota21_0.'</td>
-								  <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
-								  <td style="width:20%"></td>
-								  <td style="width:20%"></td>
-								  </tr>
-							';
-						}
-						if($Alicuota27_0)
-						{
-							echo '<tr>
-								  <td style="width:20%">27.0</td>
-								  <td style="width:20%">'.$TotalAlicuota27_0.'</td>
-								  <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
-								  <td style="width:20%"></td>
-								  <td style="width:20%"></td>
-								  </tr>
-							';
-						}
-						if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
-						{
-							$TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-							$TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
-							echo '<tr>
-								  <td style="width:20%">Totales</td>
-								  <td style="width:20%">'.$TotalNeto.'</td>
-								  <td style="width:20%">'.$TotalDebitoFiscal.'</td>
-								  <td style="width:20%"></td>
-								  <td style="width:20%"></td>
-								</tr>
-							';
-							$TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
-						}
-					?>
-					</tr>
-				</table>
-			</div>
-		<?php
-		}
-        $Alicuota2_5 = false;
-        $TotalAlicuota2_5 = 0;
-        $Alicuota5_0 = false;
-        $TotalAlicuota5_0 = 0;
-        $Alicuota10_5 = false;
-        $TotalAlicuota10_5 = 0;
-        $Alicuota21_0 = false;
-        $TotalAlicuota21_0 = 0;
-        $Alicuota27_0 = false;
-        $TotalAlicuota27_0 = 0;
-
-        foreach ($ventas as $venta){
-            if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
-            {
-                if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
+		    <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_BsUso' style="display:none">
+            <table id='divTablaActividad_BsUso_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')" border="1px solid" style="margin-bottom:0; cursor: pointer" >
+            <tr>
+                <td colspan="5" style='background-color:#76b5cd'>
+                    > TIPO DEBITO: Bienes de Uso
+                </td>
+            </tr>
+            </table>
+            <?php
+            $Alicuota2_5 = false;
+            $TotalAlicuota2_5 = 0;
+            $Alicuota5_0 = false;
+            $TotalAlicuota5_0 = 0;
+            $Alicuota10_5 = false;
+            $TotalAlicuota10_5 = 0;
+            $Alicuota21_0 = false;
+            $TotalAlicuota21_0 = 0;
+            $Alicuota27_0 = false;
+            $TotalAlicuota27_0 = 0;
+            foreach ($ventas as $venta){
+                if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
                 {
-                    if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
+                    if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
                     {
-                        $Alicuota2_5 = true;
-                        $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
-                    }
-                    if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
-                    {
-                        $Alicuota5_0 = true;
-                        $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
-                    }
-                    if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
-                    {
-                        $Alicuota10_5 = true;
-                        $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
-                    }
-                    if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
-                    {
-                        $Alicuota21_0 = true;
-                        $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
-                    }
-                    if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
-                    {
-                        $Alicuota27_0 = true;
-                        $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                        if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
+                        {
+                            $Alicuota2_5 = true;
+                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
+                        {
+                            $Alicuota5_0 = true;
+                            $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
+                        {
+                            $Alicuota10_5 = true;
+                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
+                        {
+                            $Alicuota21_0 = true;
+                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
+                        {
+                            $Alicuota27_0 = true;
+                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + + $venta['Venta']['neto'];
+                        }
                     }
                 }
-            }
-        };
-        if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
-            ?>
-		    <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_ConsF' style="display:none">
-            <table  border="1px solid" >
-                <tr>
-                    <td colspan="5" style='background-color:#87cfeb'>
-                        > > OPERACION: Cons. F, Exent. y No Alcan.
-                    </td>
-                </tr>
-                <tr style='background-color:#f0f0f0'>
-                    <td style="width:20%">Alicuota</td>
-                    <td style="width:20%">Monto total facturado</td>
-                    <td style="width:20%">Debito Fiscal</td>
-                    <td style="width:20%"></td>
-                    <td style="width:20%"></td>
-                </tr>
-                <tr>
-
-                <?php
-                    if($Alicuota2_5)
-                    {
-                        echo '<tr>
-                              <td style="width:20%">2.5</td>
-                              <td style="width:20%">'.$TotalAlicuota2_5.'</td>
-                              <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
-                              <td style="width:20%"></td>
-                              <td style="width:20%"></td>
-                              </tr>
-                        ';
-                    }
-                    if($Alicuota5_0)
-                    {
-                        echo '<tr>
-                              <td style="width:20%">5.0</td>
-                              <td style="width:20%">'.$TotalAlicuota5_0.'</td>
-                              <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
-                              <td style="width:20%"></td>
-                              <td style="width:20%"></td>
-                              </tr>
-                        ';
-                    }
-                    if($Alicuota10_5)
-                    {
-                        echo '<tr>
-                              <td style="width:20%">10.5</td>
-                              <td style="width:20%">'.$TotalAlicuota10_5.'</td>
-                              <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
-                              <td style="width:20%"></td>
-                              <td style="width:20%"></td>
-                              </tr>
-                        ';
-                    }
-                    if($Alicuota21_0)
-                    {
-                        echo '<tr>
-                              <td style="width:20%">21.0</td>
-                              <td style="width:20%">'.$TotalAlicuota21_0.'</td>
-                              <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
-                              <td style="width:20%"></td>
-                              <td style="width:20%"></td>
-                              </tr>
-                        ';
-                    }
-                    if($Alicuota27_0)
-                    {
-                        echo '<tr>
-                              <td style="width:20%">27.0</td>
-                              <td style="width:20%">'.$TotalAlicuota27_0.'</td>
-                              <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
-                              <td style="width:20%"></td>
-                              <td style="width:20%"></td>
-                              </tr>
-                        ';
-                    }
-                    if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
-                    {
-                        $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-                        $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
-                        echo '<tr>
-                              <td style="width:20%">Totales</td>
-                              <td style="width:20%">'.$TotalNeto.'</td>
-                              <td style="width:20%">'.$TotalDebitoFiscal.'</td>
-                              <td style="width:20%"></td>
-                              <td style="width:20%"></td>
-                            </tr>
-                        ';
-                        $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
-                    }
+            };
+            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
                 ?>
-                </tr>
-            </table>
-		</div>
+                <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_RespInsc' style="display:none">
+                    <table border="1px solid">
+                        <tr>
+                            <td colspan="5" style='background-color:#87cfeb'>
+                                > > OPERACION: Responsable Inscripto
+                            </td>
+                        </tr>
+                        <tr style='background-color:#f0f0f0'>
+                            <td style="width:20%">Alicuota</td>
+                            <td style="width:20%">Monto Neto Grabado</td>
+                            <td style="width:20%">Debito Fiscal</td>
+                            <td style="width:20%">Debito Fiscal Facturado</td>
+                            <td style="width:20%">Debito Fiscal - Operaciones dación en pago decreto 1145/09</td>
+                        </tr>
+                        <tr>
+
+                            <?php
+                            if ($Alicuota2_5) {
+                                echo '<tr>
+                                  <td style="width:20%">2.5</td>
+                                  <td style="width:20%">' . $TotalAlicuota2_5 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota2_5 * 0.025 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota2_5 * 0.025 . '</td>
+                                  <td style="width:20%">0</td>
+                                  </tr>
+                            ';
+                            }
+                            if ($Alicuota5_0) {
+                                echo '<tr>
+                                  <td style="width:20%">5.0</td>
+                                  <td style="width:20%">' . $TotalAlicuota5_0 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota5_0 * 0.05 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota5_0 * 0.05 . '</td>
+                                  <td style="width:20%">0</td>
+                                  </tr>
+                            ';
+                            }
+                            if ($Alicuota10_5) {
+                                echo '<tr>
+                                  <td style="width:20%">10.5</td>
+                                  <td style="width:20%">' . $TotalAlicuota10_5 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota10_5 * 0.105 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota10_5 * 0.105 . '</td>
+                                  <td style="width:20%">0</td>
+                                  </tr>
+                            ';
+                            }
+                            if ($Alicuota21_0) {
+                                echo '<tr>
+                                  <td style="width:20%">21.0</td>
+                                  <td style="width:20%">' . $TotalAlicuota21_0 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota21_0 * 0.21 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota21_0 * 0.21 . '</td>
+                                  <td style="width:20%">0</td>
+                                  </tr>
+                            ';
+                            }
+                            if ($Alicuota27_0) {
+                                echo '<tr>
+                                  <td style="width:20%">27.0</td>
+                                  <td style="width:20%">' . $TotalAlicuota27_0 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota27_0 * 0.27 . '</td>
+                                  <td style="width:20%">' . $TotalAlicuota27_0 * 0.27 . '</td>
+                                  <td style="width:20%">0</td>
+                                  </tr>
+                            ';
+                            }
+                            if ($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+                                $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
+                                $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                echo '<tr>
+                                  <td style="width:20%">Totales</td>
+                                  <td style="width:20%">' . $TotalNeto . '</td>
+                                  <td style="width:20%">' . $TotalDebitoFiscal . '</td>
+                                  <td style="width:20%">' . $TotalDebitoFiscal . '</td>
+                                  <td style="width:20%">0</td>
+                                </tr>
+                            ';
+                                $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
+                            }
+                            ?>
+                        </tr>
+                    </table>
+                </div>
+                <?php
+            }
+            $Alicuota2_5 = false;
+            $TotalAlicuota2_5 = 0;
+            $Alicuota5_0 = false;
+            $TotalAlicuota5_0 = 0;
+            $Alicuota10_5 = false;
+            $TotalAlicuota10_5 = 0;
+            $Alicuota21_0 = false;
+            $TotalAlicuota21_0 = 0;
+            $Alicuota27_0 = false;
+            $TotalAlicuota27_0 = 0;
+            foreach ($ventas as $venta){
+                if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
+                {
+                    if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'monotributista')
+                    {
+                        if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
+                        {
+                            $Alicuota2_5 = true;
+                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
+                        {
+                            $Alicuota5_0 = true;
+                            $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
+                        {
+                            $Alicuota10_5 = true;
+                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
+                        {
+                            $Alicuota21_0 = true;
+                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
+                        {
+                            $Alicuota27_0 = true;
+                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                        }
+                    }
+                }
+            };
+            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+            ?>
+                <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_Monotributista' style="display:none">
+                    <table  border="1px solid" >
+                        <tr>
+                            <td colspan="5" style='background-color:#87cfeb'>
+                                > > OPERACION: Monotributista
+                            </td>
+                        </tr>
+                        <tr style='background-color:#f0f0f0'>
+                            <td style="width:20%">Alicuota</td>
+                            <td style="width:20%">Monto total facturado</td>
+                            <td style="width:20%">Debito Fiscal</td>
+                            <td style="width:20%"></td>
+                            <td style="width:20%"></td>
+                        </tr>
+                        <tr>
+
+                        <?php
+                            if($Alicuota2_5)
+                            {
+                                echo '<tr>
+                                     <td>2.5</td>
+                                      <td>'.$TotalAlicuota2_5.'</td>
+                                      <td>'.$TotalAlicuota2_5 * 0.025.'</td>
+                                      <td></td>
+                                      <td></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota5_0)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">5.0</td>
+                                      <td style="width:20%">'.$TotalAlicuota5_0.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota10_5)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">10.5</td>
+                                      <td style="width:20%">'.$TotalAlicuota10_5.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota21_0)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">21.0</td>
+                                      <td style="width:20%">'.$TotalAlicuota21_0.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota27_0)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">27.0</td>
+                                      <td style="width:20%">'.$TotalAlicuota27_0.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
+                            {
+                                $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
+                                $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                echo '<tr>
+                                      <td style="width:20%">Totales</td>
+                                      <td style="width:20%">'.$TotalNeto.'</td>
+                                      <td style="width:20%">'.$TotalDebitoFiscal.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                    </tr>
+                                ';
+                                $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
+                            }
+                        ?>
+                        </tr>
+                    </table>
+                </div>
             <?php
-        } ?>
-		</div>
-		<!---------- FIN TIPO DEBITo: Bines de Uso ---------->
+            }
+            $Alicuota2_5 = false;
+            $TotalAlicuota2_5 = 0;
+            $Alicuota5_0 = false;
+            $TotalAlicuota5_0 = 0;
+            $Alicuota10_5 = false;
+            $TotalAlicuota10_5 = 0;
+            $Alicuota21_0 = false;
+            $TotalAlicuota21_0 = 0;
+            $Alicuota27_0 = false;
+            $TotalAlicuota27_0 = 0;
+
+            foreach ($ventas as $venta){
+                if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
+                {
+                    if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
+                    {
+                        if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
+                        {
+                            $Alicuota2_5 = true;
+                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
+                        {
+                            $Alicuota5_0 = true;
+                            $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
+                        {
+                            $Alicuota10_5 = true;
+                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
+                        {
+                            $Alicuota21_0 = true;
+                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
+                        {
+                            $Alicuota27_0 = true;
+                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                        }
+                    }
+                }
+            };
+            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+                ?>
+                <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_ConsF' style="display:none">
+                    <table  border="1px solid" >
+                        <tr>
+                            <td colspan="5" style='background-color:#87cfeb'>
+                                > > OPERACION: Cons. F, Exent. y No Alcan.
+                            </td>
+                        </tr>
+                        <tr style='background-color:#f0f0f0'>
+                            <td style="width:20%">Alicuota</td>
+                            <td style="width:20%">Monto total facturado</td>
+                            <td style="width:20%">Debito Fiscal</td>
+                            <td style="width:20%"></td>
+                            <td style="width:20%"></td>
+                        </tr>
+                        <tr>
+
+                        <?php
+                            if($Alicuota2_5)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">2.5</td>
+                                      <td style="width:20%">'.$TotalAlicuota2_5.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota5_0)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">5.0</td>
+                                      <td style="width:20%">'.$TotalAlicuota5_0.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota10_5)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">10.5</td>
+                                      <td style="width:20%">'.$TotalAlicuota10_5.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota21_0)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">21.0</td>
+                                      <td style="width:20%">'.$TotalAlicuota21_0.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota27_0)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">27.0</td>
+                                      <td style="width:20%">'.$TotalAlicuota27_0.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                      </tr>
+                                ';
+                            }
+                            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
+                            {
+                                $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
+                                $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                echo '<tr>
+                                      <td style="width:20%">Totales</td>
+                                      <td style="width:20%">'.$TotalNeto.'</td>
+                                      <td style="width:20%">'.$TotalDebitoFiscal.'</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%"></td>
+                                    </tr>
+                                ';
+                                $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
+                            }
+                        ?>
+                        </tr>
+                    </table>
+                </div>
+                <?php
+            } ?>
+        </div>
+        <!---------- FIN TIPO DEBITo: Bines de Uso ---------->
 
 		<!------------- Restitucion Credito Fiscal ---------->
-		<div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_RestCredFiscal' style="display:none">  
+		    <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_RestCredFiscal' style="display:none">
 
 		<table id='divTablaActividad_RestCredFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')" border="1px solid" style="margin-bottom:0; cursor: pointer" >			
-		<tr>
-			<td colspan="5" style='background-color:#76b5cd'>
-				> TIPO CREDITO: Restitución de Crédito Fiscal		
-			</td>
-		</tr>	
+            <tr>
+                <td colspan="5" style='background-color:#76b5cd'>
+                    > TIPO CREDITO: Restitución de Crédito Fiscal
+                </td>
+            </tr>
 		</table>
 		
 		<?php 		
@@ -1116,196 +1168,198 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
 			$TotalOtrosConceptos = 0;
 			$TotalDcto814 = 0;
            
-			foreach ($compras as $compra): 
-			
-			if($compra['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
-			{			
-				if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Bs en Gral')			
-				{	
-					$TotalBsGral = $TotalBsGral + $compra['Compra']['neto'];				
-				}
-				if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Locaciones')			
-				{	
-					$TotalLocaciones = $TotalLocaciones + $compra['Compra']['neto'];				
-				}
-				if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Prest. Servicios')			
-				{	
-					$TotalPresServ = $TotalPresServ + $compra['Compra']['neto'];				
-				}
-				if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Bs Uso')			
-				{	
-					$TotalBsUso = $TotalBsUso + $compra['Compra']['neto'];				
-				}
-				if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Otros Conceptos')			
-				{	
-					$TotalOtrosConceptos = $TotalOtrosConceptos + $compra['Compra']['neto'];				
-				}
-				/*
-				 * No vamos a agrgar el Dcto 814 como una compra por que afectara otros impuestos, ahroa se agrega como un pago a cuenta
-				 * if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Dcto 814')
-				{
-				    //Aca se debe sumar solo si el Dcto814 es del Tipo Restitucion Credito Fiscal
-					$TotalDcto814 = $TotalDcto814 + $compra['Compra']['neto'];				
-				}*/
-			}			
-
-			endforeach;	
-
-			$TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalBsGral + $TotalLocaciones + $TotalPresServ + $TotalBsUso + $TotalOtrosConceptos + $TotalDcto814;			
-		?>
-		<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_BsGral' style="display:none"> 
-		<table  border="1px solid" >					
-		<tr>
-			<td colspan="5" style='background-color:#87cfeb'>
-				> > OPERACION: Bs en Gral	
-			</td>
-		</tr>			
-		<tr style='background-color:#f0f0f0'>
-			<td>Facturado</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		<tr>
-			<td><?php echo $TotalBsGral ?></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		</table>
+			foreach ($compras as $compra) {
+                if ($compra['Actividadcliente']['actividade_id'] == $ActividadCliente_id) {
+                    if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Bs en Gral') {
+                        $TotalBsGral = $TotalBsGral + $compra['Compra']['iva'];
+                    }
+                    if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Locaciones') {
+                        $TotalLocaciones = $TotalLocaciones + $compra['Compra']['iva'];
+                    }
+                    if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Prest. Servicios') {
+                        $TotalPresServ = $TotalPresServ + $compra['Compra']['iva'];
+                    }
+                    if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Bs Uso') {
+                        $TotalBsUso = $TotalBsUso + $compra['Compra']['iva'];
+                    }
+                    if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Otros Conceptos') {
+                        $TotalOtrosConceptos = $TotalOtrosConceptos + $compra['Compra']['iva'];
+                    }
+                    /*
+                     * No vamos a agrgar el Dcto 814 como una compra por que afectara otros impuestos, ahroa se agrega como un pago a cuenta
+                     * if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Dcto 814')
+                    {
+                        //Aca se debe sumar solo si el Dcto814 es del Tipo Restitucion Credito Fiscal
+                        $TotalDcto814 = $TotalDcto814 + $compra['Compra']['neto'];
+                    }*/
+                }
+            };
+			$TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalBsGral + $TotalLocaciones + $TotalPresServ + $TotalBsUso + $TotalOtrosConceptos + $TotalDcto814;
+        if($TotalBsGral>0){
+        ?>
+		<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_BsGral' style="display:none">
+            <table  border="1px solid" >
+                <tr>
+                    <td colspan="5" style='background-color:#87cfeb'>
+                        > > OPERACION: Bs en Gral
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Facturado</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><?php echo $TotalBsGral ?></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
 		</div>
-
+        <?php }
+        if($TotalLocaciones>0){
+        ?>
 		<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_Locaciones' style="display:none"> 
-		<table  border="1px solid" >					
-		<tr>
-			<td colspan="5" style='background-color:#87cfeb'>
-				> > OPERACION: Locaciones
-			</td>
-		</tr>			
-		<tr style='background-color:#f0f0f0'>
-			<td>Facturado</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		<tr>
-			<td><?php echo $TotalLocaciones ?></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		</table>
+            <table  border="1px solid" >
+                <tr>
+                    <td colspan="5" style='background-color:#87cfeb'>
+                        > > OPERACION: Locaciones
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Facturado</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><?php echo $TotalLocaciones ?></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
 		</div>
-
+        <?php }
+        if($TotalPresServ>0){
+        ?>
 		<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_PresServ' style="display:none"> 
-		<table  border="1px solid" >					
-		<tr>
-			<td colspan="5" style='background-color:#87cfeb'>
-				> > OPERACION: Prest. Servicios
-			</td>
-		</tr>			
-		<tr style='background-color:#f0f0f0'>
-			<td>Facturado</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		<tr>
-			<td><?php echo $TotalPresServ ?></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		</table>
+            <table  border="1px solid" >
+                <tr>
+                    <td colspan="5" style='background-color:#87cfeb'>
+                        > > OPERACION: Prest. Servicios
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Facturado</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><?php echo $TotalPresServ ?></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
 		</div>
-
+        <?php }
+        if($TotalBsUso>0){
+        ?>
 		<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_BsUso' style="display:none"> 
-		<table  border="1px solid" >					
-		<tr>
-			<td colspan="5" style='background-color:#87cfeb'>
-				> > OPERACION: Bs. Uso
-			</td>
-		</tr>			
-		<tr style='background-color:#f0f0f0'>
-			<td>Facturado</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		<tr>
-			<td><?php echo $TotalBsUso ?></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		</table>
+            <table  border="1px solid" >
+                <tr>
+                    <td colspan="5" style='background-color:#87cfeb'>
+                        > > OPERACION: Bs. Uso
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Facturado</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><?php echo $TotalBsUso ?></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
 		</div>
-
+        <?php }
+        if($TotalOtrosConceptos>0){
+        ?>
 		<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_OtrosConc' style="display:none"> 
-		<table  border="1px solid" >					
-		<tr>
-			<td colspan="5" style='background-color:#87cfeb'>
-				> > OPERACION: Otros Conceptos
-			</td>
-		</tr>			
-		<tr style='background-color:#f0f0f0'>
-			<td>Facturado</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		<tr>
-			<td><?php echo $TotalOtrosConceptos ?></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		</table>
+            <table  border="1px solid" >
+                <tr>
+                    <td colspan="5" style='background-color:#87cfeb'>
+                        > > OPERACION: Otros Conceptos
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Facturado</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><?php echo $TotalOtrosConceptos ?></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
 		</div>
-
+        <?php }
+        if($TotalDcto814>0){
+        ?>
 		<div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_Dcto814' style="display:none"> 
-		<table  border="1px solid" >					
-		<tr>
-			<td colspan="5" style='background-color:#87cfeb'>
-				> > OPERACION: Dcto. 814
-			</td>
-		</tr>			
-		<tr style='background-color:#f0f0f0'>
-			<td>Facturado</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>	
-		<tr>
-			<td><?php echo $TotalDcto814 ?></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>			
-		</table>
+            <table  border="1px solid" >
+                <tr>
+                    <td colspan="5" style='background-color:#87cfeb'>
+                        > > OPERACION: Dcto. 814
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Facturado</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><?php echo $TotalDcto814 ?></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
 		</div>
 		</div>
 		<!----------- Fin Restitucion Credito Fiscal ---------->
+        <?php } ?>
 
 	</div> <!-- fin divContenedorTablaActividad_ -->		
-	<?php endforeach; ?>	
-	</div>  <!-- fin divContenedorVentas -->	
-	
-	
+	<?php } ; ?>
+    </div>
+</div>  <!-- fin divContenedorVentas -->
 	<!--COMPRAS-->
-	<div id="divContenedorCompras" >		
+	<div id="divContenedorCompras" style="height: 500px">
 		<div style="margin-top:10px">(Coeficiente de Apropiacion 0.5000)</div>	
 		
 		<div style="width:100%; height: 10px"></div>
@@ -1335,7 +1389,7 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
 			$TotalDcto814_Directo = 0;
 			$TotalDcto814_Prorateable = 0;
 
-			foreach ($compras as $compra): 
+			foreach ($compras as $compra){
 			
 			if($compra['Compra']['tipocredito'] == 'Credito Fiscal')
 			{			
@@ -1408,7 +1462,7 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
 				}*/
 			}
 
-			endforeach;
+        }
         foreach ($cliente['Impcli'][0]['Conceptosrestante'] as $key => $conceptosrestante) {
             if($conceptosrestante['conceptostipo_id']=='12'/*Decreto 814*/){
                 //tenemos que agregar campos como
@@ -1600,41 +1654,32 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
 			$Alicuota27_0 = false;
 			$TotalAlicuota27_0 = 0;
 
-			foreach ($ventas as $venta): 
-			
-			if($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal')
-			{			
-				if ($venta['Venta']['condicioniva'] == 'responsableinscripto')			
-				{
-					if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
-					{
-						$Alicuota2_5 = true;
-						$TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
-					{
-						$Alicuota5_0 = true;
-						$TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
-					{
-						$Alicuota10_5 = true;
-						$TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
-					{
-						$Alicuota21_0 = true;
-						$TotalAlicuota21_0 = $TotalAlicuota21_0 + + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
-					{
-						$Alicuota27_0 = true;
-						$TotalAlicuota27_0 = $TotalAlicuota27_0 + + $venta['Venta']['neto'];
-					}
-				}
-			}			
-
-			endforeach;	
+			foreach ($ventas as $venta) {
+                if ($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal') {
+                    if ($venta['Venta']['condicioniva'] == 'responsableinscripto') {
+                        if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50') {
+                            $Alicuota2_5 = true;
+                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00') {
+                            $Alicuota5_0 = true;
+                            $TotalAlicuota5_0 = $TotalAlicuota5_0 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50') {
+                            $Alicuota10_5 = true;
+                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00') {
+                            $Alicuota21_0 = true;
+                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + +$venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00') {
+                            $Alicuota27_0 = true;
+                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + +$venta['Venta']['neto'];
+                        }
+                    }
+                }
+            }
 		?>
 		<?php 
 			if($Alicuota2_5)
@@ -1733,41 +1778,34 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
 			$Alicuota27_0 = false;
 			$TotalAlicuota27_0 = 0;
 
-			foreach ($ventas as $venta): 
-			
-			if($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal')
-			{			
-				if ($venta['Venta']['condicioniva'] == 'monotributista')			
-				{
-					if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
-					{
-						$Alicuota2_5 = true;
-						$TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
-					{
-						$Alicuota5_0 = true;
-						$TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
-					{
-						$Alicuota10_5 = true;
-						$TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
-					{
-						$Alicuota21_0 = true;
-						$TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
-					{
-						$Alicuota27_0 = true;
-						$TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
-					}
-				}
-			}			
+			foreach ($ventas as $venta) {
 
-			endforeach;	
+                if ($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal') {
+                    if ($venta['Venta']['condicioniva'] == 'monotributista') {
+                        if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50') {
+                            $Alicuota2_5 = true;
+                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00') {
+                            $Alicuota5_0 = true;
+                            $TotalAlicuota5_0 = $TotalAlicuota5_0 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50') {
+                            $Alicuota10_5 = true;
+                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00') {
+                            $Alicuota21_0 = true;
+                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00') {
+                            $Alicuota27_0 = true;
+                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                        }
+                    }
+                }
+
+            }
 		?>
 		<?php 
 			if($Alicuota2_5)
@@ -1866,41 +1904,34 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
 			$Alicuota27_0 = false;
 			$TotalAlicuota27_0 = 0;
 
-			foreach ($ventas as $venta): 
-			
-			if($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal')
-			{			
-				if ($venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')			
-				{
-					if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
-					{
-						$Alicuota2_5 = true;
-						$TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
-					{
-						$Alicuota5_0 = true;
-						$TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
-					{
-						$Alicuota10_5 = true;
-						$TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
-					{
-						$Alicuota21_0 = true;
-						$TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
-					}
-					if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
-					{
-						$Alicuota27_0 = true;
-						$TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
-					}
-				}
-			}			
+			foreach ($ventas as $venta) {
 
-			endforeach;	
+                if ($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal') {
+                    if ($venta['Venta']['condicioniva'] == 'consf/exento/noalcanza') {
+                        if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50') {
+                            $Alicuota2_5 = true;
+                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00') {
+                            $Alicuota5_0 = true;
+                            $TotalAlicuota5_0 = $TotalAlicuota5_0 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50') {
+                            $Alicuota10_5 = true;
+                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00') {
+                            $Alicuota21_0 = true;
+                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
+                        }
+                        if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00') {
+                            $Alicuota27_0 = true;
+                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                        }
+                    }
+                }
+
+            }
 		?>
 		<?php 
 			if($Alicuota2_5)
@@ -2004,10 +2035,13 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
                     }
                 }
             }
-
+            foreach ($saldosLibreDisponibilidad as $sldpa) {
+                $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $sldpa['Conceptosrestante']['montoretenido'];
+            }
             foreach ($cliente['Impcli'][0]['Conceptosrestante'] as $key => $conceptosrestante) {
                 if($conceptosrestante['conceptostipo_id']=='1'/*Saldo A Favor*/){
-                    $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $conceptosrestante['montoretenido'];
+//                    Esto no lo vamos a sumar por que tenemos que traer el SLD del periodo anterior no del actual
+//                    $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $conceptosrestante['montoretenido'];
                 }else if($conceptosrestante['conceptostipo_id']=='14'/*Ajuste anual a favor Responable*/){
                     $AjusteAnualAFavorResponsable += $conceptosrestante['montoretenido'];
                 }else if($conceptosrestante['conceptostipo_id']=='15'/*Ajuste anual a favor AFIP*/){
@@ -2039,7 +2073,7 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
             }
             $TotalSaldoLibreDisponibilidadAFavorRespPeriodo = $TotalPagosACuenta + $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior - $TotalSaldoTecnicoAPagarPeriodo;
             $TotalSaldoImpuestoAFavorAFIP = 0;
-            $TotalSaldoImpuestoAFavorAFIP = $TotalSaldoTecnicoAPagarPeriodo - $TotalSaldoLibreDisponibilidadAFavorRespPeriodo - $TotalSaldoTecnicoAFavorRespPeriodo;
+            $TotalSaldoImpuestoAFavorAFIP = $TotalSaldoTecnicoAPagarPeriodo - $TotalPagosACuenta - $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior  ;
             ?>
 		<table border="1px solid">
 			<tr style='background-color:#f0f0f0'>
@@ -2128,8 +2162,11 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
 				<td>Saldo Tecnico a Favor del Responsable del Periodo</td>
 				<td style="width:180px">
 					<span id="spnSaldoTecnicoAfavorContribuyentePeriodo">
-                        <?php echo $TotalSaldoTecnicoAFavorRespPeriodo;?>
-                    </span>
+                        <?php echo
+                        $TotalSaldoTecnicoAFavorRespPeriodo>0?$TotalSaldoTecnicoAFavorRespPeriodo:0;
+                        echo $this->Form->input('saldoTecnico', array('type'=>'hidden','value'=>$TotalSaldoTecnicoAFavorRespPeriodo>0?$TotalSaldoTecnicoAFavorRespPeriodo:0));
+                        ?>
+                        </span>
 				</td>
 			</tr>
             <tr>
@@ -2150,7 +2187,10 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
                 <td>Saldo a favor de libre disponibilidad del periodo</td>
                 <td style="width:180px">
                     <span id="spnSaldoAFavorLibreDispNetousos">
-                        <?php echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0;?>
+                        <?php
+                        echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0;
+                        echo $this->Form->input('saldoLD', array('type'=>'hidden','value'=>$TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0));
+                        ?>
                     </span>
                 </td>
             </tr>
@@ -2158,7 +2198,10 @@ echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre']
                 <td>Saldo del Impuesto a Favor de la AFIP</td>
                 <td style="width:180px">
                     <span id="spnSaldoAFavorLibreDispNetousos">
-                        <?php echo $TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0;?>
+                        <?php
+                            echo $TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0;
+						    echo $this->Form->input('apagar', array('type'=>'hidden','value'=>$TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0));
+						?>
                     </span>
                 </td>
             </tr>

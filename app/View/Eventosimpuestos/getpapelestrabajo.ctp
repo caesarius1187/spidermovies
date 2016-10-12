@@ -10,7 +10,7 @@
     </div>
 </div>
 <div id="tabsTareaImpuesto" style="margin-left: 8px;">
-	<div class="tabsTareaImpuesto_active" onClick="showPapelesDeTrabajo()" id="tab_PapelesDeTrabajo"><h2>Impuestos determinados</h2></div>
+	<div class="tabsTareaImpuesto_active" onClick="showPapelesDeTrabajo()" id="tab_PapelesDeTrabajo"><h2>Impuestos</h2></div>
 	<div class="tabsTareaImpuesto" onClick="showPagos()" id="tab_Pagos"><h2>Pagos</h2></div>
 </div>
 <div id="divPrepararPapelesDeTrabajo" class="tareapapeldetrabajo index">
@@ -181,6 +181,7 @@
 	    echo $this->Form->input('Eventosimpuesto.0.haycambio',array('value'=> true ,'type'=>'hidden','id'=>'EventosimpuestoHaycambios'));
 	    echo $this->Form->input('Eventosimpuesto.0.cliente_id',array('value'=>$clienteid,'type'=>'hidden'));
 	    $botonOK="Guardar";
+        $faltanEventosAMostrar = false;
         switch ($tipopago) {
             case 'unico':
                 $botonOK="Guardar";
@@ -190,12 +191,14 @@
                 $montoc = 0;
                 $descripcion = '';
 
-                foreach ($eventosimpuestos as $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
+                foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
                     $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
+                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+
                 }
                 echo $this->Form->input('Eventosimpuesto.0.id',array('type'=>'hidden','value'=>$eventoid,));
                 echo $this->Form->input('Eventosimpuesto.0.impcli_id',array('value'=>$impcliid,'type'=>'hidden'));
@@ -229,13 +232,14 @@
                             $montoc = 0;
                             $descripcion = '';
                             $mybaseprorrateada = array();
-                            foreach ($eventosimpuestos as $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada estprovincia
+                            foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada estprovincia
                                 if($eventosimpuesto['Eventosimpuesto']['partido_id']==$impcliprovincia['partido_id']){
                                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
                                     $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
                                     if(isset($eventosimpuesto['Basesprorrateada'])){
                                         $mybaseprorrateada = $eventosimpuesto['Basesprorrateada'];
                                     }
@@ -375,7 +379,7 @@
                             $localidad = $impcliprovincia['localidade_id'];
                             $montoc = 0;
                             $descripcion = '';
-                            foreach ($eventosimpuestos as $eventosimpuesto){
+                            foreach ($eventosimpuestos as $key => $eventosimpuesto){
                                 //vamos a buscar el evento para ver si ya esta creada estprovincia
                                 if($eventosimpuesto['Eventosimpuesto']['localidade_id']==$impcliprovincia['localidade_id']){
                                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
@@ -383,6 +387,7 @@
                                     $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
                                 }
                             }
                             //hay que mostrar un formulario para cada provincia que este dada de alta en estos impuestos
@@ -477,13 +482,17 @@
                     $montovto = 0;
                     $montoc = 0;
                     $descripcion = '';
-                    foreach ($eventosimpuestos as $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
+                    foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
+                        if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
+                            $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                        }
                         if($eventosimpuesto['Eventosimpuesto']['item']==$keyOS){
                             $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                             $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
                             $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                             $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                             $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
+                            $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
                         }
                     }
                     echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.id',array('type'=>'hidden','value'=>$eventoid));
@@ -513,13 +522,51 @@
                     $eventoPos++;
                     echo "</br>";
                 }
+                //ahora vamos a crear los campos para registrar los Saldos A Favor de este periodo en este caso vamos
+                //a agregar solo para el IVA un Saldo de Libre Disponibilidad
+                if($impuesto['id']=19/*IVA*/){
+//                    Debugger::dump($SaldosLibreDisponibilidadimpcli);
+                    if(isset($SaldosLibreDisponibilidadimpcli)){
+                        foreach ($SaldosLibreDisponibilidadimpcli as $conceptosrestante){
+                            if($conceptosrestante['conceptostipo_id']==1){
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.id',array(
+                                    'value'=>$conceptosrestante['id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.partido_id',array(
+                                    'value'=>$conceptosrestante['partido_id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.cliente_id',array(
+                                    'value'=>$conceptosrestante['cliente_id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.impcli_id',array(
+                                    'value'=>$conceptosrestante['impcli_id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.conceptostipo_id',array(
+                                    'value'=>$conceptosrestante['conceptostipo_id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.periodo',array(
+                                    'value'=>$conceptosrestante['periodo'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.montoretenido',array(
+                                   'value'=>$conceptosrestante['montoretenido'],'type'=>'text',
+                                    'label'=>'Saldo de Libre Disponibilidad')
+                                );
+                                echo $this->HTML->image('ii.png',array('style'=>'width:15px;height:15px','title'=>"Este campo s guardo como un Pago a Cuenta del tipo Saldo de Libre Disponibilidaden el periodo ".$periodo));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.fecha',array(
+                                    'value'=>$conceptosrestante['fecha'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.descripcion',array(
+                                    'value'=>$conceptosrestante['descripcion'],'type'=>'hidden'));
+                            }
+                        }
+                    }
+                }
             break;
         }
-  	    echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a>';
+        //aca vbamos a revisar si todos los eventos han sido mostrados, en caso contrario vamos a activar la tabla de abajo para q muestre los eventos q faltan
+        //Debugger::dump($eventosimpuestos);
+        foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el evento para ver si ya esta creada este item
+            if(!$eventosimpuestos[$key]['Eventosimpuesto']['mostrado']){
+                $faltanEventosAMostrar = true;
+                break;
+            }
+        }
+        echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a>';
 	    echo '<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';?>
-
   	    <!--<fieldset style="display:none"><?php echo  $this->Form->submit('Aceptar');?> </fieldset>-->
-		
 	    <?php
         if(isset($itemsACompletar)){
             echo $this->Form->input('Eventosimpuesto.0.cantItems', array('type'=>'hidden','value'=>count($itemsACompletar)));
@@ -527,16 +574,10 @@
         }
         echo $this->Form->input('Eventosimpuesto.0.cantProvincias', array('type'=>'hidden','value'=>count($impcliprovincias)));
 	    echo $this->Form->input('Eventosimpuesto.0.cantActividades', array('type'=>'hidden','value'=>count($cliente['Actividadcliente'])));
-         if(
-             $tipopago!='unico'&&
-             $tipopago!='item'&&
-             (
-                ($tipopago=='provincia'&&count($impcliprovincias)==0)||
-                ($tipopago=='municipio'&&count($impcliprovincias)==0)
-             )
-         )
-         {
-            ?>
+        $NoTienePagoDefinido =   ($tipopago!='unico')&&( $tipopago!='item');
+        $NoTieneCargadaProvincia = ($tipopago=='provincia'&&count($impcliprovincias)==0)||($tipopago=='municipio'&&count($impcliprovincias)==0);
+        if($NoTienePagoDefinido&&$NoTieneCargadaProvincia||$faltanEventosAMostrar)
+        {   ?>
             <table cellpadding="0" cellspacing="0" id="tablePapelesPreparados" class="tbl_papeles">
                 <tr>
                     <td colspan="4s"><h3><?php echo __('Papeles preparados'); ?></h3></td>
@@ -564,7 +605,9 @@
                     <th class="actions"><?php echo __('Acciones'); ?></td>
                 </tr>
 
-                <?php foreach ($eventosimpuestos as $eventosimpuesto): ?>
+                <?php foreach ($eventosimpuestos as $key => $eventosimpuesto):
+                    if(!$eventosimpuesto['Eventosimpuesto']['mostrado']){
+                    ?>
                     <tr>
                         <?php
                         switch ($tipopago) {
@@ -606,7 +649,9 @@
                             ?>
                         </td>
                     </tr>
-                <?php endforeach; ?>
+                <?php
+                    }
+                endforeach; ?>
             </table>
         <?php } ?>
 	</div>

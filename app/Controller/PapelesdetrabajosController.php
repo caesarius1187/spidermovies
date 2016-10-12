@@ -25,7 +25,8 @@ class PapelesdetrabajosController extends AppController {
 		$this->loadModel('Cliente');
 		$this->loadModel('Venta');
 		$this->loadModel('Actividadcliente');
-		$this->loadModel('Compra');
+        $this->loadModel('Conceptosrestante');
+        $this->loadModel('Compra');
 		//$this->Archivo->recursive = 0;
 		//$this->set('archivos', $this->Paginator->paginate());
 		$añoPeriodo="SUBSTRING( '".$periodo."',4,7)";
@@ -69,6 +70,15 @@ class PapelesdetrabajosController extends AppController {
 
 		$Cliente = $this->Cliente->find('first', $options);
 		$this->set('cliente', $Cliente);
+		$conceptosOptions=array(
+			'conditions'=>array(
+                'Conceptosrestante.impcli_id'=>$Cliente['Impcli'][0]['id'],
+                'Conceptosrestante.periodo'=>$periodoPrev,
+                'Conceptosrestante.conceptostipo_id'=>1
+            )
+		);
+		$saldosLibreDisponibilidad = $this->Conceptosrestante->find('all',$conceptosOptions);
+        $this->set('saldosLibreDisponibilidad', $saldosLibreDisponibilidad);
         $this->set('periodo', $periodo);
 
 		$opcionesActividad = array(

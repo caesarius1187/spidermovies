@@ -315,6 +315,7 @@ $(document).ready(function() {
               $("#ConceptosrestanteConceptostipoId").children("option[value=15]").show();
               $("#ConceptosrestanteConceptostipoId").children("option[value=16]").show();
               $("#ConceptosrestanteConceptostipoId").children("option[value=17]").show();
+              $('#ConceptosrestanteConceptostipoId option:contains("Saldo a Favor")').text('Saldo Libre Disponibilidad');
               $('.chosen-select').trigger("chosen:updated");
               break;
           case '6'/*Actividades Varias*/:
@@ -344,6 +345,7 @@ $(document).ready(function() {
               showcolumnConceptoRestante(tblTablaConceptosrestantes,2,false);/*Localidad*/
               break;
           default:
+              $('#ConceptosrestanteConceptostipoId option:contains("Saldo Libre Disponibilidad")').text('Saldo a Favor');
               $("#ConceptosrestanteConceptostipoId").children('option').show();
               //Vamos a esconder todos los que sean unicamente del IVA
               $("#ConceptosrestanteConceptostipoId").children("option[value=12]").hide();
@@ -1842,7 +1844,7 @@ $(document).ready(function() {
                       tblTablaConceptosRestantes = $('#tblTablaConceptosrestantes').dataTable().api();
                       var mirows = tblTablaConceptosRestantes.rows();
                       var mirow = tblTablaConceptosRestantes.row();
-                      var mirowId = tblTablaConceptosRestantes.row(rowid)._fnAjaxUpdateDraw();
+                      //var mirowId = tblTablaConceptosRestantes.row(rowid)._fnAjaxUpdateDraw();
                       var mirowIdData = tblTablaConceptosRestantes.row(rowid).data();
                       var mirowIdNewData = tblTablaConceptosRestantes.row(rowid).data(rowData);
                       var drawRow = tblTablaConceptosRestantes.row(rowid).draw();

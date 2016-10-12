@@ -1,35 +1,42 @@
 <?php
 $tdClass = "tdViewConceptosrestante".$this->data['Conceptosrestante']["id"];
 if(!$mostrarForm) { ?>
-      <td class="<?php echo $tdClass?>"><?php echo $this->data['Impcli']['Impuesto']["nombre"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php if(isset($this->data['Partido']["nombre"]))echo $this->data['Partido']["nombre"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php if(isset($this->data['Localidade']['Partido']["nombre"]))echo $this->data['Localidade']['Partido']["nombre"]."-".$this->data['Localidade']["nombre"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptostipo']["nombre"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php if(isset($this->data['Comprobante']["nombre"]))echo $this->data["Comprobante"]["nombre"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["numerocomprobante"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["rectificativa"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["razonsocial"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["monto"]?></td>             
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["montoretenido"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["cuit"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo date('d-m-Y',strtotime($this->data['Conceptosrestante']["fecha"]))?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["numerodespachoaduanero"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["anticipo"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["cbu"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["tipocuenta"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["tipomoneda"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["agente"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["enterecaudador"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["regimen"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["descripcion"]?></td>
-	  <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["numeropadron"]?></td>
-	  <td class="<?php echo $tdClass?>"> 
-	    <?php 
-	    $paramsConceptorestante=$this->data['Conceptosrestante']["id"];
-	    echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarConceptosrestante(".$paramsConceptorestante.")"));
-	    echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarConceptosrestante(".$paramsConceptorestante.")"));
-	    echo $this->Form->end();  ?>  
-	  </td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Impcli']['Impuesto']["nombre"]?></td>
+    <td class="<?php echo $tdClass?>"><?php if(isset($this->data['Partido']["nombre"]))echo $this->data['Partido']["nombre"]?></td>
+    <td class="<?php echo $tdClass?>"><?php if(isset($this->data['Localidade']['Partido']["nombre"]))echo $this->data['Localidade']['Partido']["nombre"]."-".$this->data['Localidade']["nombre"]?></td>
+    <td class="<?php echo $tdClass?>"><?php
+        if(
+            $this->data['Impcli']['impuesto_id']=='19'/*IVA*/ &&
+            $this->data['Conceptosrestante']['conceptostipo_id']==1 )
+        {
+            $this->data['Conceptostipo']["nombre"] = "Saldo de Libre Disponibilidad";
+        }
+        echo $this->data['Conceptostipo']["nombre"]?></td>
+    <td class="<?php echo $tdClass?>"><?php if(isset($this->data['Comprobante']["nombre"]))echo $this->data["Comprobante"]["nombre"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["numerocomprobante"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["rectificativa"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["razonsocial"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["monto"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["montoretenido"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["cuit"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo date('d-m-Y',strtotime($this->data['Conceptosrestante']["fecha"]))?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["numerodespachoaduanero"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["anticipo"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["cbu"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["tipocuenta"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["tipomoneda"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["agente"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["enterecaudador"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["regimen"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["descripcion"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["numeropadron"]?></td>
+    <td class="<?php echo $tdClass?>">
+        <?php
+        $paramsConceptorestante=$this->data['Conceptosrestante']["id"];
+        echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarConceptosrestante(".$paramsConceptorestante.")"));
+        echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarConceptosrestante(".$paramsConceptorestante.")"));
+        echo $this->Form->end();  ?>
+    </td>
 <?php }else{ ?>
     <td colspan="20" id="tdconceptosrestante<?php echo $conid?>" class="editTD">
         <?php echo $this->Form->create('Conceptosrestante',array(
