@@ -18,7 +18,7 @@ $tieneAgenteDePercepcionIIBB=$cliente["Cliente"]['tieneAgenteDePercepcionIIBB'];
 $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePercepcionActividadesVarias'];
 ?>
 <!--<div class="" style="float:none; width: 100%; margin: 0px 4px">  -->
-  <div class="index" style="padding: 0px 1%; margin-bottom: 10px;">      
+  <div style="padding-left:1%; width:98%; height:40px;">      
       <div style="width:30%; float: left;padding-top:10px">
         Cliente: <?php echo $cliente["Cliente"]['nombre']?>
       </div>
@@ -42,8 +42,8 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
     <?php /**************************************************************************/ ?>
     <?php /*****************************TABS*****************************************/ ?>
     <?php /**************************************************************************/ ?> 
-  <div id="bodyCarga" style="width:100%;height:35px;">
-    <div class="" style="width:100%;height:30px; margin-left:10px ">
+  <div id="bodyCarga" style="width:100%;height:35px;border-bottom:2px solid;">
+    <div class="" style="width:100%;height:30px;">
       <div class="cliente_view_tab_active" style="width:23%;margin-right:0px"  onClick="" id="tabVentas">
         <?php
            echo $this->Form->label(null, $text = 'Ventas',array('style'=>'text-align:center;margin-top:5px;cursor:pointer')); 
@@ -123,7 +123,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                   $periodo
               ),
               array('class' => 'buttonImpcli',
-                  'style'=> 'width:'
+                  'style'=> ''
               )
           );
         echo $this->Form->create('Venta',array(
@@ -237,11 +237,11 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                 )); 
               echo $this->Form->input('neto',array(
                 'readonly'=>'readonly',
-                'style' => 'width:75px'
+                'style' => 'width:100px'
                 ));    
               echo $this->Form->input('iva',array(
                 'readonly'=>'readonly',
-                'style' => 'width:75px'
+                'style' => 'width:100px'
                 ));    
             }else{
               echo $this->Form->input('tipodebito',array(
@@ -257,11 +257,11 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                 )); 
               echo $this->Form->input('neto',array(
                 'readonly'=>'readonly',
-                'style' => 'width:75px'
+                'style' => 'width:100px'
                 ));    
               echo $this->Form->input('iva',array(
                 'readonly'=>'readonly',
-                'style' => 'width:75px'
+                'style' => 'width:100px'
                 ));  
             }   
             if($tieneIVAPercepciones){
@@ -283,22 +283,22 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
             }
             echo $this->Form->input('nogravados',array(
               'label'=>'No Gravados',
-              'style' => 'width:75px'
+              'style' => 'width:100px'
             ));
             echo $this->Form->input('excentos',array(
                 'label'=>'Exento',
-                'style' => 'width:75px'
+                'style' => 'width:100px'
             ));
             echo $this->Form->input('exentosactividadeseconomicas',array(
                 'label'=>'Exento Act. Eco.',
-                'style' => 'width:75px'
+                'style' => 'width:100px'
             ));
             echo $this->Form->input('exentosactividadesvarias',array(
                 'label'=>'Exento Act. Var.',
-                'style' => 'width:75px'
+                'style' => 'width:100px'
             ));
             echo $this->Form->input('total',array(
-                'style' => 'width:75px'
+                'style' => 'width:100px'
                 ));     
             echo $this->Form->input('asiento',array(
                 'type'=>'hidden'
@@ -318,45 +318,45 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
       <table class="tbl_vtas_det" style="border:1px solid white" id="tablaVentas" cellspacing="0" cellpadding="0" >
         <thead>
           <tr>
-            <th style="width: 47px">Fecha</th><!--1-->
-            <th style="width: 275px;">Comprobante</th><!--2-->
-            <th style="width: 95px;">CUIT</th><!--3-->
-            <th style="width: 95px;">Nombre</th><!--4-->
-            <th style="width: 95px;">Condicion IVA</th><!--5-->
-            <th style="width: 144px;">Actividad</th><!--6-->
-            <th style="width: 144px;">Localidad</th><!--7-->
+            <td style="width: 47px">Fecha</td><!--1-->
+            <td style="width: 275px;">Comprobante</td><!--2-->
+            <td style="width: 95px;">CUIT</td><!--3-->
+            <td style="width: 95px;">Nombre</td><!--4-->
+            <td style="width: 95px;">Condicion IVA</td><!--5-->
+            <td style="width: 144px;">Actividad</td><!--6-->
+            <td style="width: 144px;">Localidad</td><!--7-->
             <?php
             if(!$cliente['Cliente']['tieneMonotributo']){
               echo 
-              '<th style="width: 89px;">Debito</th><!--8-->
-                <th style="width:64px">Alicuota</th> <!--9-->
-               <th style="width: 89px;" class="sum">Neto</th><!--10-->
-               <th style="width: 89px;">IVA</th>   <!--11-->
+              '<td style="width: 89px;">Debito</td><!--8-->
+                <td style="width:64px">Alicuota</td> <!--9-->
+               <td style="width: 89px;" class="sum">Neto</td><!--10-->
+               <td style="width: 89px;">IVA</td>   <!--11-->
                ';   
             }
             if($cliente['Cliente']['tieneIVAPercepciones']){
               echo 
-              '<th style="width: 89px;" >IVA Percep</th><!--12-->';
+              '<td style="width: 89px;" >IVA Percep</td><!--12-->';
             }
             if($cliente['Cliente']['tieneAgenteDePercepcionIIBB']){
                echo 
-              '<th style="width: 89px;" >IIBB Percep</th><!--13-->';
+              '<td style="width: 89px;" >IIBB Percep</td><!--13-->';
             }
             if($cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias']){
               echo 
-              '<th style="width: 89px;" >Act Vs Perc</th><!--14-->';
+              '<td style="width: 89px;" >Act Vs Perc</td><!--14-->';
             }
             if($cliente['Cliente']['tieneImpuestoInterno']){
               echo 
-              '<th style="width: 89px;" >Imp Internos</th><!--15-->';
+              '<td style="width: 89px;" >Imp Internos</td><!--15-->';
             }    
             ?>
-              <th style="width: 89px;" >No Gravados</th><!--16-->
-              <th style="width: 89px;" >Exento</th><!--17-->
-              <th style="width: 89px;" >Exento Act. Econom.</th><!--18-->
-              <th style="width: 89px;" >Exento Act. Varias</th><!--19-->
-              <th style="width: 89px;" class="sum">Total</th><!--20-->
-            <th>Acciones</td><!--21-->
+              <td style="width: 89px;" >No Gravados</td><!--16-->
+              <td style="width: 89px;" >Exento</td><!--17-->
+              <td style="width: 89px;" >Exento Act. Econom.</td><!--18-->
+              <td style="width: 89px;" >Exento Act. Varias</td><!--19-->
+              <td style="width: 89px;" class="sum">Total</td><!--20-->
+            <td>Acciones</td><!--21-->
           </tr>
         </thead>
         <tbody id="bodyTablaVentas">
@@ -488,7 +488,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
    <?php /**************************************************************************/ ?>
    <?php /*****************************Compras**************************************/ ?>
    <?php /**************************************************************************/ ?>        
-    <div id="form_compra" class="tabCompras index" style="width:96%;float:left;">
+    <div id="form_compra" class="tabCompras index" style="width:96%;float:left; margin-left:5px; margin-top: 10px">
       <?php
           echo $this->Html->link(
               "Importar Compras",
@@ -499,7 +499,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                   $periodo
               ),
               array('class' => 'buttonImpcli',
-                  'style'=> 'width:132px;'
+                  'style'=> ''
               )
           );
           echo $this->Form->create('Compra',array(
@@ -654,8 +654,8 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
               ));  
           echo $this->Form->end();  ?>  
     </div>
-    <div style="overflow:auto;width:96%; float:left; margin-top:10px;min-height: 400px;" class="tareaCargarIndexTable tabCompras index">
-      <table class="display" id="tablaCompras" cellpadding="0" cellspacing="0" border="0">
+    <div style="overflow:auto;width:96%; float:left;margin-left: 5px; margin-top:10px;min-height: 400px;" class="tareaCargarIndexTable tabCompras index">
+      <table class="" style="border:1px solid white" id="tablaCompras">
         <thead>
           <tr>
             <th style="width: 95px;">Fecha</th>
@@ -675,8 +675,8 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
             <th style="width: 76px;">IIBB Percep</th>
             <th style="width: 76px;" >Act Vs Perc</th>
             <th style="width: 76px;" >Imp Interno</th>
-            <th style="width: 76px;" >Imp Comb</th>
-            <th style="width: 76px;" >No Gravados</th>
+              <th style="width: 76px;" >Imp Comb</th>
+              <th style="width: 76px;" >No Gravados</th>
             <th style="width: 76px;" >Exentos</th>
             <th style="width: 76px;" >KW</th>
             <th style="width: 76px;" class="sum">Total</th>
@@ -764,7 +764,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
    <?php /**************************************************************************/ ?>
    <?php /*****************************Novedades************************************/ ?>
    <?php /**************************************************************************/ ?>
-      <div id="form_sueldo" class="tabNovedades index" style="width:96%;float:left;">
+      <div id="form_sueldo" class="tabNovedades index" style="width:96%;float:left; margin-left:5px;margin-top:10px">
           <?php
           echo $this->Form->create('Sueldo',array(
                   'controller'=>'sueldos',
@@ -796,7 +796,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
               'style'=>'width:25px;height:25px;margin-top:8px;'));
           echo $this->Form->end();  ?>
       </div>
-      <div style="overflow:auto;width:96%; float:left;min-height: 120px; margin-top:10px;" class="tareaCargarIndexTable tabNovedades index">
+      <div style="overflow:auto;width:96%; float:left;margin-left:5px;margin-top:10px;min-height: 120px;" class="tareaCargarIndexTable tabNovedades index">
           <table class="" style="border:1px solid white" id="bodyTablaSueldos">
               <thead>
               <tr>
@@ -828,17 +828,17 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
               </tbody>
           </table>
       </div>
-      <div id="form_empleados" class="tabNovedades index" style="width:96%;float:left;">
+      <div id="form_empleados" class="tabNovedades index" style="width:96%;float:left; margin-left:5px;margin-top:10px;">
             <?php
             foreach ($cliente['Empleado'] as $empleadolista) {
-                $classButtonEmpleado = "btn_empleados";
+                $classButtonEmpleado = "buttonImpcli";
                 if(count($empleadolista['Valorrecibo'])>0){
-                    $classButtonEmpleado = "btn_empleados_liq";
+                    $classButtonEmpleado = "buttonImpcli4";
                 }
                 echo $this->Form->button(
                     $empleadolista['nombre'],
                     array(
-                        'class'=>$classButtonEmpleado,
+                        'class'=>"buttonEmpleadoSueldo ".$classButtonEmpleado,
                         'onClick'=>"cargarSueldoEmpleado('".$cliente["Cliente"]['id']."','".$periodo."','".$empleadolista['id']."',1)",
                         'id'=>'buttonEmpleado'.$empleadolista['id'],
                     ),
@@ -847,7 +847,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
             }
             ?>
       </div>
-      <div style="overflow:auto;width:96%; float:left;min-height: 400px; margin-top: 10px" class="tareaCargarIndexTable tabNovedades index" id="divSueldoForm">
+      <div style="overflow:auto;width:96%; float:left;margin-left:5px;margin-top:10px;min-height: 400px;" class="tareaCargarIndexTable tabNovedades index" id="divSueldoForm">
 
       </div>
 <?php /**************************************************************************/ ?>

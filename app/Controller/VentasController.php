@@ -621,10 +621,19 @@ class VentasController extends AppController {
 		$ultimasventas = $this->Venta->find('all',$optionsventas);
 		$this->set('ultimasventas',$ultimasventas);
 
+		$this->Venta->virtualFields = array(
+			'fullid' => "CONCAT(Venta.comprobante_id, '-' ,Venta.numerocomprobante, '-', Venta.puntosdeventa_id, '-', Venta.alicuota)"
+		);
+		$igualTipoComprobante=false;
+		$igualPuntoDV=false;
+		$igualAlicuota=false;
+		$igualNumeroComprobante=false;
+
 		$optionsventasdelperiodo=array(
 			'contain'=>array(
 			),
 			'fields'=>array(
+				'*','fullid'
 			),
 			'conditions'=>array(
 				'Venta.periodo'=>$periodo,

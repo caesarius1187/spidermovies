@@ -17,6 +17,7 @@
 		}
 			?></h3>
 
+<<<<<<< HEAD
 <table class="tabla">
 	<tr>
 		<td colspan=3>
@@ -73,6 +74,30 @@
 					}
 					echo $this->Form->input('jsonactividadcliente',array('type'=>'hidden','value'=>json_encode($actividadclientes)))."</br>";
 
+					foreach ($actividadclientes as $key => $actividadcliente) {
+						//aca tengo que preguntar si ya existe la actividad guardada en un encuadrealicuota si no existe deberia mostrar un fomulario para agregarla y si existe deberia mostrar un formulario para modificarla
+						$encuadreAlicuotaId=0;
+						$encuadreAlicuotaAlicuota=0;
+						$encuadreAlicuotaConcepto=0;
+						$actividadClienteId=$actividadcliente['Actividadcliente']['id'];
+						$actividadClienteCodigo=$actividadcliente['Actividade']['descripcion'];
+						$actividadClienteNombre=$actividadcliente['Actividade']['nombre'];
+						$precargado = 0;
+						if(isset($this->request->data['Encuadrealicuota'])){
+							if(count($this->request->data['Encuadrealicuota'])>0){
+								foreach ($this->request->data['Encuadrealicuota'] as $encuadrealicuota) {
+									if ($encuadrealicuota['actividadcliente_id']==$actividadcliente['Actividadcliente']['id']) {
+										$encuadreAlicuotaId = $encuadrealicuota['id'];
+										$actividadClienteCodigo = $actividadcliente['Actividade']['descripcion'];
+										$actividadClienteNombre = $actividadcliente['Actividade']['nombre'];
+										$encuadreAlicuotaAlicuota = $encuadrealicuota['alicuota'];
+										$encuadreAlicuotaConcepto = $encuadrealicuota['concepto'];
+										$precargado = 1;
+										echo $this->Form->input('Encuadrealicuota.'.$key.'.precargado',array('type'=>'hidden','value'=>1));
+									}
+								}
+							}
+=======
 		foreach ($actividadclientes as $key => $actividadcliente) {
 			//aca tengo que preguntar si ya existe la actividad guardada en un
 			// encuadrealicuota si no existe deberia mostrar un fomulario para agregarla
@@ -97,8 +122,36 @@
 							$encuadreAlicuotaMinimo = $encuadrealicuota['minimo'];
 							$precargado = 1;
 							echo $this->Form->input('Encuadrealicuota.'.$key.'.precargado',array('type'=>'hidden','value'=>1));
+>>>>>>> feature/sprint_3
 						}
+						echo '<div class="div_view">';
+						echo $this->Form->input('Encuadrealicuota.'.$key.'.id',array('type'=>'hidden','value'=>$encuadreAlicuotaId));
+						echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_id',array('type'=>'hidden','value'=>$actividadClienteId));
+						echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_codigo',array('label'=>'Codigo','readonly'=>'readonly','value'=>$actividadClienteCodigo));
+						echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_nombre',array(
+							'label'=>'Nombre',
+							'style'=>'width:400px',
+							'readonly'=>'readonly',
+							'value'=>$actividadClienteNombre,
+							'div'=>array(
+								'style'=>'width:410px'
+							),
+						));
+						echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota_id',array('type' => 'select','label'=>'Sugerida'));
+						echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota',array('value'=>$encuadreAlicuotaAlicuota));
+						echo $this->Form->input('Encuadrealicuota.'.$key.'.concepto',array(
+								'precargado'=>$precargado,
+								'style'=>'width:400px',
+								'value'=>$encuadreAlicuotaConcepto,
+								'div'=>array(
+									'style'=>'width:410px'
+								)
+							))."</br>";
+						echo '</div>';
 					}
+<<<<<<< HEAD
+				?>
+=======
 				}
 			}
 			echo '<div class="div_view">';
@@ -135,6 +188,7 @@
 			echo '</div>';
 		}
 	?>
+>>>>>>> feature/sprint_3
 	</div>
 	</td>
 	<tr>

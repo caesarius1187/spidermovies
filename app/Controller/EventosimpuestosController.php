@@ -243,6 +243,22 @@ class EventosimpuestosController extends AppController {
 
 		$this->set('conceptosrestantesimpcli',$myImpCli["Conceptosrestante"]);
 
+		$options = array(
+			'contain'=>array(
+				'Conceptosrestante'=>array(
+					'conditions'=>array(
+						'Conceptosrestante.periodo'=>$periodo,
+						'Conceptosrestante.conceptostipo_id'=>1,
+					)
+				),
+			),
+			'conditions' => array(
+				'Impcli.' . $this->Impcli->primaryKey => $impcli,
+			),
+		);
+		$myImpCliPeriodoActual = $this->Impcli->find('first', $options);
+		$this->set('SaldosLibreDisponibilidadimpcli',$myImpCliPeriodoActual["Conceptosrestante"]);
+
 		$eventoId= 0;
 		$fchvtoOrigen="diaDeHoy";
 		$fchvto=date('d-m-Y');//Esta fecha debe ser una de las siguientes opciones:
@@ -349,7 +365,7 @@ class EventosimpuestosController extends AppController {
 			case 19/*IVA*/:
 				$optionsIVA = array(
 					'Saldo Tecnico' => 'Saldo Tecnico',
-					'Saldo de Libre Disponibilidad'=>'Saldo de Libre Disponibilidad' , 
+					//'Saldo de Libre Disponibilidad'=>'Saldo de Libre Disponibilidad' ,
 					);
 				$this->set('optionsIVA',$optionsIVA);
 				break;

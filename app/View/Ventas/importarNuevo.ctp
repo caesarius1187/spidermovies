@@ -1,5 +1,4 @@
-<?php
-//ini_set('memory_limit', '-1');
+<?php //ini_set('memory_limit', '-1');
 echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
 echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
     <SCRIPT>
@@ -56,15 +55,87 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
     </div>
 
     <div class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
-        <?php
-        Debugger::dump(1);
-        Debugger::dump(memory_get_usage());
+    <?php
+    function ventaRepetida($ventaLeida,$lineAlicuota,$ventasperiodo,$comprobantes,$puntosdeventas,$alicuotas,$subclientes)
+    {
+        $comprobanteTipoNuevo = ltrim(customSearch($ventaLeida['comprobantetipo'], $comprobantes), '0');
+        $pdvNuevo = ltrim(customSearch($ventaLeida['puntodeventa'], $puntosdeventas), '0');
+        $alicuotaNuevo = customSearch($lineAlicuota['alicuotaiva'], $alicuotas);
+        $numeroComprobante = ltrim($ventaLeida['comprobantenumero'], '0');
+        $clienteNuevo = customSearch(ltrim($ventaLeida['identificacionnumero'], '0'), $subclientes);
+        $misalicuotas = $ventaLeida['cantidadalicuotas'];
+        foreach ($ventasperiodo as $ventaYaCargada) {
+            $nuevoFullID = $comprobanteTipoNuevo . '-' . $numeroComprobante . '-' . $pdvNuevo . '-' . $alicuotaNuevo;
+            if ($nuevoFullID == $ventaYaCargada['fullid']) {
+                echo
+                    $ventaLeida['comprobantetipo'] . "-" .
+                    $ventaLeida['puntodeventa'] . "-" .
+                    $numeroComprobante . " // ";
+                $misalicuotas--;
+                if ($misalicuotas == 0) {
+                    //No quedan alicuotas por borrar
+                    return true;
+                } else {
+                    //quedan alicuotas por borrar hay que seguir buscando
+                }
+            } else {
+
+
+            }
+        }
+        if ($misalicuotas > 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    function buscarAlicuotas($ventaLeida,$folderAlicuotas,$ventasperiodo,$comprobantes,$puntosdeventas,$alicuotas,$subclientes){
+        $dirAlicuotas = new Folder($folderAlicuotas, true, 0777);
+        $filesAlicuotas = $dirAlicuotas->find('.*\.txt');
+        //vamos a crear un array de Ventas con los datos que vayamos recavando de cada archivo
+        $l=0;
+        $alicuotasArray = array();
+        $errorInFileAlicuota=false;
+        $misalicuotas =  $ventaLeida['cantidadalicuotas'];
+        foreach ($filesAlicuotas as $dirAlicuota) {
+            $dirAlicuota = new File($dirAlicuotas->pwd() . DS . $dirAlicuota);
+            $dirAlicuota->open();
+            //$contentsAlicuota = $dirAlicuota->read();
+            $handlerAlicuota = $dirAlicuota->handle;
+            while (($line = fgets($handlerAlicuota)) !== false) {
+                // process the line read.
+                $lineAlicuota = array();
+                $lineAlicuota['comprobantetipo'] = substr($line, 0, 3);
+                $lineAlicuota['puntodeventa'] = substr($line, 3, 5);
+                $lineAlicuota['comprobantenumero'] = substr($line, 8, 20);
+                $lineAlicuota['importenetogravado'] = substr($line, 28, 13).'.'.substr($line, 41, 2);
+                $lineAlicuota['alicuotaiva'] = substr($line, 43, 4);
+                $lineAlicuota['impuestoliquidado'] = substr($line, 47, 13).'.'.substr($line, 60, 2);
+                //ahora que tenemos la alicuota en un array tenemos que buscar la venta a la que pertenece y agregarla
+                $mismocomprobante = $ventaLeida['comprobantenumero']==$lineAlicuota['comprobantenumero'];
+                $mismopuntodeventa =  $ventaLeida['puntodeventa']==$lineAlicuota['puntodeventa'];
+                if($mismocomprobante&&$mismopuntodeventa){
+                    //hay que controlar que las venas anteriores cargadas no contengan la venta que estamos por mostrar
+                    $ventaRepetida = ventaRepetida($ventaLeida,$lineAlicuota,$ventasperiodo,$comprobantes,$puntosdeventas,$alicuotas,$subclientes);
+                    if(!$ventaRepetida){
+                       array_push($alicuotasArray, $lineAlicuota);
+                       $misalicuotas--;
+                    }
+                    if($misalicuotas==0){
+                        //ya encontre todas las alicuotas
+                        return $alicuotasArray;
+                        break 2;
+                    }
+                }
+            }
+            fclose ( $handlerAlicuota );
+            $dirAlicuota->close(); // Be sure to close the file when you're done
+        }
+        return $alicuotasArray;
+    }
         $dirVentas = new Folder($folderVentas, true, 0777);
         $dirAlicuotas = new Folder($folderAlicuotas, true, 0777);
-        ?>
-        Archivos Cargador previamente</br>
-        Ventas:</br>
-        <?php
+
         $ventasArray = array();
 
         $filesVentas = $dirVentas->find('.*\.txt');
@@ -80,11 +151,19 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
             }
             $dirVenta = new File($dirVentas->pwd() . DS . $dirVenta);
             $dirVenta->open();
-            $contents = $dirVenta->read();
+            //$contents = $dirVenta->read();
             // $file->delete(); // I am deleting this file
             $handler = $dirVenta->handle;
             $j=0;
             while (($line = utf8_decode(fgets($handler))) !== false) {
+                /*
+                 * El proceso va a ser el siguiente
+                 * Recorrer archivos Ventas
+                 * >>Cargar Linea Venta
+                 *      >> Recorrer archivos alicuotas
+                 *          >>Cargar Linea Alicuota
+                 *              >>Buscar Valores reales de ventas y alicuotas
+                 *                  >>Recorrer Ventas Ya Cargadas y decidir si guardar esta venta o no*/
                 if(strlen($line)!=268){
                     //todo Mejorar la deteccion de errores
                     //$errorInFileVenta=true;
@@ -132,39 +211,94 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 $lineVenta['operacioncodigo']=substr($line, 242,1);
                 $lineVenta['otrostributos']=substr($line, 243,13).'.'.substr($line, 256, 2);
                 $lineVenta['fechavencimientopago']=substr($line, 258,8);
-                $lineVenta['lineacompleta']=$line;
-                $ventasArray[$i]['Venta']=$lineVenta;
+                //$lineVenta['lineacompleta']=$line;
+                /*
+                 * Antes de guardar esta venta vamos a buscar las alicuotas de ella
+                 * luego vamos a averiguar si esta ventaxalicuota ya esta cargada en el sistema
+                 * y si es el caso no vamos a agregar la venta al array generando un ahorro en la memoria
+                 *
+                 * */
+                 $alicuotasNoRepetidas = buscarAlicuotas($lineVenta,$folderAlicuotas,$ventasperiodo,$comprobantes,$puntosdeventas,$alicuotas,$subclientes);
+                 if (){
+
+                 }else{
+
+                 }
+                if($hayVenta){
+                    echo
+                        $ventaLeida['comprobantetipo']."-".
+                        $ventaLeida['puntodeventa']."-".
+                        $numeroComprobante." // ";
+                    $cantVentasYaguardadas++;
+
+                    $misalicuotas --;
+                    if($misalicuotas = 0) {
+                        //No quedan alicuotas por borrar
+                        break 2;
+                        unset($alicuota[$keyAlicuota]);
+                        unset($venta[$keyVenta]);
+                    }   else{
+                        //quedan alicuotas por borrar
+                        unset($alicuota[$keyAlicuota]);
+                        break 1;
+                    }
+                }else {
+                    $ventasArray[$i]['Venta']=$lineVenta;
+                    if (!isset($ventasArray[$i]['Alicuota'])) {
+                        $ventasArray[$i]['Alicuota'] = array();
+                    }
+                    array_push($ventasArray[$i]['Alicuota'], $lineAlicuota);
+                    $ventasArray[$m] = $venta;
+
+                }
+
+                /*
+                 * FIN DE BUSQUEDA DE ALICUOTAS DE LA VENTA
+                 * */
                 $i++;
                 $j++;
                 $line="";
             }
-            $tituloButton= $errorInFileVenta?$dirVenta->name." Archivo con Error": $dirVenta->name;
+            fclose ( $handler );
+            $dirVenta->close(); // Be sure to close the file when you're done
+        }
+        ?>
+        Archivos Cargador previamente</br>
+        Ventas:</br>
+        <?php
+        foreach ($filesVentas as $dirVenta) {
+            if (is_readable($dirVentas->pwd() . DS . $dirVenta)) {
+                $mostrarTabla = true;
+            } else {
+                echo "No se puede acceder al archivo:" . $dirVenta . "</br>";
+                break;
+            }
+            $dirVenta = new File($dirVentas->pwd() . DS . $dirVenta);
+            $dirVenta->open();
+            $contents = $dirVenta->read();
+            // $file->delete(); // I am deleting this file
+            $handler = $dirVenta->handle;
+            $cantVentasInFile =0;
+            while (($line = utf8_decode(fgets($handler))) !== false) {
+                $cantVentasInFile ++ ;
+            }
             echo $this->Form->button(
-                $tituloButton .'</br>
-            <label>Ventas: '.$j.'</label>',
+                $dirVenta->name.'</br><label>Ventas: ' . $cantVentasInFile. '</label>',
                 array(
-                    'class'=>'buttonImpcli4',
-                    'onClick'=>"deletefile('".$dirVenta->name."','".$cliid."','ventas','".$periodo."')",
-                    'id'=>'',
+                    'class' => 'buttonImpcli4',
+                    'onClick' => "deletefile('" . $dirVenta->name . "','" . $cliid . "','ventas','" . $periodo . "')",
+                    'id' => '',
                 ),
                 array()
             );
-            fclose ( $handler );
+            fclose($handler);
             $dirVenta->close(); // Be sure to close the file when you're done
-            if(!is_resource($handler)){
-                //echo "handler cerrado con exito";
-            }else{
-                //echo "handler cerrado ABIERTO!";
-            }
         }
-        Debugger::dump(2);
-        Debugger::dump(memory_get_usage());
         ?>
         </br></br></br></br></br>Alicuotas:</br>
         <?php
         $filesAlicuotas = $dirAlicuotas->find('.*\.txt');
         //vamos a crear un array de Ventas con los datos que vayamos recavando de cada archivo
-        $i=0;
         $alicuotasArray = array();
         $errorInFileAlicuota=false;
         foreach ($filesAlicuotas as $dirAlicuota) {
@@ -179,37 +313,13 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
             $contents = $dirAlicuota->read();
             // $file->delete(); // I am deleting this file
             $handler = $dirAlicuota->handle;
-            $j=0;
+            $k=0;
             while (($line = fgets($handler)) !== false) {
-                // process the line read.
-                $lineAlicuota = array();
-                $lineAlicuota['comprobantetipo'] = substr($line, 0, 3);
-                $lineAlicuota['puntodeventa'] = substr($line, 3, 5);
-                $lineAlicuota['comprobantenumero'] = substr($line, 8, 20);
-                $lineAlicuota['importenetogravado'] = substr($line, 28, 13).'.'.substr($line, 41, 2);
-                $lineAlicuota['alicuotaiva'] = substr($line, 43, 4);
-                $lineAlicuota['impuestoliquidado'] = substr($line, 47, 13).'.'.substr($line, 60, 2);
-                $i++;
-                $j++;
-                //ahora que tenemos la alicuota en un array tenemos que buscar la venta a la que pertenece y agregarla
-                $k=0;
-                foreach ($ventasArray as $venta) {
-                    $mismocomprobante = $venta['Venta']['comprobantenumero']==$lineAlicuota['comprobantenumero'];
-                    $mismopuntodeventa = $venta['Venta']['puntodeventa']==$lineAlicuota['puntodeventa'];
-                    if($mismocomprobante&&$mismopuntodeventa){
-                        if(!isset($venta['Alicuota'])){
-                            $venta['Alicuota']=array();
-                        }
-                        array_push($venta['Alicuota'], $lineAlicuota);
-                        $ventasArray[$k]=$venta;
-                        break;
-                    }
-                    $k++;
-                }
+                $k++;
             }
             echo $this->Form->button(
                 $dirAlicuota->name.'</br>
-            <label>Alicuotas: '.$j.'</label>',
+            <label>Alicuotas: '.$k.'</label>',
                 array(
                     'class'=>'buttonImpcli4',
                     'onClick'=>"deletefile('".$dirAlicuota->name."','".$cliid."','alicuotas','".$periodo."')",
@@ -219,15 +329,7 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
             );
             fclose ( $handler );
             $dirAlicuota->close(); // Be sure to close the file when you're done
-            if(!is_resource($handler)){
-                //echo "handler cerrado con exito 2";
-            }else{
-                //echo "handler cerrado ABIERTO! 2";
-            }
-        }
-        Debugger::dump(3);
-        Debugger::dump(memory_get_usage());
-        ?>
+        }?>
     </div>
 <?php //Debugger::dump($ventasArray)?>
     <div  class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
@@ -262,15 +364,11 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 </tr>
                 <?php
             }
-
             ?>
         </table>
 
     </div>
 <?php
-
-Debugger::dump(4);
-Debugger::dump(memory_get_usage());
 $PuntoDeVentaNoCargado=array();
 $SubclienteNoCargado=array();
 $VentasConFechasIncorrectas = array();
@@ -315,8 +413,6 @@ foreach ($ventasArray as $venta) {
     }
 
 }
-Debugger::dump(5);
-Debugger::dump(memory_get_usage());
 if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($VentasConFechasIncorrectas)!=0||!$mostrarTabla){ ?>
     <div class="index">
         <?php
@@ -424,8 +520,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
     </div>
     <?php
 } else {
-    Debugger::dump(6);
-    Debugger::dump(memory_get_usage());
     ?>
     <div class="index">
         <?php
@@ -562,8 +656,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             }
             return 0;
         }
-        Debugger::dump(7);
-        Debugger::dump(memory_get_usage());
         ?>
         Ventas ya cargadas :
         <table style="width: 100%;padding: 0px;margin: 0px;" id="tablaFormVentas" >
@@ -819,8 +911,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             ?>
         </table>
         <?php
-        Debugger::dump(8);
-        Debugger::dump(memory_get_usage());
         if ($i > 1){
             echo $this->Form->submit('Importar', array(
                     'type'=>'image',

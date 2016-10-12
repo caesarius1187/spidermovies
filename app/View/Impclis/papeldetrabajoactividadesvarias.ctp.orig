@@ -482,11 +482,15 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<td><?php echo number_format(0, 2, ",", "."); ?></td>
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", "."); ?></td>
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalRetencion'], 2, ",", "."); ?></td>
-				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalRetenciones'], 2, ",", "."); ?></td>
+				<td><?php echo number_format(0, 2, ",", "."); ?></td>
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalPercepionBancariaS'], 2, ",", "."); ?></td>
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalAFavorSaldo'], 2, ",", "."); ?></td>
+<<<<<<< HEAD
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalConceptos'], 2, ",", "."); ?></td>
 				
+=======
+				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalConceptos'], 2, ",", "."); ?></td>				
+>>>>>>> feature/sprint_3
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalAPagar'], 2, ",", "."); ?></td>
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalAFavor'], 2, ",", "."); ?></td>
 			</tr>

@@ -621,8 +621,8 @@ class ClientesController extends AppController {
 					   			),
 				   			'Conceptostipo'=>array(
 				   				'fields'=>array(
-					   						'Conceptostipo.nombre'
-					   					)
+									'Conceptostipo.nombre','Conceptostipo.id'
+									)
 				   				),	
 			   				'Comprobante'=>array(
 				   				'fields'=>array(

@@ -70,7 +70,11 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
     <?php /**************************************************************************/ ?>
     <?php /*****************************Ventas***************************************/ ?>
     <?php /**************************************************************************/ ?> 
+<<<<<<< HEAD
+    <div id="form_venta" class="tabVentas index" style="width:96%;float:left; border-bottom-left-radius: 3px;  border-bottom-right-radius: 3px; border-top-left-radius: 0px; border-top-right-radius:0px;box-shadow: 0px 3px 5px -1px #262626; border-top-color: #FFF;">             
+=======
     <div id="form_venta" class="tabVentas index" style="width:96%;float:left; margin-left:5px;margin-top:10px;">
+>>>>>>> feature/sprint_3
       <?php
           //****Aca vamos a controlar los Impuestos con periodo activo que influyen en los campos que se van a mostrar en el formulario de ventas******/
           /*
@@ -314,8 +318,13 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                 );  
             echo $this->Form->end();  ?>  
     </div>        
+<<<<<<< HEAD
+    <div style="overflow-x:auto;width:96%; float:left; margin-top:10px;min-height: 1400px" class="tareaCargarIndexTable tabVentas index">
+      <table class="tbl_vtas_det display" style="border:1px solid white" id="tablaVentas" cellspacing="0" cellpadding="0" border="0">
+=======
     <div style="overflow-x:auto;width:96%; float:left;margin-left: 5px;margin-top:10px;min-height: 1400px" class="tareaCargarIndexTable tabVentas index">
       <table class="tbl_vtas_det" style="border:1px solid white" id="tablaVentas" cellspacing="0" cellpadding="0" >
+>>>>>>> feature/sprint_3
         <thead>
           <tr>
             <th style="width: 47px">Fecha</th><!--1-->

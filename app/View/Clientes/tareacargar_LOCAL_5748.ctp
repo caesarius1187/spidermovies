@@ -70,7 +70,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
     <?php /**************************************************************************/ ?>
     <?php /*****************************Ventas***************************************/ ?>
     <?php /**************************************************************************/ ?> 
-    <div id="form_venta" class="tabVentas index" style="width:96%;float:left; margin-left:5px;margin-top:10px;">
+    <div id="form_venta" class="tabVentas index" style="width:96%;float:left; border-bottom-left-radius: 3px;  border-bottom-right-radius: 3px; border-top-left-radius: 0px; border-top-right-radius:0px;box-shadow: 0px 3px 5px -1px #262626; border-top-color: #FFF;">             
       <?php
           //****Aca vamos a controlar los Impuestos con periodo activo que influyen en los campos que se van a mostrar en el formulario de ventas******/
           /*
@@ -126,34 +126,36 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                   'style'=> 'width:'
               )
           );
-        echo $this->Form->create('Venta',array(
+      echo $this->Form->create('Venta',array(
             'id'=>'saveVentasForm',
             'action'=>'addajax',
             'class'=>'formTareaCarga formAddVenta',
             $cliente["Cliente"]['id'],
             $periodo
             )
-          );
-        echo $this->Form->input('cliente_id',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
-        //Vamos a enviar la situacion del cliente para no recalcularla en el controlador cada ves que guardemos una venta
-        /*AFIP*/
-        echo $this->Form->input('tieneMonotributo',array('value'=>$tieneMonotributo,'type'=>'hidden'));
-        echo $this->Form->input('tieneIVA',array('value'=>$tieneIVA,'type'=>'hidden'));
-        echo $this->Form->input('tieneIVAPercepciones',array('value'=>$tieneIVAPercepciones,'type'=>'hidden'));
-        echo $this->Form->input('tieneImpuestoInterno',array('value'=>$tieneImpuestoInterno,'type'=>'hidden'));
-        /*DGR*/
-        echo $this->Form->input('tieneAgenteDePercepcionIIBB',array('value'=>$tieneAgenteDePercepcionIIBB,'type'=>'hidden'));
-        /*DGRM*/
-        echo $this->Form->input('tieneAgenteDePercepcionActividadesVarias',array('value'=>$tieneAgenteDePercepcionActividadesVarias,'type'=>'hidden'));
-        echo $this->Form->input('fecha', array(
-                'class'=>'datepicker-dia',
-                'style'=>'width:40px',
-                'type'=>'text',
-                'default'=>"",
-                'readonly'=>'readonly',
-                'required'=>true
-                )
-         );
+          ); 
+          echo $this->Form->input('cliente_id',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
+          //Vamos a enviar la situacion del cliente para no recalcularla en el controlador cada ves que guardemos una venta
+          /*AFIP*/
+          echo $this->Form->input('tieneMonotributo',array('value'=>$tieneMonotributo,'type'=>'hidden'));
+          echo $this->Form->input('tieneIVA',array('value'=>$tieneIVA,'type'=>'hidden'));
+          echo $this->Form->input('tieneIVAPercepciones',array('value'=>$tieneIVAPercepciones,'type'=>'hidden'));
+          echo $this->Form->input('tieneImpuestoInterno',array('value'=>$tieneImpuestoInterno,'type'=>'hidden'));
+          /*DGR*/
+          echo $this->Form->input('tieneAgenteDePercepcionIIBB',array('value'=>$tieneAgenteDePercepcionIIBB,'type'=>'hidden'));
+          /*DGRM*/
+          echo $this->Form->input('tieneAgenteDePercepcionActividadesVarias',array('value'=>$tieneAgenteDePercepcionActividadesVarias,'type'=>'hidden'));
+       ?> 
+        <?php
+            echo $this->Form->input('fecha', array(
+                    'class'=>'datepicker-dia', 
+                    'style'=>'width:40px', 
+                    'type'=>'text',
+                    'default'=>"",
+                    'readonly'=>'readonly',
+                    'required'=>true
+                    )
+             );           
             //Aca tenemos que sacar los tipos de comprobantes que el cliente puede emitir                              
             echo $this->Form->input('comprobante_id', array(
                 'label'=>'Comprobante',
@@ -314,8 +316,8 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                 );  
             echo $this->Form->end();  ?>  
     </div>        
-    <div style="overflow-x:auto;width:96%; float:left;margin-left: 5px;margin-top:10px;min-height: 1400px" class="tareaCargarIndexTable tabVentas index">
-      <table class="tbl_vtas_det" style="border:1px solid white" id="tablaVentas" cellspacing="0" cellpadding="0" >
+    <div style="overflow-x:auto;width:96%; float:left; margin-top:10px;min-height: 1400px" class="tareaCargarIndexTable tabVentas index">
+      <table class="tbl_vtas_det display" style="border:1px solid white" id="tablaVentas" cellspacing="0" cellpadding="0" border="0">
         <thead>
           <tr>
             <th style="width: 47px">Fecha</th><!--1-->
@@ -991,15 +993,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                         echo $conceptorestante['Localidade']['Partido']["nombre"]."-". $conceptorestante['Localidade']["nombre"];
                     }?>
                 </td>
-                <td class="<?php echo $tdClass?>"><?php
-                    if(
-                        $conceptorestante['Impcli']['impuesto_id']=='19'/*IVA*/ &&
-                        $conceptorestante['Conceptostipo']['id']==1 )
-                    {
-                        $conceptorestante['Conceptostipo']["nombre"] = "Saldo de Libre Disponibilidad";
-                    }
-                    echo $conceptorestante['Conceptostipo']["nombre"]
-                    ?></td>
+                <td class="<?php echo $tdClass?>"><?php echo $conceptorestante['Conceptostipo']["nombre"]?></td>
                 <td class="<?php echo $tdClass?>">
                     <?php if(isset($conceptorestante['Comprobante']["nombre"])){
                         echo $conceptorestante["Comprobante"]["nombre"];

@@ -338,6 +338,12 @@ if($mostrarView){?>
                         </td>
                         <td>
                             <?php
+                            echo $this->Form->input('fijoart', array(
+                                    'label'=>'Cuota Fija LRT')
+                            );?>
+                        </td>
+                        <td>
+                            <?php
                             echo $this->Form->input('segurodevida', array(
                                     'label'=>'Seguro de vida')
                             );?>
