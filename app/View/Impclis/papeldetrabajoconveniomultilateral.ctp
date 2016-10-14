@@ -215,9 +215,9 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				<td colspan="6">A Favor</td>				
 			</tr>
 			<tr id="2">
-				<td>Codigo</td>
-				<td>Provincia</td>
-				<td>Ejercicio</td>
+				<td rowspan="2">Codigo</td>
+				<td rowspan="2">Provincia</td>
+				<td rowspan="2">Ejercicio</td>
 				<?php
 				if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/){
 					foreach ($actividadclientes as $actividadcliente) { ?>
@@ -243,7 +243,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				<td rowspan="2">Total</td>
 				<td rowspan="2">Reten.</td>
 				<td rowspan="2">Percep.</td>
-				<td rowspan="2" title="Percepción Bancaria" style="width: 45px;">Percep. Ban.</td>
+				<td rowspan="2" title="Percepción Bancaria" style="width: 45px;">Percep.Ban.</td>
 				<td rowspan="2">Otros</td>
 				<td rowspan="2" title="A favor del contribuyente del periodo anterior">A favor</td>
 				<td rowspan="2">Total</td>
@@ -251,7 +251,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				<td rowspan="2">Contrib.</td>
 			</tr>
 			<tr id="3">
-				<td colspan="3">Distribucion</td>
+
 				<?php
 				if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/) {
 					foreach ($actividadclientes as $actividadcliente) { ?>
@@ -475,7 +475,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 						}else{
 							$impuestoDeterminado = $minimoAMostrar;
 						}
-						echo '<span style="color:red">$'.number_format($impuestoDeterminado, 2, ",", ".")."</span>"; 
+						echo '<span style="color:red">'.number_format($impuestoDeterminado, 2, ",", ".")."</span>";
 						$liquidacionProvincia[$impcliprovincia['id']."-impuestoDeterminado"][$actividadcliente['Actividadcliente']['id']]+= $impuestoDeterminado;
 						$actividadArticulo=$actividadcliente['Actividade']['articulo'];
 						if(!isset($subTotalBaseImponibleProrrateada[$actividadcliente['Actividade']['articulo']])){
@@ -639,7 +639,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 						<?php echo number_format($subtotalNoDistribuyeBaseArt2, 2, ",", "."); ?>
 					</td>
 					<td rowspan="4">
-						<?php echo '%'.number_format($coeficienteTotal, 4, ",", "."); ?>
+						<?php echo number_format($coeficienteTotal, 4, ",", "."); ?>
 					</td>
 					<?php
 					foreach ($actividadclientes as $actividadcliente) {

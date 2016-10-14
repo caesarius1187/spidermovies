@@ -1911,7 +1911,43 @@ function cargarLibroSueldo(empid,periodo){
     return false;
 }
 var tablaSueldoCalx;
+function ocultarFunciones(){
 
+    $(".funcionAAplicar").each(function() {
+        var posicion = $(this).attr('posicion');
+        var seccion = $(this).attr('seccion');
+        var headsection = $(this).attr('headseccion');
+
+        if($('#Valorrecibo'+posicion+'Valor').val()==0){
+            //tengo que ocultar el row solo si no es cabeza de seccion por que sino me oculta toda la seccion
+            if(headsection=="0"){
+
+                //si esta visible tengo que mermar en 1 el rowspan
+                var rowspan = 0;
+                var rowVisible =  $(this).closest('tr').is(':visible');
+                if(rowVisible==true) {
+                    rowspan = $('#seccion'+seccion).attr('rowspan');
+                    rowspan = rowspan - 1;
+                    $('#seccion'+seccion).attr('rowspan',rowspan);
+                }
+                $(this).closest('tr').hide();
+            }
+
+        }else{
+
+            //si esta oculto tengo que aumentar en 1 el rowspan
+            var rowspan = 0;
+            var rowVisible = $(this).is(':visible');
+            if(rowVisible==false ) {
+                rowspan = $('#seccion' + seccion).attr('rowspan')*1;
+                rowspan = rowspan + 1;
+                $('#seccion'+seccion).attr('rowspan',rowspan);
+            }
+            //tengo que mostrar el row
+            $(this).closest('tr').show();
+        }
+    });
+}
 function activarCalXOnSueldos(){
     $(".funcionAAplicar").on('change', function() {
         var posicion = $(this).attr('posicion');
@@ -1946,6 +1982,12 @@ function activarCalXOnSueldos(){
         });
         return false;
       });
+    ocultarFunciones();
+
+    $('#ValorreciboPapeldetrabajosueldosForm input').change(function(){
+        $('#ValorreciboPapeldetrabajosueldosForm').calx({ });
+        ocultarFunciones();
+    });
 }
 function realizarEventoCliente(periodo,clienteid,estadotarea){
   var datas =  "0/tarea3/"+periodo+"/"+clienteid;

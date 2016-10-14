@@ -166,7 +166,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 						if($basesprorrateada['Impcliprovincia']['Partido']['id']==$miProvincia&&$impcliprovincia['ejercicio']!='Primero'){
 							//esta es la base que se uso para calcular Actividad Economica en esta provincia
 							$baseprorrateadaImpCLI=$basesprorrateada['baseprorrateada'];
-							echo "<td >$".number_format($baseprorrateadaImpCLI, 2, ",", ".")."</td>";
+							echo "<td >".number_format($baseprorrateadaImpCLI, 2, ",", ".")."</td>";
 							$arrayBasesProrrateadas[$miProvincia][$actividadcliente['Actividade']['id']]=$baseprorrateadaImpCLI;
 						}
 					}
@@ -328,10 +328,16 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<?php 
 				} ?>
 				<td><?php 
-					//no se de donde sacar el minimo
-					//$minimoAMostrar = $encuadrealicuota['minimo'];
-				?>0</td>
-				<td><span style="color:red"><?php echo number_format($totalPagoImpuestoLocalidad, 2, ",", "."); ?></span></td>
+					$minimoAMostrar += $myimpcliprovincia['minimo'];
+                    echo number_format($minimoAMostrar, 2, ",", ".");
+				?></td>
+				<td><span style="color:red">
+						<?php
+                        if($minimoAMostrar>$totalPagoImpuestoLocalidad){
+                            $totalPagoImpuestoLocalidad = $minimoAMostrar;
+                        }
+                        echo number_format($totalPagoImpuestoLocalidad, 2, ",", "."); ?></span>
+				</td>
 				<?php 
 				$totalRetenciones=0;
 				$totalPercepciones=0;

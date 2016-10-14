@@ -48,22 +48,22 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         }
         unset($miempleado);
         if(count($conceptosrestantes)>0) {
-            foreach ($conceptosrestantes['Conceptosrestante'] as $conceptosrestante) {
-                switch ($conceptosrestante['conceptostipo_id']) {
+            foreach ($conceptosrestantes as $conceptosrestante) {
+                switch ($conceptosrestante['Conceptosrestante']['conceptostipo_id']) {
                     case '2':
                     case '3':
-                        $Retenciones += $conceptosrestante['montoretenido'];
+                        $Retenciones += $conceptosrestante['Conceptosrestante']['montoretenido'];
                         break;
                     case '4':
-                        $OtrosPagosACuenta += $conceptosrestante['montoretenido'];
+                        $OtrosPagosACuenta += $conceptosrestante['Conceptosrestante']['montoretenido'];
                         break;
                 }
             }
             unset($conceptosrestante);
         }
         if(count($impcliSaldoAFavor)>0) {
-            foreach ($impcliSaldoAFavor['Conceptosrestante'] as $saldosafavor) {
-                    $SaldoAFavor+=$saldosafavor['montoretenido'];
+            foreach ($impcliSaldoAFavor as $saldosafavor) {
+                    $SaldoAFavor+=$saldosafavor['Conceptosrestante']['montoretenido'];
             }
             unset($saldosafavor);
         }
@@ -133,7 +133,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         Alicuota: 2% </br>
         <?php
         $impuestoTotal = 0;
-        $impuestoTotal = $baseimponible*0.2;
+        $impuestoTotal = $baseimponible*0.02;
         ?>
         Impuesto: $<?php echo number_format($impuestoTotal, 2, ",", ".") ?></br></br>
 
@@ -158,12 +158,12 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
             array(
                 'type'=>'hidden',
                 'id'=> 'afavor',
-                'value'=>$impuestoDeterminado<0?$impuestoDeterminado:0
+                'value'=>$impuestoDeterminado<0?$impuestoDeterminado*-1:0
             )
         );
 
         ?>
-        $<?php echo number_format($impuestoDeterminado, 2, ",", ".") ?></br></br>
+        $<?php echo number_format($impuestoDeterminado*-1, 2, ",", ".") ?></br></br>
         <?php
         $provinciasSubtotal = array();
         foreach ($impcli['Cliente']['Empleado'] as $empleado) {

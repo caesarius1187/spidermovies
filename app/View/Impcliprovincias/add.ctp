@@ -3,19 +3,19 @@
 	echo $error;
 }else{	
  	echo $this->Form->create('Impcliprovincia',array('class'=>'formTareaCarga formAddImpcliprovincia','type' => 'post')); ?>
-		<h3><?php 
+	<h3><?php
+	$cargarProvincia=true;
+	if(isset($partidos)){
 		$cargarProvincia=true;
-		if(isset($partidos)){
-			$cargarProvincia=true;			
-		}else{
-			$cargarProvincia=false;
-		}
-		if($cargarProvincia){
-			echo __('Relacionar Provincia al Impuesto'); 
-		}else{
-			echo __('Relacionar Localidad al Impuesto'); 
-		}
-			?></h3>
+	}else{
+		$cargarProvincia=false;
+	}
+	if($cargarProvincia){
+		echo __('Relacionar Provincia al Impuesto');
+	}else{
+		echo __('Relacionar Localidad al Impuesto');
+	}
+		?></h3>
 
 <table class="tabla">
 	<tr>
@@ -70,6 +70,9 @@
 							)
 						);
 						echo $this->Form->input('ejercicio',array('value'=>'Resto','type'=>'hidden'));
+					}
+					if($impuestoid==6/*Actividades Varias*/){
+						echo $this->Form->input('Impcliprovincia.minimo');
 					}
 					echo $this->Form->input('jsonactividadcliente',array('type'=>'hidden','value'=>json_encode($actividadclientes)))."</br>";
 

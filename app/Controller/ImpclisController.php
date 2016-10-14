@@ -923,6 +923,7 @@ class ImpclisController extends AppController {
 						),
 						'Valorrecibo'=>array(
 							'Cctxconcepto'=>array(
+								'Concepto'
 							),
 							'conditions'=>array(
 								'Valorrecibo.periodo'=>$periodo

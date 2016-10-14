@@ -1167,7 +1167,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 			$TotalBsUso = 0;
 			$TotalOtrosConceptos = 0;
 			$TotalDcto814 = 0;
-           
+
+
+        $TotalPercepcionesIVA = 0;
 			foreach ($compras as $compra) {
                 if ($compra['Actividadcliente']['actividade_id'] == $ActividadCliente_id) {
                     if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Bs en Gral') {
@@ -1193,6 +1195,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalDcto814 = $TotalDcto814 + $compra['Compra']['neto'];
                     }*/
                 }
+                //aca vamos a calcular las perceptiones tambien, acumulando una sola vez para todas las actividades
+                $TotalPercepcionesIVA = $TotalPercepcionesIVA + $compra['Compra']['ivapercep'];
             };
 			$TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalBsGral + $TotalLocaciones + $TotalPresServ + $TotalBsUso + $TotalOtrosConceptos + $TotalDcto814;
         if($TotalBsGral>0){
@@ -2057,6 +2061,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 }
                 //echo $TotalPagosACuenta ."//";
             }
+            $TotalPagosACuenta += $TotalPercepcionesIVA ;
             $CreditoGeneral = 0;
             $CreditoGeneral = $TotalCreditoFiscal_SumaTotal +  $TotalSaldoTecnicoAFavorRespPeriodoAnterior + $AjusteAnualAFavorResponsable ;
             $DebitoGeneral = 0;

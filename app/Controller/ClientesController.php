@@ -1197,10 +1197,16 @@ class ClientesController extends AppController {
 						            'fields'=>array('id','nombre','abreviacion','lugarpago','descripcion'),
 						         ),
 					        	 'Eventosimpuesto'=>array( 
-					        	  'conditions' => array(
+					        	    'conditions' => array(
 							            	 'Eventosimpuesto.periodo' => $pemes."-".$peanio
 							            ),
 					        	  ),
+                                 'Conceptosrestante'=>array(
+                                     'conditions'=>array(
+                                         'Conceptosrestante.periodo' => $pemes."-".$peanio,
+                                         'Conceptosrestante.conceptostipo_id' => 1
+                                     )
+                                 )
 					       	),
 					       	'Plandepago'=>array(
 				   				'conditions' => array(

@@ -27,6 +27,53 @@ function papelesDeTrabajo(periodo,impcli){
 			$('#Eventosimpuesto0Montovto').val(apagar);
 			$('#Eventosimpuesto0Monc').val(afavor);
 		}
+		  //aca vamos a agregar por JS los campos de saldo a favor para el periodo siguiente
+		  if(afavor*1<0){
+			  afavor=afavor*-1;
+		  }
+		  if($('#Eventosimpuesto0Conceptosrestante0Id').length<=0){
+			  if(afavor*1>0){
+				  $('<input>').attr({
+					  type: 'hidden',
+					  id: 'Eventosimpuesto0Conceptosrestante0ClienteId',
+					  value: $('#cliid').val(),
+					  name: 'data[Eventosimpuesto][0][Conceptosrestante][0][cliente_id]'
+				  }).appendTo('#EventosimpuestoRealizartarea5Form');
+				  $('<input>').attr({
+					  type: 'hidden',
+					  id: 'Eventosimpuesto0Conceptosrestante0ImpcliId',
+					  value: $('#impcliid').val(),
+					  name: 'data[Eventosimpuesto][0][Conceptosrestante][0][impcli_id]'
+				  }).appendTo('#EventosimpuestoRealizartarea5Form');
+				  $('<input>').attr({
+					  type: 'hidden',
+					  id: 'Eventosimpuesto0Conceptosrestante0ConceptostipoId',
+					  value: 1,
+					  name: 'data[Eventosimpuesto][0][Conceptosrestante][0][conceptostipo_id]'
+				  }).appendTo('#EventosimpuestoRealizartarea5Form');
+				  $('<input>').attr({
+					  type: 'hidden',
+					  id: 'Eventosimpuesto0Conceptosrestante0Periodo',
+					  value: $('#periodoPDT').val(),
+					  name: 'data[Eventosimpuesto][0][Conceptosrestante][0][periodo]'
+				  }).appendTo('#EventosimpuestoRealizartarea5Form');
+				  $('<input>').attr({
+					  type: 'hidden',
+					  id: 'Eventosimpuesto0Conceptosrestante0Montoretenido',
+					  value: afavor,
+					  name: 'data[Eventosimpuesto][0][Conceptosrestante][0][montoretenido]'
+				  }).appendTo('#EventosimpuestoRealizartarea5Form');
+				  $('<input>').attr({
+					  type: 'hidden',
+					  id: 'Eventosimpuesto0Conceptosrestante0Fecha',
+					  value: $.datepicker.formatDate('yy/mm/dd', new Date()),
+					  name: 'data[Eventosimpuesto][0][Conceptosrestante][0][fecha]'
+				  }).appendTo('#EventosimpuestoRealizartarea5Form');
+
+			  }
+		  }else{
+			  $('#Eventosimpuesto0Conceptosrestante0Montoretenido').val(afavor);
+		  }
 		$(document).ready(function() {
 	        $( "input.datepicker" ).datepicker({
 	          yearRange: "-100:+50",
@@ -58,7 +105,7 @@ function papelesDeTrabajo(periodo,impcli){
 		            alert(respuesta.validationErrors);
 		            alert(respuesta.invalidFields);
 		          }else{
-		            $('#divLiquidarConvenioMultilateral').hide();
+		            $('#divLiquidarCooperadoraAsistencial').hide();
 		          }
 		        }, 
 		        error: function(xhr,textStatus,error){ 

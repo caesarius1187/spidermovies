@@ -216,6 +216,7 @@
 
         $i=0;
         $miseccionamostrada="sinseccion";
+        $numSeccion = 0;
         foreach ($empleado['Conveniocolectivotrabajo']['Cctxconcepto'] as $conceptoobligatorio) {
             $styleForTd = "";
             if($conceptoobligatorio['Concepto']['estotal']){
@@ -224,8 +225,13 @@
                     background-color: #9E9E9E;
                     ";
             }
+            //le vamos a asignar una clase para marcar si es calculado o no para saber si lo podemos ocultar o no
+            $classTRCalculada = "nocalculado";
+            if($conceptoobligatorio['calculado']) {
+                $classTRCalculada = "calculado";
+            }
             ?>
-            <tr style="<?php echo $styleForTd; ?>">
+            <tr style="<?php echo $styleForTd; ?>" class="<?php echo $classTRCalculada; ?>">
                 <?php
                 /*vamos a contar la cantidad de veces que aparece este concepto para poner el colspan del TD*/
                 $cantSecciones = array();
@@ -248,10 +254,12 @@
                 }else{
                     $miseccionamostrar=$conceptoobligatorio['seccionpersonalizada'];
                 }
+                $headSeccion = false;
                 if($miseccionamostrada!=$miseccionamostrar){
+                    $headSeccion = true;
 
                     ?>
-                    <td rowspan="<?php echo $cantSecciones[$miseccionamostrar];?>" style="font-size: 13px; vertical-align:middle!important;">
+                    <td rowspan="<?php echo $cantSecciones[$miseccionamostrar];?>" style="font-size: 13px; vertical-align:middle!important;" id="seccion<?php echo $numSeccion;?>" >
                         <div style="transform: rotate(270deg); float:left;">
                             <?php
                             $miseccionamostrada = $miseccionamostrar;
@@ -259,6 +267,7 @@
                         </div>
                     </td>
                 <?php
+                    $numSeccion ++;
                 }
                 $styleForTd = "
                     display: flex ;
@@ -369,13 +378,13 @@
                         ));
                     }
                     ?>
-                    </td>
-                    <td>
+                </td>
+                <td>
                     <?php
                     echo $this->Form->label('Valorrecibo.'.$i.'.codigo',$datacell);
                     ?>
-                    </td>
-                    <td>
+                </td>
+                <td>
                         <?php
                             $porcentajeDataCell = "";
                             if($conceptoobligatorio['conporcentaje']){
@@ -390,16 +399,18 @@
                                     );
                             }
                         ?>
-                    </td>
-                    <td>
-                        <?php echo $porcentajeDataCell; ?>
-                    </td>
-                    <td>
+                </td>
+                <td>
+                    <?php echo $porcentajeDataCell; ?>
+                </td>
+                <td>
                     <?php
                     if($conceptoobligatorio['calculado']){
                         echo $this->Form->input('Valorrecibo.'.$i.'.formula',array('type'=>'text',
                                 'value'=>$conceptoobligatorio['funcionaaplicar'],
                                 'posicion'=>$i,
+                                'headseccion'=>$headSeccion?'1':'0',
+                                'seccion'=>$numSeccion-1,
                                 'class'=>'funcionAAplicar',
                                 'style'=>'width:600px; padding: 0px'
                             )
@@ -418,8 +429,8 @@
                             __('Esta seguro que quiere eliminar el conceptos # %s?', $conceptoobligatorio['id']));
                     }
                     ?>
-                    </td>
-                </tr>
+                </td>
+            </tr>
                 <?php
                 $i++;
             }

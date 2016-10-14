@@ -95,8 +95,51 @@ class EmpleadosController extends AppController {
 		}
 
 		$this->set(compact('periodo'));
-		if(!isset($tipoliquidacion)||$tipoliquidacion==null||$tipoliquidacion==""){
-			$tipoliquidacion=1;
+
+        $optionsLiquidaciones = array(
+            'contain'=>array(
+                'Conveniocolectivotrabajo'=>array(
+                    'Cctxconcepto'=>array(
+                        'Valorrecibo'=>array(
+                            'conditions'=>array(
+                                'Valorrecibo.empleado_id'=>$empleadoamostrar,
+                            ),
+                            'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
+                        ),
+                        'conditions'=>array(
+                            'OR'=>array(
+                                'AND'=>array(
+                                    'Cctxconcepto.cliente_id' => $cliid,
+                                    'Cctxconcepto.campopersonalizado' => 1,
+                                ),
+                                'Cctxconcepto.campopersonalizado' => 0,
+                            ),
+                        ),
+                        'fields'=>array('id'),
+                        'limit' => 1
+                    ),
+                    'fields'=>array('id'),
+                ),
+            ),
+            'fields'=>array('id','liquidaprimeraquincena','liquidasegundaquincena','liquidamensual','liquidapresupuestoprimera','liquidapresupuestosegunda','liquidapresupuestomensual'),
+            'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)
+        );
+        $tieneLiquidacion = $this->Empleado->find('first', $optionsLiquidaciones);
+
+		if(!isset($tipoliquidacion)||$tipoliquidacion==null||$tipoliquidacion==""||$tipoliquidacion=="undefined"){
+            if($tieneLiquidacion['Empleado']['liquidaprimeraquincena']==1){
+                $tipoliquidacion=1;
+            }elseif ($tieneLiquidacion['Empleado']['liquidasegundaquincena']) {
+                $tipoliquidacion = 2;
+            }elseif ($tieneLiquidacion['Empleado']['liquidamensual']) {
+                $tipoliquidacion = 3;
+            }elseif ($tieneLiquidacion['Empleado']['liquidapresupuestoprimera']) {
+                $tipoliquidacion = 4;
+            }elseif ($tieneLiquidacion['Empleado']['liquidapresupuestosegunda']) {
+                $tipoliquidacion = 5;
+            }elseif ($tieneLiquidacion['Empleado']['liquidapresupuestomensual']) {
+                $tipoliquidacion = 6;
+            }
 		}
 		$optionsempleados = array(
 			'contain'=>array(
@@ -126,36 +169,6 @@ class EmpleadosController extends AppController {
 			'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)
 		);
 		$empleado = $this->Empleado->find('first', $optionsempleados);
-
-        $optionsLiquidaciones = array(
-            'contain'=>array(
-                'Conveniocolectivotrabajo'=>array(
-                    'Cctxconcepto'=>array(
-                        'Valorrecibo'=>array(
-                            'conditions'=>array(
-                                'Valorrecibo.empleado_id'=>$empleadoamostrar,
-                            ),
-                            'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
-                        ),
-                        'conditions'=>array(
-                            'OR'=>array(
-                                'AND'=>array(
-                                    'Cctxconcepto.cliente_id' => $cliid,
-                                    'Cctxconcepto.campopersonalizado' => 1,
-                                ),
-                                'Cctxconcepto.campopersonalizado' => 0,
-                            ),
-                        ),
-                        'fields'=>array('id'),
-						'limit' => 1
-                    ),
-                    'fields'=>array('id'),
-                ),
-            ),
-            'fields'=>array('id'),
-            'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)
-        );
-        $tieneLiquidacion = $this->Empleado->find('first', $optionsLiquidaciones);
 		/*
          * Primero vamos a ordenar los cctxconcepto en base a la seccion a la que pertenece
          * */

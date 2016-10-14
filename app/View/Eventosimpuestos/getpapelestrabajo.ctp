@@ -217,6 +217,30 @@
                     echo $this->Form->input('Eventosimpuesto.0.monc',array('label'=>'Monto a Favor','default'=>"0",'style'=>'width:113px','value'=>$montoc));
                 }
                 echo $this->Form->input('Eventosimpuesto.0.descripcion',array('default'=>"-", 'style'=>'width:100px','value'=>$descripcion));
+
+                //vamos a cargar el saldo a favor del periodo actual
+                //La variable se llama $SaldosLibreDisponibilidadimpcli por que la creamos con el IVA pero son Saldos A Favor del periodo actual
+                if(isset($SaldosLibreDisponibilidadimpcli)){
+                    foreach ($SaldosLibreDisponibilidadimpcli as $conceptosrestante){
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.id',array(
+                            'value'=>$conceptosrestante['id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.cliente_id',array(
+                            'value'=>$conceptosrestante['cliente_id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.impcli_id',array(
+                            'value'=>$conceptosrestante['impcli_id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.conceptostipo_id',array(
+                            'value'=>$conceptosrestante['conceptostipo_id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.periodo',array(
+                            'value'=>$conceptosrestante['periodo'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.montoretenido',array(
+                            'value'=>$conceptosrestante['montoretenido'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.fecha',array(
+                            'value'=>$conceptosrestante['fecha'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.descripcion',array(
+                            'value'=>$conceptosrestante['descripcion'],'type'=>'hidden'));
+                    }
+                }
+                echo "</br>";
             break;
             case 'provincia':
                 if(count($impcliprovincias)>0){
@@ -233,6 +257,9 @@
                             $descripcion = '';
                             $mybaseprorrateada = array();
                             foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada estprovincia
+                                if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                                }
                                 if($eventosimpuesto['Eventosimpuesto']['partido_id']==$impcliprovincia['partido_id']){
                                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
@@ -381,6 +408,9 @@
                             $descripcion = '';
                             foreach ($eventosimpuestos as $key => $eventosimpuesto){
                                 //vamos a buscar el evento para ver si ya esta creada estprovincia
+                                if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                                }
                                 if($eventosimpuesto['Eventosimpuesto']['localidade_id']==$impcliprovincia['localidade_id']){
                                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
@@ -545,7 +575,7 @@
                                    'value'=>$conceptosrestante['montoretenido'],'type'=>'text',
                                     'label'=>'Saldo de Libre Disponibilidad')
                                 );
-                                echo $this->HTML->image('ii.png',array('style'=>'width:15px;height:15px','title'=>"Este campo s guardo como un Pago a Cuenta del tipo Saldo de Libre Disponibilidaden el periodo ".$periodo));
+                                echo $this->HTML->image('ii.png',array('style'=>'width:15px;height:15px','title'=>"Este campo se ha guardado como un Pago a Cuenta del tipo Saldo de Libre Disponibilidaden el periodo ".$periodo));
                                 echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.fecha',array(
                                     'value'=>$conceptosrestante['fecha'],'type'=>'hidden'));
                                 echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.descripcion',array(
@@ -562,6 +592,8 @@
             if(!$eventosimpuestos[$key]['Eventosimpuesto']['mostrado']){
                 $faltanEventosAMostrar = true;
                 break;
+            }else{
+
             }
         }
         echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a>';

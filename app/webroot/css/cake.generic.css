@@ -2419,7 +2419,7 @@ transition: all 0.4s ease-in-out;
 }
 
 .tbl_planpago_pagar td{
-	border: 1px solid #FFF;
+	/*border: 1px solid #FFF;*/
 }
 .tbl_planpago_pagar input{
 	width: 50%;
@@ -2433,7 +2433,7 @@ transition: all 0.4s ease-in-out;
 
 /*para probar*/
 .tabla td{
-	border: 1px solid #000;
+	/*border: 1px solid #000;*/
 
 }
 .cuadro{
@@ -2450,7 +2450,7 @@ transition: all 0.4s ease-in-out;
 .div_view{
 	float:right;
 	width: 98%;
-	border:1px solid red; 
+	/*border:1px solid red;*/
 	padding:10px 1%;
 	background-color: #FFF;
 	margin: 0px 1%;

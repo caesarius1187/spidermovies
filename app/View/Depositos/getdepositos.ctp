@@ -22,7 +22,7 @@
 	        'div' => array(
 	        	'style'=>'width:100%; cursor:pointer; margin-top: 0;'
       		),
-      		'style'=>'width:380px; margin-bottom:10px; float: left;'
+      		'style'=>'width:380px; margin-bottom:10px; float: left;padding: 0px;'
       		//'type' => 'button',
       		//'class' => 'submit'     		
 	    );

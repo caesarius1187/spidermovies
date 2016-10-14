@@ -839,7 +839,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                     $empleadolista['nombre'],
                     array(
                         'class'=>$classButtonEmpleado,
-                        'onClick'=>"cargarSueldoEmpleado('".$cliente["Cliente"]['id']."','".$periodo."','".$empleadolista['id']."',1)",
+                        'onClick'=>"cargarSueldoEmpleado('".$cliente["Cliente"]['id']."','".$periodo."','".$empleadolista['id']."')",
                         'id'=>'buttonEmpleado'.$empleadolista['id'],
                     ),
                     array()
