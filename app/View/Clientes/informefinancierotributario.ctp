@@ -654,7 +654,6 @@
                     </td>
                 </tr>                    
            </table>
-                 
         </td>
     </tr>
     <tr class="rowMovimientoCliente">

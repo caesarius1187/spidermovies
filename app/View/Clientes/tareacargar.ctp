@@ -18,7 +18,7 @@ $tieneAgenteDePercepcionIIBB=$cliente["Cliente"]['tieneAgenteDePercepcionIIBB'];
 $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePercepcionActividadesVarias'];
 ?>
 <!--<div class="" style="float:none; width: 100%; margin: 0px 4px">  -->
-  <div class="index" style="padding: 0px 1%; margin-bottom: 10px;">      
+  <div class="index" style="padding: 0px 1%; margin-bottom: 10px;" id="headerCliente">
       <div style="width:30%; float: left;padding-top:10px">
         Cliente: <?php echo $cliente["Cliente"]['nombre']?>
       </div>
@@ -43,7 +43,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
     <?php /*****************************TABS*****************************************/ ?>
     <?php /**************************************************************************/ ?> 
   <div id="bodyCarga" style="width:100%;height:35px;">
-    <div class="" style="width:100%;height:30px; margin-left:10px ">
+    <div class="" style="width:100%;height:30px; margin-left:10px " id="divAllTabs">
       <div class="cliente_view_tab_active" style="width:23%;margin-right:0px"  onClick="" id="tabVentas">
         <?php
            echo $this->Form->label(null, $text = 'Ventas',array('style'=>'text-align:center;margin-top:5px;cursor:pointer')); 
@@ -764,39 +764,40 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
    <?php /**************************************************************************/ ?>
    <?php /*****************************Novedades************************************/ ?>
    <?php /**************************************************************************/ ?>
-      <div id="form_sueldo" class="tabNovedades index" style="width:96%;float:left;">
-          <?php
-          echo $this->Form->create('Sueldo',array(
-                  'controller'=>'sueldos',
-                  'id'=>'saveSueldosForm',
-                  'action'=>'addajax',
-                  'class'=>'formTareaCarga',
-              )
-          );
-          echo $this->Form->input('cliente_id',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
-          echo $this->Form->input('periodo',array('value'=>$periodo,'type'=>'hidden'));
-          echo $this->Form->input('fecha', array(
-                  'class'=>'datepicker',
-                  'type'=>'text',
-                  'label'=>'Fecha',
-                  'default'=>"",
-                  'readonly'=>'readonly',
-                  'required'=>true,
-                  'style' => 'width:80px;'
-              )
-          );
-          echo $this->Form->input('monto', array(
-                  'label'=> 'Monto',
-              )
-          );
-          echo $this->Form->submit('+', array('type'=>'image',
-              'src' => $this->webroot.'img/add_view.png',
-              'class'=>'imgedit',
-              'title'=>'Agregar',
-              'style'=>'width:25px;height:25px;margin-top:8px;'));
-          echo $this->Form->end();  ?>
-      </div>
-      <div style="overflow:auto;width:96%; float:left;min-height: 120px; margin-top:10px;" class="tareaCargarIndexTable tabNovedades index">
+      <div id="formOldSueldo">
+          <div id="form_sueldo" class="tabNovedades index" style="width:96%;float:left;">
+              <?php
+              echo $this->Form->create('Sueldo',array(
+                      'controller'=>'sueldos',
+                      'id'=>'saveSueldosForm',
+                      'action'=>'addajax',
+                      'class'=>'formTareaCarga',
+                  )
+              );
+              echo $this->Form->input('cliente_id',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
+              echo $this->Form->input('periodo',array('value'=>$periodo,'type'=>'hidden'));
+              echo $this->Form->input('fecha', array(
+                      'class'=>'datepicker',
+                      'type'=>'text',
+                      'label'=>'Fecha',
+                      'default'=>"",
+                      'readonly'=>'readonly',
+                      'required'=>true,
+                      'style' => 'width:80px;'
+                  )
+              );
+              echo $this->Form->input('monto', array(
+                      'label'=> 'Monto',
+                  )
+              );
+              echo $this->Form->submit('+', array('type'=>'image',
+                  'src' => $this->webroot.'img/add_view.png',
+                  'class'=>'imgedit',
+                  'title'=>'Agregar',
+                  'style'=>'width:25px;height:25px;margin-top:8px;'));
+              echo $this->Form->end();  ?>
+          </div>
+          <div style="overflow:auto;width:96%; float:left;min-height: 120px; margin-top:10px;" class="tareaCargarIndexTable tabNovedades index">
           <table class="" style="border:1px solid white" id="bodyTablaSueldos">
               <thead>
               <tr>
@@ -827,6 +828,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
               ?>
               </tbody>
           </table>
+      </div>
       </div>
       <div id="form_empleados" class="tabNovedades index" style="width:96%;float:left;">
             <?php

@@ -893,6 +893,74 @@ $(document).ready(function() {
         }
     });
     numeral.language('id');
+
+    var beforePrint = function() {
+        console.log('Functionality to run before printing.');
+        $('#header').hide();
+        $('#Formhead').hide();
+        $('#headerCliente').hide();
+        $('#divAllTabs').hide();
+        $('#formOldSueldo').hide();
+        $('#form_empleados').hide();
+        $('.btn_empleados').hide();
+        $('.btn_empleados_liq').hide();
+        $('.btn_cargarliq_selected').hide();
+        $('.btn_cargarliq_liq').hide();
+        $('.btn_cargarliq').hide();
+        $('.btn_sueldo').hide();
+        $('.btn_imprimir').hide();
+        $('#divLiquidarActividadesVariar').hide();
+        $('#TituloPdtSueldo').hide();
+        $('#index').css('float','left');
+        $('#padding').css('padding','0px');
+        $('#padding').css('margin','0px');
+        $('#index').css('font-size','6px');
+        $('#index').css('border-color','#FFF');
+        $('#sueldoContent').css('width','648px');
+        $('#tblLibroSueldo').css('padding','0');
+        $('#sheetCooperadoraAsistencial').css('width','100%');
+        $('#sheetCooperadoraAsistencial').css('margin','0');
+        $('#tblLibroSueldo').css('font-size','9px');
+    };
+    var afterPrint = function() {
+        console.log('Functionality to run after printing');
+        $('#index').css('font-size','14px');
+        $('#header').show();
+        $('#Formhead').show();
+        $('#form_empleados').show();
+        $('#headerCliente').show();
+        $('#divAllTabs').show();
+        $('#formOldSueldo').show();
+        $('.btn_empleados').show();
+        $('.btn_empleados_liq').show();
+        $('.btn_cargarliq_selected').show();
+        $('.btn_cargarliq_liq').show();
+        $('.btn_cargarliq').show();
+        $('.btn_sueldo').show();
+        $('.btn_imprimir').show();
+        $('#divLiquidarActividadesVariar').show();
+        $('#TituloPdtSueldo').show();
+        $('#index').css('float','right');
+        $('#padding').css('padding','10px 1%');
+        $('#sueldoContent').css('width','1340px');
+        $('#tblLibroSueldo').css('padding','0 10%');
+        $('#sheetCooperadoraAsistencial').css('margin','10px 25px');
+        $('#sheetCooperadoraAsistencial').css('width','96%');
+        $('#tblLibroSueldo').css('font-size','12px');
+    };
+    if (window.matchMedia) {
+        var mediaQueryList = window.matchMedia('print');
+        mediaQueryList.addListener(function(mql) {
+            if (mql.matches) {
+                beforePrint();
+            } else {
+                afterPrint();
+            }
+        });
+    }
+    window.onbeforeprint = beforePrint;
+    window.onafterprint = afterPrint;
+
 });
     function calcularFooterTotales(mitabla){
         mitabla.columns( '.sum' ).every( function () {
@@ -1304,8 +1372,7 @@ $(document).ready(function() {
       $(".tdViewSueldo"+comid).show();
       $("#tdsueldo"+comid).remove(); 
     }
-  
-  function modificarVenta(venid){  
+    function modificarVenta(venid){
     var tieneMonotributo = $("#VentaTieneMonotributo").val();
     var tieneIVA = $("#VentaTieneIVA").val();
     var tieneIVAPercepciones = $("#VentaTieneIVAPercepciones").val();
@@ -1334,11 +1401,11 @@ $(document).ready(function() {
           $("#"+rowid).html(response);
 
           //$(".tdViewVenta"+venid).hide();
-          
+
           reloadInputDates();
           //Aca vamos a agregar los controles para este formulario tal cual los ejecutamos al agregar una venta
           $("#VentaFormEdit"+venid+" #VentaIvapercep").on('change paste', function() {
-            calcularivaytotal("VentaFormEdit"+venid);    
+            calcularivaytotal("VentaFormEdit"+venid);
           });
           $("#VentaFormEdit"+venid+" #VentaImpinternos").on('change paste', function() {
             calcularivaytotal("VentaFormEdit"+venid);
@@ -1381,23 +1448,23 @@ $(document).ready(function() {
                   tipodecomprobanteseleccionado="C";
                  // $('#VentaFormEdit'+venid+' #VentaAlicuota').find("option:not(:hidden):eq(0)");
                 }
-                
+
 
               }
             }, this);
           });
           $('.chosen-select').chosen({search_contains:true});
-          $('#VentaFormEdit'+venid).submit(function(){ 
-            //serialize form data 
-            var formData = $(this).serialize(); 
-            //get form action 
-            var formUrl = $(this).attr('action'); 
-                                        
-            $.ajax({ 
-              type: 'POST', 
-              url: formUrl, 
-              data: formData, 
-              success: function(data,textStatus,xhr){ 
+          $('#VentaFormEdit'+venid).submit(function(){
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+
+            $.ajax({
+              type: 'POST',
+              url: formUrl,
+              data: formData,
+              success: function(data,textStatus,xhr){
                     try
                     {
                        var respuesta = JSON.parse(data);
@@ -1406,23 +1473,23 @@ $(document).ready(function() {
                     catch(e)
                     {
                       var rowid="rowventa"+venid;
-                      $("#"+rowid).html( data); 
+                      $("#"+rowid).html( data);
                     }
-                                                 
-                }, 
-              error: function(xhr,textStatus,error){ 
-                alert(textStatus); 
-              } 
-            }); 
-            return false; 
+
+                },
+              error: function(xhr,textStatus,error){
+                alert(textStatus);
+              }
+            });
+            return false;
           });
-        },                
+        },
        error:function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);
        }
     });
-  }
-  function eliminarVenta(venid){
+    }
+    function eliminarVenta(venid){
       var r = confirm("Esta seguro que desea eliminar esta venta?. Es una accion que no podra deshacer.");
       if (r == true) {
         $.ajax({
@@ -1441,8 +1508,8 @@ $(document).ready(function() {
                            callAlertPopint(mirespuesta.respuesta);
                         }else{
                           callAlertPopint("Error por favor intente mas tarde");
-                        }        
-                        
+                        }
+
                    },
            error:function (XMLHttpRequest, textStatus, errorThrown) {
                   alert(textStatus);
@@ -1455,8 +1522,8 @@ $(document).ready(function() {
           callAlertPopint(txt);
       }/*
       */
-  }
-  function modificarCompra(comid){  
+    }
+    function modificarCompra(comid){
     var data ="";
     var tieneMonotributo = $("#VentaTieneMonotributo").val();
     var tieneIVA = $("#VentaTieneIVA").val();
@@ -1523,7 +1590,7 @@ $(document).ready(function() {
                   $("#CompraFormEdit"+comid+" #CompraImputacion").prop("readonly",false);
                   $("#CompraFormEdit"+comid+" #CompraIvapercep").prop('readonly', false);
                   $("#CompraFormEdit"+comid+" #CompraTotal").prop("readonly",true);
-                  //Permitir editar los campos relacionados a IVA 
+                  //Permitir editar los campos relacionados a IVA
                   tipodecomprobanteCompraseleccionado = 'A';
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='monotributista']").hide();
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='responsableinscripto']").show();
@@ -1534,7 +1601,7 @@ $(document).ready(function() {
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='5']").show();
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='10.5']").show();
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='21']").show();
-                  $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='27']").show();          
+                  $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='27']").show();
                   $("#CompraAlicuota").val($("#CompraAlicuota option:eq(1)").val());
                 }else  if(comprobante.Comprobante.tipo=="B"){
                   $("#CompraFormEdit"+comid+" #CompraNeto").prop("readonly",false);
@@ -1587,17 +1654,17 @@ $(document).ready(function() {
           });
           $('.chosen-select').chosen({search_contains:true});
 
-          $('#CompraFormEdit'+comid).submit(function(){ 
-            //serialize form data 
-            var formData = $(this).serialize(); 
-            //get form action 
-            var formUrl = $(this).attr('action'); 
-                                        
-            $.ajax({ 
-              type: 'POST', 
-              url: formUrl, 
-              data: formData, 
-              success: function(data,textStatus,xhr){ 
+          $('#CompraFormEdit'+comid).submit(function(){
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+
+            $.ajax({
+              type: 'POST',
+              url: formUrl,
+              data: formData,
+              success: function(data,textStatus,xhr){
                     try
                     {
                        var respuesta = JSON.parse(data);
@@ -1607,22 +1674,22 @@ $(document).ready(function() {
                     {
                       var rowid="rowcompra"+comid;
                       $("#"+rowid).html( data);
-                    } 
+                    }
 
-                }, 
-              error: function(xhr,textStatus,error){ 
-                alert(textStatus); 
-              } 
-            }); 
-            return false; 
+                },
+              error: function(xhr,textStatus,error){
+                alert(textStatus);
+              }
+            });
+            return false;
           });
-        },                
+        },
        error:function (XMLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown);
        }
     });
-  }
-  function eliminarCompra(comid){
+    }
+    function eliminarCompra(comid){
       var r = confirm("Esta seguro que desea eliminar esta compra?. Es una accion que no podra deshacer.");
       if (r == true) {
         $.ajax({
@@ -1684,7 +1751,7 @@ $(document).ready(function() {
         }/*
          */
     }
-  function modificarSueldo(sueid){  
+    function modificarSueldo(sueid){
     var data ="";
     $.ajax({
         type: "post",  // Request method: post, get
@@ -1728,7 +1795,7 @@ $(document).ready(function() {
        }
     });
   }
-  function eliminarSueldo(sueid){
+    function eliminarSueldo(sueid){
       var r = confirm("Esta seguro que desea eliminar este sueldo?. Es una accion que no podra deshacer.");
       if (r == true) {
         $.ajax({
@@ -1759,7 +1826,7 @@ $(document).ready(function() {
       }/*
       */
   }
-  function modificarConceptosrestante(conid){  
+    function modificarConceptosrestante(conid){
     var data ="";
     $.ajax({
         type: "post",  // Request method: post, get
@@ -1870,126 +1937,147 @@ $(document).ready(function() {
     });
   }
 
-function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion){
-    var data ="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/empleados/papeldetrabajosueldos/"+clienteid+"/"+periodo+"/"+empid+"/"+liquidacion, // URL to request
-        data: data,  // post data
-        success: function(response) {
-            $(".btn_empleados_liq ").each(function(){
-                $(this).removeClass("btn_empleados_selected");
-            });
-            $(".btn_empleados").each(function(){
-                $(this).removeClass("btn_empleados_selected");
-            });
-            $("#buttonEmpleado"+empid).addClass("btn_empleados_selected");
-            $("#divSueldoForm").html(response);
-            activarCalXOnSueldos();
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
-            return false;
-        }
-    });
-    return false;
-}
-function cargarLibroSueldo(empid,periodo){
-    var data ="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/empleados/papeldetrabajolibrosueldo/"+empid+"/"+periodo, // URL to request
-        data: data,  // post data
-        success: function(response) {
-            $("#sueldoContent").html(response);
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
-            return false;
-        }
-    });
-    return false;
-}
-var tablaSueldoCalx;
-function ocultarFunciones(){
-
-    $(".funcionAAplicar").each(function() {
-        var posicion = $(this).attr('posicion');
-        var seccion = $(this).attr('seccion');
-        var headsection = $(this).attr('headseccion');
-
-        if($('#Valorrecibo'+posicion+'Valor').val()==0){
-            //tengo que ocultar el row solo si no es cabeza de seccion por que sino me oculta toda la seccion
-            if(headsection=="0"){
-
-                //si esta visible tengo que mermar en 1 el rowspan
-                var rowspan = 0;
-                var rowVisible =  $(this).closest('tr').is(':visible');
-                if(rowVisible==true) {
-                    rowspan = $('#seccion'+seccion).attr('rowspan');
-                    rowspan = rowspan - 1;
-                    $('#seccion'+seccion).attr('rowspan',rowspan);
-                }
-                $(this).closest('tr').hide();
-            }
-
-        }else{
-
-            //si esta oculto tengo que aumentar en 1 el rowspan
-            var rowspan = 0;
-            var rowVisible = $(this).is(':visible');
-            if(rowVisible==false ) {
-                rowspan = $('#seccion' + seccion).attr('rowspan')*1;
-                rowspan = rowspan + 1;
-                $('#seccion'+seccion).attr('rowspan',rowspan);
-            }
-            //tengo que mostrar el row
-            $(this).closest('tr').show();
-        }
-    });
-}
-function activarCalXOnSueldos(){
-    $(".funcionAAplicar").on('change', function() {
-        var posicion = $(this).attr('posicion');
-          $('#ValorreciboPapeldetrabajosueldosForm').calx(
-            'getCell',
-            $('#Valorrecibo'+posicion+'Valor').attr('data-cell')
-        ).setFormula($(this).val());
-        tablaSueldoCalx.calx('calculate');
-    });
-    tablaSueldoCalx = $('#ValorreciboPapeldetrabajosueldosForm').calx({
-        language : 'id'
-    });
-    tablaSueldoCalx.submit(function(){
-        //serialize form data
-        var formData = $(this).serialize();
-        //get form action
-        var formUrl = $(this).attr('action');
+    function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion){
+        var data ="";
         $.ajax({
-            type: 'POST',
-            url: formUrl,
-            data: formData,
-            success: function(data,textStatus,xhr){
-                callAlertPopint("Sueldo guardado, los totales se han recalculado.");
-                $("#divSueldoForm").html(data);
-                var empid = $("#Valorrecibo0EmpleadoId").val();
-                $("#buttonEmpleado"+empid).addClass("btn_empleados_liq");
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/empleados/papeldetrabajosueldos/"+clienteid+"/"+periodo+"/"+empid+"/"+liquidacion, // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $(".btn_empleados_liq ").each(function(){
+                    $(this).removeClass("btn_empleados_selected");
+                });
+                $(".btn_empleados").each(function(){
+                    $(this).removeClass("btn_empleados_selected");
+                });
+                $("#buttonEmpleado"+empid).addClass("btn_empleados_selected");
+                $("#divSueldoForm").html(response);
                 activarCalXOnSueldos();
+                var pdtsueldo = $('#pdtsueldo');
+                pdtsueldo.floatThead();
             },
-            error: function(xhr,textStatus,error){
-                callAlertPopint(textStatus);
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                return false;
             }
         });
         return false;
-      });
-    ocultarFunciones();
+    }
+    function cargarLibroSueldo(empid,periodo){
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/empleados/papeldetrabajolibrosueldo/"+empid+"/"+periodo, // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $("#sueldoContent").html(response);
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                return false;
+            }
+        });
+        return false;
+    }
+    function cargarReciboSueldo(empid,periodo){
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/empleados/papeldetrabajorecibosueldo/"+empid+"/"+periodo, // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $("#sueldoContent").html(response);
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                return false;
+            }
+        });
+        return false;
+    }
+    function imprimirElemento(elemento){
+        PopupPrint($(elem).html());
+    }
+    var tablaSueldoCalx;
+    function ocultarFunciones(){
 
-    $('#ValorreciboPapeldetrabajosueldosForm input').change(function(){
-        $('#ValorreciboPapeldetrabajosueldosForm').calx({ });
+        $(".funcionAAplicar").each(function() {
+            var posicion = $(this).attr('posicion');
+            var seccion = $(this).attr('seccion');
+            var headsection = $(this).attr('headseccion');
+
+            if($('#Valorrecibo'+posicion+'Valor').val()==0){
+                //tengo que ocultar el row solo si no es cabeza de seccion por que sino me oculta toda la seccion
+                if(headsection=="0"){
+
+                    //si esta visible tengo que mermar en 1 el rowspan
+                    var rowspan = 0;
+                    var rowVisible =  $(this).closest('tr').is(':visible');
+                    if(rowVisible==true) {
+                        rowspan = $('#seccion'+seccion).attr('rowspan');
+                        rowspan = rowspan - 1;
+                        $('#seccion'+seccion).attr('rowspan',rowspan);
+                    }
+                    $(this).closest('tr').hide();
+                }
+
+            }else{
+
+                //si esta oculto tengo que aumentar en 1 el rowspan
+                var rowspan = 0;
+                var rowVisible = $(this).is(':visible');
+                if(rowVisible==false ) {
+                    rowspan = $('#seccion' + seccion).attr('rowspan')*1;
+                    rowspan = rowspan + 1;
+                    $('#seccion'+seccion).attr('rowspan',rowspan);
+                }
+                //tengo que mostrar el row
+                $(this).closest('tr').show();
+            }
+        });
+    }
+    function activarCalXOnSueldos(){
+        $(".funcionAAplicar").on('change', function() {
+            var posicion = $(this).attr('posicion');
+              $('#ValorreciboPapeldetrabajosueldosForm').calx(
+                'getCell',
+                $('#Valorrecibo'+posicion+'Valor').attr('data-cell')
+            ).setFormula($(this).val());
+            tablaSueldoCalx.calx('calculate');
+        });
+        tablaSueldoCalx = $('#ValorreciboPapeldetrabajosueldosForm').calx({
+            language : 'id'
+        });
+        tablaSueldoCalx.submit(function(){
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: formUrl,
+                data: formData,
+                success: function(data,textStatus,xhr){
+                    callAlertPopint("Sueldo guardado, los totales se han recalculado.");
+                    $("#divSueldoForm").html(data);
+                    var empid = $("#Valorrecibo0EmpleadoId").val();
+                    $("#buttonEmpleado"+empid).addClass("btn_empleados_liq");
+                    activarCalXOnSueldos();
+                },
+                error: function(xhr,textStatus,error){
+                    callAlertPopint(textStatus);
+                }
+            });
+            return false;
+          });
         ocultarFunciones();
-    });
-}
-function realizarEventoCliente(periodo,clienteid,estadotarea){
+
+        $('#ValorreciboPapeldetrabajosueldosForm input').change(function(){
+            $('#ValorreciboPapeldetrabajosueldosForm').calx({ });
+            ocultarFunciones();
+        });
+    }
+    function realizarEventoCliente(periodo,clienteid,estadotarea){
   var datas =  "0/tarea3/"+periodo+"/"+clienteid;
   var data ="";
   $.ajax({
@@ -2014,4 +2102,29 @@ function realizarEventoCliente(periodo,clienteid,estadotarea){
     }
   });
   return false;
+}
+
+function PrintElem(elem)
+{
+   // PopupElement($(elem).html());
+    window.print();
+
+}
+
+function PopupElement(data)
+{
+    var mywindow = window.open('', 'my div', 'height=400,width=1200');
+    mywindow.document.write('<html><head><title>my div</title>');
+    /*optional stylesheet*/ //mywindow.document.write('<link rel="stylesheet" href="main.css" type="text/css" />');
+    mywindow.document.write('</head><body >');
+    mywindow.document.write(data.html());
+    mywindow.document.write('</body></html>');
+
+    mywindow.document.close(); // necessary for IE >= 10
+    mywindow.focus(); // necessary for IE >= 10
+
+    mywindow.print();
+    mywindow.close();
+
+    return true;
 }

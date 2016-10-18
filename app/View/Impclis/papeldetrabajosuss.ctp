@@ -9,7 +9,7 @@
 		CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
 		Periodo: <?php echo $periodo; ?>
 	</div>
-	<div id="sheetCooperadoraAsistencial" class="index">
+	<div id="sheetCooperadoraAsistencial" class="index"  >
 		<!--Esta es la tabla original y vamos a recorrer todos los empleados por cada una de las
 		rows por que -->
         <?php
@@ -518,836 +518,844 @@
                     ";
         ?>
         <table id="tblDatosAIngresar" class="tbl_border" cellspacing="0">
-            <tr>
-                <td></td>
-                <td>Legajo</td>
-                <?php
+            <thead>
+                <tr>
+                    <td></td>
+                    <td>Legajo</td>
+                    <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                         echo "<td>".$empleado['legajo']."</td>";
                     }
                     ?>
-            </tr>
-            <tr>
-                <td rowspan="27" style=" vertical-align:middle!important;">
-                    <div >
-                        Remunerativos
-                    </div>
-                </td>
-                <td>Apellido y Nombre</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>".$empleado['nombre']."</td>";
-                }
-                ?>
-            </tr><!--1-->
-            <tr>
-                <td>CUIL</td>
-                <?php
-                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                            echo "<td>".$empleado['cuit']."</td>";
-                    }
-                ?>
-            </tr>
-            <tr>
-                <td>OS del Pers de Dirección</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo $empleadoDatos[$empleadoid]['osdelpersdedireccion']?'SI':'NO';
-                    echo "</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Cobertura ART</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo $empleadoDatos[$empleadoid]['coberturaart']?'SI':'NO';
-                    echo "</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Seguro de Vida</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo $empleadoDatos[$empleadoid]['segurodevida']?'SI':'NO';
-                    echo "</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Código AFIP</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>".$empleado['codigoafip']."</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Día de inicio</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>" . $empleado['fechaingreso'] . "</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Q Días Trabajados u Horas</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo $empleadoDatos[$empleadoid]['horasDias']."</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Sueldo</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['sueldo'], 2, ",", ".")."</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Adicionales</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo $empleadoDatos[$empleadoid]['adicionales']."</td>";
-                }
-                ?>
-            </tr><!--10-->
-            <tr>
-                <td>Cantidad de Horas Extra</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo $empleadoDatos[$empleadoid]['horasextras']."</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Importe Horas extras</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['importehorasextras'], 2, ",", ".")."</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>SAC</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['SAC'], 2, ",", ".")."</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Vacaciones</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['vacaciones'], 2, ",", ".")."</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Premios</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['premios'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td rowspan="3">
-                    Totales
-                </td>
-            </tr>
-            <tr>
-                <td>Maternidad
-                </td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo $empleadoDatos[$empleadoid]['maternidad']?'SI':'NO'."</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Conceptos no Remunerativos</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['conceptosnorem'], 2, ",", ".")."</td>";
-                }
-                ?>
-            </tr>
-            <tr>
-                <td>Rem. Total</td>
-                <?php
-                $remtotal=0;$rem1=0;$rem2=0;$rem3=0;$rem4=0;
-                $rem5=0;$rem6=0;$rem7=0;$rem8=0;$rem9=0;
-                //Seguridad Social
-                $seguridadsocialaporteadicional=0;
-                $seguridadsocialcontribtareadif=0;
-                //Obra Social
-                $obrasocialaporteadicional=0;
-                $obrasocialcontribucionadicional=0;
-                //Contrib SS
-                $ContribSSjubilacionsipa=0;$INSSJP=0;
-                $ContribSScontribtareadif=0;$FNE=0;$ContribSSANSSAL=0;$asignacionfamiliar=0;
-                $totalContribucionesSS=0;
-                //RENATEA
-                $contribucionrenatea = 0;
-                $trabajadorAgrario = false;
-                $aporterenatea = 0;
-                //Aportes SS
-                $AporteSSjubilacionsipa=0;
-                $ley19032 = 0;
-                $AporteSSaporteadicional=0;
-                $AporteSSANSSAL=0;;
-                $AporteSStotal=0;
-                //Contribucion OS
-                $ContribucionesOScontribucionos=0;
-                $ContribucionesOScontribucionadicionalos=0;
-                $ContribucionesOSANSSAL=0;
-                $ContribucionesOStotal=0;
-                //Aportes OS
-                $AporteOSaporteos=0;
-                $AporteOSaporteadicionalos=0;
-                $AporteOSANSSAL=0;
-                $AporteOSadicionaladherente = 0;
-                $AporteOStotal = 0;
+                    <td style="width:111px;border: 0px;"></td>
+                </tr>
+                <tr>
+                    <td >
 
-                $SeguroDeVidaObligatorio = 0;
-                $ARTart = 0;
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    $empleadoid = $empleado['id'];
-                    //en este primer loop vamos a calcular todos los siguientes totales
-                    $remtotal+=$empleadoDatos[$empleadoid]['remtotal'];
-                    $rem1+=$empleadoDatos[$empleadoid]['rem1'];
-                    $rem2+=$empleadoDatos[$empleadoid]['rem2'];
-                    $rem3+=$empleadoDatos[$empleadoid]['rem3'];
-                    $rem4+=$empleadoDatos[$empleadoid]['rem4'];
-                    $rem5+=$empleadoDatos[$empleadoid]['rem5'];
-                    $rem6+=$empleadoDatos[$empleadoid]['rem6'];
-                    $rem7+=$empleadoDatos[$empleadoid]['rem7'];
-                    $rem8+=$empleadoDatos[$empleadoid]['rem8'];
-                    $rem9+=$empleadoDatos[$empleadoid]['rem9'];
-                    $seguridadsocialaporteadicional+=$empleadoDatos[$empleadoid]['seguridadsocialaporteadicional'];
-                    $seguridadsocialcontribtareadif+=$empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif'];
-                    $obrasocialaporteadicional+=$empleadoDatos[$empleadoid]['obrasocialaporteadicional'];
-                    $obrasocialcontribucionadicional+=$empleadoDatos[$empleadoid]['obrasocialcontribucionadicional'];
-                    $ContribSSjubilacionsipa+=$empleadoDatos[$empleadoid]['ContribSSjubilacionsipa'];
-                    $INSSJP+=$empleadoDatos[$empleadoid]['INSSJP'];
-                    $ContribSScontribtareadif+=$empleadoDatos[$empleadoid]['ContribSScontribtareadif'];
-                    $FNE+=$empleadoDatos[$empleadoid]['FNE'];
-                    $ContribSSANSSAL+=$empleadoDatos[$empleadoid]['ContribSSANSSAL'];
-                    $asignacionfamiliar+=$empleadoDatos[$empleadoid]['asignacionfamiliar'];
-                    $totalContribucionesSS+=$empleadoDatos[$empleadoid]['totalContribucionesSS'];
-                    //RENATEA
-                    $contribucionrenatea+=$empleadoDatos[$empleadoid]['contribucionrenatea'];
-                    $aporterenatea+=$empleadoDatos[$empleadoid]['aporterenatea'];
-                    //Aportes SS
-                    $AporteSSjubilacionsipa+=$empleadoDatos[$empleadoid]['AporteSSjubilacionsipa'];
-                    $ley19032 +=$empleadoDatos[$empleadoid]['ley19032'];
-                    $AporteSSaporteadicional+=$empleadoDatos[$empleadoid]['AporteSSaporteadicional'];
-                    $AporteSSANSSAL+=$empleadoDatos[$empleadoid]['AporteSSANSSAL'];
-                    $AporteSStotal+=$empleadoDatos[$empleadoid]['AporteSStotal'];
-                    //Contribucion OS
-                    $ContribucionesOScontribucionos+=$empleadoDatos[$empleadoid]['ContribucionesOScontribucionos'];
-                    $ContribucionesOScontribucionadicionalos+=$empleadoDatos[$empleadoid]['ContribucionesOScontribucionadicionalos'];
-                    $ContribucionesOSANSSAL+=$empleadoDatos[$empleadoid]['ContribucionesOSANSSAL'];
-                    $ContribucionesOStotal+=$empleadoDatos[$empleadoid]['ContribucionesOStotal'];
-                    //Aportes OS
-                    $AporteOSaporteos+=$empleadoDatos[$empleadoid]['AporteOSaporteos'];
-                    $AporteOSaporteadicionalos+=$empleadoDatos[$empleadoid]['AporteOSaporteadicionalos'];
-                    $AporteOSANSSAL+=$empleadoDatos[$empleadoid]['AporteOSANSSAL'];
-                    $AporteOSadicionaladherente +=$empleadoDatos[$empleadoid]['AporteOSadicionaladherente'];
-                    $AporteOStotal +=$empleadoDatos[$empleadoid]['AporteOStotal'];
-                    $SeguroDeVidaObligatorio+=$empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio'];
-                    $ARTart+=$empleadoDatos[$empleadoid]['ARTart'];
-                    echo "<td>";
-                    echo $empleadoDatos[$empleadoid]['remtotal']."</td>";
-                }
-                ?>
-                <td><?php echo $remtotal; ?></td>
-            </tr>
-            <tr>
-                <td>Rem. 1 (SIPA)</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['rem1'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($rem1, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Rem. 2 (Cont. SIPA + INSSJP)</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['rem2'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($rem2, 2, ",", "."); ?></td>
-            </tr><!--20-->
-            <tr>
-                <td>Rem. 3 (Cont. FNE + RENATRE)</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['rem3'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($rem3, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Rem. 4 (Ap. OS + FSR o ANSSAL)</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['rem4'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($rem4, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Rem. 5 (Ap. INSSJP</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['rem5'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($rem5, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Rem. 6</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['rem6'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($rem6, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Rem. 7</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['rem7'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($rem7, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Rem. 8 (Cont. OS)</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['rem8'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($rem8, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Rem. 9 (ART)</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['rem9'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($rem9, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td rowspan="2" style=" vertical-align:middle!important;">
-                    <div >
-                        Seguridad Social
-                    </div>
-                </td>
-                <td>Aporte Adicional</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['seguridadsocialaporteadicional'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($seguridadsocialaporteadicional, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Contrib Tarea Dif</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($seguridadsocialcontribtareadif, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td rowspan="4" style=" vertical-align:middle!important;">
-                    <div >
-                        Obra Social
-                    </div>
-                </td>
-                <td>Nombre de la OS</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    echo $empleado['obrasocial']."</td>";
-                }
-                ?>
-            </tr><!--30-->
-            <tr>
-                <td>Cantidad de adherentes</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo $empleadoDatos[$empleadoid]['cantidadadherente']."</td>";
-                }
-                ?>
-
-            </tr>
-            <tr>
-                <td>Aporte Adicional</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['obrasocialaporteadicional'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($obrasocialaporteadicional, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Contribución Adicional</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['obrasocialcontribucionadicional'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($obrasocialcontribucionadicional, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td rowspan="7" style=" vertical-align:middle!important;">
-                    <div >
-                        Contrib SS
-                    </div>
-                </td>
-                <td>Jubilación (SIPA)</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['ContribSSjubilacionsipa'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($ContribSSjubilacionsipa, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>INSSJP</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['INSSJP'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo $INSSJP; ?></td>
-            </tr>
-            <tr>
-                <td>Contrib Tarea Dif</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['ContribSScontribtareadif'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($ContribSScontribtareadif, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>FNE</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['FNE'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($FNE, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>ANSSAL</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['ContribSSANSSAL'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($ContribSSANSSAL, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Asig Fliares</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['asignacionfamiliar'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($asignacionfamiliar, 2, ",", "."); ?></td>
-            </tr>
-            <tr style="<?php echo  $styleForTotalTd; ?>">
-                <td>Total Contribuciones SS</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['totalContribucionesSS'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td>
-                    <?php echo number_format($totalContribucionesSS, 2, ",", ".");
-                    echo $this->Form->input(
-                        'apagar351ContribucionesSegSocial',
-                        array(
-                            'type'=>'hidden',
-                            'id'=> 'apagar351ContribucionesSegSocial',
-                            'value'=>$totalContribucionesSS
-                        )
-                    );
-                    ?>
-                </td>
-            </tr>
-            <tr style="<?php echo  $styleForTotalTd; ?>">
-                <td rowspan="2" style=" vertical-align:middle!important;">
-                    <div >
-                        RENATEA
-                    </div>
-                </td>
-                <td>Contribución</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['contribucionrenatea'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($contribucionrenatea, 2, ",", ".");
-                    echo $this->Form->input(
-                        'apagar360ContribuciónRENATEA',
-                        array(
-                            'id'=>'apagar360ContribuciónRENATEA',
-                            'type'=>'hidden',
-                            'value'=>$contribucionrenatea
-                        )
-                    );?></td>
-            </tr>
-            <tr style="<?php echo  $styleForTotalTd; ?>">
-                <td>Aporte</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['aporterenatea'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($aporterenatea, 2, ",", ".");
-                    echo $this->Form->input(
-                        'apagar935RENATEA',
-                        array(
-                            'id'=>'apagar935RENATEA',
-                            'type'=>'hidden',
-                            'value'=>$aporterenatea
-                        )
-                    );?></td>
-            </tr>
-            <tr>
-                <td rowspan="5" style=" vertical-align:middle!important;">
-                    <div>
-                        Aportes SS
-                    </div>
-                </td>
-                <td>Jubilac (SIPA)</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['AporteSSjubilacionsipa'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($AporteSSjubilacionsipa, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Ley 19.032</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['ley19032'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($ley19032, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Aporte Adicional</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['AporteSSaporteadicional'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($AporteSSaporteadicional, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>ANSSAL</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['AporteSSANSSAL'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($AporteSSANSSAL, 2, ",", "."); ?></td>
-            </tr>
-            <tr style="<?php echo  $styleForTotalTd; ?>">
-                <td>Total Aportes SS</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['AporteSStotal'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($AporteSStotal, 2, ",", ".");
-                    echo $this->Form->input(
-                        'apagar301EmpleadorAportesSegSocial',
-                        array(
-                            'id'=>'apagar301EmpleadorAportesSegSocial',
-                            'type'=>'hidden',
-                            'value'=>$AporteSStotal
-                        )
-                    );?></td>
-            </tr>
-            <tr>
-                <td rowspan="4" style=" vertical-align:middle!important;">
-                    <div >
-                        Contribuciones OS
-                    </div>
-                </td>
-                <td>Contribucion OS</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['ContribucionesOScontribucionos'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($ContribucionesOScontribucionos, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Contribucion Adicional OS</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['ContribucionesOScontribucionadicionalos'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td>
+                    </td>
+                    <td>Apellido y Nombre</td>
                     <?php
-                    echo number_format($ContribucionesOScontribucionadicionalos, 2, ",", ".");
-
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>".$empleado['nombre']."</td>";
+                    }
                     ?>
-                </td>
-            </tr>
-            <tr>
-                <td>ANSAAL</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['ContribucionesOSANSSAL'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($ContribucionesOSANSSAL, 2, ",", "."); ?></td>
-            </tr>
-            <tr style="<?php echo  $styleForTotalTd; ?>">
-                <td>Total Contribuciones OS</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['ContribucionesOStotal'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($ContribucionesOStotal, 2, ",", ".");
-                    echo $this->Form->input(
-                        'apagar352ContribucionesObraSocial',
-                        array(
-                            'id'=>'apagar352ContribucionesObraSocial',
-                            'type'=>'hidden',
-                            'value'=>$ContribucionesOStotal
-                        )
-                    );?></td>
-            </tr>
-            <tr>
-                <td rowspan="5" style=" vertical-align:middle!important;">
-                    <div >
-                        Aportes OS
-                    </div>
-                </td>
-                <td>Aporte OS</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['AporteOSaporteos'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($AporteOSaporteos, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Aporte Adicional OS</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['AporteOSaporteadicionalos'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($AporteOSaporteadicionalos, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>ANSSAL</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['AporteOSANSSAL'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($AporteOSANSSAL, 2, ",", "."); ?></td>
-            </tr>
-            <tr>
-                <td>Adicional Adherente</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['AporteOSadicionaladherente'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($AporteOSadicionaladherente, 2, ",", "."); ?></td>
-            </tr>
-            <tr style="<?php echo  $styleForTotalTd; ?>">
-                <td>Total Aporte OS</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['AporteOStotal'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($AporteOStotal, 2, ",", ".");
-                    echo $this->Form->input(
-                        'apagar302AportesObrasSociales',
-                        array(
-                            'id'=>'apagar302AportesObrasSociales',
-                            'type'=>'hidden',
-                            'value'=>$AporteOStotal
-                        )
-                    );?></td>
-            </tr>
-            <tr style="<?php echo  $styleForTotalTd; ?>">
-                <td style=" vertical-align:middle!important;">
-                    <div >
-                        ART
-                    </div>
-                </td>
-                <td>ART</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['ARTart'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php echo number_format($ARTart, 2, ",", ".");
-                    echo $this->Form->input(
-                        'apagar312AsegRiesgodeTrabajoL24557',
-                        array(
-                            'id'=>'apagar312AsegRiesgodeTrabajoL24557',
-                            'type'=>'hidden',
-                            'value'=>$ARTart
-                        )
-                    );?></td>
-            </tr>
-            <tr style="<?php echo  $styleForTotalTd; ?>">
-                <td style=" vertical-align:middle!important;">
-                    <div >
-                        Seguro de Vida Oblig.
-                    </div>
-                </td>
-                <td>Seguro de Vida Obligatorio</td>
-                <?php
-                foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                    echo "<td>";
-                    $empleadoid = $empleado['id'];
-                    echo number_format($empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio'], 2, ",", ".")."</td>";
-                }
-                ?>
-                <td><?php
-                    echo number_format($SeguroDeVidaObligatorio, 2, ",", ".");
-                    echo $this->Form->input(
-                        'apagar28SegurodeVidaColectivo',
-                        array(
-                            'id'=>'apagar28SegurodeVidaColectivo',
-                            'type'=>'hidden',
-                            'value'=>$SeguroDeVidaObligatorio
-                        )
-                    );?></td>
-            </tr>
+                </tr><!--1-->
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="26" style=" vertical-align:middle!important;">
+                        <div >
+                            Remunerativos
+                        </div>
+                    </td>
+                    <td>CUIL</td>
+                    <?php
+                        foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                                echo "<td>".$empleado['cuit']."</td>";
+                        }
+                    ?>
+                </tr>
+                <tr>
+                    <td>OS del Pers de Dirección</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo $empleadoDatos[$empleadoid]['osdelpersdedireccion']?'SI':'NO';
+                        echo "</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Cobertura ART</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo $empleadoDatos[$empleadoid]['coberturaart']?'SI':'NO';
+                        echo "</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Seguro de Vida</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo $empleadoDatos[$empleadoid]['segurodevida']?'SI':'NO';
+                        echo "</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Código AFIP</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>".$empleado['codigoafip']."</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Día de inicio</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>" . $empleado['fechaingreso'] . "</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Q Días Trabajados u Horas</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo $empleadoDatos[$empleadoid]['horasDias']."</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Sueldo</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['sueldo'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Adicionales</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo $empleadoDatos[$empleadoid]['adicionales']."</td>";
+                    }
+                    ?>
+                </tr><!--10-->
+                <tr>
+                    <td>Cantidad de Horas Extra</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo $empleadoDatos[$empleadoid]['horasextras']."</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Importe Horas extras</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['importehorasextras'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>SAC</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['SAC'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Vacaciones</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['vacaciones'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Premios</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['premios'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td rowspan="3">
+                        Totales
+                    </td>
+                </tr>
+                <tr>
+                    <td>Maternidad
+                    </td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo $empleadoDatos[$empleadoid]['maternidad']?'SI':'NO'."</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Conceptos no Remunerativos</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['conceptosnorem'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                </tr>
+                <tr>
+                    <td>Rem. Total</td>
+                    <?php
+                    $remtotal=0;$rem1=0;$rem2=0;$rem3=0;$rem4=0;
+                    $rem5=0;$rem6=0;$rem7=0;$rem8=0;$rem9=0;
+                    //Seguridad Social
+                    $seguridadsocialaporteadicional=0;
+                    $seguridadsocialcontribtareadif=0;
+                    //Obra Social
+                    $obrasocialaporteadicional=0;
+                    $obrasocialcontribucionadicional=0;
+                    //Contrib SS
+                    $ContribSSjubilacionsipa=0;$INSSJP=0;
+                    $ContribSScontribtareadif=0;$FNE=0;$ContribSSANSSAL=0;$asignacionfamiliar=0;
+                    $totalContribucionesSS=0;
+                    //RENATEA
+                    $contribucionrenatea = 0;
+                    $trabajadorAgrario = false;
+                    $aporterenatea = 0;
+                    //Aportes SS
+                    $AporteSSjubilacionsipa=0;
+                    $ley19032 = 0;
+                    $AporteSSaporteadicional=0;
+                    $AporteSSANSSAL=0;;
+                    $AporteSStotal=0;
+                    //Contribucion OS
+                    $ContribucionesOScontribucionos=0;
+                    $ContribucionesOScontribucionadicionalos=0;
+                    $ContribucionesOSANSSAL=0;
+                    $ContribucionesOStotal=0;
+                    //Aportes OS
+                    $AporteOSaporteos=0;
+                    $AporteOSaporteadicionalos=0;
+                    $AporteOSANSSAL=0;
+                    $AporteOSadicionaladherente = 0;
+                    $AporteOStotal = 0;
+
+                    $SeguroDeVidaObligatorio = 0;
+                    $ARTart = 0;
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        $empleadoid = $empleado['id'];
+                        //en este primer loop vamos a calcular todos los siguientes totales
+                        $remtotal+=$empleadoDatos[$empleadoid]['remtotal'];
+                        $rem1+=$empleadoDatos[$empleadoid]['rem1'];
+                        $rem2+=$empleadoDatos[$empleadoid]['rem2'];
+                        $rem3+=$empleadoDatos[$empleadoid]['rem3'];
+                        $rem4+=$empleadoDatos[$empleadoid]['rem4'];
+                        $rem5+=$empleadoDatos[$empleadoid]['rem5'];
+                        $rem6+=$empleadoDatos[$empleadoid]['rem6'];
+                        $rem7+=$empleadoDatos[$empleadoid]['rem7'];
+                        $rem8+=$empleadoDatos[$empleadoid]['rem8'];
+                        $rem9+=$empleadoDatos[$empleadoid]['rem9'];
+                        $seguridadsocialaporteadicional+=$empleadoDatos[$empleadoid]['seguridadsocialaporteadicional'];
+                        $seguridadsocialcontribtareadif+=$empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif'];
+                        $obrasocialaporteadicional+=$empleadoDatos[$empleadoid]['obrasocialaporteadicional'];
+                        $obrasocialcontribucionadicional+=$empleadoDatos[$empleadoid]['obrasocialcontribucionadicional'];
+                        $ContribSSjubilacionsipa+=$empleadoDatos[$empleadoid]['ContribSSjubilacionsipa'];
+                        $INSSJP+=$empleadoDatos[$empleadoid]['INSSJP'];
+                        $ContribSScontribtareadif+=$empleadoDatos[$empleadoid]['ContribSScontribtareadif'];
+                        $FNE+=$empleadoDatos[$empleadoid]['FNE'];
+                        $ContribSSANSSAL+=$empleadoDatos[$empleadoid]['ContribSSANSSAL'];
+                        $asignacionfamiliar+=$empleadoDatos[$empleadoid]['asignacionfamiliar'];
+                        $totalContribucionesSS+=$empleadoDatos[$empleadoid]['totalContribucionesSS'];
+                        //RENATEA
+                        $contribucionrenatea+=$empleadoDatos[$empleadoid]['contribucionrenatea'];
+                        $aporterenatea+=$empleadoDatos[$empleadoid]['aporterenatea'];
+                        //Aportes SS
+                        $AporteSSjubilacionsipa+=$empleadoDatos[$empleadoid]['AporteSSjubilacionsipa'];
+                        $ley19032 +=$empleadoDatos[$empleadoid]['ley19032'];
+                        $AporteSSaporteadicional+=$empleadoDatos[$empleadoid]['AporteSSaporteadicional'];
+                        $AporteSSANSSAL+=$empleadoDatos[$empleadoid]['AporteSSANSSAL'];
+                        $AporteSStotal+=$empleadoDatos[$empleadoid]['AporteSStotal'];
+                        //Contribucion OS
+                        $ContribucionesOScontribucionos+=$empleadoDatos[$empleadoid]['ContribucionesOScontribucionos'];
+                        $ContribucionesOScontribucionadicionalos+=$empleadoDatos[$empleadoid]['ContribucionesOScontribucionadicionalos'];
+                        $ContribucionesOSANSSAL+=$empleadoDatos[$empleadoid]['ContribucionesOSANSSAL'];
+                        $ContribucionesOStotal+=$empleadoDatos[$empleadoid]['ContribucionesOStotal'];
+                        //Aportes OS
+                        $AporteOSaporteos+=$empleadoDatos[$empleadoid]['AporteOSaporteos'];
+                        $AporteOSaporteadicionalos+=$empleadoDatos[$empleadoid]['AporteOSaporteadicionalos'];
+                        $AporteOSANSSAL+=$empleadoDatos[$empleadoid]['AporteOSANSSAL'];
+                        $AporteOSadicionaladherente +=$empleadoDatos[$empleadoid]['AporteOSadicionaladherente'];
+                        $AporteOStotal +=$empleadoDatos[$empleadoid]['AporteOStotal'];
+                        $SeguroDeVidaObligatorio+=$empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio'];
+                        $ARTart+=$empleadoDatos[$empleadoid]['ARTart'];
+                        echo "<td>";
+                        echo $empleadoDatos[$empleadoid]['remtotal']."</td>";
+                    }
+                    ?>
+                    <td><?php echo $remtotal; ?></td>
+                </tr>
+                <tr>
+                    <td>Rem. 1 (SIPA)</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem1'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem1, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Rem. 2 (Cont. SIPA + INSSJP)</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem2'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem2, 2, ",", "."); ?></td>
+                </tr><!--20-->
+                <tr>
+                    <td>Rem. 3 (Cont. FNE + RENATRE)</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem3'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem3, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Rem. 4 (Ap. OS + FSR o ANSSAL)</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem4'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem4, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Rem. 5 (Ap. INSSJP</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem5'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem5, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Rem. 6</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem6'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem6, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Rem. 7</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem7'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem7, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Rem. 8 (Cont. OS)</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem8'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem8, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Rem. 9 (ART)</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem9'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem9, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td rowspan="2" style=" vertical-align:middle!important;">
+                        <div >
+                            Seguridad Social
+                        </div>
+                    </td>
+                    <td>Aporte Adicional</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['seguridadsocialaporteadicional'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($seguridadsocialaporteadicional, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Contrib Tarea Dif</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($seguridadsocialcontribtareadif, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td rowspan="4" style=" vertical-align:middle!important;">
+                        <div >
+                            Obra Social
+                        </div>
+                    </td>
+                    <td>Nombre de la OS</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        echo $empleado['obrasocial']."</td>";
+                    }
+                    ?>
+                </tr><!--30-->
+                <tr>
+                    <td>Cantidad de adherentes</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo $empleadoDatos[$empleadoid]['cantidadadherente']."</td>";
+                    }
+                    ?>
+
+                </tr>
+                <tr>
+                    <td>Aporte Adicional</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['obrasocialaporteadicional'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($obrasocialaporteadicional, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Contribución Adicional</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['obrasocialcontribucionadicional'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($obrasocialcontribucionadicional, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td rowspan="7" style=" vertical-align:middle!important;">
+                        <div >
+                            Contrib SS
+                        </div>
+                    </td>
+                    <td>Jubilación (SIPA)</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['ContribSSjubilacionsipa'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($ContribSSjubilacionsipa, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>INSSJP</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['INSSJP'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo $INSSJP; ?></td>
+                </tr>
+                <tr>
+                    <td>Contrib Tarea Dif</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['ContribSScontribtareadif'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($ContribSScontribtareadif, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>FNE</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['FNE'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($FNE, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>ANSSAL</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['ContribSSANSSAL'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($ContribSSANSSAL, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Asig Fliares</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['asignacionfamiliar'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($asignacionfamiliar, 2, ",", "."); ?></td>
+                </tr>
+                <tr style="<?php echo  $styleForTotalTd; ?>">
+                    <td>Total Contribuciones SS</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['totalContribucionesSS'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td>
+                        <?php echo number_format($totalContribucionesSS, 2, ",", ".");
+                        echo $this->Form->input(
+                            'apagar351ContribucionesSegSocial',
+                            array(
+                                'type'=>'hidden',
+                                'id'=> 'apagar351ContribucionesSegSocial',
+                                'value'=>$totalContribucionesSS
+                            )
+                        );
+                        ?>
+                    </td>
+                </tr>
+                <tr style="<?php echo  $styleForTotalTd; ?>">
+                    <td rowspan="2" style=" vertical-align:middle!important;">
+                        <div >
+                            RENATEA
+                        </div>
+                    </td>
+                    <td>Contribución</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['contribucionrenatea'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($contribucionrenatea, 2, ",", ".");
+                        echo $this->Form->input(
+                            'apagar360ContribuciónRENATEA',
+                            array(
+                                'id'=>'apagar360ContribuciónRENATEA',
+                                'type'=>'hidden',
+                                'value'=>$contribucionrenatea
+                            )
+                        );?></td>
+                </tr>
+                <tr style="<?php echo  $styleForTotalTd; ?>">
+                    <td>Aporte</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['aporterenatea'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($aporterenatea, 2, ",", ".");
+                        echo $this->Form->input(
+                            'apagar935RENATEA',
+                            array(
+                                'id'=>'apagar935RENATEA',
+                                'type'=>'hidden',
+                                'value'=>$aporterenatea
+                            )
+                        );?></td>
+                </tr>
+                <tr>
+                    <td rowspan="5" style=" vertical-align:middle!important;">
+                        <div>
+                            Aportes SS
+                        </div>
+                    </td>
+                    <td>Jubilac (SIPA)</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['AporteSSjubilacionsipa'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($AporteSSjubilacionsipa, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Ley 19.032</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['ley19032'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($ley19032, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Aporte Adicional</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['AporteSSaporteadicional'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($AporteSSaporteadicional, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>ANSSAL</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['AporteSSANSSAL'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($AporteSSANSSAL, 2, ",", "."); ?></td>
+                </tr>
+                <tr style="<?php echo  $styleForTotalTd; ?>">
+                    <td>Total Aportes SS</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['AporteSStotal'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($AporteSStotal, 2, ",", ".");
+                        echo $this->Form->input(
+                            'apagar301EmpleadorAportesSegSocial',
+                            array(
+                                'id'=>'apagar301EmpleadorAportesSegSocial',
+                                'type'=>'hidden',
+                                'value'=>$AporteSStotal
+                            )
+                        );?></td>
+                </tr>
+                <tr>
+                    <td rowspan="4" style=" vertical-align:middle!important;">
+                        <div >
+                            Contribuciones OS
+                        </div>
+                    </td>
+                    <td>Contribucion OS</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['ContribucionesOScontribucionos'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($ContribucionesOScontribucionos, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Contribucion Adicional OS</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['ContribucionesOScontribucionadicionalos'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td>
+                        <?php
+                        echo number_format($ContribucionesOScontribucionadicionalos, 2, ",", ".");
+
+                        ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ANSAAL</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['ContribucionesOSANSSAL'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($ContribucionesOSANSSAL, 2, ",", "."); ?></td>
+                </tr>
+                <tr style="<?php echo  $styleForTotalTd; ?>">
+                    <td>Total Contribuciones OS</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['ContribucionesOStotal'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($ContribucionesOStotal, 2, ",", ".");
+                        echo $this->Form->input(
+                            'apagar352ContribucionesObraSocial',
+                            array(
+                                'id'=>'apagar352ContribucionesObraSocial',
+                                'type'=>'hidden',
+                                'value'=>$ContribucionesOStotal
+                            )
+                        );?></td>
+                </tr>
+                <tr>
+                    <td rowspan="5" style=" vertical-align:middle!important;">
+                        <div >
+                            Aportes OS
+                        </div>
+                    </td>
+                    <td>Aporte OS</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['AporteOSaporteos'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($AporteOSaporteos, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Aporte Adicional OS</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['AporteOSaporteadicionalos'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($AporteOSaporteadicionalos, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>ANSSAL</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['AporteOSANSSAL'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($AporteOSANSSAL, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Adicional Adherente</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['AporteOSadicionaladherente'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($AporteOSadicionaladherente, 2, ",", "."); ?></td>
+                </tr>
+                <tr style="<?php echo  $styleForTotalTd; ?>">
+                    <td>Total Aporte OS</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['AporteOStotal'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($AporteOStotal, 2, ",", ".");
+                        echo $this->Form->input(
+                            'apagar302AportesObrasSociales',
+                            array(
+                                'id'=>'apagar302AportesObrasSociales',
+                                'type'=>'hidden',
+                                'value'=>$AporteOStotal
+                            )
+                        );?></td>
+                </tr>
+                <tr style="<?php echo  $styleForTotalTd; ?>">
+                    <td style=" vertical-align:middle!important;">
+                        <div >
+                            ART
+                        </div>
+                    </td>
+                    <td>ART</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['ARTart'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($ARTart, 2, ",", ".");
+                        echo $this->Form->input(
+                            'apagar312AsegRiesgodeTrabajoL24557',
+                            array(
+                                'id'=>'apagar312AsegRiesgodeTrabajoL24557',
+                                'type'=>'hidden',
+                                'value'=>$ARTart
+                            )
+                        );?></td>
+                </tr>
+                <tr style="<?php echo  $styleForTotalTd; ?>">
+                    <td style=" vertical-align:middle!important;">
+                        <div >
+                            Seguro de Vida Oblig.
+                        </div>
+                    </td>
+                    <td>Seguro de Vida Obligatorio</td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php
+                        echo number_format($SeguroDeVidaObligatorio, 2, ",", ".");
+                        echo $this->Form->input(
+                            'apagar28SegurodeVidaColectivo',
+                            array(
+                                'id'=>'apagar28SegurodeVidaColectivo',
+                                'type'=>'hidden',
+                                'value'=>$SeguroDeVidaObligatorio
+                            )
+                        );?></td>
+                </tr>
+            </tbody>
 	</table>
         <?php //Debugger::dump($empleadoDatos);?>
 	</div>

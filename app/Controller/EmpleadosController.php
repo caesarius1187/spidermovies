@@ -239,38 +239,80 @@ class EmpleadosController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('papeldetrabajosueldos');
 	}
-	public function papeldetrabajolibrosueldo($empid=null,$periodo=null){
+    public function papeldetrabajolibrosueldo($empid=null,$periodo=null){
 
-		$options = array(
-			'contain'=>array(
-				'Cliente'=>array(
-					'Domicilio',
-					'Actividadcliente'=>array(
-						'Actividade'
-					)
-				),
-				'Valorrecibo'=>array(
-					'Cctxconcepto'=>array(
-						'Concepto',
-						'Conveniocolectivotrabajo'=>array(
+        $options = array(
+            'contain'=>array(
+                'Domicilio'=>array(
+                    'Localidade'=>array(
+                        'Partido'
+                    )
+                ),
+                'Cliente'=>array(
 
-						)
-					),
-					'conditions'=>array(
-						'Valorrecibo.periodo'=>$periodo,
-						'Valorrecibo.tipoliquidacion'=>array(1,2,3)
-					)
-				),
-			),
-			'conditions' => array('Empleado.id' => $empid)
-		);
-		$empleado = $this->Empleado->find('first', $options);
-		$this->set('empleado',$empleado);
-		$this->set(compact('empid','periodo'));
-		$this->autoRender=false;
-		$this->layout = 'ajax';
-		$this->render('papeldetrabajolibrosueldo');
-	}
+                    'Actividadcliente'=>array(
+                        'Actividade'
+                    )
+                ),
+                'Valorrecibo'=>array(
+                    'Cctxconcepto'=>array(
+                        'Concepto',
+                        'Conveniocolectivotrabajo'=>array(
+
+                        )
+                    ),
+                    'conditions'=>array(
+                        'Valorrecibo.periodo'=>$periodo,
+                        'Valorrecibo.tipoliquidacion'=>array(1,2,3)
+                    )
+                ),
+            ),
+            'conditions' => array('Empleado.id' => $empid)
+        );
+        $empleado = $this->Empleado->find('first', $options);
+        $this->set('empleado',$empleado);
+        $this->set(compact('empid','periodo'));
+        $this->autoRender=false;
+        $this->layout = 'ajax';
+        $this->render('papeldetrabajolibrosueldo');
+    }
+    public function papeldetrabajorecibosueldo($empid=null,$periodo=null){
+
+        $options = array(
+            'contain'=>array(
+                'Domicilio'=>array(
+                    'Localidade'=>array(
+                        'Partido'
+                    )
+                ),
+                'Cliente'=>array(
+
+                    'Actividadcliente'=>array(
+                        'Actividade'
+                    )
+                ),
+                'Valorrecibo'=>array(
+                    'Cctxconcepto'=>array(
+                        'Concepto',
+                        'Conveniocolectivotrabajo'=>array(
+
+                        )
+                    ),
+                    'conditions'=>array(
+                        'Valorrecibo.periodo'=>$periodo,
+                        'Valorrecibo.tipoliquidacion'=>array(1,2,3)
+                    )
+                ),
+            ),
+            'conditions' => array('Empleado.id' => $empid)
+        );
+        $empleado = $this->Empleado->find('first', $options);
+        $this->set('empleado',$empleado);
+        $this->set(compact('empid','periodo'));
+        $this->autoRender=false;
+        $this->layout = 'ajax';
+        $this->render('papeldetrabajorecibosueldo');
+    }
 /**
  * add method
  *
@@ -321,7 +363,7 @@ class EmpleadosController extends AppController {
 		$this->set(compact('cliid'));
 
 		$optionsDomic = array(
-			'conditions' => array('Domicilio.cliente_id' => $this->request->data['Domicilio']['cliente_id'])
+			'conditions' => array('Domicilio.cliente_id' => $this->request->data['Empleado']['cliente_id'])
 		);
 		$domicilios = $this->Domicilio->find('list',$optionsDomic);
 		$this->set('domicilios', $domicilios);
