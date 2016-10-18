@@ -550,23 +550,6 @@
                     <td>
                     </td>
                 </tr>
-                <tr><td>&nbsp;</td></tr>
-                <tr><td>&nbsp;</td></tr>
-                <tr>
-                    <td colspan="4" align="right">
-                       <div style="float:right;"> Firma del Empleado:</div>
-                    </td>
-                    <td colspan="10">
-                        <hr width="450px" class="dottedhr" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                    </td>
-                    <td colspan="10">
-                        <?php echo $empleado['Empleado']['nombre'];?>
-                    </td>
-                </tr>
             </table>
         <?php //Debugger::dump($empleadoDatos);?>
 </div>

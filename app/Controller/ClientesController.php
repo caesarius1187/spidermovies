@@ -463,7 +463,7 @@ class ClientesController extends AppController {
 			}
 
 
-				$this->set('clientes', $clientes3);
+            $this->set('clientes', $clientes3);
 			$this->Tareasxclientesxestudio->recursive = 0;
 			$tareascliente = $this->Tareasxclientesxestudio->find('all',array(
 													'order' => 'Tareasxclientesxestudio.orden ASC',
@@ -1202,11 +1202,16 @@ class ClientesController extends AppController {
 							            ),
 					        	  ),
                                  'Conceptosrestante'=>array(
+									 /*Esto deberiamos llevar solo por que el IVA tiene Saldo A Favor como
+									 Saldo de Libre Disponibilidad y hay que sumarlo en el impuesto*/
                                      'conditions'=>array(
                                          'Conceptosrestante.periodo' => $pemes."-".$peanio,
                                          'Conceptosrestante.conceptostipo_id' => 1
                                      )
-                                 )
+                                 ),
+                                'conditions'=>array(
+                                    'Impcli.impuesto_id NOT IN (select id from impuestos where impuestos.organismo = "banco")'
+                                )
 					       	),
 					       	'Plandepago'=>array(
 				   				'conditions' => array(
@@ -1215,7 +1220,8 @@ class ClientesController extends AppController {
 				   				),
 					       	'order' => array('Cliente.nombre'),
 					       	'conditions'=>array(
-				       			'OR'=>array(
+                                'Cliente.estado' => 'habilitado',
+                                'OR'=>array(
 				            		array('Cliente.fchfincliente'=>null),
 				            		array('Cliente.fchfincliente'=>""),												            		
 					       			'OR'=>array(
@@ -1235,7 +1241,6 @@ class ClientesController extends AppController {
 					                'Grupocliente.estado' => 'habilitado'  ,
 					            ),
 				   'order' => array('Grupocliente.nombre'),
-
 			   )
 			);
 			$grupoclientesHistorial=$this->Grupocliente->find('all', array(
@@ -1308,6 +1313,9 @@ class ClientesController extends AppController {
 							            		),
 							            ),
 					        	  ),
+                                'conditions'=>array(
+                                    'Impcli.impuesto_id NOT IN (select id from impuestos where impuestos.organismo = "banco")',
+                                )
 					       	),
 					       	'Plandepago'=>array(
 				   				'conditions' => array(
@@ -1332,7 +1340,6 @@ class ClientesController extends AppController {
 
 			   )
 			);			
-			
 			$this->set('grupoclientesActual', $grupoclientesActual);
 			$this->set('grupoclientesHistorial', $grupoclientesHistorial);
 					

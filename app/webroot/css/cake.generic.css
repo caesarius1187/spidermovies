@@ -2455,4 +2455,11 @@ transition: all 0.4s ease-in-out;
 	background-color: #FFF;
 	margin: 0px 1%;
 }
-
+.dottedhr {
+	border:none;
+	border-top:1px dotted #000;
+	color:#fff;
+	background-color:#fff;
+	height:1px;
+	width:100%;
+}

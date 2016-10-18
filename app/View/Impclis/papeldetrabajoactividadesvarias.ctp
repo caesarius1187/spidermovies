@@ -154,7 +154,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				foreach ($actividadclientes as $actividadcliente) { 
 					$arrayBasesProrrateadas[$miProvincia][$actividadcliente['Actividade']['id']]=0;
 					?>
-				<td colspan="7" class="thActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+				<td colspan="8" class="thActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
 					<span style="color:deepskyblue" onclick="showhideactividad('<?php echo $actividadcliente['Actividade']['id']; ?>');"  >
 						<label class="lbl_trunc"><?php echo $actividadcliente['Actividade']['nombre']; ?></label>
 					</span>
