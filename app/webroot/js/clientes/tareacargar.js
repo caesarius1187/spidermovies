@@ -914,12 +914,13 @@ $(document).ready(function() {
         $('#index').css('float','left');
         $('#padding').css('padding','0px');
         $('#padding').css('margin','0px');
-        $('#index').css('font-size','10px');
+        $('#index').css('font-size','6px');
         $('#index').css('border-color','#FFF');
         $('#sueldoContent').css('width','648px');
         $('#tblLibroSueldo').css('padding','0');
         $('#sheetCooperadoraAsistencial').css('width','100%');
         $('#sheetCooperadoraAsistencial').css('margin','0');
+        $('#tblLibroSueldo').css('font-size','9px');
     };
     var afterPrint = function() {
         console.log('Functionality to run after printing');
@@ -945,7 +946,7 @@ $(document).ready(function() {
         $('#tblLibroSueldo').css('padding','0 10%');
         $('#sheetCooperadoraAsistencial').css('margin','10px 25px');
         $('#sheetCooperadoraAsistencial').css('width','96%');
-
+        $('#tblLibroSueldo').css('font-size','12px');
     };
     if (window.matchMedia) {
         var mediaQueryList = window.matchMedia('print');
