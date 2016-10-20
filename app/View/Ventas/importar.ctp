@@ -62,7 +62,7 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
         $dirVentas = new Folder($folderVentas, true, 0777);
         $dirAlicuotas = new Folder($folderAlicuotas, true, 0777);
         ?>
-        Archivos Cargador previamente</br>
+        Archivos Cargados previamente</br>
         Ventas:</br>
         <?php
         $ventasArray = array();

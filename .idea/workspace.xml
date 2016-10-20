@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="375b17fe-14ab-4ca0-9f8e-7450c16dc4ba" name="Default" comment="varios cambios de interfaz en los papeles de trabajo, y merge con los datos que estaban en el DropBox que salian como diferentes pero por un tema de fechas nada mas">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp" afterPath="$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js" afterPath="$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoddjj.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ImpclisController.php" afterPath="$PROJECT_DIR$/app/Controller/ImpclisController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Ventas/importar.ctp" afterPath="$PROJECT_DIR$/app/View/Ventas/importar.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajomonotributo.js" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajomonotributo.js" />
     </list>
     <ignored path="sigesec25.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -19,210 +23,170 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
+  <component name="DatabaseView">
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" />
+        <option name="myItemType" value="com.intellij.database.view.DatabaseStructure$Root" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="MySQL - sigesec@localhost" />
+        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
+      </PATH_ELEMENT>
+    </PATH>
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" />
+        <option name="myItemType" value="com.intellij.database.view.DatabaseStructure$Root" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="MySQL - sigesec@localhost" />
+        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="puntosdeventas" />
+        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
+      </PATH_ELEMENT>
+    </PATH>
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" />
+        <option name="myItemType" value="com.intellij.database.view.DatabaseStructure$Root" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="MySQL - sigesec@localhost" />
+        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="comprobantes" />
+        <option name="myItemType" value="com.intellij.database.view.DbNodeDescriptor" />
+      </PATH_ELEMENT>
+    </PATH>
+  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="sigesec25" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="EmpleadosController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Controller/EmpleadosController.php">
+      <file leaf-file-name="ImpclisController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Controller/ImpclisController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="500">
-              <caret line="313" column="43" selection-start-line="313" selection-start-column="43" selection-end-line="313" selection-end-column="43" />
+            <state relative-caret-position="239">
+              <caret line="1095" column="8" selection-start-line="1095" selection-start-column="8" selection-end-line="1096" selection-end-column="50" />
               <folding>
-                <element signature="n#papeldetrabajosueldos#0;n#EmpleadosController#0;n#!!top" expanded="false" />
-                <element signature="e#6334#8326#0#PHP" expanded="false" />
-                <element signature="n#papeldetrabajolibrosueldo#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+                <element signature="e#19571#22175#0#PHP" expanded="false" />
+                <element signature="e#22834#23231#0#PHP" expanded="false" />
+                <element signature="e#23293#23576#0#PHP" expanded="false" />
+                <element signature="e#23926#24326#0#PHP" expanded="false" />
+                <element signature="e#24394#24680#0#PHP" expanded="false" />
+                <element signature="e#28612#31018#0#PHP" expanded="false" />
+                <element signature="e#31144#31465#0#PHP" expanded="false" />
+                <element signature="e#31514#31899#0#PHP" expanded="false" />
+                <element signature="e#31926#32587#0#PHP" expanded="false" />
+                <element signature="e#32705#33093#0#PHP" expanded="false" />
+                <element signature="e#33141#33480#0#PHP" expanded="false" />
+                <element signature="e#33508#34216#0#PHP" expanded="false" />
+                <element signature="e#34676#35499#0#PHP" expanded="false" />
+                <element signature="n#papeldetrabajosuss#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajocooperadoraasistencial#0;n#ImpclisController#0;n#!!top" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="papeldetrabajolibrosueldo.ctp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp">
+      <file leaf-file-name="papeldetrabajoddjj.ctp" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoddjj.ctp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="441" column="53" selection-start-line="440" selection-start-column="11" selection-end-line="441" selection-end-column="53" />
+            <state relative-caret-position="652">
+              <caret line="175" column="9" selection-start-line="175" selection-start-column="9" selection-end-line="175" selection-end-column="9" />
               <folding>
-                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="e#564#1553#0#PHP" expanded="false" />
-                <element signature="n#tr#11;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#12;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#13;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#14;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#15;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#16;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#18;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#19;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#20;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#21;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#23;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#tr#25;n#table#0;n#div#0;n#!!top" expanded="false" />
-                <element signature="n#style#0;n#div#0;n#td#0;n#tr#30;n#table#0;n#div#0;n#!!top" expanded="true" />
-                <marker date="1476804494139" expanded="false" signature="14628:15086" placeholder="..." />
-                <marker date="1476804494139" expanded="false" signature="17304:17647" placeholder="..." />
-                <marker date="1476804494139" expanded="false" signature="18203:18564" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="2852:2999" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="2852:3056" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="3711:3857" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="3711:3913" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="7345:7638" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="7703:7888" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="8121:8414" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="8479:8664" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="8897:9190" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="9255:9440" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="9673:9966" placeholder="..." />
+                <marker date="1476982511943" expanded="true" signature="10031:10216" placeholder="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="papeldetrabajorecibosueldo.ctp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp">
+      <file leaf-file-name="papeldetrabajomonotributo.ctp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="704">
-              <caret line="581" column="48" selection-start-line="581" selection-start-column="48" selection-end-line="581" selection-end-column="48" />
-              <folding>
-                <element signature="e#608#1644#0#PHP" expanded="false" />
-                <element signature="e#2393#7682#0#PHP" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="cake.generic.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/webroot/css/cake.generic.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="261">
-              <caret line="2347" column="11" selection-start-line="2347" selection-start-column="1" selection-end-line="2347" selection-end-column="11" />
+            <state relative-caret-position="584">
+              <caret line="348" column="19" selection-start-line="348" selection-start-column="19" selection-end-line="348" selection-end-column="19" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tareacargar.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js">
+      <file leaf-file-name="papeldetrabajomonotributo.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajomonotributo.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1979">
-              <caret line="922" column="47" selection-start-line="922" selection-start-column="47" selection-end-line="922" selection-end-column="47" />
+            <state relative-caret-position="594">
+              <caret line="106" column="11" selection-start-line="106" selection-start-column="11" selection-end-line="106" selection-end-column="11" />
               <folding>
-                <element signature="e#1869#4308#0" expanded="false" />
-                <element signature="e#4447#8446#0" expanded="false" />
-                <element signature="e#8532#8593#0" expanded="false" />
-                <element signature="e#8772#8829#0" expanded="false" />
-                <element signature="e#8889#8946#0" expanded="false" />
-                <element signature="e#9004#9061#0" expanded="false" />
-                <element signature="e#9227#9284#0" expanded="false" />
-                <element signature="e#9491#14119#0" expanded="false" />
-                <element signature="e#14944#18602#0" expanded="false" />
-                <element signature="e#18609#28084#0" expanded="false" />
-                <element signature="e#28345#32230#0" expanded="false" />
-                <element signature="e#32274#33830#0" expanded="false" />
-                <element signature="e#33885#37833#0" expanded="false" />
-                <element signature="e#37879#38760#0" expanded="false" />
-                <element signature="e#38805#39672#0" expanded="false" />
-                <element signature="e#39733#40122#0" expanded="false" />
-                <element signature="e#40164#40554#0" expanded="false" />
-                <element signature="e#40598#40990#0" expanded="false" />
-                <element signature="e#41043#41444#0" expanded="false" />
-                <element signature="e#41591#41788#0" expanded="false" />
-                <element signature="e#41972#43977#0" expanded="false" />
-                <element signature="e#44204#44564#0" expanded="false" />
-                <element signature="n#!!block;n#calcularFooterTotales#0" expanded="false" />
-                <element signature="n#!!block;n#hiddeAllImputsFromConceptosRestantesAddForm#0" expanded="false" />
-                <element signature="n#!!block;n#calcularivaytotal#0" expanded="false" />
-                <element signature="n#!!block;n#calcularivaytotalcompra#0" expanded="false" />
-                <element signature="n#!!block;n#adaptarConceptorestanteForm#0" expanded="false" />
-                <element signature="n#!!block;n#reloadInputDates#0" expanded="false" />
-                <element signature="n#!!block;n#showVentas#0" expanded="false" />
-                <element signature="n#!!block;n#showCompras#0" expanded="false" />
-                <element signature="n#!!block;n#showNovedades#0" expanded="false" />
-                <element signature="n#!!block;n#showConceptosRestantes#0" expanded="false" />
-                <element signature="n#!!block;n#hideFormModVenta#0" expanded="false" />
-                <element signature="n#!!block;n#hideFormModCompra#0" expanded="false" />
-                <element signature="n#!!block;n#hideFormModSueldo#0" expanded="false" />
-                <element signature="n#!!block;n#modificarVenta#0" expanded="false" />
-                <element signature="n#!!block;n#eliminarVenta#0" expanded="false" />
-                <element signature="n#!!block;n#modificarCompra#0" expanded="false" />
-                <element signature="n#!!block;n#eliminarCompra#0" expanded="false" />
-                <element signature="n#!!block;n#eliminarConceptosrestante#0" expanded="false" />
-                <element signature="n#!!block;n#modificarSueldo#0" expanded="false" />
-                <element signature="n#!!block;n#eliminarSueldo#0" expanded="false" />
-                <element signature="n#!!block;n#modificarConceptosrestante#0" expanded="false" />
-                <element signature="n#!!block;n#cargarSueldoEmpleado#0" expanded="false" />
-                <element signature="n#!!block;n#cargarLibroSueldo#0" expanded="false" />
-                <element signature="n#!!block;n#ocultarFunciones#0" expanded="false" />
-                <element signature="n#!!block;n#activarCalXOnSueldos#0" expanded="false" />
-                <element signature="e#96858#97716#0" expanded="false" />
-                <element signature="n#!!block;n#realizarEventoCliente#0" expanded="false" />
+                <element signature="n#!!block;n#papelesDeTrabajo#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tareacargar.ctp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp">
+      <file leaf-file-name="VentasController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Controller/VentasController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="299">
-              <caret line="1000" column="85" selection-start-line="1000" selection-start-column="81" selection-end-line="1000" selection-end-column="85" />
+            <state relative-caret-position="10758">
+              <caret line="626" column="21" selection-start-line="626" selection-start-column="14" selection-end-line="626" selection-end-column="21" />
               <folding>
-                <element signature="n#div#0;n#!!top" expanded="false" />
-                <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#2;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#!!top" expanded="true" />
-                <element signature="n#div#1;n#div#0;n#div#1;n#!!top" expanded="false" />
-                <element signature="n#div#2;n#div#0;n#div#1;n#!!top" expanded="false" />
-                <element signature="n#div#3;n#div#0;n#div#1;n#!!top" expanded="false" />
-                <element signature="n#div#4;n#div#0;n#div#1;n#!!top" expanded="false" />
-                <element signature="n#div#0;n#div#5;n#div#0;n#div#1;n#!!top" expanded="false" />
-                <element signature="n#div#1;n#div#5;n#div#0;n#div#1;n#!!top" expanded="false" />
-                <element signature="n#style#0;n#div#6;n#div#0;n#div#1;n#!!top" expanded="true" />
-                <element signature="n#div#7;n#div#0;n#div#1;n#!!top" expanded="false" />
-                <element signature="n#div#0;n#div#2;n#!!top" expanded="false" />
-                <marker date="1476745180150" expanded="true" signature="15150:15162" placeholder="..." />
-                <marker date="1476745180150" expanded="true" signature="15211:15221" placeholder="..." />
-                <marker date="1476745180150" expanded="true" signature="15272:15284" placeholder="..." />
-                <marker date="1476745180150" expanded="true" signature="15343:15355" placeholder="..." />
-                <marker date="1476745180150" expanded="true" signature="15520:15532" placeholder="..." />
-                <marker date="1476745180150" expanded="true" signature="15691:15703" placeholder="..." />
-                <marker date="1476745180150" expanded="true" signature="15875:15887" placeholder="..." />
-                <marker date="1476745180150" expanded="true" signature="16039:16051" placeholder="..." />
+                <element signature="n#agregarparaimportar#0;n#VentasController#0;n#!!top" expanded="false" />
+                <element signature="e#19820#20094#0#PHP" expanded="false" />
+                <element signature="e#20151#20390#0#PHP" expanded="false" />
+                <element signature="e#21256#23471#0#PHP" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="papeldetrabajoactividadesvarias.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js">
+      <file leaf-file-name="importar.ctp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/View/Ventas/importar.ctp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="661">
-              <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
-              <folding>
-                <element signature="n#!!block;n#showhideactividad#0" expanded="false" />
-              </folding>
+            <state relative-caret-position="7700">
+              <caret line="350" column="0" selection-start-line="350" selection-start-column="0" selection-end-line="351" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="papeldetrabajosueldos.ctp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp">
+      <file leaf-file-name="avance.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/avance.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="23" selection-start-line="0" selection-start-column="8" selection-end-line="0" selection-end-column="23" />
-              <folding>
-                <element signature="e#7997#20666#0#PHP" expanded="false" />
-              </folding>
+            <state relative-caret-position="11374">
+              <caret line="517" column="12" selection-start-line="517" selection-start-column="12" selection-end-line="517" selection-end-column="12" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ClientesController.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/Controller/ClientesController.php">
+      <file leaf-file-name="getpapelestrabajo.ctp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="740">
-              <caret line="1222" column="65" selection-start-line="1222" selection-start-column="65" selection-end-line="1222" selection-end-column="65" />
+            <state relative-caret-position="264">
+              <caret line="12" column="40" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="40" />
               <folding>
-                <element signature="n#tareacargar#0;n#ClientesController#0;n#!!top" expanded="false" />
-                <element signature="n#informepagosdelmes#0;n#ClientesController#0;n#!!top" expanded="false" />
-                <element signature="n#pagosdelmes#0;n#ClientesController#0;n#!!top" expanded="false" />
-                <element signature="e#42350#42485#1#PHP" expanded="false" />
-                <element signature="e#42506#42637#1#PHP" expanded="false" />
-                <element signature="e#42659#42791#1#PHP" expanded="false" />
-                <element signature="e#42813#42945#1#PHP" expanded="false" />
-                <element signature="e#42970#43109#1#PHP" expanded="false" />
-                <element signature="e#43132#44226#1#PHP" expanded="false" />
-                <element signature="e#44255#44392#1#PHP" expanded="false" />
+                <marker date="1476480480748" expanded="true" signature="42550:42565" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -252,11 +216,8 @@
         <option value="$PROJECT_DIR$/app/Controller/EventosimpuestosController.php" />
         <option value="$PROJECT_DIR$/app/Controller/ConceptosrestantesController.php" />
         <option value="$PROJECT_DIR$/app/Model/Venta.php" />
-        <option value="$PROJECT_DIR$/app/Controller/VentasController.php" />
-        <option value="$PROJECT_DIR$/app/View/Ventas/importar.ctp" />
         <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajocooperadoraasistencial.ctp" />
         <option value="$PROJECT_DIR$/app/View/Depositos/getdepositos.ctp" />
-        <option value="$PROJECT_DIR$/app/Controller/ImpclisController.php" />
         <option value="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajocooperadoraasistencial.js" />
         <option value="$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp" />
         <option value="$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp" />
@@ -270,10 +231,17 @@
         <option value="$PROJECT_DIR$/app/webroot/css/cake.generic.css" />
         <option value="$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp" />
         <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp" />
-        <option value="$PROJECT_DIR$/app/Controller/EmpleadosController.php" />
         <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp" />
         <option value="$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js" />
         <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/EmpleadosController.php" />
+        <option value="$PROJECT_DIR$/app/Controller/VentasController.php" />
+        <option value="$PROJECT_DIR$/app/View/Ventas/importar.ctp" />
+        <option value="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajomonotributo.js" />
+        <option value="$PROJECT_DIR$/../../bin/php/php5.6.19/php.ini" />
+        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/ImpclisController.php" />
+        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoddjj.ctp" />
       </list>
     </option>
   </component>
@@ -282,10 +250,11 @@
   <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
   </component>
+  <component name="PhpDebugGeneral" break_at_first_line="true" />
   <component name="PhpServers">
     <servers />
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
+  <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" interpreter_name="PHP5.6.19" />
   <component name="ProjectFrameBounds">
     <option name="x" value="-9" />
     <option name="y" value="-9" />
@@ -303,7 +272,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
+    <navigator proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -316,132 +285,7 @@
       <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="webroot" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="webroot" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="webroot" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="empleados" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="webroot" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -461,14 +305,22 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="1142" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
+    <property name="settings.editor.selected.configurable" value="settings.php.debug.servers" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../bin/php/php5.6.19/php.exe" />
+    <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\wamp64\www\contasynfotech\app\View\Impclis" />
       <recent name="C:\wamp64\www\contasynfotech\app\View\Empleados" />
       <recent name="C:\wamp64\www\contasynfotech\app\View\Ventas" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="JavaScript Debug.papeldetrabajoddjj.ctp">
+    <configuration default="false" name="papeldetrabajoddjj.ctp" type="JavascriptDebugType" factoryName="JavaScript Debug" temporary="true" nameIsGenerated="true" uri="http://localhost:63342/contasynfotech/app/View/Impclis/papeldetrabajoddjj.ctp">
+      <method />
+    </configuration>
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
       <method />
     </configuration>
@@ -499,6 +351,14 @@
       <envs />
       <method />
     </configuration>
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.papeldetrabajoddjj.ctp" />
+    </list>
+    <recent_temporary>
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="JavaScript Debug.papeldetrabajoddjj.ctp" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
@@ -521,6 +381,9 @@
       <workItem from="1476199936205" duration="52955000" />
       <workItem from="1476460540149" duration="21494000" />
       <workItem from="1476714053293" duration="29221000" />
+      <workItem from="1476822803598" duration="6573000" />
+      <workItem from="1476889685182" duration="19744000" />
+      <workItem from="1476975858446" duration="7230000" />
     </task>
     <task id="LOCAL-00001" summary="varios cambios de interfaz en los papeles de trabajo, y merge con los datos que estaban en el DropBox que salian como diferentes pero por un tema de fechas nada mas">
       <created>1475861631660</created>
@@ -533,31 +396,41 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="158025000" />
+    <option name="totallyTimeSpent" value="191572000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08100858" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.105321504" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32990867" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="PHP-CGI Server" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32990867" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295711" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13948497" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295711" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.10944206" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32990867" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39503387" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Command Line Tools Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14334086" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295711" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -571,11 +444,11 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32919955" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4501073" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.105321504" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295711" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14324035" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.10944206" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -613,59 +486,40 @@
           <line>640</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoddjj.ctp</url>
+          <line>84</line>
+          <option name="timeStamp" value="30" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoddjj.ctp</url>
+          <line>65</line>
+          <option name="timeStamp" value="31" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp</url>
+          <line>146</line>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoddjj.ctp</url>
+          <line>41</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="25" />
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="43" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/AppModel (2).php" />
-    <entry file="file://$PROJECT_DIR$/app/Model/AppModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" column="3" selection-start-line="1" selection-start-column="3" selection-end-line="1" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/AppModel (2).php" />
-    <entry file="file://$PROJECT_DIR$/app/Model/AppModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" column="3" selection-start-line="1" selection-start-column="3" selection-end-line="1" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/view.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="88">
           <caret line="135" column="0" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!block;n#catchFormOrganismoxCliente#0" expanded="false" />
-            <element signature="n#!!block;n#loadFormEditarPersona#0" expanded="false" />
-            <element signature="n#!!block;n#loadFormDomicilio#0" expanded="false" />
-            <element signature="n#!!block;n#loadFormPuntoDeVenta#0" expanded="false" />
-            <element signature="n#!!block;n#restoreRow#0" expanded="false" />
-            <element signature="n#!!block;n#loadFormSubcliente#0" expanded="false" />
-            <element signature="n#!!block;n#loadFormPersonaRelacionada#0" expanded="false" />
-            <element signature="n#!!block;n#loadFormImpuestoPeriodos#0" expanded="false" />
-            <element signature="n#!!block;n#deleteImpcli#0" expanded="false" />
-            <element signature="n#!!block;n#loadFormImpuestoProvincias#0" expanded="false" />
-            <element signature="n#!!block;n#loadFormImpuestoLocalidades#0" expanded="false" />
-            <element signature="n#!!block;n#setOnChangeProvincia#0" expanded="false" />
-            <element signature="n#!!block;n#setOnChangeLocalidad#0" expanded="false" />
-            <element signature="n#!!block;n#deleteImpcliProvincia#0" expanded="false" />
-            <element signature="n#!!block;n#loadFormImpuesto#0" expanded="false" />
-            <element signature="n#!!block;n#getLocalidades#0" expanded="false" />
-            <element signature="n#!!block;n#reloadDatePickers#0" expanded="false" />
-            <element signature="n#!!block;n#catchFormAndSaveResult#0" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -736,7 +590,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-630">
           <caret line="36" column="4" selection-start-line="36" selection-start-column="4" selection-end-line="36" selection-end-column="4" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -751,12 +604,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="616">
           <caret line="206" column="29" selection-start-line="206" selection-start-column="29" selection-end-line="206" selection-end-column="29" />
-          <folding>
-            <element signature="n#addajax#0;n#ConceptosrestantesController#0;n#!!top" expanded="false" />
-            <element signature="e#4977#5839#0#PHP" expanded="false" />
-            <element signature="e#9016#9553#0#PHP" expanded="false" />
-            <element signature="e#9684#10218#0#PHP" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -774,29 +621,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Ventas/importar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="921">
-          <caret line="606" column="28" selection-start-line="606" selection-start-column="28" selection-end-line="606" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/edit.ctp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="9" column="42" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/VentasController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="347" column="28" selection-start-line="347" selection-start-column="28" selection-end-line="347" selection-end-column="28" />
-          <folding>
-            <element signature="n#addajax#0;n#VentasController#0;n#!!top" expanded="false" />
-            <element signature="n#edit#0;n#VentasController#0;n#!!top" expanded="false" />
-            <element signature="n#delete#0;n#VentasController#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -825,7 +653,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-339">
           <caret line="241" column="48" selection-start-line="241" selection-start-column="48" selection-end-line="241" selection-end-column="48" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -840,15 +667,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="789">
           <caret line="63" column="35" selection-start-line="63" selection-start-column="17" selection-end-line="63" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/ImpclisController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="908" column="37" selection-start-line="908" selection-start-column="20" selection-end-line="908" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1108,21 +926,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="261">
           <caret line="503" column="38" selection-start-line="503" selection-start-column="20" selection-end-line="503" selection-end-column="38" />
-          <folding>
-            <marker date="1476480480752" expanded="true" signature="22266:22275" placeholder="..." />
-            <marker date="1476480480752" expanded="true" signature="22859:23121" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="591">
-          <caret line="261" column="32" selection-start-line="261" selection-start-column="32" selection-end-line="261" selection-end-column="32" />
-          <folding>
-            <element signature="e#1237#4851#0#PHP" expanded="false" />
-            <marker date="1476480480748" expanded="true" signature="42550:42565" placeholder="..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1130,7 +933,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2574">
           <caret line="117" column="10" selection-start-line="117" selection-start-column="5" selection-end-line="117" selection-end-column="10" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1138,15 +940,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
           <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/avance.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="7" column="28" selection-start-line="7" selection-start-column="28" selection-end-line="7" selection-end-column="28" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1164,10 +957,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="242">
           <caret line="11" column="57" selection-start-line="11" selection-start-column="57" selection-end-line="11" selection-end-column="57" />
-          <folding>
-            <element signature="e#896#23933#0#PHP" expanded="false" />
-            <element signature="n#table#0;n#div#1;n#div#0;n#!!top" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1175,7 +964,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="284">
           <caret line="126" column="18" selection-start-line="126" selection-start-column="18" selection-end-line="126" selection-end-column="18" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1183,126 +971,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="371">
           <caret line="79" column="24" selection-start-line="74" selection-start-column="16" selection-end-line="79" selection-end-column="24" />
-          <folding>
-            <element signature="e#32312#34189#0#PHP" expanded="false" />
-            <marker date="1476721136107" expanded="true" signature="30058:30099" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/ClientesController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="740">
-          <caret line="1222" column="65" selection-start-line="1222" selection-start-column="65" selection-end-line="1222" selection-end-column="65" />
-          <folding>
-            <element signature="n#tareacargar#0;n#ClientesController#0;n#!!top" expanded="false" />
-            <element signature="n#informepagosdelmes#0;n#ClientesController#0;n#!!top" expanded="false" />
-            <element signature="n#pagosdelmes#0;n#ClientesController#0;n#!!top" expanded="false" />
-            <element signature="e#42350#42485#1#PHP" expanded="false" />
-            <element signature="e#42506#42637#1#PHP" expanded="false" />
-            <element signature="e#42659#42791#1#PHP" expanded="false" />
-            <element signature="e#42813#42945#1#PHP" expanded="false" />
-            <element signature="e#42970#43109#1#PHP" expanded="false" />
-            <element signature="e#43132#44226#1#PHP" expanded="false" />
-            <element signature="e#44255#44392#1#PHP" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="661">
-          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!block;n#showhideactividad#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="1000" column="85" selection-start-line="1000" selection-start-column="81" selection-end-line="1000" selection-end-column="85" />
-          <folding>
-            <element signature="n#div#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#div#1;n#div#0;n#div#1;n#!!top" expanded="false" />
-            <element signature="n#div#2;n#div#0;n#div#1;n#!!top" expanded="false" />
-            <element signature="n#div#3;n#div#0;n#div#1;n#!!top" expanded="false" />
-            <element signature="n#div#4;n#div#0;n#div#1;n#!!top" expanded="false" />
-            <element signature="n#div#0;n#div#5;n#div#0;n#div#1;n#!!top" expanded="false" />
-            <element signature="n#div#1;n#div#5;n#div#0;n#div#1;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#div#6;n#div#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#div#7;n#div#0;n#div#1;n#!!top" expanded="false" />
-            <element signature="n#div#0;n#div#2;n#!!top" expanded="false" />
-            <marker date="1476745180150" expanded="true" signature="15150:15162" placeholder="..." />
-            <marker date="1476745180150" expanded="true" signature="15211:15221" placeholder="..." />
-            <marker date="1476745180150" expanded="true" signature="15272:15284" placeholder="..." />
-            <marker date="1476745180150" expanded="true" signature="15343:15355" placeholder="..." />
-            <marker date="1476745180150" expanded="true" signature="15520:15532" placeholder="..." />
-            <marker date="1476745180150" expanded="true" signature="15691:15703" placeholder="..." />
-            <marker date="1476745180150" expanded="true" signature="15875:15887" placeholder="..." />
-            <marker date="1476745180150" expanded="true" signature="16039:16051" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="23" selection-start-line="0" selection-start-column="8" selection-end-line="0" selection-end-column="23" />
-          <folding>
-            <element signature="e#7997#20666#0#PHP" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Controller/EmpleadosController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="500">
-          <caret line="313" column="43" selection-start-line="313" selection-start-column="43" selection-end-line="313" selection-end-column="43" />
-          <folding>
-            <element signature="n#papeldetrabajosueldos#0;n#EmpleadosController#0;n#!!top" expanded="false" />
-            <element signature="e#6334#8326#0#PHP" expanded="false" />
-            <element signature="n#papeldetrabajolibrosueldo#0;n#EmpleadosController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/css/cake.generic.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="261">
-          <caret line="2347" column="11" selection-start-line="2347" selection-start-column="1" selection-end-line="2347" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="441" column="53" selection-start-line="440" selection-start-column="11" selection-end-line="441" selection-end-column="53" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="e#564#1553#0#PHP" expanded="false" />
-            <element signature="n#tr#11;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#12;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#13;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#14;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#15;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#16;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#18;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#19;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#20;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#21;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#23;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#tr#25;n#table#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#div#0;n#td#0;n#tr#30;n#table#0;n#div#0;n#!!top" expanded="true" />
-            <marker date="1476804494139" expanded="false" signature="14628:15086" placeholder="..." />
-            <marker date="1476804494139" expanded="false" signature="17304:17647" placeholder="..." />
-            <marker date="1476804494139" expanded="false" signature="18203:18564" placeholder="..." />
-          </folding>
+          <caret line="355" column="53" selection-start-line="355" selection-start-column="53" selection-end-line="355" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -1310,65 +985,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1979">
-          <caret line="922" column="47" selection-start-line="922" selection-start-column="47" selection-end-line="922" selection-end-column="47" />
-          <folding>
-            <element signature="e#1869#4308#0" expanded="false" />
-            <element signature="e#4447#8446#0" expanded="false" />
-            <element signature="e#8532#8593#0" expanded="false" />
-            <element signature="e#8772#8829#0" expanded="false" />
-            <element signature="e#8889#8946#0" expanded="false" />
-            <element signature="e#9004#9061#0" expanded="false" />
-            <element signature="e#9227#9284#0" expanded="false" />
-            <element signature="e#9491#14119#0" expanded="false" />
-            <element signature="e#14944#18602#0" expanded="false" />
-            <element signature="e#18609#28084#0" expanded="false" />
-            <element signature="e#28345#32230#0" expanded="false" />
-            <element signature="e#32274#33830#0" expanded="false" />
-            <element signature="e#33885#37833#0" expanded="false" />
-            <element signature="e#37879#38760#0" expanded="false" />
-            <element signature="e#38805#39672#0" expanded="false" />
-            <element signature="e#39733#40122#0" expanded="false" />
-            <element signature="e#40164#40554#0" expanded="false" />
-            <element signature="e#40598#40990#0" expanded="false" />
-            <element signature="e#41043#41444#0" expanded="false" />
-            <element signature="e#41591#41788#0" expanded="false" />
-            <element signature="e#41972#43977#0" expanded="false" />
-            <element signature="e#44204#44564#0" expanded="false" />
-            <element signature="n#!!block;n#calcularFooterTotales#0" expanded="false" />
-            <element signature="n#!!block;n#hiddeAllImputsFromConceptosRestantesAddForm#0" expanded="false" />
-            <element signature="n#!!block;n#calcularivaytotal#0" expanded="false" />
-            <element signature="n#!!block;n#calcularivaytotalcompra#0" expanded="false" />
-            <element signature="n#!!block;n#adaptarConceptorestanteForm#0" expanded="false" />
-            <element signature="n#!!block;n#reloadInputDates#0" expanded="false" />
-            <element signature="n#!!block;n#showVentas#0" expanded="false" />
-            <element signature="n#!!block;n#showCompras#0" expanded="false" />
-            <element signature="n#!!block;n#showNovedades#0" expanded="false" />
-            <element signature="n#!!block;n#showConceptosRestantes#0" expanded="false" />
-            <element signature="n#!!block;n#hideFormModVenta#0" expanded="false" />
-            <element signature="n#!!block;n#hideFormModCompra#0" expanded="false" />
-            <element signature="n#!!block;n#hideFormModSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#modificarVenta#0" expanded="false" />
-            <element signature="n#!!block;n#eliminarVenta#0" expanded="false" />
-            <element signature="n#!!block;n#modificarCompra#0" expanded="false" />
-            <element signature="n#!!block;n#eliminarCompra#0" expanded="false" />
-            <element signature="n#!!block;n#eliminarConceptosrestante#0" expanded="false" />
-            <element signature="n#!!block;n#modificarSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#eliminarSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#modificarConceptosrestante#0" expanded="false" />
-            <element signature="n#!!block;n#cargarSueldoEmpleado#0" expanded="false" />
-            <element signature="n#!!block;n#cargarLibroSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#ocultarFunciones#0" expanded="false" />
-            <element signature="n#!!block;n#activarCalXOnSueldos#0" expanded="false" />
-            <element signature="e#96858#97716#0" expanded="false" />
-            <element signature="n#!!block;n#realizarEventoCliente#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1376,9 +992,175 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="704">
           <caret line="581" column="48" selection-start-line="581" selection-start-column="48" selection-end-line="581" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="690">
+          <caret line="572" column="0" selection-start-line="572" selection-start-column="0" selection-end-line="572" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/css/cake.generic.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="2347" column="11" selection-start-line="2347" selection-start-column="1" selection-end-line="2347" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="22">
+          <caret line="922" column="47" selection-start-line="922" selection-start-column="47" selection-end-line="922" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="681">
+          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
           <folding>
-            <element signature="e#608#1644#0#PHP" expanded="false" />
-            <element signature="e#2393#7682#0#PHP" expanded="false" />
+            <element signature="n#!!block;n#showhideactividad#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="22" selection-start-line="0" selection-start-column="22" selection-end-line="0" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="12" column="40" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="40" />
+          <folding>
+            <marker date="1476480480748" expanded="true" signature="42550:42565" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/ClientesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="263">
+          <caret line="18" column="2" selection-start-line="18" selection-start-column="2" selection-end-line="18" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="327">
+          <caret line="397" column="23" selection-start-line="396" selection-start-column="14" selection-end-line="399" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/VentasController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10758">
+          <caret line="626" column="21" selection-start-line="626" selection-start-column="14" selection-end-line="626" selection-end-column="21" />
+          <folding>
+            <element signature="n#agregarparaimportar#0;n#VentasController#0;n#!!top" expanded="false" />
+            <element signature="e#19820#20094#0#PHP" expanded="false" />
+            <element signature="e#20151#20390#0#PHP" expanded="false" />
+            <element signature="e#21256#23471#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/avance.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="11374">
+          <caret line="517" column="12" selection-start-line="517" selection-start-column="12" selection-end-line="517" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Ventas/importar.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7700">
+          <caret line="350" column="0" selection-start-line="350" selection-start-column="0" selection-end-line="351" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../bin/php/php5.6.19/php.ini">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="771">
+          <caret line="2012" column="24" selection-start-line="2012" selection-start-column="24" selection-end-line="2012" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/38fae4f1-2c0d-46e8-ba11-a3ef10665fd9/console.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajomonotributo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="106" column="11" selection-start-line="106" selection-start-column="11" selection-end-line="106" selection-end-column="11" />
+          <folding>
+            <element signature="n#!!block;n#papelesDeTrabajo#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="584">
+          <caret line="348" column="19" selection-start-line="348" selection-start-column="19" selection-end-line="348" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/ImpclisController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="239">
+          <caret line="1095" column="8" selection-start-line="1095" selection-start-column="8" selection-end-line="1096" selection-end-column="50" />
+          <folding>
+            <element signature="e#19571#22175#0#PHP" expanded="false" />
+            <element signature="e#22834#23231#0#PHP" expanded="false" />
+            <element signature="e#23293#23576#0#PHP" expanded="false" />
+            <element signature="e#23926#24326#0#PHP" expanded="false" />
+            <element signature="e#24394#24680#0#PHP" expanded="false" />
+            <element signature="e#28612#31018#0#PHP" expanded="false" />
+            <element signature="e#31144#31465#0#PHP" expanded="false" />
+            <element signature="e#31514#31899#0#PHP" expanded="false" />
+            <element signature="e#31926#32587#0#PHP" expanded="false" />
+            <element signature="e#32705#33093#0#PHP" expanded="false" />
+            <element signature="e#33141#33480#0#PHP" expanded="false" />
+            <element signature="e#33508#34216#0#PHP" expanded="false" />
+            <element signature="e#34676#35499#0#PHP" expanded="false" />
+            <element signature="n#papeldetrabajosuss#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajocooperadoraasistencial#0;n#ImpclisController#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoddjj.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="652">
+          <caret line="175" column="9" selection-start-line="175" selection-start-column="9" selection-end-line="175" selection-end-column="9" />
+          <folding>
+            <marker date="1476982511943" expanded="true" signature="2852:2999" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="2852:3056" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="3711:3857" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="3711:3913" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="7345:7638" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="7703:7888" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="8121:8414" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="8479:8664" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="8897:9190" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="9255:9440" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="9673:9966" placeholder="..." />
+            <marker date="1476982511943" expanded="true" signature="10031:10216" placeholder="..." />
           </folding>
         </state>
       </provider>

@@ -3,8 +3,6 @@ $(document).ready(function() {
     $("#orden-"+orden+" td").css({'background-color' : 'lightgreen'});
     $("#orden-"+orden).css({'border' : 'blue solid 4px'});
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
-   
-
 });
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";
@@ -85,4 +83,46 @@ function papelesDeTrabajo(periodo,impcli){
 	 }
 	});
   return false;
+}
+function showRecategorizacion(){
+	if($("#tab_Recategorizacion").hasClass("tabsTareaImpuesto_active")){
+
+	}else{
+		$( ".tabsTareaImpuesto" ).switchClass( "tabsTareaImpuesto", "tabsTareaImpuesto_active", 500 );
+		$( ".tabsTareaImpuesto_active" ).switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+		$('#divRecategorizacion').show();
+		$('#divDDJJ').hide();
+	}
+}
+function showDDJJ(){
+
+	if($("#tab_DDJJ").hasClass("tabsTareaImpuesto_active")){
+
+	}else{
+		$( ".tabsTareaImpuesto" ).switchClass( "tabsTareaImpuesto", "tabsTareaImpuesto_active", 500 );
+		$( ".tabsTareaImpuesto_active" ).switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+		$('#divRecategorizacion').hide();
+		$('#divDDJJ').show();
+        var haycambios = $('#haycambios').val()*1;
+        if(haycambios){
+            loadDDJJ($('#periodoPDT').val(),$('#impcliidPDT').val());
+            $('#haycambios').val(0);
+        }
+	}
+}
+function loadDDJJ(periodo,impcli){
+    var data = "";
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/impclis/papeldetrabajoddjj/"+periodo+"/"+impcli, // URL to request
+        data: data,  // post data
+        success: function(response) {
+            //alert(response);
+            $('#divDDJJ').html(response);
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+        }
+    });
+    return false;
 }
