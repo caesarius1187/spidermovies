@@ -2,14 +2,14 @@
 <?php echo $this->Html->script('impclis/papeldetrabajosuss',array('inline'=>false)); ?>
 <?php echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
  echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));?>
-<div class="index">
+
 	<div id="Formhead" class="clientes papeldetrabajosuss index" style="margin-bottom:10px;">
 		<h2>SUSS:</h2>
 		Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
 		CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
 		Periodo: <?php echo $periodo; ?>
 	</div>
-	<div id="sheetCooperadoraAsistencial" class="index">
+	<div id="sheetCooperadoraAsistencial" class="index" style="overflow: auto; margin-bottom:10px;">
 		<!--Esta es la tabla original y vamos a recorrer todos los empleados por cada una de las
 		rows por que -->
         <?php
@@ -502,7 +502,7 @@
         unset($miempleado);
         //Debugger::dump($empleadoDatos);
         ?>
-        <table id="tblDatosAIngresar" class="tbl_border" cellspacing="0">
+        <table id="tblDatosAIngresar" class="tbl_suss" cellspacing="0">
             <tr>
                 <td></td>
                 <td>Legajo</td>
@@ -1337,4 +1337,4 @@
 	</div>
 	<div id="divLiquidarSUSS">
 	</div>
-</div>
+

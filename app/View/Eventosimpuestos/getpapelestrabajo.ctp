@@ -1,154 +1,164 @@
-<div class="index">
-
+<div class="index_pdt" style="border-color: #FFF">
     <?php
     $labelClifch = $cliente['Cliente']['nombre'];
-    $labelCuitfch =$cliente['Organismosxcliente'][0]['usuario'].'-Clave: '.$cliente['Organismosxcliente'][0]['clave'];
+    $labelCuitfch =$cliente['Organismosxcliente'][0]['usuario'].' - Clave: '.$cliente['Organismosxcliente'][0]['clave'];
     ?>
-    <div>
-        <h1><?php echo __($impuesto['nombre']); ?></h1>
-        <label><?php echo $labelClifch;?>-Usuario:<?php echo $labelCuitfch;?></label>
+    <div style="width:75%;">
+        <h3><?php echo __($impuesto['nombre']); ?></h3>
+        <label style="width:75%; float: left; font-size:14px;"><?php echo $labelClifch;?> - Usuario:<?php echo $labelCuitfch;?></label>
+    </div>
+    <div style="width: 25%; float:right;">
+        <?php
+        //aca vamos a mostrar informacion sobre las ventas,compras y retenciones cargadas
+
+        $mostrarAlertaVentasComprasConceptos = false;
+        switch ($impuesto['id']) {
+            case 4/*Monotributo*/:
+                $mostrarAlertaVentasComprasConceptos = true;
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo', //buttonImpcli
+                    'onClick' => 'verPapelDeTrabajoMonotributo('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+            case 6/*Actividades Varias*/:
+                $mostrarAlertaVentasComprasConceptos = true;
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoActividadesVarias('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+            case 10/*SUSS*/:
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoSUSS('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+            case 12/*Cooperadora Asistencial*/:
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoCooperadoraAsistencial('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+            case 21/*Actividades Economicas*/:
+            case 174/*Convenio Multilateral*/:
+                $mostrarAlertaVentasComprasConceptos = true;
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoConvenioMultilateral('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+
+            default:
+                if($impuesto['organismo']=='sindicato'){
+                    echo $this->Form->button('Papel de Trabajo', array(
+                        'id' => 'buttonPDT',
+                        'type' => 'button',
+                        'class'=>'btn_papeltrabajo',
+                        'onClick' => 'verPapelDeTrabajoSindicato('."'".$periodo."'".','."'".$impcliid."'".')',
+                        'escape' => false
+                    ));
+                }
+                break;
+        }
+        if($mostrarAlertaVentasComprasConceptos){
+        ?>
+    </div>
+    <div style="width: 100%">
+        <label>
+            <?php
+            if(isset($cliente['Venta'][0]['Venta'][0]['misventas'])){
+                echo $this->Html->image('test-pass-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "Se han cargado ".$cliente['Venta'][0]['Venta'][0]['misventas']." Ventas en este periodo</br>";
+            }else{
+                echo $this->Html->image('test-fail-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "NO se han cargado Ventas en este periodo</br>";
+            }
+            if(isset($cliente['Compra'][0]['Compra'][0]['miscompras'])){
+                echo $this->Html->image('test-pass-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "Se han cargado ".$cliente['Compra'][0]['Compra'][0]['miscompras']." Compras en este periodo</br>";
+            }else{
+                echo $this->Html->image('test-fail-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "NO se han cargado Compras en este periodo</br>";
+            }
+            if(isset($cliente['Conceptosrestante'][0]['Conceptosrestante'][0]['misconceptos'])){
+                echo $this->Html->image('test-pass-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "Se han cargado ".$cliente['Conceptosrestante'][0]['Conceptosrestante'][0]['misconceptos']." Pagos a cuenta en este periodo</br>";
+            }else{
+                echo $this->Html->image('test-fail-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "NO se han cargado Pagos a cuenta  en este periodo</br>";
+            }
+            ?>
+        </label>
+    </div>
+    <?php } ?> 
+</div>
+<div class="" style="width:100%; float: right">
+    <div id="tabsTareaImpuesto" style="margin-left: 8px;">
+    <div class="tabsTareaImpuesto_active" onClick="showPapelesDeTrabajo()" id="tab_PapelesDeTrabajo">
+        <label style="text-align:center;margin-top:5px;cursor:pointer;">Impuestos</label>
+    </div>
+    <div class="tabsTareaImpuesto" onClick="showPagos()" id="tab_Pagos">
+        <label style="text-align:center;margin-top:5px;cursor:pointer;">Pagos</label>
+    </div>
     </div>
 </div>
-<div id="tabsTareaImpuesto" style="margin-left: 8px;">
-	<div class="tabsTareaImpuesto_active" onClick="showPapelesDeTrabajo()" id="tab_PapelesDeTrabajo"><h2>Impuestos determinados</h2></div>
-	<div class="tabsTareaImpuesto" onClick="showPagos()" id="tab_Pagos"><h2>Pagos</h2></div>
-</div>
-<div id="divPrepararPapelesDeTrabajo" class="tareapapeldetrabajo index">
-
-    <div id="form_prepararPapeles" class="prepararPapeles"  style="float: left;">
+<div id="divPrepararPapelesDeTrabajo" class="tareapapeldetrabajo index_pdt">
+    <div id="form_prepararPapeles" class="prepararPapeles"  style="float: left; width:100%">
         <?php
         //Aca vamos a personalizar distintos formularios dependiendo de que impuesto sea el que necesitamos ejecutar, ya que si bien son parecidos algunos de ellos tienen particularidades
         ?>
-        <div style="width: 100%;">
-            <?php
-            //aca vamos a mostrar informacion sobre las ventas,compras y retenciones cargadas
-
-            $mostrarAlertaVentasComprasConceptos = false;
-            switch ($impuesto['id']) {
-                case 4/*Monotributo*/:
-                    $mostrarAlertaVentasComprasConceptos = true;
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoMonotributo('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-                case 6/*Actividades Varias*/:
-                    $mostrarAlertaVentasComprasConceptos = true;
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoActividadesVarias('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-                case 10/*SUSS*/:
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoSUSS('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-                case 12/*Cooperadora Asistencial*/:
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoCooperadoraAsistencial('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-                case 21/*Actividades Economicas*/:
-                case 174/*Convenio Multilateral*/:
-                    $mostrarAlertaVentasComprasConceptos = true;
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoConvenioMultilateral('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-
-                default:
-                    if($impuesto['organismo']=='sindicato'){
-                        echo $this->Form->button('Papel de Trabajo', array(
-                            'id' => 'buttonPDT',
-                            'type' => 'button',
-                            'class'=>'buttonImpcli',
-                            'onClick' => 'verPapelDeTrabajoSindicato('."'".$periodo."'".','."'".$impcliid."'".')',
-                            'escape' => false
-                        ));
-                    }
-                    break;
-            }
-            if($mostrarAlertaVentasComprasConceptos){
-            ?>
-            <label>
-                <?php
-                if(isset($cliente['Venta'][0]['Venta'][0]['misventas'])){
-                    echo $this->Html->image('test-pass-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "Se han cargado ".$cliente['Venta'][0]['Venta'][0]['misventas']." Ventas en este periodo</br>";
-                }else{
-                    echo $this->Html->image('test-fail-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "NO se han cargado Ventas en este periodo</br>";
-                }
-                if(isset($cliente['Compra'][0]['Compra'][0]['miscompras'])){
-                    echo $this->Html->image('test-pass-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "Se han cargado ".$cliente['Compra'][0]['Compra'][0]['miscompras']." Compras en este periodo</br>";
-                }else{
-                    echo $this->Html->image('test-fail-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "NO se han cargado Compras en este periodo</br>";
-                }
-                if(isset($cliente['Conceptosrestante'][0]['Conceptosrestante'][0]['misconceptos'])){
-                    echo $this->Html->image('test-pass-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "Se han cargado ".$cliente['Conceptosrestante'][0]['Conceptosrestante'][0]['misconceptos']." Pagos a cuenta en este periodo</br>";
-                }else{
-                    echo $this->Html->image('test-fail-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "NO se han cargado Pagos a cuenta  en este periodo</br>";
-                }
-                ?>
-            </label>
-            <?php } ?>
-        </div>
-
-        <div id="divVencimiento"  >
+        <div id="divVencimiento" style="margin-bottom: 20px;">
             <?php
             echo $this->Form->input('vencimientogeneral', array(
                                                   'class'=>'datepicker',
                                                   'type'=>'text',
-                                                  'label'=>"Vencimiento:",
+                                                  'label'=>array(
+                                                    'text'=>"Vencimiento:",
+                                                    "style"=>"display:inline",
+                                                    ),
                                                   'readonly','readonly',
                                                   'value'=>$fchvto,
+                                                  'div' => false,
+                                                  'style'=> 'height:9px;display:inline'
                                                   ));
             $mensajeAlertaFecha = "";
             switch ($fchvtoOrigen) {
@@ -172,10 +182,10 @@
 
 	    echo $this->Form->input('Eventosimpuesto.0.haycambio',array('value'=> true ,'type'=>'hidden','id'=>'EventosimpuestoHaycambios'));
 	    echo $this->Form->input('Eventosimpuesto.0.cliente_id',array('value'=>$clienteid,'type'=>'hidden'));
-	    $botonOK="Guardar";
+	    $botonOK="Aceptar";
         switch ($tipopago) {
             case 'unico':
-                $botonOK="Guardar";
+                $botonOK="Aceptar";
                 $eventoid=0;
                 $fchvto=date('d-m-Y');
                 $montovto = 0;
@@ -507,11 +517,11 @@
                 }
             break;
         }
-  	    echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a>';
-	    echo '<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';?>
+  	     
+	     echo '<div style="width:100%; float:rigth;"><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
 
-  	    <!--<fieldset style="display:none"><?php echo  $this->Form->submit('Aceptar');?> </fieldset>-->
-		
+         echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a></div>'
+       ;?>
 	    <?php
         if(isset($itemsACompletar)){
             echo $this->Form->input('Eventosimpuesto.0.cantItems', array('type'=>'hidden','value'=>count($itemsACompletar)));
@@ -603,6 +613,6 @@
         <?php } ?>
 	</div>
 </div><?php /*Fin Preparar Papeles de Trabajo*/?>
-<div id="divPagar"  class="tareapagos index">
-	
+<div id="divPagar"  class="tareapagos index_pdt" style="display:none;">
 </div>
+<a class="close" href="#close"></a>
