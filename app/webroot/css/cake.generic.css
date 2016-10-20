@@ -365,6 +365,7 @@ form div.submit {
 	margin-top: 10px;
 	text-align: right;
 	width: 125px;
+	float: right;
 }
 label {
 	display: block;
@@ -1524,20 +1525,20 @@ transition: all 0.4s ease-in-out;
 }
 /** Tabs **/
  .tabsTareaImpuesto{
- 	width:45%;
+ 	width:47%;
  	height:100%;
  	float:left;
  	background-color: #FFF;
  	border-radius: 3px;
- 	border: solid 1px white;	
+ 	border: solid 1px #E4E4E4;	
  	color: #000;
  	cursor:pointer; 	
  	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
  	margin:3px 2px;
- 	padding-right: 9px;
+ 	padding: 8px;
  }
  .tabsTareaImpuesto:hover{
- 	width:45%;
+ 	width:47%;
  	height:100%;
  	float:left;
  	background-color: #B6B6B6;
@@ -1545,24 +1546,30 @@ transition: all 0.4s ease-in-out;
  	border: solid 1px #B6B6B6;	
  	color: #FFF;
  	cursor:pointer;
- 	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+ 	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
  	margin:3px 2px;
- 	padding-right: 9px;
+ 	padding: 8px;
  }
+
 .tabsTareaImpuesto_active{
-	
- 	width:45%;
+ 	width:47%;
  	height:100%;
  	float:left;
  	background-color: #1565c0;
  	border-radius: 3px;
  	border: solid 1px #1565c0;	
  	color: #FFF;
+ 	cursor:pointer;
  	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
  	margin:3px 2px;
- 	padding-right: 9px;
+ 	padding: 8px;
  
  }
+
+.tabsTareaImpuesto:hover label{
+ 	color: #FFF;
+ }
+
 /** Tables view clientes**/
  .cliente_view_tab{
  	width:31%;
@@ -2280,7 +2287,6 @@ transition: all 0.4s ease-in-out;
 }
 
 .btn_sueldo{
-	
 	background-color: #757575;
     color: #FFFFFF;
     padding: 3px 2px;
@@ -2362,6 +2368,11 @@ transition: all 0.4s ease-in-out;
 	border-bottom: 1px solid #ccc;
 	font-weight: normal;
 }
+
+/*temporal
+.tbl_getpagar tr td{
+	border: 1px solid #000;
+}*/
 .clsTabla{
 	border-spacing: 0;
 	width: 0px;
@@ -2428,6 +2439,43 @@ transition: all 0.4s ease-in-out;
 .inputAControlar{
 	background-color: #FFA500;
 }
+/*SUSS*/
+.tbl_suss td, th{
+	border: 1px solid #000;
+	font-size: 12px;
+}
+/*Papeles de trabajo*/
+.btn_papeltrabajo{
+	background-color: #2196F3;
+    color: #fff;
+    padding: 3px 13px;
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    height: 40px;
+    line-height: 20px;
+    border-radius: 2px;
+    font-size: 0.9em;
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0.2s;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    border: 1px solid #2196F3;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-bottom: 6px;
+    margin-right: 4px;
+    max-width: 250px;
+    float: right;
+}
+
+div.index_pdt{
+	float:right;
+	width: 96%;
+	border:1px solid #E4E4E4; 
+	padding:10px 1%;
+	background-color: #FFFFFF;
+	margin: 3px 1% 0px;
+}	
 
 /*CM*/
 

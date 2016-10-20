@@ -296,7 +296,7 @@
 
 <!-- Inicio Popin getPrepararPapeles -->
 <a href="#x" class="overlay" id="popInPapelesDeTrabajo"></a>
-<div  class="popup" style="width:80%" id="divpopPapelesDeTrabajo" >
+<div  class="popup" style="width:65%; padding:0px;" id="divpopPapelesDeTrabajo">
 
   <a class="close" href="#close"></a>
 </div>

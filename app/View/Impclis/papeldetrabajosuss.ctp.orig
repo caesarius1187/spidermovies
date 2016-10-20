@@ -517,9 +517,8 @@
                     background-color: grey;
                     ";
         ?>
-        <table id="tblDatosAIngresar" class="tbl_border" cellspacing="0">
-	<thead>
-            		<tr>
+        <table id="tblDatosAIngresar" class="tbl_suss" cellspacing="0">
+            <tr>
                 <td></td>
                 <td>Legajo</td>
                 <?php

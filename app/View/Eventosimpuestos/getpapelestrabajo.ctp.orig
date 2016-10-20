@@ -7,6 +7,74 @@
         <h3><?php echo __($impuesto['nombre']); ?></h3>
         <label style="width:75%; float: left; font-size:14px;"><?php echo $labelClifch;?> - Usuario:<?php echo $labelCuitfch;?></label>
     </div>
+<<<<<<< .merge_file_a06532
+</div>
+<div id="tabsTareaImpuesto" style="margin-left: 8px;">
+	<div class="tabsTareaImpuesto_active" onClick="showPapelesDeTrabajo()" id="tab_PapelesDeTrabajo"><h2>Impuestos</h2></div>
+	<div class="tabsTareaImpuesto" onClick="showPagos()" id="tab_Pagos"><h2>Pagos</h2></div>
+</div>
+<div id="divPrepararPapelesDeTrabajo" class="tareapapeldetrabajo index">
+    <div id="form_prepararPapeles" class="prepararPapeles"  style="float: left;">
+        <?php
+        //Aca vamos a personalizar distintos formularios dependiendo de que impuesto sea el que necesitamos ejecutar, ya que si bien son parecidos algunos de ellos tienen particularidades
+        ?>
+        <div style="width: 100%;">
+            <?php
+            //aca vamos a mostrar informacion sobre las ventas,compras y retenciones cargadas
+            $mostrarAlertaVentasComprasConceptos = false;
+            switch ($impuesto['id']) {
+                case 4/*Monotributo*/:
+                    $mostrarAlertaVentasComprasConceptos = true;
+                    echo $this->Form->button('Papel de Trabajo', array(
+                        'id' => 'buttonPDT',
+                        'type' => 'button',
+                        'class'=>'buttonImpcli',
+                        'onClick' => 'verPapelDeTrabajoMonotributo('."'".$periodo."'".','."'".$impcliid."'".')',
+                        'escape' => false
+                    ));
+                    break;
+                case 6/*Actividades Varias*/:
+                    $mostrarAlertaVentasComprasConceptos = true;
+                    echo $this->Form->button('Papel de Trabajo', array(
+                        'id' => 'buttonPDT',
+                        'type' => 'button',
+                        'class'=>'buttonImpcli',
+                        'onClick' => 'verPapelDeTrabajoActividadesVarias('."'".$periodo."'".','."'".$impcliid."'".')',
+                        'escape' => false
+                    ));
+                    break;
+                case 10/*SUSS*/:
+                    echo $this->Form->button('Papel de Trabajo', array(
+                        'id' => 'buttonPDT',
+                        'type' => 'button',
+                        'class'=>'buttonImpcli',
+                        'onClick' => 'verPapelDeTrabajoSUSS('."'".$periodo."'".','."'".$impcliid."'".')',
+                        'escape' => false
+                    ));
+                    break;
+                case 12/*Cooperadora Asistencial*/:
+                    echo $this->Form->button('Papel de Trabajo', array(
+                        'id' => 'buttonPDT',
+                        'type' => 'button',
+                        'class'=>'buttonImpcli',
+                        'onClick' => 'verPapelDeTrabajoCooperadoraAsistencial('."'".$periodo."'".','."'".$impcliid."'".')',
+                        'escape' => false
+                    ));
+                    break;
+                case 19/*IVA*/:
+                    echo $this->Form->button('Papel de Trabajo', array(
+                        'id' => 'buttonPDT',
+                        'type' => 'button',
+                        'class'=>'buttonImpcli',
+                        'onClick' => 'verPapelDeTrabajoIVA('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')',
+                        'escape' => false
+                    ));
+                    break;
+
+                case 21/*Actividades Economicas*/:
+                case 174/*Convenio Multilateral*/:
+                    $mostrarAlertaVentasComprasConceptos = true;
+=======
     <div style="width: 25%; float:right;">
         <?php
         //aca vamos a mostrar informacion sobre las ventas,compras y retenciones cargadas
@@ -51,15 +119,6 @@
                     'escape' => false
                 ));
                 break;
-		case 19/*IVA*/:
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'btn_papeltrabajo',
-                        'onClick' => 'verPapelDeTrabajoIVA('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')',
-                        'escape' => false
-                    ));
-                    break;
             case 21/*Actividades Economicas*/:
             case 174/*Convenio Multilateral*/:
                 $mostrarAlertaVentasComprasConceptos = true;
@@ -74,6 +133,7 @@
 
             default:
                 if($impuesto['organismo']=='sindicato'){
+>>>>>>> .merge_file_a08196
                     echo $this->Form->button('Papel de Trabajo', array(
                         'id' => 'buttonPDT',
                         'type' => 'button',
@@ -191,8 +251,12 @@
 
 	    echo $this->Form->input('Eventosimpuesto.0.haycambio',array('value'=> true ,'type'=>'hidden','id'=>'EventosimpuestoHaycambios'));
 	    echo $this->Form->input('Eventosimpuesto.0.cliente_id',array('value'=>$clienteid,'type'=>'hidden'));
+<<<<<<< .merge_file_a06532
+	    $botonOK="Guardar";
+        $faltanEventosAMostrar = false;
+=======
 	    $botonOK="Aceptar";
-$faltanEventosAMostrar = false;
+>>>>>>> .merge_file_a08196
         switch ($tipopago) {
             case 'unico':
                 $botonOK="Aceptar";
@@ -597,18 +661,27 @@ $faltanEventosAMostrar = false;
                 }
             break;
         }
-foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el evento para ver si ya esta creada este item
+<<<<<<< .merge_file_a06532
+        //aca vbamos a revisar si todos los eventos han sido mostrados, en caso contrario vamos a activar la tabla de abajo para q muestre los eventos q faltan
+        //Debugger::dump($eventosimpuestos);
+        foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el evento para ver si ya esta creada este item
             if(!$eventosimpuestos[$key]['Eventosimpuesto']['mostrado']){
                 $faltanEventosAMostrar = true;
                 break;
             }else{
 
             }
-        }  	     
+        }
+        echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a>';
+	    echo '<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';?>
+  	    <!--<fieldset style="display:none"><?php echo  $this->Form->submit('Aceptar');?> </fieldset>-->
+=======
+  	     
 	     echo '<div style="width:100%; float:rigth;"><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
 
          echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a></div>'
        ;?>
+>>>>>>> .merge_file_a08196
 	    <?php
         if(isset($itemsACompletar)){
             echo $this->Form->input('Eventosimpuesto.0.cantItems', array('type'=>'hidden','value'=>count($itemsACompletar)));

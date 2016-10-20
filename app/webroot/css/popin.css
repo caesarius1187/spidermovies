@@ -127,6 +127,10 @@ a#login_pop:hover, a#join_pop:hover {
     color: #000;
 }
 
+.popup .tabsTareaImpuesto_active label{
+    color:#FFF;
+ }
+
 /*.popup input[type="text"], .popup input[type="password"] {
     border: 1px solid;
     border-color: #999 #ccc #ccc;
