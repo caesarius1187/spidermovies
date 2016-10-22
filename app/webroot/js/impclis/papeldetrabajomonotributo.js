@@ -1,8 +1,63 @@
-$(document).ready(function() { 
+$(document).ready(function() {
+    $( "#clickExcel" ).click(function() {
+        if($('#divRecategorizacion').is(':visible')){
+            $("#divRecategorizacion").table2excel({
+                // exclude CSS class
+                exclude: ".noExl",
+                name: "Monotributo",
+                filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"Recategoizacion"
+            });
+        }else{
+            $("#divDDJJ").table2excel({
+                // exclude CSS class
+                exclude: ".noExl",
+                name: "Monotributo",
+                filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"DDJJ"
+            });
+        }
+
+    });
     var orden = $("#topOrden").val();
     $("#orden-"+orden+" td").css({'background-color' : 'lightgreen'});
     $("#orden-"+orden).css({'border' : 'blue solid 4px'});
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+	var beforePrint = function() {
+		$('#header').hide();
+		//$('#Formhead').hide();
+		$('#divLiquidarMonotributo').hide();
+		$('#tabsTareaMonotributo').hide();
+		$('.btn_imprimir').hide();
+
+		$('#index').css('float','left');
+		$('#padding').css('padding','0px');
+		$('#index').css('font-size','10px');
+        $('#index').css('border-color','#FFF');
+        $('.tbl_tareas').css('width','80%');
+
+	};
+	var afterPrint = function() {
+		$('#index').css('font-size','14px');
+		$('#header').show();
+		//$('#Formhead').show();
+		$('#divLiquidarMonotributo').show();
+		 $('#tabsTareaMonotributo').show();
+		 $('.btn_imprimir').show();
+		 $('#index').css('float','right');
+		$('#padding').css('padding','10px 1%');
+        $('.tbl_tareas').css('width','50%');
+    };
+	if (window.matchMedia) {
+		var mediaQueryList = window.matchMedia('print');
+		mediaQueryList.addListener(function(mql) {
+			if (mql.matches) {
+				beforePrint();
+			} else {
+				afterPrint();
+			}
+		});
+	}
+	window.onbeforeprint = beforePrint;
+	window.onafterprint = afterPrint;
 });
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";
@@ -125,4 +180,7 @@ function loadDDJJ(periodo,impcli){
         }
     });
     return false;
+}
+function imprimir(){
+	window.print();
 }

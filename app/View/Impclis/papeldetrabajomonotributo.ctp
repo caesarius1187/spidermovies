@@ -1,20 +1,38 @@
-<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false)); ?>
-<?php echo $this->Html->script('impclis/papeldetrabajomonotributo',array('inline'=>false)); ?>
-<?php echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
+<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
+ echo $this->Html->script('jquery.table2excel',array('inline'=>false));
+ echo $this->Html->script('impclis/papeldetrabajomonotributo',array('inline'=>false));
+ echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
  echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));?>
 <div id="Formhead" class="clientes papeldetrabajoconveniomultilateral index" style="margin-bottom:10px;">
-	<h2>Recategorizacion:</h2>
+	<h2>Monotributo:</h2>
 	Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
-	CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
-	Periodo: <?php echo $periodo; ?>
+    <?php echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));?>
+    CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
+	Periodo: <?php echo $periodo; ?> </br>
+    <?php echo $this->Form->button('Imprimir',
+        array('type' => 'button',
+            'class' =>"btn_imprimir",
+            'onClick' => "imprimir()"
+        )
+    );?>
+    <?php echo $this->Form->button('Excel',
+        array('type' => 'button',
+            'id'=>"clickExcel",
+            'class' =>"btn_imprimir",
+        )
+    );?>
 	<div id="tabsTareaMonotributo" style="margin-left: 8px;">
 		<div class="tabsTareaImpuesto_active" onClick="showRecategorizacion()" id="tab_Recategorizacion"><h2>Recatecotizacion</h2></div>
 		<div class="tabsTareaImpuesto" onClick="showDDJJ()" id="tab_DDJJ"><h2>DDJJ</h2></div>
 	</div>
-	<div id="divRecategorizacion">
-        <h1>Tabla para Recategorizar Monotributistas</h1>
+	<div id="divRecategorizacion" class="index">
         <table class="tbl_tareas" style="border-collapse: collapse; width:50%;">
 			<thead>
+                <tr>
+                    <td colspan ="20">
+                        <h1>Tabla para Recategorizar Monotributistas</h1>
+                    </td>
+                </tr>
 				<tr>
 					<td>Periodo</td>
 					<td>Locaciones y Ss</td>
