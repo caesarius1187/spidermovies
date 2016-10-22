@@ -62,7 +62,6 @@ class PlandepagosController extends AppController {
 			));
 		$this->set('plandepagos', $this->Plandepago->find('all', $options));
 		$this->set('clientes', $clientes2);
-
 	}
 	
 /**

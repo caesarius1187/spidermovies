@@ -2104,6 +2104,110 @@ $(document).ready(function() {
   return false;
 }
 
+    function usosSLD(conid){
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/usosaldos/index/"+conid,
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                //var oldRow = $("#rowconceptorestante"+conid).html();
+                $("#divUsosaldos").html(response);
+                location.href="#popinUsosaldos";
+                // $('#ConceptosRestanteFormEdit'+conid).submit(function(){
+                //     //serialize form data
+                //     var formData = $(this).serialize();
+                //     //get form action
+                //     var formUrl = $(this).attr('action');
+                //
+                //     $.ajax({
+                //         type: 'POST',
+                //         url: formUrl,
+                //         data: formData,
+                //         success: function(response2,textStatus,xhr){
+                //             var respuesta = JSON.parse(response2);
+                //             callAlertPopint(respuesta.respuesta);
+                //             var conceptoCargado = respuesta.conceptosrestante.Conceptosrestante
+                //             if(conceptoCargado!=null){
+                //                 //Agregar la fila nueva a la tabla
+                //                 var  tdClass = "tdViewConceptosrestante"+conceptoCargado.id;
+                //                 var partido = "";
+                //                 var localidad = "";
+                //                 var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
+                //                 var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
+                //                 switch (impuestoseleccionado){
+                //                     //estos impuestos se pagan por provincia todos los otros por localidad
+                //                     case '21':/*Actividades Economicas*/
+                //                     case '174':/*Convenio Multilateral*/
+                //                         partido = respuesta.conceptosrestante.Partido.nombre;
+                //                         break;
+                //                     default:
+                //                         localidad =  respuesta.conceptosrestante.Localidade.Partido.nombre+'-'+respuesta.conceptosrestante.Localidade.nombre;
+                //                         break;
+                //                 }
+                //                 var rowData =
+                //                     [
+                //                         respuesta.conceptosrestante.Impcli.Impuesto.nombre,
+                //                         partido,
+                //                         localidad,
+                //                         respuesta.conceptosrestante.Conceptostipo.nombre,
+                //                         respuesta.conceptosrestante.Comprobante.nombre,
+                //                         conceptoCargado.numerocomprobante,
+                //                         conceptoCargado.rectificativa,
+                //                         conceptoCargado.razonsocial,
+                //                         conceptoCargado.monto,
+                //                         conceptoCargado.montoretenido,
+                //                         conceptoCargado.cuit,
+                //                         conceptoCargado.fecha,
+                //                         conceptoCargado.numerodespachoaduanero,
+                //                         conceptoCargado.anticipo,
+                //                         conceptoCargado.cbu,
+                //                         conceptoCargado.tipocuenta,
+                //                         conceptoCargado.tipomoneda,
+                //                         conceptoCargado.agente,
+                //                         conceptoCargado.enterecaudador,
+                //                         conceptoCargado.regimen,
+                //                         conceptoCargado.descripcion,
+                //                         conceptoCargado.numeropadron
+                //                     ];
+                //                 var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarConceptosrestante('+conceptoCargado.id+')" alt="">';
+                //                 tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarConceptosrestante('+conceptoCargado.id+')" alt="">';
+                //                 rowData.push(tdactions);
+                //
+                //                 var tdid = "#tdconceptosrestante"+conid;
+                //                 $(tdid).remove();
+                //
+                //                 $(".tdViewConceptosrestanteO"+conid).show();
+                //                 var rowid="#rowconceptorestante"+conid;
+                //                 tblTablaConceptosRestantes = $('#tblTablaConceptosrestantes').dataTable().api();
+                //                 var mirows = tblTablaConceptosRestantes.rows();
+                //                 var mirow = tblTablaConceptosRestantes.row();
+                //                 //var mirowId = tblTablaConceptosRestantes.row(rowid)._fnAjaxUpdateDraw();
+                //                 var mirowIdData = tblTablaConceptosRestantes.row(rowid).data();
+                //                 var mirowIdNewData = tblTablaConceptosRestantes.row(rowid).data(rowData);
+                //                 var drawRow = tblTablaConceptosRestantes.row(rowid).draw();
+                //                 var drawTable = tblTablaConceptosRestantes.draw();
+                //
+                //                 //.data(rowData)
+                //
+                //                 /*TODO: ReDraw pendiente
+                //                  *aca nos falta completar el "redibujado de la tabla, se actualizan los datos pero
+                //                  * no se por que no se redibuja la tabla */
+                //             }
+                //         },
+                //         error: function(xhr,textStatus,error){
+                //             alert(textStatus);
+                //         }
+                //     });
+                //     return false;
+                // });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    }
 function PrintElem(elem)
 {
    // PopupElement($(elem).html());

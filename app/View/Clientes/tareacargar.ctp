@@ -1029,6 +1029,12 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                     $paramsConceptorestante=$conceptorestante["id"];
                     echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarConceptosrestante(".$paramsConceptorestante.")"));
                     echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarConceptosrestante(".$paramsConceptorestante.")"));
+                    if(
+                        $conceptorestante['Impcli']['impuesto_id']=='19'/*IVA*/ &&
+                        $conceptorestante['Conceptostipo']['id']==1 )
+                    {
+                        echo $this->Html->image('usosaldo.png',array('width' => '20', 'height' => '20','onClick'=>"usosSLD(".$paramsConceptorestante.")"));
+                    }
                     echo $this->Form->end();  ?>
                 </td>
             </tr>
@@ -1151,4 +1157,12 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
     </div>
     <a class="close" href="#close"></a>
 </div>
+<a href="#x" class="overlay" id="popinUsosaldos"></a>
+<div class="popup">
+    <div id="divUsosaldos" >
+
+       
+    </div>
+</div>
+
 <!-- Fin Popin Nuevo Domicilio -->
