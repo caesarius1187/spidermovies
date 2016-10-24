@@ -119,9 +119,14 @@
             $sueldoActualesClientes[$cliente['id']] = 0;
             //calculo de Deuda
             foreach ($cliente['Impcli'] as $impcli) {
-                foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) {
-                   $deudasActuales+=$eventoimpuesto['montovto'];
+                $impuestoActivo = false;
+                if (count($impcli['Periodosactivo'])>0) {
+                    $impuestoActivo = true;
+                    foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) {
+                        $deudasActuales+=$eventoimpuesto['montovto'];
+                    }
                 }
+
             }
             foreach ($cliente['Plandepago'] as $plandepago) {
                    $deudasActuales+=$plandepago['montovto'];
@@ -336,24 +341,26 @@
                         $pagadoAl18=0;
                         foreach ($grupoclientesActual as $gcliActual ) {
                             foreach ($gcliActual['Cliente'] as $cliente) {
-                                foreach ($cliente['Impcli'] as $impcli) { 
-                                    foreach ($impcli['Eventosimpuesto'] as $eventosimpuesto) { 
-                                        if(date("d",strtotime($eventosimpuesto['fchvto']))<07){
-                                            //menor que 07
-                                            $planificadoAl2+=$eventosimpuesto['montovto'];
-                                            $pagadoAl2+=$eventosimpuesto['montorealizado'];
-                                        }else if(date("d",strtotime($eventosimpuesto['fchvto']))<12){
-                                            //menor que 12 y mayor que 07
-                                            $planificadoAl7+=$eventosimpuesto['montovto'];
-                                            $pagadoAl7+=$eventosimpuesto['montorealizado'];
-                                        } else if(date("d",strtotime($eventosimpuesto['fchvto']))<18){
+                                foreach ($cliente['Impcli'] as $impcli) {
+                                    if (count($impcli['Periodosactivo'])>0) {
+                                        foreach ($impcli['Eventosimpuesto'] as $eventosimpuesto) {
+                                            if (date("d", strtotime($eventosimpuesto['fchvto'])) < 07) {
+                                                //menor que 07
+                                                $planificadoAl2 += $eventosimpuesto['montovto'];
+                                                $pagadoAl2 += $eventosimpuesto['montorealizado'];
+                                            } else if (date("d", strtotime($eventosimpuesto['fchvto'])) < 12) {
+                                                //menor que 12 y mayor que 07
+                                                $planificadoAl7 += $eventosimpuesto['montovto'];
+                                                $pagadoAl7 += $eventosimpuesto['montorealizado'];
+                                            } else if (date("d", strtotime($eventosimpuesto['fchvto'])) < 18) {
                                                 //menor que 18 y mayor que 12
-                                                $planificadoAl12+=$eventosimpuesto['montovto'];
-                                                $pagadoAl12+=$eventosimpuesto['montorealizado'];
-                                        }else {
-                                            //mayor que 18
-                                            $planificadoAl18+=$eventosimpuesto['montovto'];
-                                            $pagadoAl18+=$eventosimpuesto['montorealizado'];
+                                                $planificadoAl12 += $eventosimpuesto['montovto'];
+                                                $pagadoAl12 += $eventosimpuesto['montorealizado'];
+                                            } else {
+                                                //mayor que 18
+                                                $planificadoAl18 += $eventosimpuesto['montovto'];
+                                                $pagadoAl18 += $eventosimpuesto['montorealizado'];
+                                            }
                                         }
                                     }
                                 }
@@ -533,23 +540,25 @@
                         $eventoimpuestomonc=0;
                         $eventoimpuestomontovto=0;
                         $eventoimpuestmontorealizado=0;
-                        foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) { 
-                            $eventoimpuestomonc+=$eventoimpuesto["monc"];
-                            $tcon+=$eventoimpuesto["monc"];
-                            $eventoimpuestomontovto+=$eventoimpuesto["montovto"];
-                            $tpla+=$eventoimpuesto["montovto"];
-                            $eventoimpuestmontorealizado+=$eventoimpuesto["montorealizado"];
-                            $tpag+=$eventoimpuesto["montorealizado"];
-                        }
-                        //Aca vamos a sumar el saldo a favor del periodo para el IVA (que es el SLD)
-                        //Luego sumaremos otros impuestos que sumen saldos a favor de esta forma
-                        //como economicas
-                        if($impcli['Impuesto']['id']=='19' ){
-                            foreach ($impcli['Conceptosrestante'] as $saldoLibreDisponibilidad) {
-                                $eventoimpuestomonc += $saldoLibreDisponibilidad['montoretenido'];
-                                $tcon += $saldoLibreDisponibilidad['montoretenido'];
+                        if (count($impcli['Periodosactivo'])>0) {
+                            foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) {
+                                $eventoimpuestomonc += $eventoimpuesto["monc"];
+                                $tcon += $eventoimpuesto["monc"];
+                                $eventoimpuestomontovto += $eventoimpuesto["montovto"];
+                                $tpla += $eventoimpuesto["montovto"];
+                                $eventoimpuestmontorealizado += $eventoimpuesto["montorealizado"];
+                                $tpag += $eventoimpuesto["montorealizado"];
                             }
-                        }
+                            //Aca vamos a sumar el saldo a favor del periodo para el IVA (que es el SLD)
+                            //Luego sumaremos otros impuestos que sumen saldos a favor de esta forma
+                            //como economicas
+                            if ($impcli['Impuesto']['id'] == '19') {
+                                foreach ($impcli['Conceptosrestante'] as $saldoLibreDisponibilidad) {
+                                    $eventoimpuestomonc += $saldoLibreDisponibilidad['montoretenido'];
+                                    $tcon += $saldoLibreDisponibilidad['montoretenido'];
+                                }
+                            }
+
                         ?>
                         <tr  >
                             <td style='border:thin solid #333 ;text-align:left;' align="left">
@@ -587,6 +596,7 @@
                             </td>
                         </tr>
                     <?php
+                        }
                 }
                 //Planes de Pagos
                 foreach ($cliente['Plandepago'] as $plandepago) {   ?>

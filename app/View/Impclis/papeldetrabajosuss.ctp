@@ -203,7 +203,7 @@
                 //Remuneracion 1
                 if (
                 in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('27'/*Total Remunerativos C/D*/,'109'/*Total Remunerativos S/D*/), true )
+                    array('27'/*Total Remunerativos C/D*/), true )
                 ){
                     $rem1 += $valorrecibo['valor'];
                 }

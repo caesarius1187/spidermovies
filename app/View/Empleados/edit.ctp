@@ -9,7 +9,7 @@
 	echo $this->Form->input('dni',array('label'=>'DNI'));
 	echo $this->Form->input('legajo',array('label'=>'Legajo'));
 	echo $this->Form->input('categoria',array('label'=>'Categoria'));
-	echo $this->Form->input('codigoafip',array('label'=>'Codigo Afip','options'=>array('1','2','3','4')));
+	echo $this->Form->input('codigoafip',array('label'=>'Codigo Afip','options'=>array('0','1','2','3','4')));
 	echo "</br>";
 	echo $this->Form->input('fechaingreso', array(
 			'class'=>'datepicker',
