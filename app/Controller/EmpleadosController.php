@@ -162,7 +162,7 @@ class EmpleadosController extends AppController {
 									'Cctxconcepto.campopersonalizado' => 0,
 								),
 							),
-							'order'=>array('Cctxconcepto.orden')
+							'order'=>array('Cctxconcepto.orden'),
 						),
 					),
 				),

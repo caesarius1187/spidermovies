@@ -103,12 +103,11 @@ $(document).ready(function() {
       if(ImgCheckBox.prev().is('.checked')){
           ImgCheckBox.prev().prop('checked', true);
           ImgCheckBox.prev().addClass('checked');
-          $(this).prop('src', 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/checked_checkbox.png');
-
+          $(this).prop('src', serverLayoutURL+'/img/checked_checkbox.png');
       } else {
           ImgCheckBox.prev().removeClass('checked');
           ImgCheckBox.prev().prop('checked', false);
-          $(this).prop('src', 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png');
+          $(this).prop('src', serverLayoutURL+'/img/unchecked_checkbox.png');
       }
     });
 });
@@ -208,12 +207,12 @@ $(document).ready(function() {
       if(!ImgCheckBox.prev().is('.checked')){
           ImgCheckBox.prev().prop('checked', true);
           ImgCheckBox.prev().addClass('checked');
-          $(this).prop('src', 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/checked_checkbox.png');
+          $(this).prop('src', serverLayoutURL+'/img/checked_checkbox.png');
 
       } else {
           ImgCheckBox.prev().removeClass('checked');
           ImgCheckBox.prev().prop('checked', false);
-          $(this).prop('src', 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png');
+          $(this).prop('src', serverLayoutURL+'/img/unchecked_checkbox.png');
       }
       enviarTareaSolicitar(ImgCheckBox);
     });

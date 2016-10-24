@@ -856,6 +856,7 @@ class ClientesController extends AppController {
 						),
 					);
 		$impclisid=$this->Impcli->find('list',$clienteImpuestosOptions);
+        /*para que es esto??*/
 		$this->set('impclisid', $impclisid);
 
 		$partidos = $this->Partido->find('list');
@@ -1163,6 +1164,45 @@ class ClientesController extends AppController {
 			$this->set('periodomes', $pemes);
 			$this->set('periodoanio', $peanio);
 
+            //A: Es menor que periodo Hasta
+            $esMenorQueHasta = array(
+                //HASTA es mayor que el periodo
+                'OR'=>array(
+                    'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+                        'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+                    ),
+                )
+            );
+            //B: Es mayor que periodo Desde
+            $esMayorQueDesde = array(
+                'OR'=>array(
+                    'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+                        'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+                    ),
+                )
+            );
+            $periodoNull = array(
+                'OR'=>array(
+                    array('Periodosactivo.hasta'=>null),
+                    array('Periodosactivo.hasta'=>""),
+                )
+            );
+            //C: Tiene Periodo Hasta 0 NULL
+            $conditionsImpCliHabilitados = array(
+                //El periodo esta dentro de un desde hasta
+                'AND'=> array(
+                    $esMayorQueDesde,
+                    'OR'=> array(
+                        $esMenorQueHasta,
+                        $periodoNull
+                    )
+                )
+            );
+
 			$grupoclientesActual=$this->Grupocliente->find('all', array(
 				   'contain'=>array(
 				   		'Cliente'=>array(
@@ -1209,6 +1249,9 @@ class ClientesController extends AppController {
                                          'Conceptosrestante.conceptostipo_id' => 1
                                      )
                                  ),
+                                'Periodosactivo'=>array(
+                                    'conditions'=>$conditionsImpCliHabilitados,
+                                ),
                                 'conditions'=>array(
                                     'Impcli.impuesto_id NOT IN (select id from impuestos where impuestos.organismo = "banco")'
                                 )
@@ -1303,7 +1346,7 @@ class ClientesController extends AppController {
 					   			),	
 					   		'Impcli'=>array(					         
 					        	 'Eventosimpuesto'=>array(
-					        	  'conditions' => array(
+					        	  		'conditions' => array(
 			        	  					'OR'=>array(
 							            		'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 < '.$peanio.'*1',
 							            		'AND'=>array(
