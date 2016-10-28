@@ -3,8 +3,7 @@
 	$(document).ready(function() {   
     	$("#divContenedorCompras").hide();  
     	$("#divContenedorLiquidacion").hide();  
-
-    	$("#tabVentas_Iva").attr("class", "cliente_view_tab_active");  
+    	$("#tabVentas_Iva").attr("class", "cliente_view_tab_active");
     	$("#tabCompras_Iva").attr("class", "cliente_view_tab");
         papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
     });
@@ -102,44 +101,6 @@
 			$("#"+oObj.id).attr("onclick", "MostrarOperaciones(this,'ventas');");
 		}
 	}
-	function calcularSaldotecnicoPeriodo()
-    {
-		var saldoPeriodoAnt = $("#txtSaldoAFavorPeriodoAnt").val();
-		saldoPeriodoAnt = (saldoPeriodoAnt != "") ? parseFloat(saldoPeriodoAnt) : 0;
-
-		var iTotDebitoFiscal = $("#spnTotalDeditoFiscal").html();
-		iTotDebitoFiscal = (iTotDebitoFiscal != "") ? parseFloat(iTotDebitoFiscal) : 0;
-
-		var iTotalcreditoFiscal = $("#spnTotalCreditoFiscal").html();
-		iTotalcreditoFiscal = (iTotalcreditoFiscal != "") ? parseFloat(iTotalcreditoFiscal) : 0;
-
-		var iAjusteAnualCredFiscxOpExcResp = $("#txtCredFiscalxOpExcResp").val();
-		iAjusteAnualCredFiscxOpExcResp = (iAjusteAnualCredFiscxOpExcResp != "") ? parseFloat(iAjusteAnualCredFiscxOpExcResp) : 0;
-
-		var iAjusteAnualCredFiscxOpExcAfip = $("#txtCredFiscalxOpExcAFIP").val();
-		iAjusteAnualCredFiscxOpExcAfip = (iAjusteAnualCredFiscxOpExcAfip != "") ? parseFloat(iAjusteAnualCredFiscxOpExcAfip) : 0;		
-
-		var TotalSaldoTecnicoAFavorResp = 0;
-		if (iTotDebitoFiscal < (saldoPeriodoAnt + iTotalcreditoFiscal +  iAjusteAnualCredFiscxOpExcResp))
-		{
-			TotalSaldoTecnicoAFavorResp = (saldoPeriodoAnt + iTotalcreditoFiscal +  iAjusteAnualCredFiscxOpExcResp) - iTotDebitoFiscal;
-			TotalSaldoTecnicoAFavorResp = TotalSaldoTecnicoAFavorResp - iAjusteAnualCredFiscxOpExcAfip;
-		}
-		else
-		{
-			TotalSaldoTecnicoAFavorResp = 0 - iAjusteAnualCredFiscxOpExcAfip;
-		}
-		$("#spnTotalSaldoTecnicoAFavorResp").html(TotalSaldoTecnicoAFavorResp);
-		$("#spnSaldoAfavorContribuyentePeriodo").html(TotalSaldoTecnicoAFavorResp);
-
-		var TotalSaldoTecnicoAFavorAFIP = 0;
-		if((iTotDebitoFiscal + iAjusteAnualCredFiscxOpExcAfip) > (iTotalcreditoFiscal + saldoPeriodoAnt))
-		{
-			TotalSaldoTecnicoAFavorAFIP = (iTotDebitoFiscal + iAjusteAnualCredFiscxOpExcAfip) - (iTotalcreditoFiscal + saldoPeriodoAnt);
-		}
-		$("#spnTotalSaldoTecnicoAFavorAFIP").html(TotalSaldoTecnicoAFavorAFIP);
-		$("#spnSaldoAfavorAFIPPeriodo").html(TotalSaldoTecnicoAFavorAFIP);
-	}
     function papelesDeTrabajo(periodo,impcli){
         var data = "";
         $.ajax({
@@ -164,6 +125,8 @@
                 }
                 //Cargar Resultado Saldo Libre Disponibilidad
                 var saldoLD = $('#saldoLD').val();
+                var usoSLD = $('#usoSLD').val();
+                var usoSLDID = $('#usoSLDID').val();
                 if($('#Eventosimpuesto0Conceptosrestante0Id').length<=0){
                     if(saldoLD*1>0){
                         $('<input>').attr({
@@ -214,6 +177,44 @@
                 }else{
                     $('#Eventosimpuesto0Conceptosrestante0Montoretenido').val(saldoLD);
                 }
+                if($('#Eventosimpuesto0Usosaldo0Id').length<=0) {
+                    if (usoSLD * 1 > 0) {
+                        $('<input>').attr({
+                            type: 'hidden',
+                            id: 'Eventosimpuesto0Usosaldo0EventosimpuestoId',
+                            value: $('#Eventosimpuesto0Id').val(),
+                            name: 'data[Eventosimpuesto][0][Usosaldo][0][eventosimpuesto_id]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            id: 'Eventosimpuesto0Usosaldo0ConceptosrestanteId',
+                            value: usoSLDID,
+                            name: 'data[Eventosimpuesto][0][Usosaldo][0][conceptosrestantes_id]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<label>').html("Uso Saldo Libre Disponibilidad periodo anterior").appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<img>').attr({
+                            src: serverLayoutURL + '/img/ii.png',
+                            style: 'width:15px;height:15px',
+                            title: 'Se registrará el uso de este Saldo de libre disponibilidad(SLD) de periodos anteriores, ' +
+                            'ya sea que se lo este acumulando o usando para pagar el impuesto, el saldo para periodos ' +
+                            'anteriores quedará en 0. Si se recaulcula este informe se intentara tomar de nuevo este SLD, por lo ' +
+                            'que se debe eliminar, en la tarea cargar del informe de avance, el Uso del saldo de libre disponibilidad',
+                            alt: ''
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<input>').attr({
+                            type: 'text',
+                            id: 'Eventosimpuesto0Usosaldo0Importe',
+                            value: usoSLD,
+                            name: 'data[Eventosimpuesto][0][Usosaldo][0][importe]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<input>').attr({
+                            type: 'hidden',
+                            id: 'Eventosimpuesto0Usosaldo0Fecha',
+                            value: $.datepicker.formatDate('yy/mm/dd', new Date()),
+                            name: 'data[Eventosimpuesto][0][Usosaldo][0][fecha]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                    }
+                }
                 $(document).ready(function() {
                     $( "input.datepicker" ).datepicker({
                         yearRange: "-100:+50",
@@ -262,7 +263,6 @@
         });
         return false;
     }
-
 </script>
 <?php
 echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
@@ -1362,6 +1362,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 	<?php } ; ?>
     </div>
 </div>  <!-- fin divContenedorVentas -->
+</div>
 	<!--COMPRAS-->
 	<div id="divContenedorCompras" style="height: 500px">
 		<div style="margin-top:10px">(Coeficiente de Apropiacion 0.5000)</div>	
@@ -2028,24 +2029,39 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $AjusteAnualAFavorAFIP = 0;
             $Diferimiento518 = 0;
             $BonosFiscales = 0;
+            $eventosImpuestoId = -1;
             foreach ($cliente['Impcli'] as $key => $impcli) {
                 foreach ($impcli['Eventosimpuesto'] as $key => $eventosimpuesto) {
                     /*
                     'Saldo Tecnico' => 'Saldo Tecnico',
                     'Saldo de Libre Disponibilidad'=>'Saldo de Libre Disponibilidad' ,
                     */
-                    if($eventosimpuesto['item']=='Saldo Tecnico'){//aca controlamos que el ITEM a sumar sea el correspondiente a Saldos Tecnicos
+                    if($eventosimpuesto['item']=='Saldo Tecnico'&&$eventosimpuesto['periodo']==$periodoPrev){//aca controlamos que el ITEM a sumar sea el correspondiente a Saldos Tecnicos
                         $TotalSaldoTecnicoAFavorRespPeriodoAnterior += $eventosimpuesto['monc'];
+                    }else if($eventosimpuesto['periodo']==$periodo){
+                        $eventosImpuestoId = $eventosimpuesto['id'];
                     }
                 }
             }
+            $sldID=0;
             foreach ($saldosLibreDisponibilidad as $sldpa) {
-                $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $sldpa['Conceptosrestante']['montoretenido'];
+                $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $sldpa['Conceptosrestante']['monto'];
+                $sldID = $sldpa['Conceptosrestante']['id'];
+                foreach ($sldpa['Usosaldo'] as $usosaldoDeIVAPeriodoAnterior){
+                    if($usosaldoDeIVAPeriodoAnterior['eventosimpuesto_id']==$eventosImpuestoId){
+                        $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $usosaldoDeIVAPeriodoAnterior['importe'];
+                    }
+                }
             }
             foreach ($cliente['Impcli'][0]['Conceptosrestante'] as $key => $conceptosrestante) {
                 if($conceptosrestante['conceptostipo_id']=='1'/*Saldo A Favor*/){
 //                    Esto no lo vamos a sumar por que tenemos que traer el SLD del periodo anterior no del actual
 //                    $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $conceptosrestante['montoretenido'];
+//                    foreach ($conceptosrestante['Usosaldo'] as $usosaldo){
+//                        if($usosaldo['Eventosimpuesto']['impcli_id']==$cliente['Impcli'][0]['id']){
+//                            $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $usosaldoDeIVAPeriodoAnterior['importe'];
+//                        }
+//                    }
                 }else if($conceptosrestante['conceptostipo_id']=='14'/*Ajuste anual a favor Responable*/){
                     $AjusteAnualAFavorResponsable += $conceptosrestante['montoretenido'];
                 }else if($conceptosrestante['conceptostipo_id']=='15'/*Ajuste anual a favor AFIP*/){
@@ -2178,7 +2194,14 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 <td>Saldo a favor de libre disponibilidad del periodo anterior neto de usos</td>
                 <td style="width:180px">
                     <span id="spnSaldoAFavorLibreDispPeriodoAnteriorNetousos">
-                        <?php echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior:0;?>
+                        <?php
+                        echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior:0;
+                        //resulta que esto es un Uso del saldo de libre disponibilidad del periodo anterior asi que aca vamos
+                        //a generar un input, el cual va a activar la creacion de un formulario para registrar este uso y disminuir
+                        //el saldo del periodo anterior a 0
+                        echo $this->Form->input('usoSLD', array('type'=>'hidden','value'=>$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior));
+                        echo $this->Form->input('usoSLDID', array('type'=>'hidden','value'=>$sldID));
+                        ?>
                     </span>
                 </td>
             </tr>

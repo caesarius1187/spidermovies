@@ -21,6 +21,8 @@ $(document).ready(function() {
     $("#orden-"+orden+" td").css({'background-color' : 'lightgreen'});
     $("#orden-"+orden).css({'border' : 'blue solid 4px'});
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+	loadFormImpuesto($('#impcliidPDT').val(),$('#cliid').val());
+
 	var beforePrint = function() {
 		$('#header').hide();
 		//$('#Formhead').hide();
@@ -104,32 +106,34 @@ function papelesDeTrabajo(periodo,impcli){
 	    });
 	    $( "#vencimientogeneral" ).trigger( "change" );
 	    $('#EventosimpuestoRealizartarea5Form').submit(function(){
+			//Aca primero vamos a enviar la modificacion del impuesto seleccionando la nueva categoria
+			$('#ImpcliEditForm'+impcli).submit();
 			$('.inputtodisable').prop("disabled", false);
 			//serialize form data
-	      var formData = $(this).serialize(); 
-	      //get form action 
-	      var formUrl = $(this).attr('action'); 
-	      $.ajax({ 
-	        type: 'POST', 
-	        url: formUrl, 
-	        data: formData, 
-	        success: function(data,textStatus,xhr){ 
-	          var respuesta = jQuery.parseJSON(data);
-	          var resp = respuesta.respuesta;
-	          var error=respuesta.error;
-	          if(error!=0){
-	            alert(respuesta.validationErrors);
-	            alert(respuesta.invalidFields);
-	          }else{
-	            $('#divLiquidarMonotributo').hide();
-	          }
-	        }, 
-	        error: function(xhr,textStatus,error){ 
-	          callAlertPopint(textStatus); 
-	          return false;
-	        } 
-	      }); 
-	          return false;
+			var formData = $(this).serialize();
+			//get form action
+			var formUrl = $(this).attr('action');
+			$.ajax({
+			type: 'POST',
+			url: formUrl,
+			data: formData,
+			success: function(data,textStatus,xhr){
+			  var respuesta = jQuery.parseJSON(data);
+			  var resp = respuesta.respuesta;
+			  var error=respuesta.error;
+			  if(error!=0){
+				alert(respuesta.validationErrors);
+				alert(respuesta.invalidFields);
+			  }else{
+				$('#divLiquidarMonotributo').hide();
+			  }
+			},
+			error: function(xhr,textStatus,error){
+			  callAlertPopint(textStatus);
+			  return false;
+			}
+			});
+return false;
 	    });               
 	  },
 	 error:function (XMLHttpRequest, textStatus, errorThrown) {
@@ -183,4 +187,52 @@ function loadDDJJ(periodo,impcli){
 }
 function imprimir(){
 	window.print();
+}
+function loadFormImpuesto(impcliid,cliid){
+	jQuery(document).ready(function($) {
+		var data ="";
+		$.ajax({
+			type: "post",  // Request method: post, get
+			url: serverLayoutURL+"/impclis/editajax/"+impcliid+"/"+cliid,
+			// URL to request
+			data: data,  // post data
+			success: function(response) {
+				$('#divEditImpCliMonotributo').html(response);
+				$('#ImpcliEditForm'+impcliid+' input[type="submit"]').hide();
+				$("#ImpcliCategoriamonotributo").after(
+					$('<img>').attr({
+						src: serverLayoutURL+'/img/ii.png',
+						style: 'width:15px;height:15px',
+						title: 'Se cambiara de la categoria '+$('#ImpcliCategoriamonotributo').val()+' a la categoria '+$('#topCategoria').val(),
+						alt: ''
+					})
+				);
+				$("#ImpcliCategoriamonotributo").val($('#topCategoria').val());
+				$('#ImpcliEditForm'+impcliid).submit(function(){
+					//serialize form data
+					var formData = $(this).serialize();
+					//get form action
+					var formUrl = $(this).attr('action');
+					$.ajax({
+						type: 'POST',
+						url: formUrl,
+						data: formData,
+						success: function(data,textStatus,xhr){
+							callAlertPopint("Impuesto Modificado");
+						},
+						error: function(xhr,textStatus,error){
+							callAlertPopint("Deposito NO Modificado. Intente de nuevo mas Tarde");
+						}
+					});
+					return false;
+				});
+			},
+
+			error:function (XMLHttpRequest, textStatus, errorThrown) {
+				callAlertPopint(textStatus);
+				callAlertPopint(XMLHttpRequest);
+				callAlertPopint(errorThrown);
+			}
+		});
+	});
 }

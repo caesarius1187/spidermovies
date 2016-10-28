@@ -51,8 +51,9 @@
                     'escape' => false
                 ));
                 break;
-		case 19/*IVA*/:
-                    echo $this->Form->button('Papel de Trabajo', array(
+		    case 19/*IVA*/:
+                $mostrarAlertaVentasComprasConceptos = true;
+                echo $this->Form->button('Papel de Trabajo', array(
                         'id' => 'buttonPDT',
                         'type' => 'button',
                         'class'=>'btn_papeltrabajo',
@@ -523,6 +524,7 @@ $faltanEventosAMostrar = false;
                     $montovto = 0;
                     $montoc = 0;
                     $descripcion = '';
+                    $eventosimpuestoUsosaldo = array();
                     foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
                         if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
                             $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
@@ -534,6 +536,7 @@ $faltanEventosAMostrar = false;
                             $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                             $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
                             $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+                            $eventosimpuestoUsosaldo = $eventosimpuestos[$key]['Usosaldo'];
                         }
                     }
                     echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.id',array('type'=>'hidden','value'=>$eventoid));
@@ -560,6 +563,7 @@ $faltanEventosAMostrar = false;
                     if($daAFavor) {
                         echo $this->Form->input('Eventosimpuesto.' . $eventoPos . '.monc', array('label' => $eventoPos==0?'Monto a Favor':'', 'default' => "0", 'style' => 'width:113px', 'value' => $montoc)) . "</br>";
                     }
+
                     $eventoPos++;
                     echo "</br>";
                 }
@@ -591,7 +595,26 @@ $faltanEventosAMostrar = false;
                                     'value'=>$conceptosrestante['fecha'],'type'=>'hidden'));
                                 echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.descripcion',array(
                                     'value'=>$conceptosrestante['descripcion'],'type'=>'hidden'));
+
                             }
+                        }
+                    }
+                    if(count($eventosimpuestoUsosaldo>0)){
+                        foreach ($eventosimpuestoUsosaldo as $usosaldo){
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.id',array(
+                                'value'=>$usosaldo['id'],'type'=>'hidden'));
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.eventosimpuesto_id',array(
+                                'value'=>$usosaldo['eventosimpuesto_id'],'type'=>'hidden'));
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.conceptosrestante_id',array(
+                                'value'=>$usosaldo['conceptosrestante_id'],'type'=>'hidden'));
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.importe',array(
+                                'value'=>$usosaldo['importe'],
+                                'label'=>'Uso Saldo Libre Disponibilidad'));
+                            $mensajeAlertaUsoSaldo = 'Este es el importe del uso ya descontado del Saldo de libre 
+                                disponibilidad del periodo anterior para pagar este impuesto';
+                            echo $this->HTML->image('ii.png',array('style'=>'width:15px;height:15px','title'=>$mensajeAlertaUsoSaldo));
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.fecha',array(
+                                'value'=>$usosaldo['fecha'],'type'=>'hidden'));
                         }
                     }
                 }
@@ -605,7 +628,7 @@ foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el eve
 
             }
         }  	     
-	     echo '<div style="width:100%; float:rigth;"><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
+	     echo '<div style="width:100%; float:right;"><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
 
          echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a></div>'
        ;?>

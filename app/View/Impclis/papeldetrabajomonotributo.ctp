@@ -6,7 +6,8 @@
 <div id="Formhead" class="clientes papeldetrabajoconveniomultilateral index" style="margin-bottom:10px;">
 	<h2>Monotributo:</h2>
 	Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
-    <?php echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));?>
+	<?php echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));?>
+	<?php echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));?>
     CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
 	Periodo: <?php echo $periodo; ?> </br>
     <?php echo $this->Form->button('Imprimir',
@@ -221,28 +222,28 @@
 			<tbody>
 			<?php
 			$topOrden=1;
-			foreach ($categoriamonotributos as $categoriamonotributo) { 
+            foreach ($categoriamonotributos as $categoriamonotributo) {
 				$colorTDIngBrutos = "white";
 				if($categoriamonotributo['Categoriamonotributo']['ingresobruto']*1 <= $TotalCuatrimestreIngresoBruto*1 ) {
 					$colorTDIngBrutos = "lightgreen";
-					$topOrden=$categoriamonotributo['Categoriamonotributo']['orden'];
+                    $topOrden=$categoriamonotributo['Categoriamonotributo']['orden'];
 				}
 				$colorTDSuperficie = "white";
 				if($categoriamonotributo['Categoriamonotributo']['superficiemaxima']*1 <= $subtotalCompraSuperficie*1 ) {
 					$colorTDSuperficie = "lightgreen";
 					$topOrden=$categoriamonotributo['Categoriamonotributo']['orden'];
-				}
+                }
 				$colorTDKW = "white";
 				if($categoriamonotributo['Categoriamonotributo']['kwmaximo']*1 <= $subtotalCuatrimestreKW*1 ) {
 					$colorTDKW = "lightgreen";
 					$topOrden=$categoriamonotributo['Categoriamonotributo']['orden'];
-				}
+                }
 					$colorTDAlquiler = "white";
 				if($categoriamonotributo['Categoriamonotributo']['alquileranualmaximo']*1 <= $subtotalCuatrimestreAlquiler*1 ) {
 					$colorTDAlquiler = "lightgreen";
 					$topOrden=$categoriamonotributo['Categoriamonotributo']['orden'];
-				}
-					?>
+                }
+				?>
 				<tr id="orden-<?php echo $categoriamonotributo['Categoriamonotributo']['orden'];?>">
 					<td>
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['categoria']; ?>
@@ -264,7 +265,8 @@
 			<?php } ?>
 				<?php 
 				$topOrden++;
-				echo $this->Form->input('topOrden',array('value'=>$topOrden,'type'=>'hidden'));
+                echo $this->Form->input('topOrden',array('value'=>$topOrden,'type'=>'text'));
+                echo $this->Form->input('topCategoria',array('value'=>$categoriamonotributos[$topOrden-1]['Categoriamonotributo']['categoria'],'type'=>'text'));
 				?>
 			</tbody>
 		</table>
@@ -367,6 +369,10 @@
 			<?php }
 			?>
 		</table>
+		<div id="divEditImpCliMonotributo">
+
+
+		</div>
 		<div id="divLiquidarMonotributo">
 			 
 		</div>

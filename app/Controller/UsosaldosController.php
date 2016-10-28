@@ -28,7 +28,13 @@ class UsosaldosController extends AppController {
         ));
         $this->set('conceptosrestante',$conceptosrestante);
         $usosaldos = $this->Usosaldo->find('all',array(
-                'contain' =>array(),
+                'contain' =>array(
+                    'Eventosimpuesto'=>array(
+                        'Impcli'=>array(
+                            'Impuesto'
+                        )
+                    )
+                ),
                 'conditions' => array(
                     'Usosaldo.conceptosrestante_id' => $conid
                 ),
@@ -38,9 +44,11 @@ class UsosaldosController extends AppController {
         $this->layout = 'ajax';
     }
 	public function add() {
-		$this->autoRender=false;
+        $this->loadModel('Conceptosrestante');
+        $this->autoRender=false;
 		if ($this->request->is('post')) {
-			$this->request->data('Usosaldo.fecha',date('Y-m-d',strtotime($this->request->data['Usosaldo']['fecha'])));
+            $respuesta = array();
+            $this->request->data('Usosaldo.fecha',date('Y-m-d',strtotime($this->request->data['Usosaldo']['fecha'])));
 			$this->Usosaldo->create();
 			if ($this->Usosaldo->save($this->request->data)) {
 				$id = $this->Usosaldo->getLastInsertID();
@@ -50,13 +58,26 @@ class UsosaldosController extends AppController {
 						)
 					);
 				$createdUsosaldo = $this->Usosaldo->find('first', $options);
-				$this->set('usosaldo',$createdUsosaldo);
+                $respuesta['usosaldo']=$createdUsosaldo;
+                $respuesta['respuesta']="Uso de saldo registrado con exito. ";
+//                Si se guardo vamos a restar este improte en el "saldo"(monto) del concepto restante
+                $miConceptosrestante = $this->Conceptosrestante->read(null, $this->request->data['Usosaldo']['conceptosrestante_id']);
+//                Debugger::dump($miConceptosrestante);
+                $saldoinicial =  $miConceptosrestante['Conceptosrestante']['monto'];
+                $saldoinicial -=  $this->request->data['Usosaldo']['importe'];
+
+                if($this->Conceptosrestante->saveField('monto', $saldoinicial)){
+                    $respuesta['respuesta'].="Se redujo el saldo de libre disponibilidad del periodo. ";
+                }else{
+                    $respuesta['respuesta'].="NO se redujo el saldo de libre disponibilidad del periodo. ";
+                }
 			}
 			else {
-				$this->set('respuesta','Error: NO se creo el sueldo. Intente de nuevo.');	
-			}
+                $respuesta['respuesta']="Error al registrar el Uso de saldo. Por favor intente de nuevo mas tarde.";
+            }
 		}
+        $this->set('data',$respuesta);
 		$this->layout = 'ajax';
-		$this->render('add');
+		$this->render('serializejson');
 	}
 }

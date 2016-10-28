@@ -49,7 +49,7 @@ class PapelesdetrabajosController extends AppController {
 						'Impcli'=>array(
 							'Eventosimpuesto'=>array(
 								'conditions'=>array(
-									"Eventosimpuesto.periodo"=>$periodoPrev,//monto a favor del periodo anterior
+									"Eventosimpuesto.periodo"=>[$periodoPrev,$periodo],//monto a favor del periodo anterior
 									),
 								),
 							'Conceptosrestante'=>array(
@@ -69,17 +69,23 @@ class PapelesdetrabajosController extends AppController {
 					);
 
 		$Cliente = $this->Cliente->find('first', $options);
-		$this->set('cliente', $Cliente);
-		$conceptosOptions=array(
-			'conditions'=>array(
+        $this->set('cliente', $Cliente);
+		$conceptosOptions=[
+            'Usosaldo'=>[
+                'Eventosimpuesto'=>[
+
+                ]
+            ],
+			'conditions'=>[
                 'Conceptosrestante.impcli_id'=>$Cliente['Impcli'][0]['id'],
                 'Conceptosrestante.periodo'=>$periodoPrev,
                 'Conceptosrestante.conceptostipo_id'=>1
-            )
-		);
+            ]
+		];
 		$saldosLibreDisponibilidad = $this->Conceptosrestante->find('all',$conceptosOptions);
         $this->set('saldosLibreDisponibilidad', $saldosLibreDisponibilidad);
         $this->set('periodo', $periodo);
+        $this->set('periodoPrev', $periodoPrev);
 
 		$opcionesActividad = array(
 								   'conditions'=>array('Actividadcliente.cliente_id' => $ClienteId),

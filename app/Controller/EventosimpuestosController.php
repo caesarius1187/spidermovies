@@ -53,7 +53,6 @@ class EventosimpuestosController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('realizartarea5');
 	}
-	
 	public function realizartarea5() {
 		//guardar todos los eventos no importa si tienen ID previo o no
 
@@ -62,6 +61,7 @@ class EventosimpuestosController extends AppController {
 		$this->loadModel('Impcli');
         $this->loadModel('Basesprorrateada');
         $this->loadModel('Conceptosrestante');
+        $this->loadModel('Usosaldo');
 		$impcliid=0;
 		$periodo=0;
 		$evenimpPos=0;
@@ -151,6 +151,47 @@ class EventosimpuestosController extends AppController {
 				}else{
 					$data['respuesta33'.$evenData['id']]='no tenia Conceptos restantes';
 				}
+                if(isset($evenData['Usosaldo'])){
+                    //Debugger::dump($evenData['Conceptosrestante']);
+                    $eventSavedID = $eventosAnteriores[0]['Eventosimpuesto']['id'];
+                    $eventID = $evenData['id'];
+                    foreach ($evenData['Usosaldo'] as $key => $usosaldo) {
+						if($evenData['Usosaldo'][$key]['eventosimpuesto_id']==0){
+							if( $eventID!=0 ){
+								$evenData['Usosaldo'][$key]['eventosimpuesto_id']=$eventID;
+							}else{
+								$evenData['Usosaldo'][$key]['eventosimpuesto_id']=$eventSavedID;
+							}
+						}
+                    }
+                    if($this->Usosaldo->saveAll($evenData['Usosaldo'])){
+
+						$data['respuesta44'.$evenData['id']] = 'Registro de Uso de Saldos de libre disponibilidad exitoso.';
+						$miConceptosrestante = $this->Conceptosrestante->read(null,  $evenData['Usosaldo'][0]['conceptosrestante_id']);
+						$saldoinicial =  $miConceptosrestante['Conceptosrestante']['monto'];
+						/*Si el Uso saldo ya existe ($evenData['Usosaldo'][0]['Usosaldo']['importe']!=0) tengo que sumar el importe
+						al saldo inicial para revertir el descuento ya realizado y restar el nuevo importe para acomodarlo al nuevo valor*/
+						if($evenData['Usosaldo'][0]['id']!=0){
+							$miUsosaldoViejo = $this->Usosaldo->read(null,  $evenData['Usosaldo'][0]['id']);
+							$saldoinicial +=  $miUsosaldoViejo['Usosaldo']['importe'];
+						}
+						//ahora tendriamos que restar este uso saldo del saldo del Concepto restante tipo Saldo libre disponibilidad
+						//del periodo
+						//Si se guardo vamos a restar este improte en el "saldo"(monto) del concepto restante
+						$saldoinicial -=  $evenData['Usosaldo'][0]['importe'];
+						if($this->Conceptosrestante->saveField('monto', $saldoinicial)){
+							$data['respuesta'].="Se redujo el saldo de libre disponibilidad del periodo. ";
+						}else{
+							$data['respuesta'].="NO se redujo el saldo de libre disponibilidad del periodo. Error";
+						}
+                    }else{
+                        $data['error']=5;
+                        $data['respuesta44'.$evenData['id']] = 'Registro de Saldos de libre disponibilidad NO guardado. ERROR';
+                    }
+                    $data['respuesta55'.$evenData['id']]='tenia Saldos de libre disponibilidad';
+                }else{
+                    $data['respuesta55'.$evenData['id']]='no tenia Saldos de libre disponibilidad';
+                }
 			}
 		}else{
 			$data['respuesta']='Error al guardar. Por favonr intente mas tarde';
@@ -267,7 +308,6 @@ class EventosimpuestosController extends AppController {
 			2. La fecha cargada en los Vencimientos del impuesto
 			3. La fecha de hoy*/
 
-		$eventosimpuestos=array();
 		//Si el impuesto es tipo Sindicato entonces vence el 15(esto es aproximado y cuando tengamos la posibilidad de cargar los vencimientos de todos los sindicatos deberiamos hacerlo)
 
 		$options = array(
@@ -276,6 +316,7 @@ class EventosimpuestosController extends AppController {
 				'Eventosimpuesto.periodo'=>$periodo
 				),
 			'contain'=>array(
+                'Usosaldo',
 				'Basesprorrateada' => array(
 					'conditions' =>array ('Basesprorrateada.periodo' => $periodo ),
 				),
@@ -405,12 +446,11 @@ class EventosimpuestosController extends AppController {
 		$this->loadModel('Localidade');
 		$this->loadModel('Deposito');
 		//4 formas de pagar impuestos Provincia, Municipio, Item , unico
-		
 		//Elementos del Fomulario de Pagar Papeles de Trabajo ya generados
-		$options = array('conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcli));
+		$options = array(
+			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcli)
+		);
 		$myImpCli = $this->Impcli->find('first', $options);
-		$eventoId= 0;
-		
 		$options = array(
 			'conditions' => array(
 				'Eventosimpuesto.impcli_id'=> $impcli,
@@ -419,32 +459,21 @@ class EventosimpuestosController extends AppController {
 			);
 		$eventosimpuestos = $this->Eventosimpuesto->find('all', $options);
 		$this->set('eventosimpuestos',$eventosimpuestos);
-					
 		$this->set('partidos',$this->Partido->find('list'));
 		$this->set('localidades',$this->Localidade->find('list'));
-
 		$this->set('impuesto',$myImpCli["Impuesto"]);
-		
 		$this->set('clienteid',$myImpCli["Impcli"]["cliente_id"]);
 		$this->set('impcliid',$myImpCli["Impcli"]["id"]);
 		$this->set('impclinombre',$myImpCli["Impuesto"]["nombre"]);
-
 		$this->set('periodo',$periodo);
-		//Elementos del Fomulario de Recibos(Depositos)
-		
-		$options = array(
-			'conditions' => array(
-				'Deposito.cliente_id' => $myImpCli["Impcli"]["cliente_id"],
-				'Deposito.periodo' => $periodo
-				)
-		);
-		$depositos = $this->Deposito->find('all', $options);
-		$this->set('depositos', $depositos);
-		$this->set('periodo', $periodo);
 		$this->set('cliid', $myImpCli["Impcli"]["cliente_id"]);
+
+        /*En esta seccion vamosa  buscar los Saldos de libre disponi*/
 
 		$this->layout = 'ajax';
 		$this->render('getapagar');
+
+
 	}
 	public function realizartarea13() {/*PAGAR*/
 	 	$this->request->onlyAllow('ajax');

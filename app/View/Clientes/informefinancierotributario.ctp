@@ -126,7 +126,6 @@
                         $deudasActuales+=$eventoimpuesto['montovto'];
                     }
                 }
-
             }
             foreach ($cliente['Plandepago'] as $plandepago) {
                    $deudasActuales+=$plandepago['montovto'];
@@ -512,7 +511,7 @@
                     <td style='border:1px solid #333;text-align:left;' width="125px">
                         Datos Ad.
                     </td>
-                    <td style='border:1px solid #333;text-align:left;' width="32px">
+                    <td style='border:1px solid #333;text-align:left;' width="60px">
                         Form.
                     </td>
                     <td style='border:1px solid #333;text-align:left;' width="95px">
@@ -540,6 +539,7 @@
                         $eventoimpuestomonc=0;
                         $eventoimpuestomontovto=0;
                         $eventoimpuestmontorealizado=0;
+                        $estacalculado = false;
                         if (count($impcli['Periodosactivo'])>0) {
                             foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) {
                                 $eventoimpuestomonc += $eventoimpuesto["monc"];
@@ -548,6 +548,7 @@
                                 $tpla += $eventoimpuesto["montovto"];
                                 $eventoimpuestmontorealizado += $eventoimpuesto["montorealizado"];
                                 $tpag += $eventoimpuesto["montorealizado"];
+                                $estacalculado = true;
                             }
                             //Aca vamos a sumar el saldo a favor del periodo para el IVA (que es el SLD)
                             //Luego sumaremos otros impuestos que sumen saldos a favor de esta forma
@@ -575,14 +576,23 @@
                                 echo $impcli['Impuesto']["descripcion"]?>
                             </td>
                             <td style='border:thin solid #333 ;text-align:right;'>
-                                <?php echo "$".number_format($eventoimpuestomonc, 2, ",", "."); ?>
+                                <?php
+                                if($estacalculado) {
+                                    echo "$" . number_format($eventoimpuestomonc, 2, ",", ".");
+                                } ?>
                             </td>
                             <td style='border:thin solid #333 ;text-align:right;'>
-                                <?php echo "$".number_format($eventoimpuestomontovto, 2, ",", ".");
+                                <?php
+                                if($estacalculado) {
+                                    echo "$" . number_format($eventoimpuestomontovto, 2, ",", ".");
+                                }
                                 ?>
                             </td>
                             <td style='border:thin solid #333 ;text-align:right;'>
-                                <?php echo "$".number_format($eventoimpuestmontorealizado, 2, ",", ".");
+                                <?php
+                                if($estacalculado) {
+                                    echo "$" . number_format($eventoimpuestmontorealizado, 2, ",", ".");
+                                }
                                 ?>
                             </td>
                             <td style='border:thin solid #333 ;text-align:right; padding-left:4px'>

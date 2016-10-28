@@ -8,7 +8,10 @@ $(document).ready(function() {
       dateFormat: 'dd-mm-yy',
     });
 });
-</SCRIPT>   
+</SCRIPT>
+<div>
+	
+</div>
 <?php /*Este es el formulario para PAGAR papeles de Trabajo YA generados */ ?> 	
 <h3><?php echo __('Papeles preparados para pagar en : '.$impclinombre); ?></h3>
 <?php echo $this->Form->create('Eventosimpuesto',array('action'=>'realizartarea13', 'id'=>'FormPagarEventoImpuesto')); ?>
@@ -132,6 +135,8 @@ $(document).ready(function() {
 		<a href="#" onclick="$('#FormPagarEventoImpuesto').submit();" class="btn_aceptar" style="margin-top:14px">Aceptar</a>
 		<?php  $this->Form->end();?>
 	</div>
+
+
 
 
 

@@ -33,6 +33,9 @@
             $miempleado['neto'] = 0;
             $miempleado['redondeo'] = 0;
             $miempleado['remuneracioncd'] = 0;
+            $miempleado['adicionalcomplementarioss'] = 0;
+            $miempleado['acuerdoremunerativo'] = 0;
+            $miempleado['plusvacacional'] = 0;
         }
         $jubilacion=0;
         $basico=0;
@@ -59,7 +62,9 @@
         $neto = 0;
         $redondeo = 0;
         $remuneracioncd = 0;
-
+        $adicionalcomplementarioss = 0;
+        $acuerdoremunerativo = 0;
+        $plusvacacional = 0;
 
         foreach ($empleado['Valorrecibo'] as $valorrecibo) {
             //Basico
@@ -67,7 +72,7 @@
                 $basico = $valorrecibo['valor']; // este no se deberia acumular
             }
             //Sueldo
-            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='21'/*Total basicos*/){
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='6'/*sueldo basico*/){
                 $sueldo += $valorrecibo['valor'];
             }
             if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='20'/*Vacaciones Remunerativas*/){
@@ -188,6 +193,27 @@
             ){
                 $remuneracioncd += $valorrecibo['valor'];
             }
+            //Adicional Complemento SS
+            if (
+            in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('82'/*Adicional Complemento SS*/), true )
+            ){
+                $adicionalcomplementarioss += $valorrecibo['valor'];
+            }
+            //Acuerdo Remunerativo
+            if (
+            in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('127'/*Total Acuerdo Remunerativo*/), true )
+            ){
+                $acuerdoremunerativo += $valorrecibo['valor'];
+            }
+            //Plus Vacacional
+            if (
+            in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('81'/*Plus Vacacional*/), true )
+            ){
+                $plusvacacional += $valorrecibo['valor'];
+            }
         }
 
         $miempleado['sueldo']=$sueldo;
@@ -214,6 +240,9 @@
         $miempleado['neto']=$neto;
         $miempleado['redondeo']=$redondeo;
         $miempleado['remuneracioncd']=$remuneracioncd;
+        $miempleado['adicionalcomplementarioss']=$adicionalcomplementarioss;
+        $miempleado['acuerdoremunerativo']=$acuerdoremunerativo;
+        $miempleado['plusvacacional']=$plusvacacional;
         ?>
         <table id="tblLibroSueldo" class="tblInforme" cellspacing="0">
             <tr><td>Periodo: <?php echo $periodo ?></td></tr>
@@ -304,7 +333,7 @@
                     SUELDO MENSUAL
                 </td>
                 <td>
-                    <?php echo $miempleado['basico']; ?>
+                    <?php echo $miempleado['sueldo']; ?>
                 </td>
                 <td></td>
                 <td></td>
@@ -326,18 +355,60 @@
             </tr>
             <?php }
             if($miempleado['presentismo']*1>0){ ?>
-            <tr>
-                <td>91</td>
-                <td>
-                    PRESENTISMO BASICO
-                </td>
-                <td>
-                    <?php echo $miempleado['presentismo']; ?>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+                <tr>
+                    <td>91</td>
+                    <td>
+                        PRESENTISMO BASICO
+                    </td>
+                    <td>
+                        <?php echo $miempleado['presentismo']; ?>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            <?php }
+            if($miempleado['adicionalcomplementarioss']*1>0){ ?>
+                <tr>
+                    <td>122</td>
+                    <td>
+                        Adicional Complemento SS
+                    </td>
+                    <td>
+                        <?php echo $miempleado['adicionalcomplementarioss']; ?>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            <?php }
+            if($miempleado['acuerdoremunerativo']*1>0){ ?>
+                <tr>
+                    <td>146</td>
+                    <td>
+                        Acuerdo Remunerativo
+                    </td>
+                    <td>
+                        <?php echo $miempleado['acuerdoremunerativo']; ?>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            <?php }
+            if($miempleado['plusvacacional']*1>0){ ?>
+                <tr>
+                    <td>000</td>
+                    <td>
+                        Plus Vacacional
+                    </td>
+                    <td>
+                        <?php echo $miempleado['plusvacacional']; ?>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
             <?php }
             if($miempleado['jubilacion']*1>0){ ?>
                 <tr>
