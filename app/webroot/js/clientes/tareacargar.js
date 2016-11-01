@@ -1715,7 +1715,9 @@ $(document).ready(function() {
                         var mirespuesta = jQuery.parseJSON(response);
                         if(mirespuesta.error==0){
                           callAlertPopint(mirespuesta.respuesta);
-                          $('#rowcompra'+comid).remove();
+                            $('#tablaCompras').DataTable().row('rowcompra'+comid)
+                                .remove()
+                                .draw();
                         }else if(mirespuesta.error==1){
                            callAlertPopint(mirespuesta.respuesta);
                         }else{
@@ -1746,7 +1748,9 @@ $(document).ready(function() {
                     var mirespuesta = jQuery.parseJSON(response);
                     if(mirespuesta.error==0){
                         callAlertPopint(mirespuesta.respuesta);
-                        $('#rowconceptorestante'+conresid).remove();
+                        $('#tblTablaConceptosrestantes').DataTable().row('rowconceptorestante'+conresid)
+                            .remove()
+                            .draw();
                     }else if(mirespuesta.error==1){
                         callAlertPopint(mirespuesta.respuesta);
                     }else{
@@ -1821,7 +1825,9 @@ $(document).ready(function() {
                         var mirespuesta = jQuery.parseJSON(response);
                         if(mirespuesta.error==0){
                           callAlertPopint(mirespuesta.respuesta);
-                          $('#rowsueldo'+sueid).remove();
+                            $('#tablaSueldos').DataTable().row('rowsueldo'+sueid)
+                                .remove()
+                                .draw();
                         }else if(mirespuesta.error==1){
                            callAlertPopint(mirespuesta.respuesta);
                         }else{

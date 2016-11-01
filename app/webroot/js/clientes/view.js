@@ -954,7 +954,6 @@ function loadFormImpuestoProvincias(impcliid){
 					});
 					return false;
 				});
-
 			},
 			error:function (XMLHttpRequest, textStatus, errorThrown) {
 				callAlertPopint(textStatus);
@@ -1094,7 +1093,6 @@ function setOnChangeProvincia(jsonactividadcliente){
 					return true;
 				}
 				$("#Encuadrealicuota"+pos+"AlicuotaId").on('change', function() {
-
 					var alicuotaid = $(this).val();
 					var alicuota =  $(this).find('option:selected').attr('alicuota');
 					var concepto =  $(this).find('option:selected').attr('concepto');
@@ -1103,9 +1101,8 @@ function setOnChangeProvincia(jsonactividadcliente){
 					$('#Encuadrealicuota'+pos+'Alicuota').val(alicuota);
 					$('#Encuadrealicuota'+pos+'Concepto').val(concepto);
 					$('#Encuadrealicuota'+pos+'Desde').val(desde);
-
 				});
-            //Alicuota Exepcional
+                //Alicuota Exepcional
 				//recorremos las alicuotas de las actividades de la actividadcliente para buscar una que sea de la provincia seleccionada
 				$(oActividadcliente.Actividade.Alicuota).each(function(j,oAlicuota){
 					if(provinciaseleccionada!=oAlicuota.partido_id){
@@ -1135,7 +1132,15 @@ function setOnChangeProvincia(jsonactividadcliente){
                 var  precargado= $('#Encuadrealicuota'+pos+'Concepto').attr('precargado');
 				if(precargado=="0"){
                     $('#Encuadrealicuota'+pos+'AlicuotaId').trigger('change');
-				}
+				}else{
+                    //aca vamos a seleccionar el "nombre" de la alicuota que tiene un atributo "alicuota" igual a la alicuota precargada
+                    $('#Encuadrealicuota'+pos+'AlicuotaId option').each(function(){
+                        if($(this).attr('alicuota')==$('#Encuadrealicuota'+pos+'Alicuota').val()){
+                            $('#Encuadrealicuota'+pos+'AlicuotaId').val($(this).val());
+                        }
+                    });
+                }
+
 			});
 		});
 		$("#ImpcliprovinciaPartidoId").trigger('change');

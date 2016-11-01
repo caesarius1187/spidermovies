@@ -798,7 +798,7 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
               echo $this->Form->end();  ?>
           </div>
           <div style="overflow:auto;width:96%; float:left;min-height: 120px; margin-top:10px;" class="tareaCargarIndexTable tabNovedades index">
-          <table class="" style="border:1px solid white" id="bodyTablaSueldos">
+          <table class="" style="border:1px solid white" id="tablaSueldos">
               <thead>
               <tr>
                   <th>Fecha</th>

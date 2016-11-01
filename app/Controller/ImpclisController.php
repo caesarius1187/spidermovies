@@ -1000,7 +1000,14 @@ class ImpclisController extends AppController {
 								'Valorrecibo.tipoliquidacion'=>array(1,2,3)
 							)
 						),
-						'conditions' => array('Empleado.cliente_id' => $impcliSolicitado['Impcli']['cliente_id'])
+						'conditions'=>array(
+							'Empleado.cliente_id' => $impcliSolicitado['Impcli']['cliente_id'],
+							'OR'=>[
+								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+								'Empleado.fechaegreso is null' ,
+							],
+							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("01-".$periodo)),
+						),
 					)
 				),
 			),
@@ -1030,23 +1037,29 @@ class ImpclisController extends AppController {
 		//Por ejemplo el sindicato SEC tiene CCT(convenio colectivo de trabajo) Comercio, pero los empleados que estan en el convenio de comercio
 		//pagan FAESYS tambien, pero cuando liquidamos FAESYS no tenemos convenios asociados, por eso Faesys apuntara a SEC para su liquidacion
 		$optionsImpCliSolic = array(
-			'contain' => array('Impuesto'),
+			'contain' => array('Impuesto','Cliente'),
 			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
 		);
 		//Impuesto Solicitado (por ef FAESYS)
 		//Impuesto a Liquidar (Por ejemplo SEC)
 
 		$impcliSolicitado = $this->Impcli->find('first', $optionsImpCliSolic);
-		$impcliIdALiquidar = $impcliSolicitado['Impcli']['id'];
-		if($impcliSolicitado['Impuesto']['delegado']){
-			//aca vamos a tener que buscar un Impcli con el cliente_id del solicitado y el Impuesto_id del liquidado
-			$optionsImpCliSolic = array(
+        $impcliIdAUsar = array();
+        if($impcliSolicitado['Impuesto']['delegado']){
+			//aca vamos a tener que buscar un Impcli con el cliente_id del solicitado y el Impuesto_id del ALiquidar
+			$optionsImpCliDeleg = array(
 				'contain' => array('Impuesto'),
-				'conditions' => array('Impcli.cliente_id'=> $impcliid)
+				'conditions' => array(
+                    'Impcli.cliente_id'=> $impcliSolicitado['Impcli']['cliente_id'],
+					'Impcli.impuesto_id'=> $impcliSolicitado['Impuesto']['delegadoid'])
 			);
-			$impcliIdAUsar = $impcliSolicitado['Impuesto']['delegadoId'];
-		}
-		$this->set('impcliSolicitado',$impcliSolicitado);
+            $impcliIdAUsar = $this->Impcli->find('first', $optionsImpCliDeleg);
+		}else{
+            $impcliIdAUsar = $impcliSolicitado;
+        }
+
+        $this->set('impcliSolicitado',$impcliSolicitado);
+        //$this->set('impcliIdAUsar',$impcliIdAUsar);
 
 		$options = array(
 			'contain'=>array(
@@ -1072,11 +1085,14 @@ class ImpclisController extends AppController {
 									'Valorrecibo.periodo'=>$periodo
 								)
 							),
+                            'conditions'=>[
+                                'Empleado.cliente_id'=>$impcliIdAUsar['Impcli']['cliente_id']
+                            ]
 						)
 					),
 				),
 			),
-			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
+			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']));
 		$impcli = $this->Impcli->find('first', $options);
 		$this->set('impcli',$impcli);
 
@@ -1087,7 +1103,7 @@ class ImpclisController extends AppController {
 			),
 			'conditions'=>array(
 				'Conceptosrestante.periodo'=>$periodo,
-				'Conceptosrestante.impcli_id'=>$impcliid,
+				'Conceptosrestante.impcli_id'=>$impcliIdAUsar['Impcli']['id'],
 			)
 		);
 		$conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);

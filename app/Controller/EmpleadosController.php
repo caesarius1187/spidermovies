@@ -233,6 +233,22 @@ class EmpleadosController extends AppController {
 				}
 			}
 		}
+		for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
+			for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
+				$ordenburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['orden'];
+                $ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
+                $ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
+
+                $seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
+                $seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
+
+				if($ordenburbuja>$ordenaux&&$seccionburbuja==$seccionaux){
+					$myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
+					$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
+					$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
+				}
+			}
+		}
 
 		$this->set(compact('empleado','tipoliquidacion','tieneLiquidacion'));
 		$this->autoRender=false;
@@ -322,6 +338,12 @@ class EmpleadosController extends AppController {
 		if ($this->request->is('post')) {
 			$this->Empleado->create();
 			$respuesta = array('respuesta'=>'');
+            if(isset($this->request->data['Empleado']['fechaingresoedit'])){
+                $this->request->data['Empleado']['fechaingreso']=$this->request->data['Empleado']['fechaingresoedit'];
+            }
+            if(isset($this->request->data['Empleado']['fechaegresoedit'])){
+                $this->request->data['Empleado']['fechaegreso']=$this->request->data['Empleado']['fechaegresoedit'];
+            }
 			$this->request->data('Empleado.fechaingreso',date('Y-m-d',strtotime($this->request->data['Empleado']['fechaingreso'])));
 			if($this->request->data['Empleado']['fechaegreso']) {
 				$this->request->data('Empleado.fechaegreso', date('Y-m-d', strtotime($this->request->data['Empleado']['fechaegreso'])));
@@ -359,7 +381,7 @@ class EmpleadosController extends AppController {
 		}
 		$options = array('conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
 		$this->request->data = $this->Empleado->find('first', $options);
-		
+
 		$this->set(compact('cliid'));
 
 		$optionsDomic = array(

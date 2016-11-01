@@ -265,8 +265,8 @@
 			<?php } ?>
 				<?php 
 				$topOrden++;
-                echo $this->Form->input('topOrden',array('value'=>$topOrden,'type'=>'text'));
-                echo $this->Form->input('topCategoria',array('value'=>$categoriamonotributos[$topOrden-1]['Categoriamonotributo']['categoria'],'type'=>'text'));
+                echo $this->Form->input('topOrden',array('value'=>$topOrden,'type'=>'hidden'));
+                echo $this->Form->input('topCategoria',array('value'=>$categoriamonotributos[$topOrden-1]['Categoriamonotributo']['categoria'],'type'=>'hidden'));
 				?>
 			</tbody>
 		</table>

@@ -593,11 +593,18 @@ class ClientesController extends AppController {
 					   	),
 					   	'Empleado'=>array(
                             'Valorrecibo'=>array(
-                                'conditions'=>array(
-                                    'Valorrecibo.periodo'=>$periodo,
-                                ),
+								'conditions'=>array(
+									'Valorrecibo.periodo'=>$periodo,
+								),
                                 'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
                             ),
+							'conditions'=>array(
+                                'OR'=>[
+                                    'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                                    'Empleado.fechaegreso is null' ,
+                                ],
+                                'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("01-".$periodo)),
+							),
 						),
 				   		'Conceptosrestante'=>array(			
 				   			'Impcli'=>array(
@@ -657,11 +664,12 @@ class ClientesController extends AppController {
 								'conditions'=>$conditionsImpCliHabilitados																								
 							)
 						)			   				   	
-			   		),'conditions' => array(
-					            	'id' => $id,						            						          
-				   			),	
-		   		)
-	   		);
+			   		),
+                    'conditions' => array(
+                                'id' => $id,
+                        ),
+		   		    )
+	   		    );
 		/*AFIP*/
 	   	$tieneMonotributo=False;
       	$tieneIVA=False;
@@ -1503,7 +1511,9 @@ class ClientesController extends AppController {
 											      'Personasrelacionada',
 												  'Subcliente',
 												  'Provedore',
-												  'Empleado',
+												  'Empleado'=>array(
+                                                      'order'=>'(Empleado.legajo * 1)'
+                                                  ),
 	  										      'Venta'=>array(
 										        	 'Subcliente', 
 											       ),

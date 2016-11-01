@@ -57,8 +57,6 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
 
     <div class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
         <?php
-        Debugger::dump(1);
-        Debugger::dump(memory_get_usage());
         $dirVentas = new Folder($folderVentas, true, 0777);
         $dirAlicuotas = new Folder($folderAlicuotas, true, 0777);
         ?>
@@ -84,12 +82,13 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
             // $file->delete(); // I am deleting this file
             $handler = $dirVenta->handle;
             $j=0;
-            while (($line = utf8_decode(fgets($handler))) !== false) {
+            while (($line = fgets($handler)) !== false) {
+                $line = utf8_decode($line);
                 if(strlen($line)!=268){
                     //todo Mejorar la deteccion de errores
                     //$errorInFileVenta=true;
                     //echo strlen($line)."line lenght";
-                    break;
+                    //break;
                 }
                 $ventasArray[$i] = array();
                 $ventasArray[$i]['Venta'] = array();
@@ -132,11 +131,12 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 $lineVenta['operacioncodigo']=substr($line, 242,1);
                 $lineVenta['otrostributos']=substr($line, 243,13).'.'.substr($line, 256, 2);
                 $lineVenta['fechavencimientopago']=substr($line, 258,8);
-                $lineVenta['lineacompleta']=$line;
+                //$lineVenta['lineacompleta']=$line;
                 $ventasArray[$i]['Venta']=$lineVenta;
                 $i++;
                 $j++;
-                $line="";
+               // $line="";
+                unset($lineVenta);
             }
             $tituloButton= $errorInFileVenta?$dirVenta->name." Archivo con Error": $dirVenta->name;
             echo $this->Form->button(
@@ -157,8 +157,6 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 //echo "handler cerrado ABIERTO!";
             }
         }
-        Debugger::dump(2);
-        Debugger::dump(memory_get_usage());
         ?>
         </br></br></br></br></br>Alicuotas:</br>
         <?php
@@ -225,8 +223,6 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 //echo "handler cerrado ABIERTO! 2";
             }
         }
-        Debugger::dump(3);
-        Debugger::dump(memory_get_usage());
         ?>
     </div>
 <?php //Debugger::dump($ventasArray)?>
@@ -269,8 +265,6 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
     </div>
 <?php
 
-Debugger::dump(4);
-Debugger::dump(memory_get_usage());
 $PuntoDeVentaNoCargado=array();
 $SubclienteNoCargado=array();
 $VentasConFechasIncorrectas = array();
@@ -315,8 +309,6 @@ foreach ($ventasArray as $venta) {
     }
 
 }
-Debugger::dump(5);
-Debugger::dump(memory_get_usage());
 if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($VentasConFechasIncorrectas)!=0||!$mostrarTabla){ ?>
     <div class="index">
         <?php
@@ -424,8 +416,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
     </div>
     <?php
 } else {
-    Debugger::dump(6);
-    Debugger::dump(memory_get_usage());
     ?>
     <div class="index">
         <?php
@@ -562,8 +552,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             }
             return 0;
         }
-        Debugger::dump(7);
-        Debugger::dump(memory_get_usage());
         ?>
         Ventas ya cargadas :
         <table style="width: 100%;padding: 0px;margin: 0px;" id="tablaFormVentas" >
@@ -680,6 +668,9 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             }
                                             break;
                                         }
+                                    }
+                                    if($venta['Venta']['nombre']=='Consumidor Final'){
+                                        $condicioniva = "Cons. F/Exento/No Alcanza";
                                     }
                                     echo $this->Form->input('Venta.' . $i . '.condicioniva', array(
                                             'type' => 'select',
@@ -819,8 +810,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             ?>
         </table>
         <?php
-        Debugger::dump(8);
-        Debugger::dump(memory_get_usage());
         if ($i > 1){
             echo $this->Form->submit('Importar', array(
                     'type'=>'image',

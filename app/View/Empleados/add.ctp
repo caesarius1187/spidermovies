@@ -2,6 +2,7 @@
 $empleado = $respuesta['data']['Empleado'];
 ?>
 <tr class="empleado" id="rowEmpleado<?php echo $empleado['id']; ?>">
+	<td><?php echo $empleado['legajo']; ?></td>
 	<td><?php echo $empleado['cuit']; ?></td>
 	<td><?php echo $empleado['dni']; ?></td>
 	<td><?php echo $empleado['nombre']; ?></td>

@@ -24,8 +24,8 @@ if(isset($respuesta)){
                         </a>';
     }
     //aca vamos a agregar la opcion de manejar las Provincias de un impuesto que debe relacionar Provincias
-    if($impcli['Impuesto']['impuesto_id']=='6'/*Actividades Varias*/){
-        $tdImpcliprov='<a href="#"  onclick="loadFormImpuestoLocalidades('.$impcli['id'].')" class="button_view">
+    if($impcli['Impuesto']['id']=='6'/*Actividades Varias*/){
+        $tdImpcliprov='<a href="#"  onclick="loadFormImpuestoLocalidades('.$impcli['Impcli']['id'].')" class="button_view">
             '.$this->Html->image('localidad.png', array('alt' => 'open','class'=>'imgedit')).'
         </a>';
    }

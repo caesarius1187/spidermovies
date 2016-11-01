@@ -1196,6 +1196,7 @@ if($mostrarView){?>
             <td class="empleado">
                 <table id="relatedEmpleados" class="tbl_related">
                     <tr class="empleado">
+                        <th><?php echo __('LEGAJO'); ?></th>
                         <th><?php echo __('CUIT'); ?></th>
                         <th><?php echo __('DNI'); ?></th>
                         <th><?php echo __('Nombre'); ?></th>
@@ -1208,6 +1209,7 @@ if($mostrarView){?>
                     <?php if (!empty($cliente['Empleado'])): ?>
                         <?php foreach ($cliente['Empleado'] as $empleado): ?>
                             <tr class="empleado" id="rowEmpleado<?php echo $empleado['id']; ?>">
+                                <td><?php echo $empleado['legajo']; ?></td>
                                 <td><?php echo $empleado['cuit']; ?></td>
                                 <td><?php echo $empleado['dni']; ?></td>
                                 <td><?php echo $empleado['nombre']; ?></td>
