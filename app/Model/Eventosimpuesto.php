@@ -61,7 +61,6 @@ class Eventosimpuesto extends AppModel {
 			'order' => ''
 		)
 	);
-
 /**
  * hasMany associations
  *
@@ -83,6 +82,19 @@ class Eventosimpuesto extends AppModel {
 		),
 		'Basesprorrateada' => array(
 			'className' => 'Basesprorrateada',
+			'foreignKey' => 'eventosimpuesto_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
+		'Usosaldo' => array(
+			'className' => 'Usosaldo',
 			'foreignKey' => 'eventosimpuesto_id',
 			'dependent' => false,
 			'conditions' => '',

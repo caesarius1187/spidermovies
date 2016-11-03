@@ -4,9 +4,9 @@
 echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));?>
 <div class="index">
 	<div id="Formhead" class="clientes papeldetrabajosindicato index" style="margin-bottom:10px;">
-		<h2>Sindicato: <?php echo $impcli['Impuesto']['nombre']; ?></h2>
-		Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
-		CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
+		<h2>Sindicato: <?php echo $impcliSolicitado['Impuesto']['nombre']; ?></h2>
+		Contribuyente: <?php echo $impcliSolicitado['Cliente']['nombre']; ?></br>
+		CUIT: <?php echo $impcliSolicitado['Cliente']['cuitcontribullente']; ?></br>
 		Periodo: <?php echo $periodo; ?>
 	</div>
 	<div id="sheetSindicato" class="index">
@@ -507,7 +507,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 //Por defecto vamos a sumar solo la cuota sindical original al total, y si en algun caso tenemos
                 // una configuracion extra vamos a ir agregando caso por caso
                 $impuestoDeterminado = 0;
-                switch ($impcli['Impuesto']['id']){
+                switch ($impcliSolicitado['Impuesto']['id']){
                     case '11':
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2;
                         break;

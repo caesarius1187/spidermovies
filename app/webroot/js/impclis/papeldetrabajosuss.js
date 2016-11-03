@@ -1,5 +1,7 @@
 $(document).ready(function() { 
-       papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+	papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+	var tblDatosAIngresar = $('#tblDatosAIngresar');
+    tblDatosAIngresar.floatThead();
 });
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";

@@ -23,6 +23,22 @@ if(!$showTheForm){?>
         <a href="#"  onclick="loadFormImpuestoPeriodos(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view"> 
             <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'imgedit'));?>
         </a>
+        <a href="#"  onclick="deleteImpcli(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
+            <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
+        </a>
+        <?php
+        //aca vamos a agregar la opcion de manejar las Provincias de un impuesto que debe relacionar Provincias
+        if($this->request->data['Impuesto']['id']==6/*Actividades Varias*/){ ?>
+            <a href="#"  onclick="loadFormImpuestoLocalidades(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
+                <?php echo $this->Html->image('localidad.png', array('alt' => 'open','class'=>'imgedit'));?>
+            </a>
+        <?php }
+        //aca vamos a agregar la opcion de manejar las Provincias de un impuesto que debe relacionar Provincias
+        if($this->request->data['Impuesto']['id']==174/*Convenio Multilateral*/||$this->request->data['Impuesto']['id']==21/*Convenio Multilateral*/){?>
+            <a href="#"  onclick="loadFormImpuestoProvincias(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
+                <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'imgedit'));?>
+            </a>
+        <?php } ?>
     </td>
 <?php 
 }else{ ?>

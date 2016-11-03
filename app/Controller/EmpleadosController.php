@@ -95,8 +95,51 @@ class EmpleadosController extends AppController {
 		}
 
 		$this->set(compact('periodo'));
-		if(!isset($tipoliquidacion)||$tipoliquidacion==null||$tipoliquidacion==""){
-			$tipoliquidacion=1;
+
+        $optionsLiquidaciones = array(
+            'contain'=>array(
+                'Conveniocolectivotrabajo'=>array(
+                    'Cctxconcepto'=>array(
+                        'Valorrecibo'=>array(
+                            'conditions'=>array(
+                                'Valorrecibo.empleado_id'=>$empleadoamostrar,
+                            ),
+                            'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
+                        ),
+                        'conditions'=>array(
+                            'OR'=>array(
+                                'AND'=>array(
+                                    'Cctxconcepto.cliente_id' => $cliid,
+                                    'Cctxconcepto.campopersonalizado' => 1,
+                                ),
+                                'Cctxconcepto.campopersonalizado' => 0,
+                            ),
+                        ),
+                        'fields'=>array('id'),
+                        'limit' => 1
+                    ),
+                    'fields'=>array('id'),
+                ),
+            ),
+            'fields'=>array('id','liquidaprimeraquincena','liquidasegundaquincena','liquidamensual','liquidapresupuestoprimera','liquidapresupuestosegunda','liquidapresupuestomensual'),
+            'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)
+        );
+        $tieneLiquidacion = $this->Empleado->find('first', $optionsLiquidaciones);
+
+		if(!isset($tipoliquidacion)||$tipoliquidacion==null||$tipoliquidacion==""||$tipoliquidacion=="undefined"){
+            if($tieneLiquidacion['Empleado']['liquidaprimeraquincena']==1){
+                $tipoliquidacion=1;
+            }elseif ($tieneLiquidacion['Empleado']['liquidasegundaquincena']) {
+                $tipoliquidacion = 2;
+            }elseif ($tieneLiquidacion['Empleado']['liquidamensual']) {
+                $tipoliquidacion = 3;
+            }elseif ($tieneLiquidacion['Empleado']['liquidapresupuestoprimera']) {
+                $tipoliquidacion = 4;
+            }elseif ($tieneLiquidacion['Empleado']['liquidapresupuestosegunda']) {
+                $tipoliquidacion = 5;
+            }elseif ($tieneLiquidacion['Empleado']['liquidapresupuestomensual']) {
+                $tipoliquidacion = 6;
+            }
 		}
 		$optionsempleados = array(
 			'contain'=>array(
@@ -119,43 +162,13 @@ class EmpleadosController extends AppController {
 									'Cctxconcepto.campopersonalizado' => 0,
 								),
 							),
-							'order'=>array('Cctxconcepto.orden')
+							'order'=>array('Cctxconcepto.orden'),
 						),
 					),
 				),
 			'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)
 		);
 		$empleado = $this->Empleado->find('first', $optionsempleados);
-
-        $optionsLiquidaciones = array(
-            'contain'=>array(
-                'Conveniocolectivotrabajo'=>array(
-                    'Cctxconcepto'=>array(
-                        'Valorrecibo'=>array(
-                            'conditions'=>array(
-                                'Valorrecibo.empleado_id'=>$empleadoamostrar,
-                            ),
-                            'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
-                        ),
-                        'conditions'=>array(
-                            'OR'=>array(
-                                'AND'=>array(
-                                    'Cctxconcepto.cliente_id' => $cliid,
-                                    'Cctxconcepto.campopersonalizado' => 1,
-                                ),
-                                'Cctxconcepto.campopersonalizado' => 0,
-                            ),
-                        ),
-                        'fields'=>array('id'),
-						'limit' => 1
-                    ),
-                    'fields'=>array('id'),
-                ),
-            ),
-            'fields'=>array('id'),
-            'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)
-        );
-        $tieneLiquidacion = $this->Empleado->find('first', $optionsLiquidaciones);
 		/*
          * Primero vamos a ordenar los cctxconcepto en base a la seccion a la que pertenece
          * */
@@ -220,44 +233,102 @@ class EmpleadosController extends AppController {
 				}
 			}
 		}
+		for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
+			for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
+				$ordenburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['orden'];
+                $ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
+                $ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
+
+                $seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
+                $seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
+
+				if($ordenburbuja>$ordenaux&&$seccionburbuja==$seccionaux){
+					$myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
+					$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
+					$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
+				}
+			}
+		}
 
 		$this->set(compact('empleado','tipoliquidacion','tieneLiquidacion'));
 		$this->autoRender=false;
 		$this->layout = 'ajax';
 		$this->render('papeldetrabajosueldos');
 	}
-	public function papeldetrabajolibrosueldo($empid=null,$periodo=null){
+    public function papeldetrabajolibrosueldo($empid=null,$periodo=null){
 
-		$options = array(
-			'contain'=>array(
-				'Cliente'=>array(
-					'Domicilio',
-					'Actividadcliente'=>array(
-						'Actividade'
-					)
-				),
-				'Valorrecibo'=>array(
-					'Cctxconcepto'=>array(
-						'Concepto',
-						'Conveniocolectivotrabajo'=>array(
+        $options = array(
+            'contain'=>array(
+                'Domicilio'=>array(
+                    'Localidade'=>array(
+                        'Partido'
+                    )
+                ),
+                'Cliente'=>array(
 
-						)
-					),
-					'conditions'=>array(
-						'Valorrecibo.periodo'=>$periodo,
-						'Valorrecibo.tipoliquidacion'=>array(1,2,3)
-					)
-				),
-			),
-			'conditions' => array('Empleado.id' => $empid)
-		);
-		$empleado = $this->Empleado->find('first', $options);
-		$this->set('empleado',$empleado);
-		$this->set(compact('empid','periodo'));
-		$this->autoRender=false;
-		$this->layout = 'ajax';
-		$this->render('papeldetrabajolibrosueldo');
-	}
+                    'Actividadcliente'=>array(
+                        'Actividade'
+                    )
+                ),
+                'Valorrecibo'=>array(
+                    'Cctxconcepto'=>array(
+                        'Concepto',
+                        'Conveniocolectivotrabajo'=>array(
+
+                        )
+                    ),
+                    'conditions'=>array(
+                        'Valorrecibo.periodo'=>$periodo,
+                        'Valorrecibo.tipoliquidacion'=>array(1,2,3)
+                    )
+                ),
+            ),
+            'conditions' => array('Empleado.id' => $empid)
+        );
+        $empleado = $this->Empleado->find('first', $options);
+        $this->set('empleado',$empleado);
+        $this->set(compact('empid','periodo'));
+        $this->autoRender=false;
+        $this->layout = 'ajax';
+        $this->render('papeldetrabajolibrosueldo');
+    }
+    public function papeldetrabajorecibosueldo($empid=null,$periodo=null){
+
+        $options = array(
+            'contain'=>array(
+                'Domicilio'=>array(
+                    'Localidade'=>array(
+                        'Partido'
+                    )
+                ),
+                'Cliente'=>array(
+
+                    'Actividadcliente'=>array(
+                        'Actividade'
+                    )
+                ),
+                'Valorrecibo'=>array(
+                    'Cctxconcepto'=>array(
+                        'Concepto',
+                        'Conveniocolectivotrabajo'=>array(
+
+                        )
+                    ),
+                    'conditions'=>array(
+                        'Valorrecibo.periodo'=>$periodo,
+                        'Valorrecibo.tipoliquidacion'=>array(1,2,3)
+                    )
+                ),
+            ),
+            'conditions' => array('Empleado.id' => $empid)
+        );
+        $empleado = $this->Empleado->find('first', $options);
+        $this->set('empleado',$empleado);
+        $this->set(compact('empid','periodo'));
+        $this->autoRender=false;
+        $this->layout = 'ajax';
+        $this->render('papeldetrabajorecibosueldo');
+    }
 /**
  * add method
  *
@@ -267,6 +338,12 @@ class EmpleadosController extends AppController {
 		if ($this->request->is('post')) {
 			$this->Empleado->create();
 			$respuesta = array('respuesta'=>'');
+            if(isset($this->request->data['Empleado']['fechaingresoedit'])){
+                $this->request->data['Empleado']['fechaingreso']=$this->request->data['Empleado']['fechaingresoedit'];
+            }
+            if(isset($this->request->data['Empleado']['fechaegresoedit'])){
+                $this->request->data['Empleado']['fechaegreso']=$this->request->data['Empleado']['fechaegresoedit'];
+            }
 			$this->request->data('Empleado.fechaingreso',date('Y-m-d',strtotime($this->request->data['Empleado']['fechaingreso'])));
 			if($this->request->data['Empleado']['fechaegreso']) {
 				$this->request->data('Empleado.fechaegreso', date('Y-m-d', strtotime($this->request->data['Empleado']['fechaegreso'])));
@@ -304,11 +381,11 @@ class EmpleadosController extends AppController {
 		}
 		$options = array('conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
 		$this->request->data = $this->Empleado->find('first', $options);
-		
+
 		$this->set(compact('cliid'));
 
 		$optionsDomic = array(
-			'conditions' => array('Domicilio.cliente_id' => $this->request->data['Domicilio']['cliente_id'])
+			'conditions' => array('Domicilio.cliente_id' => $this->request->data['Empleado']['cliente_id'])
 		);
 		$domicilios = $this->Domicilio->find('list',$optionsDomic);
 		$this->set('domicilios', $domicilios);

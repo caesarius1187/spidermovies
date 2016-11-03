@@ -103,12 +103,11 @@ $(document).ready(function() {
       if(ImgCheckBox.prev().is('.checked')){
           ImgCheckBox.prev().prop('checked', true);
           ImgCheckBox.prev().addClass('checked');
-          $(this).prop('src', 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/checked_checkbox.png');
-
+          $(this).prop('src', serverLayoutURL+'/img/checked_checkbox.png');
       } else {
           ImgCheckBox.prev().removeClass('checked');
           ImgCheckBox.prev().prop('checked', false);
-          $(this).prop('src', 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png');
+          $(this).prop('src', serverLayoutURL+'/img/unchecked_checkbox.png');
       }
     });
 });
@@ -208,12 +207,12 @@ $(document).ready(function() {
       if(!ImgCheckBox.prev().is('.checked')){
           ImgCheckBox.prev().prop('checked', true);
           ImgCheckBox.prev().addClass('checked');
-          $(this).prop('src', 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/checked_checkbox.png');
+          $(this).prop('src', serverLayoutURL+'/img/checked_checkbox.png');
 
       } else {
           ImgCheckBox.prev().removeClass('checked');
           ImgCheckBox.prev().prop('checked', false);
-          $(this).prop('src', 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png');
+          $(this).prop('src', serverLayoutURL+'/img/unchecked_checkbox.png');
       }
       enviarTareaSolicitar(ImgCheckBox);
     });
@@ -339,6 +338,9 @@ $(document).ready(function() {
     }
     function verPapelDeTrabajoSindicato(periodo,impcliid){
         var win = window.open(serverLayoutURL+'/impclis/papeldetrabajosindicatos/'+impcliid+'/'+periodo , '_blank');
+    }
+    function verPapelDeTrabajoIVA(periodo,impcliid){
+        var win = window.open(serverLayoutURL+'/papelesdetrabajos/iva/'+impcliid+'/'+periodo , '_blank');
     }
 /* 5  agregar Papel de Trabajo -- ejecutar la funcion que agrega el papel de trabajo cargado en el formulario*/
   /*function agregarPapeldeTrabajo(){
@@ -485,30 +487,89 @@ $(document).ready(function() {
       if($("#tab_PapelesDeTrabajo").hasClass("tabsTareaImpuesto_active")){
 
       }else{
-          $( ".tabsTareaImpuesto" ).switchClass( "tabsTareaImpuesto", "tabsTareaImpuesto_active", 500 );
-          $( ".tabsTareaImpuesto_active" ).switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+          $("#tab_PapelesDeTrabajo").switchClass( "tabsTareaImpuesto", "tabsTareaImpuesto_active", 500 );
+          $("#tab_Contabilidad_Impuestos").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+          $("#tab_Pagos").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+          $("#tab_Contabilidad_Pagos").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+
           $('.tareapapeldetrabajo').show();
+          $('.tareaContabilidadImpuestos').hide();
           $('.tareapagos').hide();
+          $('.tareaContabilidadPagar').hide();
       }
   }
   function showPagos(){
-
       if($("#tab_Pagos").hasClass("tabsTareaImpuesto_active")){
-
       }else{
-          $( ".tabsTareaImpuesto" ).switchClass( "tabsTareaImpuesto", "tabsTareaImpuesto_active", 500 );
-          $( ".tabsTareaImpuesto_active" ).switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+          $("#tab_PapelesDeTrabajo").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+          $("#tab_Contabilidad_Impuestos").switchClass( "tabsTareaImpuesto", "tabsTareaImpuesto_active", 500 );
+          $("#tab_Pagos").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+          $("#tab_Contabilidad_Pagos").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+
           $('.tareapapeldetrabajo').hide();
+          $('.tareaContabilidadImpuestos').hide();
           $('.tareapagos').show();
+          $('.tareaContabilidadPagar').hide();
+
           var haycambios = $('#EventosimpuestoHaycambios').val()*1;
-          if(haycambios){
+          var divPagosVacio = false;
+          if($("#divPagar").html()=="")
+              divPagosVacio = true;
+          if(haycambios||divPagosVacio){
               var impcli = $('#EventosimpuestoRealizartarea5Form #Eventosimpuesto0ImpcliId').val();
-              showPagar(periodoSel,impcli);
+              loadPagar(periodoSel,impcli);
               $('#EventosimpuestoHaycambios').val(0);
           }
       }
-
   }
+    function showContabilidadImpuesto(){
+        if($("#tab_Contabilidad_Impuestos").hasClass("tabsTareaImpuesto_active")){
+
+        }else{
+            $("#tab_PapelesDeTrabajo").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+            $("#tab_Contabilidad_Impuestos").switchClass( "tabsTareaImpuesto", "tabsTareaImpuesto_active", 500 );
+            $("#tab_Pagos").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+            $("#tab_Contabilidad_Pagos").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+
+            $('.tareapapeldetrabajo').hide();
+            $('.tareaContabilidadImpuestos').show();
+            $('.tareapagos').hide();
+            $('.tareaContabilidadPagar').hide();
+            var haycambios = $('#EventosimpuestoHaycambios').val()*1;
+            var divcontImpuestoVacio = false;
+            if($("#divContabilidadImpuestos").html()=="")
+                divcontImpuestoVacio = true;
+            if(haycambios||divcontImpuestoVacio){
+                var impcli = $('#EventosimpuestoRealizartarea5Form #Eventosimpuesto0ImpcliId').val();
+                loadContabilidadImpuesto(periodoSel,impcli);
+                $('#EventosimpuestoHaycambios').val(0);
+            }
+        }
+    }
+    function showContabilidadPagos(){
+        if($("#tab_Contabilidad_Pagos").hasClass("tabsTareaImpuesto_active")){
+
+        }else{
+            $("#tab_PapelesDeTrabajo").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+            $("#tab_Contabilidad_Impuestos").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+            $("#tab_Pagos").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
+            $("#tab_Contabilidad_Pagos").switchClass( "tabsTareaImpuesto", "tabsTareaImpuesto_active", 500 );
+
+            $('.tareapapeldetrabajo').hide();
+            $('.tareaContabilidadImpuestos').hide();
+            $('.tareapagos').hide();
+            $('.tareaContabilidadPagar').show();
+            var haycambios = $('#EventosimpuestoHaycambios').val()*1;
+            var divcontPagosVacio = false;
+            if($("#divContabilidadPagar").html()=="")
+                divcontPagosVacio = true;
+            if(haycambios||divcontPagosVacio){
+                var impcli = $('#EventosimpuestoRealizartarea5Form #Eventosimpuesto0ImpcliId').val();
+                loadContabilidadPagos(periodoSel,impcli);
+                $('#EventosimpuestoHaycambios').val(0);
+            }
+        }
+    }
 /* 10 ver Tarea Informar -- Mostrar Honorario del periodo y Recibos del periodo*/
   function verFormInformar(eventId,tarea,periodo,cliid,clientenombre,estadotarea,honoid,honomonto,honofecha,descripcion){
     var data = "";
@@ -622,7 +683,7 @@ $(document).ready(function() {
       }
   }
 /* 11 ver Tarea Pagar -- Mostrar el formulario para pagar papeles de trabajo del impcli del periodo*/
-  function showPagar(periodo,impcli){
+  function loadPagar(periodo,impcli){
      var data = "";
          $.ajax({
                type: "post",  // Request method: post, get

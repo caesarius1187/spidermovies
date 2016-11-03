@@ -296,7 +296,7 @@
 
 <!-- Inicio Popin getPrepararPapeles -->
 <a href="#x" class="overlay" id="popInPapelesDeTrabajo"></a>
-<div  class="popup" style="width:80%" id="divpopPapelesDeTrabajo" >
+<div  class="popup" style="width:65%; padding:0px;" id="divpopPapelesDeTrabajo">
 
   <a class="close" href="#close"></a>
 </div>
@@ -367,7 +367,7 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaFild, $clien
 
             if($cliente['Cliente']['cargaFacturaCompras']){
               echo $context->Form->input('fccompra', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['fccompra'],'class'=>$evento['fccompra']?'checked':''));?>
-              <img src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Compras solicitadas y recibidas" id="blr" class="imgcb" />
+              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Compras solicitadas y recibidas" id="blr" class="imgcb" />
               Fc. de Compra
               </br>
               
@@ -375,56 +375,56 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaFild, $clien
             }
             if($cliente['Cliente']['cargaLibroIVAVentas']){
               echo $context->Form->input('libroivaventas', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['libroivaventas'],'class'=>$evento['libroivaventas']?'checked':''));?>
-              <img src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png" width = '15' height = '15' title="Libro IVA Ventas solicitado y recibido" id="blr" class="imgcb" />
+              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Libro IVA Ventas solicitado y recibido" id="blr" class="imgcb" />
               Libro IVA Ventas
               </br>
             <?php 
             }
             if($cliente['Cliente']['cargaFacturaVentas']){
               echo $context->Form->input('fcventa', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['fcventa'],'class'=>$evento['fcventa']?'checked':''));?>
-              <img src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Ventas solicitadas y recibidas" id="blr" class="imgcb" />
+              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Ventas solicitadas y recibidas" id="blr" class="imgcb" />
             Fc. de Venta
             </br>
             <?php
             } 
             if($cliente['Cliente']['cargaVentasWeb']){
               echo $context->Form->input('descargawebafip', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['descargawebafip'],'class'=>$evento['descargawebafip']?'checked':''));?>
-              <img src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png" width = '15' height = '15' title="Descarga de ventas Web AFIP realizada" id="blr" class="imgcb" />
+              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Descarga de ventas Web AFIP realizada" id="blr" class="imgcb" />
             Descarg. Web AFIP
             </br>
             <?php
             } 
             if($cliente['Cliente']['cargaBanco']){
               echo $context->Form->input('banco', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['banco'],'class'=>$evento['banco']?'checked':''));?>
-              <img src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png" width = '15' height = '15' title="Resumenes Bancarios descargados" id="blr" class="imgcb" />
+              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Resumenes Bancarios descargados" id="blr" class="imgcb" />
             Resumen Bco.
             </br>
             <?php 
             } 
             if($cliente['Cliente']['cargaTarjetasCredito']){
               echo $context->Form->input('tarjetadecredito', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['tarjetadecredito'],'class'=>$evento['tarjetadecredito']?'checked':''));?>
-              <img src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png" width = '15' height = '15' title="Resumenes de Tarjetas de Creditos descargados" id="blr" class="imgcb" />
+              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Resumenes de Tarjetas de Creditos descargados" id="blr" class="imgcb" />
             Resumen Tarj. de Cred.
             </br>
             <?php 
             } 
             if($cliente['Cliente']['cargaFacturaLuz']){
               echo $context->Form->input('fcluz', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['fcluz'],'class'=>$evento['fcluz']?'checked':''));?>
-              <img src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Luz solicitadas y recibidas" id="blr" class="imgcb" />
+              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Luz solicitadas y recibidas" id="blr" class="imgcb" />
             Fc de Luz
             </br>
             <?php 
             } 
             if($cliente['Cliente']['cargaNovedades']){
               echo $context->Form->input('sueldos', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['sueldos'],'class'=>$evento['sueldos']?'checked':''));?>
-              <img src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png" width = '15' height = '15' title="Recibos de sueldos solicitados y recibidos" id="blr" class="imgcb" />
+              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Recibos de sueldos solicitados y recibidos" id="blr" class="imgcb" />
             Novedades Sueldos
             </br>
             <?php 
             } 
             if($cliente['Cliente']['cargaLibroUnico']){
               echo $context->Form->input('librounico', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['librounico'],'class'=>$evento['librounico']?'checked':''));?>
-              <img src="https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/128/unchecked_checkbox.png" width = '15' height = '15' title="Libro Unico Firmado" id="blr" class="imgcb" />
+              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Libro Unico Firmado" id="blr" class="imgcb" />
             Libro Unico
             <?php }
             echo $context->Form->end();            

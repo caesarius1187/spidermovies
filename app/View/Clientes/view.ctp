@@ -338,6 +338,12 @@ if($mostrarView){?>
                         </td>
                         <td>
                             <?php
+                            echo $this->Form->input('fijoart', array(
+                                    'label'=>'Cuota Fija LRT')
+                            );?>
+                        </td>
+                        <td>
+                            <?php
                             echo $this->Form->input('segurodevida', array(
                                     'label'=>'Seguro de vida')
                             );?>
@@ -1190,6 +1196,7 @@ if($mostrarView){?>
             <td class="empleado">
                 <table id="relatedEmpleados" class="tbl_related">
                     <tr class="empleado">
+                        <th><?php echo __('LEGAJO'); ?></th>
                         <th><?php echo __('CUIT'); ?></th>
                         <th><?php echo __('DNI'); ?></th>
                         <th><?php echo __('Nombre'); ?></th>
@@ -1202,6 +1209,7 @@ if($mostrarView){?>
                     <?php if (!empty($cliente['Empleado'])): ?>
                         <?php foreach ($cliente['Empleado'] as $empleado): ?>
                             <tr class="empleado" id="rowEmpleado<?php echo $empleado['id']; ?>">
+                                <td><?php echo $empleado['legajo']; ?></td>
                                 <td><?php echo $empleado['cuit']; ?></td>
                                 <td><?php echo $empleado['dni']; ?></td>
                                 <td><?php echo $empleado['nombre']; ?></td>
@@ -1328,7 +1336,7 @@ if($mostrarView){?>
                         <td>
                             <?php echo $this->Form->input('cuit',array('label'=>'CUIT','maxlength'=>'11'));?>
                         </td>                         
-                         <td><?php echo $this->Form->input('tipo',array('type'=>'select','options'=>array(
+                         <td><?php echo $this->Form->input('tipo',array('type'=>'select', 'class'=>'chosen-select','options'=>array(
                             'conyuge'=>'Conyuge',
                             'familiar'=>'Familiar',
                             'representante'=>'Representante',
@@ -1780,8 +1788,8 @@ if($mostrarView){?>
     <div id="form_impcliOrganismo_sindicato">
         <?php if (!empty($impuestossindicato)){ 
             echo $this->Form->create('Impcli',array('controller'=>'Impclis','action'=>'add','id'=>'FormImpcliSindicato')); ?>            
-            <h3><?php echo __('Relacionar Sindicato al Cliente'); ?></h3>
-            <table>
+            <h3><?php echo __('Relacionar Sindicato'); ?></h3>
+            <table cellpadding="0" cellspacing="0" border="0" class="tabla">
                 <?php
                 echo $this->Form->input('cliente_id',array('default'=>$cliente['Cliente']['id'],'type'=>'hidden'));?>
                 <tr>
@@ -1860,7 +1868,7 @@ if($mostrarView){?>
         <?php if (!empty($impuestosbancos)){ 
                 echo $this->Form->create('Impcli',array('controller'=>'Impclis','action'=>'add','id'=>'FormImpcliBanco')); ?>  
                 <h3><?php echo __('Relacionar Banco'); ?></h3>
-                <table>
+                <table cellpadding="0" cellspacing="0" border="0" class="tabla">
                     <?php
                     echo $this->Form->input('cliente_id',array('default'=>$cliente['Cliente']['id'],'type'=>'hidden'));?>
                     <tr>
@@ -2031,7 +2039,7 @@ if($mostrarView){?>
 <!-- Inicio Popin Nuevo Empleado -->
     <a href="#x" class="overlay" id="nuevo_empleado"></a>
     <div class="popup" >
-        <div id="form_empleado" class="form index" style="width: 94%;">
+        <div id="form_empleado" class="form" style="width: 94%;">
             <?php echo $this->Form->create('Empleado',array('class'=>'formTareaCarga','controller'=>'Empelados','action'=>'add')); ?>
             <h3><?php echo __('Agregar Empleado'); ?></h3>
             <?php
@@ -2042,7 +2050,7 @@ if($mostrarView){?>
             echo $this->Form->input('dni',array('label'=>'DNI'));
             echo $this->Form->input('legajo',array('label'=>'Legajo'));
             echo $this->Form->input('categoria',array('label'=>'Categoria'));
-            echo $this->Form->input('codigoafip',array('label'=>'Codigo Afip','options'=>array('1','2','3','4')));
+            echo $this->Form->input('codigoafip',array('label'=>'Codigo Afip','options'=>array('0','1','2','3')));
             echo "</br>";
             echo $this->Form->input('fechaingreso', array(
                     'class'=>'datepicker',

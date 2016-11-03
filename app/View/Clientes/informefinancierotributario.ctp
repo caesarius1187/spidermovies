@@ -119,8 +119,12 @@
             $sueldoActualesClientes[$cliente['id']] = 0;
             //calculo de Deuda
             foreach ($cliente['Impcli'] as $impcli) {
-                foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) {
-                   $deudasActuales+=$eventoimpuesto['montovto'];
+                $impuestoActivo = false;
+                if (count($impcli['Periodosactivo'])>0) {
+                    $impuestoActivo = true;
+                    foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) {
+                        $deudasActuales+=$eventoimpuesto['montovto'];
+                    }
                 }
             }
             foreach ($cliente['Plandepago'] as $plandepago) {
@@ -336,24 +340,26 @@
                         $pagadoAl18=0;
                         foreach ($grupoclientesActual as $gcliActual ) {
                             foreach ($gcliActual['Cliente'] as $cliente) {
-                                foreach ($cliente['Impcli'] as $impcli) { 
-                                    foreach ($impcli['Eventosimpuesto'] as $eventosimpuesto) { 
-                                        if(date("d",strtotime($eventosimpuesto['fchvto']))<07){
-                                            //menor que 07
-                                            $planificadoAl2+=$eventosimpuesto['montovto'];
-                                            $pagadoAl2+=$eventosimpuesto['montorealizado'];
-                                        }else if(date("d",strtotime($eventosimpuesto['fchvto']))<12){
-                                            //menor que 12 y mayor que 07
-                                            $planificadoAl7+=$eventosimpuesto['montovto'];
-                                            $pagadoAl7+=$eventosimpuesto['montorealizado'];
-                                        } else if(date("d",strtotime($eventosimpuesto['fchvto']))<18){
+                                foreach ($cliente['Impcli'] as $impcli) {
+                                    if (count($impcli['Periodosactivo'])>0) {
+                                        foreach ($impcli['Eventosimpuesto'] as $eventosimpuesto) {
+                                            if (date("d", strtotime($eventosimpuesto['fchvto'])) < 07) {
+                                                //menor que 07
+                                                $planificadoAl2 += $eventosimpuesto['montovto'];
+                                                $pagadoAl2 += $eventosimpuesto['montorealizado'];
+                                            } else if (date("d", strtotime($eventosimpuesto['fchvto'])) < 12) {
+                                                //menor que 12 y mayor que 07
+                                                $planificadoAl7 += $eventosimpuesto['montovto'];
+                                                $pagadoAl7 += $eventosimpuesto['montorealizado'];
+                                            } else if (date("d", strtotime($eventosimpuesto['fchvto'])) < 18) {
                                                 //menor que 18 y mayor que 12
-                                                $planificadoAl12+=$eventosimpuesto['montovto'];
-                                                $pagadoAl12+=$eventosimpuesto['montorealizado'];
-                                        }else {
-                                            //mayor que 18
-                                            $planificadoAl18+=$eventosimpuesto['montovto'];
-                                            $pagadoAl18+=$eventosimpuesto['montorealizado'];
+                                                $planificadoAl12 += $eventosimpuesto['montovto'];
+                                                $pagadoAl12 += $eventosimpuesto['montorealizado'];
+                                            } else {
+                                                //mayor que 18
+                                                $planificadoAl18 += $eventosimpuesto['montovto'];
+                                                $pagadoAl18 += $eventosimpuesto['montorealizado'];
+                                            }
                                         }
                                     }
                                 }
@@ -505,7 +511,7 @@
                     <td style='border:1px solid #333;text-align:left;' width="125px">
                         Datos Ad.
                     </td>
-                    <td style='border:1px solid #333;text-align:left;' width="32px">
+                    <td style='border:1px solid #333;text-align:left;' width="60px">
                         Form.
                     </td>
                     <td style='border:1px solid #333;text-align:left;' width="95px">
@@ -530,85 +536,78 @@
                 $tcon=0;
                 //Impuestos
                 foreach ($cliente['Impcli'] as $impcli) {
-                    if(count($impcli['Eventosimpuesto'])>1){
                         $eventoimpuestomonc=0;
                         $eventoimpuestomontovto=0;
                         $eventoimpuestmontorealizado=0;
-                        foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) { 
-                            $eventoimpuestomonc+=$eventoimpuesto["monc"];
-                            $tcon+=$eventoimpuesto["monc"];
-                            $eventoimpuestomontovto+=$eventoimpuesto["montovto"];
-                            $tpla+=$eventoimpuesto["montovto"];
-                            $eventoimpuestmontorealizado+=$eventoimpuesto["montorealizado"];
-                            $tpag+=$eventoimpuesto["montorealizado"];
-                        } ?>
-                <tr  >
-                    <td style='border:thin solid #333 ;text-align:left;' align="left"> 
-                        <?php echo __($impcli['Impuesto']["abreviacion"]);?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:left;' align="left"> 
-                        <?php echo $impcli['Eventosimpuesto'][0]["descripcion"]?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:left;' align="left"> 
-                        <?php echo $impcli['Impuesto']["descripcion"]?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:right;'> 
-                        <?php echo "$".number_format($eventoimpuestomonc, 2, ",", "."); ?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:right;'> 
-                        <?php echo "$".number_format($eventoimpuestomontovto, 2, ",", ".");
+                        $estacalculado = false;
+                        if (count($impcli['Periodosactivo'])>0) {
+                            foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) {
+                                $eventoimpuestomonc += $eventoimpuesto["monc"];
+                                $tcon += $eventoimpuesto["monc"];
+                                $eventoimpuestomontovto += $eventoimpuesto["montovto"];
+                                $tpla += $eventoimpuesto["montovto"];
+                                $eventoimpuestmontorealizado += $eventoimpuesto["montorealizado"];
+                                $tpag += $eventoimpuesto["montorealizado"];
+                                $estacalculado = true;
+                            }
+                            //Aca vamos a sumar el saldo a favor del periodo para el IVA (que es el SLD)
+                            //Luego sumaremos otros impuestos que sumen saldos a favor de esta forma
+                            //como economicas
+                            if ($impcli['Impuesto']['id'] == '19') {
+                                foreach ($impcli['Conceptosrestante'] as $saldoLibreDisponibilidad) {
+                                    $eventoimpuestomonc += $saldoLibreDisponibilidad['montoretenido'];
+                                    $tcon += $saldoLibreDisponibilidad['montoretenido'];
+                                }
+                            }
+
                         ?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:right;'> 
-                        <?php echo "$".number_format($eventoimpuestmontorealizado, 2, ",", ".");
-                        ?>
-                    </td> 
-                    <td style='border:thin solid #333 ;text-align:right; padding-left:4px'> 
-                        <?php echo date("d/m",strtotime($impcli['Eventosimpuesto'][0]["fchvto"]));?>
-                    </td>                            
-                    <td style='border:thin solid #333 ;text-align:left;'> 
-                        <?php echo $impcli['Impuesto']["lugarpago"];?>
-                    </td>                                  
-                </tr>
+                        <tr  >
+                            <td style='border:thin solid #333 ;text-align:left;' align="left">
+                                <?php echo __($impcli['Impuesto']["abreviacion"]);?>
+                            </td>
+                            <td style='border:thin solid #333 ;text-align:left;' align="left">
+                                <?php
+                                if(isset($impcli['Eventosimpuesto'][0])){
+                                    echo $impcli['Eventosimpuesto'][0]["descripcion"];
+                                }?>
+                            </td>
+                            <td style='border:thin solid #333 ;text-align:left;' align="left">
+                                <?php
+                                echo $impcli['Impuesto']["descripcion"]?>
+                            </td>
+                            <td style='border:thin solid #333 ;text-align:right;'>
+                                <?php
+                                if($estacalculado) {
+                                    echo "$" . number_format($eventoimpuestomonc, 2, ",", ".");
+                                } ?>
+                            </td>
+                            <td style='border:thin solid #333 ;text-align:right;'>
+                                <?php
+                                if($estacalculado) {
+                                    echo "$" . number_format($eventoimpuestomontovto, 2, ",", ".");
+                                }
+                                ?>
+                            </td>
+                            <td style='border:thin solid #333 ;text-align:right;'>
+                                <?php
+                                if($estacalculado) {
+                                    echo "$" . number_format($eventoimpuestmontorealizado, 2, ",", ".");
+                                }
+                                ?>
+                            </td>
+                            <td style='border:thin solid #333 ;text-align:right; padding-left:4px'>
+                                <?php
+                                if(isset($impcli['Eventosimpuesto'][0])){
+                                    echo date("d/m",strtotime($impcli['Eventosimpuesto'][0]["fchvto"]));
+                                }?>
+                            </td>
+                            <td style='border:thin solid #333 ;text-align:left;'>
+                                <?php echo $impcli['Impuesto']["lugarpago"];?>
+                            </td>
+                        </tr>
                     <?php
-                    }else{
-                        foreach ($impcli['Eventosimpuesto'] as $eventoimpuesto) {  ?>
-                <tr  >
-                    <td style='border:thin solid #333 ;text-align:left;' align="left"> 
-                        <?php echo __($impcli['Impuesto']["nombre"]);?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:left;' align="left"> 
-                        <?php echo $eventoimpuesto["descripcion"]?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:left;' align="left"> 
-                        <?php echo $impcli["descripcion"]?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:right;'> 
-                        <?php echo "$".number_format($eventoimpuesto["monc"], 2, ",", ".");
-                        $tcon+=$eventoimpuesto["monc"];
-                        ?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:right;'> 
-                        <?php echo "$".number_format($eventoimpuesto["montovto"], 2, ",", ".");
-                        $tpla+=$eventoimpuesto["montovto"];
-                        ?>
-                    </td>
-                    <td style='border:thin solid #333 ;text-align:right;'> 
-                        <?php echo "$".number_format($eventoimpuesto["montorealizado"], 2, ",", ".");
-                        $tpag+=$eventoimpuesto["montorealizado"];
-                        ?>
-                    </td> 
-                    <td style='border:thin solid #333 ;text-align:right; padding-left:4px'> 
-                        <?php echo date("d/m",strtotime($eventoimpuesto["fchvto"]));?>
-                    </td>                            
-                    <td style='border:thin solid #333 ;text-align:left;'> 
-                        <?php echo $impcli['Impuesto']["lugarpago"];?>
-                    </td>  
-                </tr>
-                        <?php }
-                    }
-                    
-                }   
+                        }
+                }
                 //Planes de Pagos
                 foreach ($cliente['Plandepago'] as $plandepago) {   ?>
                      <tr  >
@@ -675,7 +674,6 @@
                     </td>
                 </tr>                    
            </table>
-                 
         </td>
     </tr>
     <tr class="rowMovimientoCliente">

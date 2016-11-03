@@ -142,7 +142,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 		}	
 	}
 	?>
-	<div class="index">
+	<div class="index" style="overflow:scroll;">
 		<?php
 		$arrayBasesProrrateadas=array();
 		foreach ($provinciasArecorrer as $miProvincia) { 
@@ -154,9 +154,9 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				foreach ($actividadclientes as $actividadcliente) { 
 					$arrayBasesProrrateadas[$miProvincia][$actividadcliente['Actividade']['id']]=0;
 					?>
-				<td colspan="7" class="thActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+				<td colspan="8" class="thActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
 					<span style="color:deepskyblue" onclick="showhideactividad('<?php echo $actividadcliente['Actividade']['id']; ?>');"  >
-						<?php echo $actividadcliente['Actividade']['nombre']; ?>
+						<label class="lbl_trunc"><?php echo $actividadcliente['Actividade']['nombre']; ?></label>
 					</span>
 				</td>
 					<?php 
@@ -166,7 +166,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 						if($basesprorrateada['Impcliprovincia']['Partido']['id']==$miProvincia&&$impcliprovincia['ejercicio']!='Primero'){
 							//esta es la base que se uso para calcular Actividad Economica en esta provincia
 							$baseprorrateadaImpCLI=$basesprorrateada['baseprorrateada'];
-							echo "<td >$".number_format($baseprorrateadaImpCLI, 2, ",", ".")."</td>";
+							echo "<td >".number_format($baseprorrateadaImpCLI, 2, ",", ".")."</td>";
 							$arrayBasesProrrateadas[$miProvincia][$actividadcliente['Actividade']['id']]=$baseprorrateadaImpCLI;
 						}
 					}
@@ -174,8 +174,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				?>	
 				<td colspan="2">Impuesto</td>
 				<td colspan="5">Conceptos que restan</td>
-				<td rowspan="2">A Pagar</td>
-				<td rowspan="2">A Favor del Contribuyente</td>
+				<td colspan="2">A Favor</td>
 			</tr>
 			<tr id="2">
 				<td ><?php
@@ -186,27 +185,30 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 						echo $impcliprovincia['Localidade']['Partido']['nombre'];
 						break;
 					}
+
 				}?></td>
 				<td>Sede?</td>
 				<?php 
 				foreach ($actividadclientes as $actividadcliente) { ?>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo $actividadcliente['Actividade']['articulo']; ?></td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">%</td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">Art 6, 7, 9, 10, 11, 12 </td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="Art 6, 7, 9, 10, 11, 12">Art 6, 7,.. </td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">Art 2</td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">Diferencia Administración</td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">Base Determinada</td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">Alìcuota por Municipio</td>
-				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>">Impuesto Determinado</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="Diferencia Administración">Dif. Admin.</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="Base Determinada">Base</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="Alicuota por Municipio">Alicuota</td>
+				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>" title="Impuesto Determinado">Impuesto</td>
 				<?php }
 				?>	
 				<td>Mínimo</td>
-				<td>Impuesto o Mínimo el Mayo</td>
+				<td title="Impuesto o Mínimo el Mayor">Impuesto</td>
 				<td>Retención</td>
-				<td>Act Vs Percep</td>
-				<td>Percepción Bancaria	Otros</td>
-				<td>Saldo a Favor Período Ant</td>
+				<td title="Act Vs Percep">Percep.</td>
+				<td>x</td>
+				<td title="Saldo a Favor Período Ant">A Favor</td>
 				<td>Total</td>
+				<td>Fisco</td>
+				<td>Contrib.</td>
 			</tr>
 			<?php 
 			$provinciaAMostrar=array();
@@ -238,7 +240,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 			
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php
 				$subTotalVenta=$subtotalVentaxActividad[$provinciaid][$impcliprovinciaid][$actividadclienteActividadclienteid]['subTotalVenta'];			
-				echo  "$".number_format($subTotalVenta, 2, ",", ".");?></td>
+				echo  number_format($subTotalVenta, 2, ",", ".");?></td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php
 					$porcentajeVentas = 0;
 					if($totalesProvincia[$provinciaid]['Total'][$actividadclienteActividadclienteid]!=0){
@@ -249,7 +251,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 					}
 					$totalesProvincia[$provinciaid]['porcentajes'][$actividadclienteActividadclienteid]+=$porcentajeVentas;
 
-					echo  "%".number_format($porcentajeVentas*100, 2, ",", ".");
+					echo  number_format($porcentajeVentas*100, 2, ",", ".");
 				?></td>
 				<?php
 				$totalOtrosArticulos = 0;
@@ -295,14 +297,14 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				$totalesProvincia[$provinciaid]['TotalOtrosArticulos'][$actividadcliente['Actividadcliente']['id']]+=$totalOtrosArticulos;
 				$totalesProvincia[$provinciaid]['TotalArticulo2'][$actividadcliente['Actividadcliente']['id']]+=$totalArticulo2;
 				?>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo "$".number_format($totalOtrosArticulos, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo "$".number_format($totalArticulo2, 2, ",", "."); ?></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($totalOtrosArticulos, 2, ",", "."); ?></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($totalArticulo2, 2, ",", "."); ?></td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">0</td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
 					<span style="color:#0C0">
 					<?php 
 					$totalBaseDeterminada = $totalArticulo2 + $totalOtrosArticulos;
-					echo "$".number_format($totalBaseDeterminada, 2, ",", "."); 
+					echo number_format($totalBaseDeterminada, 2, ",", "."); 
 					$impuestodeterminado=($alicuotaAMostrar/100)*$totalBaseDeterminada;
 					if(!isset($totalesProvincia[$provinciaid]['TotalBaseDeterminada'][$actividadcliente['Actividadcliente']['id']])){
 						$totalesProvincia[$provinciaid]['TotalBaseDeterminada'][$actividadcliente['Actividadcliente']['id']]=0;
@@ -321,15 +323,21 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 					?>
 					</span>
 				</td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo "%".number_format($alicuotaAMostrar, 2, ",", "."); ?></td>
-				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>"><span style="color:red"><?php echo "$".number_format($impuestodeterminado, 2, ",", "."); ?></span></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($alicuotaAMostrar, 2, ",", "."); ?></td>
+				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>"><span style="color:red"><?php echo number_format($impuestodeterminado, 2, ",", "."); ?></span></td>
 				<?php 
 				} ?>
 				<td><?php 
-					//no se de donde sacar el minimo
-					//$minimoAMostrar = $encuadrealicuota['minimo'];
-				?>0</td>
-				<td><span style="color:red"><?php echo "$".number_format($totalPagoImpuestoLocalidad, 2, ",", "."); ?></span></td>
+					$minimoAMostrar += $myimpcliprovincia['minimo'];
+                    echo number_format($minimoAMostrar, 2, ",", ".");
+				?></td>
+				<td><span style="color:red">
+						<?php
+                        if($minimoAMostrar>$totalPagoImpuestoLocalidad){
+                            $totalPagoImpuestoLocalidad = $minimoAMostrar;
+                        }
+                        echo number_format($totalPagoImpuestoLocalidad, 2, ",", "."); ?></span>
+				</td>
 				<?php 
 				$totalRetenciones=0;
 				$totalPercepciones=0;
@@ -396,11 +404,11 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				$totalesProvincia[$provinciaid]['TotalConceptos']+=$totalConceptos;
 				$totalesProvincia[$provinciaid]['TotalRetenciones']+=$percepionSubtotal;
 				?>
-				<td><?php echo "$".number_format($retencionSubtotal, 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($percepionSubtotal, 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($percepionBancariaSubtotal, 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($afavorSubtotal, 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($totalConceptos, 2, ",", "."); ?></td>
+				<td><?php echo number_format($retencionSubtotal, 2, ",", "."); ?></td>
+				<td><?php echo number_format(0, 2, ",", "."); ?></td>
+				<td><?php echo number_format($percepionBancariaSubtotal, 2, ",", "."); ?></td>
+				<td><?php echo number_format($afavorSubtotal, 2, ",", "."); ?></td>
+				<td><?php echo number_format($totalConceptos, 2, ",", "."); ?></td>
 				<?php 
 				$subtotalAPagar = 0;
 				$subtotalAFavor = 0;
@@ -415,11 +423,11 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				$totalesProvincia[$provinciaid]['TotalAFavor']+=$subtotalAFavor;
 				?>
 				<td><?php 
-					echo "$".number_format($subtotalAPagar, 2, ",", ".");
+					echo number_format($subtotalAPagar, 2, ",", ".");
 					echo $this->Form->input('apagar'.$impcliprovincia['Localidade']['id'], array('type'=>'hidden','value'=>$subtotalAPagar));  ?>
 				</td>
 				<td><?php 
-					echo "$".number_format($subtotalAFavor, 2, ",", "."); 
+					echo number_format($subtotalAFavor, 2, ",", "."); 
 					echo $this->Form->input('afavor'.$impcliprovincia['Localidade']['id'], array('type'=>'hidden','value'=>$subtotalAFavor));  ?>
 				</td>
 			</tr>	
@@ -468,25 +476,25 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 					$Articulo2poractividad = $Articulo2porprovincia[$actividadclienteActividadclienteid];
 					$BaseDeterminadaporactividad = $BaseDeterminadaporprovincia[$actividadclienteActividadclienteid];
 					$Impuestoporactividad = $Impuestoporprovincia[$actividadclienteActividadclienteid]; ?>    
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo "$".number_format($ventasporactividad, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo "%".number_format($porcentajesporactividad, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo "$".number_format($OtrosArticulosporactividad, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo "$".number_format($Articulo2poractividad, 2, ",", "."); ?></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($ventasporactividad, 2, ",", "."); ?></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($porcentajesporactividad, 2, ",", "."); ?></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($OtrosArticulosporactividad, 2, ",", "."); ?></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($Articulo2poractividad, 2, ",", "."); ?></td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">0</td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo "$".number_format($BaseDeterminadaporactividad, 2, ",", "."); ?></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($BaseDeterminadaporactividad, 2, ",", "."); ?></td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">&nbsp;</td>
-				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo "$".number_format($Impuestoporactividad, 2, ",", "."); ?></td>
+				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($Impuestoporactividad, 2, ",", "."); ?></td>
 				<?php } ?>
-				<td><?php echo "$".number_format(0, 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($totalesProvincia[$provinciaid]['TotalRetencion'], 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($totalesProvincia[$provinciaid]['TotalRetenciones'], 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($totalesProvincia[$provinciaid]['TotalPercepionBancariaS'], 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($totalesProvincia[$provinciaid]['TotalAFavorSaldo'], 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($totalesProvincia[$provinciaid]['TotalConceptos'], 2, ",", "."); ?></td>
+				<td><?php echo number_format(0, 2, ",", "."); ?></td>
+				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", "."); ?></td>
+				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalRetencion'], 2, ",", "."); ?></td>
+				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalRetenciones'], 2, ",", "."); ?></td>
+				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalPercepionBancariaS'], 2, ",", "."); ?></td>
+				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalAFavorSaldo'], 2, ",", "."); ?></td>
+				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalConceptos'], 2, ",", "."); ?></td>
 				
-				<td><?php echo "$".number_format($totalesProvincia[$provinciaid]['TotalAPagar'], 2, ",", "."); ?></td>
-				<td><?php echo "$".number_format($totalesProvincia[$provinciaid]['TotalAFavor'], 2, ",", "."); ?></td>
+				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalAPagar'], 2, ",", "."); ?></td>
+				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalAFavor'], 2, ",", "."); ?></td>
 			</tr>
 		</table>
 	<?php 

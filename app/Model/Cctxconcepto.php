@@ -30,7 +30,7 @@ class Cctxconcepto extends AppModel {
 			'foreignKey' => 'concepto_id',
 			'conditions' => '',
 			'fields' => '',
-			'order' => ''
+			'order' => 'Concepto.seccion'
 		)
 	);
 

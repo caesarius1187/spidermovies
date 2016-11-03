@@ -8,6 +8,7 @@ $(document).ready(function() {
 		});
 	});
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+
 	var beforePrint = function() {
 		console.log('Functionality to run before printing.');
 		$('#header').hide();
@@ -18,7 +19,6 @@ $(document).ready(function() {
 		$('#index').css('font-size','10px');
 		$('#index').css('border-color','#FFF');
 	};
-
 	var afterPrint = function() {
 		console.log('Functionality to run after printing');
 		$('#index').css('font-size','14px');
@@ -28,7 +28,6 @@ $(document).ready(function() {
 		$('#index').css('float','right');
 		$('#padding').css('padding','10px 1%');
 	};
-
 	if (window.matchMedia) {
 		var mediaQueryList = window.matchMedia('print');
 		mediaQueryList.addListener(function(mql) {
@@ -39,7 +38,6 @@ $(document).ready(function() {
 			}
 		});
 	}
-
 	window.onbeforeprint = beforePrint;
 	window.onafterprint = afterPrint;
 });

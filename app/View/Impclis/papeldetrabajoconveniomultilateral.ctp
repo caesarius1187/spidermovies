@@ -104,15 +104,15 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 						?>	
 			          y dé de alta las provincias listadas anteriormente para poder visualizar el informe correctamente</br>
 </div>
-<?php } else { ?>	
-	<?php 
+<?php } else { ?>
+	<?php
 	$subtotalVentaxActividad = array();
 	$totalGeneralVentas = 0;
 	//echo json_encode($actividadclientes );
-	foreach ($actividadclientes as $actividadcliente) { 
+	foreach ($actividadclientes as $actividadcliente) {
 		$subTotalProvincialxActividadVenta=0;
 		foreach ($actividadcliente['Venta'] as $venta) {
-			foreach ($impcli['Impcliprovincia'] as $impcliprovincia) { 
+			foreach ($impcli['Impcliprovincia'] as $impcliprovincia) {
 				if(($venta['Localidade']['partido_id']==$impcliprovincia['Partido']['id'])&&($impcliprovincia['ejercicio']!='Primero')){
                     if($venta['tipodebito']=='Debito Fiscal'){
                         $subTotalProvincialxActividadVenta +=$venta['neto']+$venta['nogravados']+$venta['excentos']-$venta['exentosactividadeseconomicas'];
@@ -166,28 +166,36 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         }
     }
 	?>
-	<div class="index">
+	<div class="index" style="overflow:scroll;">
         <?php
         echo $this->Form->input('cantBaseRealJurisdiccionTD',array('value'=>count($actividadclientes)+1,'type'=>'hidden'));
         ?>
 		<table class="tbl_tareas aimprimir" style="border-collapse: collapse;" id="pdtconveniomultilateral">
 			<tr id="1">
 				<td colspan="3"> </td>
-				<td id="baseRealJurisdiccionTDTitle" colspan="<?php echo count($actividadclientes)+1; ?>">
-                    <span style="color:deepskyblue" onclick="showhideBaseRealJurisdiccion();"  >
-                        Base real por jurisdiccion
+				<?php
+				//Si es Actividad Economica no distribuye base por articulo en las provincias, entonces toda esta zona esta demás
+				if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/) {
+					?>
+					<td id="baseRealJurisdiccionTDTitle" colspan="<?php echo count($actividadclientes) + 1; ?>">
+                    <span style="color:deepskyblue" onclick="showhideBaseRealJurisdiccion();">
+                        Base real  <!--por jurisdiccion-->
                     </span>
-                </td>
-				<td rowspan="3">Coeficientes Unificados</td>
-				<td id="prorrateoPorAplicacionArticuloTDTitle" colspan="<?php echo count($actividadclientes)+1; ?>">
-                    <span style="color:deepskyblue" onclick="showhideProrrateoPorAplicacionArticulo();"  >
-                        Prorrateo a la Jurisdicción Sede por aplicación de regímenes especiales Art 6, 7, 10, 11 y 12 del Convenio
+					</td>
+                    <td rowspan="3">Coef.</td>
+					<td id="prorrateoPorAplicacionArticuloTDTitle"
+						colspan="<?php echo count($actividadclientes) + 1; ?>">
+                    <span style="color:deepskyblue" onclick="showhideProrrateoPorAplicacionArticulo();"
+						  title="Prorrateo a la Jurisdicción Sede por aplicación de regímenes especiales Art 6, 7, 10, 11 y 12 del Convenio">
+                        Prorrateo a la Sede
                     </span>
-                </td>
-				<?php 
-				$cuadrosPorActividad = 4;
-				if($impcli['Impcli']['impuesto_id']==21){ 
-					//elimino un cuadro por que no voy a mostrar el minimo
+					</td>
+					<?php
+				}
+				$cuadrosPorActividad = 3;
+				if($impcli['Impcli']['impuesto_id']==21/*Actividades Economicas*/){
+					//elimino dos cuadro por que no voy a mostrar el minimo ni la comparacion de minimo con impuesto
+					$cuadrosPorActividad++;
 					$cuadrosPorActividad++;
 				}
                 echo $this->Form->input('cantBaseProrrateadaActividadTD',array('value'=>$cuadrosPorActividad,'type'=>'hidden'));
@@ -195,65 +203,72 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 ?>
                 <td id="baseImponibleProrrateadaTDTitle" colspan="<?php echo count($actividadclientes)*$cuadrosPorActividad+1; ?>">
                    <span style="color:deepskyblue" onclick="showhideBaseImponibleProrrateada();"  >
-                       Bases Imponibles Prorrateadas
+					   <?php
+					   if($impcli['Impcli']['impuesto_id']==21/*Actividades Economicas*/){
+					   		echo "Bases Imponibles";
+					   }else{
+						   echo "Bases Imponibles Prorrateadas";
+					   }?>
                    </span>
                 </td>
 				<td colspan="6">Conceptos que restan</td>
-				<td rowspan="3">A Pagar</td>
-				<td rowspan="3">A Favor del Contribuyente</td>
+				<td colspan="6">A Favor</td>				
 			</tr>
 			<tr id="2">
-				<td>Codigo</td>
-				<td>Provincia</td>
-				<td>Ejercicio</td>
-				<?php 
-				foreach ($actividadclientes as $actividadcliente) { ?>
-					<td class="baseRealJurisdiccion"><?php echo $actividadcliente['Actividade']['nombre']; ?></td>
-				<?php }
-				?>	
-				<td rowspan="2">Total</td>
-				<?php 
-				foreach ($actividadclientes as $actividadcliente) { ?>
-					<td class="prorrateoPorAplicacionArticulo"><?php echo $actividadcliente['Actividade']['nombre']; ?></td>
-				<?php }
-				?>	
-				<td rowspan="2">Total</td>
-				<?php 
+				<td rowspan="2">Codigo</td>
+				<td rowspan="2">Provincia</td>
+				<td rowspan="2">Ejercicio</td>
+				<?php
+				if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/){
+					foreach ($actividadclientes as $actividadcliente) { ?>
+					<td class="baseRealJurisdiccion cursor" title="<?php echo $actividadcliente['Actividade']['nombre'] ?>"><?php echo $actividadcliente['Actividade']['descripcion']; ?></td>
+					<?php }
+					?>
+					<td rowspan="2">Total</td>
+					<?php
+					foreach ($actividadclientes as $actividadcliente) { ?>
+						<td class="prorrateoPorAplicacionArticulo cursor" title="<?php echo $actividadcliente['Actividade']['nombre'] ?>"><?php echo $actividadcliente['Actividade']['descripcion']; ?></td>
+					<?php }
+					?>
+					<td rowspan="2">Total</td>
+
+				<?php
+				}
 				foreach ($actividadclientes as $actividadcliente) { ?>
 					<td class="baseImponibleProrrateadaActividad" colspan="<?php echo $cuadrosPorActividad; ?>">
-                        <?php echo $actividadcliente['Actividade']['nombre']; ?>
+                        <label class="lbl_trunc"><?php echo $actividadcliente['Actividade']['descripcion']." - ".$actividadcliente['Actividade']['nombre']; ?></label>
                     </td>
 				<?php }
-				?>	
+				?>
 				<td rowspan="2">Total</td>
-				<td rowspan="2">Retención</td>
-				<td rowspan="2">Percepción</td>
-				<td rowspan="2">Percepción Bancaria</td>
+				<td rowspan="2">Reten.</td>
+				<td rowspan="2">Percep.</td>
+				<td rowspan="2" title="Percepción Bancaria" style="width: 45px;">Percep.Ban.</td>
 				<td rowspan="2">Otros</td>
-				<td rowspan="2">Saldo a favor periodo anterior</td>
+				<td rowspan="2" title="A favor del contribuyente del periodo anterior">A favor</td>
 				<td rowspan="2">Total</td>
+				<td rowspan="2">Fisco</td>
+				<td rowspan="2">Contrib.</td>
 			</tr>
 			<tr id="3">
-				<td colspan="3">Distribucion</td>
-				<?php 
-				foreach ($actividadclientes as $actividadcliente) { ?>
-					<td class="baseRealJurisdiccion"><?php echo $actividadcliente['Actividade']['articulo']; ?></td>
-				<?php }
-				?>	
-				<?php 
-				foreach ($actividadclientes as $actividadcliente) { ?>
-					<td class="prorrateoPorAplicacionArticulo"><?php echo $actividadcliente['Actividade']['articulo']; ?></td>
-				<?php }
-				?>	
+
 				<?php
+				if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/) {
+					foreach ($actividadclientes as $actividadcliente) { ?>
+						<td class="baseRealJurisdiccion"><?php echo $actividadcliente['Actividade']['articulo']; ?></td>
+					<?php }
+					foreach ($actividadclientes as $actividadcliente) { ?>
+						<td class="prorrateoPorAplicacionArticulo"><?php echo $actividadcliente['Actividade']['articulo']; ?></td>
+					<?php }
+				}
 				foreach ($actividadclientes as $actividadcliente) { ?>
-					<td class="baseImponibleProrrateada">Base Prorrateada</td>
-					<td class="baseImponibleProrrateada">Alicuota</td>
-					<td class="baseImponibleProrrateada">Impuesto</td>
+					<td class="baseImponibleProrrateada" title="Base Prorrateada">Base</td>
+					<td class="baseImponibleProrrateada" title="Alicuota">%</td>
 					<?php if($impcli['Impcli']['impuesto_id']==21){ ?>
-					<td class="baseImponibleProrrateada">Minimo Imputable</td>
+                        <td class="baseImponibleProrrateada">Impuesto</td>
+                        <td class="baseImponibleProrrateada" title="Minimo Imputable">Min</td>
 					 <?php } ?>
-					<td>Impuesto Determinado</td>
+					<td title="Impuesto Determinado">Impuesto</td>
 				<?php }?>
 			</tr>
 			<?php
@@ -297,16 +312,21 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 						}
 						$subTotalProvincialVenta += $subTotalProvincialxActividadVenta;
 						$liquidacionActividad[$actividadcliente['Actividadcliente']['id']] = $subTotalProvincialxActividadVenta;
-						?>
-						<td class="baseRealJurisdiccion"><?php echo '$'.number_format($subTotalProvincialxActividadVenta, 2, ",", ".") ?></td>
+						if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/) {
+							?>
+						<td class="baseRealJurisdiccion"><?php echo number_format($subTotalProvincialxActividadVenta, 2, ",", ".") ?></td>
 					<?php }
+					}
 					$liquidacionProvincia[$impcliprovincia['id']."-TotalVentaxActividad"] = $liquidacionActividad;
-				?>	
-				<td><?php echo '$'.number_format($subTotalProvincialVenta, 2, ",", ".");  ?></td>
-				<td><!-- Coeficiente -->
-					<?php echo $impcliprovincia['coeficiente']; ?>
-				</td>
-				<?php 
+
+				if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/) {
+					?>
+					<td><?php echo number_format($subTotalProvincialVenta, 2, ",", "."); ?></td>
+					<td><!-- Coeficiente -->
+						<?php echo $impcliprovincia['coeficiente']; ?>
+					</td>
+					<?php
+				}
 				//=SI(O(E$8=7;E$8=10;E$8=11;E$8=12);E9*80%;SI(E$8=6;E9*90%;SI(E$8=9;E9;0))) 
 				$subTotalProrrateoPorAplicacionArticulo  = 0;
 				$liquidacionActividadProrrateada = array();
@@ -338,18 +358,24 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					}
 					$liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']]=$prorrateoPorAplicacionArticulo;
 					$subTotalProrrateoPorAplicacionArticulo  += $prorrateoPorAplicacionArticulo;
-					?>
-				<td class="prorrateoPorAplicacionArticulo"><!-- Total Prorrateo por Provincia por actividad por aplicacion de articulo -->
-					<?php echo  '$'.number_format($prorrateoPorAplicacionArticulo, 2, ",", ".");$i++;  ?>
-				</td>
-					<?php
+					$i++;
+					if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/) {
+						?>
+						<td class="prorrateoPorAplicacionArticulo">
+							<!-- Total Prorrateo por Provincia por actividad por aplicacion de articulo -->
+							<?php echo number_format($prorrateoPorAplicacionArticulo, 2, ",", "."); ?>
+						</td>
+						<?php
+					}
 				}
 				$liquidacionProvincia[$impcliprovincia['id']."-TotalVentaxActividadProrrateada"]=$liquidacionActividadProrrateada;
-				?>
-				<td><!-- Total Prorrateo por Provincia  por aplicacion de articulo-->
-					<?php echo '$'.number_format($subTotalProrrateoPorAplicacionArticulo, 2, ",", ".");  ?>
-				</td>
-				<?php
+				if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/) {
+					?>
+					<td><!-- Total Prorrateo por Provincia  por aplicacion de articulo-->
+						<?php echo number_format($subTotalProrrateoPorAplicacionArticulo, 2, ",", "."); ?>
+					</td>
+					<?php
+				}
 				$subTotalBaseImponibleProrrateada = array();
 				/*Recorremos actividades para calcular Bases Prorrateadas de la provincia que estamos recorriendo*/
 				foreach ($actividadclientes as $actividadcliente) { 
@@ -391,7 +417,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				<td class="baseImponibleProrrateada" id="<?php echo $impcliprovincia['id']."-baseimponible".$actividadcliente['Actividadcliente']['id'] ?>">
 					<!-- Base Prorrateada Bases Imponibles Prorrateadas -->
 					<span style="color:#0C0">
-					<?php echo '$'.number_format($baseProrrateada, 2, ",", ".");
+					<?php echo number_format($baseProrrateada, 2, ",", ".");
                     $liquidacionProvincia[$impcliprovincia['id']."-baseimponible"][$actividadcliente['Actividadcliente']['id']]=$baseProrrateada;
 					echo $this->Form->input('baseProrrateada'.$impcliprovincia['id'].'actividadclienteid'.$actividadcliente['Actividadcliente']['id'] , array('type'=>'hidden','value'=>$baseProrrateada,)); 
 					 ?>
@@ -419,21 +445,23 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				} ?>
 				<td class="baseImponibleProrrateada" ><!-- Alicuota Bases Imponibles Prorrateadas -->
 					<?php 
-						echo '%'.number_format($alicuotaAMostrar, 4, ",", "."); 
+						echo number_format($alicuotaAMostrar, 2, ",", "."); 
 						$liquidacionProvincia[$impcliprovincia['id']."-alicuotaAMostrar"][$actividadcliente['Actividadcliente']['id']]+= $alicuotaAMostrar;
 					?>
 				</td>
-				<td class="baseImponibleProrrateada"><!-- Impuesto Bases Imponibles Prorrateadas -->
+                <?php
+                    $impuestoAMostrar = $baseProrrateada*$alicuotaAMostrar/100;
+                    $liquidacionProvincia[$impcliprovincia['id']."-impuestoAMostrar"][$actividadcliente['Actividadcliente']['id']]+=$impuestoAMostrar;
+                    $liquidacionProvincia[$impcliprovincia['id']."-minimoAMostrar"][$actividadcliente['Actividadcliente']['id']]+= $minimoAMostrar;
+                    if($impcli['Impcli']['impuesto_id']==21){ ?>
+                    <td class="baseImponibleProrrateada"><!-- Impuesto Bases Imponibles Prorrateadas -->
 						<?php 
-						$impuestoAMostrar = $baseProrrateada*$alicuotaAMostrar/100;
-						echo '$'.number_format($impuestoAMostrar, 2, ",", "."); 
-						$liquidacionProvincia[$impcliprovincia['id']."-impuestoAMostrar"][$actividadcliente['Actividadcliente']['id']]+=$impuestoAMostrar;
+						echo number_format($impuestoAMostrar, 2, ",", ".");
 						?>
-				</td>
-				<?php if($impcli['Impcli']['impuesto_id']==21){ ?>
+				    </td>
 					<td class="baseImponibleProrrateada"><!-- Minimo Bases Imponibles Prorrateadas -->
 						<?php 
-						echo '$'.number_format($minimoAMostrar, 2, ",", "."); 
+						echo number_format($minimoAMostrar, 2, ",", "."); 
 						$liquidacionProvincia[$impcliprovincia['id']."-minimoAMostrar"][$actividadcliente['Actividadcliente']['id']]+= $minimoAMostrar;
 						?>
 					</td>
@@ -447,7 +475,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 						}else{
 							$impuestoDeterminado = $minimoAMostrar;
 						}
-						echo '<span style="color:red">$'.number_format($impuestoDeterminado, 2, ",", ".")."</span>"; 
+						echo '<span style="color:red">'.number_format($impuestoDeterminado, 2, ",", ".")."</span>";
 						$liquidacionProvincia[$impcliprovincia['id']."-impuestoDeterminado"][$actividadcliente['Actividadcliente']['id']]+= $impuestoDeterminado;
 						$actividadArticulo=$actividadcliente['Actividade']['articulo'];
 						if(!isset($subTotalBaseImponibleProrrateada[$actividadcliente['Actividade']['articulo']])){
@@ -466,7 +494,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 						$totalBaseImponibleProrrateada += $value;
 					}
 					$liquidacionProvincia[$impcliprovincia['id'].'TotalBaseImponibleProrrateada'] = $subTotalBaseImponibleProrrateada;
-					echo '$'.number_format($totalBaseImponibleProrrateada, 2, ",", "."); ; 
+					echo number_format($totalBaseImponibleProrrateada, 2, ",", "."); ; 
 					$totalGeneralBaseImponibleProrrateada += $totalBaseImponibleProrrateada ;
 					?>
 				</td>
@@ -476,12 +504,10 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					$percepionSubtotal=0;
 					$percepionBancariaSubtotal=0;
 					$otrosSubtotal=0;
-
                     $retencionSubtotal=$conceptosxProvincia[$impcliprovincia['Partido']['id']]['retencion'];
                     $percepionBancariaSubtotal= $conceptosxProvincia[$impcliprovincia['Partido']['id']]['percepionBancariaSubtotal'];
                     $afavorSubtotal=$conceptosxProvincia[$impcliprovincia['Partido']['id']]['afavorSubtotal'];
                     $otrosSubtotal=$conceptosxProvincia[$impcliprovincia['Partido']['id']]['otrosSubtotal'];
-
                     foreach ($actividadclientes as $actividadcliente) {
                         foreach ($actividadcliente['Compra'] as $compra) {
 							if($impcliprovincia['Partido']['id']==$compra['Localidade']['partido_id']){
@@ -497,38 +523,38 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				?>
 				<td><!-- Retencion -->
 					<?php
-						echo '$'.number_format($retencionSubtotal, 2, ",", ".");
+						echo number_format($retencionSubtotal, 2, ",", ".");
 						$totalGeneralRetenciones += $retencionSubtotal;
 					?>
 				</td>
 				<td><!-- Percepcion -->
 					<?php
-						echo '$'.number_format($percepionSubtotal, 2, ",", "."); 
+						echo number_format($percepionSubtotal, 2, ",", "."); 
 						$totalGeneralPercepciones += $percepionSubtotal;
 					?>
 				</td>
 				<td><!-- Percepcion Bancaria -->
 					<?php
-						echo '$'.number_format($percepionBancariaSubtotal, 2, ",", ".");
+						echo number_format($percepionBancariaSubtotal, 2, ",", ".");
 						$totalGeneralPercepcionesBancarias += $percepionBancariaSubtotal;
 					?>
 				</td>
 				<td><!-- Otros -->
 					<?php
-						echo '$'.number_format($otrosSubtotal, 2, ",", ".");
+						echo number_format($otrosSubtotal, 2, ",", ".");
 						$totalGeneralOtros += $otrosSubtotal;
 					?>
 				</td>
 				<td><!-- A Favor Periodo Anterior -->
 					<?php
-						echo '$'.number_format($afavorSubtotal, 2, ",", ".");
+						echo number_format($afavorSubtotal, 2, ",", ".");
 						$totalGeneralAFavor += $afavorSubtotal;
 					?>
 				</td>
 				<td><!-- Total -->
 					<?php
 						$subTotalRetenciones = $retencionSubtotal+$percepionSubtotal+$percepionBancariaSubtotal+$otrosSubtotal+$afavorSubtotal;
-						echo '$'.number_format($subTotalRetenciones, 2, ",", ".");
+						echo number_format($subTotalRetenciones, 2, ",", ".");
 						$totalGeneralTotalRetenciones += $subTotalRetenciones;
 					?>
 				</td>
@@ -536,10 +562,10 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					<?php 
 					$totalDefinitivo = $totalBaseImponibleProrrateada - $subTotalRetenciones; 
 					if($totalDefinitivo<=0){
-						echo '$'.number_format(0, 2, ",", ".");;
+						echo number_format(0, 2, ",", ".");;
 						echo $this->Form->input('apagar'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>0)); 
 					}else{
-						echo '$'.number_format($totalDefinitivo, 2, ",", ".");
+						echo number_format($totalDefinitivo, 2, ",", ".");
 						$totalGeneralAPagar+= $totalDefinitivo;
 						echo $this->Form->input('apagar'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>$totalDefinitivo)); 
 					}
@@ -548,209 +574,213 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				<td><!-- A Favor Del Contribuyente -->
 					<?php 
 					if($totalDefinitivo>=0){
-						echo '$'.number_format(0, 2, ",", ".");;
+						echo number_format(0, 2, ",", ".");;
                         echo $this->Form->input('afavor'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>0));
                     }else{
-						echo '$'.number_format($totalDefinitivo*-1, 2, ",", ".");
+						echo number_format($totalDefinitivo*-1, 2, ",", ".");
 						$totalGeneralAFavorDelContribuyente+= $totalDefinitivo*-1;
 						echo $this->Form->input('afavor'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>$totalDefinitivo)); 
 					}
                     echo $this->Form->input('afavorPartido'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>$impcliprovincia['Partido']['nombre']));
-
                     ?>
 				</td>
 			</tr>
 			<?php 
-			} ?>
-			<tr id="Tot No Distribuye Base Art 2">
-				<td colspan="3">Tot No Distribuye Base Art 2</td>
-					<?php 
-					$subtotalesBaseReal = array();
-					$subtotalesProrrateados = array();
-					$subtotalDistribuyeBaseArt2 = 0; 
-					$subtotalNoDistribuyeBaseArt2 = 0; 
-					$subtotalOtrosArticulos = 0; 
-					$subtotalNoDistribuyeBaseArt2Prorrateados = 0; 
-					$subtotalDistribuyeBaseArt2Prorrateados = 0; 
-					foreach ($actividadclientes as $actividadcliente) { 
-						$actividadclienteid = $actividadcliente['Actividadcliente']['id'];
-						$subtotalesBaseReal[$actividadclienteid.'totalOtrosArticulos'] = 0;
-						$subtotalesBaseReal[$actividadclienteid.'totalDistribuyeBaseArt2'] = 0;
-						$subtotalesBaseReal[$actividadclienteid.'totalNoDistribuyeBaseArt2'] = 0;
-						$subtotalesProrrateados[$actividadclienteid.'totalNoDistribuyeBaseArt2'] = 0;
-						$subtotalesProrrateados[$actividadclienteid.'totalDistribuyeBaseArt2'] = 0;
-						$coeficienteTotal=0;
-						foreach ($impcli['Impcliprovincia'] as $impcliprovincia) {
-							// Calculo de Base Real
-							$subtotalProvinciaxActividad= $liquidacionProvincia[$impcliprovincia['id']."-TotalVentaxActividad"][$actividadclienteid];
+			}
+			//Estos Subtotales y totales son innecesarios para Actividad Economica por que se desarrolla en solo 1 provincia
+			if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/) {
+						?>
+				<tr id="Tot No Distribuye Base Art 2">
+					<td colspan="3">No Distribuye Base Art 2</td>
+						<?php
+						$subtotalesBaseReal = array();
+						$subtotalesProrrateados = array();
+						$subtotalDistribuyeBaseArt2 = 0;
+						$subtotalNoDistribuyeBaseArt2 = 0;
+						$subtotalOtrosArticulos = 0;
+						$subtotalNoDistribuyeBaseArt2Prorrateados = 0;
+						$subtotalDistribuyeBaseArt2Prorrateados = 0;
+						foreach ($actividadclientes as $actividadcliente) {
+							$actividadclienteid = $actividadcliente['Actividadcliente']['id'];
+							$subtotalesBaseReal[$actividadclienteid.'totalOtrosArticulos'] = 0;
+							$subtotalesBaseReal[$actividadclienteid.'totalDistribuyeBaseArt2'] = 0;
+							$subtotalesBaseReal[$actividadclienteid.'totalNoDistribuyeBaseArt2'] = 0;
+							$subtotalesProrrateados[$actividadclienteid.'totalNoDistribuyeBaseArt2'] = 0;
+							$subtotalesProrrateados[$actividadclienteid.'totalDistribuyeBaseArt2'] = 0;
+							$coeficienteTotal=0;
+							foreach ($impcli['Impcliprovincia'] as $impcliprovincia) {
+								// Calculo de Base Real
+								$subtotalProvinciaxActividad= $liquidacionProvincia[$impcliprovincia['id']."-TotalVentaxActividad"][$actividadclienteid];
 
-							if($impcliprovincia['ejercicio']=='Primero'&&$actividadcliente['Actividade']['articulo']==2){
-								$subtotalesBaseReal[$actividadclienteid.'totalNoDistribuyeBaseArt2'] += $subtotalProvinciaxActividad;
-							}else if($impcliprovincia['ejercicio']=='Resto'&&$actividadcliente['Actividade']['articulo']==2){
-								$subtotalesBaseReal[$actividadclienteid.'totalDistribuyeBaseArt2'] += $subtotalProvinciaxActividad;
+								if($impcliprovincia['ejercicio']=='Primero'&&$actividadcliente['Actividade']['articulo']==2){
+									$subtotalesBaseReal[$actividadclienteid.'totalNoDistribuyeBaseArt2'] += $subtotalProvinciaxActividad;
+								}else if($impcliprovincia['ejercicio']=='Resto'&&$actividadcliente['Actividade']['articulo']==2){
+									$subtotalesBaseReal[$actividadclienteid.'totalDistribuyeBaseArt2'] += $subtotalProvinciaxActividad;
+								}
+								if($actividadcliente['Actividade']['articulo']!=2){
+									$subtotalesBaseReal[$actividadclienteid.'totalOtrosArticulos'] += $subtotalProvinciaxActividad;
+								}
+								//Calculo Coeficiente
+								$coeficienteTotal+=$impcliprovincia['coeficiente'];
+								//Calculo de Base Prorrateada
+								$subtotalesProrrateados[$actividadclienteid.'totalNoDistribuyeBaseArt2'] += $subtotalProvinciaxActividad;
+								if($actividadcliente['Actividade']['articulo']!=2){
+									$subtotalesProrrateados[$actividadclienteid.'totalDistribuyeBaseArt2'] += $subtotalProvinciaxActividad;
+								}
 							}
-							if($actividadcliente['Actividade']['articulo']!=2){
-								$subtotalesBaseReal[$actividadclienteid.'totalOtrosArticulos'] += $subtotalProvinciaxActividad;
-							}
-							//Calculo Coeficiente
-							$coeficienteTotal+=$impcliprovincia['coeficiente'];
-							//Calculo de Base Prorrateada
-							$subtotalesProrrateados[$actividadclienteid.'totalNoDistribuyeBaseArt2'] += $subtotalProvinciaxActividad;
-							if($actividadcliente['Actividade']['articulo']!=2){
-								$subtotalesProrrateados[$actividadclienteid.'totalDistribuyeBaseArt2'] += $subtotalProvinciaxActividad;
-							}
-						}
+							?>
+					<td class="baseRealJurisdiccion">
+						<?php
+						echo number_format($subtotalesBaseReal[$actividadclienteid.'totalNoDistribuyeBaseArt2']*-1, 2, ",", ".");
+						$subtotalNoDistribuyeBaseArt2 += $subtotalesBaseReal[$actividadclienteid.'totalNoDistribuyeBaseArt2'];
 						?>
-				<td class="baseRealJurisdiccion">
-					<?php 
-					echo '$'.number_format($subtotalesBaseReal[$actividadclienteid.'totalNoDistribuyeBaseArt2']*-1, 2, ",", ".");
-					$subtotalNoDistribuyeBaseArt2 += $subtotalesBaseReal[$actividadclienteid.'totalNoDistribuyeBaseArt2'];
-					?>
-				</td><?php } ?>
-				<td>
-					<?php echo '$'.number_format($subtotalNoDistribuyeBaseArt2, 2, ",", "."); ?> 
-				</td>
-				<td rowspan="4">
-					<?php echo '%'.number_format($coeficienteTotal, 4, ",", "."); ?>
-				</td>
-				<?php
-				foreach ($actividadclientes as $actividadcliente) { 
-				?>
-				<td class="prorrateoPorAplicacionArticulo">
-						<?php 
-						echo '$'.number_format($subtotalesProrrateados[$actividadcliente['Actividadcliente']['id'].'totalNoDistribuyeBaseArt2'], 2, ",", ".");
-						$subtotalNoDistribuyeBaseArt2Prorrateados += $subtotalesProrrateados[$actividadcliente['Actividadcliente']['id'].'totalNoDistribuyeBaseArt2'];
-						?>
-				</td>
+					</td><?php } ?>
+					<td>
+						<?php echo number_format($subtotalNoDistribuyeBaseArt2, 2, ",", "."); ?>
+					</td>
+					<td rowspan="4">
+						<?php echo number_format($coeficienteTotal, 4, ",", "."); ?>
+					</td>
 					<?php
-				}
-				?>
-				<td>
-					<?php echo '$'.number_format($subtotalNoDistribuyeBaseArt2Prorrateados, 2, ",", ".");?>
-				</td>
-				<?php
-				foreach ($actividadclientes as $actividadcliente) { 
-					$totalalicuota = 0;
-					$totalminimoAMostrar = 0;
-					$totalimpuestoDeterminado = 0;
-					$totalimpuestoAMostrar = 0;
-					$totalbaseimponible = 0;
-					foreach ($impcli['Impcliprovincia'] as $impcliprovincia) {
-						$totalbaseimponible += $liquidacionProvincia[$impcliprovincia['id']."-baseimponible"][$actividadcliente['Actividadcliente']['id']];
-						$totalalicuota += $liquidacionProvincia[$impcliprovincia['id']."-alicuotaAMostrar"][$actividadcliente['Actividadcliente']['id']];
-						$totalminimoAMostrar += $liquidacionProvincia[$impcliprovincia['id']."-minimoAMostrar"][$actividadcliente['Actividadcliente']['id']];
-						$totalimpuestoAMostrar += $liquidacionProvincia[$impcliprovincia['id']."-impuestoAMostrar"][$actividadcliente['Actividadcliente']['id']];
-						$totalimpuestoDeterminado += $liquidacionProvincia[$impcliprovincia['id']."-impuestoDeterminado"][$actividadcliente['Actividadcliente']['id']];
+					foreach ($actividadclientes as $actividadcliente) {
+					?>
+					<td class="prorrateoPorAplicacionArticulo">
+							<?php
+							echo number_format($subtotalesProrrateados[$actividadcliente['Actividadcliente']['id'].'totalNoDistribuyeBaseArt2'], 2, ",", ".");
+							$subtotalNoDistribuyeBaseArt2Prorrateados += $subtotalesProrrateados[$actividadcliente['Actividadcliente']['id'].'totalNoDistribuyeBaseArt2'];
+							?>
+					</td>
+						<?php
 					}
-				?>
-				<td class="baseImponibleProrrateada">
-					<?php 
-						echo '$'.number_format($totalbaseimponible, 2, ",", ".");
 					?>
-				</td>
-				<td class="baseImponibleProrrateada">
-					<?php 
-						echo '%'.number_format($totalalicuota, 4, ",", ".");
-					?>
-				</td>
-				<td class="baseImponibleProrrateada">
-					<?php 
-						echo '$'.number_format($totalimpuestoAMostrar, 2, ",", ".");
-					?>
-				</td>
-				<?php if($impcli['Impcli']['impuesto_id']==21){  ?>
-				<td class="baseImponibleProrrateada">
-					<?php 
-						echo '$'.number_format($totalminimoAMostrar, 2, ",", ".");
-					?>
-				</td>
-				<?php } ?>
-				<td>
-					<?php 
-						echo '$'.number_format($totalimpuestoDeterminado, 2, ",", ".");
-					?>
-				</td>
+					<td>
+						<?php echo number_format($subtotalNoDistribuyeBaseArt2Prorrateados, 2, ",", ".");?>
+					</td>
 					<?php
-				}
-				?>
-				<td>
-					<?php echo '$'.number_format($totalGeneralBaseImponibleProrrateada, 2, ",", ".");?>
-				</td>
-				<td>
-					<?php echo '$'.number_format($totalGeneralRetenciones, 2, ",", ".");?>
-				</td>
-				<td>
-					<?php echo '$'.number_format($totalGeneralPercepciones, 2, ",", ".");?>
-				</td>
-				<td>
-					<?php echo '$'.number_format($totalGeneralPercepcionesBancarias, 2, ",", ".");?>
-				</td>
-				<td>
-					<?php echo '$'.number_format($totalGeneralOtros, 2, ",", ".");?>
-				</td>
-				<td>
-					<?php echo '$'.number_format($totalGeneralAFavor, 2, ",", ".");?>
-				</td>
-				<td>
-					<?php echo '$'.number_format($totalGeneralTotalRetenciones, 2, ",", ".");?>
-				</td>
-				<td>
-					<?php echo '$'.number_format($totalGeneralAPagar, 2, ",", ".");?>
-				</td>
-				<td>
-					<?php echo '$'.number_format($totalGeneralAFavorDelContribuyente, 2, ",", ".");?>
-				</td>
-			</tr>	
-			<tr id="Total Otros Art.">
-				<td colspan="3">Total Otros Art.</td>
-				<?php
-					foreach ($actividadclientes as $actividadcliente) { 
+					foreach ($actividadclientes as $actividadcliente) {
+						$totalalicuota = 0;
+						$totalminimoAMostrar = 0;
+						$totalimpuestoDeterminado = 0;
+						$totalimpuestoAMostrar = 0;
+						$totalbaseimponible = 0;
+						foreach ($impcli['Impcliprovincia'] as $impcliprovincia) {
+							$totalbaseimponible += $liquidacionProvincia[$impcliprovincia['id']."-baseimponible"][$actividadcliente['Actividadcliente']['id']];
+							$totalalicuota += $liquidacionProvincia[$impcliprovincia['id']."-alicuotaAMostrar"][$actividadcliente['Actividadcliente']['id']];
+							$totalminimoAMostrar += $liquidacionProvincia[$impcliprovincia['id']."-minimoAMostrar"][$actividadcliente['Actividadcliente']['id']];
+							$totalimpuestoAMostrar += $liquidacionProvincia[$impcliprovincia['id']."-impuestoAMostrar"][$actividadcliente['Actividadcliente']['id']];
+							$totalimpuestoDeterminado += $liquidacionProvincia[$impcliprovincia['id']."-impuestoDeterminado"][$actividadcliente['Actividadcliente']['id']];
+						}
 					?>
-					<td  class="baseRealJurisdiccion">
-						<?php 
-						echo '$'.number_format($subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalOtrosArticulos'], 2, ",", ".");
-						$subtotalOtrosArticulos += $subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalOtrosArticulos'];
+					<td class="baseImponibleProrrateada">
+						<?php
+							echo number_format($totalbaseimponible, 2, ",", ".");
+						?>
+					</td>
+					<td class="baseImponibleProrrateada">
+						<?php
+							echo number_format($totalalicuota, 2, ",", ".");
+						?>
+					</td>
+
+					<?php
+                    if($impcli['Impcli']['impuesto_id']==21){  ?>
+                        <td class="baseImponibleProrrateada">
+                            <?php
+                            echo number_format($totalimpuestoAMostrar, 2, ",", ".");
+                            ?>
+                        </td>
+                        <td class="baseImponibleProrrateada">
+                            <?php
+                                echo number_format($totalminimoAMostrar, 2, ",", ".");
+                            ?>
+                        </td>
+					<?php } ?>
+					<td>
+						<?php
+							echo number_format($totalimpuestoDeterminado, 2, ",", ".");
 						?>
 					</td>
 						<?php
 					}
-				?>
-				<td>
-					<?php echo '$'.number_format($subtotalOtrosArticulos, 2, ",", ".");?>
-				</td>
-				<td class="prorrateoPorAplicacionArticulo" colspan="<?php echo count($actividadclientes); ?>"></td>
-			</tr>	
-			<tr id="Total Que Distribuye Base">
-				<td colspan="3">Total Que Distribuye Base</td>
-				<?php
-				foreach ($actividadclientes as $actividadcliente) { 
-				?>
-				<td  class="baseRealJurisdiccion">
-					<?php 
-					echo '$'.number_format($subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2'], 2, ",", "."); 
-					$subtotalDistribuyeBaseArt2 += $subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2'];
 					?>
-				</td>
-				<?php
-				}
-				?>
-				<td>
-					<?php echo '$'.number_format($subtotalDistribuyeBaseArt2, 2, ",", "."); ?>
-				</td>
-				<?php
-				foreach ($actividadclientes as $actividadcliente) { 
-				?>
-				<td class="prorrateoPorAplicacionArticulo">
-					<?php 
-					echo '$'.number_format($subtotalesProrrateados[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2'], 2, ",", "."); 
-					$subtotalDistribuyeBaseArt2Prorrateados += $subtotalesProrrateados[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2'];
+					<td>
+						<?php echo number_format($totalGeneralBaseImponibleProrrateada, 2, ",", ".");?>
+					</td>
+					<td>
+						<?php echo number_format($totalGeneralRetenciones, 2, ",", ".");?>
+					</td>
+					<td>
+						<?php echo number_format($totalGeneralPercepciones, 2, ",", ".");?>
+					</td>
+					<td>
+						<?php echo number_format($totalGeneralPercepcionesBancarias, 2, ",", ".");?>
+					</td>
+					<td>
+						<?php echo number_format($totalGeneralOtros, 2, ",", ".");?>
+					</td>
+					<td>
+						<?php echo number_format($totalGeneralAFavor, 2, ",", ".");?>
+					</td>
+					<td>
+						<?php echo number_format($totalGeneralTotalRetenciones, 2, ",", ".");?>
+					</td>
+					<td>
+						<?php echo number_format($totalGeneralAPagar, 2, ",", ".");?>
+					</td>
+					<td>
+						<?php echo number_format($totalGeneralAFavorDelContribuyente, 2, ",", ".");?>
+					</td>
+				</tr>
+				<tr id="Total Otros Art.">
+					<td colspan="3">Total Otros Art.</td>
+					<?php
+						foreach ($actividadclientes as $actividadcliente) {
+						?>
+						<td  class="baseRealJurisdiccion">
+							<?php
+							echo number_format($subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalOtrosArticulos'], 2, ",", ".");
+							$subtotalOtrosArticulos += $subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalOtrosArticulos'];
+							?>
+						</td>
+							<?php
+						}
 					?>
-				</td>
-				<?php
-				}
-				?>
-			</tr>	
-			<tr id="Total General">
+					<td>
+						<?php echo number_format($subtotalOtrosArticulos, 2, ",", ".");?>
+					</td>
+					<td class="prorrateoPorAplicacionArticulo" colspan="<?php echo count($actividadclientes); ?>"></td>
+				</tr>
+				<tr id="Total Que Distribuye Base">
+					<td colspan="3">Total Que Distribuye Base</td>
+					<?php
+					foreach ($actividadclientes as $actividadcliente) {
+					?>
+					<td  class="baseRealJurisdiccion">
+						<?php
+						echo number_format($subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2'], 2, ",", ".");
+						$subtotalDistribuyeBaseArt2 += $subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2'];
+						?>
+					</td>
+					<?php
+					}
+					?>
+					<td>
+						<?php echo number_format($subtotalDistribuyeBaseArt2, 2, ",", "."); ?>
+					</td>
+					<?php
+					foreach ($actividadclientes as $actividadcliente) {
+					?>
+					<td class="prorrateoPorAplicacionArticulo">
+						<?php
+						echo number_format($subtotalesProrrateados[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2'], 2, ",", ".");
+						$subtotalDistribuyeBaseArt2Prorrateados += $subtotalesProrrateados[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2'];
+						?>
+					</td>
+					<?php
+					}
+					?>
+				</tr>
+				<tr id="Total General">
 				<td colspan="3">Total General</td>
 				<?php
 				$totalGeneral = 0;
@@ -762,7 +792,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					$subtotalGeneral += $subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2']; 
 					$subtotalGeneral += $subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalOtrosArticulos']; 
 					$subtotalGeneral += $subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalNoDistribuyeBaseArt2']; 
-					echo '$'.number_format($subtotalGeneral, 2, ",", ".");
+					echo number_format($subtotalGeneral, 2, ",", ".");
 					$totalGeneral += $subtotalGeneral;
 					?>
 				</td>
@@ -770,7 +800,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				}
 				?>
 				<td>
-					<?php echo '$'.number_format($totalGeneral, 2, ",", "."); ?>
+					<?php echo number_format($totalGeneral, 2, ",", "."); ?>
 				</td>
 				<?php
 				foreach ($actividadclientes as $actividadcliente) { 
@@ -780,13 +810,15 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					$subtotalGeneralProrrateado = 0;
 					$subtotalGeneralProrrateado += $subtotalesProrrateados[$actividadcliente['Actividadcliente']['id'].'totalDistribuyeBaseArt2']; 
 					$subtotalGeneralProrrateado += $subtotalesBaseReal[$actividadcliente['Actividadcliente']['id'].'totalNoDistribuyeBaseArt2']; 
-					echo '$'.number_format($subtotalGeneralProrrateado, 2, ",", ".");
+					echo number_format($subtotalGeneralProrrateado, 2, ",", ".");
 					?>
 				</td>
 				<?php
 				}
 				?>	
-			</tr>	
+			</tr>
+			<?php
+			} ?>
 		</table>
 	<?php 
 		//echo json_encode($liquidacionProvincia);

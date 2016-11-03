@@ -25,7 +25,8 @@ class PapelesdetrabajosController extends AppController {
 		$this->loadModel('Cliente');
 		$this->loadModel('Venta');
 		$this->loadModel('Actividadcliente');
-		$this->loadModel('Compra');
+        $this->loadModel('Conceptosrestante');
+        $this->loadModel('Compra');
 		//$this->Archivo->recursive = 0;
 		//$this->set('archivos', $this->Paginator->paginate());
 		$añoPeriodo="SUBSTRING( '".$periodo."',4,7)";
@@ -39,6 +40,8 @@ class PapelesdetrabajosController extends AppController {
 	    			),												            		
 	    		)
 		);
+		$timePeriodo = strtotime("01-".$periodo ." -1 months");
+		$periodoPrev = date("m-Y",$timePeriodo);
 		$options = 
 			array(
 				'conditions' => array('Cliente.' . $this->Cliente->primaryKey => $ClienteId),
@@ -46,19 +49,19 @@ class PapelesdetrabajosController extends AppController {
 						'Impcli'=>array(
 							'Eventosimpuesto'=>array(
 								'conditions'=>array(
-									"SUBSTRING(Eventosimpuesto.periodo,4,7) = ".$añoPeriodo."*1",//que tengan el mismo año
-									$esMenorQuePeriodo,
+									"Eventosimpuesto.periodo"=>[$periodoPrev,$periodo],//monto a favor del periodo anterior
 									),
 								),
+							'Conceptosrestante'=>array(
+								'conditions'=>array(
+									'Conceptosrestante.periodo' => $periodo,
+								),
+							),
 							'conditions'=>array(
 								'Impcli.impuesto_id'=>19//IVA
 								)
 							),
-						'Conceptosrestante'=>array(
-							'conditions'=>array(
-								'Conceptosrestante.periodo' => $periodo,
-							),
-						),	 
+						 
 						'Actividadcliente' => array(
 							'Actividade',
 							)
@@ -66,18 +69,35 @@ class PapelesdetrabajosController extends AppController {
 					);
 
 		$Cliente = $this->Cliente->find('first', $options);
-		$this->set('cliente', $Cliente);
+        $this->set('cliente', $Cliente);
+		$conceptosOptions=[
+            'Usosaldo'=>[
+                'Eventosimpuesto'=>[
+
+                ]
+            ],
+			'conditions'=>[
+                'Conceptosrestante.impcli_id'=>$Cliente['Impcli'][0]['id'],
+                'Conceptosrestante.periodo'=>$periodoPrev,
+                'Conceptosrestante.conceptostipo_id'=>1
+            ]
+		];
+		$saldosLibreDisponibilidad = $this->Conceptosrestante->find('all',$conceptosOptions);
+        $this->set('saldosLibreDisponibilidad', $saldosLibreDisponibilidad);
+        $this->set('periodo', $periodo);
+        $this->set('periodoPrev', $periodoPrev);
 
 		$opcionesActividad = array(
 								   'conditions'=>array('Actividadcliente.cliente_id' => $ClienteId),
 								   'contain'=> array(
 								   	  'Actividade',
-									  'Venta' => array('conditions' => array(
-									  										 'Venta.cliente_id' => $ClienteId,
-									  										 'Venta.periodo' => $periodo,
-									  										)
-									  				  )									  
-								 ) 
+									  'Venta' => array(
+										  'conditions' => array(
+											 'Venta.cliente_id' => $ClienteId,
+											 'Venta.periodo' => $periodo,
+											)
+									  )
+								 	)
 							 );
 		$actividades = $this->Actividadcliente->find('all', $opcionesActividad);
 
@@ -98,9 +118,6 @@ class PapelesdetrabajosController extends AppController {
 													'Actividadcliente' => array(																				
 																				'Actividade'
 																				)
-													//'actividades' => array(
-													//						'conditions' => array('Actividade.id' => 'Actividadcliente.actividade_id')
-													//					   )
 												  )
 							  );
 		$ventas = $this->Venta->find('all', $opcionesVenta);

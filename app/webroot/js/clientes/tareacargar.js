@@ -41,49 +41,49 @@ $(document).ready(function() {
 
     /*Esta funcion asigna el comportamiento del formulario Venta buscando el tipo de comprobante seleccionado ya que cambia si es tipo A, B o C*/
     $("#VentaComprobanteId").on('change paste', function() {
-    allcomprobantes.forEach(function(comprobante) {
-      if($("#VentaComprobanteId").val()==comprobante.Comprobante.id){
-        switch(comprobante.Comprobante.tipodebitoasociado){
-          case 'Debito fiscal o bien de uso':
-            $("#VentaTipodebito option[value='Debito Fiscal']").show();
-            $("#VentaTipodebito option[value='Bien de uso']").show();
-            $("#VentaTipodebito option[value='Restitucion debito fiscal']").hide();
-            $("#VentaTipodebito").val($("#VentaTipodebito option:eq(0)").val());
-          
-          break;
-          case 'Restitucion de debito fiscal':
-            $("#VentaTipodebito option[value='Debito Fiscal']").hide();
-            $("#VentaTipodebito option[value='Bien de uso']").hide();
-            $("#VentaTipodebito option[value='Restitucion debito fiscal']").show();
-            $("#VentaTipodebito").val($("#VentaTipodebito option:eq(2)").val());
-          break;
-        }
+        allcomprobantes.forEach(function(comprobante) {
+          if($("#VentaComprobanteId").val()==comprobante.Comprobante.id){
+            switch(comprobante.Comprobante.tipodebitoasociado){
+              case 'Debito fiscal o bien de uso':
+                $("#VentaTipodebito option[value='Debito Fiscal']").show();
+                $("#VentaTipodebito option[value='Bien de uso']").show();
+                $("#VentaTipodebito option[value='Restitucion debito fiscal']").hide();
+                $("#VentaTipodebito").val($("#VentaTipodebito option:eq(0)").val());
 
-        if(comprobante.Comprobante.tipo=="A"){
-          $("#VentaNeto").prop("readonly",false);
-          $("#VentaIva").prop("readonly",true);
-          $("#VentaTotal").prop("readonly",true);
-          tipodecomprobanteseleccionado = 'A';
-          $("#CompraCondicioniva option[value='monotributista']").show();
-          $("#CompraCondicioniva option[value='responsableinscripto']").hide();
-          $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
-        }else  if(comprobante.Comprobante.tipo=="B"){
-          $("#VentaNeto").prop('readonly', true);
-          $("#VentaIva").prop('readonly', true);
-          $("#VentaTotal").prop('readonly', false);
-          tipodecomprobanteseleccionado = 'B';
-          $("#CompraCondicioniva option[value='monotributista']").show();
-          $("#CompraCondicioniva option[value='responsableinscripto']").hide();
-          $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
-        }else  if(comprobante.Comprobante.tipo=="C"){
-          tipodecomprobanteseleccionado = 'C';
-          $("#CompraCondicioniva option[value='monotributista']").show();
-          $("#CompraCondicioniva option[value='responsableinscripto']").hide();
-          $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
-        }
-      }
-    }, this);
-  });
+              break;
+              case 'Restitucion de debito fiscal':
+                $("#VentaTipodebito option[value='Debito Fiscal']").hide();
+                $("#VentaTipodebito option[value='Bien de uso']").hide();
+                $("#VentaTipodebito option[value='Restitucion debito fiscal']").show();
+                $("#VentaTipodebito").val($("#VentaTipodebito option:eq(2)").val());
+              break;
+            }
+
+            if(comprobante.Comprobante.tipo=="A"){
+              $("#VentaNeto").prop("readonly",false);
+              $("#VentaIva").prop("readonly",true);
+              $("#VentaTotal").prop("readonly",true);
+              tipodecomprobanteseleccionado = 'A';
+              $("#CompraCondicioniva option[value='monotributista']").show();
+              $("#CompraCondicioniva option[value='responsableinscripto']").hide();
+              $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
+            }else  if(comprobante.Comprobante.tipo=="B"){
+              $("#VentaNeto").prop('readonly', true);
+              $("#VentaIva").prop('readonly', true);
+              $("#VentaTotal").prop('readonly', false);
+              tipodecomprobanteseleccionado = 'B';
+              $("#CompraCondicioniva option[value='monotributista']").show();
+              $("#CompraCondicioniva option[value='responsableinscripto']").hide();
+              $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
+            }else  if(comprobante.Comprobante.tipo=="C"){
+              tipodecomprobanteseleccionado = 'C';
+              $("#CompraCondicioniva option[value='monotributista']").show();
+              $("#CompraCondicioniva option[value='responsableinscripto']").hide();
+              $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
+            }
+          }
+        }, this);
+      });
     $( "#VentaComprobanteId" ).trigger( "change" );
     reloadInputDates();
     showVentas();
@@ -298,186 +298,243 @@ $(document).ready(function() {
     }, this);
   });
   $("#CompraComprobanteId" ).trigger( "change" );
+    //Esta funcion asigna el comportamiento del formulario Conceptosrestante buscando que impuesto se ha seleccionado y que tipo de concepto
   $("#ConceptosrestanteImpcliId").on('change paste', function() {
     $("#ConceptosrestanteConceptostipoId" ).trigger( "change" );
   });
   $("#ConceptosrestanteConceptostipoId").on('change paste', function() {
-      hiddeAllImputsFromConceptosRestantesAddForm();
-      var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
-      if(impcliseleccionado==null) return;
-      var impuestoseleccionadoNombre = $('#ConceptosrestanteImpcliId option[value="' + impcliseleccionado + '"]').html();
-      var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
+        hiddeAllImputsFromConceptosRestantesAddForm();
+        var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
+        if(impcliseleccionado==null) return;
+        var impuestoseleccionadoNombre = $('#ConceptosrestanteImpcliId option[value="' + impcliseleccionado + '"]').html();
+        var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
       switch (impuestoseleccionado){
+          case '19'/*IVA*/:
+              $("#ConceptosrestanteConceptostipoId").children("option[value=12]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=14]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=15]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=16]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=17]").show();
+              $('#ConceptosrestanteConceptostipoId option:contains("Saldo a Favor")').text('Saldo Libre Disponibilidad');
+              $('.chosen-select').trigger("chosen:updated");
+              break;
+          case '6'/*Actividades Varias*/:
+              $("#ConceptosrestanteConceptostipoId").children('option').hide();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=1]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=2]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=4]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=10]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=13]").show();
+              $('.chosen-select').trigger("chosen:updated");
+              break;
           case '21':/*Actividades Economicas*/
           case '174':/*Convenio Multilateral*/
+              $("#ConceptosrestanteConceptostipoId").children('option').hide();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=1]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=2]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=4]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=5]").show();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=10]").show();
+              $('.chosen-select').trigger("chosen:updated");
+
               $('#ConceptosrestanteLocalidadeId').closest('div').hide();
               $('#ConceptosrestanteLocalidadeId').val("");
+
               $('#ConceptosrestantePartidoId').closest('div').show();
               showcolumnConceptoRestante(tblTablaConceptosrestantes,1,true);/*Partido*/
               showcolumnConceptoRestante(tblTablaConceptosrestantes,2,false);/*Localidad*/
               break;
           default:
+              $('#ConceptosrestanteConceptostipoId option:contains("Saldo Libre Disponibilidad")').text('Saldo a Favor');
+              $("#ConceptosrestanteConceptostipoId").children('option').show();
+              //Vamos a esconder todos los que sean unicamente del IVA
+              $("#ConceptosrestanteConceptostipoId").children("option[value=12]").hide();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=14]").hide();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=15]").hide();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=16]").hide();
+              $("#ConceptosrestanteConceptostipoId").children("option[value=17]").hide();
+              $('.chosen-select').trigger("chosen:updated");
               $('#ConceptosrestanteLocalidadeId').closest('div').show();
               $('#ConceptosrestantePartidoId').closest('div').hide();
               $('#ConceptosrestantePartidoId').val("");
-              showcolumnConceptoRestante(tblTablaConceptosrestantes,1,false);/*Partido*/
               showcolumnConceptoRestante(tblTablaConceptosrestantes,2,true);/*Localidad*/
+              showcolumnConceptoRestante(tblTablaConceptosrestantes,1,false);/*Partido*/
               break;
       }
+      $("label[for='ConceptosrestanteMonto']").html("Monto");
+      $("label[for='ConceptosrestanteMontoretenido']").html("Monto Retenido");
+      $( "#ConceptosrestanteMontoretenido").unbind( "change" );
       switch($("#ConceptosrestanteConceptostipoId").val()*1){
-      case 1:/*Saldos A Favor*/
-        $('#ConceptosrestanteDescripcion').closest('div').show();
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
-        break;     
-      case 2:/*Retenciones*/
-        switch(impuestoseleccionado){
-          case '21':/*Actividades Economicas*/
+
+            case 1:/*Saldos A Favor*/
+                $('#ConceptosrestanteDescripcion').closest('div').show();
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
+                switch(impuestoseleccionado) {
+                    case '19':/*IVA*/
+                        $('#ConceptosrestanteMonto').closest('div').show();
+                        showcolumnConceptoRestante(tblTablaConceptosrestantes,8,true);/*Monto*/
+                        $("label[for='ConceptosrestanteMonto']").html("Saldo");
+                        $("label[for='ConceptosrestanteMontoretenido']").html("Monto");
+                        $('#ConceptosrestanteMontoretenido').change(function(){
+                            $('#ConceptosrestanteMonto').val($(this).val());
+                        });
+                        break;
+                }
+                break;
+            case 2:/*Retenciones*/
+                switch(impuestoseleccionado){
+                  case '21':/*Actividades Economicas*/
+                      $('#ConceptosrestanteNumeropadron').closest('div').show();
+                      $('#ConceptosrestanteAgente').closest('div').show();
+                      $('#ConceptosrestanteCuit').closest('div').show();
+                      $('#ConceptosrestanteNumerocomprobante').closest('div').show();
+                      $('#ConceptosrestanteMonto').closest('div').show();
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,22,true);/*NumeroPadron*/
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,17,true);/*Agente*/
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,8,true);/*Monto*/
+                      break
+                  case '160':/*Ganancia(PF)*/
+                  case '5':/*Ganancia(PJ)*/
+                    $('#ConceptosrestanteCuit').closest('div').show();
+                    $('#ConceptosrestanteRegimen').closest('div').show();
+                    $('#ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#ConceptosrestanteDescripcion').closest('div').show();
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,19,true);/*Regimen*/
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
+                    /*falta:
+                    numero certificado
+                    decha comprobante
+                    descripcion comprobante
+                    Fecha Registración DJ Ag Ret
+                    */
+                    case '19':/*IVA*/
+                        $('#ConceptosrestanteCuit').closest('div').show();
+                        $('#ConceptosrestanteRegimen').closest('div').show();
+                        $('#ConceptosrestanteNumerocomprobante').closest('div').show();
+                        $('#ConceptosrestanteDescripcion').closest('div').show();
+                        showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
+                        showcolumnConceptoRestante(tblTablaConceptosrestantes,19,true);/*Regimen*/
+                        showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
+                        showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
+                        /*falta:
+                         numero certificado
+                         decha comprobante
+                         descripcion comprobante
+                         Fecha Registración DJ Ag Ret
+                         */
+                        break;
+                    case '6':/*Actividades Varias*/
+                      $('#ConceptosrestanteCuit').closest('div').show();
+                      $('#ConceptosrestanteAgente').closest('div').show();
+                      $('#ConceptosrestanteNumeropadron').closest('div').show();
+                      $('#ConceptosrestanteNumerocomprobante').closest('div').show();
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,22,true);/*NumeroPadron*/
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,17,true);/*Agente*/
+                      /*falta:
+                        denominacion
+                        */
+                        break;
+                  case '10':/*SUSS*/
+                    $('#ConceptosrestanteCuit').closest('div').show();
+                    $('#ConceptosrestanteRegimen').closest('div').show();
+                    $('#ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#ConceptosrestanteDescripcion').closest('div').show();
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,19,true);/*Regimen*/
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
+                  break;
+                  default:
+                    $('#ConceptosrestanteCuit').closest('div').show();
+                    $('#ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#ConceptosrestanteComprobanteId').closest('div').show();
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
+                    showcolumnConceptoRestante(tblTablaConceptosrestantes,4,true);/*TipoComptobante*/
+                  break;
+                }
+                break;
+          case 3:/*Recaudacion Bancaria*/
+            switch(impuestoseleccionado){
+              case 21:/*Actividades Economicas*/
+                $('#ConceptosrestanteAgente').closest('div').show();
+                $('#ConceptosrestanteCuit').closest('div').show();
+                $('#ConceptosrestanteNumerocomprobante').closest('div').show();
+                $('#ConceptosrestanteMonto').closest('div').show();
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,17,true);/*Agente*/
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,8,true);/*Monto*/
+              break
+              default:
+                $('#ConceptosrestanteCuit').closest('div').show();
+                $('#ConceptosrestanteAnticipo').closest('div').show();
+                $('#ConceptosrestanteCbu').closest('div').show();
+                $('#ConceptosrestanteTipocuenta').closest('div').show();
+                $('#ConceptosrestanteTipomoneda').closest('div').show();
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,13,true);/*Anticipo*/
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,14,true);/*CBU*/
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,15,true);/*TipoCuenta*/
+                showcolumnConceptoRestante(tblTablaConceptosrestantes,16,true);/*TipoMoneda*/
+              break;
+            }
+            break;
+          case 4:/*Otros*/
+            $('#ConceptosrestanteDescripcion').closest('div').show();
+            showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
+            break;
+          case 5:/*Percepciones Aduaneras*/
+            $('#ConceptosrestanteCuit').closest('div').show();
+            $('#ConceptosrestanteNumerodespachoaduanero').closest('div').show();
+            showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
+            showcolumnConceptoRestante(tblTablaConceptosrestantes,12,true);/*DespachoAduanero*/
+            break;
+          case 6:/*Credito por adicional*/
+            break;
+          case 7:/*Anticipos especiales*/
+            break;
+          case 8:/*Pago en bonos*/
+            $('#ConceptosrestanteDescripcion').closest('div').show();
+            showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
+            break;
+          case 9:/*Compensaciones*/
+            $('#ConceptosrestanteDescripcion').closest('div').show();
+            showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
+            break;
+          case 10:/*Pagos a Cuenta*/
+            $('#ConceptosrestanteEnterecaudador').closest('div').show();
+            $('#ConceptosrestanteNumerocomprobante').closest('div').show();
+            //showcolumnConceptoRestante(tblTablaConceptosrestantes,18,true);/*EnteRecaudador*/
+            //showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
+            break;
+          case 11:/*SICREB*/
             $('#ConceptosrestanteAgente').closest('div').show();
-            $('#ConceptosrestanteCuit').closest('div').show();
-            $('#ConceptosrestanteNumerocomprobante').closest('div').show();
-            $('#ConceptosrestanteMonto').closest('div').show();
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,17,true);/*Agente*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,8,true);/*Monto*/
-          break
-          case '160':/*Ganancia(PF)*/
-          case '5':/*Ganancia(PJ)*/
-            $('#ConceptosrestanteCuit').closest('div').show();
-            $('#ConceptosrestanteRegimen').closest('div').show();
-            $('#ConceptosrestanteNumerocomprobante').closest('div').show();
-            $('#ConceptosrestanteDescripcion').closest('div').show();
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,19,true);/*Regimen*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
-            /*falta:
-            numero certificado
-            decha comprobante
-            descripcion comprobante
-            Fecha Registración DJ Ag Ret
-            */
-          case '4':/*IVA*/
-            $('#ConceptosrestanteCuit').closest('div').show();
-            $('#ConceptosrestanteRegimen').closest('div').show();
-            $('#ConceptosrestanteNumerocomprobante').closest('div').show();
-            $('#ConceptosrestanteDescripcion').closest('div').show();
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,19,true);/*Regimen*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
-            /*falta:
-            numero certificado
-            decha comprobante
-            descripcion comprobante
-            Fecha Registración DJ Ag Ret
-            */
-          break;
-          case '6':/*Actividades Varias*/
-            $('#ConceptosrestanteCuit').closest('div').show();
-            $('#ConceptosrestanteNumerocomprobante').closest('div').show();
-            $('#ConceptosrestanteNumeropadron').closest('div').show();
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,22,true);/*NumeroPadron*/
-            /*falta:
-            denominacion
-            */
-          break;
-          case '10':/*SUSS*/
-            $('#ConceptosrestanteCuit').closest('div').show();
-            $('#ConceptosrestanteRegimen').closest('div').show();
-            $('#ConceptosrestanteNumerocomprobante').closest('div').show();
-            $('#ConceptosrestanteDescripcion').closest('div').show();
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,19,true);/*Regimen*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
-          break;
-          default:
-            $('#ConceptosrestanteCuit').closest('div').show();
-            $('#ConceptosrestanteNumerocomprobante').closest('div').show();
-            $('#ConceptosrestanteComprobanteId').closest('div').show();
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,4,true);/*TipoComptobante*/
-          break;
-        }
-      case 3:/*Recaudacion Bancaria*/
-        switch(impuestoseleccionado){
-          case 21:/*Actividades Economicas*/
-            $('#ConceptosrestanteAgente').closest('div').show();
-            $('#ConceptosrestanteCuit').closest('div').show();
-            $('#ConceptosrestanteNumerocomprobante').closest('div').show();
-            $('#ConceptosrestanteMonto').closest('div').show();
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,17,true);/*Agente*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,8,true);/*Monto*/
-          break
-          default:
-            $('#ConceptosrestanteCuit').closest('div').show();
-            $('#ConceptosrestanteAnticipo').closest('div').show();
             $('#ConceptosrestanteCbu').closest('div').show();
             $('#ConceptosrestanteTipocuenta').closest('div').show();
             $('#ConceptosrestanteTipomoneda').closest('div').show();
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
-            showcolumnConceptoRestante(tblTablaConceptosrestantes,13,true);/*Anticipo*/
+            showcolumnConceptoRestante(tblTablaConceptosrestantes,17,true);/*Agente*/
             showcolumnConceptoRestante(tblTablaConceptosrestantes,14,true);/*CBU*/
             showcolumnConceptoRestante(tblTablaConceptosrestantes,15,true);/*TipoCuenta*/
             showcolumnConceptoRestante(tblTablaConceptosrestantes,16,true);/*TipoMoneda*/
-          break;
+            break;
         }
-        break;
-      case 4:/*Otros*/
-        $('#ConceptosrestanteDescripcion').closest('div').show();
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
-        break;
-      case 5:/*Percepciones Aduaneras*/
-        $('#ConceptosrestanteCuit').closest('div').show();
-        $('#ConceptosrestanteNumerodespachoaduanero').closest('div').show();
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,12,true);/*DespachoAduanero*/
-        break;
-      case 6:/*Credito por adicional*/
-        break;
-      case 7:/*Anticipos especiales*/
-        break;
-      case 8:/*Pago en bonos*/
-        $('#ConceptosrestanteDescripcion').closest('div').show();
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
-        break;
-      case 9:/*Compensaciones*/
-        $('#ConceptosrestanteDescripcion').closest('div').show();
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,20,true);/*Descripcion*/
-        break;
-      case 10:/*Pagos a Cuenta*/
-        $('#ConceptosrestanteEnterecaudador').closest('div').show();
-        $('#ConceptosrestanteNumerocomprobante').closest('div').show();
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,18,true);/*EnteRecaudador*/
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
-        break;
-      case 11:/*SICREB*/
-        $('#ConceptosrestanteAgente').closest('div').show();
-        $('#ConceptosrestanteCbu').closest('div').show();
-        $('#ConceptosrestanteTipocuenta').closest('div').show();
-        $('#ConceptosrestanteTipomoneda').closest('div').show();
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,17,true);/*Agente*/
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,14,true);/*CBU*/
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,15,true);/*TipoCuenta*/
-        showcolumnConceptoRestante(tblTablaConceptosrestantes,16,true);/*TipoMoneda*/
-        break;
-    }     
-    $('#tblTablaConceptosrestantes').width("100%");
-    tblTablaConceptosrestantes.column( 0 ).search( impuestoseleccionadoNombre ).draw();
-  });
+      $('#tblTablaConceptosrestantes').width("100%");
+        tblTablaConceptosrestantes.column( 0 ).search( impuestoseleccionadoNombre ).draw();
+    });
   $("#ConceptosrestanteConceptostipoId" ).trigger( "change" );
-  
 
-  $('#saveComprasForm').submit(function(){ 
-      //serialize form data 
-      var formData = $(this).serialize(); 
-      //get form action 
-      var formUrl = $(this).attr('action'); 
+
+  $('#saveComprasForm').submit(function(){
+      //serialize form data
+      var formData = $(this).serialize();
+      //get form action
+      var formUrl = $(this).attr('action');
       //Controles de inputs
       var fecha = $('#CompraFecha').val();
       var provedor = $('#CompraProvedoreId').val();
@@ -494,12 +551,12 @@ $(document).ready(function() {
         callAlertPopint('Debes ingresar un numero de Comprobante');
         return false;
       }
-     
-      $.ajax({ 
-        type: 'POST', 
-        url: formUrl, 
-        data: formData, 
-        success: function(data,textStatus,xhr){ 
+
+      $.ajax({
+        type: 'POST',
+        url: formUrl,
+        data: formData,
+        success: function(data,textStatus,xhr){
           var respuesta = JSON.parse(data);
           callAlertPopint(respuesta.respuesta);
           if(respuesta.compra.Compra!=null){
@@ -556,29 +613,29 @@ $(document).ready(function() {
               calcularFooterTotales(tblTablaCompras);
 
             }
-          }, 
-        error: function(xhr,textStatus,error){ 
-          alert(error); 
-        } 
-      }); 
-      return false; 
+          },
+        error: function(xhr,textStatus,error){
+          alert(error);
+        }
+      });
+      return false;
     });
-  $('#saveSueldosForm').submit(function(){ 
-      //serialize form data 
-      var formData = $(this).serialize(); 
-      //get form action 
-      var formUrl = $(this).attr('action'); 
+  $('#saveSueldosForm').submit(function(){
+      //serialize form data
+      var formData = $(this).serialize();
+      //get form action
+      var formUrl = $(this).attr('action');
       //Controles de inputs
       var fecha = $('#SueldoFecha').val();
       if(fecha==null || fecha == ""){
         callAlertPopint('Debes seleccionar una fecha');
         return false;
       }
-      $.ajax({ 
-        type: 'POST', 
-        url: formUrl, 
-        data: formData, 
-        success: function(data,textStatus,xhr){ 
+      $.ajax({
+        type: 'POST',
+        url: formUrl,
+        data: formData,
+        success: function(data,textStatus,xhr){
           var respuesta = JSON.parse(data);
           callAlertPopint(respuesta.respuesta);
           if(respuesta.sueldo.Sueldo!=null){
@@ -587,24 +644,24 @@ $(document).ready(function() {
               row = row +"<td class='"+tdClass+"'>"+respuesta.sueldo.Sueldo.fecha+"</td>";
               row = row + "<td class='"+tdClass+"'>"+respuesta.sueldo.Sueldo.monto+"</td>";
               row = row + "<td class='"+tdClass+"'>";
-              row = row + '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarSueldo('+respuesta.sueldo_id+')" alt="">';                                  
-              row = row + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarSueldo('+respuesta.sueldo_id+')" alt=""></td>';                                  
+              row = row + '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarSueldo('+respuesta.sueldo_id+')" alt="">';
+              row = row + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarSueldo('+respuesta.sueldo_id+')" alt=""></td>';
               row = row + "</tr>";
               $("#bodyTablaSueldos").append(row);
             }
-          }, 
-        error: function(xhr,textStatus,error){ 
-          alert(textStatus); 
-          alert(error); 
-        } 
-      }); 
-      return false; 
+          },
+        error: function(xhr,textStatus,error){
+          alert(textStatus);
+          alert(error);
+        }
+      });
+      return false;
     });
-  $('#saveConceptosrestantesForm').submit(function(){ 
-      //serialize form data 
-      var formData = $(this).serialize(); 
-      //get form action 
-      var formUrl = $(this).attr('action'); 
+  $('#saveConceptosrestantesForm').submit(function(){
+      //serialize form data
+      var formData = $(this).serialize();
+      //get form action
+      var formUrl = $(this).attr('action');
       //Controles de inputs
       var fecha = $('#ConceptosrestanteFecha').val();
       if(fecha==null || fecha == ""){
@@ -621,11 +678,11 @@ $(document).ready(function() {
         callAlertPopint('Debes cargar un monto');
         return false;
       }
-      $.ajax({ 
-        type: 'POST', 
-        url: formUrl, 
-        data: formData, 
-        success: function(data,textStatus,xhr){ 
+      $.ajax({
+        type: 'POST',
+        url: formUrl,
+        data: formData,
+        success: function(data,textStatus,xhr){
           var respuesta = JSON.parse(data);
           callAlertPopint(respuesta.respuesta);
           var conceptoCargado = respuesta.conceptosrestante.Conceptosrestante
@@ -679,14 +736,14 @@ $(document).ready(function() {
                 var row = $('#tblTablaConceptosrestantes').dataTable().fnGetNodes(rowIndex);
                 $(row).attr( 'id', "rowconceptorestante"+conceptoCargado.id );
             }
-        }, 
-      error: function(xhr,textStatus,error){ 
-        alert(error); 
-      } 
-    }); 
-    return false; 
-  }); 
-  $('#SubclienteAddForm').submit(function(){ 
+        },
+      error: function(xhr,textStatus,error){
+        alert(error);
+      }
+    });
+    return false;
+  });
+  $('#SubclienteAddForm').submit(function(){
     //serialize form data 
     var formData = $(this).serialize(); 
     //get form action 
@@ -851,6 +908,74 @@ $(document).ready(function() {
         }
     });
     numeral.language('id');
+
+    var beforePrint = function() {
+        console.log('Functionality to run before printing.');
+        $('#header').hide();
+        $('#Formhead').hide();
+        $('#headerCliente').hide();
+        $('#divAllTabs').hide();
+        $('#formOldSueldo').hide();
+        $('#form_empleados').hide();
+        $('.btn_empleados').hide();
+        $('.btn_empleados_liq').hide();
+        $('.btn_cargarliq_selected').hide();
+        $('.btn_cargarliq_liq').hide();
+        $('.btn_cargarliq').hide();
+        $('.btn_sueldo').hide();
+        $('.btn_imprimir').hide();
+        $('#divLiquidarActividadesVariar').hide();
+        $('#TituloPdtSueldo').hide();
+        $('#index').css('float','left');
+        $('#padding').css('padding','0px');
+        $('#padding').css('margin','0px');
+        $('#index').css('font-size','6px');
+        $('#index').css('border-color','#FFF');
+        $('#sueldoContent').css('width','648px');
+        $('#tblLibroSueldo').css('padding','0');
+        $('#sheetCooperadoraAsistencial').css('width','100%');
+        $('#sheetCooperadoraAsistencial').css('margin','0');
+        $('#tblLibroSueldo').css('font-size','9px');
+    };
+    var afterPrint = function() {
+        console.log('Functionality to run after printing');
+        $('#index').css('font-size','14px');
+        $('#header').show();
+        $('#Formhead').show();
+        $('#form_empleados').show();
+        $('#headerCliente').show();
+        $('#divAllTabs').show();
+        $('#formOldSueldo').show();
+        $('.btn_empleados').show();
+        $('.btn_empleados_liq').show();
+        $('.btn_cargarliq_selected').show();
+        $('.btn_cargarliq_liq').show();
+        $('.btn_cargarliq').show();
+        $('.btn_sueldo').show();
+        $('.btn_imprimir').show();
+        $('#divLiquidarActividadesVariar').show();
+        $('#TituloPdtSueldo').show();
+        $('#index').css('float','right');
+        $('#padding').css('padding','10px 1%');
+        $('#sueldoContent').css('width','1340px');
+        $('#tblLibroSueldo').css('padding','0 10%');
+        $('#sheetCooperadoraAsistencial').css('margin','10px 25px');
+        $('#sheetCooperadoraAsistencial').css('width','96%');
+        $('#tblLibroSueldo').css('font-size','12px');
+    };
+    if (window.matchMedia) {
+        var mediaQueryList = window.matchMedia('print');
+        mediaQueryList.addListener(function(mql) {
+            if (mql.matches) {
+                beforePrint();
+            } else {
+                afterPrint();
+            }
+        });
+    }
+    window.onbeforeprint = beforePrint;
+    window.onafterprint = afterPrint;
+
 });
     function calcularFooterTotales(mitabla){
         mitabla.columns( '.sum' ).every( function () {
@@ -1097,7 +1222,12 @@ $(document).ready(function() {
     switch($("#"+formnombre+" #ConceptosrestanteConceptostipoId").val()*1){
       case 1:/*Saldos A Favor*/
         $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-        break;     
+          switch(impuestoseleccionado) {
+              case '19':
+                $('#' + formnombre + ' #ConceptosrestanteMonto').closest('div').show();
+              break;
+          }
+          break;
       case 2:/*Retenciones*/
         switch(impuestoseleccionado){
           case '21':/*Actividades Economicas*/
@@ -1118,7 +1248,7 @@ $(document).ready(function() {
             descripcion comprobante
             Fecha Registración DJ Ag Ret
             */
-          case '4':/*IVA*/
+          case '19':/*IVA*/
             $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
             $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
             $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
@@ -1262,8 +1392,7 @@ $(document).ready(function() {
       $(".tdViewSueldo"+comid).show();
       $("#tdsueldo"+comid).remove(); 
     }
-  
-  function modificarVenta(venid){  
+    function modificarVenta(venid){
     var tieneMonotributo = $("#VentaTieneMonotributo").val();
     var tieneIVA = $("#VentaTieneIVA").val();
     var tieneIVAPercepciones = $("#VentaTieneIVAPercepciones").val();
@@ -1292,11 +1421,11 @@ $(document).ready(function() {
           $("#"+rowid).html(response);
 
           //$(".tdViewVenta"+venid).hide();
-          
+
           reloadInputDates();
           //Aca vamos a agregar los controles para este formulario tal cual los ejecutamos al agregar una venta
           $("#VentaFormEdit"+venid+" #VentaIvapercep").on('change paste', function() {
-            calcularivaytotal("VentaFormEdit"+venid);    
+            calcularivaytotal("VentaFormEdit"+venid);
           });
           $("#VentaFormEdit"+venid+" #VentaImpinternos").on('change paste', function() {
             calcularivaytotal("VentaFormEdit"+venid);
@@ -1339,23 +1468,23 @@ $(document).ready(function() {
                   tipodecomprobanteseleccionado="C";
                  // $('#VentaFormEdit'+venid+' #VentaAlicuota').find("option:not(:hidden):eq(0)");
                 }
-                
+
 
               }
             }, this);
           });
           $('.chosen-select').chosen({search_contains:true});
-          $('#VentaFormEdit'+venid).submit(function(){ 
-            //serialize form data 
-            var formData = $(this).serialize(); 
-            //get form action 
-            var formUrl = $(this).attr('action'); 
-                                        
-            $.ajax({ 
-              type: 'POST', 
-              url: formUrl, 
-              data: formData, 
-              success: function(data,textStatus,xhr){ 
+          $('#VentaFormEdit'+venid).submit(function(){
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+
+            $.ajax({
+              type: 'POST',
+              url: formUrl,
+              data: formData,
+              success: function(data,textStatus,xhr){
                     try
                     {
                        var respuesta = JSON.parse(data);
@@ -1364,23 +1493,23 @@ $(document).ready(function() {
                     catch(e)
                     {
                       var rowid="rowventa"+venid;
-                      $("#"+rowid).html( data); 
+                      $("#"+rowid).html( data);
                     }
-                                                 
-                }, 
-              error: function(xhr,textStatus,error){ 
-                alert(textStatus); 
-              } 
-            }); 
-            return false; 
+
+                },
+              error: function(xhr,textStatus,error){
+                alert(textStatus);
+              }
+            });
+            return false;
           });
-        },                
+        },
        error:function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);
        }
     });
-  }
-  function eliminarVenta(venid){
+    }
+    function eliminarVenta(venid){
       var r = confirm("Esta seguro que desea eliminar esta venta?. Es una accion que no podra deshacer.");
       if (r == true) {
         $.ajax({
@@ -1399,8 +1528,8 @@ $(document).ready(function() {
                            callAlertPopint(mirespuesta.respuesta);
                         }else{
                           callAlertPopint("Error por favor intente mas tarde");
-                        }        
-                        
+                        }
+
                    },
            error:function (XMLHttpRequest, textStatus, errorThrown) {
                   alert(textStatus);
@@ -1413,8 +1542,8 @@ $(document).ready(function() {
           callAlertPopint(txt);
       }/*
       */
-  }
-  function modificarCompra(comid){  
+    }
+    function modificarCompra(comid){
     var data ="";
     var tieneMonotributo = $("#VentaTieneMonotributo").val();
     var tieneIVA = $("#VentaTieneIVA").val();
@@ -1481,7 +1610,7 @@ $(document).ready(function() {
                   $("#CompraFormEdit"+comid+" #CompraImputacion").prop("readonly",false);
                   $("#CompraFormEdit"+comid+" #CompraIvapercep").prop('readonly', false);
                   $("#CompraFormEdit"+comid+" #CompraTotal").prop("readonly",true);
-                  //Permitir editar los campos relacionados a IVA 
+                  //Permitir editar los campos relacionados a IVA
                   tipodecomprobanteCompraseleccionado = 'A';
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='monotributista']").hide();
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='responsableinscripto']").show();
@@ -1492,7 +1621,7 @@ $(document).ready(function() {
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='5']").show();
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='10.5']").show();
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='21']").show();
-                  $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='27']").show();          
+                  $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='27']").show();
                   $("#CompraAlicuota").val($("#CompraAlicuota option:eq(1)").val());
                 }else  if(comprobante.Comprobante.tipo=="B"){
                   $("#CompraFormEdit"+comid+" #CompraNeto").prop("readonly",false);
@@ -1545,17 +1674,17 @@ $(document).ready(function() {
           });
           $('.chosen-select').chosen({search_contains:true});
 
-          $('#CompraFormEdit'+comid).submit(function(){ 
-            //serialize form data 
-            var formData = $(this).serialize(); 
-            //get form action 
-            var formUrl = $(this).attr('action'); 
-                                        
-            $.ajax({ 
-              type: 'POST', 
-              url: formUrl, 
-              data: formData, 
-              success: function(data,textStatus,xhr){ 
+          $('#CompraFormEdit'+comid).submit(function(){
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+
+            $.ajax({
+              type: 'POST',
+              url: formUrl,
+              data: formData,
+              success: function(data,textStatus,xhr){
                     try
                     {
                        var respuesta = JSON.parse(data);
@@ -1565,22 +1694,22 @@ $(document).ready(function() {
                     {
                       var rowid="rowcompra"+comid;
                       $("#"+rowid).html( data);
-                    } 
+                    }
 
-                }, 
-              error: function(xhr,textStatus,error){ 
-                alert(textStatus); 
-              } 
-            }); 
-            return false; 
+                },
+              error: function(xhr,textStatus,error){
+                alert(textStatus);
+              }
+            });
+            return false;
           });
-        },                
+        },
        error:function (XMLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown);
        }
     });
-  }
-  function eliminarCompra(comid){
+    }
+    function eliminarCompra(comid){
       var r = confirm("Esta seguro que desea eliminar esta compra?. Es una accion que no podra deshacer.");
       if (r == true) {
         $.ajax({
@@ -1591,7 +1720,9 @@ $(document).ready(function() {
                         var mirespuesta = jQuery.parseJSON(response);
                         if(mirespuesta.error==0){
                           callAlertPopint(mirespuesta.respuesta);
-                          $('#rowcompra'+comid).remove();
+                            $('#tablaCompras').DataTable().row('rowcompra'+comid)
+                                .remove()
+                                .draw();
                         }else if(mirespuesta.error==1){
                            callAlertPopint(mirespuesta.respuesta);
                         }else{
@@ -1622,7 +1753,9 @@ $(document).ready(function() {
                     var mirespuesta = jQuery.parseJSON(response);
                     if(mirespuesta.error==0){
                         callAlertPopint(mirespuesta.respuesta);
-                        $('#rowconceptorestante'+conresid).remove();
+                        $('#tblTablaConceptosrestantes').DataTable().row('rowconceptorestante'+conresid)
+                            .remove()
+                            .draw();
                     }else if(mirespuesta.error==1){
                         callAlertPopint(mirespuesta.respuesta);
                     }else{
@@ -1642,7 +1775,7 @@ $(document).ready(function() {
         }/*
          */
     }
-  function modificarSueldo(sueid){  
+    function modificarSueldo(sueid){
     var data ="";
     $.ajax({
         type: "post",  // Request method: post, get
@@ -1686,7 +1819,7 @@ $(document).ready(function() {
        }
     });
   }
-  function eliminarSueldo(sueid){
+    function eliminarSueldo(sueid){
       var r = confirm("Esta seguro que desea eliminar este sueldo?. Es una accion que no podra deshacer.");
       if (r == true) {
         $.ajax({
@@ -1697,7 +1830,9 @@ $(document).ready(function() {
                         var mirespuesta = jQuery.parseJSON(response);
                         if(mirespuesta.error==0){
                           callAlertPopint(mirespuesta.respuesta);
-                          $('#rowsueldo'+sueid).remove();
+                            $('#tablaSueldos').DataTable().row('rowsueldo'+sueid)
+                                .remove()
+                                .draw();
                         }else if(mirespuesta.error==1){
                            callAlertPopint(mirespuesta.respuesta);
                         }else{
@@ -1717,7 +1852,7 @@ $(document).ready(function() {
       }/*
       */
   }
-  function modificarConceptosrestante(conid){  
+    function modificarConceptosrestante(conid){
     var data ="";
     $.ajax({
         type: "post",  // Request method: post, get
@@ -1802,7 +1937,7 @@ $(document).ready(function() {
                       tblTablaConceptosRestantes = $('#tblTablaConceptosrestantes').dataTable().api();
                       var mirows = tblTablaConceptosRestantes.rows();
                       var mirow = tblTablaConceptosRestantes.row();
-                      var mirowId = tblTablaConceptosRestantes.row(rowid)._fnAjaxUpdateDraw();
+                      //var mirowId = tblTablaConceptosRestantes.row(rowid)._fnAjaxUpdateDraw();
                       var mirowIdData = tblTablaConceptosRestantes.row(rowid).data();
                       var mirowIdNewData = tblTablaConceptosRestantes.row(rowid).data(rowData);
                       var drawRow = tblTablaConceptosRestantes.row(rowid).draw();
@@ -1828,81 +1963,147 @@ $(document).ready(function() {
     });
   }
 
-function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion){
-    var data ="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/empleados/papeldetrabajosueldos/"+clienteid+"/"+periodo+"/"+empid+"/"+liquidacion, // URL to request
-        data: data,  // post data
-        success: function(response) {
-            $(".buttonEmpleadoSueldo").each(function(){
-                $(this).removeClass("buttonImpcliSelected");
-            });
-            $("#buttonEmpleado"+empid).addClass("buttonImpcliSelected");
-            $("#divSueldoForm").html(response);
-            activarCalXOnSueldos();
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
-            return false;
-        }
-    });
-    return false;
-}
-function cargarLibroSueldo(empid,periodo){
-    var data ="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/empleados/papeldetrabajolibrosueldo/"+empid+"/"+periodo, // URL to request
-        data: data,  // post data
-        success: function(response) {
-            $("#sueldoContent").html(response);
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
-            return false;
-        }
-    });
-    return false;
-}
-var tablaSueldoCalx;
-
-function activarCalXOnSueldos(){
-    $(".funcionAAplicar").on('change', function() {
-        var posicion = $(this).attr('posicion');
-          $('#ValorreciboPapeldetrabajosueldosForm').calx(
-            'getCell',
-            $('#Valorrecibo'+posicion+'Valor').attr('data-cell')
-        ).setFormula($(this).val());
-        tablaSueldoCalx.calx('calculate');
-    });
-    tablaSueldoCalx = $('#ValorreciboPapeldetrabajosueldosForm').calx({
-        language : 'id'
-    });
-    tablaSueldoCalx.submit(function(){
-        //serialize form data
-        var formData = $(this).serialize();
-        //get form action
-        var formUrl = $(this).attr('action');
+    function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion){
+        var data ="";
         $.ajax({
-            type: 'POST',
-            url: formUrl,
-            data: formData,
-            success: function(data,textStatus,xhr){
-                callAlertPopint("Sueldo guardado, los totales se han recalculado.");
-                $("#divSueldoForm").html(data);
-                var empid = $("#Valorrecibo0EmpleadoId").val();
-                $("#buttonEmpleado"+empid).addClass("buttonImpcli4");
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/empleados/papeldetrabajosueldos/"+clienteid+"/"+periodo+"/"+empid+"/"+liquidacion, // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $(".btn_empleados_liq ").each(function(){
+                    $(this).removeClass("btn_empleados_selected");
+                });
+                $(".btn_empleados").each(function(){
+                    $(this).removeClass("btn_empleados_selected");
+                });
+                $("#buttonEmpleado"+empid).addClass("btn_empleados_selected");
+                $("#divSueldoForm").html(response);
                 activarCalXOnSueldos();
+                var pdtsueldo = $('#pdtsueldo');
+                pdtsueldo.floatThead();
             },
-            error: function(xhr,textStatus,error){
-                callAlertPopint(textStatus);
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                return false;
             }
         });
         return false;
-      });
-}
-function realizarEventoCliente(periodo,clienteid,estadotarea){
+    }
+    function cargarLibroSueldo(empid,periodo){
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/empleados/papeldetrabajolibrosueldo/"+empid+"/"+periodo, // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $("#sueldoContent").html(response);
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                return false;
+            }
+        });
+        return false;
+    }
+    function cargarReciboSueldo(empid,periodo){
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/empleados/papeldetrabajorecibosueldo/"+empid+"/"+periodo, // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $("#sueldoContent").html(response);
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                return false;
+            }
+        });
+        return false;
+    }
+    function imprimirElemento(elemento){
+        PopupPrint($(elem).html());
+    }
+    var tablaSueldoCalx;
+    function ocultarFunciones(){
+
+        $(".funcionAAplicar").each(function() {
+            var posicion = $(this).attr('posicion');
+            var seccion = $(this).attr('seccion');
+            var headsection = $(this).attr('headseccion');
+
+            if($('#Valorrecibo'+posicion+'Valor').val()==0){
+                //tengo que ocultar el row solo si no es cabeza de seccion por que sino me oculta toda la seccion
+                if(headsection=="0"){
+
+                    //si esta visible tengo que mermar en 1 el rowspan
+                    var rowspan = 0;
+                    var rowVisible =  $(this).closest('tr').is(':visible');
+                    if(rowVisible==true) {
+                        rowspan = $('#seccion'+seccion).attr('rowspan');
+                        rowspan = rowspan - 1;
+                        $('#seccion'+seccion).attr('rowspan',rowspan);
+                    }
+                    $(this).closest('tr').hide();
+                }
+
+            }else{
+
+                //si esta oculto tengo que aumentar en 1 el rowspan
+                var rowspan = 0;
+                var rowVisible = $(this).is(':visible');
+                if(rowVisible==false ) {
+                    rowspan = $('#seccion' + seccion).attr('rowspan')*1;
+                    rowspan = rowspan + 1;
+                    $('#seccion'+seccion).attr('rowspan',rowspan);
+                }
+                //tengo que mostrar el row
+                $(this).closest('tr').show();
+            }
+        });
+    }
+    function activarCalXOnSueldos(){
+        $(".funcionAAplicar").on('change', function() {
+            var posicion = $(this).attr('posicion');
+              $('#ValorreciboPapeldetrabajosueldosForm').calx(
+                'getCell',
+                $('#Valorrecibo'+posicion+'Valor').attr('data-cell')
+            ).setFormula($(this).val());
+            tablaSueldoCalx.calx('calculate');
+        });
+        tablaSueldoCalx = $('#ValorreciboPapeldetrabajosueldosForm').calx({
+            language : 'id'
+        });
+        tablaSueldoCalx.submit(function(){
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: formUrl,
+                data: formData,
+                success: function(data,textStatus,xhr){
+                    callAlertPopint("Sueldo guardado, los totales se han recalculado.");
+                    $("#divSueldoForm").html(data);
+                    var empid = $("#Valorrecibo0EmpleadoId").val();
+                    $("#buttonEmpleado"+empid).addClass("btn_empleados_liq");
+                    activarCalXOnSueldos();
+                },
+                error: function(xhr,textStatus,error){
+                    callAlertPopint(textStatus);
+                }
+            });
+            return false;
+          });
+        ocultarFunciones();
+
+        $('#ValorreciboPapeldetrabajosueldosForm input').change(function(){
+            $('#ValorreciboPapeldetrabajosueldosForm').calx({ });
+            ocultarFunciones();
+        });
+    }
+    function realizarEventoCliente(periodo,clienteid,estadotarea){
   var datas =  "0/tarea3/"+periodo+"/"+clienteid;
   var data ="";
   $.ajax({
@@ -1927,4 +2128,67 @@ function realizarEventoCliente(periodo,clienteid,estadotarea){
     }
   });
   return false;
+}
+
+    function usosSLD(conid){
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/usosaldos/index/"+conid,
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                //var oldRow = $("#rowconceptorestante"+conid).html();
+                $("#divUsosaldos").html(response);
+                location.href="#popinUsosaldos";
+                $('#UsosaldoAddForm').submit(function(){
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(response2,textStatus,xhr){
+                            var respuesta = JSON.parse(response2);
+                            callAlertPopint(respuesta.respuesta);
+                            return false;
+                        },
+                        error: function(xhr,textStatus,error){
+                            alert(textStatus);
+                            return false;
+                        }
+                    });
+                    return false;
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    }
+function PrintElem(elem)
+{
+   // PopupElement($(elem).html());
+    window.print();
+
+}
+
+function PopupElement(data)
+{
+    var mywindow = window.open('', 'my div', 'height=400,width=1200');
+    mywindow.document.write('<html><head><title>my div</title>');
+    /*optional stylesheet*/ //mywindow.document.write('<link rel="stylesheet" href="main.css" type="text/css" />');
+    mywindow.document.write('</head><body >');
+    mywindow.document.write(data.html());
+    mywindow.document.write('</body></html>');
+
+    mywindow.document.close(); // necessary for IE >= 10
+    mywindow.focus(); // necessary for IE >= 10
+
+    mywindow.print();
+    mywindow.close();
+
+    return true;
 }

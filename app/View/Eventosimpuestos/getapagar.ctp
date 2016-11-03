@@ -8,7 +8,10 @@ $(document).ready(function() {
       dateFormat: 'dd-mm-yy',
     });
 });
-</SCRIPT>   
+</SCRIPT>
+<div>
+	
+</div>
 <?php /*Este es el formulario para PAGAR papeles de Trabajo YA generados */ ?> 	
 <h3><?php echo __('Papeles preparados para pagar en : '.$impclinombre); ?></h3>
 <?php echo $this->Form->create('Eventosimpuesto',array('action'=>'realizartarea13', 'id'=>'FormPagarEventoImpuesto')); ?>
@@ -121,15 +124,21 @@ $(document).ready(function() {
 		if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14){ ?>
 			<td><?php echo $this->Form->input('Eventosimpuesto.'.$i.'.monc',array('value'=>$eventosimpuesto['Eventosimpuesto']['monc'],'label'=>false, 'style' => 'width:70px')); ?></td>
 			<?php } ?>			
-		<td><?php echo $this->Form->input('Eventosimpuesto.'.$i.'.descripcion',array('value'=>$eventosimpuesto['Eventosimpuesto']['descripcion'],'label'=>false, 'style' => 'width:100px')); ?></td>					
+		<td><?php echo $this->Form->input('Eventosimpuesto.'.$i.'.descripcion',array('value'=>$eventosimpuesto['Eventosimpuesto']['descripcion'],'label'=>false, 'style' => 'width:100px')); ?>
+		</td>					
 	</tr>
 	<?php $i=$i+1;
 	 endforeach; ?>
-	<tr>
-		<td colspan="4"></td>
-		<td><?php echo  $this->Form->submit('Aceptar');echo  $this->Form->end();?></td>
-		<td><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:24px">Cancelar</a></td>
-	</tr>
-</table>
+	</table>
+	<div style="width:100%; float:right;">
+		<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>
+		<a href="#" onclick="$('#FormPagarEventoImpuesto').submit();" class="btn_aceptar" style="margin-top:14px">Aceptar</a>
+		<?php  $this->Form->end();?>
+	</div>
+
+
+
+
+
   
 

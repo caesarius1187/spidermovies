@@ -9,9 +9,12 @@
 	echo $this->Form->input('dni',array('label'=>'DNI'));
 	echo $this->Form->input('legajo',array('label'=>'Legajo'));
 	echo $this->Form->input('categoria',array('label'=>'Categoria'));
-	echo $this->Form->input('codigoafip',array('label'=>'Codigo Afip','options'=>array('1','2','3','4')));
+	echo $this->Form->input('codigoafip',array('label'=>'Codigo Afip','options'=>array('0','1','2','3','4')));
 	echo "</br>";
-	echo $this->Form->input('fechaingreso', array(
+	echo $this->Form->input('fechaingreso', array('type'=>'hidden'));
+	echo $this->Form->input('fechaegreso', array('type'=>'hidden'));
+
+	echo $this->Form->input('fechaingresoedit', array(
 			'class'=>'datepicker',
 			'type'=>'text',
 			'label'=>'Ingreso',
@@ -19,12 +22,13 @@
 			'default'=>$this->request->data['Empleado']['fechaingreso']?$this->request->data['Empleado']['fechaingreso']:null,
 			'readonly'=>'readonly')
 	);
-	echo $this->Form->input('fechaegreso', array(
-				'class'=>'datepicker',
-				'type'=>'text',
-				'label'=>'Egreso',
-				'readonly'=>'readonly')
-		);
+	echo $this->Form->input('fechaegresoedit', array(
+			'class'=>'datepicker',
+			'type'=>'text',
+			'label'=>'Egreso',
+			'default'=>$this->request->data['Empleado']['fechaegreso']?$this->request->data['Empleado']['fechaegreso']:null,
+			'readonly'=>'readonly')
+	);
 	//Debugger::dump($puntosdeventas);
 	echo $this->Form->input('domicilio_id',array('label'=>'Domicilio','options'=>$domicilios));
 	echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));

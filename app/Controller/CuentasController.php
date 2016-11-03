@@ -71,7 +71,12 @@ class CuentasController extends AppController {
 		}
 		else
 		{
+			/*todo: Borrar Asientos
+			Esto deberia disparar un alerta cuando hay Asientos relacionados a esta cuenta por que podriamos
+			eliminarlos y desactivarlos horriblemente*/
 			//Desactivar
+
+
 			if ($this->Cuentascliente->deleteAll(array(
 														'Cuentascliente.cliente_id' => $ClienteId,
 														'Cuentascliente.cuenta_id' => $CuentaId

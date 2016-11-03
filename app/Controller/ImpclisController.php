@@ -536,6 +536,8 @@ class ImpclisController extends AppController {
 		$this->loadModel('Domicilio');
 		$this->loadModel('Categoriamonotributo');
 		$this->loadModel('Actividadcliente');
+        $this->loadModel('Puntosdeventa');
+        $this->loadModel('Comprobante');
 
 		$strDatePeriodo='01-'.$periodo;
 		$mesPeriodo = date('m',strtotime($strDatePeriodo));
@@ -544,67 +546,78 @@ class ImpclisController extends AppController {
 		//primero hay que ver en que cuatrimestre estamos ese va a ser nuestro 3 cuatrimestre, tengo que calcular los 2 anteriores y determinar cual es el periodo en el que va a comenzar el año
 		$mesinicioDelAño = '01';
 		$añoinicioDelAño = $añoPeriodo;
-		$mesParaProximaRecategorizacion= 1;
+        $mesParaProximaRecategorizacion= 1;
+        $mesinicioDelCuatrimestre= '01';
 		$showBtnChangeRecategorizacion = false;
 		switch ($mesPeriodo) {
 			case '01':
 				$mesParaProximaRecategorizacion= 4;
+                $mesinicioDelCuatrimestre = '01';
 				$mesinicioDelAño= '05';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				break;
 			case '02':
 				$mesParaProximaRecategorizacion= 3;
-				$mesinicioDelAño= '05';
+                $mesinicioDelCuatrimestre = '01';
+                $mesinicioDelAño= '05';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				break;
 			case '03':
 				$mesParaProximaRecategorizacion= 2;
-				$mesinicioDelAño= '05';
+                $mesinicioDelCuatrimestre = '01';
+                $mesinicioDelAño= '05';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				break;
 			case '04':
 				$mesParaProximaRecategorizacion= 1;
-				$mesinicioDelAño= '05';
+                $mesinicioDelCuatrimestre = '01';
+                $mesinicioDelAño= '05';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				$showBtnChangeRecategorizacion = true;
 				break;
 			case '05':
 				$mesParaProximaRecategorizacion= 4;
-				$mesinicioDelAño= '09';
+                $mesinicioDelCuatrimestre = '05';
+                $mesinicioDelAño= '09';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				break;
 			case '06':
 				$mesParaProximaRecategorizacion= 3;
-				$mesinicioDelAño= '09';
+                $mesinicioDelCuatrimestre = '05';
+                $mesinicioDelAño= '09';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				break;
 			case '07':
 				$mesParaProximaRecategorizacion= 2;
-				$mesinicioDelAño= '09';
+                $mesinicioDelCuatrimestre = '05';
+                $mesinicioDelAño= '09';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				break;
 			case '08':
 				$mesParaProximaRecategorizacion= 1;
-				$mesinicioDelAño= '09';
+                $mesinicioDelCuatrimestre = '05';
+                $mesinicioDelAño= '09';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				$showBtnChangeRecategorizacion = true;
 				break;
 			case '09':
 				$mesParaProximaRecategorizacion= 4;
-				$mesinicioDelAño= '01';
+                $mesinicioDelCuatrimestre = '09';
+                $mesinicioDelAño= '01';
 				break;
 			case '10':
 				$mesParaProximaRecategorizacion= 3;
-				$mesinicioDelAño= '01';
+                $mesinicioDelCuatrimestre = '09';
+                $mesinicioDelAño= '01';
 				break;
 			case '11':
 				$mesParaProximaRecategorizacion= 2;
-				$mesinicioDelAño= '01';
+                $mesinicioDelCuatrimestre = '09';
+                $mesinicioDelAño= '01';
 				break;
 			case '12':
 				$mesParaProximaRecategorizacion= 1;
-				$mesinicioDelAño= '01';
-				break;
+                $mesinicioDelCuatrimestre = '09';
 				$mesinicioDelAño= '01';
 				$showBtnChangeRecategorizacion = true;
 				break;
@@ -698,9 +711,7 @@ class ImpclisController extends AppController {
 								 	'group'=>array(
 									 	'Venta.periodo','Venta.comprobante_id','Venta.actividadcliente_id'
 									 	)
-							 		)
-								);
-		$totalVentas=0;
+							 		));
 		$optionActividad=array(
 			'contain' => array('Actividade'),
 			'conditions'=>array(
@@ -708,14 +719,6 @@ class ImpclisController extends AppController {
 				),
 		);
 		$actividadclientes = $this->Actividadcliente->find('all',$optionActividad);
-
-		foreach ($ventas as $venta) {
-			if($venta['Comprobante']['tipodebitoasociado']='Debito fiscal o bien de uso'){
-				$totalVentas += $venta[0]['total'];							
-			}else{
-				$totalVentas -= $venta[0]['total'];							
-			}
-		}
 		$compras = $this->Compra->find('all',array(
 									'fields' => array('SUM(Compra.total) AS total','SUM(Compra.kw) AS kw','SUM(Compra.superficie) AS superficie','Compra.periodo','Compra.imputacion','Compra.tipogasto_id'),
 									'conditions'=>array(
@@ -730,21 +733,7 @@ class ImpclisController extends AppController {
 								 	'group'=>array(
 									 	'Compra.periodo','Compra.tipogasto_id'
 									 	)
-							 		)
-								);
-		$totalLuz=0;
-		$totalKW=0;
-		$totalAlquiler=0;
-		foreach ($compras as $compra) {
-			if($compra['Compra']['tipogasto_id']=='19'/*Luz*/){
-				$totalLuz += $compra[0]['total'];							
-				$totalKW += $compra[0]['kw'];							
-			}
-			if($compra['Compra']['tipogasto_id']=='21'/*Alquiler*/){
-				$totalAlquiler += $compra[0]['total'];							
-			}
-		}
-
+							 		));
 		$domicilios = $this->Domicilio->find('all',array(
 								'fields' => array('SUM(Domicilio.superficie) AS superficie'),
 								'conditions'=>array(
@@ -753,8 +742,7 @@ class ImpclisController extends AppController {
 							 	'group'=>array(
 								 	'Domicilio.cliente_id'
 								 	)
-								)
-							);
+								));
 		$strDatePeriodo = '28-'.$periodo;
 		$optionsCategoriaMax=array(
 			'fields'=>array('MAX(Categoriamonotributo.vigenciadesde) AS vigenciadesde'),
@@ -764,7 +752,6 @@ class ImpclisController extends AppController {
 			);
 		$maxcategory=$this->Categoriamonotributo->find('first',$optionsCategoriaMax);
 		$this->set('maxcategory',$maxcategory);
-
 		$optionsCategoria=array(
 			'conditions'=>array(
 					'Categoriamonotributo.vigenciadesde'=>$maxcategory[0]['vigenciadesde']
@@ -773,7 +760,221 @@ class ImpclisController extends AppController {
 			);
 		$categoriamonotributos = $this->Categoriamonotributo->find('all',$optionsCategoria);
 		$this->set(compact('impcliid','periodo','periodoDeInicio','ventas','compras','domicilios','categoriamonotributos','actividadclientes'));
-	}
+
+
+    }
+    public function papeldetrabajoddjj($periodo=null,$impcliid=null){
+        $this->loadModel('Venta');
+        $this->loadModel('Compra');
+        $this->loadModel('Actividadcliente');
+        $this->loadModel('Puntosdeventa');
+        $this->loadModel('Comprobante');
+        $this->loadModel('Domicilio');
+
+        $strDatePeriodo='01-'.$periodo;
+        $mesPeriodo = date('m',strtotime($strDatePeriodo));
+        $añoPeriodo = date('Y',strtotime($strDatePeriodo));
+
+        $mesinicioDelAño = '01';
+        $añoinicioDelAño = $añoPeriodo;
+        $mesinicioDelCuatrimestre= '01';
+
+        $options = array('conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
+        $myImpcli = $this->Impcli->find('first', $options);
+        $this->set('impcli',$myImpcli);
+
+        switch ($mesPeriodo) {
+            case '01':
+                $mesinicioDelCuatrimestre = '01';
+                $mesinicioDelAño= '05';
+                $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                break;
+            case '02':
+                $mesinicioDelCuatrimestre = '01';
+                $mesinicioDelAño= '05';
+                $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                break;
+            case '03':
+                $mesinicioDelCuatrimestre = '01';
+                $mesinicioDelAño= '05';
+                $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                break;
+            case '04':
+                $mesinicioDelCuatrimestre = '01';
+                $mesinicioDelAño= '05';
+                $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                break;
+            case '05':
+                $mesinicioDelCuatrimestre = '05';
+                $mesinicioDelAño= '09';
+                $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                break;
+            case '06':
+                $mesinicioDelCuatrimestre = '05';
+                $mesinicioDelAño= '09';
+                $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                break;
+            case '07':
+                $mesinicioDelCuatrimestre = '05';
+                $mesinicioDelAño= '09';
+                $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                break;
+            case '08':
+                $mesinicioDelCuatrimestre = '05';
+                $mesinicioDelAño= '09';
+                $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                break;
+            case '09':
+                $mesinicioDelCuatrimestre = '09';
+                $mesinicioDelAño= '01';
+                break;
+            case '10':
+                $mesinicioDelCuatrimestre = '09';
+                $mesinicioDelAño= '01';
+                break;
+            case '11':
+                $mesinicioDelCuatrimestre = '09';
+                $mesinicioDelAño= '01';
+                break;
+            case '12':
+                $mesinicioDelCuatrimestre = '09';
+                $mesinicioDelAño= '01';
+                break;
+            default:
+                # code...
+                break;
+        }
+		$this->set('periodoInicioCuatrimestre',$mesinicioDelCuatrimestre.'-'.$añoPeriodo);
+        $esMenorQuePeriodoFINConsulta = array(
+            'OR'=>array(
+                'SUBSTRING(Venta.periodo,4,7)*1 < '.$añoPeriodo.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Venta.periodo,4,7)*1 <= '.$añoPeriodo.'*1',
+                    'SUBSTRING(Venta.periodo,1,2) <= '.$mesPeriodo.'*1'
+                ),
+            )
+        );
+        $esMayorQuePeriodoInicioCuatrimestre = array(
+            //Periodo FIN es mayor que el periodo
+            'OR'=>array(
+                'SUBSTRING(Venta.periodo,4,7)*1 > '.$añoPeriodo.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Venta.periodo,4,7)*1 >= '.$añoPeriodo.'*1',
+                    'SUBSTRING(Venta.periodo,1,2) >= '.$mesinicioDelCuatrimestre.'*1'
+                ),
+            )
+        );
+        $optionVentastop=array(
+            'contain'=>array(
+                'Subcliente'=>array(
+                    'fields'=>array('Subcliente.id,Subcliente.nombre','Subcliente.cuit')
+                )
+            ),
+            'conditions'=>array(
+                'Venta.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+                'AND'=>array(
+                    $esMayorQuePeriodoInicioCuatrimestre,
+                    $esMenorQuePeriodoFINConsulta
+                )
+            ),
+            'fields'=>array('subcliente_id,SUM(Venta.total) as total,COUNT(Venta.total) as cantidad'),
+            'group'=>array('Venta.subcliente_id'),
+            'limit' => 5
+        );
+        $ventastop=$this->Venta->find('all',$optionVentastop);
+        $esMayorQuePeriodoInicioCuatrimestreCompra = array(
+            //Periodo FIN es mayor que el periodo
+            'OR'=>array(
+                'SUBSTRING(Compra.periodo,4,7)*1 > '.$añoPeriodo.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Compra.periodo,4,7)*1 >= '.$añoPeriodo.'*1',
+                    'SUBSTRING(Compra.periodo,1,2) >= '.$mesinicioDelCuatrimestre.'*1'
+                ),
+            )
+        );
+        $esMenorQuePeriodoFINCompraConsulta = array(
+            'OR'=>array(
+                'SUBSTRING(Compra.periodo,4,7)*1 < '.$añoinicioDelAño.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Compra.periodo,4,7)*1 <= '.$añoinicioDelAño.'*1',
+                    'SUBSTRING(Compra.periodo,1,2) <= '.$mesinicioDelAño.'*1'
+                ),
+            )
+        );
+        $optionComprastop=array(
+            'contain'=>array(
+                'Provedore'=>array(
+                    'fields'=>array('Provedore.id,Provedore.nombre','Provedore.cuit')
+                )
+            ),
+            'conditions'=>array(
+                'Compra.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+                'AND'=>array(
+                    $esMayorQuePeriodoInicioCuatrimestreCompra,
+                    $esMenorQuePeriodoFINCompraConsulta
+                )
+            ),
+            'fields'=>array('provedore_id,SUM(Compra.total) as total,COUNT(Compra.total) as cantidad'),
+            'group'=>array('Compra.provedore_id'),
+            'order'=>array('total'),
+            'limit' => 5
+        );
+        $comprastop=$this->Compra->find('all',$optionComprastop);
+
+        $optionPuntosdeventas = array(
+            'conditions'=>array('Puntosdeventa.cliente_id'=> $myImpcli['Impcli']['cliente_id']),
+            'fields'=>array('id','nombre','sistemafacturacion')
+        );
+        $puntosdeventas = $this->Puntosdeventa->find('all',$optionPuntosdeventas);
+
+        // Primera y ultima factura por tipocomprobante y punto de venta
+        $optionsventas=array(
+            'contain'=>array(
+                'Comprobante'=>array('id','nombre','tipodebitoasociado'),
+                'Puntosdeventa'=>array('id','nombre'),//
+            ),
+            'fields'=>array(
+                'MAX(numerocomprobante) as maxnumerocomprobante',
+                'MIN(numerocomprobante) as minnumerocomprobante',
+                'SUM(total) as total',
+            ),
+            'conditions'=>array(
+                'Venta.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+                'AND'=>array(
+                    $esMayorQuePeriodoInicioCuatrimestre,
+                    $esMenorQuePeriodoFINConsulta
+                )
+            ),
+            'group'=>array('Venta.puntosdeventa_id','Venta.comprobante_id'),
+            'limit' => 5,
+            'order'=>array('total')
+        );
+        $ultimasventas = $this->Venta->find('all',$optionsventas);
+        $this->set('ultimasventas',$ultimasventas);
+        $domicilios = $this->Domicilio->find('list',array(
+            'conditions'=>array(
+                'Domicilio.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+            ),
+        ));
+        //Kilowats
+        $compraskw = $this->Compra->find('all',array(
+            'fields' => array('SUM(Compra.total) AS total','SUM(Compra.kw) AS kw','SUM(Compra.superficie) AS superficie','Compra.periodo','Compra.imputacion','Compra.tipogasto_id'),
+            'conditions'=>array(
+                'Compra.tipogasto_id'=> array(19/*Factura de Luz*/,21/*Alquileres*/) ,
+                'Compra.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+                'AND'=>array(
+                    $esMayorQuePeriodoInicioCuatrimestreCompra,
+                    $esMenorQuePeriodoFINCompraConsulta
+                )
+            ),
+            'group'=>array(
+                'Compra.periodo','Compra.tipogasto_id'
+            )
+        ));
+
+        $this->set(compact('ventastop','comprastop','puntosdeventas','comprobantes','domicilios','compraskw'));
+        $this->layout = 'ajax';
+    }
 	public function papeldetrabajosuss($impcliid=null,$periodo=null){
 		$optionsImpCliSolic = array(
 			'contain' => array('Impuesto'),
@@ -799,7 +1000,14 @@ class ImpclisController extends AppController {
 								'Valorrecibo.tipoliquidacion'=>array(1,2,3)
 							)
 						),
-						'conditions' => array('Empleado.cliente_id' => $impcliSolicitado['Impcli']['cliente_id'])
+						'conditions'=>array(
+							'Empleado.cliente_id' => $impcliSolicitado['Impcli']['cliente_id'],
+							'OR'=>[
+								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+								'Empleado.fechaegreso is null' ,
+							],
+							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("01-".$periodo)),
+						),
 					)
 				),
 			),
@@ -829,23 +1037,29 @@ class ImpclisController extends AppController {
 		//Por ejemplo el sindicato SEC tiene CCT(convenio colectivo de trabajo) Comercio, pero los empleados que estan en el convenio de comercio
 		//pagan FAESYS tambien, pero cuando liquidamos FAESYS no tenemos convenios asociados, por eso Faesys apuntara a SEC para su liquidacion
 		$optionsImpCliSolic = array(
-			'contain' => array('Impuesto'),
+			'contain' => array('Impuesto','Cliente'),
 			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
 		);
 		//Impuesto Solicitado (por ef FAESYS)
 		//Impuesto a Liquidar (Por ejemplo SEC)
 
 		$impcliSolicitado = $this->Impcli->find('first', $optionsImpCliSolic);
-		$impcliIdALiquidar = $impcliSolicitado['Impcli']['id'];
-		if($impcliSolicitado['Impuesto']['delegado']){
-			//aca vamos a tener que buscar un Impcli con el cliente_id del solicitado y el Impuesto_id del liquidado
-			$optionsImpCliSolic = array(
+        $impcliIdAUsar = array();
+        if($impcliSolicitado['Impuesto']['delegado']){
+			//aca vamos a tener que buscar un Impcli con el cliente_id del solicitado y el Impuesto_id del ALiquidar
+			$optionsImpCliDeleg = array(
 				'contain' => array('Impuesto'),
-				'conditions' => array('Impcli.cliente_id'=> $impcliid)
+				'conditions' => array(
+                    'Impcli.cliente_id'=> $impcliSolicitado['Impcli']['cliente_id'],
+					'Impcli.impuesto_id'=> $impcliSolicitado['Impuesto']['delegadoid'])
 			);
-			$impcliIdAUsar = $impcliSolicitado['Impuesto']['delegadoId'];
-		}
-		$this->set('impcliSolicitado',$impcliSolicitado);
+            $impcliIdAUsar = $this->Impcli->find('first', $optionsImpCliDeleg);
+		}else{
+            $impcliIdAUsar = $impcliSolicitado;
+        }
+
+        $this->set('impcliSolicitado',$impcliSolicitado);
+        //$this->set('impcliIdAUsar',$impcliIdAUsar);
 
 		$options = array(
 			'contain'=>array(
@@ -871,11 +1085,14 @@ class ImpclisController extends AppController {
 									'Valorrecibo.periodo'=>$periodo
 								)
 							),
+                            'conditions'=>[
+                                'Empleado.cliente_id'=>$impcliIdAUsar['Impcli']['cliente_id']
+                            ]
 						)
 					),
 				),
 			),
-			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
+			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']));
 		$impcli = $this->Impcli->find('first', $options);
 		$this->set('impcli',$impcli);
 
@@ -886,7 +1103,7 @@ class ImpclisController extends AppController {
 			),
 			'conditions'=>array(
 				'Conceptosrestante.periodo'=>$periodo,
-				'Conceptosrestante.impcli_id'=>$impcliid,
+				'Conceptosrestante.impcli_id'=>$impcliIdAUsar['Impcli']['id'],
 			)
 		);
 		$conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
@@ -923,6 +1140,7 @@ class ImpclisController extends AppController {
 						),
 						'Valorrecibo'=>array(
 							'Cctxconcepto'=>array(
+								'Concepto'
 							),
 							'conditions'=>array(
 								'Valorrecibo.periodo'=>$periodo

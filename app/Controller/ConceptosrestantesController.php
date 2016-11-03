@@ -178,6 +178,7 @@ class ConceptosrestantesController extends AppController {
 			$mostrarForm = false;
 
             $data['conceptosrestante'] = $this->Conceptosrestante->find('first', $options);
+
             $this->layout = 'ajax';
             $this->set('data', $data);
             $this->render('serializejson');
@@ -186,6 +187,11 @@ class ConceptosrestantesController extends AppController {
 			$options = array('conditions' => array('Conceptosrestante.' . $this->Conceptosrestante->primaryKey => $id));
 			$this->request->data = $this->Conceptosrestante->find('first', $options);
 		}
+        $options = array(
+            'conditions' => array('Conceptosrestante.' . $this->Conceptosrestante->primaryKey => $id),
+        );
+        $this->request->data = $this->Conceptosrestante->find('first', $options);
+
 		$conditionsLocalidades = array(
 			'contain'=>'Partido',
 			'fields'=>array('Localidade.id','Localidade.nombre','Partido.nombre'),
@@ -195,6 +201,12 @@ class ConceptosrestantesController extends AppController {
         $partidos = $this->Partido->find('list');
 		$comprobantes = $this->Comprobante->find('list');
 		$conceptostipos = $this->Conceptostipo->find('list');
+        Debugger::dump($this->request->data);
+
+        if( $this->request->data['Impcli']['impuesto_id']==19/*IVA*/){
+            $conceptostipos[1]='Saldo de Libre Disponibilidad';
+            Debugger::dump($conceptostipos);
+        }
 		$this->set(compact('partidos', 'localidades', 'comprobantes', 'conceptostipos'));
 
 		$pemes = substr($this->request->data['Conceptosrestante']['periodo'], 0, 2);
@@ -281,8 +293,7 @@ class ConceptosrestantesController extends AppController {
 		$this->set('impclisid', $impclisid);
 
 		$this->set('mostrarForm',$mostrarForm);	
-		$options = array('conditions' => array('Conceptosrestante.' . $this->Conceptosrestante->primaryKey => $id));
-		$this->request->data = $this->Conceptosrestante->find('first', $options);
+
 		$this->set('conid',$id);
 		$this->layout = 'ajax';
 	}

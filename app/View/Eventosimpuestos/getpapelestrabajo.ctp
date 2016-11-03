@@ -1,154 +1,180 @@
-<div class="index">
-
+<div class="index_pdt" style="border-color: #FFF">
     <?php
     $labelClifch = $cliente['Cliente']['nombre'];
-    $labelCuitfch =$cliente['Organismosxcliente'][0]['usuario'].'-Clave: '.$cliente['Organismosxcliente'][0]['clave'];
+    $labelCuitfch =$cliente['Organismosxcliente'][0]['usuario'].' - Clave: '.$cliente['Organismosxcliente'][0]['clave'];
     ?>
-    <div>
-        <h1><?php echo __($impuesto['nombre']); ?></h1>
-        <label><?php echo $labelClifch;?>-Usuario:<?php echo $labelCuitfch;?></label>
+    <div style="width:75%;">
+        <h3><?php echo __($impuesto['nombre']); ?></h3>
+        <label style="width:75%; float: left; font-size:14px;"><?php echo $labelClifch;?> - Usuario:<?php echo $labelCuitfch;?></label>
+    </div>
+    <div style="width: 25%; float:right;">
+        <?php
+        //aca vamos a mostrar informacion sobre las ventas,compras y retenciones cargadas
+
+        $mostrarAlertaVentasComprasConceptos = false;
+        switch ($impuesto['id']) {
+            case 4/*Monotributo*/:
+                $mostrarAlertaVentasComprasConceptos = true;
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo', //buttonImpcli
+                    'onClick' => 'verPapelDeTrabajoMonotributo('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+            case 6/*Actividades Varias*/:
+                $mostrarAlertaVentasComprasConceptos = true;
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoActividadesVarias('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+            case 10/*SUSS*/:
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoSUSS('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+            case 12/*Cooperadora Asistencial*/:
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoCooperadoraAsistencial('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+		    case 19/*IVA*/:
+                $mostrarAlertaVentasComprasConceptos = true;
+                echo $this->Form->button('Papel de Trabajo', array(
+                        'id' => 'buttonPDT',
+                        'type' => 'button',
+                        'class'=>'btn_papeltrabajo',
+                        'onClick' => 'verPapelDeTrabajoIVA('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')',
+                        'escape' => false
+                    ));
+                    break;
+            case 21/*Actividades Economicas*/:
+            case 174/*Convenio Multilateral*/:
+                $mostrarAlertaVentasComprasConceptos = true;
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoConvenioMultilateral('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
+
+            default:
+                if($impuesto['organismo']=='sindicato'){
+                    echo $this->Form->button('Papel de Trabajo', array(
+                        'id' => 'buttonPDT',
+                        'type' => 'button',
+                        'class'=>'btn_papeltrabajo',
+                        'onClick' => 'verPapelDeTrabajoSindicato('."'".$periodo."'".','."'".$impcliid."'".')',
+                        'escape' => false
+                    ));
+                }
+                break;
+        }
+        if($mostrarAlertaVentasComprasConceptos){
+        ?>
+    </div>
+    <div style="width: 100%">
+        <label>
+            <?php
+            if(isset($cliente['Venta'][0]['Venta'][0]['misventas'])){
+                echo $this->Html->image('test-pass-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "Se han cargado ".$cliente['Venta'][0]['Venta'][0]['misventas']." Ventas en este periodo</br>";
+            }else{
+                echo $this->Html->image('test-fail-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "NO se han cargado Ventas en este periodo</br>";
+            }
+            if(isset($cliente['Compra'][0]['Compra'][0]['miscompras'])){
+                echo $this->Html->image('test-pass-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "Se han cargado ".$cliente['Compra'][0]['Compra'][0]['miscompras']." Compras en este periodo</br>";
+            }else{
+                echo $this->Html->image('test-fail-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "NO se han cargado Compras en este periodo</br>";
+            }
+            if(isset($cliente['Conceptosrestante'][0]['Conceptosrestante'][0]['misconceptos'])){
+                echo $this->Html->image('test-pass-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "Se han cargado ".$cliente['Conceptosrestante'][0]['Conceptosrestante'][0]['misconceptos']." Pagos a cuenta en este periodo</br>";
+            }else{
+                echo $this->Html->image('test-fail-icon.png',array(
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                    )
+                );
+                echo "NO se han cargado Pagos a cuenta  en este periodo</br>";
+            }
+            ?>
+        </label>
+    </div>
+    <?php } ?> 
+</div>
+<div class="" style="width:100%; float: right">
+    <div id="tabsTareaImpuesto" style="margin-left: 8px;">
+    <div class="tabsTareaImpuesto_active" onClick="showPapelesDeTrabajo()" id="tab_PapelesDeTrabajo">
+        <label style="text-align:center;margin-top:5px;cursor:pointer;">Impuestos</label>
+    </div>
+    <div class="tabsTareaImpuesto" onClick="showContabilidadImpuestos()" id="tab_Contabilidad_Impuestos">
+        <label style="text-align:center;margin-top:5px;cursor:pointer;">Contabilizar Impuestos</label>
+    </div>
+    <div class="tabsTareaImpuesto" onClick="showPagos()" id="tab_Pagos">
+        <label style="text-align:center;margin-top:5px;cursor:pointer;">Pagos</label>
+    </div>
+    <div class="tabsTareaImpuesto" onClick="showContabilidadPagos()" id="tab_Contabilidad_Pagos">
+        <label style="text-align:center;margin-top:5px;cursor:pointer;">Contabilizar Pagos</label>
+    </div>
     </div>
 </div>
-<div id="tabsTareaImpuesto" style="margin-left: 8px;">
-	<div class="tabsTareaImpuesto_active" onClick="showPapelesDeTrabajo()" id="tab_PapelesDeTrabajo"><h2>Impuestos determinados</h2></div>
-	<div class="tabsTareaImpuesto" onClick="showPagos()" id="tab_Pagos"><h2>Pagos</h2></div>
-</div>
-<div id="divPrepararPapelesDeTrabajo" class="tareapapeldetrabajo index">
-
-    <div id="form_prepararPapeles" class="prepararPapeles"  style="float: left;">
+<div id="divPrepararPapelesDeTrabajo" class="tareapapeldetrabajo index_pdt">
+    <div id="form_prepararPapeles" class="prepararPapeles"  style="float: left; width:100%">
         <?php
         //Aca vamos a personalizar distintos formularios dependiendo de que impuesto sea el que necesitamos ejecutar, ya que si bien son parecidos algunos de ellos tienen particularidades
         ?>
-        <div style="width: 100%;">
-            <?php
-            //aca vamos a mostrar informacion sobre las ventas,compras y retenciones cargadas
-
-            $mostrarAlertaVentasComprasConceptos = false;
-            switch ($impuesto['id']) {
-                case 4/*Monotributo*/:
-                    $mostrarAlertaVentasComprasConceptos = true;
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoMonotributo('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-                case 6/*Actividades Varias*/:
-                    $mostrarAlertaVentasComprasConceptos = true;
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoActividadesVarias('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-                case 10/*SUSS*/:
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoSUSS('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-                case 12/*Cooperadora Asistencial*/:
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoCooperadoraAsistencial('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-                case 21/*Actividades Economicas*/:
-                case 174/*Convenio Multilateral*/:
-                    $mostrarAlertaVentasComprasConceptos = true;
-                    echo $this->Form->button('Papel de Trabajo', array(
-                        'id' => 'buttonPDT',
-                        'type' => 'button',
-                        'class'=>'buttonImpcli',
-                        'onClick' => 'verPapelDeTrabajoConvenioMultilateral('."'".$periodo."'".','."'".$impcliid."'".')',
-                        'escape' => false
-                    ));
-                    break;
-
-                default:
-                    if($impuesto['organismo']=='sindicato'){
-                        echo $this->Form->button('Papel de Trabajo', array(
-                            'id' => 'buttonPDT',
-                            'type' => 'button',
-                            'class'=>'buttonImpcli',
-                            'onClick' => 'verPapelDeTrabajoSindicato('."'".$periodo."'".','."'".$impcliid."'".')',
-                            'escape' => false
-                        ));
-                    }
-                    break;
-            }
-            if($mostrarAlertaVentasComprasConceptos){
-            ?>
-            <label>
-                <?php
-                if(isset($cliente['Venta'][0]['Venta'][0]['misventas'])){
-                    echo $this->Html->image('test-pass-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "Se han cargado ".$cliente['Venta'][0]['Venta'][0]['misventas']." Ventas en este periodo</br>";
-                }else{
-                    echo $this->Html->image('test-fail-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "NO se han cargado Ventas en este periodo</br>";
-                }
-                if(isset($cliente['Compra'][0]['Compra'][0]['miscompras'])){
-                    echo $this->Html->image('test-pass-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "Se han cargado ".$cliente['Compra'][0]['Compra'][0]['miscompras']." Compras en este periodo</br>";
-                }else{
-                    echo $this->Html->image('test-fail-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "NO se han cargado Compras en este periodo</br>";
-                }
-                if(isset($cliente['Conceptosrestante'][0]['Conceptosrestante'][0]['misconceptos'])){
-                    echo $this->Html->image('test-pass-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "Se han cargado ".$cliente['Conceptosrestante'][0]['Conceptosrestante'][0]['misconceptos']." Pagos a cuenta en este periodo</br>";
-                }else{
-                    echo $this->Html->image('test-fail-icon.png',array(
-                            'alt' => 'open',
-                            'class' => 'btn_exit',
-                        )
-                    );
-                    echo "NO se han cargado Pagos a cuenta  en este periodo</br>";
-                }
-                ?>
-            </label>
-            <?php } ?>
-        </div>
-
-        <div id="divVencimiento"  >
+        <div id="divVencimiento" style="margin-bottom: 20px;">
             <?php
             echo $this->Form->input('vencimientogeneral', array(
                                                   'class'=>'datepicker',
                                                   'type'=>'text',
-                                                  'label'=>"Vencimiento:",
+                                                  'label'=>array(
+                                                    'text'=>"Vencimiento:",
+                                                    "style"=>"display:inline",
+                                                    ),
                                                   'readonly','readonly',
                                                   'value'=>$fchvto,
+                                                  'div' => false,
+                                                  'style'=> 'height:9px;display:inline'
                                                   ));
             $mensajeAlertaFecha = "";
             switch ($fchvtoOrigen) {
@@ -172,22 +198,25 @@
 
 	    echo $this->Form->input('Eventosimpuesto.0.haycambio',array('value'=> true ,'type'=>'hidden','id'=>'EventosimpuestoHaycambios'));
 	    echo $this->Form->input('Eventosimpuesto.0.cliente_id',array('value'=>$clienteid,'type'=>'hidden'));
-	    $botonOK="Guardar";
+	    $botonOK="Aceptar";
+$faltanEventosAMostrar = false;
         switch ($tipopago) {
             case 'unico':
-                $botonOK="Guardar";
+                $botonOK="Aceptar";
                 $eventoid=0;
                 $fchvto=date('d-m-Y');
                 $montovto = 0;
                 $montoc = 0;
                 $descripcion = '';
 
-                foreach ($eventosimpuestos as $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
+                foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
                     $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
+                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+
                 }
                 echo $this->Form->input('Eventosimpuesto.0.id',array('type'=>'hidden','value'=>$eventoid,));
                 echo $this->Form->input('Eventosimpuesto.0.impcli_id',array('value'=>$impcliid,'type'=>'hidden'));
@@ -206,6 +235,30 @@
                     echo $this->Form->input('Eventosimpuesto.0.monc',array('label'=>'Monto a Favor','default'=>"0",'style'=>'width:113px','value'=>$montoc));
                 }
                 echo $this->Form->input('Eventosimpuesto.0.descripcion',array('default'=>"-", 'style'=>'width:100px','value'=>$descripcion));
+
+                //vamos a cargar el saldo a favor del periodo actual
+                //La variable se llama $SaldosLibreDisponibilidadimpcli por que la creamos con el IVA pero son Saldos A Favor del periodo actual
+                if(isset($SaldosLibreDisponibilidadimpcli)){
+                    foreach ($SaldosLibreDisponibilidadimpcli as $conceptosrestante){
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.id',array(
+                            'value'=>$conceptosrestante['id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.cliente_id',array(
+                            'value'=>$conceptosrestante['cliente_id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.impcli_id',array(
+                            'value'=>$conceptosrestante['impcli_id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.conceptostipo_id',array(
+                            'value'=>$conceptosrestante['conceptostipo_id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.periodo',array(
+                            'value'=>$conceptosrestante['periodo'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.montoretenido',array(
+                            'value'=>$conceptosrestante['montoretenido'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.fecha',array(
+                            'value'=>$conceptosrestante['fecha'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.descripcion',array(
+                            'value'=>$conceptosrestante['descripcion'],'type'=>'hidden'));
+                    }
+                }
+                echo "</br>";
             break;
             case 'provincia':
                 if(count($impcliprovincias)>0){
@@ -221,13 +274,17 @@
                             $montoc = 0;
                             $descripcion = '';
                             $mybaseprorrateada = array();
-                            foreach ($eventosimpuestos as $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada estprovincia
+                            foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada estprovincia
+                                if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                                }
                                 if($eventosimpuesto['Eventosimpuesto']['partido_id']==$impcliprovincia['partido_id']){
                                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
                                     $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
                                     if(isset($eventosimpuesto['Basesprorrateada'])){
                                         $mybaseprorrateada = $eventosimpuesto['Basesprorrateada'];
                                     }
@@ -241,7 +298,7 @@
                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.fchvto', array(
                                                               'class'=>'hiddendatepicker',
                                                               'type'=>'text',
-                                                              'label'=>'Fch. Vto.',
+                                                              'label'=>$eventoPos==0?'Fch. Vto.':'',
                                                               'readonly','readonly',
                                                               'style'=>'width:80px',
                                                               'value'=>date('d-m-Y',strtotime($fchvto)),
@@ -367,14 +424,18 @@
                             $localidad = $impcliprovincia['localidade_id'];
                             $montoc = 0;
                             $descripcion = '';
-                            foreach ($eventosimpuestos as $eventosimpuesto){
+                            foreach ($eventosimpuestos as $key => $eventosimpuesto){
                                 //vamos a buscar el evento para ver si ya esta creada estprovincia
+                                if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                                }
                                 if($eventosimpuesto['Eventosimpuesto']['localidade_id']==$impcliprovincia['localidade_id']){
                                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
                                     $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
                                 }
                             }
                             //hay que mostrar un formulario para cada provincia que este dada de alta en estos impuestos
@@ -385,7 +446,7 @@
                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.fchvto', array(
                                                               'class'=>'hiddendatepicker',
                                                               'type'=>'text',
-                                                              'label'=>'Fch. Vto.',
+                                                              'label'=>$eventoPos==0?'Fch. Vto.':'',
                                                               'readonly','readonly',
                                                               'style'=>'width:80px',
                                                               'value'=>date('d-m-Y',strtotime($fchvto)),
@@ -469,13 +530,19 @@
                     $montovto = 0;
                     $montoc = 0;
                     $descripcion = '';
-                    foreach ($eventosimpuestos as $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
+                    $eventosimpuestoUsosaldo = array();
+                    foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
+                        if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
+                            $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                        }
                         if($eventosimpuesto['Eventosimpuesto']['item']==$keyOS){
                             $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                             $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
                             $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                             $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                             $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
+                            $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+                            $eventosimpuestoUsosaldo = $eventosimpuestos[$key]['Usosaldo'];
                         }
                     }
                     echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.id',array('type'=>'hidden','value'=>$eventoid));
@@ -493,7 +560,7 @@
                     );
                     echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.fchvto', array(	'class'=>'hiddendatepicker',
                                                                 'type'=>'hidden',
-                                                                'label'=>'Fch. Vto.',
+                                                                'label'=>$eventoPos==0?'Fch. Vto.':'',
                                                                 'readonly','readonly',
                                                                 'style'=>'width:80px',
                                                                 'value'=>date('d-m-Y',strtotime($fchvto)),
@@ -502,16 +569,75 @@
                     if($daAFavor) {
                         echo $this->Form->input('Eventosimpuesto.' . $eventoPos . '.monc', array('label' => $eventoPos==0?'Monto a Favor':'', 'default' => "0", 'style' => 'width:113px', 'value' => $montoc)) . "</br>";
                     }
+
                     $eventoPos++;
                     echo "</br>";
                 }
+                //ahora vamos a crear los campos para registrar los Saldos A Favor de este periodo en este caso vamos
+                //a agregar solo para el IVA un Saldo de Libre Disponibilidad
+                if($impuesto['id']=19/*IVA*/){
+//                    Debugger::dump($SaldosLibreDisponibilidadimpcli);
+                    if(isset($SaldosLibreDisponibilidadimpcli)){
+                        foreach ($SaldosLibreDisponibilidadimpcli as $conceptosrestante){
+                            if($conceptosrestante['conceptostipo_id']==1){
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.id',array(
+                                    'value'=>$conceptosrestante['id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.partido_id',array(
+                                    'value'=>$conceptosrestante['partido_id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.cliente_id',array(
+                                    'value'=>$conceptosrestante['cliente_id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.impcli_id',array(
+                                    'value'=>$conceptosrestante['impcli_id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.conceptostipo_id',array(
+                                    'value'=>$conceptosrestante['conceptostipo_id'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.periodo',array(
+                                    'value'=>$conceptosrestante['periodo'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.montoretenido',array(
+                                   'value'=>$conceptosrestante['montoretenido'],'type'=>'text',
+                                    'label'=>'Saldo de Libre Disponibilidad')
+                                );
+                                echo $this->HTML->image('ii.png',array('style'=>'width:15px;height:15px','title'=>"Este campo se ha guardado como un Pago a Cuenta del tipo Saldo de Libre Disponibilidaden el periodo ".$periodo));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.fecha',array(
+                                    'value'=>$conceptosrestante['fecha'],'type'=>'hidden'));
+                                echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.descripcion',array(
+                                    'value'=>$conceptosrestante['descripcion'],'type'=>'hidden'));
+
+                            }
+                        }
+                    }
+                    if(count($eventosimpuestoUsosaldo>0)){
+                        foreach ($eventosimpuestoUsosaldo as $usosaldo){
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.id',array(
+                                'value'=>$usosaldo['id'],'type'=>'hidden'));
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.eventosimpuesto_id',array(
+                                'value'=>$usosaldo['eventosimpuesto_id'],'type'=>'hidden'));
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.conceptosrestante_id',array(
+                                'value'=>$usosaldo['conceptosrestante_id'],'type'=>'hidden'));
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.importe',array(
+                                'value'=>$usosaldo['importe'],
+                                'label'=>'Uso Saldo Libre Disponibilidad'));
+                            $mensajeAlertaUsoSaldo = 'Este es el importe del uso ya descontado del Saldo de libre 
+                                disponibilidad del periodo anterior para pagar este impuesto';
+                            echo $this->HTML->image('ii.png',array('style'=>'width:15px;height:15px','title'=>$mensajeAlertaUsoSaldo));
+                            echo $this->Form->input('Eventosimpuesto.0.Usosaldo.0.fecha',array(
+                                'value'=>$usosaldo['fecha'],'type'=>'hidden'));
+                        }
+                    }
+                }
             break;
         }
-  	    echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a>';
-	    echo '<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';?>
+foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el evento para ver si ya esta creada este item
+            if(!$eventosimpuestos[$key]['Eventosimpuesto']['mostrado']){
+                $faltanEventosAMostrar = true;
+                break;
+            }else{
 
-  	    <!--<fieldset style="display:none"><?php echo  $this->Form->submit('Aceptar');?> </fieldset>-->
-		
+            }
+        }  	     
+	     echo '<div style="width:100%; float:right;"><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
+
+         echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a></div>'
+       ;?>
 	    <?php
         if(isset($itemsACompletar)){
             echo $this->Form->input('Eventosimpuesto.0.cantItems', array('type'=>'hidden','value'=>count($itemsACompletar)));
@@ -519,16 +645,10 @@
         }
         echo $this->Form->input('Eventosimpuesto.0.cantProvincias', array('type'=>'hidden','value'=>count($impcliprovincias)));
 	    echo $this->Form->input('Eventosimpuesto.0.cantActividades', array('type'=>'hidden','value'=>count($cliente['Actividadcliente'])));
-         if(
-             $tipopago!='unico'&&
-             $tipopago!='item'&&
-             (
-                ($tipopago=='provincia'&&count($impcliprovincias)==0)||
-                ($tipopago=='municipio'&&count($impcliprovincias)==0)
-             )
-         )
-         {
-            ?>
+        $NoTienePagoDefinido =   ($tipopago!='unico')&&( $tipopago!='item');
+        $NoTieneCargadaProvincia = ($tipopago=='provincia'&&count($impcliprovincias)==0)||($tipopago=='municipio'&&count($impcliprovincias)==0);
+        if($NoTienePagoDefinido&&$NoTieneCargadaProvincia||$faltanEventosAMostrar)
+        {   ?>
             <table cellpadding="0" cellspacing="0" id="tablePapelesPreparados" class="tbl_papeles">
                 <tr>
                     <td colspan="4s"><h3><?php echo __('Papeles preparados'); ?></h3></td>
@@ -556,7 +676,9 @@
                     <th class="actions"><?php echo __('Acciones'); ?></td>
                 </tr>
 
-                <?php foreach ($eventosimpuestos as $eventosimpuesto): ?>
+                <?php foreach ($eventosimpuestos as $key => $eventosimpuesto):
+                    if(!$eventosimpuesto['Eventosimpuesto']['mostrado']){
+                    ?>
                     <tr>
                         <?php
                         switch ($tipopago) {
@@ -598,11 +720,17 @@
                             ?>
                         </td>
                     </tr>
-                <?php endforeach; ?>
+                <?php
+                    }
+                endforeach; ?>
             </table>
         <?php } ?>
 	</div>
 </div><?php /*Fin Preparar Papeles de Trabajo*/?>
-<div id="divPagar"  class="tareapagos index">
-	
+<div id="divContabilidadImpuestos"  class="tareaContabilidadImpuestos index_pdt" style="display:none;">
 </div>
+<div id="divPagar"  class="tareapagos index_pdt" style="display:none;">
+</div>
+<div id="divContabilidadPagar"  class="tareaContabilidadPagar index_pdt" style="display:none;">
+</div>
+<a class="close" href="#close"></a>

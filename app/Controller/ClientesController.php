@@ -463,7 +463,7 @@ class ClientesController extends AppController {
 			}
 
 
-				$this->set('clientes', $clientes3);
+            $this->set('clientes', $clientes3);
 			$this->Tareasxclientesxestudio->recursive = 0;
 			$tareascliente = $this->Tareasxclientesxestudio->find('all',array(
 													'order' => 'Tareasxclientesxestudio.orden ASC',
@@ -593,11 +593,18 @@ class ClientesController extends AppController {
 					   	),
 					   	'Empleado'=>array(
                             'Valorrecibo'=>array(
-                                'conditions'=>array(
-                                    'Valorrecibo.periodo'=>$periodo,
-                                ),
+								'conditions'=>array(
+									'Valorrecibo.periodo'=>$periodo,
+								),
                                 'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
                             ),
+							'conditions'=>array(
+                                'OR'=>[
+                                    'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                                    'Empleado.fechaegreso is null' ,
+                                ],
+                                'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("01-".$periodo)),
+							),
 						),
 				   		'Conceptosrestante'=>array(			
 				   			'Impcli'=>array(
@@ -621,8 +628,8 @@ class ClientesController extends AppController {
 					   			),
 				   			'Conceptostipo'=>array(
 				   				'fields'=>array(
-					   						'Conceptostipo.nombre'
-					   					)
+									'Conceptostipo.nombre','Conceptostipo.id'
+									)
 				   				),	
 			   				'Comprobante'=>array(
 				   				'fields'=>array(
@@ -657,11 +664,12 @@ class ClientesController extends AppController {
 								'conditions'=>$conditionsImpCliHabilitados																								
 							)
 						)			   				   	
-			   		),'conditions' => array(
-					            	'id' => $id,						            						          
-				   			),	
-		   		)
-	   		);
+			   		),
+                    'conditions' => array(
+                                'id' => $id,
+                        ),
+		   		    )
+	   		    );
 		/*AFIP*/
 	   	$tieneMonotributo=False;
       	$tieneIVA=False;
@@ -856,6 +864,7 @@ class ClientesController extends AppController {
 						),
 					);
 		$impclisid=$this->Impcli->find('list',$clienteImpuestosOptions);
+        /*para que es esto??*/
 		$this->set('impclisid', $impclisid);
 
 		$partidos = $this->Partido->find('list');
@@ -1163,6 +1172,45 @@ class ClientesController extends AppController {
 			$this->set('periodomes', $pemes);
 			$this->set('periodoanio', $peanio);
 
+            //A: Es menor que periodo Hasta
+            $esMenorQueHasta = array(
+                //HASTA es mayor que el periodo
+                'OR'=>array(
+                    'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+                        'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+                    ),
+                )
+            );
+            //B: Es mayor que periodo Desde
+            $esMayorQueDesde = array(
+                'OR'=>array(
+                    'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+                        'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+                    ),
+                )
+            );
+            $periodoNull = array(
+                'OR'=>array(
+                    array('Periodosactivo.hasta'=>null),
+                    array('Periodosactivo.hasta'=>""),
+                )
+            );
+            //C: Tiene Periodo Hasta 0 NULL
+            $conditionsImpCliHabilitados = array(
+                //El periodo esta dentro de un desde hasta
+                'AND'=> array(
+                    $esMayorQueDesde,
+                    'OR'=> array(
+                        $esMenorQueHasta,
+                        $periodoNull
+                    )
+                )
+            );
+
 			$grupoclientesActual=$this->Grupocliente->find('all', array(
 				   'contain'=>array(
 				   		'Cliente'=>array(
@@ -1197,10 +1245,24 @@ class ClientesController extends AppController {
 						            'fields'=>array('id','nombre','abreviacion','lugarpago','descripcion'),
 						         ),
 					        	 'Eventosimpuesto'=>array( 
-					        	  'conditions' => array(
+					        	    'conditions' => array(
 							            	 'Eventosimpuesto.periodo' => $pemes."-".$peanio
 							            ),
 					        	  ),
+                                 'Conceptosrestante'=>array(
+									 /*Esto deberiamos llevar solo por que el IVA tiene Saldo A Favor como
+									 Saldo de Libre Disponibilidad y hay que sumarlo en el impuesto*/
+                                     'conditions'=>array(
+                                         'Conceptosrestante.periodo' => $pemes."-".$peanio,
+                                         'Conceptosrestante.conceptostipo_id' => 1
+                                     )
+                                 ),
+                                'Periodosactivo'=>array(
+                                    'conditions'=>$conditionsImpCliHabilitados,
+                                ),
+                                'conditions'=>array(
+                                    'Impcli.impuesto_id NOT IN (select id from impuestos where impuestos.organismo = "banco")'
+                                )
 					       	),
 					       	'Plandepago'=>array(
 				   				'conditions' => array(
@@ -1209,7 +1271,8 @@ class ClientesController extends AppController {
 				   				),
 					       	'order' => array('Cliente.nombre'),
 					       	'conditions'=>array(
-				       			'OR'=>array(
+                                'Cliente.estado' => 'habilitado',
+                                'OR'=>array(
 				            		array('Cliente.fchfincliente'=>null),
 				            		array('Cliente.fchfincliente'=>""),												            		
 					       			'OR'=>array(
@@ -1229,7 +1292,6 @@ class ClientesController extends AppController {
 					                'Grupocliente.estado' => 'habilitado'  ,
 					            ),
 				   'order' => array('Grupocliente.nombre'),
-
 			   )
 			);
 			$grupoclientesHistorial=$this->Grupocliente->find('all', array(
@@ -1292,7 +1354,7 @@ class ClientesController extends AppController {
 					   			),	
 					   		'Impcli'=>array(					         
 					        	 'Eventosimpuesto'=>array(
-					        	  'conditions' => array(
+					        	  		'conditions' => array(
 			        	  					'OR'=>array(
 							            		'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 < '.$peanio.'*1',
 							            		'AND'=>array(
@@ -1302,6 +1364,9 @@ class ClientesController extends AppController {
 							            		),
 							            ),
 					        	  ),
+                                'conditions'=>array(
+                                    'Impcli.impuesto_id NOT IN (select id from impuestos where impuestos.organismo = "banco")',
+                                )
 					       	),
 					       	'Plandepago'=>array(
 				   				'conditions' => array(
@@ -1326,7 +1391,6 @@ class ClientesController extends AppController {
 
 			   )
 			);			
-			
 			$this->set('grupoclientesActual', $grupoclientesActual);
 			$this->set('grupoclientesHistorial', $grupoclientesHistorial);
 					
@@ -1447,7 +1511,9 @@ class ClientesController extends AppController {
 											      'Personasrelacionada',
 												  'Subcliente',
 												  'Provedore',
-												  'Empleado',
+												  'Empleado'=>array(
+                                                      'order'=>'(Empleado.legajo * 1)'
+                                                  ),
 	  										      'Venta'=>array(
 										        	 'Subcliente', 
 											       ),

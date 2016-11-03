@@ -63,4 +63,19 @@ class Conceptosrestante extends AppModel {
 			'order' => ''
 		)
 	);
+	public $hasMany = array(
+		'Usosaldo' => array(
+			'className' => 'Usosaldo',
+			'foreignKey' => 'conceptosrestante_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		)
+	);
 }
