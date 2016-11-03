@@ -20,6 +20,8 @@ class CuentasclientesController extends AppController {
  *
  * @return void
  */
+    
+
 	public function plancuentas($ClienteId = null) 
 	{				
 		$this->loadModel('Cliente');
@@ -40,5 +42,26 @@ class CuentasclientesController extends AppController {
 						);
 		$cliente = $this->Cliente->find('first', $clienteOpc);
 		$this->set('cliente',$cliente);
+	}
+	public function informesumaysaldo($clienteid = null, $periodo = null){
+		$this->loadModel('Cliente');
+		$this->loadModel('Movimiento');
+		$optionCliente = [
+			'contain' => [
+				'Cuentascliente'=>[
+					'Cuenta',
+					'Saldocuentacliente'=>[
+						'conditions'=>[
+							'Saldocuentacliente.periodo'=>$periodo
+						],
+					],
+					'Movimiento'
+				],
+			],
+			'conditions' => ['Cliente.id'=>$clienteid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
+		$this->set('cliente',$cliente);
+		$this->set('periodo',$periodo);
 	}
 }

@@ -41,11 +41,11 @@ class Cuentascliente extends AppModel {
 		)
 	);
 	
-	/*
+
 	public $hasMany = array(
-		'Cliente' => array(
-			'className' => 'Cliente',
-			'foreignKey' => 'cliente_id',
+		'Saldocuentacliente' => array(
+			'className' => 'Saldocuentacliente',
+			'foreignKey' => 'cuentascliente_id',
 			'dependent' => false,
 			'conditions' => '',
 			'fields' => '',
@@ -56,9 +56,9 @@ class Cuentascliente extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
-		'Cuenta' => array(
-			'className' => 'Cuenta',
-			'foreignKey' => 'cuenta_id',
+		'Movimiento' => array(
+			'className' => 'Movimiento',
+			'foreignKey' => 'cuentascliente_id',
 			'dependent' => false,
 			'conditions' => '',
 			'fields' => '',
@@ -70,5 +70,4 @@ class Cuentascliente extends AppModel {
 			'counterQuery' => ''
 		)
 	);
-	*/
 }

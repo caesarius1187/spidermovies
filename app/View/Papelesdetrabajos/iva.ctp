@@ -169,6 +169,12 @@
                         }).appendTo('#EventosimpuestoRealizartarea5Form');
                         $('<input>').attr({
                             type: 'hidden',
+                            id: 'Eventosimpuesto0Conceptosrestante0Monto',
+                            value: saldoLD,
+                            name: 'data[Eventosimpuesto][0][Conceptosrestante][0][monto]'
+                        }).appendTo('#EventosimpuestoRealizartarea5Form');
+                        $('<input>').attr({
+                            type: 'hidden',
                             id: 'Eventosimpuesto0Conceptosrestante0Fecha',
                             value: $.datepicker.formatDate('yy/mm/dd', new Date()),
                             name: 'data[Eventosimpuesto][0][Conceptosrestante][0][fecha]'

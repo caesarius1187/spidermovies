@@ -146,8 +146,14 @@
     <div class="tabsTareaImpuesto_active" onClick="showPapelesDeTrabajo()" id="tab_PapelesDeTrabajo">
         <label style="text-align:center;margin-top:5px;cursor:pointer;">Impuestos</label>
     </div>
+    <div class="tabsTareaImpuesto" onClick="showContabilidadImpuestos()" id="tab_Contabilidad_Impuestos">
+        <label style="text-align:center;margin-top:5px;cursor:pointer;">Contabilizar Impuestos</label>
+    </div>
     <div class="tabsTareaImpuesto" onClick="showPagos()" id="tab_Pagos">
         <label style="text-align:center;margin-top:5px;cursor:pointer;">Pagos</label>
+    </div>
+    <div class="tabsTareaImpuesto" onClick="showContabilidadPagos()" id="tab_Contabilidad_Pagos">
+        <label style="text-align:center;margin-top:5px;cursor:pointer;">Contabilizar Pagos</label>
     </div>
     </div>
 </div>
@@ -721,6 +727,10 @@ foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el eve
         <?php } ?>
 	</div>
 </div><?php /*Fin Preparar Papeles de Trabajo*/?>
+<div id="divContabilidadImpuestos"  class="tareaContabilidadImpuestos index_pdt" style="display:none;">
+</div>
 <div id="divPagar"  class="tareapagos index_pdt" style="display:none;">
+</div>
+<div id="divContabilidadPagar"  class="tareaContabilidadPagar index_pdt" style="display:none;">
 </div>
 <a class="close" href="#close"></a>

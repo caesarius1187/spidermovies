@@ -1222,7 +1222,12 @@ $(document).ready(function() {
     switch($("#"+formnombre+" #ConceptosrestanteConceptostipoId").val()*1){
       case 1:/*Saldos A Favor*/
         $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-        break;     
+          switch(impuestoseleccionado) {
+              case '19':
+                $('#' + formnombre + ' #ConceptosrestanteMonto').closest('div').show();
+              break;
+          }
+          break;
       case 2:/*Retenciones*/
         switch(impuestoseleccionado){
           case '21':/*Actividades Economicas*/

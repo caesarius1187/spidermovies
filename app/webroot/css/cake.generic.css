@@ -1525,7 +1525,7 @@ transition: all 0.4s ease-in-out;
 }
 /** Tabs **/
  .tabsTareaImpuesto{
- 	width:47%;
+ 	width:23%;
  	height:100%;
  	float:left;
  	background-color: #FFF;
@@ -1538,7 +1538,7 @@ transition: all 0.4s ease-in-out;
  	padding: 8px;
  }
  .tabsTareaImpuesto:hover{
- 	width:47%;
+ 	width:23%;
  	height:100%;
  	float:left;
  	background-color: #B6B6B6;
@@ -1552,7 +1552,7 @@ transition: all 0.4s ease-in-out;
  }
 
 .tabsTareaImpuesto_active{
- 	width:47%;
+ 	width:23%;
  	height:100%;
  	float:left;
  	background-color: #1565c0;

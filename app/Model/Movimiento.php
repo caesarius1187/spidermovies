@@ -31,6 +31,13 @@ class Movimiento extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'Cuentascliente' => array(
+			'className' => 'Cuentascliente',
+			'foreignKey' => 'cuentascliente_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
 		)
 	);
 	
