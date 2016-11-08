@@ -20,8 +20,6 @@ class CuentasclientesController extends AppController {
  *
  * @return void
  */
-    
-
 	public function plancuentas($ClienteId = null) 
 	{				
 		$this->loadModel('Cliente');

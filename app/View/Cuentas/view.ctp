@@ -3,7 +3,7 @@
 	    var iTamPantalla = $(window).height();
 	    var iTamTabla = iTamPantalla - 170;
 	    iTamTabla = (iTamTabla < 100) ? 100 : iTamTabla;
-	    $("#divPlanCuentasStandard").attr("style", "max-height:" + iTamTabla + "px; width:100%; overflow:auto");
+	    $("#divPlanCuentasStandard").attr("style", "max-height:" + iTamTabla + "px; width:96%; overflow:auto");
 
 	    $('#txtBuscarCuenta').keyup(function () {
             var valThis = this.value.toLowerCase();
@@ -55,7 +55,7 @@
 	}
 </script>
 
-<div style="width:100%;">
+<div class="index">
 	<div style="width:40%;float:left">
 		<?php
 			echo $this->Html->link(
@@ -76,7 +76,7 @@
 		<input placeholder="Buscar Nro. Cuenta" id="txtBuscarCuenta" type="text" style="float:right; width:80%; margin:5px" />
 	</div>
 </div>
-<div style="width:100%;">
+<div class="index">
 	<table style="margin-bottom:0px"> 		
 		<tr>
 			<td style="width:10%;text-align:left">				
@@ -88,7 +88,7 @@
 		</tr>		
 	</table>		
 </div>
-<div id="divPlanCuentasStandard">
+<div id="divPlanCuentasStandard" class="index">
 	<table>
 		<?php foreach ($cuentas as $cuenta)
 		{ 

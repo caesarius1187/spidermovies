@@ -79,9 +79,9 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
         while (($line = fgets($handler)) !== false) {
                 $line = utf8_decode($line);
             if(strlen($line)!=328){
-                $errorInFileCompra=true;
+                //$errorInFileCompra=true;
                 //echo strlen($line)."line lenght";
-                break;
+                //break;
             }
             $comprasArray[$i] = array();
             $comprasArray[$i]['Compra'] = array();
@@ -127,7 +127,7 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
             <label>Compras: '.$j.'</label>',
             array(
                 'class'=>'buttonImpcli4',
-                'onClick'=>"deletefile('".$dirCompra->name."','".$cliid."','".$periodo."')",
+                'onClick'=>"deletefile('".$dirCompra->name."','".$cliid."','compras','".$periodo."')",
                 'style'=>'white-space: nowrap;overflow: hidden;text-overflow: ellipsis;',
                 'id'=>'',
             ),
@@ -196,7 +196,7 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
             <label>Alicuotas: '.$j.'</label>',
             array(
                 'class'=>'buttonImpcli4',
-                'onClick'=>"deletefile('".$dirAlicuota->name."','".$cliid."','".$periodo."')",
+                'onClick'=>"deletefile('".$dirAlicuota->name."','".$cliid."','alicuotas','".$periodo."')",
                 'style'=>'white-space: nowrap;overflow: hidden;text-overflow: ellipsis;',
                 'id'=>'',
             ),

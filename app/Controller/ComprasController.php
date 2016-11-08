@@ -349,8 +349,6 @@ class ComprasController extends AppController {
 		$this->layout = 'ajax';
 		$this->set('data', $data);
 		$this->render('serializejson');
-
-
 		//return $this->redirect(array('controller'=>'compras', 'action' => 'importar',$this->request->data['Compra'][0]['cliente_id'],$this->request->data['Compra'][0]['periodo']));
 	}
 	public function deletefile($name=null,$cliid=null,$folder=null,$periodo=null){
@@ -365,7 +363,14 @@ class ComprasController extends AppController {
 				$this->Session->setFlash(__('El Archivo NO ha sido eliminado.Por favor nuevamente intente mas tarde.'));
 			}
 		}else{
-			$this->Session->setFlash(__('No se puede acceder al archivo'.$file));
+			$error="";
+			if(is_file( $file )){
+				$error.=" No es archivo.";
+			}
+			if(is_readable( $file ) ){
+				$error.=" No se puede Leer.";
+			}
+			$this->Session->setFlash(__($error.": ".$file));
 		}
 		return $this->redirect(
 			array(

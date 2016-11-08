@@ -657,12 +657,21 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                     );
                                     $condicioniva = 'monotributista';//defaultavalue
                                     $mitipodebito = 'Debito Fiscal';//Default Value
+                                    $classcondicionIVA="";
                                     foreach ($supercomprobantes as $micomprobante) {
                                         if ($venta['Venta']['comprobantetipo'] == $micomprobante['Comprobante']['codigo']) {
-                                            if ($micomprobante['Comprobante']['tipo'] == 'A' || $micomprobante['Comprobante']['tipo'] == 'B') {
+                                            if ($micomprobante['Comprobante']['tipo'] == 'A' ) {
                                                 $condicioniva = 'Responsable Inscripto';//defaultavalue
-                                            } else {
-                                                $condicioniva = 'Monotributista';
+                                            } else  if ($micomprobante['Comprobante']['tipo'] == 'B'){
+                                                //aca me tengo que fijar si no tiene cuit es consumidor final
+                                                //y si no tiene cuit voy a marcar monotributista pero tengo q resaltarlo
+                                                //para que se chekee si hay que buscar ese cuit y chekiar q no sea excento
+                                                if($venta['Venta']['identificacionnumero'] == '20000000001'){
+                                                    $condicioniva = '"Cons. F/Exento/No Alcanza"';
+                                                }else{
+                                                    $condicioniva = 'Monotributista';
+                                                    $classcondicionIVA="controlarInput";
+                                                }
                                             }
                                             if ($micomprobante['Comprobante']['tipodebitoasociado'] == 'Debito fiscal o bien de uso') {
                                                 $mitipodebito = 'Debito Fiscal';
@@ -682,7 +691,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'style' => 'width:80px',
                                             'div' => array('class' => 'inputAControlar'),
                                             'defaultoption' => $condicioniva,
-                                            'class' => 'filtrocondicioniva',
+                                            'class' => 'filtrocondicioniva '.$classcondicionIVA,
                                         )
                                     );
                                     //esto no trae asi que vamos a tener que elegir

@@ -2439,6 +2439,9 @@ transition: all 0.4s ease-in-out;
 .inputAControlar{
 	background-color: #FFA500;
 }
+.controlarInput{
+	background-color: #E4E444;
+}
 /*SUSS*/
 .tbl_suss td, th{
 	border: 1px solid #000;

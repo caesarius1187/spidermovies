@@ -3,11 +3,11 @@
 	    var iTamPantalla = $(window).height();
 	    var iTamTabla = iTamPantalla - 160;
 	    iTamTabla = (iTamTabla < 100) ? 100 : iTamTabla;
-	    $("#divPlanCuentasCliente").attr("style", "max-height:" + iTamTabla + "px; width:100%; overflow:auto");	    
+	    $("#divPlanCuentasCliente").attr("style", "max-height:" + iTamTabla + "px; width:96%; overflow:auto");
 	});
 </script>
 
-<div style="width:98%; margin:2%;">
+<div style="" class="index">
 	<div style='float:left; width:70%'> 
 		Cliente: <?php echo $cliente['Cliente']['nombre']; ?>
 	</div>
@@ -30,8 +30,8 @@
 
 	</div>
 </div>
-<div style="width:99%;">	
-	<table style="margin-bottom:0px">			
+<div class="index">
+	<table style="margin-bottom:0px">
 		<tr>
 			<th style="width:30%;text-align:left">Cuenta Nro.</th>
 			<th style="width:50%;text-align:left">Descripcion</th>			
@@ -40,7 +40,7 @@
 		</tr>		
 	</table>	
 </div>	
-<div id="divPlanCuentasCliente"  style="width:100%;">	
+<div id="divPlanCuentasCliente"  class="index">
 	<table>			
 		<?php foreach ($cuentasclientes as $cuentascliente)
 		{ ?>
