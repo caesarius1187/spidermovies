@@ -48,6 +48,19 @@ class Impuesto extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
+		'Asientoestandare' => array(
+			'className' => 'Asientoestandare',
+			'foreignKey' => 'impuesto_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
 		'Vencimiento' => array(
 			'className' => 'Vencimiento',
 			'foreignKey' => 'impuesto_id',

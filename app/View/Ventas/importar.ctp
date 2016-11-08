@@ -194,7 +194,8 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 foreach ($ventasArray as $venta) {
                     $mismocomprobante = $venta['Venta']['comprobantenumero']==$lineAlicuota['comprobantenumero'];
                     $mismopuntodeventa = $venta['Venta']['puntodeventa']==$lineAlicuota['puntodeventa'];
-                    if($mismocomprobante&&$mismopuntodeventa){
+                    $mismotipocomprobante = $venta['Venta']['comprobantetipo']==$lineAlicuota['comprobantetipo'];
+                    if($mismocomprobante&&$mismopuntodeventa&&$mismotipocomprobante){
                         if(!isset($venta['Alicuota'])){
                             $venta['Alicuota']=array();
                         }
@@ -559,6 +560,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             $i=1;
             $cantVentasYaguardadas = 0;
             foreach ($ventasArray as $keyVenta => $venta) {
+                $numalicuota=0;
                 foreach ($venta['Alicuota'] as $keyAlicuota => $alicuota) {
                     //hay que controlar que las venas anteriores cargadas no contengan la venta que estamos por mostrar
                     $ventaCargadaPreviamente = false;
@@ -567,6 +569,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                     $alicuotaNuevo = customSearch($alicuota['alicuotaiva'],$alicuotas);
                     $numeroComprobante = ltrim($venta['Venta']['comprobantenumero'], '0');
                     $clienteNuevo = customSearch(ltrim($venta['Venta']['identificacionnumero'], '0'),$subclientes);
+
                     foreach ($ventasperiodo as $ventaYaCargada) {
                         $igualTipoComprobante=false;
                         $igualPuntoDV=false;
@@ -654,12 +657,21 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                     );
                                     $condicioniva = 'monotributista';//defaultavalue
                                     $mitipodebito = 'Debito Fiscal';//Default Value
+                                    $classcondicionIVA="";
                                     foreach ($supercomprobantes as $micomprobante) {
                                         if ($venta['Venta']['comprobantetipo'] == $micomprobante['Comprobante']['codigo']) {
-                                            if ($micomprobante['Comprobante']['tipo'] == 'A' || $micomprobante['Comprobante']['tipo'] == 'B') {
+                                            if ($micomprobante['Comprobante']['tipo'] == 'A' ) {
                                                 $condicioniva = 'Responsable Inscripto';//defaultavalue
-                                            } else {
-                                                $condicioniva = 'Monotributista';
+                                            } else  if ($micomprobante['Comprobante']['tipo'] == 'B'){
+                                                //aca me tengo que fijar si no tiene cuit es consumidor final
+                                                //y si no tiene cuit voy a marcar monotributista pero tengo q resaltarlo
+                                                //para que se chekee si hay que buscar ese cuit y chekiar q no sea excento
+                                                if($venta['Venta']['identificacionnumero'] == '20000000001'){
+                                                    $condicioniva = '"Cons. F/Exento/No Alcanza"';
+                                                }else{
+                                                    $condicioniva = 'Monotributista';
+                                                    $classcondicionIVA="controlarInput";
+                                                }
                                             }
                                             if ($micomprobante['Comprobante']['tipodebitoasociado'] == 'Debito fiscal o bien de uso') {
                                                 $mitipodebito = 'Debito Fiscal';
@@ -679,7 +691,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'style' => 'width:80px',
                                             'div' => array('class' => 'inputAControlar'),
                                             'defaultoption' => $condicioniva,
-                                            'class' => 'filtrocondicioniva',
+                                            'class' => 'filtrocondicioniva '.$classcondicionIVA,
                                         )
                                     );
                                     //esto no trae asi que vamos a tener que elegir
@@ -734,37 +746,37 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                     echo $this->Form->input('Venta.' . $i . '.iva', array(
                                         'style' => 'max-width: 100px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'IVA' : '',
-                                        'value' => $alicuota['impuestoliquidado'] * 1,
+                                        'value' => $alicuota['impuestoliquidado']*1,
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.ivapercep', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'IVA Perc.' : '',
-                                        'value' => $venta['Venta']['percepcionesnocategorizados'] * 1,
+                                        'value' => $numalicuota==0?$venta['Venta']['percepcionesnocategorizados']*1:0,
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.iibbpercep', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'IIBB Perc.' : '',
-                                        'value' => $venta['Venta']['importeingresosbrutos'] * 1,
+                                        'value' => $numalicuota==0?$venta['Venta']['importeingresosbrutos']*1:0,
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.actvspercep', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'Ac.Vs. Perc.' : '',
-                                        'value' => $venta['Venta']['importeimpuestosmunicipales'] * 1,
+                                        'value' => $numalicuota==0?$venta['Venta']['importeimpuestosmunicipales']*1:0,
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.impinternos', array(
                                         'label' => ($i + 9) % 10 == 0 ? 'Imp.Inter.' : '',
                                         'style' => 'max-width: 70px;',
-                                        'value' => $venta['Venta']['importeimpuestosinternos'] * 1,
+                                        'value' => $numalicuota==0?$venta['Venta']['importeimpuestosinternos']*1:0,
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.nogravados', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'No Gravado' : '',
-                                        'value' => $venta['Venta']['importeconceptosprecionetogravado'] * 1,
+                                        'value' => $numalicuota==0?$venta['Venta']['importeconceptosprecionetogravado']*1:0,
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.excentos', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'Exento IVA' : '',
-                                        'value' => $venta['Venta']['importeoperacionesexentas'] * 1,
+                                        'value' => $numalicuota==0?$venta['Venta']['importeoperacionesexentas']*1:0,
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.exentosactividadeseconomicas', array(
                                         'label' => ($i + 9) % 10 == 0 ? 'Exen. Ac.Ec' : '',
@@ -779,11 +791,27 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                     //$lineVenta['percepcionesnocategorizados']=substr($line, 138,15);
                                     //$lineVenta['importepercepcionespagosacuenta']=substr($line, 168,15);
                                     echo $this->Form->input('Venta.' . $i . '.periodo', array('type' => 'hidden', 'value' => $periodo));
+                                    //si hay mas de una alicuota este total se debe recalcular por que sino se va a cargar 2(n) veces uno para cada alicuota
+                                    if(count($venta['Alicuota'])>=2){
+                                        $totalrecalculado = 0;
+                                        $totalrecalculado += $alicuota['importenetogravado'] * 1;
+                                        $totalrecalculado += $alicuota['impuestoliquidado'];
+                                        if($numalicuota==0){
+                                            $totalrecalculado += $venta['Venta']['percepcionesnocategorizados'];
+                                            $totalrecalculado += $venta['Venta']['importeingresosbrutos'];
+                                            $totalrecalculado += $venta['Venta']['importeimpuestosmunicipales'];
+                                            $totalrecalculado += $venta['Venta']['importeimpuestosinternos'];
+                                            $totalrecalculado += $venta['Venta']['importeconceptosprecionetogravado'];
+                                        }
+                                    }else{
+                                        $totalrecalculado = $venta['Venta']['importetotaloperacion'] * 1;
+                                    }
                                     echo $this->Form->input('Venta.' . $i . '.total', array(
                                         'label' => ($i + 9) % 10 == 0 ? 'Total.' : '',
                                         'style' => 'max-width: 100px;',
-                                        'value' => $venta['Venta']['importetotaloperacion'] * 1,
+                                        'value' => $totalrecalculado,
                                     ));
+                                    $numalicuota++;
                                     //echo "<label>".json_encode($venta)."</label>";
                                     $i++;
                                     ?>

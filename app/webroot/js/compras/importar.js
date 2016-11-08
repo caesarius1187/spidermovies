@@ -45,13 +45,13 @@ $(document).ready(function() {
         return false;
     });
 });
-function deletefile(name,cliid,periodo) {
+function deletefile(name,cliid,folder,periodo) {
     var r = confirm("Esta seguro que desea eliminar este archivo?. Es una accion que no podra deshacer.");
     if (r == true) {
         var data = "";
         $.ajax({
             type: "post",  // Request method: post, get
-            url: serverLayoutURL + "/compras/deletefile/" + name + "/" + cliid + "/" + periodo,
+            url: serverLayoutURL + "/compras/deletefile/" + name + "/" + cliid + "/" + folder+ "/" + periodo,
             // URL to request
             data: data,  // post data
             success: function (response) {

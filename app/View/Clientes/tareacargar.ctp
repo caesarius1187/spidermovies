@@ -1,10 +1,17 @@
 <?php
+echo $this->Html->css('bootstrapmodal');
+
 echo $this->Html->script('jquery-ui.js',array('inline'=>false));
+
 echo $this->Html->script('languages.js',array('inline'=>false));
 echo $this->Html->script('numeral.js',array('inline'=>false));
 echo $this->Html->script('moment.js',array('inline'=>false));
 echo $this->Html->script('jquery-calx-2.2.6',array('inline'=>false));
+
 echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
+echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
+echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
+
 echo $this->Html->script('clientes/tareacargar',array('inline'=>false));
 //Vamos a guardar las variables de configuracion del cliente para consultarlas a todas de las misma manera
 /*AFIP*/
@@ -16,7 +23,22 @@ $tieneImpuestoInterno=$cliente["Cliente"]['tieneImpuestoInterno'];
 $tieneAgenteDePercepcionIIBB=$cliente["Cliente"]['tieneAgenteDePercepcionIIBB'];
 /*DGRM*/
 $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePercepcionActividadesVarias'];
+echo $this->Form->input('cliid',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
+echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
+
 ?>
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->
+<!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css"/>-->
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.1.2/css/buttons.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.1.2/css/select.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.0.2/css/responsive.dataTables.min.css"/>
+
+<!--<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>-->
+<!--<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>-->
+
+<script src="https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
 <!--<div class="" style="float:none; width: 100%; margin: 0px 4px">  -->
   <div class="index" style="padding: 0px 1%; margin-bottom: 10px;" id="headerCliente">
       <div style="width:30%; float: left;padding-top:10px">
@@ -100,20 +122,12 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
           DGRM(solo para Ventas)
               Agente de Percepción de Actividades Varias(TISH)(Agregar Este Impuesto)
           */
-          
-          
           echo $this->Form->input('jsonallcomprobantes',array(
                   'value'=>json_encode($allcomprobantes) ,
                   'type'=>'hidden',
                   "id"=>"jsonallcomprobantes"
                   )
           );
-          /*echo $this->Form->input('jsonlocalidadpuntosdeventa',array(
-                  'value'=>json_encode($localidadpuntosdeventa) ,
-                  'type'=>'hidden',
-                  "id"=>"jsonlocalidadpuntosdeventa"
-                  )
-          );*/
           echo $this->Html->link(
               "Importar Ventas",
               array(
@@ -123,7 +137,17 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                   $periodo
               ),
               array('class' => 'buttonImpcli',
-                  'style'=> 'width:'
+                  'style'=> 'margin-right: 8px;width:141px'
+              )
+          );
+          echo $this->Html->link(
+              "Contabilizar Ventas",
+              array(
+
+              ),
+              array('class' => 'buttonImpcli',
+                  'id'=>'buttonCargarAsientosVenta',
+                  'style'=> 'margin-right: 8px;width:141px',
               )
           );
         echo $this->Form->create('Venta',array(
@@ -499,7 +523,17 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
                   $periodo
               ),
               array('class' => 'buttonImpcli',
-                  'style'=> 'width:132px;'
+                  'style'=> 'margin-right: 8px;width:154px',
+              )
+          );
+          echo $this->Html->link(
+              "Contabilizar Compras",
+              array(
+
+              ),
+              array('class' => 'buttonImpcli',
+                  'id'=>'buttonCargarAsientosCompra',
+                  'style'=> 'margin-right: 8px;width:154px',
               )
           );
           echo $this->Form->create('Compra',array(
@@ -1164,5 +1198,13 @@ $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePerc
        
     </div>
 </div>
-
 <!-- Fin Popin Nuevo Domicilio -->
+<!-- Popin Asientos Venta -->
+<a href="#x" class="overlay" id="popinAsientosVenta"></a>
+<div class="popup">
+    <div id="divAsientosVenta" >
+
+
+    </div>
+</div>
+<!-- Fin Popin Asientos Venta -->
