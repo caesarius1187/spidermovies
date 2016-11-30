@@ -43,6 +43,21 @@ class CuentasclientesController extends AppController {
 		$cliente = $this->Cliente->find('first', $clienteOpc);
 		$this->set('cliente',$cliente);
 	}
+	public function GuardarDescripcion($CuentaClienteId, $Descripcion)
+	{
+		$this->Cuentascliente->id = $CuentaClienteId;
+		if($this->Cuentascliente->saveField('descripcioncuenta', $Descripcion))
+		{
+			$data['respuesta']='Descripcion modificada exitosamente.';
+		}
+		else
+		{
+			$data['respuesta']='Error al modificar la descripcion.';
+		}
+		$this->set('data',$data);
+		$this->layout = 'ajax';
+		$this->render('serializejson');	
+	}
 	public function informesumaysaldo($clienteid = null, $periodo = null){
 		$this->loadModel('Cliente');
 		$this->loadModel('Movimiento');
