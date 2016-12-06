@@ -198,7 +198,17 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 																	)
 													); 	
 								?>
-							</li>	 
+							</li>
+							<li class='has-sub'>
+								<?php
+								echo $this->Html->link("Plan de cuentas",
+									array(
+										'controller' => 'cuentasclientes',
+										'action' => 'plancuentas',
+									)
+								);
+								?>
+							</li>
 						</ul>
 					</li>
 					<li class=' has-sub' id='ligestion'><a href='#'><span>Gestion</span></a>

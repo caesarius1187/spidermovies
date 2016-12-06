@@ -465,13 +465,15 @@ class ClientesController extends AppController {
 
             $this->set('clientes', $clientes3);
 			$this->Tareasxclientesxestudio->recursive = 0;
-			$tareascliente = $this->Tareasxclientesxestudio->find('all',array(
-													'order' => 'Tareasxclientesxestudio.orden ASC',
-													'conditions' => array(
-										                'Tareasxclientesxestudio.estudio_id' => $this->Session->read('Auth.User.estudio_id') ,
-										                'Tareasxclientesxestudio.estado' => 'habilitado' , 
-										            ),
-										            'contain'=>array('Tareascliente')));
+			$tareascliente = $this->Tareasxclientesxestudio->find('all',[
+						'contain'=>['Tareascliente'],
+						'order' => 'Tareasxclientesxestudio.orden ASC',
+						'conditions' => [
+							'Tareasxclientesxestudio.estudio_id' => $this->Session->read('Auth.User.estudio_id') ,
+							'Tareasxclientesxestudio.estado' => 'habilitado' ,
+						],
+				]
+			);
 			$this->set('tareas',$tareascliente);
 			$mostrarInforme=true;
 			$this->set('mostrarInforme',$mostrarInforme);

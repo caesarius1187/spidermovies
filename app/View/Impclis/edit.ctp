@@ -54,7 +54,38 @@ if(!$showTheForm){?>
             <td><?php echo $this->Form->input('clave'); ?></td>
             <?php } ?>
             <?php if( $this->request->data['Impuesto']['id']==4/*Monotributo*/){?>
-            <td><?php echo $this->Form->input('categoriamonotributo', array('label' => 'Categori&oacute;a Monotributo','type'=>'select','options'=>$categoriasmonotributos));?></td>          
+            <td>
+                <?php
+                echo $this->Form->input('categoriamonotributo',
+                    [
+                        'label' => 'Categori&oacute;a Monotributo',
+                        'type'=>'select','options'=>$categoriasmonotributos
+                    ]);?>
+            </td>
+            <td >
+                <?php
+                echo $this->Form->input('monotributoadherentes',
+                    [
+                        'label' => 'Adherentes',
+                        'div'=>['style'=>"width: 200px;"]
+                    ]);?>
+            </td>
+            <td >
+            <?php
+                echo $this->Form->input('monotributojubilacion',
+                    [
+                        'label' => 'paga Jubilacion',
+                        'div'=>['style'=>"width: 200px;"]
+                    ]);?>
+            </td>
+            <td >
+                <?php
+                echo $this->Form->input('monotributoobrasocial',
+                    [
+                        'label' => 'paga Obra Soc.',
+                        'div'=>['style'=>"width: 200px;"]
+                    ]);?>
+            </td>
             <?php } ?>
             <td width="275"><?php echo $this->Form->input('descripcion', array('label' => 'Descripci&oacute;n'));?></td>   
 

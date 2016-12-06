@@ -89,15 +89,13 @@
 										$subtotalVentaP0Mueble += $venta[0]['total'];					
 									}
 									$subtotalVentaP0Total += $venta[0]['total'];
-	
 								}else{
 									if($sumaen=='locacionservicio'){
-										$subtotalVentaP0Locacion -= $venta[0]['total'];							
+										$subtotalVentaP0Locacion -= $venta[0]['total'];
 									}else{
-										$subtotalVentaP0Mueble -= $venta[0]['total'];					
+										$subtotalVentaP0Mueble -= $venta[0]['total'];
 									}
 									$subtotalVentaP0Total -= $venta[0]['total'];
-	
 								}
 							}
 						}
@@ -339,9 +337,20 @@
 					}
 					$montoSIPA=$categoriaActual['Categoriamonotributo']['sipa'];
 					$montoObraSocial=$categoriaActual['Categoriamonotributo']['obrasocial'];
+
 					echo $this->Form->input('apagarMonotributo',array('value' => $montoAPagar,'type'=>'hidden' ));
+					//solo si el impcli esta marcado como "paga jubilacion"
+					if(!($impcli['Impcli']['monotributojubilacion']*1)){
+						$montoSIPA = 0;
+					}
 					echo $this->Form->input('apagarAutonomo',array('value' => $montoSIPA,'type'=>'hidden' ));
-					echo $this->Form->input('apagarObrasocial',array('value' => $montoObraSocial,'type'=>'hidden' ));
+					//Solo si el impcli esta marcado como "paga obra social" y x cant adherentes
+					if(!($impcli['Impcli']['monotributoobrasocial']*1)){
+						$montoObraSocial = 0;
+					}else{
+						$montoObraSocial = $montoObraSocial*$impcli['Impcli']['monotributoadherentes'];
+					}echo $this->Form->input('apagarObrasocial',array('value' => $montoObraSocial,'type'=>'hidden' ));
+
 					?>
 				</td>
 			</tr>

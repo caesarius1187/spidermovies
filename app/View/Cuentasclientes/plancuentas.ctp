@@ -4,6 +4,11 @@
 	    var iTamTabla = iTamPantalla - 160;
 	    iTamTabla = (iTamTabla < 100) ? 100 : iTamTabla;
 	    $("#divPlanCuentasCliente").attr("style", "max-height:" + iTamTabla + "px; width:96%; overflow:auto");
+        $("#cuentasclientePlancuentasForm").submit(function(){
+            var cliid = $("#cuentasclienteClis").val();
+             location.href = serverLayoutURL+"/cuentasclientes/plancuentas/"+cliid ;
+            return false;
+        });
 	});
 	function EditarDescripcion(CuentaCliId)
 	{
@@ -50,8 +55,35 @@
 		});
 	}
 </script>
-
+<?php if(!isset($cliente['Cliente']))
+{ ?>
+	<div id="Formhead" class="index" style="">
+        Seleccionar cliente para ver el plan de cuentas
+		<?php
+		echo $this->Form->create('cuentascliente',array('action' => 'plancuentas')); ?>
+		<table class="" style="width:auto;">
+			<tr>
+				<td style ="">
+					<?php
+					echo $this->Form->input('clis', array(
+						//'multiple' => 'multiple',
+						'type' => 'select',
+						'class'=>'chosen-select',
+						'label' => false,
+						'empty' => 'Seleccionar cliente',
+                        'options'=>$clientes
+					)); ?>
+				</td><!--Clientes--><!--Grupo de Clientes-->
+				<td>
+					<?php echo $this->Form->end(__('Aceptar')); ?>
+				</td>
+			</tr>
+		</table>
+	</div> <!--End Clietenes_avance-->
+<?php
+}else{?>
 <div style="" class="index">
+
 	<div style='float:left; width:70%'> 
 		Cliente: <?php echo $cliente['Cliente']['nombre']; ?>
 	</div>
@@ -71,7 +103,6 @@
                                 )                               
                               );  
         ?>
-
 	</div>
 </div>
 <div class="index">
@@ -95,13 +126,13 @@
 			</td>
 			<td style="width:50%;text-align:left"> 
 				<?php 
-					$DescCuenta = $cuentascliente['Cuentascliente']['descripcioncuenta'];
+					$DescCuenta = $cuentascliente['Cuentascliente']['nombre'];
 					$CuentaCliId = $cuentascliente['Cuentascliente']['id'];
 				 ?>
-				<label id="lblDescripcionCuenta_<?php echo $CuentaCliId;?>">
+				<label id="lblDescripcionCuenta_<?php echo $CuentaCliId;?>" onclick="EditarDescripcion('<?php echo $CuentaCliId;?>')" />
 				<?php echo $DescCuenta;?>
 				</label>				
-				<input id="txtDescripcionCuenta_<?php echo $CuentaCliId;?>" type="text" value="" style="display:none;"/>				
+				<input id="txtDescripcionCuenta_<?php echo $CuentaCliId;?>" type="text" value="" style="display:none;" "/>
 			</td>		
 			<td style="width:10%;text-align:center">
 				<?php 
@@ -132,3 +163,4 @@
 		} ?>		
 	</table>
 </div>
+<?php } ?>

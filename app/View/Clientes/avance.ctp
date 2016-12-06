@@ -193,8 +193,9 @@
               }
             }
             if($tarea["Tareasxclientesxestudio"]['tipo']=="impuesto"){
-              //tarea tipo impuesto ?>
-              <td class=""> <!--Tbl 1.2-->
+              //tarea tipo impuesto
+              if($tarea['Tareascliente']['id']=='5'/*Preparar Papeles de trabajo*/) {?>
+                <td class=""> <!--Tbl 1.2-->
                   <?php 
                   $hayImpuestoRelacioado=false;
                   foreach ($cliente["Impcli"] as $impcli){ 
@@ -218,9 +219,27 @@
                     mostrarBotonImpuesto($this, $impcli,$montovto ,$periodoSel,$pagado) ;
                   } 
                  ?>
-              </td>       
-            <?php 
-            }  
+              </td>
+            <?php
+              }else if($tarea['Tareascliente']['id']=='19'/*Contabilizar*/) { ?>
+                <td class=""> <!--Tbl 1.2-->
+                    <?php
+                    $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
+                    echo $this->Form->button(
+                        'Sumas y Saldos',
+                        array(
+                            'class'=>'buttonImpcli0',
+                            'onClick'=>"abrirsumasysaldos(".$paramsPrepPapeles.")",
+                            'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
+                        ),
+                        array());
+                    ?>
+                </td>
+                <?php
+              }else{
+                echo "<td></td>";
+              }
+            }
           } ?>
         </tr>
                         

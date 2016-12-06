@@ -46,7 +46,7 @@
                     <?php echo $cuentascliente['Cuenta']['numero']; ?>
                 </td>
                 <td>
-                    <?php echo $cuentascliente['Cuenta']['nombre']; ?>
+                    <?php echo $cuentascliente['nombre']; ?>
                 </td>
                 <?php
                 $saldoCalculado = 0;

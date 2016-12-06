@@ -460,6 +460,7 @@ $(document).ready(function() {
                     $("#ConceptosrestanteConceptostipoId").children('option').hide();
                     $("#ConceptosrestanteConceptostipoId").children("option[value=1]").show();
                     $("#ConceptosrestanteConceptostipoId").children("option[value=2]").show();
+                    $("#ConceptosrestanteConceptostipoId").children("option[value=3]").show();
                     $("#ConceptosrestanteConceptostipoId").children("option[value=4]").show();
                     $("#ConceptosrestanteConceptostipoId").children("option[value=5]").show();
                     $("#ConceptosrestanteConceptostipoId").children("option[value=10]").show();

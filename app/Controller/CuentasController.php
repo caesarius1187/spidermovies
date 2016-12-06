@@ -66,7 +66,7 @@ class CuentasController extends AppController {
 			$this->Cuentascliente->create();
 			$this->Cuentascliente->set('cliente_id',$ClienteId);
 			$this->Cuentascliente->set('cuenta_id',$CuentaId);
-			$this->Cuentascliente->set('descripcioncuenta',$CuentaDesc['Cuenta']['nombre']);
+			$this->Cuentascliente->set('nombre',$CuentaDesc['Cuenta']['nombre']);
 			if ($this->Cuentascliente->save()) 
 			{ 				
 				$data['respuesta']='Cuenta activada correctamente.';

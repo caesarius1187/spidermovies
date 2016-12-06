@@ -343,77 +343,6 @@ $(document).ready(function() {
         var win = window.open(serverLayoutURL+'/papelesdetrabajos/iva/'+impcliid+'/'+periodo , '_blank');
     }
 /* 5  agregar Papel de Trabajo -- ejecutar la funcion que agrega el papel de trabajo cargado en el formulario*/
-  /*function agregarPapeldeTrabajo(){
-    clienteid = $('#form_prepararPapeles #EventosimpuestoClienteid').val();
-    item = $('#form_prepararPapeles #EventosimpuestoItem').val();
-    prov = $('#form_prepararPapeles #EventosimpuestoPartidoId').val();
-    municipio = $('#form_prepararPapeles #EventosimpuestoLocalidadeId').val();
-
-    if(item === undefined){
-      if(prov === undefined) {
-        if(municipio === undefined) {
-            tipopago = " "; 
-        }else{
-          tipopago = municipio; 
-        } 
-      } else {
-         tipopago = prov;    
-      }
-    } else {
-      tipopago = item;    
-    }
-    id=0;
-
-    eventId = $('#form_prepararPapeles #EventosimpuestoEventoId').val();
-    eventId2= $('#form_prepararPapeles #EventosimpuestoId').val();
-    periodo = $('#periodoSel').val();
-    impcliid = $('#form_prepararPapeles #EventosimpuestoImpcliid').val();
-
-    montovto = $('#form_prepararPapeles #EventosimpuestoMontovto').val();
-    fchvto = $('#form_prepararPapeles #EventosimpuestoFchvto').val();
-    monc = $('#form_prepararPapeles #EventosimpuestoMonc').val();
-    descripcion = $('#form_prepararPapeles #EventosimpuestoDescripcion').val();
-
-    error="";
-    if(monc==""){
-      error+="Debe cargar monto/n";
-    }
-    if(fchvto==""){
-      error+="Debe cargar Fecha de Vencimiento/n";
-    }
-    if(eventId!=""){
-      id=eventId;
-    }
-    if(eventId2!=""){
-      id=eventId2;
-    }
-    if(error==""){
-     var datas =  eventId2+"/"+periodo+"/"+impcliid+"/"+montovto+"/"+fchvto+"/"+monc+"/"+descripcion;
-     var data ="";
-     $.ajax({
-           type: "post",  // Request method: post, get
-           url: serverLayoutURL+"/eventosimpuestos/realizartarea5/"+id+"/"+periodo+"/"+impcliid+"/"+montovto+"/"+fchvto+"/"+monc+"/"+descripcion+"/"+tipopago, // URL to request
-           data: data,  // post data
-           success: function(response) {
-                        var resp = response.split("&&");
-                        var respuesta=resp[1];
-                        var error=resp[0];
-                        var cant=resp[3];                      
-                        $('#buttonImpCli'+impcliid+' label').html(cant);
-                        callAlertPopint(respuesta); 
-                        $('#EventosimpuestoHaycambios').val(1);
-                   },
-           error:function (XMLHttpRequest, textStatus, errorThrown) {
-                  alert(textStatus);
-                 
-          }
-      });
-      return false;    
-    }else{
-      callAlertPopint(error);
-      return false;    
-    }
-  }  */
   function agregarPapeldeTrabajo(){
     
     if(error==""){
@@ -733,3 +662,7 @@ $(document).ready(function() {
             });
       return false;
   }
+/* 19 Tarea Contabilizar*/
+    function abrirsumasysaldos(clienteid,periodo){
+        var win = window.open(serverLayoutURL+'/cuentasclientes/informesumaysaldo/'+clienteid+'/'+periodo , '_blank');
+    }

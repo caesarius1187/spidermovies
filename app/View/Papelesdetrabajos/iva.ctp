@@ -1804,15 +1804,16 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     }
                 }
         }
-        foreach ($cliente['Impcli'][0]['Conceptosrestante'] as $key => $conceptosrestante) {
-            if($conceptosrestante['conceptostipo_id']=='12'/*Decreto 814*/){
-                //tenemos que agregar campos como
-    //                directo
-    //                prorrateable
-    //                creditofiscal/restirucioncreditofiscal
-                $TotalDcto814_Directo += $conceptosrestante['montoretenido'];
+            $TotalDcto814_Directo=0;
+            foreach ($cliente['Impcli'][0]['Conceptosrestante'] as $key => $conceptosrestante) {
+                if($conceptosrestante['conceptostipo_id']=='12'/*Decreto 814*/){
+                    //tenemos que agregar campos como
+        //                directo
+        //                prorrateable
+        //                creditofiscal/restirucioncreditofiscal
+                    $TotalDcto814_Directo += $conceptosrestante['montoretenido'];
+                }
             }
-        }
 
         ?>
             <tr>
@@ -2184,7 +2185,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 <td colspan="2">Computable Total</td>
             </tr>
             <tr>
-                <td><?php echo $TotalDcto814['Directo']['total'] ?></td>
+                <td><?php
+                    $TotalDcto814['Directo']['total'] =  $TotalDcto814_Directo;
+                    echo $TotalDcto814['Directo']['total'] ?></td>
                 <td><?php echo $TotalDcto814['Prorateable']['total'] ?></td>
                 <td><?php echo $TotalDcto814['Prorateable']['total'] * 0.5000 ?></td>
                 <td><?php echo $TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'] ?></td>
