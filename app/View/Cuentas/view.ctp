@@ -109,7 +109,9 @@
 				<label><?php echo h($cuenta['Cuenta']['numero']); ?></label>
 			</td>			
 			<td style="width:60%">
-				<?php echo h($cuenta['Cuenta']['nombre']); ?>
+				<label id="lblNombreCuenta_<?php echo $CuentaId ?>">
+					<?php echo h($cuenta['Cuenta']['nombre']); ?>
+				</label>
 			</td>			
 		</tr>		
 		<?php 

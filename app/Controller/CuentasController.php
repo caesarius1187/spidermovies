@@ -51,13 +51,22 @@ class CuentasController extends AppController {
 	public function activar($ClienteId,$CuentaId,$Activo)
 	{
 		$this->loadModel('Cuentascliente');
-
+		$this->loadModel('Cuenta');
 		if ($Activo == "1")
 		{
 			//Activar			
+
+			$optionsCuenta = [
+				'contain'=>[],
+				'conditions' => ['Cuenta.id' => $CuentaId], 
+				'fields'=> ['Cuenta.nombre']				
+			];
+			$CuentaDesc = $this->Cuenta->find('first', $optionsCuenta);
+
 			$this->Cuentascliente->create();
 			$this->Cuentascliente->set('cliente_id',$ClienteId);
 			$this->Cuentascliente->set('cuenta_id',$CuentaId);
+			$this->Cuentascliente->set('descripcioncuenta',$CuentaDesc['Cuenta']['nombre']);
 			if ($this->Cuentascliente->save()) 
 			{ 				
 				$data['respuesta']='Cuenta activada correctamente.';
