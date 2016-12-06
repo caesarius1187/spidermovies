@@ -4,8 +4,9 @@ echo $this->Html->script('impclis/papeldetrabajoactividadesvarias',array('inline
 echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
 echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
 echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));?>
-<div id="Formhead" class="clientes papeldetrabajoactividadesvarias index" style="margin-bottom:10px;">
-    <table class="tbl_actividadesvarias tblInforme">
+<div id="index" class="index" style="margin-bottom:10px;">
+	<div id="Formhead" class="clientes papeldetrabajoactividadesvarias index" style="margin-bottom:10px;">
+    	<table class="tbl_actividadesvarias tblInforme">
         <tr>
             <td>
             	Contribuyente:
@@ -39,8 +40,8 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 			</td>
         </tr>
     </table>
-</div> <!--End Clietenes_avance-->
-<?php if (count($provinciasVentasDiff)!=0||count($provinciasComprasDiff)!=0){ ?>
+	</div> <!--End Clietenes_avance-->
+	<?php if (count($provinciasVentasDiff)!=0||count($provinciasComprasDiff)!=0){ ?>
 <div class="index">
 	Las localidades dadas de alta, actualmente, son: </br><?php 
 	foreach ($provinciasActivadas as $key => $value) {
@@ -154,7 +155,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				foreach ($actividadclientes as $actividadcliente) { 
 					$arrayBasesProrrateadas[$miProvincia][$actividadcliente['Actividade']['id']]=0;
 					?>
-				<td colspan="8" class="thActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+				<td colspan="7" class="thActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
 					<span style="color:deepskyblue" onclick="showhideactividad('<?php echo $actividadcliente['Actividade']['id']; ?>');"  >
 						<label class="lbl_trunc"><?php echo $actividadcliente['Actividade']['nombre']; ?></label>
 					</span>
@@ -236,8 +237,6 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<?php 
 				foreach ($actividadclientes as $actividadcliente) { 
 					$actividadclienteActividadclienteid=$actividadcliente['Actividadcliente']['id'];?>
-				
-			
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php
 				$subTotalVenta=$subtotalVentaxActividad[$provinciaid][$impcliprovinciaid][$actividadclienteActividadclienteid]['subTotalVenta'];			
 				echo  number_format($subTotalVenta, 2, ",", ".");?></td>
@@ -405,7 +404,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				$totalesProvincia[$provinciaid]['TotalRetenciones']+=$percepionSubtotal;
 				?>
 				<td><?php echo number_format($retencionSubtotal, 2, ",", "."); ?></td>
-				<td><?php echo number_format(0, 2, ",", "."); ?></td>
+				<td><?php echo number_format($percepionSubtotal, 2, ",", "."); ?></td>
 				<td><?php echo number_format($percepionBancariaSubtotal, 2, ",", "."); ?></td>
 				<td><?php echo number_format($afavorSubtotal, 2, ",", "."); ?></td>
 				<td><?php echo number_format($totalConceptos, 2, ",", "."); ?></td>
@@ -486,15 +485,33 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($Impuestoporactividad, 2, ",", "."); ?></td>
 				<?php } ?>
 				<td><?php echo number_format(0, 2, ",", "."); ?></td>
-				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", "."); ?></td>
-				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalRetencion'], 2, ",", "."); ?></td>
-				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalRetenciones'], 2, ",", "."); ?></td>
+				<td>
+					<?php
+					echo number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", ".");
+					echo $this->Form->input('totaldeterminadogeneral', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalElMayor']));
+					?>
+				</td>
+				<td><?php
+                    echo number_format($totalesProvincia[$provinciaid]['TotalRetencion'], 2, ",", ".");
+                    echo $this->Form->input('totalretenciones', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalRetencion']));
+                    ?>
+                </td>
+				<td><?php
+                    echo number_format($totalesProvincia[$provinciaid]['TotalRetenciones'], 2, ",", ".");
+                    echo $this->Form->input('totalpercepciones', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalRetenciones']));
+                    ?>
+                </td>
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalPercepionBancariaS'], 2, ",", "."); ?></td>
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalAFavorSaldo'], 2, ",", "."); ?></td>
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalConceptos'], 2, ",", "."); ?></td>
-				
-				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalAPagar'], 2, ",", "."); ?></td>
-				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalAFavor'], 2, ",", "."); ?></td>
+				<td><?php
+                    echo number_format($totalesProvincia[$provinciaid]['TotalAPagar'], 2, ",", ".");
+                    echo $this->Form->input('totalapagar', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalAPagar']));
+                    ?></td>
+				<td><?php
+                    echo number_format($totalesProvincia[$provinciaid]['TotalAFavor'], 2, ",", ".");
+                    echo $this->Form->input('totalafavor', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalAFavor']));
+                    ?></td>
 			</tr>
 		</table>
 	<?php 
@@ -504,4 +521,81 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 	<div id="divLiquidarActividadesVariar">
 			 
 	</div>
-<?php } ?>
+	<?php } ?>
+	<div id="divContenedorContabilidad" style="margin-top:10px">
+		<div class="index">
+			<?php
+			$Asientoid=0;
+			$movId=[];
+			if(isset($impcli['Asiento'])){
+				if(count($impcli['Asiento'])>0) {
+					$Asientoid = $impcli['Asiento'][0]['id'];
+					foreach ($impcli['Asiento'][0]['Movimiento'] as $mimovimiento) {
+						$movId[$mimovimiento['Cuentascliente']['cuenta_id']] = $mimovimiento['id'];
+					}
+				}
+			}
+			//ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
+			echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
+			echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
+			echo $this->Form->input('Asiento.0.fecha',array(
+				'class'=>'datepicker',
+				'type'=>'text',
+				'label'=>array(
+					'text'=>"Fecha:",
+				),
+				'readonly','readonly',
+				'value'=>date('d-m-Y'),
+				'div' => false,
+				'style'=> 'height:9px;display:inline'
+			));
+			echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento Act. Varias" ,'style'=>'width:250px']);
+			echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Asiento Automatico periodo: ".$periodo,'style'=>'width:250px']);
+			echo $this->Form->input('Asiento.0.cliente_id',['value'=>$impcli['Cliente']['id'],'type'=>'hidden']);
+			echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcli['Impcli']['id'],'type'=>'hidden']);
+			echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo,'type'=>'hidden']);
+			echo $this->Form->input('Asiento.0.tipoasiento',['value'=>'impuestos','type'=>'hidden'])."</br>";
+			$i=0;
+			foreach ($impcli['Impuesto']['Asientoestandare'] as $asientoestandaractvs) {
+				if(!isset($movId[$asientoestandaractvs['cuenta_id']])){
+					$movId[$asientoestandaractvs['cuenta_id']]=0;
+				}
+				$cuentaclienteid=0;
+				$cuentaclientenombre=$asientoestandaractvs['Cuenta']['nombre'];
+				foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaIVA){
+					if($cuentaclientaIVA['cuenta_id']==$asientoestandaractvs['cuenta_id']){
+						$cuentaclienteid=$cuentaclientaIVA['id'];
+						$cuentaclientenombre=$cuentaclientaIVA['nombre'];
+						break;
+					}
+				}
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['value'=>$movId[$asientoestandaractvs['cuenta_id']],]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
+					'readonly'=>'readonly',
+					'class'=>'datepicker',
+					'type'=>'hidden',
+					'label'=>array(
+						'text'=>"Vencimiento:",
+						"style"=>"display:inline",
+					),
+					'readonly','readonly',
+					'value'=>date('d-m-Y'),
+					'div' => false,
+					'style'=> 'height:9px;display:inline'
+				));
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['readonly'=>'readonly','value'=>0,]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['readonly'=>'readonly','value'=>0,]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandaractvs['cuenta_id'],'id'=>'cuenta'.$asientoestandaractvs['cuenta_id']]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['readonly'=>'readonly','value'=>$asientoestandaractvs['Cuenta']['numero'],'style'=>'width:82px']);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px'])."</br>";
+				$i++;
+			}
+
+			echo $this->Form->submit('Contabilizar',['style'=>'display:none']);
+			echo $this->Form->end();
+			?>
+		</div>
+	</div>
+</div> <!--End Content-->
+

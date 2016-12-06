@@ -27,6 +27,7 @@ class PapelesdetrabajosController extends AppController {
 		$this->loadModel('Actividadcliente');
         $this->loadModel('Conceptosrestante');
         $this->loadModel('Compra');
+        $this->loadModel('Cuenta');
 		//$this->Archivo->recursive = 0;
 		//$this->set('archivos', $this->Paginator->paginate());
 		$añoPeriodo="SUBSTRING( '".$periodo."',4,7)";
@@ -42,31 +43,48 @@ class PapelesdetrabajosController extends AppController {
 		);
 		$timePeriodo = strtotime("01-".$periodo ." -1 months");
 		$periodoPrev = date("m-Y",$timePeriodo);
+		$cuentasIVA = $this->Cuenta->cuentasdeIVA;
+		$this->set('cuentasIVA', $cuentasIVA);
 		$options = 
-			array(
-				'conditions' => array('Cliente.' . $this->Cliente->primaryKey => $ClienteId),
-				'contain' => array(
-						'Impcli'=>array(
-							'Eventosimpuesto'=>array(
-								'conditions'=>array(
-									"Eventosimpuesto.periodo"=>[$periodoPrev,$periodo],//monto a favor del periodo anterior
-									),
-								),
-							'Conceptosrestante'=>array(
-								'conditions'=>array(
-									'Conceptosrestante.periodo' => $periodo,
-								),
-							),
-							'conditions'=>array(
-								'Impcli.impuesto_id'=>19//IVA
-								)
-							),
-						 
-						'Actividadcliente' => array(
-							'Actividade',
-							)
-						),
-					);
+			[
+			'conditions' => ['Cliente.' . $this->Cliente->primaryKey => $ClienteId],
+			'contain' => [
+				'Impcli'=>[
+					'Impuesto'=>[
+						'Asientoestandare'=>['Cuenta'],
+					],
+					'Eventosimpuesto'=>[
+						'conditions'=>[
+							"Eventosimpuesto.periodo"=>[$periodoPrev,$periodo],
+							//monto a favor del periodo anterior
+							],
+						],
+					'Conceptosrestante'=>[
+						'conditions'=>[
+							'Conceptosrestante.periodo' => $periodo,
+						],
+					],
+                    'Asiento'=>[
+                        'Movimiento'=>[
+							'Cuentascliente'
+						],
+                        'conditions'=>['periodo'=>$periodo]
+                    ],
+					'conditions'=>[
+						'Impcli.impuesto_id'=>19//IVA
+						]
+					],
+				'Actividadcliente' => [
+					'Actividade',
+					],
+				'Cuentascliente'=>[
+					'Cuenta',
+					'conditions'=>[
+						'Cuentascliente.cuenta_id' => $cuentasIVA
+					]
+				]
+			],
+		];
 
 		$Cliente = $this->Cliente->find('first', $options);
         $this->set('cliente', $Cliente);
@@ -123,27 +141,35 @@ class PapelesdetrabajosController extends AppController {
 		$ventas = $this->Venta->find('all', $opcionesVenta);
 
 		$opcionesCompra = array(
-								'conditions'=>array(
-									'Compra.cliente_id' => $ClienteId,
-									'Compra.periodo' => $periodo,
-									),
-								'contain' => array(
-													'Actividadcliente' => array(																				
-																				'Actividade'
-																				)
-													//'actividades' => array(
-													//						'conditions' => array('Actividade.id' => 'Actividadcliente.actividade_id')
-													//					   )
-												  )
-							  );
+			'fields'=>[
+				'Compra.actividadcliente_id','Compra.tipocredito','Compra.imputacion','Compra.tipoiva',
+                'Compra.alicuota','SUM(iva)as iva','SUM(ivapercep)as ivapercep' ],
+			'conditions'=>array(
+				'Compra.cliente_id' => $ClienteId,
+				'Compra.periodo' => $periodo,
+				),
+			'contain' => array(
+                'Actividadcliente' => [
+                        'fields'=>['actividade_id']
+                                        ]
+                //'actividades' => array(
+                //						'conditions' => array('Actividade.id' => 'Actividadcliente.actividade_id')
+                //					   )
+              ),
+			'group'=>[
+				'Compra.actividadcliente_id','Compra.tipocredito','Compra.imputacion','Compra.tipoiva','Compra.alicuota'
+			]
+		  );
 		$compras = $this->Compra->find('all', $opcionesCompra);
 
 		$this->set('actividades', $actividades); 
-		$this->set('ventas', $ventas); 
+		$this->set('ventas', $ventas);
 		$this->set('compras', $compras); 
 		//$CondicionVenta = array('conditions' => array('Venta.cliente_id' => $ClienteId));
 		//$Ventas = $this->Venta->find('all', $CondicionVenta);
 		//$this->set('venta', $Ventas);
+
+
 	}
 
 }

@@ -18,28 +18,57 @@ class AsientosController extends AppController {
 	public $components = array('Paginator');
     public function add() {
         $this->loadModel('Movimiento');
+        $this->loadModel('Cuentascliente');
+        $this->loadModel('Cuenta');
         if ($this->request->is('post')) {
             $this->Asiento->create();
             $respuesta = array('respuesta'=>'');
+
+            $this->request->data('Asiento.0.fecha',date('Y-m-d',strtotime($this->request->data['Asiento'][0]['fecha'])));
             $respuesta['data']=$this->request->data;
             if ($this->Asiento->saveAll($this->request->data['Asiento'])) {
-                $respuesta['respuesta'] = "El Asiento se guardo correctamente";
+                $respuesta['respuesta'] = "El Asiento se guardo correctamente.</br>";
                 $asientoid=0;
                 if($this->request->data['Asiento'][0]['id']==0){
                     $asientoid = $this->Asiento->getLastInsertID();
                 }else{
                     $asientoid = $this->request->data['Asiento'][0]['id'];
                 }
-                foreach ($this->request->data['Asiento'][0]['Movimiento'] as $movimiento){
+                foreach ($this->request->data['Asiento'][0]['Movimiento'] as $k => $movimiento){
+                    $movimiento['fecha']= date('Y-m-d',strtotime($movimiento['fecha']));
                     $movimiento['asiento_id'] = $asientoid;
+                    //aca vamos a controlar que el asiento apunte a una cuenta cliente
+                    //y si no apunta vamos a preguntar si hay una cuenta disponible para crear una cuenta cliente
+                    // y utilizarla automaticamente para este movimiento dando de alta la cuenta para el cliente
+
+                    if($movimiento['cuentascliente_id']==0)
+                    {
+                        if(isset($movimiento['cuenta_id']))
+                        {
+                            $this->Cuentascliente->create();
+                            $this->Cuentascliente->set('cliente_id',$this->request->data['Asiento'][0]['cliente_id']);
+                            $this->Cuentascliente->set('cuenta_id',$movimiento['cuenta_id']);
+                            $this->Cuentascliente->set('nombre',$this->request->data['Asiento'][0]['nombre']);
+                            if ($this->Cuentascliente->save())
+                            {
+                                $movimiento['cuentascliente_id'] = $this->Cuentascliente->getLastInsertID();
+                                $respuesta['respuesta'].='Cuenta activada correctamente.</br>';
+                            }
+                            else
+                            {
+                                $respuesta['respuesta'].='Error al guardar cuenta. Por favor intente nuevamente.</br>';
+                            }
+                        }
+                    }
+
                     if ($this->Movimiento->saveAll($movimiento)) {
-                        $respuesta['respuesta'].= "El Movimiento se guardo correctamente";
+                        $respuesta['respuesta'].= "El Movimiento se guardo correctamente.</br>";
                     } else {
-                        $respuesta['respuesta'].="El Movimiento NO se guardo correctamente. Por favor intentelo de nuevo";
+                        $respuesta['respuesta'].="El Movimiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
                     }
                 }
             }else {
-                $respuesta['respuesta']="El Asiento NO se guardo correctamente. Por favor intentelo de nuevo";
+                $respuesta['respuesta']="El Asiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
             }
         }
         $this->set('data',$respuesta);

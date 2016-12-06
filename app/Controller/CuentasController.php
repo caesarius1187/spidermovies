@@ -1,8 +1,6 @@
 <?php
 App::uses('AppController', 'Controller');
 /**
- * Cbuses Controller
- *
  * @property Cbus $Cbus
  * @property PaginatorComponent $Paginator
  */

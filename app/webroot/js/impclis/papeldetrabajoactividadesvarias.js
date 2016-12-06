@@ -8,9 +8,7 @@ $(document).ready(function() {
 		});
 	});
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
-
 	var beforePrint = function() {
-		console.log('Functionality to run before printing.');
 		$('#header').hide();
 		$('#Formhead').hide();
 		$('#divLiquidarActividadesVariar').hide();
@@ -20,7 +18,6 @@ $(document).ready(function() {
 		$('#index').css('border-color','#FFF');
 	};
 	var afterPrint = function() {
-		console.log('Functionality to run after printing');
 		$('#index').css('font-size','14px');
 		$('#header').show();
 		$('#Formhead').show();
@@ -40,6 +37,8 @@ $(document).ready(function() {
 	}
 	window.onbeforeprint = beforePrint;
 	window.onafterprint = afterPrint;
+    cargarAsiento();
+    catchAsientoIVA();
 });
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";
@@ -98,7 +97,8 @@ function papelesDeTrabajo(periodo,impcli){
 		            alert(respuesta.validationErrors);
 		            alert(respuesta.invalidFields);
 		          }else{
-		           	 $('#divLiquidarActividadesVariar').hide();
+                      $('#AsientoAddForm').submit();
+                      $('#divLiquidarActividadesVariar').hide();
 		          }
 		        }, 
 		        error: function(xhr,textStatus,error){ 
@@ -130,4 +130,64 @@ function showhideactividad(actividad) {
 }
 function imprimir(){
 	window.print();
+}
+function cargarAsiento(){
+
+    //aca vamos a buscar los valores guardados en los inputs que estan hidden y que tienen los valores que hay que guardar en los movimientos
+    //los movimientos que tenemos que guardar son los siguentes
+
+    // 506311001	Act. Vs.
+    if($('#cuenta2589').length > 0){
+        var orden = $('#cuenta2589').attr('orden');
+        var totaldeterminadogeneral = $("#totaldeterminadogeneral").val();
+        $('#Asiento0Movimiento'+orden+'Debe').val(totaldeterminadogeneral);
+    }
+    // 110405103	Act. Vs. - Saldo a Favor
+    if($('#cuenta334').length > 0){
+        var orden = $('#cuenta334').attr('orden');
+        var totalafavor = $("#totalafavor").val();
+        $('#Asiento0Movimiento'+orden+'Debe').val(totalafavor);
+    }
+    // 110405101	Act. Vs. - Retenciones
+    if($('#cuenta332').length > 0){
+        var orden = $('#cuenta332').attr('orden');
+        var totalretenciones = $("#totalretenciones").val();
+        $('#Asiento0Movimiento'+orden+'Haber').val(totalretenciones);
+    }
+    // 110405102	Act. Vs. - Percepciones
+    if($('#cuenta333').length > 0){
+        var orden = $('#cuenta333').attr('orden');
+        var totalpercepciones = $("#totalpercepciones").val();
+        $('#Asiento0Movimiento'+orden+'Haber').val(totalpercepciones);
+    }
+    // 210403101	Actividades Varias a Pagar
+    if($('#cuenta1518').length > 0){
+        var orden = $('#cuenta1518').attr('orden');
+        var totalapagar = $("#totalapagar").val();
+        $('#Asiento0Movimiento'+orden+'Haber').val(totalapagar);
+    }
+}
+function catchAsientoIVA(){
+	$('#AsientoAddForm').submit(function(){
+		//serialize form data
+		var formData = $(this).serialize();
+		//get form action
+		var formUrl = $(this).attr('action');
+		$.ajax({
+			type: 'POST',
+			url: formUrl,
+			data: formData,
+			success: function(data,textStatus,xhr){
+				var respuesta = jQuery.parseJSON(data);
+				var resp = respuesta.respuesta;
+				callAlertPopint(resp);
+			},
+			error: function(xhr,textStatus,error){
+				callAlertPopint(textStatus);
+				return false;
+			}
+		});
+		return false;
+	});
+
 }

@@ -52,7 +52,7 @@
 		<li><?php echo $this->Html->link(__('New Bancosysindicato'), array('action' => 'add')); ?></li>
 		<li><?php echo $this->Html->link(__('List Clientes'), array('controller' => 'clientes', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Clientes'), array('controller' => 'clientes', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Cbuses'), array('controller' => 'cbuses', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Cbus'), array('controller' => 'cbuses', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Cbus'), array('controller' => 'cbuses', 'action' => 'add')); ?> </li>
 	</ul>
 </div>

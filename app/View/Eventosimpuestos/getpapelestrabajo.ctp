@@ -146,15 +146,15 @@
     <div class="tabsTareaImpuesto_active" onClick="showPapelesDeTrabajo()" id="tab_PapelesDeTrabajo">
         <label style="text-align:center;margin-top:5px;cursor:pointer;">Impuestos</label>
     </div>
-    <div class="tabsTareaImpuesto" onClick="showContabilidadImpuestos()" id="tab_Contabilidad_Impuestos">
-        <label style="text-align:center;margin-top:5px;cursor:pointer;">Contabilizar Impuestos</label>
-    </div>
+<!--    <div class="tabsTareaImpuesto" onClick="showContabilidadImpuestos()" id="tab_Contabilidad_Impuestos">-->
+<!--        <label style="text-align:center;margin-top:5px;cursor:pointer;">Contabilizar Impuestos</label>-->
+<!--    </div>-->
     <div class="tabsTareaImpuesto" onClick="showPagos()" id="tab_Pagos">
         <label style="text-align:center;margin-top:5px;cursor:pointer;">Pagos</label>
     </div>
-    <div class="tabsTareaImpuesto" onClick="showContabilidadPagos()" id="tab_Contabilidad_Pagos">
-        <label style="text-align:center;margin-top:5px;cursor:pointer;">Contabilizar Pagos</label>
-    </div>
+<!--    <div class="tabsTareaImpuesto" onClick="showContabilidadPagos()" id="tab_Contabilidad_Pagos">-->
+<!--        <label style="text-align:center;margin-top:5px;cursor:pointer;">Contabilizar Pagos</label>-->
+<!--    </div>-->
     </div>
 </div>
 <div id="divPrepararPapelesDeTrabajo" class="tareapapeldetrabajo index_pdt">

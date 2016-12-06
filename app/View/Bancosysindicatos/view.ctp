@@ -52,12 +52,12 @@
 		<li><?php echo $this->Html->link(__('New Bancosysindicato'), array('action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List Clientes'), array('controller' => 'clientes', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Clientes'), array('controller' => 'clientes', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Cbuses'), array('controller' => 'cbuses', 'action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Cbus'), array('controller' => 'cbuses', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Cbus'), array('controller' => 'cbuses', 'action' => 'add')); ?> </li>
 	</ul>
 </div>
 <div class="related">
-	<h3><?php echo __('Related Cbuses'); ?></h3>
+	<h3><?php echo __('Related Cbus'); ?></h3>
 	<?php if (!empty($bancosysindicato['Cbus'])): ?>
 	<table cellpadding = "0" cellspacing = "0">
 	<tr>

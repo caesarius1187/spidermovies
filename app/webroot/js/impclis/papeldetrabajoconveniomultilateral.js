@@ -40,6 +40,8 @@ $(document).ready(function() {
     }
     window.onbeforeprint = beforePrint;
     window.onafterprint = afterPrint;
+	cargarAsiento();
+	catchAsientoIVA();
 });
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";
@@ -166,7 +168,8 @@ function papelesDeTrabajo(periodo,impcli){
 		            alert(respuesta.validationErrors);
 		            alert(respuesta.invalidFields);
 		          }else{
-		            $('#divLiquidarConvenioMultilateral').hide();
+					  $('#AsientoAddForm').submit();
+					  $('#divLiquidarConvenioMultilateral').hide();
 		          }
 		        }, 
 		        error: function(xhr,textStatus,error){ 
@@ -223,4 +226,66 @@ function showhideBaseImponibleProrrateada() {
 }
 function imprimir(){
     window.print();
+}
+function cargarAsiento(){
+
+	//aca vamos a buscar los valores guardados en los inputs que estan hidden y que tienen los valores que hay que guardar en los movimientos
+	//los movimientos que tenemos que guardar son los siguentes
+
+
+	// 506210001	Ingresos Brutos Capital Federal
+	if($('#cuenta2577').length > 0){
+		var orden = $('#cuenta2577').attr('orden');
+		var impuestoDeterminadoTotal = $("#impuestoDeterminadoTotal").val();
+		$('#Asiento0Movimiento'+orden+'Debe').val(impuestoDeterminadoTotal);
+	}
+	// 110404301	I.I.B.B. - Saldo a Favor Capital Federal
+	if($('#cuenta319').length > 0){
+		var orden = $('#cuenta319').attr('orden');
+		var saldoAFavorTotal = $("#saldoAFavorTotal").val();
+		$('#Asiento0Movimiento'+orden+'Debe').val(saldoAFavorTotal);
+	}
+	// 110404101	I.I.B.B. - Retenciones Capital Federal
+	if($('#cuenta313').length > 0){
+		var orden = $('#cuenta313').attr('orden');
+		var totalretenciones = $("#totalretenciones").val();
+		$('#Asiento0Movimiento'+orden+'Haber').val(totalretenciones);
+	}
+	// 110404201	I.I.B.B. - Percepciones Capital Federal
+	if($('#cuenta316').length > 0){
+		var orden = $('#cuenta316').attr('orden');
+		var totalpercepciones = $("#totalpercepciones").val();
+		$('#Asiento0Movimiento'+orden+'Haber').val(totalpercepciones);
+	}
+	// 210402101	Ingresos Brutos a Pagar
+	if($('#cuenta1492').length > 0){
+		var orden = $('#cuenta1492').attr('orden');
+		var totalgeneralapagar = $("#totalgeneralapagar").val();
+		$('#Asiento0Movimiento'+orden+'Haber').val(totalgeneralapagar);
+	}
+
+}
+function catchAsientoIVA(){
+	$('#AsientoAddForm').submit(function(){
+		//serialize form data
+		var formData = $(this).serialize();
+		//get form action
+		var formUrl = $(this).attr('action');
+		$.ajax({
+			type: 'POST',
+			url: formUrl,
+			data: formData,
+			success: function(data,textStatus,xhr){
+				var respuesta = jQuery.parseJSON(data);
+				var resp = respuesta.respuesta;
+				callAlertPopint(resp);
+			},
+			error: function(xhr,textStatus,error){
+				callAlertPopint(textStatus);
+				return false;
+			}
+		});
+		return false;
+	});
+
 }

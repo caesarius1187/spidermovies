@@ -1,7 +1,7 @@
 <?php
 App::uses('AppController', 'Controller');
 /**
- * Cbuses Controller
+ * Cbus Controller
  *
  * @property Cbus $Cbus
  * @property PaginatorComponent $Paginator
@@ -113,7 +113,7 @@ class CbusesController extends AppController {
 				$id=null,$cliid = null) {
 
 		if (!$this->Cbus->exists($id)) {
-			throw new NotFoundException(__('Dirección inválida.-'));
+			throw new NotFoundException(__('DirecciÃ³n invÃ¡lida.-'));
 		}
 
 		$options = array('conditions' => array('Cbus.' . $this->Cbus->primaryKey => $id));

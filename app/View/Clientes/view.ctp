@@ -997,6 +997,9 @@ if($mostrarView){?>
                                     <a href="#"  onclick="deleteImpcli(<?php echo$impcli['id']; ?>)" class="button_view"> 
                                         <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
                                     </a>
+                                    <a href="#"  onclick="loadCbus(<?php echo$impcli['id']; ?>)" class="button_view">
+                                        <?php echo $this->Html->image('cuentabancaria.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                    </a>
                                 </td>
                             </tr>                            
                          <?php endif;    ?>
@@ -1497,11 +1500,19 @@ if($mostrarView){?>
 <!-- Inicio Popin Modificar Persona-->
 <a href="#x" class="overlay" id="modificar_periodoactivo"></a>
 <div class="popup">
-        <div id="form_modificar_periodosactivos" class="persona form" style="width:100%">   
-        </div>
+    <div id="form_modificar_periodosactivos" class="persona form" style="width:100%">
+    </div>
     <a class="close" href="#close"></a>
 </div>
 <!-- Fin Popin Modificar Persona-->
+<!-- Inicio Popin Cbus-->
+<a href="#x" class="overlay" id="load_cbuform"></a>
+<div class="popup">
+    <div id="form_cbus" class="persona form" style="width:100%">
+    </div>
+    <a class="close" href="#close"></a>
+</div>
+<!-- Fin Popin Cbus-->
 
 <!-- Inicio Popin Modificar Impuesto-->
 <a href="#x" class="overlay" id="modificar_impcli"></a>
@@ -2040,7 +2051,11 @@ if($mostrarView){?>
     <a href="#x" class="overlay" id="nuevo_empleado"></a>
     <div class="popup" >
         <div id="form_empleado" class="form" style="width: 94%;">
-            <?php echo $this->Form->create('Empleado',array('class'=>'formTareaCarga','controller'=>'Empelados','action'=>'add')); ?>
+            <?php
+            //todo: AGREGAR SI TIENE conyugue, hijos, adherente,
+            //todo: codigoactividad, codigosituacion, codigocondicion, codigozona, codigomodalidadcontratacion
+            //todo: codigosiniestrado(codigo incapacidad), tipoempresa
+            echo $this->Form->create('Empleado',array('class'=>'formTareaCarga','controller'=>'Empelados','action'=>'add')); ?>
             <h3><?php echo __('Agregar Empleado'); ?></h3>
             <?php
             echo $this->Form->input('id',array('type'=>'hidden'));
@@ -2070,6 +2085,18 @@ if($mostrarView){?>
             echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
             echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
             echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Excento Coop. Asistencial','value'=>0))."</br>";
+
+            echo $this->Form->input('conyugue',array('label'=>'Conyugue','value'=>0));
+            echo $this->Form->input('hijos',array('label'=>'Hijos','value'=>0));
+            echo $this->Form->input('adherente',array('label'=>'Adherentes','value'=>0));
+            echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad));
+            echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion'));
+            echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion'));
+            echo $this->Form->input('codigozona',array('label'=>'Codigo Zona','options'=>$codigozona));
+            echo $this->Form->input('codigomodalidadcontratacion',array('label'=>'Codigo Modalidad Contratacion','options'=>$codigomodalidadcontratacion));
+            echo $this->Form->input('codigosiniestrado',array('label'=>'Codigo Siniestrado','options'=>$codigosiniestrado));
+            echo $this->Form->input('tipoempresa',array('label'=>'Tipo empresa','options'=>$tipoempresa))."</br>";
+
             echo $this->Form->label("Liquidaciones:");
             echo $this->Form->input('liquidaprimeraquincena',array('label'=>'Primera Quincena'));
             echo $this->Form->input('liquidasegundaquincena',array('label'=>'Segunda Quincena'));

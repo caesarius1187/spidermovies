@@ -77,15 +77,12 @@ class VentasController extends AppController {
 			if($this->request->data['Venta']['fecha']!="")				
 				$this->request->data('Venta.fecha',date('Y-m-d',strtotime(substr($this->request->data['Venta']['periodo'], 3).'-'.substr($this->request->data['Venta']['periodo'], 0,2).'-'.$this->request->data['Venta']['fecha'])));
 			if ($this->Venta->save($this->request->data)) {
-				$optionsComprobante = array('conditions'=>array('Comprobante.id' => $this->request->data['Venta']['comprobante_id']));
-				$optionsPuntosDeVenta = array('conditions'=>array('Puntosdeventa.id' => $this->request->data['Venta']['puntosdeventa_id']));
-				$optionsSubCliente = array('conditions'=>array('Subcliente.id'=>$this->request->data['Venta']['subcliente_id']));
-				$optionsLocalidade = array('conditions'=>array('Localidade.id'=>$this->request->data['Venta']['localidade_id']));
-				$optionsActividadCliente = array('conditions'=>array('Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id']));
-				$this->Puntosdeventa->recursive = -1;
-				$this->Subcliente->recursive = -1;
-				$this->Localidade->recursive = -1;
-				$this->request->data['Venta']['fecha'] = date('d',strtotime($this->request->data['Venta']['fecha']));		
+				$optionsComprobante = array('contain'=>[],'conditions'=>array('Comprobante.id' => $this->request->data['Venta']['comprobante_id']));
+				$optionsPuntosDeVenta = array('contain'=>[],'conditions'=>array('Puntosdeventa.id' => $this->request->data['Venta']['puntosdeventa_id']));
+				$optionsSubCliente = array('contain'=>[],'conditions'=>array('Subcliente.id'=>$this->request->data['Venta']['subcliente_id']));
+				$optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Venta']['localidade_id']));
+				$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id']));
+				$this->request->data['Venta']['fecha'] = date('d',strtotime($this->request->data['Venta']['fecha']));
 
 				$data = array(
 		            "respuesta" => "La Venta ha sido creada.",
@@ -205,13 +202,43 @@ class VentasController extends AppController {
 					'conditions' => array('Venta.' . $this->Venta->primaryKey => $id)
 					);
 				$venta = $this->Venta->find('first', $options);
-				$venta['Venta']['tieneMonotributo'] = $this->request->data['Venta']['tieneMonotributo'];
-				$venta['Venta']['tieneIVAPercepciones'] = $this->request->data['Venta']['tieneIVAPercepciones'];
-				$venta['Venta']['tieneImpuestoInterno'] = $this->request->data['Venta']['tieneImpuestoInterno'];
-				$venta['Venta']['tieneAgenteDePercepcionActividadesVarias'] = $this->request->data['Venta']['tieneAgenteDePercepcionActividadesVarias'];
-				$venta['Venta']['tieneIVA'] = $this->request->data['Venta']['tieneIVA'];
-				$venta['Venta']['tieneAgenteDePercepcionIIBB'] = $this->request->data['Venta']['tieneAgenteDePercepcionIIBB'];
-				$this->set('venta',$venta);
+//				$venta['Venta']['tieneMonotributo'] = $this->request->data['Venta']['tieneMonotributo'];
+//				$venta['Venta']['tieneIVAPercepciones'] = $this->request->data['Venta']['tieneIVAPercepciones'];
+//				$venta['Venta']['tieneImpuestoInterno'] = $this->request->data['Venta']['tieneImpuestoInterno'];
+//				$venta['Venta']['tieneAgenteDePercepcionActividadesVarias'] = $this->request->data['Venta']['tieneAgenteDePercepcionActividadesVarias'];
+//				$venta['Venta']['tieneIVA'] = $this->request->data['Venta']['tieneIVA'];
+//				$venta['Venta']['tieneAgenteDePercepcionIIBB'] = $this->request->data['Venta']['tieneAgenteDePercepcionIIBB'];
+				$optionsComprobante = array('contain'=>[],'conditions'=>array('Comprobante.id' => $this->request->data['Venta']['comprobante_id']));
+				$optionsPuntosDeVenta = array('contain'=>[],'conditions'=>array('Puntosdeventa.id' => $this->request->data['Venta']['puntosdeventa_id']));
+				$optionsSubCliente = array('contain'=>[],'conditions'=>array('Subcliente.id'=>$this->request->data['Venta']['subcliente_id']));
+				$optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Venta']['localidade_id']));
+				$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id']));
+				$this->request->data['Venta']['fecha'] = date('d',strtotime($this->request->data['Venta']['fecha']));
+				$data = array(
+					"respuesta" => "La Venta ha sido modificada.",
+					"error" => "0",
+					"venta_id" => $this->request->data['Venta']['id'],
+					"venta"=> $this->request->data,
+					"comprobante"=> $this->Comprobante->find('first',$optionsComprobante),
+					"puntosdeventa"=> $this->Puntosdeventa->find('first',$optionsPuntosDeVenta),
+					"subcliente"=> $this->Subcliente->find('first',$optionsSubCliente),
+					"localidade"=> $this->Localidade->find('first',$optionsLocalidade),
+					"actividadcliente"=> $this->Actividadcliente->find('first',$optionsActividadCliente),
+		            "actividadcliente_id"=> $this->request->data['Venta']['actividadcliente_id'],
+					/*AFIP*/
+					"tieneMonotributo"=> $this->request->data['Venta']['tieneMonotributo'],
+					"tieneIVA"=> $this->request->data['Venta']['tieneIVA'],
+					"tieneIVAPercepciones"=> $this->request->data['Venta']['tieneIVAPercepciones'],
+					"tieneImpuestoInterno"=> $this->request->data['Venta']['tieneImpuestoInterno'],
+					/*DGR*/
+					"tieneAgenteDePercepcionIIBB"=> $this->request->data['Venta']['tieneAgenteDePercepcionIIBB'],
+					/*DGRM*/
+					"tieneAgenteDePercepcionActividadesVarias"=> $this->request->data['Venta']['tieneAgenteDePercepcionActividadesVarias'],
+				);
+				$this->layout = 'ajax';
+				$this->set('data',$data);
+				$this->set('mostrarForm',false);
+				return;
 			}else{
 				$data = array('respuesta'=>'La venta'.$this->request->data['Venta']['numerocomprobante']." ya ha sido registrada en el periodo".$this->request->data['Venta']['periodo'].', por favor cambiar comprobante o alicuota');
 				$this->set('data',$data);
@@ -285,9 +312,6 @@ class VentasController extends AppController {
 											)
 									);	
 		$this->set('actividades', $clienteActividadList);
-		
-
-
 		$this->layout = 'ajax';
 	}
 

@@ -6,29 +6,59 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="375b17fe-14ab-4ca0-9f8e-7450c16dc4ba" name="Default" comment="varios cambios de interfaz en los papeles de trabajo, y merge con los datos que estaban en el DropBox que salian como diferentes pero por un tema de fechas nada mas">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Asientos/contabilizarcompra.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Asientos/contabilizarventa.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Asientos/serializejson.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/css/bootstrapmodal.css" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/bootstrapmodal.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/Controller/CbusController.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/Controller/MovimientosbancariosController.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/Model/Cbu.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/Model/Movimientosbancario.php" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Cbus/serializejson.ctp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Movimientosbancarios/importar.ctp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Movimientosbancarios/index.ctp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Movimientosbancarios/serializejson.ctp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/importar.js" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/Model/Cbus.php" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/View/Cbuses/add.ctp" afterPath="$PROJECT_DIR$/app/View/Cbus/add.ctp" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/View/Cbuses/addajax.ctp" afterPath="$PROJECT_DIR$/app/View/Cbus/addajax.ctp" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/View/Cbuses/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Cbus/edit.ctp" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/View/Cbuses/index.ctp" afterPath="$PROJECT_DIR$/app/View/Cbus/index.ctp" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/app/View/Cbuses/view.ctp" afterPath="$PROJECT_DIR$/app/View/Cbus/view.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dataSources.ids" afterPath="$PROJECT_DIR$/.idea/dataSources.ids" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dataSources.xml" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/AppController.php" afterPath="$PROJECT_DIR$/app/Controller/AppController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/AsientosController.php" afterPath="$PROJECT_DIR$/app/Controller/AsientosController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/CbusesController.php" afterPath="$PROJECT_DIR$/app/Controller/CbusesController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ClientesController.php" afterPath="$PROJECT_DIR$/app/Controller/ClientesController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ComprasController.php" afterPath="$PROJECT_DIR$/app/Controller/ComprasController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ConceptosrestantesController.php" afterPath="$PROJECT_DIR$/app/Controller/ConceptosrestantesController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/CuentasController.php" afterPath="$PROJECT_DIR$/app/Controller/CuentasController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/CuentasclientesController.php" afterPath="$PROJECT_DIR$/app/Controller/CuentasclientesController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ImpclisController.php" afterPath="$PROJECT_DIR$/app/Controller/ImpclisController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/MovimientosController.php" afterPath="$PROJECT_DIR$/app/Controller/MovimientosController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/PapelesdetrabajosController.php" afterPath="$PROJECT_DIR$/app/Controller/PapelesdetrabajosController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/SubclientesController.php" afterPath="$PROJECT_DIR$/app/Controller/SubclientesController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/VentasController.php" afterPath="$PROJECT_DIR$/app/Controller/VentasController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Asiento.php" afterPath="$PROJECT_DIR$/app/Model/Asiento.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Cuenta.php" afterPath="$PROJECT_DIR$/app/Model/Cuenta.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Cuentascliente.php" afterPath="$PROJECT_DIR$/app/Model/Cuentascliente.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Empleado.php" afterPath="$PROJECT_DIR$/app/Model/Empleado.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Impcli.php" afterPath="$PROJECT_DIR$/app/Model/Impcli.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Asientos/contabilizarimpuesto.ctp" afterPath="$PROJECT_DIR$/app/View/Asientos/contabilizarimpuesto.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Bancosysindicatos/index.ctp" afterPath="$PROJECT_DIR$/app/View/Bancosysindicatos/index.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Bancosysindicatos/view.ctp" afterPath="$PROJECT_DIR$/app/View/Bancosysindicatos/view.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp" afterPath="$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Clientes/view.ctp" afterPath="$PROJECT_DIR$/app/View/Clientes/view.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Compras/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Compras/edit.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Compras/importar.ctp" afterPath="$PROJECT_DIR$/app/View/Compras/importar.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Cuentas/view.ctp" afterPath="$PROJECT_DIR$/app/View/Cuentas/view.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Cuentasclientes/plancuentas.ctp" afterPath="$PROJECT_DIR$/app/View/Cuentasclientes/plancuentas.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp" afterPath="$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoconveniomultilateral.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoconveniomultilateral.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosuss.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosuss.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp" afterPath="$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Ventas/importar.ctp" afterPath="$PROJECT_DIR$/app/View/Ventas/importar.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/css/cake.generic.css" afterPath="$PROJECT_DIR$/app/webroot/css/cake.generic.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Ventas/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Ventas/edit.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js" afterPath="$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/compras/importar.js" afterPath="$PROJECT_DIR$/app/webroot/js/compras/importar.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/clientes/view.js" afterPath="$PROJECT_DIR$/app/webroot/js/clientes/view.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoconveniomultilateral.js" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoconveniomultilateral.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajosuss.js" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajosuss.js" />
     </list>
     <ignored path="sigesec25.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -57,124 +87,130 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="tareacargar.ctp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp">
+      <file leaf-file-name="Cuenta.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Model/Cuenta.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-220">
-              <caret line="11" column="75" selection-start-line="11" selection-start-column="75" selection-end-line="11" selection-end-column="75" />
+            <state relative-caret-position="176">
+              <caret line="44" column="20" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ClientesController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Controller/ClientesController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="437">
+              <caret line="1598" column="48" selection-start-line="1598" selection-start-column="48" selection-end-line="1598" selection-end-column="48" />
               <folding>
-                <element signature="n#div#0;n#!!top" expanded="false" />
-                <element signature="n#div#0;n#div#0;n#div#1;n#!!top" expanded="false" />
-                <element signature="e#5610#6526#0#PHP" expanded="false" />
-                <marker date="1478639252946" expanded="false" signature="16542:16554" placeholder="..." />
-                <marker date="1478639252946" expanded="false" signature="16603:16613" placeholder="..." />
-                <marker date="1478639252946" expanded="false" signature="16664:16676" placeholder="..." />
-                <marker date="1478639252946" expanded="false" signature="16735:16747" placeholder="..." />
-                <marker date="1478639252946" expanded="true" signature="16912:16924" placeholder="..." />
-                <marker date="1478639252946" expanded="true" signature="17083:17095" placeholder="..." />
-                <marker date="1478639252946" expanded="true" signature="17267:17279" placeholder="..." />
-                <marker date="1478639252946" expanded="true" signature="17431:17443" placeholder="..." />
+                <element signature="n#avance#0;n#ClientesController#0;n#!!top" expanded="false" />
+                <element signature="e#19377#19797#0#PHP" expanded="false" />
+                <element signature="e#19854#20215#0#PHP" expanded="false" />
+                <element signature="e#20268#20458#0#PHP" expanded="false" />
+                <element signature="e#20493#20704#0#PHP" expanded="false" />
+                <element signature="e#20788#24415#0#PHP" expanded="false" />
+                <element signature="e#24689#27274#0#PHP" expanded="false" />
+                <element signature="n#pagosdelmes#0;n#ClientesController#0;n#!!top" expanded="false" />
+                <element signature="n#informefinancierotributario#0;n#ClientesController#0;n#!!top" expanded="false" />
+                <element signature="n#comparativo#0;n#ClientesController#0;n#!!top" expanded="false" />
+                <element signature="n#comparativolistacliente#0;n#ClientesController#0;n#!!top" expanded="false" />
+                <element signature="n#habilitar#0;n#ClientesController#0;n#!!top" expanded="false" />
+                <element signature="n#deshabilitar#0;n#ClientesController#0;n#!!top" expanded="false" />
+                <element signature="n#edit#0;n#ClientesController#0;n#!!top" expanded="false" />
+                <element signature="n#editajax#0;n#ClientesController#0;n#!!top" expanded="false" />
+                <element signature="n#delete#0;n#ClientesController#0;n#!!top" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="bootstrapmodal.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/webroot/css/bootstrapmodal.css">
+      <file leaf-file-name="ImpclisController.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/Controller/ImpclisController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2758">
-              <caret line="584" column="1" selection-start-line="584" selection-start-column="1" selection-end-line="584" selection-end-column="1" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="bootstrapmodal.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/webroot/js/bootstrapmodal.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="809">
-              <caret line="363" column="10" selection-start-line="363" selection-start-column="10" selection-end-line="363" selection-end-column="10" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="default.ctp" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/View/Layouts/default.ctp">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="638">
-              <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tareacargar.js" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="550">
-              <caret line="25" column="9" selection-start-line="4" selection-start-column="4" selection-end-line="25" selection-end-column="9" />
+            <state relative-caret-position="343">
+              <caret line="173" column="21" selection-start-line="173" selection-start-column="21" selection-end-line="173" selection-end-column="21" />
               <folding>
-                <element signature="e#2599#5038#0" expanded="false" />
-                <element signature="e#5177#9176#0" expanded="false" />
-                <element signature="e#9262#9323#0" expanded="false" />
-                <element signature="e#9502#9559#0" expanded="false" />
-                <element signature="e#9619#9676#0" expanded="false" />
-                <element signature="e#9734#9791#0" expanded="false" />
-                <element signature="e#9846#9903#0" expanded="false" />
-                <element signature="e#9957#10014#0" expanded="false" />
-                <element signature="e#10221#14849#0" expanded="false" />
-                <element signature="e#15674#19332#0" expanded="false" />
-                <element signature="e#19544#29680#0" expanded="false" />
-                <element signature="e#29941#33826#0" expanded="false" />
-                <element signature="e#33870#35426#0" expanded="false" />
-                <element signature="e#35481#39429#0" expanded="false" />
-                <element signature="e#39475#40356#0" expanded="false" />
-                <element signature="e#40401#41268#0" expanded="false" />
-                <element signature="e#41329#41718#0" expanded="false" />
-                <element signature="e#41760#42150#0" expanded="false" />
-                <element signature="e#42194#42586#0" expanded="false" />
-                <element signature="e#42639#43040#0" expanded="false" />
-                <element signature="e#43187#43384#0" expanded="false" />
-                <element signature="e#43568#45573#0" expanded="false" />
-                <element signature="e#45800#46160#0" expanded="false" />
-                <element signature="e#46229#47350#0" expanded="false" />
-                <element signature="e#47384#48431#0" expanded="false" />
-                <element signature="e#48460#48714#0" expanded="false" />
-                <element signature="e#48900#50708#0" expanded="false" />
-                <element signature="n#!!block;n#calcularFooterTotales#0" expanded="false" />
-                <element signature="n#!!block;n#calcularivaytotal#0" expanded="false" />
-                <element signature="n#!!block;n#calcularivaytotalcompra#0" expanded="false" />
-                <element signature="n#!!block;n#adaptarConceptorestanteForm#0" expanded="false" />
-                <element signature="e#62740#68451#0" expanded="false" />
-                <element signature="e#66099#67033#0" expanded="false" />
-                <element signature="n#!!block;n#reloadInputDates#0" expanded="false" />
-                <element signature="n#!!block;n#showVentas#0" expanded="false" />
-                <element signature="n#!!block;n#showCompras#0" expanded="false" />
-                <element signature="n#!!block;n#showNovedades#0" expanded="false" />
-                <element signature="n#!!block;n#showConceptosRestantes#0" expanded="false" />
-                <element signature="n#!!block;n#hideFormModVenta#0" expanded="false" />
-                <element signature="n#!!block;n#hideFormModCompra#0" expanded="false" />
-                <element signature="n#!!block;n#hideFormModSueldo#0" expanded="false" />
-                <element signature="n#!!block;n#eliminarVenta#0" expanded="false" />
-                <element signature="n#!!block;n#modificarCompra#0" expanded="false" />
-                <element signature="n#!!block;n#eliminarCompra#0" expanded="false" />
-                <element signature="n#!!block;n#eliminarConceptosrestante#0" expanded="false" />
-                <element signature="n#!!block;n#modificarConceptosrestante#0" expanded="false" />
-                <element signature="e#96423#97925#0" expanded="false" />
-                <element signature="n#!!block;n#eliminarSueldo#0" expanded="false" />
-                <element signature="n#!!block;n#cargarSueldoEmpleado#0" expanded="false" />
-                <element signature="n#!!block;n#cargarLibroSueldo#0" expanded="false" />
-                <element signature="n#!!block;n#cargarReciboSueldo#0" expanded="false" />
-                <element signature="n#!!block;n#imprimirElemento#0" expanded="false" />
-                <element signature="n#!!block;n#ocultarFunciones#0" expanded="false" />
-                <element signature="n#!!block;n#activarCalXOnSueldos#0" expanded="false" />
-                <element signature="e#103833#104691#0" expanded="false" />
-                <element signature="n#!!block;n#realizarEventoCliente#0" expanded="false" />
-                <element signature="n#!!block;n#usosSLD#0" expanded="false" />
-                <element signature="n#!!block;n#PrintElem#0" expanded="false" />
-                <element signature="n#!!block;n#PopupElement#0" expanded="false" />
+                <element signature="e#201#239#0#PHP" expanded="false" />
+                <element signature="e#283#325#0#PHP" expanded="false" />
+                <element signature="n#index#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="e#444#535#0#PHP" expanded="false" />
+                <element signature="n#view#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="e#824#864#0#PHP" expanded="false" />
+                <element signature="e#7342#9290#0#PHP" expanded="false" />
+                <element signature="e#9547#9765#0#PHP" expanded="false" />
+                <element signature="n#addbancosindicato#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="e#17213#17304#0#PHP" expanded="false" />
+                <element signature="n#edit#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#editajax#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="e#19344#19437#0#PHP" expanded="false" />
+                <element signature="n#delete#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="e#21615#22055#0#PHP" expanded="false" />
+                <element signature="e#22195#22550#0#PHP" expanded="false" />
+                <element signature="e#22619#22930#0#PHP" expanded="false" />
+                <element signature="e#22955#23102#0#PHP" expanded="false" />
+                <element signature="e#23183#23448#0#PHP" expanded="false" />
+                <element signature="e#23547#24103#0#PHP" expanded="false" />
+                <element signature="n#papeldetrabajomonotributo#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajoddjj#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="e#53457#54050#0#PHP" expanded="false" />
+                <element signature="n#papeldetrabajocooperadoraasistencial#0;n#ImpclisController#0;n#!!top" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="papeldetrabajosuss.ctp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajosuss.ctp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="508">
+              <caret line="1831" column="51" selection-start-line="1831" selection-start-column="51" selection-end-line="1831" selection-end-column="51" />
+              <folding>
+                <element signature="e#2060#5659#0#PHP" expanded="false" />
+                <element signature="e#8375#19020#0#PHP" expanded="false" />
+                <element signature="e#19076#19371#0#PHP" expanded="false" />
+                <element signature="e#19154#19371#0#PHP" expanded="false" />
+                <element signature="e#19176#19357#0#PHP" expanded="false" />
+                <element signature="e#19290#19357#0#PHP" expanded="false" />
+                <element signature="e#19473#19576#0#PHP" expanded="false" />
+                <element signature="e#19589#19696#0#PHP" expanded="false" />
+                <element signature="e#19709#19817#0#PHP" expanded="false" />
+                <element signature="e#19862#19949#0#PHP" expanded="false" />
+                <element signature="e#19962#20053#0#PHP" expanded="false" />
+                <element signature="e#20066#20158#0#PHP" expanded="false" />
+                <element signature="e#20318#20695#0#PHP" expanded="false" />
+                <element signature="e#20779#21025#0#PHP" expanded="false" />
+                <element signature="n#div#4;n#div#0;n#!!top" expanded="false" />
+                <element signature="e#86558#87156#0#PHP" expanded="false" />
+                <element signature="e#87528#87873#0#PHP" expanded="false" />
+                <marker date="1481037136638" expanded="true" signature="69438:69534" placeholder="..." />
+                <marker date="1481037136638" expanded="false" signature="86110:86153" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="papeldetrabajosuss.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajosuss.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="261">
+              <caret line="12" column="33" selection-start-line="12" selection-start-column="33" selection-end-line="12" selection-end-column="33" />
+              <folding>
+                <element signature="n#!!block;n#cargarAsiento#0" expanded="false" />
+                <element signature="n#!!block;n#catchAsiento#0" expanded="false" />
+                <element signature="n#!!block;n#pad#0" expanded="false" />
+                <element signature="n#!!block;n#cargartxt#0" expanded="false" />
+                <element signature="n#!!block;n#papelesDeTrabajo#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AsientosController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Controller/AsientosController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="440">
+              <caret line="50" column="107" selection-start-line="50" selection-start-column="107" selection-end-line="50" selection-end-column="107" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -195,57 +231,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/Controller/UsosaldosController.php" />
-        <option value="$PROJECT_DIR$/app/Controller/PapelesdetrabajosController.php" />
-        <option value="$PROJECT_DIR$/app/View/Clientes/informefinancierotributario.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp" />
-        <option value="$PROJECT_DIR$/app/Model/Eventosimpuesto.php" />
-        <option value="$PROJECT_DIR$/app/Controller/EventosimpuestosController.php" />
-        <option value="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajomonotributo.js" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosindicatos.ctp" />
-        <option value="$PROJECT_DIR$/app/Model/Cctxconcepto.php" />
-        <option value="$PROJECT_DIR$/app/Controller/EmpleadosController.php" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/edit.ctp" />
-        <option value="$PROJECT_DIR$/app/Controller/ImpclisController.php" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/add.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Clientes/view.ctp" />
-        <option value="$PROJECT_DIR$/app/Controller/ClientesController.php" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/edit.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/add.ctp" />
-        <option value="$PROJECT_DIR$/app/webroot/js/clientes/view.js" />
-        <option value="$PROJECT_DIR$/app/webroot/js/chosen.jquery.js" />
-        <option value="$PROJECT_DIR$/app/Model/Cliente.php" />
-        <option value="$PROJECT_DIR$/app/Model/Saldocuentacliente.php" />
-        <option value="$PROJECT_DIR$/app/Model/Cuentascliente.php" />
-        <option value="$PROJECT_DIR$/app/Model/Movimiento.php" />
-        <option value="$PROJECT_DIR$/app/View/Cuentasclientes/informesumaysaldo.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp" />
-        <option value="$PROJECT_DIR$/app/webroot/js/clientes/avance.js" />
-        <option value="$PROJECT_DIR$/app/Model/Asiento.php" />
-        <option value="$PROJECT_DIR$/app/webroot/js/asientos/contabilizarimpuesto.js" />
-        <option value="$PROJECT_DIR$/app/Controller/CuentasController.php" />
-        <option value="$PROJECT_DIR$/app/Model/Asientoestandare.php" />
         <option value="$PROJECT_DIR$/app/Model/Impuesto.php" />
-        <option value="$PROJECT_DIR$/app/Model/Impcli.php" />
-        <option value="$PROJECT_DIR$/app/Controller/CuentasclientesController.php" />
-        <option value="$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp" />
         <option value="$PROJECT_DIR$/app/webroot/js/compras/importar.js" />
-        <option value="$PROJECT_DIR$/app/View/Compras/importar.ctp" />
         <option value="$PROJECT_DIR$/app/View/Ventas/importar.ctp" />
         <option value="$PROJECT_DIR$/app/webroot/css/cake.generic.css" />
         <option value="$PROJECT_DIR$/app/View/Asientos/contabilizarimpuesto.ctp" />
-        <option value="$PROJECT_DIR$/app/Controller/ComprasController.php" />
-        <option value="$PROJECT_DIR$/app/Controller/AsientosController.php" />
         <option value="$PROJECT_DIR$/app/View/Asientos/contabilizarcompra.ctp" />
         <option value="$PROJECT_DIR$/app/View/Asientos/contabilizarventa.ctp" />
         <option value="$PROJECT_DIR$/app/View/Cuentas/view.ctp" />
         <option value="$PROJECT_DIR$/app/View/Cuentasclientes/plancuentas.ctp" />
         <option value="$PROJECT_DIR$/app/webroot/css/bootstrapmodal.css" />
         <option value="$PROJECT_DIR$/app/webroot/js/bootstapmodal.js" />
-        <option value="$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/CuentasclientesController.php" />
+        <option value="$PROJECT_DIR$/app/Controller/CuentasController.php" />
+        <option value="$PROJECT_DIR$/app/View/Compras/importar.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Cbus/index.ctp" />
+        <option value="$PROJECT_DIR$/app/Model/Movimientosbancario.php" />
+        <option value="$PROJECT_DIR$/app/Model/Cbu.php" />
+        <option value="$PROJECT_DIR$/app/View/Movimientosbancarios/index.ctp" />
+        <option value="$PROJECT_DIR$/app/Model/Cuentascliente.php" />
+        <option value="$PROJECT_DIR$/app/Controller/EmpleadosController.php" />
+        <option value="$PROJECT_DIR$/app/Controller/SubclientesController.php" />
+        <option value="$PROJECT_DIR$/app/webroot/js/clientes/view.js" />
+        <option value="$PROJECT_DIR$/app/View/Ventas/edit.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/VentasController.php" />
+        <option value="$PROJECT_DIR$/app/View/Compras/edit.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/ConceptosrestantesController.php" />
         <option value="$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js" />
+        <option value="$PROJECT_DIR$/app/Controller/ComprasController.php" />
+        <option value="$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Movimientosbancarios/importar.ctp" />
+        <option value="$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/importar.js" />
+        <option value="$PROJECT_DIR$/app/Controller/MovimientosbancariosController.php" />
+        <option value="$PROJECT_DIR$/app/Controller/CbusController.php" />
+        <option value="$PROJECT_DIR$/app/View/Clientes/view.ctp" />
+        <option value="$PROJECT_DIR$/app/Model/Empleado.php" />
+        <option value="$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp" />
+        <option value="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoconveniomultilateral.js" />
+        <option value="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js" />
+        <option value="$PROJECT_DIR$/app/Model/Asiento.php" />
+        <option value="$PROJECT_DIR$/app/Model/Impcli.php" />
+        <option value="$PROJECT_DIR$/app/Controller/PapelesdetrabajosController.php" />
+        <option value="$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoconveniomultilateral.ctp" />
+        <option value="$PROJECT_DIR$/app/Model/Cuenta.php" />
+        <option value="$PROJECT_DIR$/app/Controller/AsientosController.php" />
+        <option value="$PROJECT_DIR$/app/Controller/AppController.php" />
+        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/ClientesController.php" />
+        <option value="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajosuss.js" />
+        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosuss.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/ImpclisController.php" />
       </list>
     </option>
   </component>
@@ -306,8 +342,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -402,77 +438,7 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="compras" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="webroot" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="clientes" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="webroot" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="View" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Ventas" />
+              <option name="myItemId" value="impclis" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -512,29 +478,7 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Papelesdetrabajos" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="View" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Layouts" />
+              <option name="myItemId" value="Impclis" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -557,116 +501,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Cuentasclientes" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="View" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Cuentas" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="View" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Conveniocolectivotrabajos" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="View" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Compras" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="View" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Clientes" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="contasynfotech" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="View" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Asientos" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -710,7 +544,7 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="1142" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.appearance" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../bin/php/php5.6.19/php.exe" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
@@ -718,11 +552,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\wamp64\www\contasynfotech\app\webroot\js" />
-      <recent name="C:\wamp64\www\contasynfotech\app\View\Asientos" />
-      <recent name="C:\wamp64\www\contasynfotech\app\Model" />
-      <recent name="C:\wamp64\www\contasynfotech\app\Controller" />
+      <recent name="C:\wamp64\www\contasynfotech\app\webroot\js\Movimientosbancarios" />
+      <recent name="C:\wamp64\www\contasynfotech\app\View\Movimientosbancarios" />
       <recent name="C:\wamp64\www\contasynfotech\app\View" />
+      <recent name="C:\wamp64\www\contasynfotech\app\View\Movimientos" />
+      <recent name="C:\wamp64\www\contasynfotech\app\Controller" />
     </key>
   </component>
   <component name="RunManager" selected="JavaScript Debug.papeldetrabajoddjj.ctp">
@@ -799,7 +633,14 @@
       <workItem from="1477322754358" duration="1976000" />
       <workItem from="1477337427818" duration="43756000" />
       <workItem from="1477590430300" duration="29100000" />
-      <workItem from="1477917610046" duration="106754000" />
+      <workItem from="1477917610046" duration="152164000" />
+      <workItem from="1479222690744" duration="56385000" />
+      <workItem from="1479506844197" duration="29862000" />
+      <workItem from="1479913941870" duration="9668000" />
+      <workItem from="1480003226535" duration="28267000" />
+      <workItem from="1480430659343" duration="22319000" />
+      <workItem from="1480520340969" duration="8517000" />
+      <workItem from="1480603636908" duration="58261000" />
     </task>
     <task id="LOCAL-00001" summary="varios cambios de interfaz en los papeles de trabajo, y merge con los datos que estaban en el DropBox que salian como diferentes pero por un tema de fechas nada mas">
       <created>1475861631660</created>
@@ -812,7 +653,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="394177000" />
+    <option name="totallyTimeSpent" value="652866000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -827,16 +668,14 @@
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17328326" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16523606" sideWeight="0.73476297" order="0" side_tool="true" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32990867" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295711" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18133047" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45332617" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32844242" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15182403" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16523606" sideWeight="0.26523703" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32990867" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39503387" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299356" sideWeight="0.49097064" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -844,9 +683,11 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Command Line Tools Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.14334086" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295711" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39503387" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -872,24 +713,13 @@
           <line>23</line>
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js</url>
-          <line>30</line>
-          <option name="timeStamp" value="43" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js</url>
-          <line>2007</line>
-          <properties />
-          <option name="timeStamp" value="57" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp</url>
-          <line>99</line>
-          <option name="timeStamp" value="15" />
+          <url>file://$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/importar.js</url>
+          <line>2</line>
+          <option name="timeStamp" value="71" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp</url>
-          <line>645</line>
+          <line>752</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -912,628 +742,679 @@
           <line>55</line>
           <option name="timeStamp" value="36" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/app/View/Clientes/view.ctp</url>
+          <line>884</line>
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/app/Controller/EmpleadosController.php</url>
+          <line>41</line>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="58" />
+      <option name="time" value="78" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/app/Controller/VentasController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="84" column="72" selection-start-line="84" selection-start-column="72" selection-end-line="84" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Compras/edit.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="804">
+          <caret line="41" column="40" selection-start-line="41" selection-start-column="40" selection-end-line="41" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/edit.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-594">
-          <caret line="9" column="62" selection-start-line="9" selection-start-column="46" selection-end-line="9" selection-end-column="62" />
+        <state relative-caret-position="1892">
+          <caret line="86" column="16" selection-start-line="86" selection-start-column="12" selection-end-line="86" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Ventas/edit.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="638">
+          <caret line="86" column="34" selection-start-line="86" selection-start-column="34" selection-end-line="86" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/add.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-388">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/index.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/serializejson.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/view.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/ConceptosrestantesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="657">
+          <caret line="203" column="10" selection-start-line="203" selection-start-column="10" selection-end-line="203" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/ed7d84c9/38fae4f1-2c0d-46e8-ba11-a3ef10665fd9/sigesec.cuentasclientes">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Ventas/importar.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8778">
+          <caret line="453" column="0" selection-start-line="453" selection-start-column="0" selection-end-line="532" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/ventas/importar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="85" column="41" selection-start-line="85" selection-start-column="41" selection-end-line="85" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/css/cake.generic.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="591">
+          <caret line="1402" column="27" selection-start-line="1402" selection-start-column="18" selection-end-line="1402" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/php/lib/php.jar!/com/jetbrains/php/lang/psi/stubs/data/standard_8.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="284">
+          <caret line="1013" column="9" selection-start-line="1013" selection-start-column="9" selection-end-line="1013" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Saldocuentacliente.php">
+    <entry file="file://$PROJECT_DIR$/app/Controller/ComprasController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="16" column="24" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
-          <folding />
+        <state relative-caret-position="261">
+          <caret line="312" column="65" selection-start-line="312" selection-start-column="56" selection-end-line="312" selection-end-column="65" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Cuentascliente.php">
+    <entry file="file://$PROJECT_DIR$/app/View/Compras/importar.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1174">
-          <caret line="59" column="38" selection-start-line="59" selection-start-column="38" selection-end-line="59" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="704">
-          <caret line="38" column="17" selection-start-line="23" selection-start-column="12" selection-end-line="38" selection-end-column="17" />
-          <folding>
-            <element signature="e#1444#23996#0#PHP" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Cuentasclientes/informesumaysaldo.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="26" selection-end-column="0" />
-          <folding>
-            <element signature="e#6#94#0#PHP" expanded="true" />
-            <marker date="1478123601729" expanded="true" signature="1175:2811" placeholder="..." />
-            <marker date="1478123601729" expanded="true" signature="1196:1289" placeholder="..." />
-          </folding>
+        <state relative-caret-position="304">
+          <caret line="430" column="41" selection-start-line="430" selection-start-column="41" selection-end-line="430" selection-end-column="41" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/avance.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="271">
-          <caret line="685" column="15" selection-start-line="685" selection-start-column="15" selection-end-line="685" selection-end-column="15" />
+        <state relative-caret-position="528">
+          <caret line="24" column="32" selection-start-line="24" selection-start-column="32" selection-end-line="24" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Movimientosbancarios/importar.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="123" column="46" selection-start-line="123" selection-start-column="46" selection-end-line="123" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/importar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="8" column="58" selection-start-line="8" selection-start-column="58" selection-end-line="8" selection-end-column="58" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="349">
+          <caret line="811" column="48" selection-start-line="811" selection-start-column="21" selection-end-line="811" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="dbDummy://dbtable:/ed7d84c9/38fae4f1-2c0d-46e8-ba11-a3ef10665fd9/sigesec.empleados">
+      <provider selected="true" editor-type-id="com.intellij.database.editor.DatabaseTableFileEditorProvider">
+        <state>
+          <filtering enabled="true" />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/MovimientosbancariosController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="768">
+          <caret line="71" column="8" selection-start-line="71" selection-start-column="8" selection-end-line="71" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Clientes/view.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44242">
+          <caret line="2094" column="100" selection-start-line="2094" selection-start-column="89" selection-end-line="2094" selection-end-column="100" />
+          <folding>
+            <element signature="e#91713#95812#0#PHP" expanded="false" />
+            <element signature="e#114516#114723#0#PHP" expanded="false" />
+            <element signature="e#114790#114996#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Model/Empleado.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3520">
+          <caret line="176" column="15" selection-start-line="176" selection-start-column="15" selection-end-line="176" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/CbusesController.php.bak" />
+    <entry file="file://$PROJECT_DIR$/app/Controller/CbusesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="404">
+          <caret line="58" column="55" selection-start-line="58" selection-start-column="55" selection-end-line="58" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp.orig">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/consoles/db/38fae4f1-2c0d-46e8-ba11-a3ef10665fd9/console.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="700">
-          <caret line="736" column="0" selection-start-line="736" selection-start-column="0" selection-end-line="736" selection-end-column="0" />
-          <folding>
-            <element signature="e#681#4140#0#PHP" expanded="false" />
-            <element signature="n#div#2;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#0;n#div#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#1;n#div#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#2;n#div#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#div#3;n#div#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#div#2;n#!!top" expanded="false" />
-            <element signature="e#14325#27979#0#PHP" expanded="false" />
-            <element signature="e#27992#35520#0#PHP" expanded="false" />
-            <element signature="e#40187#42706#0#PHP" expanded="false" />
-            <marker date="1478184959288" expanded="true" signature="44612:44636" placeholder="..." />
-            <marker date="1478184959288" expanded="true" signature="44695:44710" placeholder="..." />
-          </folding>
+        <state relative-caret-position="3894">
+          <caret line="177" column="53" selection-start-line="166" selection-start-column="11" selection-end-line="177" selection-end-column="53" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getapagar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Movimiento.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="546">
-          <caret line="36" column="30" selection-start-line="36" selection-start-column="30" selection-end-line="36" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Eventosimpuesto.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="74">
-          <caret line="63" column="0" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/EventosimpuestosController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="219" column="8" selection-start-line="219" selection-start-column="8" selection-end-line="227" selection-end-column="57" />
-          <folding>
-            <element signature="n#realizareventoimpuesto#0;n#EventosimpuestosController#0;n#!!top" expanded="false" />
-            <element signature="n#realizartarea5#0;n#EventosimpuestosController#0;n#!!top" expanded="false" />
-            <element signature="e#16160#17439#0#PHP" expanded="false" />
-            <element signature="n#getapagar#0;n#EventosimpuestosController#0;n#!!top" expanded="false" />
-            <element signature="n#realizartarea13#0;n#EventosimpuestosController#0;n#!!top" expanded="false" />
-            <element signature="n#delete#0;n#EventosimpuestosController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="179" column="30" selection-start-line="169" selection-start-column="23" selection-end-line="179" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Cctxconcepto.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="26" column="10" selection-start-line="20" selection-start-column="8" selection-end-line="26" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Cliente.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="536">
-          <caret line="279" column="42" selection-start-line="279" selection-start-column="42" selection-end-line="279" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Asiento.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="24" column="36" selection-start-line="24" selection-start-column="36" selection-end-line="24" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Asientoestandare.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
-          <caret line="36" column="10" selection-start-line="36" selection-start-column="10" selection-end-line="36" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/asientos/contabilizarimpuesto.js">
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoconveniomultilateral.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="22">
-          <caret line="3" column="0" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <caret line="45" column="41" selection-start-line="45" selection-start-column="41" selection-end-line="45" selection-end-column="41" />
+          <folding>
+            <element signature="e#29#1565#0" expanded="false" />
+            <element signature="e#453#814#0" expanded="false" />
+            <element signature="e#848#1164#0" expanded="false" />
+            <element signature="e#1193#1447#0" expanded="false" />
+            <element signature="n#!!block;n#papelesDeTrabajo#0" expanded="false" />
+            <element signature="n#!!block;n#showhideBaseRealJurisdiccion#0" expanded="false" />
+            <element signature="n#!!block;n#showhideProrrateoPorAplicacionArticulo#0" expanded="false" />
+            <element signature="n#!!block;n#showhideBaseImponibleProrrateada#0" expanded="false" />
+            <element signature="n#!!block;n#imprimir#0" expanded="false" />
+            <element signature="n#!!block;n#cargarAsiento#0" expanded="false" />
+            <element signature="n#!!block;n#catchAsientoIVA#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajocooperadoraasistencial.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="133" column="0" selection-start-line="133" selection-start-column="0" selection-end-line="192" selection-end-column="1" />
+          <folding>
+            <element signature="e#68#283#0" expanded="false" />
+            <element signature="e#386#637#0" expanded="false" />
+            <element signature="e#668#882#0" expanded="false" />
+            <element signature="e#908#1090#0" expanded="false" />
+            <element signature="n#!!block;n#papelesDeTrabajo#0" expanded="false" />
+            <element signature="n#!!block;n#showhideactividad#0" expanded="false" />
+            <element signature="n#!!block;n#imprimir#0" expanded="false" />
+            <element signature="n#!!block;n#cargarAsiento#0" expanded="false" />
+            <element signature="n#!!block;n#catchAsientoIVA#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/CbusController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="376">
+          <caret line="49" column="56" selection-start-line="49" selection-start-column="49" selection-end-line="49" selection-end-column="56" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/MovimientosController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Model/Impuesto.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="51" column="44" selection-start-line="51" selection-start-column="44" selection-end-line="51" selection-end-column="44" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Cuenta.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-256">
+        <state relative-caret-position="-740">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Honorario.php">
+    <entry file="file://$PROJECT_DIR$/app/Model/Asiento.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/Clientesxcomprobantes.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="60" column="5" selection-start-line="47" selection-start-column="4" selection-end-line="60" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/ComprobantesController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-806">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/DepositosController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1914">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Asientos/serializejson.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="261">
+          <caret line="13" column="74" selection-start-line="13" selection-start-column="74" selection-end-line="13" selection-end-column="74" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Model/Impcli.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1086">
-          <caret line="122" column="35" selection-start-line="122" selection-start-column="35" selection-end-line="122" selection-end-column="35" />
+        <state relative-caret-position="888">
+          <caret line="133" column="9" selection-start-line="133" selection-start-column="9" selection-end-line="133" selection-end-column="9" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/EmpleadosController.php">
+    <entry file="file://$PROJECT_DIR$/app/Controller/PapelesdetrabajosController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="335" column="3" selection-start-line="335" selection-start-column="3" selection-end-line="335" selection-end-column="3" />
-          <folding>
-            <element signature="n#view#0;n#EmpleadosController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/compras/importar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="479">
-          <caret line="53" column="93" selection-start-line="53" selection-start-column="93" selection-end-line="53" selection-end-column="93" />
+        <state relative-caret-position="110">
+          <caret line="53" column="55" selection-start-line="53" selection-start-column="42" selection-end-line="53" selection-end-column="55" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Venta.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1158">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/css/cake.generic.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="2442" column="29" selection-start-line="2442" selection-start-column="29" selection-end-line="2442" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Ventas/importar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-281">
-          <caret line="672" column="86" selection-start-line="672" selection-start-column="72" selection-end-line="672" selection-end-column="86" />
-          <folding>
-            <element signature="e#10782#12066#0#HTML" expanded="false" />
-            <element signature="e#10927#12054#0#HTML" expanded="false" />
-            <element signature="e#12175#13685#0#PHP" expanded="false" />
-            <element signature="e#13818#18958#0#HTML" expanded="false" />
-            <element signature="e#19083#19230#0#PHP" expanded="false" />
-            <element signature="e#19417#19741#0#PHP" expanded="false" />
-            <element signature="e#20126#23326#0#HTML" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="589">
-          <caret line="1369" column="45" selection-start-line="1369" selection-start-column="45" selection-end-line="1369" selection-end-column="45" />
+        <state relative-caret-position="69">
+          <caret line="2908" column="17" selection-start-line="2908" selection-start-column="17" selection-end-line="2908" selection-end-column="17" />
           <folding>
-            <element signature="n#div#0;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#div#1;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#div#1;n#div#3;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#table#0;n#div#1;n#div#3;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#table#0;n#div#0;n#div#1;n#div#3;n#div#0;n#!!top" expanded="false" />
-            <element signature="e#16540#18668#0#PHP" expanded="false" />
-            <element signature="n#table#0;n#div#0;n#div#0;n#div#1;n#div#3;n#div#0;n#!!top" expanded="false" />
-            <element signature="e#25713#27972#0#PHP" expanded="false" />
-            <element signature="n#table#0;n#div#1;n#div#0;n#div#1;n#div#3;n#div#0;n#!!top" expanded="false" />
-            <element signature="e#34453#36450#0#PHP" expanded="false" />
-            <element signature="n#table#0;n#div#2;n#div#0;n#div#1;n#div#3;n#div#0;n#!!top" expanded="false" />
-            <element signature="e#43008#45005#0#PHP" expanded="false" />
-            <element signature="e#45023#50684#0#PHP" expanded="false" />
-            <element signature="e#51092#53079#0#PHP" expanded="false" />
-            <element signature="e#53097#58683#0#PHP" expanded="false" />
-            <element signature="e#59092#61087#0#PHP" expanded="false" />
-            <element signature="e#67794#70064#0#PHP" expanded="false" />
-            <element signature="e#86715#88309#0#PHP" expanded="false" />
-            <marker date="1478273323663" expanded="true" signature="20049:20578" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="20112:20121" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="20193:20202" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="20292:20301" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="20399:20408" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="20506:20515" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="20821:21348" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="20884:20893" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="20965:20974" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="21064:21073" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="21170:21179" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="21276:21285" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="21592:22125" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="21655:21664" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="21737:21746" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="21837:21846" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="21945:21954" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="22053:22062" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="22369:22900" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="22432:22441" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="22514:22523" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="22614:22623" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="22721:22730" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="22828:22837" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="23144:23675" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="23207:23216" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="23289:23298" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="23389:23398" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="23496:23505" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="23603:23612" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="24358:24868" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="24421:24430" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="24506:24515" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="24598:24607" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="24698:24707" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="24798:24807" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="29258:29733" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="29317:29326" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="29394:29403" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="29489:29498" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="29592:29601" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="29666:29675" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="29956:30430" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="30015:30024" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="30092:30101" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="30187:30196" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="30289:30298" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="30363:30372" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="30654:31132" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="30713:30722" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="30791:30800" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="30887:30896" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="30991:31000" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="31065:31074" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="31356:31833" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="31415:31424" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="31493:31502" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="31589:31598" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="31692:31701" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="31766:31775" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="32057:32534" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="32116:32125" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="32194:32203" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="32290:32299" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="32393:32402" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="32467:32476" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="33189:33652" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="33248:33257" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="33329:33338" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="33417:33426" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="33513:33522" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="33587:33596" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="37657:38092" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="37708:37717" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="37777:37786" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="37868:37877" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="37967:37976" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="38033:38042" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="38260:38694" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="38311:38320" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="38380:38389" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="38471:38480" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="38569:38578" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="38635:38644" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="38863:39301" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="38914:38923" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="38984:38993" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="39076:39085" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="39176:39185" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="39242:39251" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="39470:39907" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="39521:39530" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="39591:39600" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="39683:39692" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="39782:39791" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="39848:39857" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="40076:40513" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="40127:40136" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="40197:40206" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="40289:40298" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="40388:40397" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="40454:40463" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="41105:41528" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="41156:41165" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="41229:41238" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="41313:41322" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="41405:41414" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="41471:41480" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="46255:46724" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="46306:46315" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="46375:46384" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="46466:46475" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="46565:46574" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="46664:46673" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="46892:47359" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="46943:46952" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="47012:47021" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="47103:47112" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="47201:47210" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="47299:47308" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="47528:48001" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="47579:47588" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="47649:47658" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="47741:47750" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="47841:47850" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="47941:47950" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="48170:48641" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="48221:48230" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="48291:48300" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="48383:48392" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="48482:48491" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="48581:48590" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="48810:49281" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="48861:48870" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="48931:48940" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="49023:49032" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="49122:49131" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="49221:49230" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="49873:50323" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="49924:49933" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="49997:50006" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="50081:50090" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="50173:50182" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="50265:50274" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="54275:54635" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="54838:55288" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="54893:54902" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="54966:54975" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="55057:55066" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="55155:55164" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="55225:55234" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="55492:55946" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="55547:55556" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="55621:55630" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="55713:55722" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="55813:55822" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="55883:55892" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="56150:56603" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="56205:56214" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="56279:56288" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="56371:56380" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="56470:56479" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="56540:56549" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="56807:57260" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="56862:56871" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="56936:56945" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="57028:57037" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="57127:57136" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="57197:57206" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="57887:58326" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="57942:57951" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="58019:58028" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="58103:58112" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="58195:58204" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="58265:58274" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="62291:62742" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="62346:62355" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="62419:62428" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="62510:62519" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="62609:62618" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="62679:62688" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="62945:63395" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63000:63009" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63073:63082" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63164:63173" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63262:63271" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63332:63341" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="63599:64053" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63654:63663" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63728:63737" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63820:63829" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63920:63929" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="63990:63999" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="64257:64710" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="64312:64321" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="64386:64395" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="64478:64487" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="64577:64586" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="64647:64656" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="64914:65367" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="64969:64978" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="65043:65052" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="65135:65144" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="65234:65243" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="65304:65313" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="65994:66433" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="66049:66058" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="66126:66135" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="66210:66219" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="66302:66311" placeholder="..." />
-            <marker date="1478273323663" expanded="false" signature="66372:66381" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="88376:88556" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="88608:88787" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="88840:89025" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="89078:89262" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="89315:89498" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="89910:90074" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="92442:92592" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="92644:92794" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="92847:93001" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="93054:93208" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="93261:93414" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="93826:93967" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="96354:96504" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="96556:96706" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="96759:96913" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="96966:97120" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="97173:97326" placeholder="..." />
-            <marker date="1478273323663" expanded="true" signature="97738:97879" placeholder="..." />
+            <element signature="e#37802#39671#0#PHP" expanded="false" />
+            <element signature="e#47664#52981#0#PHP" expanded="false" />
+            <element signature="e#55218#60436#0#PHP" expanded="false" />
+            <element signature="e#68923#70949#0#PHP" expanded="false" />
+            <element signature="e#122197#123851#0#PHP" expanded="false" />
+            <marker date="1480701771099" expanded="true" signature="24278:24783" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="24337:24346" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="24414:24423" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="24509:24518" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="24612:24621" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="24715:24724" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="25006:25509" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="25065:25074" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="25142:25151" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="25237:25246" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="25339:25348" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="25441:25450" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="25733:26242" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="25792:25801" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="25870:25879" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="25966:25975" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="26070:26079" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="26174:26183" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="26466:26973" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="26525:26534" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="26603:26612" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="26699:26708" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="26802:26811" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="26905:26914" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="27197:27704" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="27256:27265" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="27334:27343" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="27430:27439" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="27533:27542" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="27636:27645" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="28359:28845" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="28418:28427" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="28499:28508" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="28587:28596" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="28683:28692" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="28779:28788" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="32939:33390" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="32994:33003" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="33067:33076" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="33158:33167" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="33257:33266" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="33327:33336" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="33593:34043" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="33648:33657" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="33721:33730" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="33812:33821" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="33910:33919" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="33980:33989" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="34247:34701" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="34302:34311" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="34376:34385" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="34468:34477" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="34568:34577" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="34638:34647" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="34905:35358" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="34960:34969" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="35034:35043" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="35126:35135" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="35225:35234" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="35295:35304" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="35562:36015" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="35617:35626" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="35691:35700" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="35783:35792" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="35882:35891" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="35952:35961" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="36642:37081" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="36697:36706" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="36774:36783" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="36858:36867" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="36950:36959" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="37020:37029" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="40794:41205" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="40841:40850" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="40906:40915" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="40993:41002" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="41088:41097" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="41150:41159" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="41357:41767" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="41404:41413" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="41469:41478" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="41556:41565" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="41650:41659" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="41712:41721" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="41920:42334" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="41967:41976" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="42033:42042" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="42121:42130" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="42217:42226" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="42279:42288" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="42487:42900" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="42534:42543" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="42600:42609" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="42688:42697" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="42783:42792" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="42845:42854" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="43053:43466" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="43100:43109" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="43166:43175" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="43254:43263" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="43349:43358" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="43411:43420" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="44034:44433" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="44081:44090" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="44150:44159" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="44230:44239" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="44318:44327" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="44380:44389" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="48820:49265" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="48867:48876" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="48932:48941" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="49019:49028" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="49114:49123" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="49209:49218" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="49417:49860" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="49464:49473" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="49529:49538" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="49616:49625" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="49710:49719" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="49804:49813" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="50013:50462" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="50060:50069" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="50126:50135" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="50214:50223" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="50310:50319" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="50406:50415" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="50615:51062" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="50662:50671" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="50728:50737" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="50816:50825" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="50911:50920" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="51006:51015" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="51215:51662" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="51262:51271" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="51328:51337" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="51416:51425" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="51511:51520" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="51606:51615" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="52230:52656" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="52277:52286" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="52346:52355" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="52426:52435" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="52514:52523" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="52602:52611" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="56316:56652" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="56835:57261" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="56886:56895" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="56955:56964" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="57042:57051" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="57136:57145" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="57202:57211" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="57445:57875" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="57496:57505" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="57566:57575" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="57654:57663" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="57750:57759" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="57816:57825" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="58059:58488" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="58110:58119" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="58180:58189" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="58268:58277" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="58363:58372" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="58429:58438" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="58672:59101" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="58723:58732" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="58793:58802" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="58881:58890" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="58976:58985" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="59042:59051" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="59700:60115" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="59751:59760" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="59824:59833" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="59904:59913" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="59992:60001" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="60058:60067" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="63788:64215" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="63839:63848" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="63908:63917" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="63995:64004" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="64090:64099" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="64156:64165" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="64398:64824" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="64449:64458" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="64518:64527" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="64605:64614" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="64699:64708" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="64765:64774" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="65008:65438" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65059:65068" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65129:65138" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65217:65226" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65313:65322" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65379:65388" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="65622:66051" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65673:65682" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65743:65752" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65831:65840" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65926:65935" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="65992:66001" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="66235:66664" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="66286:66295" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="66356:66365" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="66444:66453" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="66539:66548" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="66605:66614" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="67263:67678" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="67314:67323" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="67387:67396" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="67467:67476" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="67555:67564" placeholder="..." />
+            <marker date="1480701771099" expanded="false" signature="67621:67630" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="95174:95213" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="123945:124215" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="124318:124587" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="124691:124966" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="125070:125343" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="125447:125720" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="126207:126459" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="129115:129355" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="129458:129698" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="129802:130046" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="130150:130393" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="130497:130740" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="131227:131456" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="134133:134373" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="134476:134716" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="134820:135064" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="135168:135411" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="135515:135758" placeholder="..." />
+            <marker date="1480701771099" expanded="true" signature="136245:136474" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Ventas/tareacargar.ctp">
+    <entry file="file://$PROJECT_DIR$/app/Controller/CuentasController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="987">
-          <caret line="103" column="54" selection-start-line="103" selection-start-column="51" selection-end-line="103" selection-end-column="54" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/VentasController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="42">
-          <caret line="645" column="4" selection-start-line="645" selection-start-column="4" selection-end-line="675" selection-end-column="5" />
-          <folding>
-            <element signature="n#addajax#0;n#VentasController#0;n#!!top" expanded="false" />
-            <element signature="n#edit#0;n#VentasController#0;n#!!top" expanded="false" />
-            <element signature="n#delete#0;n#VentasController#0;n#!!top" expanded="false" />
-            <element signature="n#agregarparaimportar#0;n#VentasController#0;n#!!top" expanded="false" />
-            <element signature="n#importar#0;n#VentasController#0;n#!!top" expanded="false" />
-            <element signature="e#16060#17255#0#PHP" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/ComprasController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="351" column="0" selection-start-line="351" selection-start-column="0" selection-end-line="351" selection-end-column="0" />
+        <state relative-caret-position="418">
+          <caret line="67" column="13" selection-start-line="57" selection-start-column="12" selection-end-line="67" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Compras/importar.ctp">
+    <entry file="file://$PROJECT_DIR$/app/Controller/CuentasclientesController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-858">
-          <caret line="179" column="48" selection-start-line="179" selection-start-column="48" selection-end-line="179" selection-end-column="48" />
+        <state relative-caret-position="655">
+          <caret line="60" column="39" selection-start-line="60" selection-start-column="39" selection-end-line="60" selection-end-column="39" />
           <folding>
-            <element signature="e#9401#10447#0#PHP" expanded="false" />
-            <element signature="e#11235#12834#0#PHP" expanded="false" />
-            <marker date="1478548770120" expanded="true" signature="11026:11059" placeholder="..." />
+            <element signature="n#plancuentas#0;n#CuentasclientesController#0;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Asientos/contabilizarimpuesto.ctp">
+    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoconveniomultilateral.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="498">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+        <state relative-caret-position="-159">
+          <caret line="903" column="82" selection-start-line="903" selection-start-column="64" selection-end-line="903" selection-end-column="82" />
           <folding>
-            <element signature="e#6#94#0#PHP" expanded="false" />
+            <marker date="1480704538516" expanded="true" signature="22326:22335" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/AsientosController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="50" column="107" selection-start-line="50" selection-start-column="107" selection-end-line="50" selection-end-column="107" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/AppController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="36" column="18" selection-start-line="36" selection-start-column="18" selection-end-line="36" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="563" column="44" selection-start-line="563" selection-start-column="0" selection-end-line="564" selection-end-column="0" />
+          <folding>
+            <element signature="e#1507#25000#0#PHP" expanded="false" />
+            <element signature="e#3185#5697#0#PHP" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Model/Cuenta.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="44" column="20" selection-start-line="44" selection-start-column="16" selection-end-line="44" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajosuss.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="12" column="33" selection-start-line="12" selection-start-column="33" selection-end-line="12" selection-end-column="33" />
+          <folding>
+            <element signature="n#!!block;n#cargarAsiento#0" expanded="false" />
+            <element signature="n#!!block;n#catchAsiento#0" expanded="false" />
+            <element signature="n#!!block;n#pad#0" expanded="false" />
+            <element signature="n#!!block;n#cargartxt#0" expanded="false" />
+            <element signature="n#!!block;n#papelesDeTrabajo#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Controller/ClientesController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="113">
-          <caret line="566" column="0" selection-start-line="566" selection-start-column="0" selection-end-line="566" selection-end-column="0" />
+        <state relative-caret-position="437">
+          <caret line="1598" column="48" selection-start-line="1598" selection-start-column="48" selection-end-line="1598" selection-end-column="48" />
           <folding>
-            <element signature="n#index#0;n#ClientesController#0;n#!!top" expanded="false" />
             <element signature="n#avance#0;n#ClientesController#0;n#!!top" expanded="false" />
-            <element signature="e#19735#20096#0#PHP" expanded="false" />
-            <element signature="e#20149#20339#0#PHP" expanded="false" />
-            <element signature="e#20374#20585#0#PHP" expanded="false" />
-            <element signature="e#20719#21307#1#PHP" expanded="false" />
-            <element signature="e#21328#21426#1#PHP" expanded="false" />
-            <element signature="e#22139#22988#1#PHP" expanded="false" />
-            <element signature="e#23011#23562#1#PHP" expanded="false" />
-            <element signature="e#23584#23714#1#PHP" expanded="false" />
-            <element signature="e#24141#26726#0#PHP" expanded="false" />
+            <element signature="e#19377#19797#0#PHP" expanded="false" />
+            <element signature="e#19854#20215#0#PHP" expanded="false" />
+            <element signature="e#20268#20458#0#PHP" expanded="false" />
+            <element signature="e#20493#20704#0#PHP" expanded="false" />
+            <element signature="e#20788#24415#0#PHP" expanded="false" />
+            <element signature="e#24689#27274#0#PHP" expanded="false" />
             <element signature="n#pagosdelmes#0;n#ClientesController#0;n#!!top" expanded="false" />
             <element signature="n#informefinancierotributario#0;n#ClientesController#0;n#!!top" expanded="false" />
             <element signature="n#comparativo#0;n#ClientesController#0;n#!!top" expanded="false" />
             <element signature="n#comparativolistacliente#0;n#ClientesController#0;n#!!top" expanded="false" />
-            <element signature="n#view#0;n#ClientesController#0;n#!!top" expanded="false" />
             <element signature="n#habilitar#0;n#ClientesController#0;n#!!top" expanded="false" />
             <element signature="n#deshabilitar#0;n#ClientesController#0;n#!!top" expanded="false" />
-            <element signature="n#add#0;n#ClientesController#0;n#!!top" expanded="false" />
             <element signature="n#edit#0;n#ClientesController#0;n#!!top" expanded="false" />
             <element signature="n#editajax#0;n#ClientesController#0;n#!!top" expanded="false" />
             <element signature="n#delete#0;n#ClientesController#0;n#!!top" expanded="false" />
@@ -1541,199 +1422,63 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/CuentasController.php">
+    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajosuss.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1548">
-          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Cuentasclientes/planpago.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/dataTables.altEditor.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2091">
-          <caret line="0" column="5726" selection-start-line="0" selection-start-column="5708" selection-end-line="0" selection-end-column="5726" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Cuentasclientes/plancuentas.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8">
-          <caret line="42" column="33" selection-start-line="42" selection-start-column="33" selection-end-line="42" selection-end-column="33" />
+        <state relative-caret-position="508">
+          <caret line="1831" column="51" selection-start-line="1831" selection-start-column="51" selection-end-line="1831" selection-end-column="51" />
           <folding>
-            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#td#3;n#tr#0;n#table#0;n#div#2;n#!!top" expanded="false" />
+            <element signature="e#2060#5659#0#PHP" expanded="false" />
+            <element signature="e#8375#19020#0#PHP" expanded="false" />
+            <element signature="e#19076#19371#0#PHP" expanded="false" />
+            <element signature="e#19154#19371#0#PHP" expanded="false" />
+            <element signature="e#19176#19357#0#PHP" expanded="false" />
+            <element signature="e#19290#19357#0#PHP" expanded="false" />
+            <element signature="e#19473#19576#0#PHP" expanded="false" />
+            <element signature="e#19589#19696#0#PHP" expanded="false" />
+            <element signature="e#19709#19817#0#PHP" expanded="false" />
+            <element signature="e#19862#19949#0#PHP" expanded="false" />
+            <element signature="e#19962#20053#0#PHP" expanded="false" />
+            <element signature="e#20066#20158#0#PHP" expanded="false" />
+            <element signature="e#20318#20695#0#PHP" expanded="false" />
+            <element signature="e#20779#21025#0#PHP" expanded="false" />
+            <element signature="n#div#4;n#div#0;n#!!top" expanded="false" />
+            <element signature="e#86558#87156#0#PHP" expanded="false" />
+            <element signature="e#87528#87873#0#PHP" expanded="false" />
+            <marker date="1481037136638" expanded="true" signature="69438:69534" placeholder="..." />
+            <marker date="1481037136638" expanded="false" signature="86110:86153" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/CuentasclientesController.php">
+    <entry file="file://$PROJECT_DIR$/app/Controller/ImpclisController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="22" column="50" selection-start-line="22" selection-start-column="50" selection-end-line="22" selection-end-column="50" />
+        <state relative-caret-position="343">
+          <caret line="173" column="21" selection-start-line="173" selection-start-column="21" selection-end-line="173" selection-end-column="21" />
           <folding>
-            <element signature="n#plancuentas#0;n#CuentasclientesController#0;n#!!top" expanded="false" />
-            <element signature="n#informesumaysaldo#0;n#CuentasclientesController#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Cuentas/view.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="92" selection-start-line="5" selection-start-column="92" selection-end-line="5" selection-end-column="92" />
-          <folding>
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#div#2;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#td#1;n#tr#0;n#table#0;n#div#2;n#!!top" expanded="false" />
-            <element signature="n#style#0;n#td#2;n#tr#0;n#table#0;n#div#2;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Asientos/contabilizarventa.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="564">
-          <caret line="101" column="5" selection-start-line="101" selection-start-column="5" selection-end-line="101" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Asientos/contabilizarcompra.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="78" column="0" selection-start-line="78" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/AsientosController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="198" column="25" selection-start-line="198" selection-start-column="8" selection-end-line="198" selection-end-column="25" />
-          <folding>
-            <element signature="n#contabilizarimpuesto#0;n#AsientosController#0;n#!!top" expanded="false" />
-            <marker date="1478555939961" expanded="false" signature="487:1965" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/css/bootstrapmodal.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2758">
-          <caret line="584" column="1" selection-start-line="584" selection-start-column="1" selection-end-line="584" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/bootstrapmodal.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="809">
-          <caret line="363" column="10" selection-start-line="363" selection-start-column="10" selection-end-line="363" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Layouts/default.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="638">
-          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-220">
-          <caret line="11" column="75" selection-start-line="11" selection-start-column="75" selection-end-line="11" selection-end-column="75" />
-          <folding>
-            <element signature="n#div#0;n#!!top" expanded="false" />
-            <element signature="n#div#0;n#div#0;n#div#1;n#!!top" expanded="false" />
-            <element signature="e#5610#6526#0#PHP" expanded="false" />
-            <marker date="1478639252946" expanded="false" signature="16542:16554" placeholder="..." />
-            <marker date="1478639252946" expanded="false" signature="16603:16613" placeholder="..." />
-            <marker date="1478639252946" expanded="false" signature="16664:16676" placeholder="..." />
-            <marker date="1478639252946" expanded="false" signature="16735:16747" placeholder="..." />
-            <marker date="1478639252946" expanded="true" signature="16912:16924" placeholder="..." />
-            <marker date="1478639252946" expanded="true" signature="17083:17095" placeholder="..." />
-            <marker date="1478639252946" expanded="true" signature="17267:17279" placeholder="..." />
-            <marker date="1478639252946" expanded="true" signature="17431:17443" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="25" column="9" selection-start-line="4" selection-start-column="4" selection-end-line="25" selection-end-column="9" />
-          <folding>
-            <element signature="e#2599#5038#0" expanded="false" />
-            <element signature="e#5177#9176#0" expanded="false" />
-            <element signature="e#9262#9323#0" expanded="false" />
-            <element signature="e#9502#9559#0" expanded="false" />
-            <element signature="e#9619#9676#0" expanded="false" />
-            <element signature="e#9734#9791#0" expanded="false" />
-            <element signature="e#9846#9903#0" expanded="false" />
-            <element signature="e#9957#10014#0" expanded="false" />
-            <element signature="e#10221#14849#0" expanded="false" />
-            <element signature="e#15674#19332#0" expanded="false" />
-            <element signature="e#19544#29680#0" expanded="false" />
-            <element signature="e#29941#33826#0" expanded="false" />
-            <element signature="e#33870#35426#0" expanded="false" />
-            <element signature="e#35481#39429#0" expanded="false" />
-            <element signature="e#39475#40356#0" expanded="false" />
-            <element signature="e#40401#41268#0" expanded="false" />
-            <element signature="e#41329#41718#0" expanded="false" />
-            <element signature="e#41760#42150#0" expanded="false" />
-            <element signature="e#42194#42586#0" expanded="false" />
-            <element signature="e#42639#43040#0" expanded="false" />
-            <element signature="e#43187#43384#0" expanded="false" />
-            <element signature="e#43568#45573#0" expanded="false" />
-            <element signature="e#45800#46160#0" expanded="false" />
-            <element signature="e#46229#47350#0" expanded="false" />
-            <element signature="e#47384#48431#0" expanded="false" />
-            <element signature="e#48460#48714#0" expanded="false" />
-            <element signature="e#48900#50708#0" expanded="false" />
-            <element signature="n#!!block;n#calcularFooterTotales#0" expanded="false" />
-            <element signature="n#!!block;n#calcularivaytotal#0" expanded="false" />
-            <element signature="n#!!block;n#calcularivaytotalcompra#0" expanded="false" />
-            <element signature="n#!!block;n#adaptarConceptorestanteForm#0" expanded="false" />
-            <element signature="e#62740#68451#0" expanded="false" />
-            <element signature="e#66099#67033#0" expanded="false" />
-            <element signature="n#!!block;n#reloadInputDates#0" expanded="false" />
-            <element signature="n#!!block;n#showVentas#0" expanded="false" />
-            <element signature="n#!!block;n#showCompras#0" expanded="false" />
-            <element signature="n#!!block;n#showNovedades#0" expanded="false" />
-            <element signature="n#!!block;n#showConceptosRestantes#0" expanded="false" />
-            <element signature="n#!!block;n#hideFormModVenta#0" expanded="false" />
-            <element signature="n#!!block;n#hideFormModCompra#0" expanded="false" />
-            <element signature="n#!!block;n#hideFormModSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#eliminarVenta#0" expanded="false" />
-            <element signature="n#!!block;n#modificarCompra#0" expanded="false" />
-            <element signature="n#!!block;n#eliminarCompra#0" expanded="false" />
-            <element signature="n#!!block;n#eliminarConceptosrestante#0" expanded="false" />
-            <element signature="n#!!block;n#modificarConceptosrestante#0" expanded="false" />
-            <element signature="e#96423#97925#0" expanded="false" />
-            <element signature="n#!!block;n#eliminarSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#cargarSueldoEmpleado#0" expanded="false" />
-            <element signature="n#!!block;n#cargarLibroSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#cargarReciboSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#imprimirElemento#0" expanded="false" />
-            <element signature="n#!!block;n#ocultarFunciones#0" expanded="false" />
-            <element signature="n#!!block;n#activarCalXOnSueldos#0" expanded="false" />
-            <element signature="e#103833#104691#0" expanded="false" />
-            <element signature="n#!!block;n#realizarEventoCliente#0" expanded="false" />
-            <element signature="n#!!block;n#usosSLD#0" expanded="false" />
-            <element signature="n#!!block;n#PrintElem#0" expanded="false" />
-            <element signature="n#!!block;n#PopupElement#0" expanded="false" />
+            <element signature="e#201#239#0#PHP" expanded="false" />
+            <element signature="e#283#325#0#PHP" expanded="false" />
+            <element signature="n#index#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="e#444#535#0#PHP" expanded="false" />
+            <element signature="n#view#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="e#824#864#0#PHP" expanded="false" />
+            <element signature="e#7342#9290#0#PHP" expanded="false" />
+            <element signature="e#9547#9765#0#PHP" expanded="false" />
+            <element signature="n#addbancosindicato#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="e#17213#17304#0#PHP" expanded="false" />
+            <element signature="n#edit#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#editajax#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="e#19344#19437#0#PHP" expanded="false" />
+            <element signature="n#delete#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="e#21615#22055#0#PHP" expanded="false" />
+            <element signature="e#22195#22550#0#PHP" expanded="false" />
+            <element signature="e#22619#22930#0#PHP" expanded="false" />
+            <element signature="e#22955#23102#0#PHP" expanded="false" />
+            <element signature="e#23183#23448#0#PHP" expanded="false" />
+            <element signature="e#23547#24103#0#PHP" expanded="false" />
+            <element signature="n#papeldetrabajomonotributo#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajoddjj#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="e#53457#54050#0#PHP" expanded="false" />
+            <element signature="n#papeldetrabajocooperadoraasistencial#0;n#ImpclisController#0;n#!!top" expanded="false" />
           </folding>
         </state>
       </provider>

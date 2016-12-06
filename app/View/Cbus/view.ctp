@@ -33,7 +33,7 @@
 	<ul>
 		<li><?php echo $this->Html->link(__('Edit Cbus'), array('action' => 'edit', $cbus['Cbus']['id'])); ?> </li>
 		<li><?php echo $this->Form->postLink(__('Delete Cbus'), array('action' => 'delete', $cbus['Cbus']['id']), null, __('Are you sure you want to delete # %s?', $cbus['Cbus']['id'])); ?> </li>
-		<li><?php echo $this->Html->link(__('List Cbuses'), array('action' => 'index')); ?> </li>
+		<li><?php echo $this->Html->link(__('List Cbus'), array('action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Cbus'), array('action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List Bancosysindicatos'), array('controller' => 'bancosysindicatos', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Bancosysindicato'), array('controller' => 'bancosysindicatos', 'action' => 'add')); ?> </li>

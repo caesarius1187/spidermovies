@@ -178,9 +178,11 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
             //ahora que tenemos la alicuota en un array tenemos que buscar la venta a la que pertenece y agregarla
             $k=0;
             foreach ($comprasArray as $compra) {
+                $mismoidentificacion = $compra['Compra']['identificacionnumero']==$lineAlicuota['identificacionnumero'];
                 $mismocomprobante = $compra['Compra']['comprobantenumero']==$lineAlicuota['comprobantenumero'];
                 $mismopuntodeventa = $compra['Compra']['puntodeventa']==$lineAlicuota['puntodeventa'];
-                if($mismocomprobante&&$mismopuntodeventa){
+                $mismotipocomprobante = $compra['Compra']['comprobantetipo']==$lineAlicuota['comprobantetipo'];
+                if($mismoidentificacion&&$mismocomprobante&&$mismopuntodeventa&&$mismotipocomprobante){
                     if(!isset($compra['Alicuota'])){
                         $compra['Alicuota']=array();
                     }
@@ -504,9 +506,6 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                  if($micomprobante['Comprobante']['id']==$comprobanteTipoNuevo){
                                      $mismoID=true;
                                  }
-                                 if($micomprobante['Comprobante']['tipocreditoasociado']=='Restitucion credito fiscal'){
-                                     $tipocreditocompra = 'Restitucion credito fiscal';
-                                 }
                                  if($mismoID){
                                      if ($micomprobante['Comprobante']['tipo'] == 'A') {
                                          $condicionIVAArray['defaultoption'] = 'Responsable Inscripto';
@@ -514,6 +513,9 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                          $condicionIVAArray['defaultoption'] = 'Monotributista';
                                      }else{
                                          $condicionIVAArray['defaultoption'] = "Cons. F/Exento/No Alcanza";
+                                     }
+                                     if($micomprobante['Comprobante']['tipocreditoasociado']=='Restitucion credito fiscal'){
+                                         $tipocreditocompra = 'Restitucion credito fiscal';
                                      }
                                      break;
                                  }

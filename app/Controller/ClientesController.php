@@ -521,7 +521,10 @@ class ClientesController extends AppController {
 		$this->loadModel('Comprobante');
 		$this->loadModel('Compra');
 		$this->loadModel('Conceptostipo');
-		$this->loadModel('Impcli');
+        $this->loadModel('Impcli');
+        $this->loadModel('Cbu');
+        $this->loadModel('Cuentascliente');
+        $this->loadModel('Cuenta');
 
 		$pemes = substr($periodo, 0, 2);
 		$peanio = substr($periodo, 3);
@@ -580,10 +583,11 @@ class ClientesController extends AppController {
 		   					'Actividadcliente'=>array(
 		   						'Actividade',
 		   					),
-		   					'Comprobante'=>array(
-		   					),				   								   			
+		   					'Comprobante'=>[
+								'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre']
+		   					],
 			   				'conditions' => array(					            	
-					            	'Venta.periodo'=>$periodo					           
+								'Venta.periodo'=>$periodo
 				   			),	
 				   		),
 					   	'Sueldo'=>array(
@@ -659,11 +663,20 @@ class ClientesController extends AppController {
 					            	'Compra.periodo'=>$periodo					           
 				   			),	
 				   		),	
-				   		'Impcli'=>array(
-							'Periodosactivo'=>array(
+				   		'Impcli'=>[
+                            'Cbu'=>[
+                                'Movimientosbancario'=>[
+                                    'Cbu',
+                                    'Cuentascliente',
+                                    'conditions'=>[
+                                        'Movimientosbancario.periodo'=>$periodo,
+                                    ]
+                                ],
+                            ],
+							'Periodosactivo'=>[
 								'conditions'=>$conditionsImpCliHabilitados																								
-							)
-						)			   				   	
+							]
+						]
 			   		),
                     'conditions' => array(
                                 'id' => $id,
@@ -825,7 +838,23 @@ class ClientesController extends AppController {
 
 					);
 		$impclis=$this->Impcli->find('list',$clienteImpuestosOptions);
-		$this->set('impclis', $impclis);
+        $this->set('impclis', $impclis);
+
+        /*Aca vamos a listar las cuentas clientes que se relacionan a los movimientos bancarios
+        se supone que ya estan relacionadas al cliente cuando se les dio de alta alguna cuenta bancaria*/
+        $cuentasDeMovimientoBancario = $this->Cuenta->cuentasDeMovimientoBancario;
+        /*Tenemos que tener en cuenta las cuentas de movimientos grales y las cuentas de acreditaciones
+        y extracciones relacionadas a los CBU*/
+        $optioncuentascliente = [
+            'conditions'=>[
+                'Cuentascliente.cuenta_id'=> $cuentasDeMovimientoBancario,
+                'Cuentascliente.cliente_id'=> $id,
+            ]
+        ];
+        $cuentasclientes = $this->Cuentascliente->find('list',$optioncuentascliente);
+        $this->set('cuentasclientes', $cuentasclientes);
+
+
 		$clienteImpuestosOptions = array(
 					'contain'=>array(
 							'Impuesto'=>array(
@@ -833,7 +862,7 @@ class ClientesController extends AppController {
 									'AND'=>array(
 										'Impcli.impuesto_id = Impuesto.id',
 										'Impuesto.organismo <> "sindicato"',
-										'Impuesto.organismo <> "banco"'
+										//'Impuesto.organismo <> "banco"'
 									)
 								)
 							)
@@ -864,7 +893,6 @@ class ClientesController extends AppController {
 						),
 					);
 		$impclisid=$this->Impcli->find('list',$clienteImpuestosOptions);
-        /*para que es esto??*/
 		$this->set('impclisid', $impclisid);
 
 		$partidos = $this->Partido->find('list');
@@ -926,11 +954,26 @@ class ClientesController extends AppController {
 								 			'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id')
 							 		),
 								 		'order' => array(
-									                'Grupocliente.nombre','Cliente.nombre'  
+									                'Grupocliente.nombre','Cliente.nombre'
 									            ),
 							 		));
 		$this->set(compact('lclis'));
 		$this->set(compact('gclis'));
+        $clienteCbuOptions = array(
+            'contain'=>array(
+            ),
+            'joins'=>array(
+                array('table'=>'impclis',
+                    'alias' => 'Impcli',
+                    'type'=>'inner',
+                    'conditions'=> array(
+                        'Impcli.cliente_id'=> $id
+                    )
+                ),
+            )
+        );
+        $cbus = $this->Cbu->find('list',$clienteCbuOptions);
+        $this->set(compact('cbus'));
 	}
 	function informepagosdelmes($data=null) {
 		$pemes="";
@@ -1478,6 +1521,7 @@ class ClientesController extends AppController {
 		$this->loadModel('ActividadCliente');
 		$this->loadModel('Domicilio');
 		$this->loadModel('Conveniocolectivotrabajo');
+		$this->loadModel('Empleado');
 
 		if(!is_null($id)){
 			$containCliAuth = array(
@@ -1509,14 +1553,11 @@ class ClientesController extends AppController {
 											      		)
 											      	),
 											      'Personasrelacionada',
-												  'Subcliente',
-												  'Provedore',
+												  'Subcliente'=>['limit' => 200,],
+												  'Provedore'=>['limit' => 200,],
 												  'Empleado'=>array(
                                                       'order'=>'(Empleado.legajo * 1)'
                                                   ),
-	  										      'Venta'=>array(
-										        	 'Subcliente', 
-											       ),
 	  										      'Actividadcliente'=>array(
 										      		 'Actividade'
 	  										      	),
@@ -1532,7 +1573,6 @@ class ClientesController extends AppController {
 											         'Impuesto'=>array(
 											            'fields'=>array('id','nombre','organismo'),								             
 											         ),
-										        	 'Eventosimpuesto', 
 										        	 'Periodosactivo'=>array(
 	 														'conditions' => array(
 												                'OR'=>array(
@@ -1542,8 +1582,6 @@ class ClientesController extends AppController {
 												            ),
 										        	 	), 
 											       ),
-											      'Deposito',
-											      'Honorario',
 										    ),
 										   'conditions' => array(
 											                'Cliente.id' => $id, // <-- Notice this addition
@@ -1776,6 +1814,14 @@ class ClientesController extends AppController {
 		$this->set('clientesesDeshabilitados',$clientesesDeshabilitados);
 
 		$this->set('mostrarView',$mostrarView);
+		//aca vamos a setiar las listas que se necesita para cargar empleados
+		$this->set('codigorevista',$this->Empleado->codigorevista);
+		$this->set('codigoactividad',$this->Empleado->codigoactividad);
+		$this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
+		$this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
+		$this->set('tipoempresa',$this->Empleado->tipoempresa);
+		$this->set('codigozona',$this->Empleado->codigozona);
+
 	}
 	public function habilitar($id=null) {
 		$this->Cliente->id = $id;		

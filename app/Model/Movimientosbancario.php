@@ -1,12 +1,12 @@
 <?php
 App::uses('AppModel', 'Model');
 /**
- * Cbus Model
+ * Movimientosbancario Model
  *
  * @property Bancosysindicato $Bancosysindicato
  */
-class Cuentascliente extends AppModel {
-	public $displayField = 'nombre';
+class Movimientosbancario extends AppModel {
+
 /**
  * Validation rules
  *
@@ -25,27 +25,34 @@ class Cuentascliente extends AppModel {
  */
 	
 	public $belongsTo = array(
-		'Cliente' => array(
-			'className' => 'Cliente',
-			'foreignKey' => 'cliente_id',
+		'Impcli' => array(
+			'className' => 'Impcli',
+			'foreignKey' => 'impcli_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
 		),
-		'Cuenta' => array(
-			'className' => 'Cuenta',
-			'foreignKey' => 'cuenta_id',
+		'Cbu' => array(
+			'className' => 'Cbu',
+			'foreignKey' => 'cbu_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+		'Cuentascliente' => array(
+			'className' => 'Cuentascliente',
+			'foreignKey' => 'cuentascliente_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
 		)
 	);
 	
-
+	/*
 	public $hasMany = array(
-		'Saldocuentacliente' => array(
-			'className' => 'Saldocuentacliente',
-			'foreignKey' => 'cuentascliente_id',
+		'Cliente' => array(
+			'className' => 'Cliente',
+			'foreignKey' => 'cliente_id',
 			'dependent' => false,
 			'conditions' => '',
 			'fields' => '',
@@ -56,9 +63,9 @@ class Cuentascliente extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
-		'Movimiento' => array(
-			'className' => 'Movimiento',
-			'foreignKey' => 'cuentascliente_id',
+		'Cuenta' => array(
+			'className' => 'Cuenta',
+			'foreignKey' => 'cuenta_id',
 			'dependent' => false,
 			'conditions' => '',
 			'fields' => '',
@@ -70,4 +77,5 @@ class Cuentascliente extends AppModel {
 			'counterQuery' => ''
 		)
 	);
+	*/
 }

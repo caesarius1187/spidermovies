@@ -76,7 +76,7 @@ if(!$mostrarForm) { ?>
       echo $this->Form->input('ventafecha'.$this->data['Venta']['id'], array(
               'class'=>'datepicker-dia', 
               'type'=>'text',
-              'label'=>false,                                       
+              'label'=>'Fecha',
               'readonly'=>'readonly',
               'default'=>date('d',strtotime($this->data['Venta']['fecha'])),
               'style'=>"width:20px"
@@ -84,100 +84,100 @@ if(!$mostrarForm) { ?>
        );                               
       //Aca tenemos que sacar los tipos de comprobantes que el cliente puede emitir
       echo $this->Form->input('comprobante_id', array(
-            'label'=> ' ',
+            'label'=> 'Comprobante',
             'style'=>"width: 80px;"
       )); 
       echo $this->Form->input('puntosdeventa_id', array(
             'options' => $puntosdeventas,                              
-            'label'=> ' ',
+            'label'=> 'Punto de venta',
             'style'=>'width:56px;'
             )); 
       echo $this->Form->input('numerocomprobante', array(
-          'label'=> ' ',
+          'label'=> 'N° Comprobante',
             'style'=>'max-width:95px;width:95px;'
           ));    
       echo $this->Form->input('subcliente_id', array(
                   'options' => $subclientes, 
-                  'label' => '',                             
+                  'label' => 'Cliente',
                   'required' => true,                             
                   'class' => 'chosen-select',    
                   'style'=>'width:176px;'
                   )
               );    
-      echo $this->Form->input('condicioniva',array('type'=>'select','label'=>' ','options'=>$condicionesiva));    
+      echo $this->Form->input('condicioniva',array('type'=>'select','label'=>'Cond. IVA','options'=>$condicionesiva));
       echo $this->Form->input('actividadcliente_id',array(
-        'label'=>'',
+        'label'=>'Actividad',
         'type'=>'select', 
         'options'=>$actividades,
         'style'=>'width:130px' 
         ));  
       echo $this->Form->input('localidade_id',array(
-        'label'=>'',
+        'label'=>'Localidad',
         'class'=>"chosen-select",
         'style'=>'width:130px' 
         ));    
       if(!filter_var($tieneMonotributo, FILTER_VALIDATE_BOOLEAN)){ 
          echo $this->Form->input('tipodebito',array(
-            'label'=>'',
+            'label'=>'Tipo Debito',
             'default'=> $this->data['Venta']['tipodebito'],
             'options'=>$tipodebitos,
             'style'=>'width:83px' 
             ));    
           echo $this->Form->input('alicuota',array(
-            'label'=>'',
+            'label'=>'Alicuota',
             'default'=> $this->data['Venta']['alicuota'],
             'style'=>'width:55px' 
             ));    
           echo $this->Form->input('neto',array(
-            'label'=>'', 
+            'label'=>'Neto',
             'style'=>'max-width: 70px;' 
             ));    
           echo $this->Form->input('iva',array(
-            'label'=>'',
+            'label'=>'IVA',
             'style'=>'max-width: 70px;' 
              ));    
       }else{
            echo $this->Form->input('tipodebito',array(
-            'label'=>'',
+            'label'=>'Tipo Debito',
             'default'=> $this->data['Venta']['tipodebito'],
             'options'=>$tipodebitos,
             'style'=>'width:83px' 
             ));    
           echo $this->Form->input('alicuota',array(
-            'label'=>'',
+            'label'=>'Alicuota',
             'default'=> $this->data['Venta']['alicuota'],
             'style'=>'width:55px' 
             ));    
           echo $this->Form->input('neto',array(
-            'label'=>'', 
+            'label'=>'Neto',
             'style'=>'max-width: 70px;' 
             ));    
           echo $this->Form->input('iva',array(
-            'label'=>'',
+            'label'=>'IVA',
             'style'=>'max-width: 70px;' 
              ));    
       }   
       if(filter_var($tieneIVAPercepciones, FILTER_VALIDATE_BOOLEAN)){
           echo $this->Form->input('ivapercep',array(
-            'label'=>'',
+            'label'=>'IVA Percep.',
           'style'=>'max-width: 70px;' 
            ));    
       }
       if(filter_var($tieneAgenteDePercepcionIIBB, FILTER_VALIDATE_BOOLEAN)){
           echo $this->Form->input('iibbpercep',array(
-            'label'=>'',
+            'label'=>'IIBB Percep.',
             'style'=>'max-width: 70px;' 
              ));    
       }
       if(filter_var($tieneAgenteDePercepcionActividadesVarias, FILTER_VALIDATE_BOOLEAN)){
           echo $this->Form->input('actvspercep',array(
-            'label'=>'',
+            'label'=>'Act.Vs. Persep.',
             'style'=>'max-width: 70px;' 
              ));
       }
       if(filter_var($tieneImpuestoInterno, FILTER_VALIDATE_BOOLEAN)){
           echo $this->Form->input('impinternos',array(
-            'label'=>'',
+            'label'=>'Imp. Internos',
             'style'=>'max-width: 70px;' 
              )); 
       }    
@@ -192,23 +192,23 @@ if(!$mostrarForm) { ?>
       /*DGRM*/
       echo $this->Form->input('tieneAgenteDePercepcionActividadesVarias',array('value'=>$tieneAgenteDePercepcionActividadesVarias,'type'=>'hidden'));
       echo $this->Form->input('nogravados',array(
-          'label'=>'',
+          'label'=>'No Gravados',
           'style'=>'max-width: 70px;'
       ));
       echo $this->Form->input('excentos',array(
-          'label'=>'',
+          'label'=>'Excentos',
           'style'=>'max-width: 70px;'
       ));
       echo $this->Form->input('exentosactividadeseconomicas',array(
-          'label'=>'',
+          'label'=>'Act.Ec. Exentos',
           'style'=>'max-width: 70px;'
       ));
       echo $this->Form->input('exentosactividadesvarias',array(
-          'label'=>'',
+          'label'=>'Act.Vs. Exentos',
           'style'=>'max-width: 70px;'
       ));
       echo $this->Form->input('total',array(
-          'label'=>'',
+          'label'=>'Total',
           'style'=>'max-width: 70px;'
       ));
       echo $this->Form->submit('+', array(

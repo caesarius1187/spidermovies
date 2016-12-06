@@ -132,6 +132,20 @@ class Impcli extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
+		'Cbu' => array(
+			'className' => 'Cbu',
+			'foreignKey' => 'impcli_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
+		
 	);
 
 }

@@ -116,14 +116,14 @@ class ComprasController extends AppController {
 				$this->request->data('Compra.fecha',date('Y-m-d',strtotime($this->request->data['Compra']['fecha'])));
 			}				
 			if ($this->Compra->save($this->request->data)) {
-				$optionsComprobante = array('conditions'=>array('Comprobante.id' => $this->request->data['Compra']['comprobante_id']));
-				$optionsTipoGasto = array('conditions'=>array('Tipogasto.id' => $this->request->data['Compra']['tipogasto_id']));
-				$optionsProverode = array('conditions'=>array('Provedore.id'=>$this->request->data['Compra']['provedore_id']));
-				$optionsLocalidade = array('conditions'=>array('Localidade.id'=>$this->request->data['Compra']['localidade_id']));
-				$optionsActividadCliente = array('conditions'=>array('Actividadcliente.id'=>$this->request->data['Compra']['actividadcliente_id']));
-				$this->Provedore->recursive = -1;
-				$this->Localidade->recursive = -1;
+				$optionsComprobante = array('contain'=>[],'conditions'=>array('Comprobante.id' => $this->request->data['Compra']['comprobante_id']));
+				$optionsTipoGasto = array('contain'=>[],'conditions'=>array('Tipogasto.id' => $this->request->data['Compra']['tipogasto_id']));
+				$optionsProverode = array('contain'=>[],'conditions'=>array('Provedore.id'=>$this->request->data['Compra']['provedore_id']));
+				$optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Compra']['localidade_id']));
+				$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Compra']['actividadcliente_id']));
 
+                $this->request->data('Compra.fecha',date('d-m-Y',strtotime($this->request->data['Compra']['fecha'])));
+                $this->request->data['Compra']['fecha'] = date('d-m-Y',strtotime($this->request->data['Compra']['fecha']));
 				$data = array(
 		            "respuesta" => "La Compra ha sido creada.",
 		            "compra_id" => $this->Compra->getLastInsertID(),
@@ -401,6 +401,10 @@ class ComprasController extends AppController {
 		$this->loadModel('Localidade');
 		$this->loadModel('Partido');
 		$this->loadModel('Puntosdeventa');
+        $this->loadModel('Subcliente');
+        $this->loadModel('Comprobante');
+        $this->loadModel('Tipogasto');
+        $this->loadModel('Actividadcliente');
 		if (!$this->Compra->exists($id)) {
 			throw new NotFoundException(__('Compra No Existe'));
 			return;
@@ -442,29 +446,45 @@ class ComprasController extends AppController {
 					)
 				);
 				if ($this->Compra->save($this->request->data)) {
+					$optionsComprobante = array(
+                        'contain'=>[],
+                        'conditions'=>array('Comprobante.id' => $this->request->data['Compra']['comprobante_id'])
+                    );
+					$optionsTipoGasto = array('contain'=>[],'conditions'=>array('Tipogasto.id' => $this->request->data['Compra']['tipogasto_id']));
+					$optionsProverode = array('contain'=>[],'conditions'=>array('Provedore.id'=>$this->request->data['Compra']['provedore_id']));
+					$optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Compra']['localidade_id']));
+					$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Compra']['actividadcliente_id']));
 
-				} else {
-
-				}
-				$options = array(
-					'contain'=>array(
-						'Actividadcliente'=>array(
-				   						'Actividade',
-				   					),
-						'Provedore',
-						'Localidade'=>array('Partido'),
-						'Comprobante',
-					),
-					'conditions' => array('Compra.' . $this->Compra->primaryKey => $id)
+					$data = array(
+						"respuesta" => "La Compra ha sido modificada.",
+						"error" => "0",
+						"compra_id" => $this->request->data['Compra']['id'],
+						"compra"=> $this->request->data,
+						"comprobante"=> $this->Comprobante->find('first',$optionsComprobante),
+						"tipogasto"=> $this->Tipogasto->find('first',$optionsTipoGasto),
+						"provedore"=> $this->Provedore->find('first',$optionsProverode),
+						"localidade"=> $this->Localidade->find('first',$optionsLocalidade),
+						"actividadcliente"=> $this->Actividadcliente->find('first',$optionsActividadCliente),
+						"actividadcliente_id"=> $this->request->data['Compra']['actividadcliente_id'],
+						/*AFIP*/
+						"tieneMonotributo"=> $this->request->data['Compra']['tieneMonotributo'],
+						"tieneIVA"=> $this->request->data['Compra']['tieneIVA'],
+						"tieneIVAPercepciones"=> $this->request->data['Compra']['tieneIVAPercepciones'],
+						"tieneImpuestoInterno"=> $this->request->data['Compra']['tieneImpuestoInterno'],
+						/*DGR*/
+						"tieneAgenteDePercepcionIIBB"=> $this->request->data['Compra']['tieneAgenteDePercepcionIIBB'],
+						/*DGRM*/
+						"tieneAgenteDePercepcionActividadesVarias"=> $this->request->data['Compra']['tieneAgenteDePercepcionActividadesVarias'],
 					);
-				$compra = $this->Compra->find('first', $options);
-				$compra['Compra']['tieneMonotributo'] = $this->request->data['Compra']['tieneMonotributo'];
-				$compra['Compra']['tieneIVAPercepciones'] = $this->request->data['Compra']['tieneIVAPercepciones'];
-				$compra['Compra']['tieneImpuestoInterno'] = $this->request->data['Compra']['tieneImpuestoInterno'];
-				$compra['Compra']['tieneAgenteDePercepcionActividadesVarias'] = $this->request->data['Compra']['tieneAgenteDePercepcionActividadesVarias'];
-				$compra['Compra']['tieneIVA'] = $this->request->data['Compra']['tieneIVA'];
-				$compra['Compra']['tieneAgenteDePercepcionIIBB'] = $this->request->data['Compra']['tieneAgenteDePercepcionIIBB'];
-				$this->set('compra',$compra);
+				} else {
+					$data = array(
+						"respuesta" => "La Compra NO ha sido modificada. Por favor intentelo mas tarde",
+						"error" => "1",
+						);
+				}
+				$this->set('data',$data);
+				$this->layout = 'ajax';
+				$this->render('serializejson');
 			}else{
 				$data = array(
 		            "respuesta" => "La Compra ".$this->request->data['Compra']['numerocomprobante']." ya ha sido creada. Por favor cambie el numero de comprobante o la alicuota",
@@ -472,8 +492,10 @@ class ComprasController extends AppController {
 		            "compra"=> array(),		            
 		        );
 				$this->set('data',$data);
-		        $this->layout = 'ajax';
-				$this->render('serializejson');
+                $this->set('mostrarForm',false);
+                $this->layout = 'ajax';
+				//$this->render('serializejson');
+                return;
 			}			
 			$mostrarForm=false;			
 		}else{

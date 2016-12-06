@@ -201,7 +201,7 @@ class ConceptosrestantesController extends AppController {
         $partidos = $this->Partido->find('list');
 		$comprobantes = $this->Comprobante->find('list');
 		$conceptostipos = $this->Conceptostipo->find('list');
-        Debugger::dump($this->request->data);
+        //Debugger::dump($this->request->data);
 
         if( $this->request->data['Impcli']['impuesto_id']==19/*IVA*/){
             $conceptostipos[1]='Saldo de Libre Disponibilidad';

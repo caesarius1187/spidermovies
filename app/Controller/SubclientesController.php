@@ -49,16 +49,24 @@ class SubclientesController extends AppController {
 		$this->autoRender=false; 
 		$data = array();
 		if ($this->request->is('post')) {
-			$this->Subcliente->create();
-			if ($this->Subcliente->save($this->request->data)) {
-				$data['respuesta']='El Subcliente ha sido Guardado..';
-				$id = $this->Subcliente->getLastInsertID();
-				$options = array('conditions' => array('Subcliente.' . $this->Subcliente->primaryKey => $id));
-				$data['subcliente']=$this->Subcliente->find('first', $options);
-			} else {
-				$data['respuesta']='El Subcliente no ha sido Guardado. Por favor intente de nuevo mas tarde';
-			}
-		}else{
+			$conditionsSubcliente = array(
+				'Subcliente.cuit' => $this->request->data['Subcliente']['cuit'],
+			);
+			if ($this->Subcliente->hasAny($conditionsSubcliente)){
+                $data['respuesta']='Este cliente ya fue creado para este contribuyente';
+                $data['subcliente']=0;
+            }else{
+                $this->Subcliente->create();
+                if ($this->Subcliente->save($this->request->data)) {
+                    $data['respuesta']='El Subcliente ha sido Guardado..';
+                    $id = $this->Subcliente->getLastInsertID();
+                    $options = array('conditions' => array('Subcliente.' . $this->Subcliente->primaryKey => $id));
+                    $data['subcliente']=$this->Subcliente->find('first', $options);
+                } else {
+                    $data['respuesta']='El Subcliente no ha sido Guardado. Por favor intente de nuevo mas tarde';
+                }
+            }
+        }else{
 			$data['respuesta']='El Subcliente no ha sido Guardado. Por favor intente de nuevo mas tarde';
 		}
 		$this->layout = 'ajax';

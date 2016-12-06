@@ -216,6 +216,7 @@ jQuery(document).ready(function($) {
 
 	/*Otros*/
         $('#SubclienteAddForm').submit(function(){
+            location.hash ="#x";
             //serialize form data
             var formData = $(this).serialize();
             //get form action
@@ -226,41 +227,46 @@ jQuery(document).ready(function($) {
                 data: formData,
                 success: function(data,textStatus,xhr){
                     var mirespuesta = jQuery.parseJSON(data);
-                    var subclienteID = mirespuesta.subcliente.Subcliente.id;
-                    $("#relatedClientes").find('tbody')
-                        .append($('<tr>')
-                            .attr('class', "subcliente")
-                            .attr('style', "display: table-row;")
-                            .attr('id', "rowSubcliente"+subclienteID)
-                            .append($('<td>')
-                                .text(mirespuesta.subcliente.Subcliente.cuit)
-                            )
-                            .append($('<td>')
-                                .text(mirespuesta.subcliente.Subcliente.dni)
-                            )
-                            .append($('<td>')
-                                .text(mirespuesta.subcliente.Subcliente.nombre)
-                            )
-                            .append($('<td>')
-                                .append($('<a>')
-                                    .attr('onclick', "loadFormSubcliente("+subclienteID+")")
-                                    .append($('<img>')
-                                        .attr('src', serverLayoutURL+'/img/edit_view.png')
-                                        .text('Image cell')
+                    var subclienteID = mirespuesta.subcliente;
+                    if(subclienteID!=0){
+                        var subclienteID = mirespuesta.subcliente.Subcliente.id;
+                        $("#relatedClientes").find('tbody')
+                            .append($('<tr>')
+                                .attr('class', "subcliente")
+                                .attr('style', "display: table-row;")
+                                .attr('id', "rowSubcliente"+subclienteID)
+                                .append($('<td>')
+                                    .text(mirespuesta.subcliente.Subcliente.cuit)
+                                )
+                                .append($('<td>')
+                                    .text(mirespuesta.subcliente.Subcliente.dni)
+                                )
+                                .append($('<td>')
+                                    .text(mirespuesta.subcliente.Subcliente.nombre)
+                                )
+                                .append($('<td>')
+                                    .append($('<a>')
+                                        .attr('onclick', "loadFormSubcliente("+subclienteID+")")
+                                        .append($('<img>')
+                                            .attr('src', serverLayoutURL+'/img/edit_view.png')
+                                            .text('Image cell')
+                                        )
+                                    )
+                                    .append('<form action="'+serverLayoutURL+'/Subclientes/delete/'+subclienteID+'" name="post_57e41d8188965451050686'+subclienteID+'" id="post_57e41d8188965451050686'+subclienteID+'" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>')
+                                    .append($('<a>')
+                                        .attr('class', "deleteSubcliente")
+                                        .append($('<img>')
+                                            .attr('src', serverLayoutURL+'/img/ic_delete_black_24dp.png')
+                                            .text('Image cell')
+                                        )
                                     )
                                 )
-                                .append('<form action="'+serverLayoutURL+'/Subclientes/delete/'+subclienteID+'" name="post_57e41d8188965451050686'+subclienteID+'" id="post_57e41d8188965451050686'+subclienteID+'" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>')
-                                .append($('<a>')
-                                    .attr('class', "deleteSubcliente")
-                                    .append($('<img>')
-                                        .attr('src', serverLayoutURL+'/img/ic_delete_black_24dp.png')
-                                        .text('Image cell')
-                                    )
-                                )
-                            )
-                        );
-                    catchEliminarSubcliente();
-                    location.hash ="#x";
+                            );
+                        catchEliminarSubcliente();
+                    }
+                    else{
+                        callAlertPopint(mirespuesta.respuesta);
+                    }
                 },
                 error: function(xhr,textStatus,error){
                     callAlertPopint(textStatus);
@@ -1366,6 +1372,52 @@ function deleteImpcliProvincia(impcliprovinciaid){
 		}
 	});
 }
+function loadCbus(impcliid){
+    jQuery(document).ready(function($) {
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/cbus/index/"+impcliid,
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $("#form_cbus").html(response);
+                $("#form_cbus").width("600px");
+                location.href='#load_cbuform';
+                $('#CbuAddForm').submit(function(){
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(data,textStatus,xhr){
+                            location.href='#close';
+                            var respuesta = jQuery.parseJSON(data);;
+                            callAlertPopint(respuesta.respuesta);
+                            setTimeout(function(){
+                                loadCbus(impcliid);
+                            }, 3000);
+                        },
+                        error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                            location.href='#close';
+                        }
+                    });
+                    return false;
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                callAlertPopint(textStatus);
+                callAlertPopint(XMLHttpRequest);
+                callAlertPopint(errorThrown);
+            }
+        });
+    });
+}
+
 function catchImpCliAFIP(){
 	catchFormAndSaveResult('FormImpcliAFIP','tablaImpAfip','ImpcliAltaafip');
 }

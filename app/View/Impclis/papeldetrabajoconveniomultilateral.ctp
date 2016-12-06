@@ -8,6 +8,8 @@ $timePeriodo = strtotime("01-".$periodo ." +1 months");
 $periodoNext = date("m-Y",$timePeriodo);
 echo $this->Form->input('periodonext',array('value'=>$periodoNext,'type'=>'hidden'));
 echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));?>
+<div id="index" class="index" style="margin-bottom:10px;">
+
 <div id="Formhead" class="clientes papeldetrabajoconveniomultilateral index" style="margin-bottom:10px;">
     <table class="tbl_conveniomultilateral tblInforme">
         <tr>
@@ -496,7 +498,12 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					$liquidacionProvincia[$impcliprovincia['id'].'TotalBaseImponibleProrrateada'] = $subTotalBaseImponibleProrrateada;
 					echo number_format($totalBaseImponibleProrrateada, 2, ",", "."); ; 
 					$totalGeneralBaseImponibleProrrateada += $totalBaseImponibleProrrateada ;
-					?>
+                    /*Si es Actividades Economicas este es el valor que va a contener el valor de la cuenta 506210001*/
+                    if($impcli['Impcli']['impuesto_id']==21){
+                        echo $this->Form->input('impuestoDeterminadoTotal', array('type'=>'hidden','value'=>$totalGeneralBaseImponibleProrrateada));
+                    }
+
+                    ?>
 				</td>
 				<?php //Calculos 
 					$retencionSubtotal=0;
@@ -523,20 +530,26 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				?>
 				<td><!-- Retencion -->
 					<?php
-						echo number_format($retencionSubtotal, 2, ",", ".");
-						$totalGeneralRetenciones += $retencionSubtotal;
+                    echo number_format($retencionSubtotal, 2, ",", ".");
+                    $totalGeneralRetenciones += $retencionSubtotal;
+                    if($impcli['Impcli']['impuesto_id']==21){
+                        echo $this->Form->input('totalretenciones', array('type'=>'hidden','value'=>$retencionSubtotal));
+                    }
 					?>
 				</td>
 				<td><!-- Percepcion -->
 					<?php
-						echo number_format($percepionSubtotal, 2, ",", "."); 
-						$totalGeneralPercepciones += $percepionSubtotal;
+                    echo number_format($percepionSubtotal, 2, ",", ".");
+                    $totalGeneralPercepciones += $percepionSubtotal;
 					?>
 				</td>
 				<td><!-- Percepcion Bancaria -->
 					<?php
-						echo number_format($percepionBancariaSubtotal, 2, ",", ".");
-						$totalGeneralPercepcionesBancarias += $percepionBancariaSubtotal;
+                    echo number_format($percepionBancariaSubtotal, 2, ",", ".");
+                    $totalGeneralPercepcionesBancarias += $percepionBancariaSubtotal;
+                    if($impcli['Impcli']['impuesto_id']==21){
+                        echo $this->Form->input('totalpercepciones', array('type'=>'hidden','value'=>$percepionBancariaSubtotal+$percepionSubtotal));
+                    }
 					?>
 				</td>
 				<td><!-- Otros -->
@@ -563,12 +576,21 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					$totalDefinitivo = $totalBaseImponibleProrrateada - $subTotalRetenciones; 
 					if($totalDefinitivo<=0){
 						echo number_format(0, 2, ",", ".");;
-						echo $this->Form->input('apagar'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>0)); 
-					}else{
+						echo $this->Form->input('apagar'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>0));
+                        if($impcli['Impcli']['impuesto_id']==21){
+                            //si es act econo esto va a aparecer una sola vez y es el campo que tengo que llevar a la cuenta 110404301
+                            echo $this->Form->input('totalgeneralapagar', array('type'=>'hidden','value'=>0));
+                        }
+                    }else{
 						echo number_format($totalDefinitivo, 2, ",", ".");
 						$totalGeneralAPagar+= $totalDefinitivo;
-						echo $this->Form->input('apagar'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>$totalDefinitivo)); 
-					}
+						echo $this->Form->input('apagar'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>$totalDefinitivo));
+                        if($impcli['Impcli']['impuesto_id']==21){
+                            //si es act econo esto va a aparecer una sola vez y es el campo que tengo que llevar a la cuenta 110404301
+                            echo $this->Form->input('totalgeneralapagar', array('type'=>'hidden','value'=>$totalGeneralAPagar));
+                        }
+                    }
+
 					?>
 				</td>
 				<td><!-- A Favor Del Contribuyente -->
@@ -576,10 +598,18 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					if($totalDefinitivo>=0){
 						echo number_format(0, 2, ",", ".");;
                         echo $this->Form->input('afavor'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>0));
+                        if($impcli['Impcli']['impuesto_id']==21){
+                            //si es act econo esto va a aparecer una sola vez y es el campo que tengo que llevar a la cuenta 110404301
+                            echo $this->Form->input('saldoAFavorTotal', array('type'=>'hidden','value'=>0));
+                        }
                     }else{
 						echo number_format($totalDefinitivo*-1, 2, ",", ".");
 						$totalGeneralAFavorDelContribuyente+= $totalDefinitivo*-1;
-						echo $this->Form->input('afavor'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>$totalDefinitivo)); 
+						echo $this->Form->input('afavor'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>$totalDefinitivo));
+                        if($impcli['Impcli']['impuesto_id']==21){
+                            //si es act econo esto va a aparecer una sola vez y es el campo que tengo que llevar a la cuenta 110404301
+                            echo $this->Form->input('saldoAFavorTotal', array('type'=>'hidden','value'=>$totalDefinitivo*-1));
+                        }
 					}
                     echo $this->Form->input('afavorPartido'.$impcliprovincia['Partido']['id'], array('type'=>'hidden','value'=>$impcliprovincia['Partido']['nombre']));
                     ?>
@@ -704,16 +734,23 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					}
 					?>
 					<td>
-						<?php echo number_format($totalGeneralBaseImponibleProrrateada, 2, ",", ".");?>
+						<?php echo number_format($totalGeneralBaseImponibleProrrateada, 2, ",", ".");
+                        //Si es Convenio Este es el campo que me va a mostrar el valor de la cuenta 506210001
+                        echo $this->Form->input('impuestoDeterminadoTotal', array('type'=>'hidden','value'=>$totalGeneralBaseImponibleProrrateada));
+                        ?>
 					</td>
 					<td>
-						<?php echo number_format($totalGeneralRetenciones, 2, ",", ".");?>
+						<?php echo number_format($totalGeneralRetenciones, 2, ",", ".");
+                        echo $this->Form->input('totalretenciones', array('type'=>'hidden','value'=>$totalGeneralRetenciones));
+                        ?>
 					</td>
 					<td>
 						<?php echo number_format($totalGeneralPercepciones, 2, ",", ".");?>
 					</td>
 					<td>
-						<?php echo number_format($totalGeneralPercepcionesBancarias, 2, ",", ".");?>
+						<?php echo number_format($totalGeneralPercepcionesBancarias, 2, ",", ".");
+                        echo $this->Form->input('totalpercepciones', array('type'=>'hidden','value'=>$totalGeneralPercepcionesBancarias+$totalGeneralPercepciones));
+                        ?>
 					</td>
 					<td>
 						<?php echo number_format($totalGeneralOtros, 2, ",", ".");?>
@@ -725,10 +762,14 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 						<?php echo number_format($totalGeneralTotalRetenciones, 2, ",", ".");?>
 					</td>
 					<td>
-						<?php echo number_format($totalGeneralAPagar, 2, ",", ".");?>
+						<?php echo number_format($totalGeneralAPagar, 2, ",", ".");
+                        echo $this->Form->input('totalgeneralapagar', array('type'=>'hidden','value'=>$totalGeneralAPagar));
+                        ?>
 					</td>
 					<td>
-						<?php echo number_format($totalGeneralAFavorDelContribuyente, 2, ",", ".");?>
+						<?php echo number_format($totalGeneralAFavorDelContribuyente, 2, ",", ".");
+                        echo $this->Form->input('saldoAFavorTotal', array('type'=>'hidden','value'=>$totalGeneralAFavorDelContribuyente));
+                        ?>
 					</td>
 				</tr>
 				<tr id="Total Otros Art.">
@@ -826,4 +867,81 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 	</div>
 	<div id="divLiquidarConvenioMultilateral">
 	</div>
+	<div id="divContenedorContabilidad" style="margin-top:10px">
+		<div class="index">
+			<?php
+			$Asientoid=0;
+			$movId=[];
+			if(isset($impcli['Asiento'])){
+				if(count($impcli['Asiento'])>0) {
+					$Asientoid = $impcli['Asiento'][0]['id'];
+					foreach ($impcli['Asiento'][0]['Movimiento'] as $mimovimiento) {
+						$movId[$mimovimiento['Cuentascliente']['cuenta_id']] = $mimovimiento['id'];
+					}
+				}
+			}
+			//ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
+			echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
+			echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
+			echo $this->Form->input('Asiento.0.fecha',array(
+				'class'=>'datepicker',
+				'type'=>'text',
+				'label'=>array(
+					'text'=>"Fecha:",
+				),
+				'readonly','readonly',
+				'value'=>date('d-m-Y'),
+				'div' => false,
+				'style'=> 'height:9px;display:inline'
+			));
+			echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento Act. Economicas" ,'style'=>'width:250px']);
+			echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Asiento Automatico periodo: ".$periodo,'style'=>'width:250px']);
+			echo $this->Form->input('Asiento.0.cliente_id',['value'=>$impcli['Cliente']['id'],'type'=>'hidden']);
+			echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcli['Impcli']['id'],'type'=>'hidden']);
+			echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo,'type'=>'hidden']);
+			echo $this->Form->input('Asiento.0.tipoasiento',['value'=>'impuestos','type'=>'hidden'])."</br>";
+			$i=0;
+			foreach ($impcli['Impuesto']['Asientoestandare'] as $asientoestandarCM) {
+				if(!isset($movId[$asientoestandarCM['cuenta_id']])){
+					$movId[$asientoestandarCM['cuenta_id']]=0;
+				}
+				$cuentaclienteid=0;
+				$cuentaclientenombre="0";
+				foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaCm){
+					if($cuentaclientaCm['cuenta_id']==$asientoestandarCM['cuenta_id']){
+						$cuentaclienteid=$cuentaclientaCm['id'];
+						$cuentaclientenombre=$cuentaclientaCm['nombre'];
+						break;
+					}
+				}
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['value'=>$movId[$asientoestandarCM['cuenta_id']],]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
+					'readonly'=>'readonly',
+					'class'=>'datepicker',
+					'type'=>'hidden',
+					'label'=>array(
+						'text'=>"Vencimiento:",
+						"style"=>"display:inline",
+					),
+					'readonly','readonly',
+					'value'=>date('d-m-Y'),
+					'div' => false,
+					'style'=> 'height:9px;display:inline'
+				));
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['readonly'=>'readonly','value'=>0,]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['readonly'=>'readonly','value'=>0,]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarCM['cuenta_id'],'id'=>'cuenta'.$asientoestandarCM['cuenta_id']]);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['readonly'=>'readonly','value'=>$asientoestandarCM['Cuenta']['numero'],'style'=>'width:82px']);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px'])."</br>";
+				$i++;
+			}
+
+			echo $this->Form->submit('Contabilizar',['style'=>'display:none']);
+			echo $this->Form->end();
+			?>
+		</div>
+	</div>
+
 <?php } ?>
+</div>

@@ -1,7 +1,7 @@
 <?php
 App::uses('AppController', 'Controller');
 /**
- * Cbuses Controller
+ * Cbus Controller
  *
  * @property Cbus $Cbus
  * @property PaginatorComponent $Paginator

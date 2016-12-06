@@ -25,9 +25,9 @@ if(!$mostrarForm) { ?>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["iibbpercep"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["actvspercep"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["impinternos"], 2, ",", ".")?></td>
-        <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["impcombustible"], 2, ",", ".")?></td>
-        <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["nogravados"], 2, ",", ".")?></td>
-        <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["exentos"], 2, ",", ".")?></td>
+      <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["impcombustible"], 2, ",", ".")?></td>
+      <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["nogravados"], 2, ",", ".")?></td>
+      <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["exentos"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"><?php echo number_format($this->data['Compra']["kw"], 2, ",", ".")."KW"?></td>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["total"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"> 
@@ -39,6 +39,7 @@ if(!$mostrarForm) { ?>
     <?php } ?>
 <?php }else{ ?>
     <td colspan="20" id="tdcompra<?php echo $comid?>" style="overflow: inherit;">
+        <div   style="overflow-x: auto;">
       <?php echo $this->Form->create('Compra',array(
                             'controller'=>'Compra',
                             'action'=>'edit',
@@ -51,7 +52,7 @@ if(!$mostrarForm) { ?>
       echo $this->Form->input('fecha'.$this->data['Compra']['id'], array(
         'class'=>'datepicker', 
         'type'=>'text',
-        'label'=>'',
+        'label'=>'Fecha',
         'value'=>date('d-m-Y',strtotime($this->data['Compra']["fecha"])),
         'readonly'=>'readonly',
         'required'=>true,
@@ -61,7 +62,6 @@ if(!$mostrarForm) { ?>
       //Aca tenemos que sacar los tipos de comprobantes que el cliente puede emitir                              
       echo $this->Form->input('comprobante_id', array(
                   'style'=>'width:49px;padding:0;margin:0',
-                  'label'=>'',
                   'options'=>$comprobantes
                   )
       ); 
@@ -69,99 +69,95 @@ if(!$mostrarForm) { ?>
           'style'=>'width:37px;padding:0;margin:0',
           'type'=>'text',
           'maxlength'=>'4',
-          'label'=>''                
+          'label'=>'Punto de venta'
           )
       ); 
       echo $this->Form->input('numerocomprobante', array(
           'style'=>'width:53px;padding:0;margin:0',
-          'label'=>''                
+          'label'=>'N° Comprobante'
           )
       );  
       echo $this->Form->input('provedore_id', array(
           'options' => $provedores,        
           'class'=>'chosen-select',  
-          'label'=>'' ,                   
+          'label'=>'Provedor' ,
           'style'=>"width:101px"
           )
       );  
       echo $this->Form->input('condicioniva', array(                      
               'type'=>'select',
-              'label'=>'',
+              'label'=>'Condicion IVA',
               'options'=>$condicionesiva,
               'style' => 'width:94px' 
               )
        );
       echo $this->Form->input('actividadcliente_id',array(
           'type'=>'select',
-          'label'=>'',
+          'label'=>'Actividad',
           'options'=>$actividades,
           'style' => 'width:114px' 
 
           ));                
       echo $this->Form->input('localidade_id',array(
           'class'=>'chosen-select',     
-          'label'=>'',
+          'label'=>'Localidad',
           'style' => 'width:84px' 
           )
       );    
       echo $this->Form->input('tipocredito',array(
-            'label'=>'',
+            'label'=>'Tipo Credito',
             'options'=>$tipocreditos
         ));               
       echo $this->Form->input('tipogasto_id', array(                      
-            'label'=>'',
+            'label'=>'Tipo Gasto',
             'style' => 'width:69px' 
 
             )
       );   
       echo $this->Form->input('tipoiva',array(
-          'label'=>'',
+          'label'=>'Tipo IVA',
           'options'=>array('directo'=>'Directo','prorateable'=>'Prorateable')
           ));    
       echo $this->Form->input('imputacion',array(
-          'label'=>'',
           'type'=>'select',
           'options'=>$imputaciones,
           ));
       echo $this->Form->input('alicuota',array(
           'options' => $alicuotas,
-          'label'=>'',
-          'style'=>'width:60px'));    
+          'style'=>'width:60px'));
       echo $this->Form->input('neto',array(
-          'label'=>'',
           'style'=>'width: 85px; max-width: 68px;'
           ));    
       echo $this->Form->input('iva',array(
-          'label'=>'',
           'style'=>'width: 66px;max-width: 66px;'
           ));    
       echo $this->Form->input('ivapercep',array(
-           'label'=> '',                              
+           'label'=> 'IVA percep.',
           ));    
       echo $this->Form->input('iibbpercep',array(
-          'label'=> '',                              
+          'label'=> 'IIBB percep.',
         ));
       echo $this->Form->input('actvspercep',array(
-          'label'=> '',
+          'label'=> 'Act.Vs. percep',
           'style'=>'max-width: 94px;width: 68px;'
         ));  
       echo $this->Form->input('impinternos',array(
-         'label'=> '',
+         'label'=> 'Imp. internos',
         ));    
       echo $this->Form->input('impcombustible',array(
-            'label'=> '',
+            'label'=> 'Imp. combustible',
           ));
       echo $this->Form->input('nogravados',array(
-          'label'=> '',
+          'label'=> 'No gravados',
       ));
       echo $this->Form->input('exentos',array(
-          'label'=> '',
+          'label'=> 'Excento',
       ));
       echo $this->Form->input('kw',array(
-            'label'=>''
+            'label'=>'KW'
           ));  
       echo $this->Form->input('total',array(
-            'label'=>''
+            'label'=>'Total'
           ));     
       echo $this->Form->input('asiento',array('type'=>'hidden'));      
       echo $this->Form->input('periodo',array('type'=>'hidden'));
@@ -182,7 +178,7 @@ if(!$mostrarForm) { ?>
           );  
       echo $this->Form->end();  
    /* <a href="#" class="btn_cancelar" onClick="hideFormModCompra('<?php echo $this->data['Compra']['id'];?>')" style="float: left;width: 45px;margin: 0;">X</a>*/?>  
-                  
+                  </div>
     </td>     
 <?php } ?>                      
                     
