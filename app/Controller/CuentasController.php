@@ -30,8 +30,8 @@ class CuentasController extends AppController {
 
 		$options = array(
 			'contain'=>array(),
-			'conditions' => array('Cuenta.tipo' => 'rubro'), 
-			'fields'=> array('Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.ajuste,cuentascliente.cuenta_id'),
+			//'conditions' => array('Cuenta.tipo' => 'rubro'),
+			'fields'=> array('Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.ajuste,cuentascliente.cuenta_id,cuentascliente.nombre'),
 			'joins'=>array(
 				array('table'=>'cuentasclientes', 
 	                  'alias' => 'cuentascliente',

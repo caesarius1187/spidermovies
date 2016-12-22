@@ -48,8 +48,8 @@ function cargarAsiento(){
 	// 503030005	RENATRE
 	if($('#cuenta2257').length > 0){
 		var orden = $('#cuenta2257').attr('orden');
-		var apagar360ContribuciónRENATEA = $("#apagar360ContribuciónRENATEA").val();
-		$('#Asiento0Movimiento'+orden+'Debe').val(apagar360ContribuciónRENATEA);
+		var apagar360ContribucionRENATEA = $("#apagar360ContribucionRENATEA").val();
+		$('#Asiento0Movimiento'+orden+'Debe').val(apagar360ContribucionRENATEA);
 	}
     /*
     *INACAP es un impuesto que se paga si el empleador es comercio asi que vamos a darlo de alta manualmente
@@ -119,8 +119,8 @@ function cargarAsiento(){
 	// 210303005	RENATRE a pagar
     if($('#cuenta1422').length > 0){
         var orden = $('#cuenta1422').attr('orden');
-        var apagar360ContribuciónRENATEA = $("#apagar360ContribuciónRENATEA").val();
-        $('#Asiento0Movimiento'+orden+'Haber').val(apagar360ContribuciónRENATEA);
+        var apagar360ContribucionRENATEA = $("#apagar360ContribucionRENATEA").val();
+        $('#Asiento0Movimiento'+orden+'Haber').val(apagar360ContribucionRENATEA);
     }
 
     /*Aportes Sindicales*/

@@ -425,7 +425,6 @@ jQuery(document).ready(function($) {
         $("#divCliente_Info").css("height",sClienteInfoHeight + "px");
         reloadDatePickers();
         $('.chosen-select').chosen({search_contains:true});
-
 });
 /*Labels*/
 function activateLabelsFunctionality(){

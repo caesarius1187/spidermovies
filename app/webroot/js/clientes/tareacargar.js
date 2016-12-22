@@ -3,9 +3,333 @@ var tblTablaCompras;
 $(document).ready(function() {
     allcomprobantes =  JSON.parse($('#jsonallcomprobantes').val());
     var tblTablaConceptosrestantes = $('#tblTablaConceptosrestantes').dataTable().api();
-    tblTablaVentas = $('#tablaVentas').dataTable().api();
+    //tblTablaVentas = $('#tablaVentas').dataTable().api();
+    var nombrecliente = $('#clientenombre').val();
+    var periodo = $('#periododefault').val();
+
+    tblTablaVentas = $('#tablaVentas').DataTable( {
+        dom: 'Bfrtip',
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10', '25', '50', 'todas' ]
+        ],
+        buttons: [
+            {
+                extend: 'collection',
+                text: 'Columnas',
+                autoClose: true,
+                buttons: [
+                    {
+                        text: 'Conmutar Fecha',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 0 ).visible( ! dt.column( 0 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Comprobante',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 1 ).visible( ! dt.column( 1 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar CUIT',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 2 ).visible( ! dt.column( 2 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Nombre',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 3 ).visible( ! dt.column( 3 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Condicion IVA',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 4 ).visible( ! dt.column( 4 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Actividad',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 5 ).visible( ! dt.column( 5 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Localidad',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 6 ).visible( ! dt.column( 6 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Debito',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 7 ).visible( ! dt.column( 7 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Acciones',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( -1 ).visible( ! dt.column( -1 ).visible() );
+                        }
+                    }
+                ]
+            },
+            {
+                extend: 'pageLength',
+                text: 'Ver',
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                title: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                title: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                title: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                },
+                orientation: 'landscape',
+                download: 'open',
+                message: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+
+            },
+            {
+                extend: 'copy',
+                text: 'Copiar',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Imprimir',
+                exportOptions: {
+                    columns: ':visible'
+                },
+                orientation: 'landscape',
+                message: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+            },
+        ],
+    } );
+
     $('#bodyTablaVentas').width("100%");
-    tblTablaCompras = $('#tablaCompras').dataTable().api();
+    // tblTablaCompras = $('#tablaCompras').dataTable().api();
+    tblTablaCompras = $('#tablaCompras').DataTable( {
+        dom: 'Bfrtip',
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10', '25', '50', 'todas' ]
+        ],
+        buttons: [
+            {
+                extend: 'collection',
+                text: 'Columnas',
+                autoClose: true,
+                buttons: [
+                    {
+                        text: 'Conmutar Fecha',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 0 ).visible( ! dt.column( 0 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Comprobante',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 1 ).visible( ! dt.column( 1 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Provedor',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 2 ).visible( ! dt.column( 2 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Cond. IVA',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 3 ).visible( ! dt.column( 3 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Actividad',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 4 ).visible( ! dt.column( 4 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Localidad',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 5 ).visible( ! dt.column( 5 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Tipo Credito',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 6 ).visible( ! dt.column( 6 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Tipo Gasto',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 7 ).visible( ! dt.column( 7 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Tipo IVA',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 8 ).visible( ! dt.column( 8 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Imputacion',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 9 ).visible( ! dt.column( 9 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Alicuota',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 10 ).visible( ! dt.column( 10 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Neto',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 11 ).visible( ! dt.column( 11 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar IVA',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 12 ).visible( ! dt.column( 12 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar IVA Percep',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 13 ).visible( ! dt.column( 13 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar IIBB Percep',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 14 ).visible( ! dt.column( 14 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Act.Vs.Percep',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 15 ).visible( ! dt.column( 15 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Imp. Interno',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 16 ).visible( ! dt.column( 16 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Imp. Comb.',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 17 ).visible( ! dt.column( 17 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar No Gravados',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 18 ).visible( ! dt.column( 18 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Exentos',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 19 ).visible( ! dt.column( 19 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Total',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 21 ).visible( ! dt.column( 21 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar KW',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 20 ).visible( ! dt.column( 20 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Acciones',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( -1 ).visible( ! dt.column( -1 ).visible() );
+                        }
+                    }
+                ]
+            },
+            {
+                extend: 'pageLength',
+                text: 'Ver',
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                title: 'LibroIVA-Compras-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                title: 'LibroIVA-Compras-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                title: 'LibroIVA-Compras-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                },
+                orientation: 'landscape',
+                download: 'open',
+                message: 'LibroIVA-Compras-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+
+            },
+            {
+                extend: 'copy',
+                text: 'Copiar',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Imprimir',
+                exportOptions: {
+                    columns: ':visible'
+                },
+                orientation: 'landscape',
+                message: 'LibroIVA-Compras-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+            },
+        ],
+    } );
     var tblTablaConceptosRestantes = $('#tblTablaConceptosrestantes').dataTable().api();
     var tblTablaMovimientosBancarios = $('#tblTablaMovimientosBancarios').dataTable().api();
 
@@ -97,7 +421,7 @@ $(document).ready(function() {
         };
         var afterPrint = function() {
             console.log('Functionality to run after printing');
-            $('#index').css('font-size','14px');
+            $('#index').css('font-size','10px');
             $('#header').show();
             $('#Formhead').show();
             $('#form_empleados').show();
@@ -125,9 +449,9 @@ $(document).ready(function() {
             var mediaQueryList = window.matchMedia('print');
             mediaQueryList.addListener(function(mql) {
                 if (mql.matches) {
-                    beforePrint();
+                    beforePrint;
                 } else {
-                    afterPrint();
+                    afterPrint;
                 }
             });
         }
@@ -275,6 +599,7 @@ $(document).ready(function() {
                             $("#VentaTipodebito").val($("#VentaTipodebito option:eq(2)").val());
                             break;
                     }
+                    $("#VentaTipodebito").trigger("chosen:updated");
 
                     if(comprobante.Comprobante.tipo=="A"){
                         $("#VentaNeto").prop("readonly",false);
@@ -282,7 +607,7 @@ $(document).ready(function() {
                         $("#VentaTotal").prop("readonly",true);
                         tipodecomprobanteseleccionado = 'A';
                         $("#CompraCondicioniva option[value='monotributista']").show();
-                        $("#CompraCondicioniva option[value='responsableinscripto']").hide();
+                        $("#CompraCondicioniva option[value='responsableinscripto']").show();
                         $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
                     }else  if(comprobante.Comprobante.tipo=="B"){
                         $("#VentaNeto").prop('readonly', true);
@@ -290,12 +615,12 @@ $(document).ready(function() {
                         $("#VentaTotal").prop('readonly', false);
                         tipodecomprobanteseleccionado = 'B';
                         $("#CompraCondicioniva option[value='monotributista']").show();
-                        $("#CompraCondicioniva option[value='responsableinscripto']").hide();
+                        $("#CompraCondicioniva option[value='responsableinscripto']").show();
                         $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
                     }else  if(comprobante.Comprobante.tipo=="C"){
                         tipodecomprobanteseleccionado = 'C';
                         $("#CompraCondicioniva option[value='monotributista']").show();
-                        $("#CompraCondicioniva option[value='responsableinscripto']").hide();
+                        $("#CompraCondicioniva option[value='responsableinscripto']").show();
                         $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
                     }
                 }
@@ -328,7 +653,17 @@ $(document).ready(function() {
         $("#CompraNeto").on('change paste', function() {
             calcularivaytotalcompra("saveComprasForm");
         });
+        $("#CompraNogravados").on('change paste', function() {
+            calcularivaytotalcompra("saveComprasForm");
+        });
+        $("#CompraExentos").on('change paste', function() {
+            calcularivaytotalcompra("saveComprasForm");
+        });
 
+
+        $("#CompraCondicioniva").on('change paste', function() {
+            $("#CompraComprobanteId" ).trigger( "change" );
+        });
         /*Esta funcion asigna el comportamiento del formulario Compra buscando el tipo de comprobante seleccionado ya que cambia si es tipo A, B o C*/
         $("#CompraComprobanteId").on('change paste', function() {
             allcomprobantes.forEach(function(comprobante) {
@@ -360,9 +695,9 @@ $(document).ready(function() {
                         $("#CompraTotal").prop("readonly",true);
                         //Permitir editar los campos relacionados a IVA
                         tipodecomprobanteCompraseleccionado = 'A';
-                        $("#CompraCondicioniva option[value='monotributista']").hide();
+                        $("#CompraCondicioniva option[value='monotributista']").show();
                         $("#CompraCondicioniva option[value='responsableinscripto']").show();
-                        $("#CompraCondicioniva option[value='consf/exento/noalcanza']").show();
+                        $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
                         $("#CompraCondicioniva").val($("#CompraCondicioniva option:eq(1)").val());
 
                         $("#CompraAlicuota option[value='0']").show();
@@ -383,9 +718,9 @@ $(document).ready(function() {
                         $("#CompraImputacion").val(0);
                         $("#CompraIvapercep").val(0);
                         tipodecomprobanteCompraseleccionado = 'B';
-                        $("#CompraCondicioniva option[value='monotributista']").hide();
+                        $("#CompraCondicioniva option[value='monotributista']").show();
                         $("#CompraCondicioniva option[value='responsableinscripto']").show();
-                        $("#CompraCondicioniva option[value='consf/exento/noalcanza']").show();
+                        $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
                         $("#CompraCondicioniva").val($("#CompraCondicioniva option:eq(1)").val());
 
                         $("#CompraAlicuota option[value='0']").show();
@@ -407,7 +742,7 @@ $(document).ready(function() {
                         $("#CompraIvapercep").val(0);
                         tipodecomprobanteCompraseleccionado = 'C';
                         $("#CompraCondicioniva option[value='monotributista']").show();
-                        $("#CompraCondicioniva option[value='responsableinscripto']").hide();
+                        $("#CompraCondicioniva option[value='responsableinscripto']").show();
                         $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
                         $("#CompraCondicioniva").val($("#CompraCondicioniva option:eq(0)").val());
 
@@ -447,6 +782,7 @@ $(document).ready(function() {
                     $('.chosen-select').trigger("chosen:updated");
                     break;
                 case '6'/*Actividades Varias*/:
+                    $('#ConceptosrestanteConceptostipoId option:contains("Saldo Libre Disponibilidad")').text('Saldo a Favor');
                     $("#ConceptosrestanteConceptostipoId").children('option').hide();
                     $("#ConceptosrestanteConceptostipoId").children("option[value=1]").show();
                     $("#ConceptosrestanteConceptostipoId").children("option[value=2]").show();
@@ -457,6 +793,7 @@ $(document).ready(function() {
                     break;
                 case '21':/*Actividades Economicas*/
                 case '174':/*Convenio Multilateral*/
+                    $('#ConceptosrestanteConceptostipoId option:contains("Saldo Libre Disponibilidad")').text('Saldo a Favor');
                     $("#ConceptosrestanteConceptostipoId").children('option').hide();
                     $("#ConceptosrestanteConceptostipoId").children("option[value=1]").show();
                     $("#ConceptosrestanteConceptostipoId").children("option[value=2]").show();
@@ -490,8 +827,8 @@ $(document).ready(function() {
                     showcolumnConceptoRestante(tblTablaConceptosrestantes,1,false);/*Partido*/
                     break;
             }
-            $("label[for='ConceptosrestanteMonto']").html("Monto");
-            $("label[for='ConceptosrestanteMontoretenido']").html("Monto Retenido");
+            $("label[for='ConceptosrestanteMonto']").html("Monto Op.");
+            $("label[for='ConceptosrestanteMontoretenido']").html("Monto");
             $( "#ConceptosrestanteMontoretenido").unbind( "change" );
             switch($("#ConceptosrestanteConceptostipoId").val()*1){
 
@@ -502,15 +839,17 @@ $(document).ready(function() {
                         case '19':/*IVA*/
                             $('#ConceptosrestanteMonto').closest('div').show();
                             showcolumnConceptoRestante(tblTablaConceptosrestantes,8,true);/*Monto*/
-                            $("label[for='ConceptosrestanteMonto']").html("Saldo");
-                            $("label[for='ConceptosrestanteMontoretenido']").html("Monto");
-                            $('#ConceptosrestanteMontoretenido').change(function(){
-                                $('#ConceptosrestanteMonto').val($(this).val());
-                            });
                             break;
                     }
+                    $('#ConceptosrestanteMontoretenido').change(function(){
+                        $('#ConceptosrestanteMonto').val($(this).val());
+                    });
+                    $("label[for='ConceptosrestanteMonto']").html("Saldo");
+                    $("label[for='ConceptosrestanteMontoretenido']").html("Monto");
+
                     break;
                 case 2:/*Retenciones*/
+                    $("label[for='ConceptosrestanteMontoretenido']").html("Monto Retenido");
                     switch(impuestoseleccionado){
                         case '21':/*Actividades Economicas*/
                             $('#ConceptosrestanteNumeropadron').closest('div').show();
@@ -684,13 +1023,9 @@ $(document).ready(function() {
                         $( "#VentaNumerocomprobante" ).val($( "#VentaNumerocomprobante" ).val()*1 + 1);
                         //Agregar la fila nueva a la tabla
                         var  tdClass = "tdViewVenta"+respuesta.venta_id;
-                        var mineto = respuesta.venta.Venta.neto;
-                        var mitotal = respuesta.venta.Venta.total;
-                        mineto = parseFloat(mineto);
-                        mitotal = parseFloat(mitotal);
+                        var positivo = 1;
                         if(respuesta.venta.Venta.tipodebito=='Restitucion debito fiscal'){
-                            mineto = mineto*-1;
-                            mitotal = mitotal*-1;
+                            positivo = positivo*-1;
                         }
                         var rowData =
                             [
@@ -706,26 +1041,28 @@ $(document).ready(function() {
                         if(!respuesta.tieneMonotributo){
                             rowData.push(respuesta.venta.Venta.tipodebito);
                             rowData.push(respuesta.venta.Venta.alicuota+"%");
-                            rowData.push(mineto);
-                            rowData.push(respuesta.venta.Venta.iva);
+                            rowData.push(respuesta.venta.Venta.neto*positivo);
+                            rowData.push(respuesta.venta.Venta.iva*positivo);
                         }
                         if(respuesta.tieneIVAPercepciones){
-                            rowData.push(respuesta.venta.Venta.ivapercep);
+                            rowData.push(respuesta.venta.Venta.ivapercep*positivo);
                         }
                         if(respuesta.tieneAgenteDePercepcionIIBB){
-                            rowData.push(respuesta.venta.Venta.iibbpercep);
+                            rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
                         }
                         if(respuesta.tieneAgenteDePercepcionActividadesVarias){
-                            rowData.push(respuesta.venta.Venta.actvspercep);
+                            rowData.push(respuesta.venta.Venta.actvspercep*positivo);
                         }
                         if(respuesta.tieneImpuestoInterno){
-                            rowData.push(respuesta.venta.Venta.impinternos);
+                            rowData.push(respuesta.venta.Venta.impinternos*positivo);
                         }
-                        rowData.push(respuesta.venta.Venta.nogravados);
-                        rowData.push(respuesta.venta.Venta.excentos);
-                        rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas);
-                        rowData.push(respuesta.venta.Venta.exentosactividadesvarias);
-                        rowData.push(mitotal);
+                        if(!respuesta.tieneMonotributo) {
+                            rowData.push(respuesta.venta.Venta.nogravados * positivo);
+                            rowData.push(respuesta.venta.Venta.excentos * positivo);
+                        }
+                        rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);
+                        rowData.push(respuesta.venta.Venta.exentosactividadesvarias*positivo);
+                        rowData.push(respuesta.venta.Venta.total*positivo);
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarVenta('+respuesta.venta_id+')" alt="">';
                         tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarVenta('+respuesta.venta_id+')" alt="">';
                         rowData.push(tdactions);
@@ -777,18 +1114,11 @@ $(document).ready(function() {
                         //Incrementa campo de Factura en 1
                         $( "#CompraNumerocomprobante" ).val($( "#CompraNumerocomprobante" ).val()*1 + 1);
 
-                        var mineto = respuesta.compra.Compra.neto;
-                        var mitotal = respuesta.compra.Compra.total;
-
-                        mineto = parseFloat(mineto);
-                        mitotal = parseFloat(mitotal);
-
+                        var positivo = 1;
                         if(respuesta.compra.Compra.tipocredito=='Restitucion credito fiscal'){
-                            mineto = mineto*-1;
-                            mitotal = mitotal*-1;
+                            positivo= -1;
                         }else{
-                            mineto = mineto;
-                            mitotal = mitotal;
+                            positivo = 1;
                         }
 
                         //Agregar Row Nueva a la tabla
@@ -805,17 +1135,17 @@ $(document).ready(function() {
                                 respuesta.compra.Compra.tipoiva,
                                 respuesta.compra.Compra.imputacion,
                                 respuesta.compra.Compra.alicuota+"%",
-                                mineto,
-                                respuesta.compra.Compra.iva,
-                                respuesta.compra.Compra.ivapercep,
-                                respuesta.compra.Compra.iibbpercep,
-                                respuesta.compra.Compra.actvspercep,
-                                respuesta.compra.Compra.impinternos,
-                                respuesta.compra.Compra.impcombustible,
-                                respuesta.compra.Compra.nogravados,
-                                respuesta.compra.Compra.exentos,
-                                respuesta.compra.Compra.kw,
-                                mitotal,
+                                respuesta.compra.Compra.neto*positivo,
+                                respuesta.compra.Compra.iva*positivo,
+                                respuesta.compra.Compra.ivapercep*positivo,
+                                respuesta.compra.Compra.iibbpercep*positivo,
+                                respuesta.compra.Compra.actvspercep*positivo,
+                                respuesta.compra.Compra.impinternos*positivo,
+                                respuesta.compra.Compra.impcombustible*positivo,
+                                respuesta.compra.Compra.nogravados*positivo,
+                                respuesta.compra.Compra.exentos*positivo,
+                                respuesta.compra.Compra.total*positivo,
+                                respuesta.compra.Compra.kw*positivo,
                             ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarCompra('+respuesta.compra_id+')" alt="">';
                         tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarCompra('+respuesta.compra_id+')" alt="">';
@@ -1199,169 +1529,174 @@ $(document).ready(function() {
     var tipodecomprobanteCompraseleccionado = '';
     function calcularivaytotal(formulario){
 
-    $("#"+formulario+" #VentaComprobanteId").trigger( "change" );
+        $("#"+formulario+" #VentaComprobanteId").trigger( "change" );
 
-    var tieneMonotributo = $("#saveVentasForm #VentaTieneMonotributo").val();
-    var tieneIVA = $("#saveVentasForm #VentaTieneIVA").val();
-    var tieneIVAPercepciones = $("#saveVentasForm #VentaTieneIVAPercepciones").val();
-    var tieneImpuestoInterno = $("#saveVentasForm #VentaTieneImpuestoInterno").val();
-    var tieneAgenteDePercepcionActividadesVarias = $("#saveVentasForm #VentaTieneAgenteDePercepcionActividadesVarias").val();
-    var tieneAgenteDePercepcionIIBB = $("#saveVentasForm #VentaIibbpercep").val();
+        var tieneMonotributo = $("#saveVentasForm #VentaTieneMonotributo").val();
+        var tieneIVA = $("#saveVentasForm #VentaTieneIVA").val();
+        var tieneIVAPercepciones = $("#saveVentasForm #VentaTieneIVAPercepciones").val();
+        var tieneImpuestoInterno = $("#saveVentasForm #VentaTieneImpuestoInterno").val();
+        var tieneAgenteDePercepcionActividadesVarias = $("#saveVentasForm #VentaTieneAgenteDePercepcionActividadesVarias").val();
+        var tieneAgenteDePercepcionIIBB = $("#saveVentasForm #VentaIibbpercep").val();
 
-    tieneMonotributo ? tieneMonotributo = true : tieneMonotributo = false;
-    tieneIVA ? tieneIVA = true : tieneIVA = false;
-    tieneIVAPercepciones ? tieneIVAPercepciones = true : tieneIVAPercepciones = false;
-    tieneImpuestoInterno ? tieneImpuestoInterno = true : tieneImpuestoInterno = false;
-    tieneAgenteDePercepcionActividadesVarias ? tieneAgenteDePercepcionActividadesVarias = true : tieneAgenteDePercepcionActividadesVarias = false;
-    tieneAgenteDePercepcionIIBB ? tieneAgenteDePercepcionIIBB = true : tieneAgenteDePercepcionIIBB = false;
+        tieneMonotributo ? tieneMonotributo = true : tieneMonotributo = false;
+        tieneIVA ? tieneIVA = true : tieneIVA = false;
+        tieneIVAPercepciones ? tieneIVAPercepciones = true : tieneIVAPercepciones = false;
+        tieneImpuestoInterno ? tieneImpuestoInterno = true : tieneImpuestoInterno = false;
+        tieneAgenteDePercepcionActividadesVarias ? tieneAgenteDePercepcionActividadesVarias = true : tieneAgenteDePercepcionActividadesVarias = false;
+        tieneAgenteDePercepcionIIBB ? tieneAgenteDePercepcionIIBB = true : tieneAgenteDePercepcionIIBB = false;
 
-    var alicuota = 0;
-    var ivapercep = 0;
-    var agenteDePercepcionIIBB = 0;
-    var agenteDePercepcionActividadesVarias = 0;
-    var impinternos = 0;
+        var alicuota = 0;
+        var ivapercep = 0;
+        var agenteDePercepcionIIBB = 0;
+        var agenteDePercepcionActividadesVarias = 0;
+        var impinternos = 0;
 
-    var neto = 0;
-    var iva = 0;
+        var neto = 0;
+        var iva = 0;
 
-    var total = 0;
-    var noGravados = $("#"+formulario+" #VentaNogravados").val();
-    var excentos = $("#"+formulario+" #VentaExcentos").val();
+        var total = 0;
+        var noGravados = $("#"+formulario+" #VentaNogravados").val();
+        var excentos = $("#"+formulario+" #VentaExcentos").val();
 
-    if(tieneMonotributo){
-      total = $("#"+formulario+" #VentaTotal").val();
-      $("#"+formulario+" #VentaAlicuota").val(0);
-      $("#"+formulario+" #VentaNeto").val(0)
-      $("#"+formulario+" #VentaIva").val(0);
-      total+= noGravados * 1;
-      total+= excentos * 1;
-      return;
-    }else{
-       alicuota = $("#"+formulario+" #VentaAlicuota").val() * 1;
-      if(tipodecomprobanteseleccionado == "A"){
+        if(tieneMonotributo){
+            $("#"+formulario+" #VentaAlicuota").val(0);
+            $("#"+formulario+" #VentaIva").val(0);
+            total = $("#"+formulario+" #VentaTotal").val()*1;
+            $("#"+formulario+" #VentaNeto").val(total*1);
+            $("#"+formulario+" #VentaTotal").val(total*1);
+        }else{
+            alicuota = $("#"+formulario+" #VentaAlicuota").val() * 1;
+            if(tipodecomprobanteseleccionado == "A"){
+            //Ingreso Alicuota
+            //Ingreso Neto
+            //Calcular IVA
+            //Calcular TOTAl
+            neto = $("#"+formulario+" #VentaNeto").val();
+            iva=neto*(alicuota/100);
+
+            total+=neto * 1;
+            total+=iva * 1;
+
+            if(tieneIVAPercepciones){
+              ivapercep = $("#"+formulario+" #VentaIvapercep").val() * 1;
+              total+= ivapercep * 1;
+            }
+            if(tieneImpuestoInterno){
+              impinternos = $("#"+formulario+" #VentaImpinternos").val() * 1;
+              total+= impinternos * 1;
+            }
+            if(tieneAgenteDePercepcionActividadesVarias){
+              agenteDePercepcionActividadesVarias = $("#"+formulario+" #VentaActvspercep").val() * 1;
+              total+= agenteDePercepcionActividadesVarias * 1;
+            }
+            if(tieneAgenteDePercepcionIIBB){
+              agenteDePercepcionIIBB = $("#"+formulario+" #VentaIibbpercep").val() * 1;
+              total+= agenteDePercepcionIIBB * 1;
+            }
+            total+= noGravados * 1;
+            total+= excentos * 1;
+
+            $("#"+formulario+" #VentaTotal").val(total)
+            $("#"+formulario+" #VentaIva").val(iva);
+          }
+            if(tipodecomprobanteseleccionado=="B"){
+            //Ingreso alicuota
+            //Ingreso Total
+            //Calcular IVA
+            //Calcular Neto
+            total = $("#"+formulario+" #VentaTotal").val() * 1;
+
+            neto += total;
+            if(tieneIVAPercepciones){
+              ivapercep = $("#"+formulario+" #VentaIvapercep").val() * 1;
+              neto-= ivapercep * 1;
+            }
+            if(tieneImpuestoInterno){
+              impinternos = $("#"+formulario+" #VentaImpinternos").val() * 1;
+              neto-= impinternos * 1;
+            }
+            if(tieneAgenteDePercepcionActividadesVarias){
+              agenteDePercepcionActividadesVarias = $("#"+formulario+" #VentaActvspercep").val() * 1;
+              neto-= agenteDePercepcionActividadesVarias * 1;
+            }
+            if(tieneAgenteDePercepcionIIBB){
+              agenteDePercepcionIIBB = $("#"+formulario+" #VentaIibbpercep").val() * 1;
+              neto-= agenteDePercepcionIIBB * 1;
+            }
+            neto-= noGravados * 1;
+            neto-= excentos * 1;
+            iva = neto/((alicuota/100)+1)*(alicuota/100);
+            neto = neto/((alicuota/100)+1);
+            $("#"+formulario+" #VentaNeto").val(neto);
+            $("#"+formulario+" #VentaIva").val(iva);
+          }
+        }
+    }
+    function calcularivaytotalcompra(formulario){
+
+        $("#"+formulario+" #CompraComprobanteId").trigger( "change" );
+
+        var tieneMonotributo = $("#saveComprasForm #CompraTieneMonotributo").val();
+        var tieneIVA = $("#saveComprasForm #CompraTieneIVA").val();
+        var tieneIVAPercepciones = $("#saveComprasForm #CompraTieneIVAPercepciones").val();
+        var tieneImpuestoInterno = $("#saveComprasForm #CompraTieneImpuestoInterno").val();
+        var tieneAgenteDePercepcionActividadesVarias = $("#saveComprasForm #CompraTieneAgenteDePercepcionActividadesVarias").val();
+        var tieneAgenteDePercepcionIIBB = $("#saveComprasForm #CompraIibbpercep").val();
+
+        tieneMonotributo ? tieneMonotributo = true : tieneMonotributo = false;
+        tieneIVA ? tieneIVA = true : tieneIVA = false;
+        tieneIVAPercepciones ? tieneIVAPercepciones = true : tieneIVAPercepciones = false;
+        tieneImpuestoInterno ? tieneImpuestoInterno = true : tieneImpuestoInterno = false;
+        tieneAgenteDePercepcionActividadesVarias ? tieneAgenteDePercepcionActividadesVarias = true : tieneAgenteDePercepcionActividadesVarias = false;
+        tieneAgenteDePercepcionIIBB ? tieneAgenteDePercepcionIIBB = true : tieneAgenteDePercepcionIIBB = false;
+
+        var alicuota = 0;
+        var ivapercep = 0;
+        var agenteDePercepcionIIBB = 0;
+        var agenteDePercepcionActividadesVarias = 0;
+        var impinternos = 0;
+        var impcombustible=0;
+        var nogravados=0;
+        var exentos=0;
+        var neto = 0;
+        var iva = 0;
+
+        var total = 0;
+
+        alicuota = $("#"+formulario+" #CompraAlicuota").val() * 1;
         //Ingreso Alicuota
         //Ingreso Neto
         //Calcular IVA
         //Calcular TOTAl
-        neto = $("#"+formulario+" #VentaNeto").val();
+        neto = $("#"+formulario+" #CompraNeto").val();
         iva=neto*(alicuota/100);
 
         total+=neto * 1;
         total+=iva * 1;
 
-        if(tieneIVAPercepciones){
-          ivapercep = $("#"+formulario+" #VentaIvapercep").val() * 1;
-          total+= ivapercep * 1;
-        }
-        if(tieneImpuestoInterno){
-          impinternos = $("#"+formulario+" #VentaImpinternos").val() * 1;
-          total+= impinternos * 1;
-        }
-        if(tieneAgenteDePercepcionActividadesVarias){
-          agenteDePercepcionActividadesVarias = $("#"+formulario+" #VentaActvspercep").val() * 1;
-          total+= agenteDePercepcionActividadesVarias * 1;
-        }
-        if(tieneAgenteDePercepcionIIBB){
-          agenteDePercepcionIIBB = $("#"+formulario+" #VentaIibbpercep").val() * 1;
-          total+= agenteDePercepcionIIBB * 1;
-        }
-        total+= noGravados * 1;
-        total+= excentos * 1;
+        ivapercep = $("#"+formulario+" #CompraIvapercep").val() * 1;
+        total+= ivapercep * 1;
 
-        $("#"+formulario+" #VentaTotal").val(total)
-        $("#"+formulario+" #VentaIva").val(iva);
-      }
-      if(tipodecomprobanteseleccionado=="B"){
-        //Ingreso alicuota
-        //Ingreso Total
-        //Calcular IVA
-        //Calcular Neto
-        total = $("#"+formulario+" #VentaTotal").val() * 1;
+        agenteDePercepcionIIBB = $("#"+formulario+" #CompraIibbpercep").val() * 1;
+        total+= agenteDePercepcionIIBB * 1;
 
-        neto += total;
-        if(tieneIVAPercepciones){
-          ivapercep = $("#"+formulario+" #VentaIvapercep").val() * 1;
-          neto-= ivapercep * 1;
-        }
-        if(tieneImpuestoInterno){
-          impinternos = $("#"+formulario+" #VentaImpinternos").val() * 1;
-          neto-= impinternos * 1;
-        }
-        if(tieneAgenteDePercepcionActividadesVarias){
-          agenteDePercepcionActividadesVarias = $("#"+formulario+" #VentaActvspercep").val() * 1;
-          neto-= agenteDePercepcionActividadesVarias * 1;
-        }
-        if(tieneAgenteDePercepcionIIBB){
-          agenteDePercepcionIIBB = $("#"+formulario+" #VentaIibbpercep").val() * 1;
-          neto-= agenteDePercepcionIIBB * 1;
-        }
-        neto-= noGravados * 1;
-        neto-= excentos * 1;
-        iva = neto/((alicuota/100)+1)*(alicuota/100);
-        neto = neto/((alicuota/100)+1);
-        $("#"+formulario+" #VentaNeto").val(neto);
-        $("#"+formulario+" #VentaIva").val(iva);
-      }
-    }
-    }
-    function calcularivaytotalcompra(formulario){
+        agenteDePercepcionActividadesVarias = $("#"+formulario+" #CompraActvspercep").val() * 1;
+        total+= agenteDePercepcionActividadesVarias * 1;
 
-    $("#"+formulario+" #CompraComprobanteId").trigger( "change" );
+        impinternos = $("#"+formulario+" #CompraImpinternos").val() * 1;
+        total+= impinternos * 1;
 
-    var tieneMonotributo = $("#saveComprasForm #CompraTieneMonotributo").val();
-    var tieneIVA = $("#saveComprasForm #CompraTieneIVA").val();
-    var tieneIVAPercepciones = $("#saveComprasForm #CompraTieneIVAPercepciones").val();
-    var tieneImpuestoInterno = $("#saveComprasForm #CompraTieneImpuestoInterno").val();
-    var tieneAgenteDePercepcionActividadesVarias = $("#saveComprasForm #CompraTieneAgenteDePercepcionActividadesVarias").val();
-    var tieneAgenteDePercepcionIIBB = $("#saveComprasForm #CompraIibbpercep").val();
+        impcombustible = $("#"+formulario+" #CompraImpcombustible").val() * 1;
+        total+= impcombustible * 1;
 
-    tieneMonotributo ? tieneMonotributo = true : tieneMonotributo = false;
-    tieneIVA ? tieneIVA = true : tieneIVA = false;
-    tieneIVAPercepciones ? tieneIVAPercepciones = true : tieneIVAPercepciones = false;
-    tieneImpuestoInterno ? tieneImpuestoInterno = true : tieneImpuestoInterno = false;
-    tieneAgenteDePercepcionActividadesVarias ? tieneAgenteDePercepcionActividadesVarias = true : tieneAgenteDePercepcionActividadesVarias = false;
-    tieneAgenteDePercepcionIIBB ? tieneAgenteDePercepcionIIBB = true : tieneAgenteDePercepcionIIBB = false;
+        nogravados = $("#"+formulario+" #CompraNogravados").val() * 1;
+        total+= nogravados * 1;
 
-    var alicuota = 0;
-    var ivapercep = 0;
-    var agenteDePercepcionIIBB = 0;
-    var agenteDePercepcionActividadesVarias = 0;
-    var impinternos = 0;
-    var impcombustible=0;
+        exentos = $("#"+formulario+" #CompraExentos").val() * 1;
+        total+= exentos * 1;
 
-    var neto = 0;
-    var iva = 0;
-
-    var total = 0;
-
-    alicuota = $("#"+formulario+" #CompraAlicuota").val() * 1;
-    //Ingreso Alicuota
-    //Ingreso Neto
-    //Calcular IVA
-    //Calcular TOTAl
-    neto = $("#"+formulario+" #CompraNeto").val();
-    iva=neto*(alicuota/100);
-
-    total+=neto * 1;
-    total+=iva * 1;
-
-    ivapercep = $("#"+formulario+" #CompraIvapercep").val() * 1;
-    total+= ivapercep * 1;
-
-    agenteDePercepcionIIBB = $("#"+formulario+" #CompraIibbpercep").val() * 1;
-    total+= agenteDePercepcionIIBB * 1;
-
-    agenteDePercepcionActividadesVarias = $("#"+formulario+" #CompraActvspercep").val() * 1;
-    total+= agenteDePercepcionActividadesVarias * 1;
-
-    impinternos = $("#"+formulario+" #CompraImpinternos").val() * 1;
-    total+= impinternos * 1;
-
-    impcombustible = $("#"+formulario+" #CompraImpcombustible").val() * 1;
-    total+= impinternos * 1;
-
-    $("#"+formulario+" #CompraTotal").val(total)
-    $("#"+formulario+" #CompraIva").val(iva);
+        $("#"+formulario+" #CompraTotal").val(total);
+        $("#"+formulario+" #CompraIva").val(iva);
     }
     function adaptarConceptorestanteForm(formnombre,conid){
 
@@ -1512,7 +1847,7 @@ $(document).ready(function() {
     })(jQuery);
     
   }
-  /*Show Hide from Tabs*/
+/*Show Hide from Tabs*/
     function showVentas(){
       $('.tabVentas').show();
       $('.tabCompras').hide();
@@ -1548,7 +1883,7 @@ $(document).ready(function() {
         $('.tabConceptosrestantes').hide();
         $('.tabBancos').show();
     }
-  /*Hide Formulario para modificar*/
+/*Hide Formulario para modificar*/
     function hideFormModVenta(venid){
       //$(".tdViewVenta"+venid).show();
       $("#rowventa"+venid).find('td').each(function(){
@@ -1597,7 +1932,7 @@ $(document).ready(function() {
             });
 
             $('#myModal').modal('show');
-            $('#myModal input[0]').focus();
+            // $('#myModal input[0]').focus();
           //$(".tdViewVenta"+venid).hide();
 
           reloadInputDates();
@@ -1663,13 +1998,9 @@ $(document).ready(function() {
                        var respuesta = JSON.parse(data);
                         //Agregar la fila nueva a la tabla
                         var  tdClass = "tdViewVenta"+respuesta.venta_id;
-                        var mineto = respuesta.venta.Venta.neto;
-                        var mitotal = respuesta.venta.Venta.total;
-                        mineto = parseFloat(mineto);
-                        mitotal = parseFloat(mitotal);
+                        var positivo = 1;
                         if(respuesta.venta.Venta.tipodebito=='Restitucion debito fiscal'){
-                            mineto = mineto*-1;
-                            mitotal = mitotal*-1;
+                            positivo = -1;
                         }
                         var rowData =
                             [
@@ -1684,26 +2015,26 @@ $(document).ready(function() {
                         if(!(respuesta.tieneMonotributo=="true")){
                             rowData.push(respuesta.venta.Venta.tipodebito);
                             rowData.push(respuesta.venta.Venta.alicuota+"%");
-                            rowData.push(mineto);
-                            rowData.push(respuesta.venta.Venta.iva);
+                            rowData.push(respuesta.venta.Venta.neto*positivo);
+                            rowData.push(respuesta.venta.Venta.iva*positivo);
                         }
                         if(respuesta.tieneIVAPercepciones=="true"){
-                            rowData.push(respuesta.venta.Venta.ivapercep);
+                            rowData.push(respuesta.venta.Venta.ivapercep*positivo);
                         }
                         if(respuesta.tieneAgenteDePercepcionIIBB=="true"){
-                            rowData.push(respuesta.venta.Venta.iibbpercep);
+                            rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
                         }
                         if(respuesta.tieneAgenteDePercepcionActividadesVarias=="true"){
-                            rowData.push(respuesta.venta.Venta.actvspercep);
+                            rowData.push(respuesta.venta.Venta.actvspercep*positivo);
                         }
                         if(respuesta.tieneImpuestoInterno=="true"){
-                            rowData.push(respuesta.venta.Venta.impinternos);
+                            rowData.push(respuesta.venta.Venta.impinternos*positivo);
                         }
-                        rowData.push(respuesta.venta.Venta.nogravados);
-                        rowData.push(respuesta.venta.Venta.excentos);
-                        rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas);
-                        rowData.push(respuesta.venta.Venta.exentosactividadesvarias);
-                        rowData.push(mitotal);
+                        rowData.push(respuesta.venta.Venta.nogravados*positivo);
+                        rowData.push(respuesta.venta.Venta.excentos*positivo);
+                        rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);
+                        rowData.push(respuesta.venta.Venta.exentosactividadesvarias*positivo);
+                        rowData.push(respuesta.venta.Venta.total*positivo);
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarVenta('+respuesta.venta_id+')" alt="">';
                         tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarVenta('+respuesta.venta_id+')" alt="">';
                         rowData.push(tdactions);
@@ -1805,7 +2136,7 @@ $(document).ready(function() {
             });
 
             $('#myModal').modal('show');
-            $('#myModal input[0]').focus();
+            // $('#myModal input[0]').focus();
             // var button = '<a href="#" class="btn_cancelar" onClick="hideFormModCompra('+comid+')">X</a>';
             //$("#tdventa"+comid).append(button);
             reloadInputDates();
@@ -1846,9 +2177,9 @@ $(document).ready(function() {
                   $("#CompraFormEdit"+comid+" #CompraTotal").prop("readonly",true);
                   //Permitir editar los campos relacionados a IVA
                   tipodecomprobanteCompraseleccionado = 'A';
-                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='monotributista']").hide();
+                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='monotributista']").show();
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='responsableinscripto']").show();
-                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='consf/exento/noalcanza']").show();
+                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
 
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='0']").hide();
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='2.5']").show();
@@ -1868,9 +2199,9 @@ $(document).ready(function() {
                   $("#CompraFormEdit"+comid+" #CompraImputacion").val(0);
                   $("#CompraFormEdit"+comid+" #CompraIvapercep").val(0);
                   tipodecomprobanteCompraseleccionado = 'B';
-                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='monotributista']").hide();
+                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='monotributista']").show();
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='responsableinscripto']").show();
-                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='consf/exento/noalcanza']").show();
+                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
 
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='0']").show();
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='2.5']").hide();
@@ -1891,7 +2222,7 @@ $(document).ready(function() {
                   $("#CompraFormEdit"+comid+" #CompraIvapercep").val(0);
                   tipodecomprobanteCompraseleccionado = 'C';
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='monotributista']").show();
-                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='responsableinscripto']").hide();
+                  $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='responsableinscripto']").show();
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
 
                   $("#CompraFormEdit"+comid+" #CompraAlicuota option[value='0']").show();
@@ -1926,18 +2257,12 @@ $(document).ready(function() {
                       //Incrementa campo de Factura en 1
                       $( "#CompraNumerocomprobante" ).val($( "#CompraNumerocomprobante" ).val()*1 + 1);
 
-                      var mineto = respuesta.compra.Compra.neto;
-                      var mitotal = respuesta.compra.Compra.total;
-
-                      mineto = parseFloat(mineto);
-                      mitotal = parseFloat(mitotal);
+                      var positivo = 1;
 
                       if(respuesta.compra.Compra.tipocredito=='Restitucion credito fiscal'){
-                          mineto = mineto*-1;
-                          mitotal = mitotal*-1;
+                          positivo = -1;
                       }else{
-                          mineto = mineto;
-                          mitotal = mitotal;
+                          positivo = 1;
                       }
 
                       //Agregar Row Nueva a la tabla
@@ -1954,17 +2279,17 @@ $(document).ready(function() {
                               respuesta.compra.Compra.tipoiva,
                               respuesta.compra.Compra.imputacion,
                               respuesta.compra.Compra.alicuota+"%",
-                              mineto,
-                              respuesta.compra.Compra.iva,
-                              respuesta.compra.Compra.ivapercep,
-                              respuesta.compra.Compra.iibbpercep,
-                              respuesta.compra.Compra.actvspercep,
-                              respuesta.compra.Compra.impinternos,
-                              respuesta.compra.Compra.impcombustible,
-                              respuesta.compra.Compra.nogravados,
-                              respuesta.compra.Compra.exentos,
-                              respuesta.compra.Compra.kw,
-                              mitotal,
+                              respuesta.compra.Compra.neto*positivo,
+                              respuesta.compra.Compra.iva*positivo,
+                              respuesta.compra.Compra.ivapercep*positivo,
+                              respuesta.compra.Compra.iibbpercep*positivo,
+                              respuesta.compra.Compra.actvspercep*positivo,
+                              respuesta.compra.Compra.impinternos*positivo,
+                              respuesta.compra.Compra.impcombustible*positivo,
+                              respuesta.compra.Compra.nogravados*positivo,
+                              respuesta.compra.Compra.exentos*positivo,
+                              respuesta.compra.Compra.total*positivo,
+                              respuesta.compra.Compra.kw*positivo,
                           ];
                       var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarCompra('+respuesta.compra_id+')" alt="">';
                       tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarCompra('+respuesta.compra_id+')" alt="">';
@@ -2063,123 +2388,123 @@ $(document).ready(function() {
          */
     }
     function modificarConceptosrestante(conid){
-    var data ="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/conceptosrestantes/edit/"+conid,
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/conceptosrestantes/edit/"+conid,
 
-        // URL to request
-        data: data,  // post data
-        success: function(response) {
-            //var oldRow = $("#rowconceptorestante"+conid).html();
-            var rowid="rowconceptorestante"+conid;
-            //var oldrow = $("#"+rowid).html();
-            //$("#"+rowid).html(oldrow+response);
-            //$(".tdViewConceptosrestanteO"+conid).hide();
-            $('#myModal').on('show.bs.modal', function() {
-                $('#myModal').find('.modal-title').html('Editar Venta');
-                $('#myModal').find('.modal-body').html('<pre>' + response + '</pre>');
-                // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
-            });
-
-            $('#myModal').modal('show');
-            $('#myModal input[0]').focus();
-
-            reloadInputDates();
-            $('.chosen-select').chosen({search_contains:true});
-            adaptarConceptorestanteForm("ConceptosRestanteFormEdit"+conid,conid)
-
-            $('#ConceptosRestanteFormEdit'+conid).submit(function(){
-                //serialize form data
-                var formData = $(this).serialize();
-                //get form action
-                var formUrl = $(this).attr('action');
-
-                $.ajax({
-                    type: 'POST',
-                    url: formUrl,
-                    data: formData,
-                    success: function(response2,textStatus,xhr){
-                        var respuesta = JSON.parse(response2);
-                        callAlertPopint(respuesta.respuesta);
-                        var conceptoCargado = respuesta.conceptosrestante.Conceptosrestante
-                        if(conceptoCargado!=null){
-                            //Agregar la fila nueva a la tabla
-                            var  tdClass = "tdViewConceptosrestante"+conceptoCargado.id;
-                            var partido = "";
-                            var localidad = "";
-                            var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
-                            var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
-                            switch (impuestoseleccionado){
-                                //estos impuestos se pagan por provincia todos los otros por localidad
-                                case '21':/*Actividades Economicas*/
-                                case '174':/*Convenio Multilateral*/
-                                    if (!(typeof respuesta.conceptosrestante.Partido.nombre === 'undefined' || respuesta.conceptosrestante.Partido.nombre === null)) {
-                                        partido = ""+respuesta.conceptosrestante.Partido.nombre;
-                                    }
-                                    break;
-                                default:
-                                    if (!(typeof respuesta.conceptosrestante.Localidade.Partido === 'undefined' || respuesta.conceptosrestante.Localidade === null)) {
-                                        localidad =  ""+respuesta.conceptosrestante.Localidade.Partido.nombre+'-'+respuesta.conceptosrestante.Localidade.nombre;
-                                    }
-                                    break;
-                            }
-                            var rowData =
-                                [
-                                    respuesta.conceptosrestante.Impcli.Impuesto.nombre,
-                                    partido,
-                                    localidad,
-                                    respuesta.conceptosrestante.Conceptostipo.nombre,
-                                    respuesta.conceptosrestante.Comprobante.nombre,
-                                    conceptoCargado.numerocomprobante,
-                                    conceptoCargado.rectificativa,
-                                    conceptoCargado.razonsocial,
-                                    conceptoCargado.monto,
-                                    conceptoCargado.montoretenido,
-                                    conceptoCargado.cuit,
-                                    conceptoCargado.fecha,
-                                    conceptoCargado.numerodespachoaduanero,
-                                    conceptoCargado.anticipo,
-                                    conceptoCargado.cbu,
-                                    conceptoCargado.tipocuenta,
-                                    conceptoCargado.tipomoneda,
-                                    conceptoCargado.agente,
-                                    conceptoCargado.enterecaudador,
-                                    conceptoCargado.regimen,
-                                    conceptoCargado.descripcion,
-                                    conceptoCargado.numeropadron
-                                ];
-                            var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarConceptosrestante('+conceptoCargado.id+')" alt="">';
-                            tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarConceptosrestante('+conceptoCargado.id+')" alt="">';
-                            rowData.push(tdactions);
-
-                            $('#tblTablaConceptosrestantes').dataTable().fnDeleteRow($("#rowconceptorestante"+conid));
-
-                            var rowIndex = $('#tblTablaConceptosrestantes').dataTable().fnAddData(rowData);
-                            var row = $('#tblTablaConceptosrestantes').dataTable().fnGetNodes(rowIndex);
-                            $(row).attr( 'id', "rowconceptorestante"+respuesta.conid );
-                            calcularFooterTotales(tblTablaVentas);
-                            $('#myModal').modal('hide');
-
-                            //.data(rowData)
-
-                            /*TODO: ReDraw pendiente
-                             *aca nos falta completar el "redibujado de la tabla, se actualizan los datos pero
-                             * no se por que no se redibuja la tabla */
-                        }
-                    },
-                    error: function(xhr,textStatus,error){
-                        alert(textStatus);
-                    }
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                //var oldRow = $("#rowconceptorestante"+conid).html();
+                var rowid="rowconceptorestante"+conid;
+                //var oldrow = $("#"+rowid).html();
+                //$("#"+rowid).html(oldrow+response);
+                //$(".tdViewConceptosrestanteO"+conid).hide();
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Editar Venta');
+                    $('#myModal').find('.modal-body').html('<pre>' + response + '</pre>');
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
                 });
-                return false;
-            });
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
-        }
-    });
-}
+
+                $('#myModal').modal('show');
+                // $('#myModal input[0]').focus();
+
+                reloadInputDates();
+                $('.chosen-select').chosen({search_contains:true});
+                adaptarConceptorestanteForm("ConceptosRestanteFormEdit"+conid,conid)
+
+                $('#ConceptosRestanteFormEdit'+conid).submit(function(){
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(response2,textStatus,xhr){
+                            var respuesta = JSON.parse(response2);
+                            callAlertPopint(respuesta.respuesta);
+                            var conceptoCargado = respuesta.conceptosrestante.Conceptosrestante
+                            if(conceptoCargado!=null){
+                                //Agregar la fila nueva a la tabla
+                                var  tdClass = "tdViewConceptosrestante"+conceptoCargado.id;
+                                var partido = "";
+                                var localidad = "";
+                                var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
+                                var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
+                                switch (impuestoseleccionado){
+                                    //estos impuestos se pagan por provincia todos los otros por localidad
+                                    case '21':/*Actividades Economicas*/
+                                    case '174':/*Convenio Multilateral*/
+                                        if (!(typeof respuesta.conceptosrestante.Partido.nombre === 'undefined' || respuesta.conceptosrestante.Partido.nombre === null)) {
+                                            partido = ""+respuesta.conceptosrestante.Partido.nombre;
+                                        }
+                                        break;
+                                    default:
+                                        if (!(typeof respuesta.conceptosrestante.Localidade.Partido === 'undefined' || respuesta.conceptosrestante.Localidade === null)) {
+                                            localidad =  ""+respuesta.conceptosrestante.Localidade.Partido.nombre+'-'+respuesta.conceptosrestante.Localidade.nombre;
+                                        }
+                                        break;
+                                }
+                                var rowData =
+                                    [
+                                        respuesta.conceptosrestante.Impcli.Impuesto.nombre,
+                                        partido,
+                                        localidad,
+                                        respuesta.conceptosrestante.Conceptostipo.nombre,
+                                        respuesta.conceptosrestante.Comprobante.nombre,
+                                        conceptoCargado.numerocomprobante,
+                                        conceptoCargado.rectificativa,
+                                        conceptoCargado.razonsocial,
+                                        conceptoCargado.monto,
+                                        conceptoCargado.montoretenido,
+                                        conceptoCargado.cuit,
+                                        conceptoCargado.fecha,
+                                        conceptoCargado.numerodespachoaduanero,
+                                        conceptoCargado.anticipo,
+                                        conceptoCargado.cbu,
+                                        conceptoCargado.tipocuenta,
+                                        conceptoCargado.tipomoneda,
+                                        conceptoCargado.agente,
+                                        conceptoCargado.enterecaudador,
+                                        conceptoCargado.regimen,
+                                        conceptoCargado.descripcion,
+                                        conceptoCargado.numeropadron
+                                    ];
+                                var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarConceptosrestante('+conceptoCargado.id+')" alt="">';
+                                tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarConceptosrestante('+conceptoCargado.id+')" alt="">';
+                                rowData.push(tdactions);
+
+                                $('#tblTablaConceptosrestantes').dataTable().fnDeleteRow($("#rowconceptorestante"+conid));
+
+                                var rowIndex = $('#tblTablaConceptosrestantes').dataTable().fnAddData(rowData);
+                                var row = $('#tblTablaConceptosrestantes').dataTable().fnGetNodes(rowIndex);
+                                $(row).attr( 'id', "rowconceptorestante"+respuesta.conid );
+                                calcularFooterTotales(tblTablaVentas);
+                                $('#myModal').modal('hide');
+
+                                //.data(rowData)
+
+                                /*TODO: ReDraw pendiente
+                                 *aca nos falta completar el "redibujado de la tabla, se actualizan los datos pero
+                                 * no se por que no se redibuja la tabla */
+                            }
+                        },
+                        error: function(xhr,textStatus,error){
+                            alert(textStatus);
+                        }
+                    });
+                    return false;
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    }
 /*fin Update Pagos a cuenta*/
 /*Update Sueldos*/
     function modificarSueldo(sueid){
@@ -2318,176 +2643,170 @@ $(document).ready(function() {
         return false;
     }
 /*fin Update Sueldos*/
+function imprimirElemento(elemento){
+    PopupPrint($(elem).html());
+}
+var tablaSueldoCalx;
+function ocultarFunciones(){
 
-    function imprimirElemento(elemento){
-        PopupPrint($(elem).html());
-    }
-    var tablaSueldoCalx;
-    function ocultarFunciones(){
+    $(".funcionAAplicar").each(function() {
+        var posicion = $(this).attr('posicion');
+        var seccion = $(this).attr('seccion');
+        var headsection = $(this).attr('headseccion');
 
-        $(".funcionAAplicar").each(function() {
-            var posicion = $(this).attr('posicion');
-            var seccion = $(this).attr('seccion');
-            var headsection = $(this).attr('headseccion');
+        if($('#Valorrecibo'+posicion+'Valor').val()==0){
+            //tengo que ocultar el row solo si no es cabeza de seccion por que sino me oculta toda la seccion
+            if(headsection=="0"){
 
-            if($('#Valorrecibo'+posicion+'Valor').val()==0){
-                //tengo que ocultar el row solo si no es cabeza de seccion por que sino me oculta toda la seccion
-                if(headsection=="0"){
-
-                    //si esta visible tengo que mermar en 1 el rowspan
-                    var rowspan = 0;
-                    var rowVisible =  $(this).closest('tr').is(':visible');
-                    if(rowVisible==true) {
-                        rowspan = $('#seccion'+seccion).attr('rowspan');
-                        rowspan = rowspan - 1;
-                        $('#seccion'+seccion).attr('rowspan',rowspan);
-                    }
-                    $(this).closest('tr').hide();
-                }
-
-            }else{
-
-                //si esta oculto tengo que aumentar en 1 el rowspan
+                //si esta visible tengo que mermar en 1 el rowspan
                 var rowspan = 0;
-                var rowVisible = $(this).is(':visible');
-                if(rowVisible==false ) {
-                    rowspan = $('#seccion' + seccion).attr('rowspan')*1;
-                    rowspan = rowspan + 1;
+                var rowVisible =  $(this).closest('tr').is(':visible');
+                if(rowVisible==true) {
+                    rowspan = $('#seccion'+seccion).attr('rowspan');
+                    rowspan = rowspan - 1;
                     $('#seccion'+seccion).attr('rowspan',rowspan);
                 }
-                //tengo que mostrar el row
-                $(this).closest('tr').show();
+                $(this).closest('tr').hide();
+            }
+
+        }else{
+
+            //si esta oculto tengo que aumentar en 1 el rowspan
+            var rowspan = 0;
+            var rowVisible = $(this).is(':visible');
+            if(rowVisible==false ) {
+                rowspan = $('#seccion' + seccion).attr('rowspan')*1;
+                rowspan = rowspan + 1;
+                $('#seccion'+seccion).attr('rowspan',rowspan);
+            }
+            //tengo que mostrar el row
+            $(this).closest('tr').show();
+        }
+    });
+}
+function activarCalXOnSueldos(){
+    $(".funcionAAplicar").on('change', function() {
+        var posicion = $(this).attr('posicion');
+          $('#ValorreciboPapeldetrabajosueldosForm').calx(
+            'getCell',
+            $('#Valorrecibo'+posicion+'Valor').attr('data-cell')
+        ).setFormula($(this).val());
+        tablaSueldoCalx.calx('calculate');
+    });
+    tablaSueldoCalx = $('#ValorreciboPapeldetrabajosueldosForm').calx({
+        language : 'id'
+    });
+    tablaSueldoCalx.submit(function(){
+        //serialize form data
+        var formData = $(this).serialize();
+        //get form action
+        var formUrl = $(this).attr('action');
+        $.ajax({
+            type: 'POST',
+            url: formUrl,
+            data: formData,
+            success: function(data,textStatus,xhr){
+                callAlertPopint("Sueldo guardado, los totales se han recalculado.");
+                $("#divSueldoForm").html(data);
+                var empid = $("#Valorrecibo0EmpleadoId").val();
+                $("#buttonEmpleado"+empid).addClass("btn_empleados_liq");
+                activarCalXOnSueldos();
+            },
+            error: function(xhr,textStatus,error){
+                callAlertPopint(textStatus);
             }
         });
-    }
-    function activarCalXOnSueldos(){
-        $(".funcionAAplicar").on('change', function() {
-            var posicion = $(this).attr('posicion');
-              $('#ValorreciboPapeldetrabajosueldosForm').calx(
-                'getCell',
-                $('#Valorrecibo'+posicion+'Valor').attr('data-cell')
-            ).setFormula($(this).val());
-            tablaSueldoCalx.calx('calculate');
-        });
-        tablaSueldoCalx = $('#ValorreciboPapeldetrabajosueldosForm').calx({
-            language : 'id'
-        });
-        tablaSueldoCalx.submit(function(){
-            //serialize form data
-            var formData = $(this).serialize();
-            //get form action
-            var formUrl = $(this).attr('action');
-            $.ajax({
-                type: 'POST',
-                url: formUrl,
-                data: formData,
-                success: function(data,textStatus,xhr){
-                    callAlertPopint("Sueldo guardado, los totales se han recalculado.");
-                    $("#divSueldoForm").html(data);
-                    var empid = $("#Valorrecibo0EmpleadoId").val();
-                    $("#buttonEmpleado"+empid).addClass("btn_empleados_liq");
-                    activarCalXOnSueldos();
-                },
-                error: function(xhr,textStatus,error){
-                    callAlertPopint(textStatus);
-                }
-            });
-            return false;
-          });
-        ocultarFunciones();
+        return false;
+      });
+    ocultarFunciones();
 
-        $('#ValorreciboPapeldetrabajosueldosForm input').change(function(){
-            $('#ValorreciboPapeldetrabajosueldosForm').calx({ });
-            ocultarFunciones();
-        });
-    }
-    function realizarEventoCliente(periodo,clienteid,estadotarea){
-  var datas =  "0/tarea3/"+periodo+"/"+clienteid;
-  var data ="";
-  $.ajax({
-    type: "post",  // Request method: post, get
-    url: serverLayoutURL+"/eventosclientes/realizareventocliente/0/tarea3/"+periodo+"/"+clienteid+"/"+estadotarea, // URL to request
-    data: data,  // post data
-    success: function(response) {
-      var resp = response.split("&&");
-      var respuesta=resp[1];
-      var error=resp[0];
-      if(error!=0){
-        callAlertPopint('Error por favor intente mas tarde');
-        return;
-      }else{
-        callAlertPopint('Estado de la tarea modificado');
-      }
-      return false;
-    },
-    error:function (XMLHttpRequest, textStatus, errorThrown) {
-      alert(textStatus);
-      return false;
-    }
-  });
+    $('#ValorreciboPapeldetrabajosueldosForm input').change(function(){
+        $('#ValorreciboPapeldetrabajosueldosForm').calx({ });
+        ocultarFunciones();
+    });
+}
+function realizarEventoCliente(periodo,clienteid,estadotarea){
+var datas =  "0/tarea3/"+periodo+"/"+clienteid;
+var data ="";
+$.ajax({
+type: "post",  // Request method: post, get
+url: serverLayoutURL+"/eventosclientes/realizareventocliente/0/tarea3/"+periodo+"/"+clienteid+"/"+estadotarea, // URL to request
+data: data,  // post data
+success: function(response) {
+  var resp = response.split("&&");
+  var respuesta=resp[1];
+  var error=resp[0];
+  if(error!=0){
+    callAlertPopint('Error por favor intente mas tarde');
+    return;
+  }else{
+    callAlertPopint('Estado de la tarea modificado');
+  }
+  return false;
+},
+error:function (XMLHttpRequest, textStatus, errorThrown) {
+  alert(textStatus);
   return false;
 }
-
-    function usosSLD(conid){
-        var data ="";
-        $.ajax({
-            type: "post",  // Request method: post, get
-            url: serverLayoutURL+"/usosaldos/index/"+conid,
-            // URL to request
-            data: data,  // post data
-            success: function(response) {
-                //var oldRow = $("#rowconceptorestante"+conid).html();
-                $("#divUsosaldos").html(response);
-                location.href="#popinUsosaldos";
-                $('#UsosaldoAddForm').submit(function(){
-                    //serialize form data
-                    var formData = $(this).serialize();
-                    //get form action
-                    var formUrl = $(this).attr('action');
-                    $.ajax({
-                        type: 'POST',
-                        url: formUrl,
-                        data: formData,
-                        success: function(response2,textStatus,xhr){
-                            var respuesta = JSON.parse(response2);
-                            callAlertPopint(respuesta.respuesta);
-                            return false;
-                        },
-                        error: function(xhr,textStatus,error){
-                            alert(textStatus);
-                            return false;
-                        }
-                    });
-                    return false;
+});
+return false;
+}
+function usosSLD(conid){
+    var data ="";
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/usosaldos/index/"+conid,
+        // URL to request
+        data: data,  // post data
+        success: function(response) {
+            //var oldRow = $("#rowconceptorestante"+conid).html();
+            $("#divUsosaldos").html(response);
+            location.href="#popinUsosaldos";
+            $('#UsosaldoAddForm').submit(function(){
+                //serialize form data
+                var formData = $(this).serialize();
+                //get form action
+                var formUrl = $(this).attr('action');
+                $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(response2,textStatus,xhr){
+                        var respuesta = JSON.parse(response2);
+                        callAlertPopint(respuesta.respuesta);
+                        return false;
+                    },
+                    error: function(xhr,textStatus,error){
+                        alert(textStatus);
+                        return false;
+                    }
                 });
-            },
-            error:function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(errorThrown);
-            }
-        });
-    }
-
-function PrintElem(elem)
-{
-   // PopupElement($(elem).html());
-    window.print();
+                return false;
+            });
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+}
+function PrintElem(elem){
+// PopupElement($(elem).html());
+window.print();
 
 }
+function PopupElement(data){
+var mywindow = window.open('', 'my div', 'height=400,width=1200');
+mywindow.document.write('<html><head><title>my div</title>');
+/*optional stylesheet*/ //mywindow.document.write('<link rel="stylesheet" href="main.css" type="text/css" />');
+mywindow.document.write('</head><body >');
+mywindow.document.write(data.html());
+mywindow.document.write('</body></html>');
 
-function PopupElement(data)
-{
-    var mywindow = window.open('', 'my div', 'height=400,width=1200');
-    mywindow.document.write('<html><head><title>my div</title>');
-    /*optional stylesheet*/ //mywindow.document.write('<link rel="stylesheet" href="main.css" type="text/css" />');
-    mywindow.document.write('</head><body >');
-    mywindow.document.write(data.html());
-    mywindow.document.write('</body></html>');
+mywindow.document.close(); // necessary for IE >= 10
+mywindow.focus(); // necessary for IE >= 10
 
-    mywindow.document.close(); // necessary for IE >= 10
-    mywindow.focus(); // necessary for IE >= 10
+mywindow.print();
+mywindow.close();
 
-    mywindow.print();
-    mywindow.close();
-
-    return true;
+return true;
 }

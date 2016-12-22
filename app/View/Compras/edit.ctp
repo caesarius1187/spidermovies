@@ -110,8 +110,7 @@ if(!$mostrarForm) { ?>
         ));               
       echo $this->Form->input('tipogasto_id', array(                      
             'label'=>'Tipo Gasto',
-            'style' => 'width:69px' 
-
+            'style' => 'width:69px'
             )
       );   
       echo $this->Form->input('tipoiva',array(
@@ -151,15 +150,15 @@ if(!$mostrarForm) { ?>
           'label'=> 'No gravados',
       ));
       echo $this->Form->input('exentos',array(
-          'label'=> 'Excento',
+          'label'=> 'Exento',
+      ));
+      echo $this->Form->input('total',array(
+          'label'=>'Total'
       ));
       echo $this->Form->input('kw',array(
             'label'=>'KW'
-          ));  
-      echo $this->Form->input('total',array(
-            'label'=>'Total'
-          ));     
-      echo $this->Form->input('asiento',array('type'=>'hidden'));      
+          ));
+      echo $this->Form->input('asiento',array('type'=>'hidden'));
       echo $this->Form->input('periodo',array('type'=>'hidden'));
       /*AFIP*/
       echo $this->Form->input('tieneMonotributo',array('value'=>$tieneMonotributo,'type'=>'hidden'));

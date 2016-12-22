@@ -467,6 +467,8 @@ class ImpclisController extends AppController {
 		$this->loadModel('Actividadcliente');
 		$this->loadModel('Conceptosrestante');
 		$this->loadModel('Cuenta');
+		$this->loadModel('Eventosimpuesto');
+		$this->loadModel('Cliente');
 		$this->set('periodo',$periodo);
 		$this->set('impcliid',$impcliid);
         $cuentasdeActEconomicas = $this->Cuenta->cuentasdeActEconomicas;
@@ -511,87 +513,49 @@ class ImpclisController extends AppController {
 		$this->set('impcli',$impcli);
         $pemes = substr($periodo, 0, 2);
         $peanio = substr($periodo, 3);
-        $esMenorQueHasta = array(
-            //HASTA es mayor que el periodo
-            'OR'=>array(
-                'SUBSTRING(Alicuota.hasta,4,7)*1 > '.$peanio.'*1',
-                'AND'=>array(
-                    'SUBSTRING(Alicuota.hasta,4,7)*1 >= '.$peanio.'*1',
-                    'SUBSTRING(Alicuota.hasta,1,2) >= '.$pemes.'*1'
-                ),
-            )
-        );
-        //B: Es mayor que periodo Desde
-        $esMayorQueDesde = array(
-            'OR'=>array(
-                'SUBSTRING(Alicuota.desde,4,7)*1 < '.$peanio.'*1',
-                'AND'=>array(
-                    'SUBSTRING(Alicuota.desde,4,7)*1 <= '.$peanio.'*1',
-                    'SUBSTRING(Alicuota.desde,1,2) <= '.$pemes.'*1'
-                ),
-            )
-        );
-        $periodoNull = array(
-            'OR'=>array(
-                array('Alicuota.hasta'=>null),
-                array('Alicuota.hasta'=>""),
-            )
-        );
-        //C: Tiene Periodo Hasta 0 NULL
-        $conditionsImpCliHabilitados = array(
-            //El periodo esta dentro de un desde hasta
-            'AND'=> array(
-                $esMayorQueDesde,
-                'OR'=> array(
-                    $esMenorQueHasta,
-                    $periodoNull
-                )
-            )
-        );
-		//vamos a buscar las actividades y las vamos a traer con las ventas
-		$conditionsActividades = array(
-			'contain'=>array(
-				'Actividade'=>array(
-					'Alicuota'=>array(
-						),
-					),
-				'Encuadrealicuota'=>array(
-					),
-				'Venta'=>array(
-					'Localidade'=>array(
+		$conditionsActividades = [
+			'contain'=>[
+				'Actividade'=>[
+					'Alicuota'=>[
+						],
+					],
+				'Encuadrealicuota'=>[
+					],
+				'Venta'=>[
+					'Localidade'=>[
 						'Partido'
-						),
+						],
 					'Comprobante',
-					'conditions'=>array(
+					'conditions'=>[
 						'Venta.periodo'=>$periodo
-						)
-					),
-				'Compra'=>array(
-						'Localidade'=>array(
+						]
+					],
+				'Compra'=>[
+						'Localidade'=>[
 								'Partido'
-							),
-						'conditions'=>array(
+							],
+						'conditions'=>[
 							'Compra.periodo'=>$periodo
-							)
-						),
-			),
-			'conditions' => array(
+							]
+						],
+			],
+			'conditions' => [
 				'Actividadcliente.cliente_id'=>$impcli['Cliente']['id']
-				), 
-		);
+				],
+		];
 		$actividadclientes = $this->Actividadcliente->find('all',$conditionsActividades);
 		$this->set('actividadclientes',$actividadclientes);
 		/*aca le vamos a sacar un mes al periodo para que los conceptos restantes que traigamos sean del periodo anterior*/
-		$conditionsConceptosrestantes=array(
-			'contain'=>array(
+		$conditionsConceptosrestantes=[
+			'contain'=>[
 				'Localidade',
 				'Partido',
-			),
-			'conditions'=>array(
+			],
+			'conditions'=>[
 				'Conceptosrestante.periodo'=>$periodo,
 				'Conceptosrestante.impcli_id'=>$impcliid,
-			)
-		);
+			]
+		];
 		$conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
 		$this->set('conceptosrestantes',$conceptosrestantes);
 
@@ -623,11 +587,100 @@ class ImpclisController extends AppController {
 		// el informe controle y no te deje avanzar hasta que el array de compras y de ventas este vacio
 		$provinciasVentasDiff = array_diff($provinciasVentas,$provinciasActivadas);
 		$provinciasComprasDiff = array_diff($provinciasCompras,$provinciasActivadas);
-		$this->set(compact('provinciasActivadas','provinciasVentas','provinciasCompras','provinciasVentasDiff','provinciasComprasDiff'));
+
+		//Aca vamos a listar los eventosimpuestos generados por provincia en el año del periodo, para compararlos con el minimo
+        $conditionsEventosimpuestos = [
+            'contain'=>[],
+            'fields'=>['Eventosimpuesto.partido_id','SUM(montovto) as montovto'],
+            'group'=>['Eventosimpuesto.partido_id'],
+            'conditions'=>[
+                'Eventosimpuesto.impcli_id'=>$impcliid,
+                'AND'=>array(
+                    'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 = '.$peanio.'*1',
+                    'SUBSTRING(Eventosimpuesto.periodo,1,2) < '.$pemes.'*1'
+                ),
+            ]
+        ];
+		$eventosimpuestos = $this->Eventosimpuesto->find('all',$conditionsEventosimpuestos);
+        $this->set(compact('provinciasActivadas','provinciasVentas','provinciasCompras',
+            'provinciasVentasDiff','provinciasComprasDiff','eventosimpuestos'));
+
+		//Aca vamos a buscar si tiene Monotributo
+		//A: Es menor que periodo Hasta
+		$esMenorQueHasta = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+		//B: Es mayor que periodo Desde
+		$esMayorQueDesde = array(
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+				),
+			)
+		);
+		//C: Tiene Periodo Hasta 0 NULL
+		$periodoNull = array(
+			'OR'=>array(
+				array('Periodosactivo.hasta'=>null),
+				array('Periodosactivo.hasta'=>""),
+			)
+		);
+		$conditionsImpCliHabilitados = array(
+			//El periodo esta dentro de un desde hasta
+			'AND'=> array(
+				$esMayorQueDesde,
+				'OR'=> array(
+					$esMenorQueHasta,
+					$periodoNull
+				)
+			)
+		);
+
+		$cliente=$this->Cliente->find('first', array(
+				'contain'=>array(
+					'Impcli'=>[
+						'Periodosactivo'=>[
+							'conditions'=>$conditionsImpCliHabilitados
+						],
+						'conditions'=>['Impcli.impuesto_id'=>'4']
+					]
+				),
+				'conditions' => array(
+					'id' => $impcli['Cliente']['id'],
+				),
+			)
+		);
+
+		$tieneMonotributo=False;
+        $tieneIVA = False;
+
+		foreach ($cliente['Impcli'] as $impcli) {
+			/*AFIP*/
+			if ($impcli['impuesto_id'] == 4/*Monotributo*/) {
+				//Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+				if (Count($impcli['Periodosactivo']) != 0) {
+					//Aca estamos Seguros que es un Monotributista Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo = True;
+					$tieneIVA = False;
+				}
+			}
+		}
+        $this->set(compact('tieneMonotributo','tieneIVA'));
 	}
 	public function papeldetrabajoactividadesvarias($impcliid=null,$periodo=null) {
 		$this->loadModel('Actividadcliente');
 		$this->loadModel('Cuenta');
+		$this->loadModel('Cliente');
 		$this->set('periodo',$periodo);
 		$this->set('impcliid',$impcliid);
         $cuentasdeActVarias = $this->Cuenta->cuentasdeActVarias;
@@ -747,6 +800,80 @@ class ImpclisController extends AppController {
 		$provinciasVentasDiff = array_diff($provinciasVentas,$provinciasActivadas);
 		$provinciasComprasDiff = array_diff($provinciasCompras,$provinciasActivadas);
 		$this->set(compact('provinciasActivadas','provinciasVentas','provinciasCompras','provinciasVentasDiff','provinciasComprasDiff'));
+
+        //Aca vamos a buscar si tiene Monotributo
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+		//A: Es menor que periodo Hasta
+		$esMenorQueHasta = array(
+            //HASTA es mayor que el periodo
+            'OR'=>array(
+                'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+                    'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+                ),
+            )
+        );
+		//B: Es mayor que periodo Desde
+		$esMayorQueDesde = array(
+            'OR'=>array(
+                'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+                    'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+                ),
+            )
+        );
+		//C: Tiene Periodo Hasta 0 NULL
+		$periodoNull = array(
+            'OR'=>array(
+                array('Periodosactivo.hasta'=>null),
+                array('Periodosactivo.hasta'=>""),
+            )
+        );
+		$conditionsImpCliHabilitados = array(
+            //El periodo esta dentro de un desde hasta
+            'AND'=> array(
+                $esMayorQueDesde,
+                'OR'=> array(
+                    $esMenorQueHasta,
+                    $periodoNull
+                )
+            )
+        );
+
+		$cliente=$this->Cliente->find('first', array(
+                'contain'=>array(
+                    'Impcli'=>[
+                        'Periodosactivo'=>[
+                            'conditions'=>$conditionsImpCliHabilitados
+                        ],
+                        'conditions'=>['Impcli.impuesto_id'=>'4']
+                    ]
+                ),
+                'conditions' => array(
+                    'id' => $impcli['Cliente']['id'],
+                ),
+            )
+        );
+
+		$tieneMonotributo=False;
+        $tieneIVA = False;
+
+		foreach ($cliente['Impcli'] as $impcli) {
+            /*AFIP*/
+            if ($impcli['impuesto_id'] == 4/*Monotributo*/) {
+                //Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+                if (Count($impcli['Periodosactivo']) != 0) {
+                    //Aca estamos Seguros que es un Monotributista Activo en este periodo
+                    //Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+                    $tieneMonotributo = True;
+                    $tieneIVA = False;
+                }
+            }
+        }
+        $this->set(compact('tieneMonotributo','tieneIVA'));
 	}
 	public function papeldetrabajomonotributo($impcliid=null,$periodo=null){
 		$this->loadModel('Venta');
@@ -786,7 +913,7 @@ class ImpclisController extends AppController {
                 $mesinicioDelAño= '05';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				break;
-			case '04':
+			case '04':/*Abril*/
 				$mesParaProximaRecategorizacion= 1;
                 $mesinicioDelCuatrimestre = '01';
                 $mesinicioDelAño= '05';
@@ -811,7 +938,7 @@ class ImpclisController extends AppController {
                 $mesinicioDelAño= '09';
 				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
 				break;
-			case '08':
+			case '08':/*Agosto*/
 				$mesParaProximaRecategorizacion= 1;
                 $mesinicioDelCuatrimestre = '05';
                 $mesinicioDelAño= '09';
@@ -833,7 +960,7 @@ class ImpclisController extends AppController {
                 $mesinicioDelCuatrimestre = '09';
                 $mesinicioDelAño= '01';
 				break;
-			case '12':
+			case '12':/*Diciembre*/
 				$mesParaProximaRecategorizacion= 1;
                 $mesinicioDelCuatrimestre = '09';
 				$mesinicioDelAño= '01';
@@ -1197,6 +1324,7 @@ class ImpclisController extends AppController {
 		$this->loadModel('Empleado');
         $this->loadModel('Cuenta');
         $this->loadModel('Asiento');
+        $this->loadModel('Cliente');
         $cuentasdeSUSS = $this->Cuenta->cuentasdeSUSS;
         $asientodevengamientoSUSS = $this->Asiento->devengamientoSUSS;
         $contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
@@ -1264,48 +1392,6 @@ class ImpclisController extends AppController {
 
 		$impcli = $this->Impcli->find('first', $options);
 		$this->set('impcli',$impcli);
-//        $optionsDevengamiento = array(
-//            'contain'=>array(
-//                'Cliente'=>array(
-//                    'Cuentascliente'=>[
-//                        'Cuenta',
-//                        'conditions'=>[
-//                            'Cuentascliente.cuenta_id' => $devengamientoSUSS,
-//                        ]
-//                    ],
-//                ),
-//            ),
-//            'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
-//        $impcliDevengamiento = $this->Impcli->find('first', $optionsDevengamiento);
-//        $this->set('impcliDevengamiento',$impcliDevengamiento);
-//        $optionsContribuciones = array(
-//            'contain'=>array(
-//                'Cliente'=>array(
-//                    'Cuentascliente'=>[
-//                        'Cuenta',
-//                        'conditions'=>[
-//                            'Cuentascliente.cuenta_id' => $contribucionesSindicatos,
-//                        ]
-//                    ],
-//                ),
-//            ),
-//            'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
-//        $impcliContribuciones = $this->Impcli->find('first', $optionsContribuciones);
-//        $this->set('impcliContribuciones',$impcliContribuciones);
-//        $optionsAportes = array(
-//            'contain'=>array(
-//                'Cliente'=>array(
-//                    'Cuentascliente'=>[
-//                        'Cuenta',
-//                        'conditions'=>[
-//                            'Cuentascliente.cuenta_id' => $aportesSindicatos,
-//                        ]
-//                    ],
-//                ),
-//            ),
-//            'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
-//        $impcliAportes = $this->Impcli->find('first', $optionsAportes);
-//        $this->set('impcliAportes',$impcliAportes);
 
 		$this->set(compact('impcliid','periodo'));
 		$optionsSUSS = array(
@@ -1326,6 +1412,80 @@ class ImpclisController extends AppController {
 		$this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
 		$this->set('tipoempresa',$this->Empleado->tipoempresa);
 		$this->set('codigozona',$this->Empleado->codigozona);
+
+        //Aca vamos a buscar si tiene Monotributo
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+        //A: Es menor que periodo Hasta
+        $esMenorQueHasta = array(
+            //HASTA es mayor que el periodo
+            'OR'=>array(
+                'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+                    'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+                ),
+            )
+        );
+        //B: Es mayor que periodo Desde
+        $esMayorQueDesde = array(
+            'OR'=>array(
+                'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+                    'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+                ),
+            )
+        );
+        //C: Tiene Periodo Hasta 0 NULL
+        $periodoNull = array(
+            'OR'=>array(
+                array('Periodosactivo.hasta'=>null),
+                array('Periodosactivo.hasta'=>""),
+            )
+        );
+        $conditionsImpCliHabilitados = array(
+            //El periodo esta dentro de un desde hasta
+            'AND'=> array(
+                $esMayorQueDesde,
+                'OR'=> array(
+                    $esMenorQueHasta,
+                    $periodoNull
+                )
+            )
+        );
+
+        $cliente=$this->Cliente->find('first', array(
+                'contain'=>array(
+                    'Impcli'=>[
+                        'Periodosactivo'=>[
+                            'conditions'=>$conditionsImpCliHabilitados
+                        ],
+                        'conditions'=>['Impcli.impuesto_id'=>'4']
+                    ]
+                ),
+                'conditions' => array(
+                    'id' => $impcli['Cliente']['id'],
+                ),
+            )
+        );
+
+        $tieneMonotributo=False;
+        $tieneIVA = False;
+
+        foreach ($cliente['Impcli'] as $impcli) {
+            /*AFIP*/
+            if ($impcli['impuesto_id'] == 4/*Monotributo*/) {
+                //Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+                if (Count($impcli['Periodosactivo']) != 0) {
+                    //Aca estamos Seguros que es un Monotributista Activo en este periodo
+                    //Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+                    $tieneMonotributo = True;
+                    $tieneIVA = False;
+                }
+            }
+        }
+        $this->set(compact('tieneMonotributo','tieneIVA'));
 	}
 	public function papeldetrabajosindicatos($impcliid=null,$periodo=null){
 		$this->loadModel('Conceptosrestante');

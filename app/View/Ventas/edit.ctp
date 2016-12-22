@@ -43,10 +43,12 @@ if(!$mostrarForm) { ?>
         if(filter_var($venta['Venta']["tieneImpuestoInterno"], FILTER_VALIDATE_BOOLEAN)){?>
           <td class="<?php echo $tdClass?>"><?php echo "$".number_format($venta['Venta']["impinternos"], 2, ",", ".")?></td>
           <?php
-        }    
-        ?>
+        }
+        if(!filter_var($venta['Venta']["tieneMonotributo"], FILTER_VALIDATE_BOOLEAN)){ ?>
+            ?>
         <td class="<?php echo $tdClass?>"><?php echo "$".number_format($venta['Venta']["nogravados"], 2, ",", ".")?></td>
         <td class="<?php echo $tdClass?>"><?php echo "$".number_format($venta['Venta']["excentos"], 2, ",", ".")?></td>
+            <?php } ?>
         <td class="<?php echo $tdClass?>"><?php echo "$".number_format($venta['Venta']["exentosactividadeseconomicas"], 2, ",", ".")?></td>
         <td class="<?php echo $tdClass?>"><?php echo "$".number_format($venta['Venta']["exentosactividadesvarias"], 2, ",", ".")?></td>
         <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["total"], 2, ",", ".")?></td>
@@ -141,20 +143,24 @@ if(!$mostrarForm) { ?>
             'label'=>'Tipo Debito',
             'default'=> $this->data['Venta']['tipodebito'],
             'options'=>$tipodebitos,
-            'style'=>'width:83px' 
+            'style'=>'width:83px' ,
+               'type'=>'hidden'
             ));    
           echo $this->Form->input('alicuota',array(
             'label'=>'Alicuota',
             'default'=> $this->data['Venta']['alicuota'],
-            'style'=>'width:55px' 
+            'style'=>'width:55px' ,
+               'type'=>'hidden'
             ));    
           echo $this->Form->input('neto',array(
             'label'=>'Neto',
-            'style'=>'max-width: 70px;' 
+            'style'=>'max-width: 70px;' ,
+               'type'=>'hidden'
             ));    
           echo $this->Form->input('iva',array(
             'label'=>'IVA',
-            'style'=>'max-width: 70px;' 
+            'style'=>'max-width: 70px;' ,
+               'type'=>'hidden'
              ));    
       }   
       if(filter_var($tieneIVAPercepciones, FILTER_VALIDATE_BOOLEAN)){
@@ -191,14 +197,27 @@ if(!$mostrarForm) { ?>
       echo $this->Form->input('tieneAgenteDePercepcionIIBB',array('value'=>$tieneAgenteDePercepcionIIBB,'type'=>'hidden'));
       /*DGRM*/
       echo $this->Form->input('tieneAgenteDePercepcionActividadesVarias',array('value'=>$tieneAgenteDePercepcionActividadesVarias,'type'=>'hidden'));
-      echo $this->Form->input('nogravados',array(
-          'label'=>'No Gravados',
-          'style'=>'max-width: 70px;'
-      ));
-      echo $this->Form->input('excentos',array(
-          'label'=>'Excentos',
-          'style'=>'max-width: 70px;'
-      ));
+      if(!filter_var($tieneMonotributo, FILTER_VALIDATE_BOOLEAN)) {
+          echo $this->Form->input('nogravados', array(
+              'label' => 'No Gravados',
+              'style' => 'max-width: 70px;'
+          ));
+          echo $this->Form->input('excentos', array(
+              'label' => 'Exentos',
+              'style' => 'max-width: 70px;'
+          ));
+      }else{
+          echo $this->Form->input('nogravados', array(
+              'label' => 'No Gravados',
+              'style' => 'max-width: 70px;',
+              'type'=>'hidden'
+          ));
+          echo $this->Form->input('excentos', array(
+              'label' => 'Exentos',
+              'style' => 'max-width: 70px;',
+              'type'=>'hidden'
+          ));
+      }
       echo $this->Form->input('exentosactividadeseconomicas',array(
           'label'=>'Act.Ec. Exentos',
           'style'=>'max-width: 70px;'

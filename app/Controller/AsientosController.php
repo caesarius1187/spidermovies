@@ -45,10 +45,17 @@ class AsientosController extends AppController {
                     {
                         if(isset($movimiento['cuenta_id']))
                         {
+                            $optionsCuenta = [
+                                'contain'=>[],
+                                'conditions' => ['Cuenta.id' => $movimiento['cuenta_id']],
+                                'fields'=> ['Cuenta.nombre']
+                            ];
+                            $CuentaDesc = $this->Cuenta->find('first', $optionsCuenta);
+
                             $this->Cuentascliente->create();
                             $this->Cuentascliente->set('cliente_id',$this->request->data['Asiento'][0]['cliente_id']);
                             $this->Cuentascliente->set('cuenta_id',$movimiento['cuenta_id']);
-                            $this->Cuentascliente->set('nombre',$this->request->data['Asiento'][0]['nombre']);
+                            $this->Cuentascliente->set('nombre',$CuentaDesc['Cuenta']['nombre']);
                             if ($this->Cuentascliente->save())
                             {
                                 $movimiento['cuentascliente_id'] = $this->Cuentascliente->getLastInsertID();

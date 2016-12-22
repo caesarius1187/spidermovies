@@ -219,7 +219,7 @@
 			</thead>	
 			<tbody>
 			<?php
-			$topOrden=1;
+			$topOrden=0;
             foreach ($categoriamonotributos as $categoriamonotributo) {
 				$colorTDIngBrutos = "white";
 				if($categoriamonotributo['Categoriamonotributo']['ingresobruto']*1 <= $TotalCuatrimestreIngresoBruto*1 ) {
@@ -246,17 +246,17 @@
 					<td>
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['categoria']; ?>
 					</td>
-					<td style="background-color:<?php echo $colorTDIngBrutos; ?>;">
+					<td style="background-color:<?php echo ($topOrden==1)?"lightgreen":$colorTDIngBrutos; ?>;">
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['ingresobruto']; 
 						 ?>
 					</td>
-					<td style="background-color:<?php echo $colorTDSuperficie; ?>;">
+					<td style="background-color:<?php echo ($topOrden==1)?"lightgreen":$colorTDSuperficie; ?>;">
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['superficiemaxima']; ?>
 					</td>
-					<td style="background-color:<?php echo $colorTDKW; ?>;">
+					<td style="background-color:<?php echo ($topOrden==1)?"lightgreen":$colorTDKW; ?>;">
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['kwmaximo']; ?>
 					</td>
-					<td style="background-color:<?php echo $colorTDAlquiler; ?>;">
+					<td style="background-color:<?php echo ($topOrden==1)?"lightgreen":$colorTDAlquiler; ?>;">
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['alquileranualmaximo']; ?>
 					</td>
 				</tr>
@@ -264,7 +264,9 @@
 				<?php 
 				$topOrden++;
                 echo $this->Form->input('topOrden',array('value'=>$topOrden,'type'=>'hidden'));
-                echo $this->Form->input('topCategoria',array('value'=>$categoriamonotributos[$topOrden-1]['Categoriamonotributo']['categoria'],'type'=>'hidden'));
+                echo $this->Form->input('mesParaProximaRecategorizacion',array('value'=>$mesParaProximaRecategorizacion,'type'=>'text'));
+				$selectedCategory = ($topOrden==1)?1:$topOrden-1;
+                echo $this->Form->input('topCategoria',array('value'=>$categoriamonotributos[$selectedCategory]['Categoriamonotributo']['categoria'],'type'=>'hidden'));
 				?>
 			</tbody>
 		</table>

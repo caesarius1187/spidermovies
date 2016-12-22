@@ -204,11 +204,13 @@
                     $eventoNoCreado=true; 
                     //Recorremos los impuestos de cada cliente Chekiamos si el evento esta creado
                     $montovto = 0;
+                    $montofavor = 0;
                     $pagado=true;
                     foreach ($impcli["Eventosimpuesto"] as $evento){
                       if($evento['periodo']==$periodoSel){
                         $eventoNoCreado=false;
                         $montovto += $evento['montovto']; 
+                        $montofavor += $evento['monc'];
                       }
                       if($evento['tarea13']=='pendiente'){
                           $pagado=false;
@@ -216,6 +218,11 @@
                     }
                     $tareaFild='tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]; 
                    /*Como no podemos traer los impuestos ordenados por sql vamos a ordenarlos aqui*/
+                    if($montovto>0){
+                      $montovto = $montovto*-1;
+                    }else{
+                      $montovto = $montofavor;
+                    }
                     mostrarBotonImpuesto($this, $impcli,$montovto ,$periodoSel,$pagado) ;
                   } 
                  ?>
@@ -224,15 +231,17 @@
               }else if($tarea['Tareascliente']['id']=='19'/*Contabilizar*/) { ?>
                 <td class=""> <!--Tbl 1.2-->
                     <?php
-                    $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
-                    echo $this->Form->button(
-                        'Sumas y Saldos',
-                        array(
-                            'class'=>'buttonImpcli0',
-                            'onClick'=>"abrirsumasysaldos(".$paramsPrepPapeles.")",
-                            'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
-                        ),
-                        array());
+                    if(!$cliente['Cliente']['cargaFacturaLuz']){/*Es monotributista y no hace contabilidad*/
+                        $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
+                        echo $this->Form->button(
+                            'Sumas y Saldos',
+                            array(
+                                'class'=>'buttonImpcli0',
+                                'onClick'=>"abrirsumasysaldos(".$paramsPrepPapeles.")",
+                                'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
+                            ),
+                            array());
+                    }
                     ?>
                 </td>
                 <?php
@@ -497,8 +506,10 @@ function mostrarBotonImpuesto($context,$impcli,$montoevento, $periodoSel,$pagado
             $buttonclass="buttonImpcli2";
         }
     }
-    echo $context->Form->button(
-      $impcli['Impuesto']['abreviacion'].'</br><label>$'.number_format($montoevento, 2, ",", ".").'</label>',
+    $labelcolor="white";
+      $montoevento>=0?$labelcolor="white":$labelcolor="red";
+      echo $context->Form->button(
+      $impcli['Impuesto']['abreviacion'].'</br><label style="color: '.$labelcolor.';">$'.number_format($montoevento, 2, ",", ".").'</label>',
       array(
         'class'=>$buttonclass,
         'onClick'=>"papelesDeTrabajo(".$paramsPrepPapeles.")",
@@ -554,7 +565,7 @@ function mostrarEventoImpuesto($context, $evento,$montovto, $tareaFild, $periodo
       if($Tareahabilitado) {
         //Aqui controlo si el evento esta que siendo realizado es uno que debe mostrar un popin 
         if($tareaFild=="tarea5"){
-          //Tarea5 es "Prepar Papeles de Trabajo" debe mostrar popin para inicializar variables del pagoa realiar del impuesto
+          //Tarea5 es "Prepar Papeles de Trabajo" debe mostrar popin para inicializar variables del pago a realiar del impuesto
           echo $context->Html->image('edit.png',array('width' => '20', 'title' => 'Papeles de Trabajo','height' => '20','onClick'=>"papelesDeTrabajo(".$paramsPrepPapeles.")"));
           echo $context->Form->label("$".number_format($montovto, 2, ",", "."));    
           echo $context->Form->input('montotarea5',array('type'=>'hidden','value'=>$montovto,'id'=>'montoTarea5'+$cliente['Cliente']['id']+'-'+ $impcli["id"])); 

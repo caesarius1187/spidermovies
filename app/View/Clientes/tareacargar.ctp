@@ -11,6 +11,13 @@ echo $this->Html->script('jquery-calx-2.2.6',array('inline'=>false));
 echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
 echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
+echo $this->Html->script('dataTables.buttons.min.js',array('inline'=>false));
+echo $this->Html->script('buttons.print.min.js',array('inline'=>false));
+echo $this->Html->script('buttons.flash.min.js',array('inline'=>false));
+echo $this->Html->script('jszip.min.js',array('inline'=>false));
+echo $this->Html->script('pdfmake.min.js',array('inline'=>false));
+echo $this->Html->script('vfs_fonts.js',array('inline'=>false));
+echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));
 
 echo $this->Html->script('clientes/tareacargar',array('inline'=>false));
 //Vamos a guardar las variables de configuracion del cliente para consultarlas a todas de las misma manera
@@ -42,10 +49,12 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
 <!--<div class="" style="float:none; width: 100%; margin: 0px 4px">  -->
   <div class="index" style="padding: 0px 1%; margin-bottom: 10px;" id="headerCliente">
       <div style="width:30%; float: left;padding-top:10px">
-        Cliente: <?php echo $cliente["Cliente"]['nombre']?>
+        Cliente: <?php echo $cliente["Cliente"]['nombre'];
+          echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);?>
       </div>
       <div style="width:25%; float: left;padding-top:10px">
-        Periodo: <?php echo $periodo?>
+        Periodo: <?php echo $periodo;
+          echo $this->Form->input('periododefault',['type'=>'hidden','value'=>$periodo])?>
       </div>
       <div style="float:right; width:45%">
       <?php echo $this->Form->button('Finalizar', 
@@ -103,9 +112,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               Monotributista
                 -CondIVA
                 -Tipo de Debito
-                -Alicuota
-                -Neto
-                -IVA
+                -Total
               Responsable Inscripto(IVA)
                 +CondIVA
                 +Tipo de Debito
@@ -143,16 +150,31 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                   'style'=> 'margin-right: 8px;width: initial;'
               )
           );
-          echo $this->Html->link(
-              "Contabilizar Ventas",
-              array(
+        if(!$tieneMonotributo){
+            echo $this->Html->link(
+                "Contabilizar Ventas",
+                array(
 
-              ),
-              array('class' => 'buttonImpcli',
-                  'id'=>'buttonCargarAsientosVenta',
-                  'style'=> 'margin-right: 8px;width: initial;',
-              )
-          );
+                ),
+                array('class' => 'buttonImpcli',
+                    'id'=>'buttonCargarAsientosVenta',
+                    'style'=> 'margin-right: 8px;width: initial;',
+                )
+            );
+        }
+        echo $this->Html->link(
+          "TXT SIAP",
+          array(
+              'controller' => 'Ventas',
+              'action' => 'exportartxt',
+              $cliente["Cliente"]['id'],
+              $periodo
+          ),
+          array('class' => 'buttonImpcli',
+              'style'=> 'margin-right: 8px;width: initial;'
+          )
+        );
+
         echo $this->Form->create('Venta',array(
             'id'=>'saveVentasForm',
             'action'=>'addajax',
@@ -248,48 +270,69 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               'label'=>'Localidad',
               'class'=>"chosen-select",
               'style' => 'width:100px'
-              ));    
-            
-            if($tieneMonotributo){                
-              echo $this->Form->input('tipodebito',array(
-              'options' => $tipodebitos,
-              'label' => 'Tipo Debito',
-              'class' => 'chosen-select',  
-              'style' => 'width:80px'
-                ));
+              ));
+
+            if($tieneMonotributo=='1'){
+
               echo $this->Form->input('alicuota',array(
-              'options' => $alicuotas,
-              'class' => 'chosen-select',
-              'style' => 'width:60px' 
-                )); 
+                  'options' => $alicuotas,
+                  'style' => 'width:60px',
+                  'type'=>'hidden'
+                ));
               echo $this->Form->input('neto',array(
                 'readonly'=>'readonly',
-                'style' => 'width:75px'
+                'style' => 'width:75px',
+                  'type'=>'hidden'
                 ));    
               echo $this->Form->input('iva',array(
                 'readonly'=>'readonly',
-                'style' => 'width:75px'
-                ));    
+                'style' => 'width:75px',
+                  'type'=>'hidden'
+                ));
+                echo $this->Form->input('nogravados',array(
+                    'label'=>'No Gravados',
+                    'style' => 'width:75px',
+                    'type'=>'hidden'
+                ));
+                echo $this->Form->input('excentos',array(
+                    'label'=>'Exento',
+                    'style' => 'width:75px',
+                    'type'=>'hidden',
+                ));
+                echo $this->Form->input('tipodebito',array(
+                    'options' => $tipodebitos,
+                    'type'=>'hidden',
+                    'style' => 'width:80px'
+                ));
             }else{
-              echo $this->Form->input('tipodebito',array(
-              'options' => $tipodebitos,
-              'label' => 'Tipo Debito',
-              'class' => 'chosen-select',  
-              'style' => 'width:150px' 
-                ));
-              echo $this->Form->input('alicuota',array(
-              'options' => $alicuotas,
-              'class' => 'chosen-select',  
-              'style' => 'width:60px' 
+
+                echo $this->Form->input('alicuota',array(
+                  'options' => $alicuotas,
+                  'class' => 'chosen-select',
+                  'style' => 'width:60px'
                 )); 
-              echo $this->Form->input('neto',array(
-                'readonly'=>'readonly',
-                'style' => 'width:75px'
+                echo $this->Form->input('neto',array(
+                 'readonly'=>'readonly',
+                 'style' => 'width:75px'
                 ));    
-              echo $this->Form->input('iva',array(
-                'readonly'=>'readonly',
-                'style' => 'width:75px'
-                ));  
+                echo $this->Form->input('iva',array(
+                 'readonly'=>'readonly',
+                 'style' => 'width:75px'
+                ));
+                echo $this->Form->input('nogravados',array(
+                    'label'=>'No Gravados',
+                    'style' => 'width:75px'
+                ));
+                echo $this->Form->input('excentos',array(
+                    'label'=>'Exento',
+                    'style' => 'width:75px'
+                ));
+                echo $this->Form->input('tipodebito',array(
+                    'options' => $tipodebitos,
+                    'label' => 'Tipo Debito',
+                    'class' => 'chosen-select',
+                    'style' => 'width:80px'
+                ));
             }   
             if($tieneIVAPercepciones){
               echo $this->Form->input('ivapercep',array(
@@ -308,14 +351,6 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               echo $this->Form->input('impinternos',array(
                 ));
             }
-            echo $this->Form->input('nogravados',array(
-              'label'=>'No Gravados',
-              'style' => 'width:75px'
-            ));
-            echo $this->Form->input('excentos',array(
-                'label'=>'Exento',
-                'style' => 'width:75px'
-            ));
             echo $this->Form->input('exentosactividadeseconomicas',array(
                 'label'=>'Exento Act. Eco.',
                 'style' => 'width:75px'
@@ -358,30 +393,32 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               '<th style="width: 89px;">Debito</th><!--8-->
                 <th style="width:64px">Alicuota</th> <!--9-->
                <th style="width: 89px;" class="sum">Neto</th><!--10-->
-               <th style="width: 89px;">IVA</th>   <!--11-->
+               <th style="width: 89px;" class="sum">IVA</th>   <!--11-->
                ';   
             }
             if($cliente['Cliente']['tieneIVAPercepciones']){
               echo 
-              '<th style="width: 89px;" >IVA Percep</th><!--12-->';
+              '<th style="width: 89px;" class="sum" >IVA Percep</th><!--12-->';
             }
             if($cliente['Cliente']['tieneAgenteDePercepcionIIBB']){
                echo 
-              '<th style="width: 89px;" >IIBB Percep</th><!--13-->';
+              '<th style="width: 89px;" class="sum" >IIBB Percep</th><!--13-->';
             }
             if($cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias']){
               echo 
-              '<th style="width: 89px;" >Act Vs Perc</th><!--14-->';
+              '<th style="width: 89px;" class="sum" >Act Vs Perc</th><!--14-->';
             }
             if($cliente['Cliente']['tieneImpuestoInterno']){
               echo 
-              '<th style="width: 89px;" >Imp Internos</th><!--15-->';
-            }    
+              '<th style="width: 89px;" class="sum" >Imp Internos</th><!--15-->';
+            }
+            if(!$cliente['Cliente']['tieneMonotributo']){
             ?>
-              <th style="width: 89px;" >No Gravados</th><!--16-->
-              <th style="width: 89px;" >Exento</th><!--17-->
-              <th style="width: 89px;" >Exento Act. Econom.</th><!--18-->
-              <th style="width: 89px;" >Exento Act. Varias</th><!--19-->
+              <th style="width: 89px;" class="sum" >No Gravados</th><!--16-->
+              <th style="width: 89px;" class="sum" >Exento</th><!--17-->
+            <?php } ?>
+              <th style="width: 89px;" class="sum" >Exento Act. Econom.</th><!--18-->
+              <th style="width: 89px;" class="sum" >Exento Act. Varias</th><!--19-->
               <th style="width: 89px;" class="sum">Total</th><!--20-->
             <th>Acciones</td><!--21-->
           </tr>
@@ -423,6 +460,15 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               <?php
               if($venta['Comprobante']["tipodebitoasociado"]=='Restitucion de debito fiscal'){
                   $venta["neto"] = $venta["neto"]*-1;
+                  $venta["iva"] = $venta["iva"]*-1;
+                  $venta["ivapercep"] = $venta["ivapercep"]*-1;
+                  $venta["iibbpercep"] = $venta["iibbpercep"]*-1;
+                  $venta["actvspercep"] = $venta["actvspercep"]*-1;
+                  $venta["impinternos"] = $venta["impinternos"]*-1;
+                  $venta["nogravados"] = $venta["nogravados"]*-1;
+                  $venta["excentos"] = $venta["excentos"]*-1;
+                  $venta["exentosactividadeseconomicas"] = $venta["exentosactividadeseconomicas"]*-1;
+                  $venta["exentosactividadesvarias"] = $venta["exentosactividadesvarias"]*-1;
                   $venta["total"] = $venta["total"]*-1;
               }
               if(!$cliente['Cliente']['tieneMonotributo']){?>
@@ -448,10 +494,11 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               if($cliente['Cliente']['tieneImpuestoInterno']){?>
                 <td class="<?php echo $tdClass?>"><?php echo number_format($venta["impinternos"], 2, ",", ".")?></td><!--15-->
                 <?php
-              }    
-              ?>
+              }
+              if(!$cliente['Cliente']['tieneMonotributo']){?>
                 <td class="<?php echo $tdClass?>"><?php echo number_format($venta["nogravados"], 2, ",", ".")?></td><!--16-->
                 <td class="<?php echo $tdClass?>"><?php echo number_format($venta["excentos"], 2, ",", ".")?></td><!--17-->
+              <?php } ?>
                 <td class="<?php echo $tdClass?>"><?php echo number_format($venta["exentosactividadeseconomicas"], 2, ",", ".")?></td><!--18-->
                 <td class="<?php echo $tdClass?>"><?php echo number_format($venta["exentosactividadesvarias"], 2, ",", ".")?></td><!--19-->
                 <td class="<?php echo $tdClass?>"><?php echo number_format($venta["total"], 2, ",", ".")?></td><!--20-->
@@ -502,9 +549,13 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                   echo
                   '<th></th><!--15-->';
               }
-              ?>
+              if(!$cliente['Cliente']['tieneMonotributo']) {
+                  echo
+                  '
               <th></th><!--16-->
-              <th></th><!--17-->
+              <th></th><!--17-->';
+              }
+              ?>
               <th></th><!--18-->
               <th></th><!--19-->
               <th></th><!--20-->
@@ -512,7 +563,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
           </tr>
         </tfoot>
       </table>
-    </div> 
+    </div>
    <?php /**************************************************************************/ ?>
    <?php /*****************************Compras**************************************/ ?>
    <?php /**************************************************************************/ //die("compras"); ?>
@@ -530,17 +581,30 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                   'style'=> 'margin-right: 8px;width: initial;',
               )
           );
+          if(!$tieneMonotributo) {
+              echo $this->Html->link(
+                  "Contabilizar Compras",
+                  array(),
+                  array('class' => 'buttonImpcli',
+                      'id' => 'buttonCargarAsientosCompra',
+                      'style' => 'margin-right: 8px;width: initial;',
+                  )
+              );
+          }
           echo $this->Html->link(
-              "Contabilizar Compras",
+              "TXT SIAP",
               array(
-
+                  'controller' => 'Compras',
+                  'action' => 'exportartxt',
+                  $cliente["Cliente"]['id'],
+                  $periodo
               ),
               array('class' => 'buttonImpcli',
-                  'id'=>'buttonCargarAsientosCompra',
-                  'style'=> 'margin-right: 8px;width: initial;',
+                  'style'=> 'margin-right: 8px;width: initial;'
               )
           );
-          echo $this->Form->create('Compra',array(
+
+      echo $this->Form->create('Compra',array(
             'id'=>'saveComprasForm',
             'action'=>'addajax',
             'class'=>'formTareaCarga formAddCompra'
@@ -707,18 +771,18 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
             <th style="width: 88px;">Tipo(IVA)</th>
             <th style="width: 76px;">Impuntacion</th>
             <th style="width: 70px;">Alicuota</th>
-            <th style="width: 81px;"  class="sum">Neto</th>
-            <th style="width: 73px;" >IVA</th>
-            <th style="width: 76px;" >IVA Percep</th>
-            <th style="width: 76px;">IIBB Percep</th>
-            <th style="width: 76px;" >Act Vs Perc</th>
-            <th style="width: 76px;" >Imp Interno</th>
-            <th style="width: 76px;" >Imp Comb</th>
-            <th style="width: 76px;" >No Gravados</th>
-            <th style="width: 76px;" >Exentos</th>
-            <th style="width: 76px;" >KW</th>
+            <th style="width: 81px;" class="sum">Neto</th>
+            <th style="width: 73px;" class="sum">IVA</th>
+            <th style="width: 76px;" class="sum">IVA Percep</th>
+            <th style="width: 76px;" class="sum">IIBB Percep</th>
+            <th style="width: 76px;" class="sum">Act Vs Perc</th>
+            <th style="width: 76px;" class="sum">Imp Interno</th>
+            <th style="width: 76px;" class="sum">Imp Comb</th>
+            <th style="width: 76px;" class="sum">No Gravados</th>
+            <th style="width: 76px;" class="sum">Exentos</th>
             <th style="width: 76px;" class="sum">Total</th>
-            <th>Acciones</th>
+              <th style="width: 76px;" class="sum">KW</th>
+              <th>Acciones</th>
           </tr>
         </thead>
         <tbody id="bodyTablaCompras">
@@ -729,7 +793,15 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               if($compra["tipocredito"]=='Restitucion credito fiscal'){
                   $compra["neto"] = $compra["neto"]*-1;
                   $compra["total"] = $compra["total"]*-1;
-                  //$compra["iva"] = $compra["iva"]*-1;
+                  $compra["iva"] = $compra["iva"]*-1;
+                  $compra["ivapercep"] = $compra["ivapercep"]*-1;
+                  $compra["iibbpercep"] = $compra["iibbpercep"]*-1;
+                  $compra["actvspercep"] = $compra["actvspercep"]*-1;
+                  $compra["impinternos"] = $compra["impinternos"]*-1;
+                  $compra["impcombustible"] = $compra["impcombustible"]*-1;
+                  $compra["nogravados"] = $compra["nogravados"]*-1;
+                  $compra["total"] = $compra["total"]*-1;
+                  $compra["kw"] = $compra["kw"]*-1;
               }
             ?>
             <tr id="rowcompra<?php echo $compra["id"]?>"> 
@@ -754,10 +826,10 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impcombustible"], 2, ",", ".")?></td><!--18-->
                 <td class="<?php echo $tdClass?>"><?php echo number_format($compra["nogravados"], 2, ",", ".")?></td><!--19-->
                 <td class="<?php echo $tdClass?>"><?php echo number_format($compra["exentos"], 2, ",", ".")?></td><!--20-->
-              <td class="<?php echo $tdClass?>"><?php echo number_format($compra["kw"], 2, ",", ".")."KW"?></td><!--21-->
               <td class="<?php echo $tdClass?>"><?php echo number_format($compra["total"], 2, ",", ".")?></td><!--22-->
-              <td class="<?php echo $tdClass?>">
-                <?php 
+                <td class="<?php echo $tdClass?>"><?php echo number_format($compra["kw"], 2, ",", ".")?></td><!--21-->
+                <td class="<?php echo $tdClass?>">
+                <?php
                 $paramsCompra=$compra["id"];
                 echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarCompra(".$paramsCompra.")"));
                 echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarCompra(".$paramsCompra.")"));
@@ -801,7 +873,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
     </div> 
    <?php /**************************************************************************/ ?>
    <?php /*****************************Novedades************************************/ ?>
-   <?php /**************************************************************************/ //die("sueldos");?>
+   <?php /**************************************************************************/ ?>
       <div id="formOldSueldo">
           <div id="form_sueldo" class="tabNovedades index" style="width:96%;float:left;">
               <?php
@@ -1106,19 +1178,20 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 );
             }
         }
+        if(!$tieneMonotributo){
+            echo $this->Html->link(
+                "Contabilizar Resumen Bancario",
+                array(
 
-        echo $this->Html->link(
-            "Contabilizar Resumen Bancario",
-            array(
-
-            ),
-            array('class' => 'buttonImpcli',
-                'id'=>'buttonCargarAsientosVenta',
-                'style'=> 'margin-right: 8px;width: initial;',
-            )
-        );
+                ),
+                array('class' => 'buttonImpcli',
+                    'id'=>'buttonCargarAsientosVenta',
+                    'style'=> 'margin-right: 8px;width: initial;',
+                )
+            );
+        }
         echo $this->Form->create('Movimientosbancario',array(
-                'controller'=>'Movimientosbancarios',
+                'controller'=>'movimientosbancarios',
                 'id'=>'saveMovimientosbancariosForm',
                 'action'=>'addajax',
                 'class'=>'formTareaCarga',

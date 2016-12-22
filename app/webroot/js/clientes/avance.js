@@ -171,13 +171,11 @@ $(document).ready(function() {
                               var myparams="";
                               if(estadotarea=='pendiente'){
                                 myparams= eventId+",'"+tarea+"','"+periodo+"','"+clienteid+"','"+impcliid+"','realizado'";      
-                                newtd+='<img src="'+serverLayoutURL+'/img/add.png" onclick="realizarEventoImpuesto('+myparams+')" height="20" width="20"> ';                           
-                                                         
+                                newtd+='<img src="'+serverLayoutURL+'/img/add.png" onclick="realizarEventoImpuesto('+myparams+')" height="20" width="20"> ';
                                 $(idCell).attr("class", "pendiente");   
                               }else{
                                 myparams= eventId+",'"+tarea+"','"+periodo+"','"+clienteid+"','"+impcliid+"','pendiente'";   
-                                newtd+='<img src="'+serverLayoutURL+'/img/edit.png" onclick="realizarEventoImpuesto('+myparams+')" height="20" width="20"> ';                           
-                              
+                                newtd+='<img src="'+serverLayoutURL+'/img/edit.png" onclick="realizarEventoImpuesto('+myparams+')" height="20" width="20"> ';
                                 $(idCell).attr("class", "realizado");  
                               }
                                
@@ -251,7 +249,7 @@ $(document).ready(function() {
       );
   }
 /* 5  ver Tarea Papeles de Trabajo -- Mostrar el formulario para papeles de trabajo del impcli del periodo*/
-    function papelesDeTrabajo(periodo,impcli){
+  function papelesDeTrabajo(periodo,impcli){
         var data = "";
         $.ajax({
           type: "post",  // Request method: post, get
@@ -296,7 +294,6 @@ $(document).ready(function() {
                     //papelesDeTrabajo(periodo,impcli);
                   }
                   $('#EventosimpuestoHaycambios').val(1);
-    
                   /*var cellid = 'cellimp'+clienteid+'-tarea5-'+impcliid;
                   $('#'+cellid).removeClass('pendiente');
                   $('#'+cellid).addClass('realizado');

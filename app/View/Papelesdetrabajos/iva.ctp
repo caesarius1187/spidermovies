@@ -1,4 +1,6 @@
-<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));?>
+<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
+echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
+
 <script type="text/javascript">
 	$(document).ready(function() {   
     	$("#divContenedorCompras").hide();
@@ -10,10 +12,56 @@
         papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
         cargarAsiento();
         catchAsientoIVA();
+
+        $( "#clickExcel" ).click(function() {
+            $("#contenedor").table2excel({
+                // exclude CSS class
+                exclude: ".noExl",
+                name: "Conveniomultilateral",
+                filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"IVA"
+            });
+        });
+        papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+        var beforePrint = function() {
+            console.log('Functionality to run before printing.');
+            $('#header').hide();
+            $('.Formhead').hide();
+            $('#divContenedorVentas').show();
+            $('#divContenedorCompras').show();
+            $('#divContenedorLiquidacion').show();
+            $('#divContenedorContabilidad').hide();
+            $('#divLiquidarIVA').hide();
+            $('#index').css('float','left');
+            $('#padding').css('padding','0px');
+            $('#index').css('font-size','10px');
+            $('#index').css('border-color','#FFF');
+        };
+        var afterPrint = function() {
+            console.log('Functionality to run after printing');
+            $('#index').css('font-size','14px');
+            $('#header').show();
+            $('.Formhead').show();
+            $('#divLiquidarIVA').show();
+            $('#index').css('float','right');
+            $('#padding').css('padding','10px 1%');
+            CambiarTab('ventas')
+        };
+        if (window.matchMedia) {
+            var mediaQueryList = window.matchMedia('print');
+            mediaQueryList.addListener(function(mql) {
+                if (mql.matches) {
+                    beforePrint();
+                } else {
+                    afterPrint();
+                }
+            });
+        }
+        window.onbeforeprint = beforePrint;
+        window.onafterprint = afterPrint;
+        CambiarTab('ventas')
     });
    
-	function CambiarTab(sTab)
-	{
+	function CambiarTab(sTab)	{
 		$("#tabVentas_Iva").attr("class", "cliente_view_tab");
 		$("#tabCompras_Iva").attr("class", "cliente_view_tab");
         $("#tabLiquidacion_Iva").attr("class", "cliente_view_tab");
@@ -54,71 +102,67 @@
             $("#divContenedorContabilidad").show();
         }
 	}
-	function MostrarTabla(oObj, tipo)
-	{		
-		if (tipo == "ventas")
-		{
-			var iActId = (oObj.id).split("_")[1];					
-			var siD = "divTablaTipoDebito_" + iActId;
-			$('div[id^='+siD+']').each(function(){ 
-				$(this).show();
-			});			
-			$("#"+oObj.id).attr("onclick", "Ocultartablas(this,'ventas');");
-		}
-		if (tipo == "compras")
-		{
-			var sTipoCredito = (oObj.id).split("_")[1];
-			$("#divTablaComprasCredito_" + sTipoCredito).show();
-			$("#"+oObj.id).attr("onclick", "Ocultartablas(this,'compras');");
-		}
-	}
-	function Ocultartablas(oObj, tipo)
-	{		
-		if (tipo == "ventas")
-		{
-			var iActId = (oObj.id).split("_")[1];					
-			var siD = "divTablaTipoDebito_" + iActId;
-			$('div[id^='+siD+']').each(function(){
-				$(this).hide();
-			});
-			$("#"+oObj.id).attr("onclick", "MostrarTabla(this,'ventas');");
-		}
-		if (tipo == "compras")
-		{
-			var sTipoCredito = (oObj.id).split("_")[1];
-			$("#divTablaComprasCredito_" + sTipoCredito).hide();
-			$("#"+oObj.id).attr("onclick", "MostrarTabla(this,'compras');");
-		}
-	}
-	function MostrarOperaciones(oObj, tipo)
-	{
-		if (tipo == "ventas")
-		{
-			var iActId = (oObj.id).split("_")[2];		
-			var sTipoDebito = (oObj.id).split("_")[1];	
-			var sId = "divTablaOperaciones_"+iActId+"_"+sTipoDebito+"_";
-
-			$('div[id^='+sId+']').each(function(){ 
-				$(this).show();
-			});
-			
-			$("#"+oObj.id).attr("onclick", "OcultarOperaciones(this,'ventas');");
-		}
-	}
-	function OcultarOperaciones(oObj, tipo)
-	{		
-		if (tipo == "ventas")
-		{
-			var iActId = (oObj.id).split("_")[2];		
-			var sTipoDebito = (oObj.id).split("_")[1];	
-			var sId = "divTablaOperaciones_"+iActId+"_"+sTipoDebito+"_";
-
-			$('div[id^='+sId+']').each(function(){
-				$(this).hide();
-			});
-			$("#"+oObj.id).attr("onclick", "MostrarOperaciones(this,'ventas');");
-		}
-	}
+//	function MostrarTabla(oObj, tipo)	{
+//		if (tipo == "ventas")
+//		{
+//			var iActId = (oObj.id).split("_")[1];
+//			var siD = "divTablaTipoDebito_" + iActId;
+//			$('div[id^='+siD+']').each(function(){
+//				$(this).show();
+//			});
+//			$("#"+oObj.id).attr("onclick", "Ocultartablas(this,'ventas');");
+//		}
+//		if (tipo == "compras")
+//		{
+//			var sTipoCredito = (oObj.id).split("_")[1];
+//			$("#divTablaComprasCredito_" + sTipoCredito).show();
+//			$("#"+oObj.id).attr("onclick", "Ocultartablas(this,'compras');");
+//		}
+//	}
+//	function Ocultartablas(oObj, tipo)	{
+//		if (tipo == "ventas")
+//		{
+//			var iActId = (oObj.id).split("_")[1];
+//			var siD = "divTablaTipoDebito_" + iActId;
+//			$('div[id^='+siD+']').each(function(){
+//				$(this).hide();
+//			});
+//			$("#"+oObj.id).attr("onclick", "MostrarTabla(this,'ventas');");
+//		}
+//		if (tipo == "compras")
+//		{
+//			var sTipoCredito = (oObj.id).split("_")[1];
+//			$("#divTablaComprasCredito_" + sTipoCredito).hide();
+//			$("#"+oObj.id).attr("onclick", "MostrarTabla(this,'compras');");
+//		}
+//	}
+//	function MostrarOperaciones(oObj, tipo)	{
+//		if (tipo == "ventas")
+//		{
+//			var iActId = (oObj.id).split("_")[2];
+//			var sTipoDebito = (oObj.id).split("_")[1];
+//			var sId = "divTablaOperaciones_"+iActId+"_"+sTipoDebito+"_";
+//
+//			$('div[id^='+sId+']').each(function(){
+//				$(this).show();
+//			});
+//
+//			$("#"+oObj.id).attr("onclick", "OcultarOperaciones(this,'ventas');");
+//		}
+//	}
+//	function OcultarOperaciones(oObj, tipo)	{
+//		if (tipo == "ventas")
+//		{
+//			var iActId = (oObj.id).split("_")[2];
+//			var sTipoDebito = (oObj.id).split("_")[1];
+//			var sId = "divTablaOperaciones_"+iActId+"_"+sTipoDebito+"_";
+//
+//			$('div[id^='+sId+']').each(function(){
+//				$(this).hide();
+//			});
+//			$("#"+oObj.id).attr("onclick", "MostrarOperaciones(this,'ventas');");
+//		}
+//	}
     function papelesDeTrabajo(periodo,impcli){
         var data = "";
         $.ajax({
@@ -213,7 +257,7 @@
                             type: 'hidden',
                             id: 'Eventosimpuesto0Usosaldo0ConceptosrestanteId',
                             value: usoSLDID,
-                            name: 'data[Eventosimpuesto][0][Usosaldo][0][conceptosrestantes_id]'
+                            name: 'data[Eventosimpuesto][0][Usosaldo][0][conceptosrestante_id]'
                         }).appendTo('#EventosimpuestoRealizartarea5Form');
                         $('<label>').html("Uso Saldo Libre Disponibilidad periodo anterior").appendTo('#EventosimpuestoRealizartarea5Form');
                         $('<img>').attr({
@@ -301,13 +345,26 @@
         if($('#cuenta287').length > 0){
             var orden = $('#cuenta287').attr('orden');
             var saldotecnico = $("#saldoTecnico").val();
-            $('#Asiento0Movimiento'+orden+'Debe').val(saldotecnico);
+            var saldotecnicoperiodoant = $("#spnSaldoAFavorPeriodoAnt").html();
+            var difST = saldotecnico*1-saldotecnicoperiodoant*1;
+            if(difST>=0){
+                $('#Asiento0Movimiento'+orden+'Debe').val(difST);
+            }else{
+                $('#Asiento0Movimiento'+orden+'Haber').val(difST*-1);
+            }
         }
 //        110403406	IVA - Saldo a Favor Libre Disp
         if($('#cuenta290').length > 0){
             var orden = $('#cuenta290').attr('orden');
             var saldoLD = $("#saldoLD").val();
             $('#Asiento0Movimiento'+orden+'Debe').val(saldoLD);
+            var saldoLDperiodoant = $("#spnSaldoAFavorLibreDispPeriodoAnteriorNetousos").html();
+            var difSLD = saldoLD*1-saldoLDperiodoant*1;
+            if(difSLD>=0){
+                $('#Asiento0Movimiento'+orden+'Debe').val(difSLD);
+            }else{
+                $('#Asiento0Movimiento'+orden+'Haber').val(difSLD*-1);
+            }
         }
 //        110403401	IVA - Credito Fiscal General
         if($('#cuenta286').length > 0){
@@ -373,19 +430,34 @@
         });
         
     }
+    function imprimir(){
+        window.print();
+    }
 </script>
 <?php
 echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
 echo $this->Form->input('impcliidPDT',array('value'=>$cliente['Impcli'][0]['id'],'type'=>'hidden'));
 echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre'],'type'=>'hidden'));
 echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=>'hidden'));?>
-<div class="eventosclientes index">
-    <div>
+<div class="eventosclientes index" id="contenedor">
+    <div class="Formhead" class="noExl">
         <label>INFORME IVA</label>
         <label>Contribuyente: <?php echo $cliente['Cliente']['nombre']; ?> </label>
-        <label>Periodo: </label>
-    </div>
-    <div style="width:100%;height:30px;">
+        <label>Periodo: <?php echo $periodo; ?></label>
+        <?php echo $this->Form->button('Imprimir',
+            array('type' => 'button',
+                'class' =>"btn_imprimir",
+                'onClick' => "imprimir()"
+            )
+        );?>
+        <?php echo $this->Form->button('Excel',
+            array('type' => 'button',
+                'id'=>"clickExcel",
+                'class' =>"btn_imprimir",
+            )
+        );?>
+    </div >
+    <div style="width:100%;height:30px;"  class="Formhead noExl" >
         <div id="tabVentas_Iva" class="cliente_view_tab_active" onclick="CambiarTab('ventas');" style="width:24%;">
             <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Debito</label>
         </div>
@@ -399,7 +471,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Contabilidad</label>
         </div>
     </div>
-    <div style="width:100%; border-bottom: 1px solid; padding-top:5px"></div>
+    <div style="width:100%; padding-top:5px" class="noExl"></div>
     <div id="divContenedorVentas">
         <?php
             $TotalDebitoFiscal_SumaTotal = 0;
@@ -411,7 +483,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         $ActividadCliente_id = $actividad['Actividadcliente']['actividade_id'];
         ?>
         <div id='divContenedorTablaActividad_<?php echo $ActividadCliente_id; ?>'>
-            <table id='divTituloActividad_<?php echo $ActividadCliente_id; ?>' border="1px solid" style="margin-bottom:0; cursor: pointer" onclick="MostrarTabla(this, 'ventas');">
+            <table id='divTituloActividad_<?php echo $ActividadCliente_id; ?>'  style="margin-bottom:0; cursor: pointer" onclick="MostrarTabla(this, 'ventas');">
                 <tr>
                     <td colspan="5" style='background-color:#76b5cd'>
                     <b>
@@ -422,8 +494,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </td>
                 </tr>
             </table>
-            <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_DebitoFiscal' style="display:none">
-                <table id='divTablaActividad_DebitoFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')" border="1px solid" style="margin-bottom:0; cursor: pointer">
+            <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_DebitoFiscal' style="">
+                <table id='divTablaActividad_DebitoFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')"  style="margin-bottom:0; cursor: pointer">
                     <!---------- TIPO DEBITo: Debito Fiscal ---------->
                     <tr>
                         <td colspan="5" style='background-color:#76b5cd'>
@@ -432,6 +504,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </tr>
                 </table>
                 <?php
+                $Alicuota0 = false;
+                $TotalAlicuota0 = 0;
                 $Alicuota2_5 = false;
                 $TotalAlicuota2_5 = 0;
                 $Alicuota5_0 = false;
@@ -447,6 +521,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     {
                         if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
                         {
+                            if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
+                            {
+                                $Alicuota0 = true;
+                                $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                            }
                             if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                             {
                                 $Alicuota2_5 = true;
@@ -476,10 +555,10 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     }
 
                 };
-                if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
+                if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
                 { ?>
-                    <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_RespInsc' style="display:none">
-                        <table  border="1px solid" >
+                    <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_RespInsc' style="">
+                        <table   >
                             <tr>
                                 <td colspan="5" style='background-color:#87cfeb'>
                                     > > OPERACION: Responsable Inscripto
@@ -494,6 +573,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             </tr>
                             <tr>
                                 <?php
+                                    if($Alicuota0)
+                                    {
+                                        echo '<tr>
+                                                  <td style="width:20%">0</td>
+                                                  <td style="width:20%">'.$TotalAlicuota0.'</td>
+                                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                                  <td style="width:20%">0</td>
+                                                  </tr>
+                                            ';
+                                    }
                                     if($Alicuota2_5)
                                     {
                                         echo '<tr>
@@ -568,6 +658,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         </table>
                     </div>
                 <?php }
+                $Alicuota0 = false;
+                $TotalAlicuota0 = 0;
                 $Alicuota2_5 = false;
                 $TotalAlicuota2_5 = 0;
                 $Alicuota5_0 = false;
@@ -585,6 +677,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     {
                         if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'monotributista')
                         {
+                            if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
+                            {
+                                $Alicuota0 = true;
+                                $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                            }
                             if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                             {
                                 $Alicuota2_5 = true;
@@ -613,10 +710,10 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         }
                     }
                 };
-                if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0){
+                if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0){
                 ?>
-                    <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_Monotributista' style="display:none">
-                        <table  border="1px solid" >
+                    <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_Monotributista' style="">
+                        <table   >
                             <tr>
                                 <td colspan="5" style='background-color:#87cfeb'>
                                     > > OPERACION: Monotributista
@@ -632,6 +729,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             <tr>
 
                             <?php
+                                if($Alicuota0)
+                                {
+                                    echo '<tr>
+                                                      <td style="width:20%">0</td>
+                                                      <td style="width:20%">'.$TotalAlicuota0.'</td>
+                                                      <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                                      <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                                      <td style="width:20%">0</td>
+                                                      </tr>
+                                                ';
+                                }
                                 if($Alicuota2_5)
                                 {
                                     echo '<tr>
@@ -707,6 +815,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </div>
                 <?php
                 }
+            $Alicuota0 = false;
+            $TotalAlicuota0 = 0;
             $Alicuota2_5 = false;
             $TotalAlicuota2_5 = 0;
             $Alicuota5_0 = false;
@@ -722,6 +832,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 {
                     if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
                     {
+                        if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
+                        {
+                            $Alicuota0 = true;
+                            $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                        }
                         if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                         {
                             $Alicuota2_5 = true;
@@ -750,11 +865,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     }
                 }
             };
-            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+            if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
                 ?>
                 <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_ConsF'
-                     style="display:none">
-                    <table border="1px solid">
+                     style="">
+                    <table >
                         <tr>
                             <td colspan="5" style='background-color:#87cfeb'>
                                 > > OPERACION: Cons. F, Exent. y No Alcan.
@@ -770,6 +885,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <tr>
 
                             <?php
+                            if($Alicuota0)
+                            {
+                                echo '<tr>
+                                  <td style="width:20%">0</td>
+                                  <td style="width:20%">'.$TotalAlicuota0.'</td>
+                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                  <td style="width:20%">0</td>
+                                  </tr>
+                            ';
+                            }
                             if ($Alicuota2_5) {
                                 echo '<tr>
                                   <td style="width:20%">2.5</td>
@@ -843,8 +969,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         </div>
         <!---------- FIN TIPO DEBITo: Debito Fiscal ---------->
         <!---------- TIPO DEBITo: Bines de Uso ---------->
-            <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_BsUso' style="display:none">
-            <table id='divTablaActividad_BsUso_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')" border="1px solid" style="margin-bottom:0; cursor: pointer" >
+            <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_BsUso' style="">
+            <table id='divTablaActividad_BsUso_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')"  style="margin-bottom:0; cursor: pointer" >
             <tr>
                 <td colspan="5" style='background-color:#76b5cd'>
                     > TIPO DEBITO: Bienes de Uso
@@ -852,6 +978,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             </tr>
             </table>
             <?php
+            $Alicuota0 = false;
+            $TotalAlicuota0 = 0;
             $Alicuota2_5 = false;
             $TotalAlicuota2_5 = 0;
             $Alicuota5_0 = false;
@@ -867,6 +995,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 {
                     if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
                     {
+                        if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
+                        {
+                            $Alicuota0 = true;
+                            $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                        }
                         if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                         {
                             $Alicuota2_5 = true;
@@ -895,10 +1028,10 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     }
                 }
             };
-            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+            if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
                 ?>
-                <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_RespInsc' style="display:none">
-                    <table border="1px solid">
+                <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_RespInsc' style="">
+                    <table >
                         <tr>
                             <td colspan="5" style='background-color:#87cfeb'>
                                 > > OPERACION: Responsable Inscripto
@@ -914,6 +1047,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <tr>
 
                             <?php
+                            if($Alicuota0)
+                            {
+                                echo '<tr>
+                                  <td style="width:20%">0</td>
+                                  <td style="width:20%">'.$TotalAlicuota0.'</td>
+                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                  <td style="width:20%">0</td>
+                                  </tr>
+                            ';
+                            }
                             if ($Alicuota2_5) {
                                 echo '<tr>
                                   <td style="width:20%">2.5</td>
@@ -983,6 +1127,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 </div>
                 <?php
             }
+            $Alicuota0 = false;
+            $TotalAlicuota0 = 0;
             $Alicuota2_5 = false;
             $TotalAlicuota2_5 = 0;
             $Alicuota5_0 = false;
@@ -998,6 +1144,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 {
                     if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'monotributista')
                     {
+                        if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
+                        {
+                            $Alicuota0 = true;
+                            $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                        }
                         if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                         {
                             $Alicuota2_5 = true;
@@ -1026,10 +1177,10 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     }
                 }
             };
-            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+            if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
             ?>
-                <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_Monotributista' style="display:none">
-                    <table  border="1px solid" >
+                <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_Monotributista' style="">
+                    <table   >
                         <tr>
                             <td colspan="5" style='background-color:#87cfeb'>
                                 > > OPERACION: Monotributista
@@ -1045,6 +1196,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <tr>
 
                         <?php
+                            if($Alicuota0)
+                            {
+                                echo '<tr>
+                                      <td style="width:20%">0</td>
+                                      <td style="width:20%">'.$TotalAlicuota0.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                      <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                      <td style="width:20%">0</td>
+                                      </tr>
+                                ';
+                            }
                             if($Alicuota2_5)
                             {
                                 echo '<tr>
@@ -1120,6 +1282,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 </div>
             <?php
             }
+            $Alicuota0 = false;
+            $TotalAlicuota0 = 0;
             $Alicuota2_5 = false;
             $TotalAlicuota2_5 = 0;
             $Alicuota5_0 = false;
@@ -1136,6 +1300,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 {
                     if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
                     {
+                        if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
+                        {
+                            $Alicuota0 = true;
+                            $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                        }
                         if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                         {
                             $Alicuota2_5 = true;
@@ -1164,10 +1333,10 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     }
                 }
             };
-            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+            if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
                 ?>
-                <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_ConsF' style="display:none">
-                    <table  border="1px solid" >
+                <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_ConsF' style="">
+                    <table   >
                         <tr>
                             <td colspan="5" style='background-color:#87cfeb'>
                                 > > OPERACION: Cons. F, Exent. y No Alcan.
@@ -1183,6 +1352,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <tr>
 
                         <?php
+                            if($Alicuota0)
+                            {
+                                echo '<tr>
+                                          <td style="width:20%">0</td>
+                                          <td style="width:20%">'.$TotalAlicuota0.'</td>
+                                          <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                          <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
+                                          <td style="width:20%">0</td>
+                                          </tr>
+                                    ';
+                            }
                             if($Alicuota2_5)
                             {
                                 echo '<tr>
@@ -1262,9 +1442,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <!---------- FIN TIPO DEBITo: Bines de Uso ---------->
 
         <!------------- Restitucion Credito Fiscal ---------->
-            <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_RestCredFiscal' style="display:none">
+            <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_RestCredFiscal' style="">
 
-        <table id='divTablaActividad_RestCredFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')" border="1px solid" style="margin-bottom:0; cursor: pointer" >
+        <table id='divTablaActividad_RestCredFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')"  style="margin-bottom:0; cursor: pointer" >
             <tr>
                 <td colspan="5" style='background-color:#76b5cd'>
                     > TIPO CREDITO: Restitución de Crédito Fiscal
@@ -1299,7 +1479,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             $TotalBsUso = $TotalBsUso + $compra[0]['iva'];
                         }
                         if ($compra['Compra']['imputacion'] == 'Otros Conceptos') {
-                            $TotalOtrosConceptos = $TotalOtrosConceptos + $compra[0]['iva'];
+                            $TotalOtrosConceptos = $TotalOtrosConceptos + $compra[0]['
+                            '];
                         }
                         /*
                          * No vamos a agrgar el Dcto 814 como una compra por que afectara otros impuestos, ahroa se agrega como un pago a cuenta
@@ -1319,11 +1500,12 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     'value'=>$TotalPercepcionesIVA
                 ]
             );
+            // ACA la restitucion de credito de compra SUMA AL DEBITO tal vez esto deberia restar del credito en realidad
             $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalBsGral + $TotalLocaciones + $TotalPresServ + $TotalBsUso + $TotalOtrosConceptos + $TotalDcto814;
         if($TotalBsGral>0){
         ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_BsGral' style="display:none">
-            <table  border="1px solid" >
+        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_BsGral' style="">
+            <table   >
                 <tr>
                     <td colspan="5" style='background-color:#87cfeb'>
                         > > OPERACION: Bs en Gral
@@ -1348,8 +1530,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <?php }
         if($TotalLocaciones>0){
         ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_Locaciones' style="display:none">
-            <table  border="1px solid" >
+        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_Locaciones' style="">
+            <table   >
                 <tr>
                     <td colspan="6" style='background-color:#87cfeb'>
                         > > OPERACION: Locaciones
@@ -1374,8 +1556,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <?php }
         if($TotalPresServ>0){
         ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_PresServ' style="display:none">
-            <table  border="1px solid" >
+        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_PresServ' style="">
+            <table   >
                 <tr>
                     <td colspan="5" style='background-color:#87cfeb'>
                         > > OPERACION: Prest. Servicios
@@ -1400,8 +1582,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <?php }
         if($TotalBsUso>0){
         ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_BsUso' style="display:none">
-            <table  border="1px solid" >
+        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_BsUso' style="">
+            <table   >
                 <tr>
                     <td colspan="5" style='background-color:#87cfeb'>
                         > > OPERACION: Bs. Uso
@@ -1426,8 +1608,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <?php }
         if($TotalOtrosConceptos>0){
         ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_OtrosConc' style="display:none">
-            <table  border="1px solid" >
+        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_OtrosConc' style="">
+            <table   >
                 <tr>
                     <td colspan="5" style='background-color:#87cfeb'>
                         > > OPERACION: Otros Conceptos
@@ -1452,8 +1634,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <?php }
         if($TotalDcto814>0){
         ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_Dcto814' style="display:none">
-            <table  border="1px solid" >
+        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_Dcto814' style="">
+            <table   >
                 <tr>
                     <td colspan="5" style='background-color:#87cfeb'>
                         > > OPERACION: Dcto. 814
@@ -1485,7 +1667,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
     <div id="divContenedorCompras" style="height: 500px">
         <div style="margin-top:10px">(Coeficiente de Apropiacion 0.5000)</div>
         <div style="width:100%; height: 10px"></div>
-        <table id='divTablaCompras_CreditoFiscal' border="1px solid" onclick="MostrarTabla(this,'compras');" style="margin-bottom:0; cursor: pointer">
+        <table id='divTablaCompras_CreditoFiscal'  onclick="MostrarTabla(this,'compras');" style="margin-bottom:0; cursor: pointer">
         <!------------- Credito Fiscal ---------->
             <tr>
                 <td colspan="5" style='background-color:#76b5cd'>
@@ -1495,7 +1677,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 </td>
             </tr>
         </table>
-        <table id='divTablaComprasCredito_CreditoFiscal' border="1px solid" style="display:none">
+        <table id='divTablaComprasCredito_CreditoFiscal'  style="">
         <?php
         $Alicuota2_5 = false;
         $TotalAlicuota2_5 = 0;
@@ -1508,8 +1690,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         $Alicuota27_0 = false;
         $TotalAlicuota27_0 = 0;
         $TotalBnGral=[];
+        $TotalBnGral['mostrar']=false;
         $TotalBnGral['Directo']=[];
         $TotalBnGral['Prorateable']=[];
+        $TotalBnGral['Neto']=[];
+        $TotalBnGral['Neto']['total']=0;
+        $TotalBnGral['Neto']['0']=0;
+        $TotalBnGral['Neto']['2.5']=0;
+        $TotalBnGral['Neto']['50']=0;
+        $TotalBnGral['Neto']['10.5']=0;
+        $TotalBnGral['Neto']['21']=0;
+        $TotalBnGral['Neto']['27']=0;
         $TotalBnGral['Directo']['total']=0;
         $TotalBnGral['Directo']['0']=0;
         $TotalBnGral['Directo']['2.5']=0;
@@ -1525,8 +1716,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         $TotalBnGral['Prorateable']['21']=0;
         $TotalBnGral['Prorateable']['27']=0;
         $TotalLocaciones=[];
+        $TotalLocaciones['mostrar']=false;
         $TotalLocaciones['Directo']=[];
         $TotalLocaciones['Prorateable']=[];
+        $TotalLocaciones['Neto']=[];
+        $TotalLocaciones['Neto']['total']=0;
+        $TotalLocaciones['Neto']['0']=0;
+        $TotalLocaciones['Neto']['2.5']=0;
+        $TotalLocaciones['Neto']['50']=0;
+        $TotalLocaciones['Neto']['10.5']=0;
+        $TotalLocaciones['Neto']['21']=0;
+        $TotalLocaciones['Neto']['27']=0;
         $TotalLocaciones['Directo']['total']=0;
         $TotalLocaciones['Directo']['0']=0;
         $TotalLocaciones['Directo']['2.5']=0;
@@ -1543,8 +1743,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         $TotalLocaciones['Prorateable']['27']=0;
         $TotalLocaciones['Directo']['total']=0;
         $TotalPresServ=[];
+        $TotalPresServ['mostrar']=false;
         $TotalPresServ['Directo']=[];
         $TotalPresServ['Prorateable']=[];
+        $TotalPresServ['Neto']=[];
+        $TotalPresServ['Neto']['total']=0;
+        $TotalPresServ['Neto']['0']=0;
+        $TotalPresServ['Neto']['2.5']=0;
+        $TotalPresServ['Neto']['50']=0;
+        $TotalPresServ['Neto']['10.5']=0;
+        $TotalPresServ['Neto']['21']=0;
+        $TotalPresServ['Neto']['27']=0;
         $TotalPresServ['Directo']['total']=0;
         $TotalPresServ['Directo']['0']=0;
         $TotalPresServ['Directo']['2.5']=0;
@@ -1560,8 +1769,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         $TotalPresServ['Prorateable']['21']=0;
         $TotalPresServ['Prorateable']['27']=0;
         $TotalBsUso=[];
+        $TotalBsUso['mostrar']=false;
         $TotalBsUso['Directo']=[];
         $TotalBsUso['Prorateable']=[];
+        $TotalBsUso['Neto']=[];
+        $TotalBsUso['Neto']['total']=0;
+        $TotalBsUso['Neto']['0']=0;
+        $TotalBsUso['Neto']['2.5']=0;
+        $TotalBsUso['Neto']['50']=0;
+        $TotalBsUso['Neto']['10.5']=0;
+        $TotalBsUso['Neto']['21']=0;
+        $TotalBsUso['Neto']['27']=0;
         $TotalBsUso['Directo']['total']=0;
         $TotalBsUso['Directo']['0']=0;
         $TotalBsUso['Directo']['2.5']=0;
@@ -1577,8 +1795,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         $TotalBsUso['Prorateable']['21']=0;
         $TotalBsUso['Prorateable']['27']=0;
         $TotalOtrosConceptos=[];
+        $TotalOtrosConceptos['mostrar']=false;
         $TotalOtrosConceptos['Directo']=[];
         $TotalOtrosConceptos['Prorateable']=[];
+        $TotalOtrosConceptos['Neto']=[];
+        $TotalOtrosConceptos['Neto']['total']=0;
+        $TotalOtrosConceptos['Neto']['0']=0;
+        $TotalOtrosConceptos['Neto']['2.5']=0;
+        $TotalOtrosConceptos['Neto']['50']=0;
+        $TotalOtrosConceptos['Neto']['10.5']=0;
+        $TotalOtrosConceptos['Neto']['21']=0;
+        $TotalOtrosConceptos['Neto']['27']=0;
         $TotalOtrosConceptos['Directo']['total']=0;
         $TotalOtrosConceptos['Directo']['0']=0;
         $TotalOtrosConceptos['Directo']['2.5']=0;
@@ -1594,8 +1821,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         $TotalOtrosConceptos['Prorateable']['21']=0;
         $TotalOtrosConceptos['Prorateable']['27']=0;
         $TotalDcto814=[];
+        $TotalDcto814['mostrar']=false;
         $TotalDcto814['Directo']=[];
         $TotalDcto814['Prorateable']=[];
+        $TotalDcto814['Neto']=[];
+        $TotalDcto814['Neto']['total']=0;
+        $TotalDcto814['Neto']['0']=0;
+        $TotalDcto814['Neto']['2.5']=0;
+        $TotalDcto814['Neto']['50']=0;
+        $TotalDcto814['Neto']['10.5']=0;
+        $TotalDcto814['Neto']['21']=0;
+        $TotalDcto814['Neto']['27']=0;
         $TotalDcto814['Directo']['total']=0;
         $TotalDcto814['Directo']['0']=0;
         $TotalDcto814['Directo']['2.5']=0;
@@ -1616,10 +1852,26 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $suma = 1;
             if($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal')
             {
-                $suma = -1;
+                //$suma = -1;
+                break;
             }
             if ($compra['Compra']['imputacion'] == 'Bs en Gral')
             {
+                $TotalBnGral['mostrar']=true;
+                $TotalBnGral['Neto']['total'] += $compra[0]['neto']*$suma;
+                if($compra['Compra']['alicuota']=='0'){
+                    $TotalBnGral['Neto']['0'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='2.5'){
+                    $TotalBnGral['Neto']['2.5'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='5'){
+                    $TotalBnGral['Neto']['50'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='10.5'){
+                    $TotalBnGral['Neto']['10.5'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='21'){
+                    $TotalBnGral['Neto']['21'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='27'){
+                    $TotalBnGral['Neto']['27'] += $compra[0]['neto']*$suma;
+                }
                 if ($compra['Compra']['tipoiva'] == 'directo')
                 {
                     $TotalBnGral['Directo']['total'] += $compra[0]['iva']*$suma;
@@ -1657,6 +1909,22 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             }
             if ($compra['Compra']['imputacion'] == 'Locaciones')
             {
+                $TotalLocaciones['mostrar']=true;
+
+                $TotalLocaciones['Neto']['total'] += $compra[0]['neto']*$suma;
+                if($compra['Compra']['alicuota']=='0'){
+                    $TotalLocaciones['Neto']['0'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='2.5'){
+                    $TotalLocaciones['Neto']['2.5'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='5'){
+                    $TotalLocaciones['Neto']['50'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='10.5'){
+                    $TotalLocaciones['Neto']['10.5'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='21'){
+                    $TotalLocaciones['Neto']['21'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='27'){
+                    $TotalLocaciones['Neto']['27'] += $compra[0]['neto']*$suma;
+                }
                 if ($compra['Compra']['tipoiva'] == 'directo')
                 {
                     $TotalLocaciones['Directo']['total'] += $compra[0]['iva']*$suma;
@@ -1694,6 +1962,22 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             }
             if ($compra['Compra']['imputacion'] == 'Prest. Servicios')
             {
+                $TotalPresServ['mostrar']=true;
+
+                $TotalPresServ['Neto']['total'] += $compra[0]['neto']*$suma;
+                if($compra['Compra']['alicuota']=='0'){
+                    $TotalPresServ['Neto']['0'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='2.5'){
+                    $TotalPresServ['Neto']['2.5'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='5'){
+                    $TotalPresServ['Neto']['50'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='10.5'){
+                    $TotalPresServ['Neto']['10.5'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='21'){
+                    $TotalPresServ['Neto']['21'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='27'){
+                    $TotalPresServ['Neto']['27'] += $compra[0]['neto']*$suma;
+                }
                 if ($compra['Compra']['tipoiva'] == 'directo')
                 {
                     $TotalPresServ['Directo']['total'] += $compra[0]['iva']*$suma;
@@ -1731,6 +2015,22 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             }
             if ($compra['Compra']['imputacion'] == 'Bs Uso')
             {
+                $TotalBsUso['mostrar']=true;
+
+                $TotalBsUso['Neto']['total'] += $compra[0]['neto']*$suma;
+                if($compra['Compra']['alicuota']=='0'){
+                    $TotalBsUso['Neto']['0'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='2.5'){
+                    $TotalBsUso['Neto']['2.5'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='5'){
+                    $TotalBsUso['Neto']['50'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='10.5'){
+                    $TotalBsUso['Neto']['10.5'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='21'){
+                    $TotalBsUso['Neto']['21'] += $compra[0]['neto']*$suma;
+                }elseif ($compra['Compra']['alicuota']=='27'){
+                    $TotalBsUso['Neto']['27'] += $compra[0]['neto']*$suma;
+                }
                 if ($compra['Compra']['tipoiva'] == 'directo')
                 {
                     $TotalBsUso['Directo']['total'] += $compra[0]['iva']*$suma;
@@ -1768,6 +2068,22 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             }
             if ($compra['Compra']['imputacion'] == 'Otros Conceptos')
                 {
+                    $TotalOtrosConceptos['mostrar']=true;
+
+                    $TotalOtrosConceptos['Neto']['total'] += $compra[0]['neto']*$suma;
+                    if($compra['Compra']['alicuota']=='0'){
+                        $TotalOtrosConceptos['Neto']['0'] += $compra[0]['neto']*$suma;
+                    }elseif ($compra['Compra']['alicuota']=='2.5'){
+                        $TotalOtrosConceptos['Neto']['2.5'] += $compra[0]['neto']*$suma;
+                    }elseif ($compra['Compra']['alicuota']=='5'){
+                        $TotalOtrosConceptos['Neto']['50'] += $compra[0]['neto']*$suma;
+                    }elseif ($compra['Compra']['alicuota']=='10.5'){
+                        $TotalOtrosConceptos['Neto']['10.5'] += $compra[0]['neto']*$suma;
+                    }elseif ($compra['Compra']['alicuota']=='21'){
+                        $TotalOtrosConceptos['Neto']['21'] += $compra[0]['neto']*$suma;
+                    }elseif ($compra['Compra']['alicuota']=='27'){
+                        $TotalOtrosConceptos['Neto']['27'] += $compra[0]['neto']*$suma;
+                    }
                     if ($compra['Compra']['tipoiva'] == 'directo')
                     {
                         $TotalOtrosConceptos['Directo']['total'] += $compra[0]['iva']*$suma;
@@ -1812,388 +2128,561 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         //                prorrateable
         //                creditofiscal/restirucioncreditofiscal
                     $TotalDcto814_Directo += $conceptosrestante['montoretenido'];
+                    $TotalDcto814['mostrar']=true;
                 }
             }
 
         ?>
-            <tr>
-                <td colspan="6" style='background-color:#87cfeb'>
-                    > OPERACION: Bs en Gral
-                </td>
-            </tr>
-            <tr style='background-color:#f0f0f0'>
-                <td>Alicuota</td>
-                <td>Directo</td>
-                <td>Prorrateable</td>
-                <td>Computable</td>
-                <td>Facturado</td>
-                <td>Computable Total</td>
-            </tr>
-            <tr>
-                <td><?php echo "0%"?></td>
-                <td><?php echo $TotalBnGral['Directo']['0']?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['0'] * 0.5000 ?></td>
-                <td><?php echo $TotalBnGral['Directo']['0'] + $TotalBnGral['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalBnGral['Directo']['0'] + ($TotalBnGral['Prorateable']['0'] * 0.5000) ?></td>
-
-            </tr>
-            <tr>
-                <td><?php echo "2.5%"?></td>
-                <td><?php echo $TotalBnGral['Directo']['2.5']?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['2.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalBnGral['Directo']['2.5'] + $TotalBnGral['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalBnGral['Directo']['2.5'] + ($TotalBnGral['Prorateable']['2.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "5.0%"?></td>
-                <td><?php echo $TotalBnGral['Directo']['50']?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['50'] * 0.5000 ?></td>
-                <td><?php echo $TotalBnGral['Directo']['50'] + $TotalBnGral['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalBnGral['Directo']['50'] + ($TotalBnGral['Prorateable']['50'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "10.5%"?></td>
-                <td><?php echo $TotalBnGral['Directo']['10.5']?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['10.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalBnGral['Directo']['10.5'] + $TotalBnGral['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalBnGral['Directo']['10.5'] + ($TotalBnGral['Prorateable']['10.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "21%"?></td>
-                <td><?php echo $TotalBnGral['Directo']['21']?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['21'] * 0.5000 ?></td>
-                <td><?php echo $TotalBnGral['Directo']['21'] + $TotalBnGral['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalBnGral['Directo']['21'] + ($TotalBnGral['Prorateable']['21'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "27%"?></td>
-                <td><?php echo $TotalBnGral['Directo']['27']?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['27'] * 0.5000 ?></td>
-                <td><?php echo $TotalBnGral['Directo']['27'] + $TotalBnGral['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalBnGral['Directo']['27'] + ($TotalBnGral['Prorateable']['27'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td>Totales</td>
-                <td><?php echo $TotalBnGral['Directo']['total'] ?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalBnGral['Prorateable']['total'] * 0.5000 ?></td>
-                <td><?php echo $TotalBnGral['Directo']['total']+ $TotalBnGral['Prorateable']['total']?></td>
-                <td><?php echo $TotalBnGral['Directo']['total']+ ($TotalBnGral['Prorateable']['total']* 0.5000) ?></td>
-            </tr>
-            <?php $TotalNoComputable += ($TotalBnGral['Directo']['total'] + $TotalBnGral['Prorateable']['total'])-$TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000)); ?>
-            <tr>
-                <td colspan="6" style='background-color:#87cfeb'>
-                    > OPERACION: Locaciones
-                </td>
-            </tr>
-            <tr style='background-color:#f0f0f0'>
-                <td>Alicuota</td>
-                <td>Directo</td>
-                <td>Prorrateable</td>
-                <td>Computable</td>
-                <td>Facturado</td>
-                <td>Computable Total</td>
-            </tr>
-            <tr>
-                <td><?php echo "0%"?></td>
-                <td><?php echo $TotalLocaciones['Directo']['0']?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['0'] * 0.5000 ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['0'] + $TotalLocaciones['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['0'] + ($TotalLocaciones['Prorateable']['0'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "2.5%"?></td>
-                <td><?php echo $TotalLocaciones['Directo']['2.5']?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['2.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['2.5'] + $TotalLocaciones['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['2.5'] + ($TotalLocaciones['Prorateable']['2.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "5.0%"?></td>
-                <td><?php echo $TotalLocaciones['Directo']['50']?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['50'] * 0.5000 ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['50'] + $TotalLocaciones['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['50'] + ($TotalLocaciones['Prorateable']['50'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "10.5%"?></td>
-                <td><?php echo $TotalLocaciones['Directo']['10.5']?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['10.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['10.5'] + $TotalLocaciones['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['10.5'] + ($TotalLocaciones['Prorateable']['10.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "21%"?></td>
-                <td><?php echo $TotalLocaciones['Directo']['21']?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['21'] * 0.5000 ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['21'] + $TotalLocaciones['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['21'] + ($TotalLocaciones['Prorateable']['21'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "27%"?></td>
-                <td><?php echo $TotalLocaciones['Directo']['27']?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['27'] * 0.5000 ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['27'] + $TotalLocaciones['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['27'] + ($TotalLocaciones['Prorateable']['27'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td>Totales</td>
-                <td><?php echo $TotalLocaciones['Directo']['total'] ?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalLocaciones['Prorateable']['total'] * 0.5000 ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000) ?></td>
-            </tr>
-            <?php $TotalNoComputable += ($TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'])-$TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000)); ?>
-            <tr>
-                <td colspan="6" style='background-color:#87cfeb'>
-                    > OPERACION: Prest. Servicios
-                </td>
-            </tr>
-            <tr style='background-color:#f0f0f0'>
-                <td>Alicuota</td>
-                <td>Directo</td>
-                <td>Prorrateable</td>
-                <td>Computable</td>
-                <td>Facturado</td>
-                <td>Computable Total</td>
-            </tr>
-            <tr>
-                <td><?php echo "0%"?></td>
-                <td><?php echo $TotalPresServ['Directo']['0']?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['0'] * 0.5000 ?></td>
-                <td><?php echo $TotalPresServ['Directo']['0'] + $TotalPresServ['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalPresServ['Directo']['0'] + ($TotalPresServ['Prorateable']['0'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "2.5%"?></td>
-                <td><?php echo $TotalPresServ['Directo']['2.5']?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['2.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalPresServ['Directo']['2.5'] + $TotalPresServ['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalPresServ['Directo']['2.5'] + ($TotalPresServ['Prorateable']['2.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "5.0%"?></td>
-                <td><?php echo $TotalPresServ['Directo']['50']?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['50'] * 0.5000 ?></td>
-                <td><?php echo $TotalPresServ['Directo']['50'] + $TotalPresServ['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalPresServ['Directo']['50'] + ($TotalPresServ['Prorateable']['50'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "10.5%"?></td>
-                <td><?php echo $TotalPresServ['Directo']['10.5']?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['10.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalPresServ['Directo']['10.5'] + $TotalPresServ['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalPresServ['Directo']['10.5'] + ($TotalPresServ['Prorateable']['10.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "21%"?></td>
-                <td><?php echo $TotalPresServ['Directo']['21']?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['21'] * 0.5000 ?></td>
-                <td><?php echo $TotalPresServ['Directo']['21'] + $TotalPresServ['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalPresServ['Directo']['21'] + ($TotalPresServ['Prorateable']['21'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "27%"?></td>
-                <td><?php echo $TotalPresServ['Directo']['27']?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['27'] * 0.5000 ?></td>
-                <td><?php echo $TotalPresServ['Directo']['27'] + $TotalPresServ['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalPresServ['Directo']['27'] + ($TotalPresServ['Prorateable']['27'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td>Totales</td>
-                <td><?php echo $TotalPresServ['Directo']['total'] ?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalPresServ['Prorateable']['total'] * 0.5000 ?></td>
-                <td><?php echo $TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000) ?></td>
-            </tr>
-            <?php $TotalNoComputable += ($TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'])-$TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000)); ?>
-            <tr>
-                <td colspan="6" style='background-color:#87cfeb'>
-                    > OPERACION: Bs. Uso
-                </td>
-            </tr>
-            <tr style='background-color:#f0f0f0'>
-                <td>Alicuota</td>
-                <td>Directo</td>
-                <td>Prorrateable</td>
-                <td>Computable</td>
-                <td>Facturado</td>
-                <td>Computable Total</td>
-            </tr>
-            <tr>
-                <td><?php echo "0%"?></td>
-                <td><?php echo $TotalBsUso['Directo']['0']?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['0'] * 0.5000 ?></td>
-                <td><?php echo $TotalBsUso['Directo']['0'] + $TotalBsUso['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalBsUso['Directo']['0'] + ($TotalBsUso['Prorateable']['0'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "2.5%"?></td>
-                <td><?php echo $TotalBsUso['Directo']['2.5']?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['2.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalBsUso['Directo']['2.5'] + $TotalBsUso['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalBsUso['Directo']['2.5'] + ($TotalBsUso['Prorateable']['2.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "5.0%"?></td>
-                <td><?php echo $TotalBsUso['Directo']['50']?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['50'] * 0.5000 ?></td>
-                <td><?php echo $TotalBsUso['Directo']['50'] + $TotalBsUso['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalBsUso['Directo']['50'] + ($TotalBsUso['Prorateable']['50'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "10.5%"?></td>
-                <td><?php echo $TotalBsUso['Directo']['10.5']?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['10.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalBsUso['Directo']['10.5'] + $TotalBsUso['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalBsUso['Directo']['10.5'] + ($TotalBsUso['Prorateable']['10.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "21%"?></td>
-                <td><?php echo $TotalBsUso['Directo']['21']?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['21'] * 0.5000 ?></td>
-                <td><?php echo $TotalBsUso['Directo']['21'] + $TotalBsUso['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalBsUso['Directo']['21'] + ($TotalBsUso['Prorateable']['21'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "27%"?></td>
-                <td><?php echo $TotalBsUso['Directo']['27']?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['27'] * 0.5000 ?></td>
-                <td><?php echo $TotalBsUso['Directo']['27'] + $TotalBsUso['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalBsUso['Directo']['27'] + ($TotalBsUso['Prorateable']['27'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td>Totales</td>
-                <td><?php echo $TotalBsUso['Directo']['total'] ?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalBsUso['Prorateable']['total'] * 0.5000 ?></td>
-                <td><?php echo $TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000) ?></td>
-            </tr>
-            <?php $TotalNoComputable += ($TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'])-$TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000)); ?>
-            <tr>
-                <td colspan="6" style='background-color:#87cfeb'>
-                    > OPERACION: Otros Conceptos
-                </td>
-            </tr>
-            <tr style='background-color:#f0f0f0'>
-                <td>Alicuota</td>
-                <td>Directo</td>
-                <td>Prorrateable</td>
-                <td>Computable</td>
-                <td>Facturado</td>
-                <td>Computable Total</td>
-            </tr>
-            <tr>
-                <td><?php echo "0%"?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['0']?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['0'] * 0.5000 ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['0'] + $TotalOtrosConceptos['Prorateable']['0'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['0'] + ($TotalOtrosConceptos['Prorateable']['0'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "2.5%"?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['2.5']?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['2.5'] + $TotalOtrosConceptos['Prorateable']['2.5'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['2.5'] + ($TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "5.0%"?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['50']?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['50'] * 0.5000 ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['50'] + $TotalOtrosConceptos['Prorateable']['50'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['50'] + ($TotalOtrosConceptos['Prorateable']['50'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "10.5%"?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['10.5']?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000 ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['10.5'] + $TotalOtrosConceptos['Prorateable']['10.5'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['10.5'] + ($TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "21%"?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['21']?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['21'] * 0.5000 ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['21'] + $TotalOtrosConceptos['Prorateable']['21'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['21'] + ($TotalOtrosConceptos['Prorateable']['21'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td><?php echo "27%"?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['27']?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['27'] * 0.5000 ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['27'] + $TotalOtrosConceptos['Prorateable']['27'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['27'] + ($TotalOtrosConceptos['Prorateable']['27'] * 0.5000) ?></td>
-            </tr>
-            <tr>
-                <td>Totales</td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['total'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Prorateable']['total'] * 0.5000 ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000) ?></td>
-            </tr>
-            <?php $TotalNoComputable += ($TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'])-$TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000)); ?>
-            <tr>
-                <td colspan="6" style='background-color:#87cfeb'>
-                    > OPERACION: Dcto. 814
-                </td>
-            </tr>
-            <tr style='background-color:#f0f0f0'>
-                <td>Directo</td>
-                <td>Prorrateable</td>
-                <td>Computable</td>
-                <td>Facturado</td>
-                <td colspan="2">Computable Total</td>
-            </tr>
-            <tr>
-                <td><?php
-                    $TotalDcto814['Directo']['total'] =  $TotalDcto814_Directo;
-                    echo $TotalDcto814['Directo']['total'] ?></td>
-                <td><?php echo $TotalDcto814['Prorateable']['total'] ?></td>
-                <td><?php echo $TotalDcto814['Prorateable']['total'] * 0.5000 ?></td>
-                <td><?php echo $TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'] ?></td>
-                <td colspan="2"><?php echo $TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * 0.5000) ?></td>
-            </tr>
             <?php
+            if($TotalBnGral['mostrar']) {
+                ?>
+                <tr>
+                    <td colspan="7" style='background-color:#87cfeb'>
+                        > OPERACION: Bs en Gral
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Alicuota</td>
+                    <td>Monto Neto</td>
+                    <td>Directo</td>
+                    <td>Prorrateable</td>
+                    <td>Computable</td>
+                    <td>Facturado</td>
+                    <td>Computable Total</td>
+                </tr>
+                <?php
+                if($TotalBnGral['Neto']['0']+$TotalBnGral['Directo']['0']+$TotalBnGral['Prorateable']['0'] != 0){ ?>
+                <tr>
+                    <td><?php echo "0%" ?></td>
+                    <td><?php echo $TotalBnGral['Neto']['0'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['0'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['0'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['0'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['0'] + $TotalBnGral['Prorateable']['0'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['0'] + ($TotalBnGral['Prorateable']['0'] * 0.5000) ?></td>
+                </tr>
+                <?php }
+                if($TotalBnGral['Neto']['2.5']+$TotalBnGral['Directo']['2.5']+$TotalBnGral['Prorateable']['2.5'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "2.5%" ?></td>
+                        <td><?php echo $TotalBnGral['Neto']['2.5'] ?></td>
+                        <td><?php echo $TotalBnGral['Directo']['2.5'] ?></td>
+                        <td><?php echo $TotalBnGral['Prorateable']['2.5'] ?></td>
+                        <td><?php echo $TotalBnGral['Prorateable']['2.5'] * 0.5000 ?></td>
+                        <td><?php echo $TotalBnGral['Directo']['2.5'] + $TotalBnGral['Prorateable']['2.5'] ?></td>
+                        <td><?php echo $TotalBnGral['Directo']['2.5'] + ($TotalBnGral['Prorateable']['2.5'] * 0.5000) ?></td>
+                    </tr>
+                <?php
+                }
+                if($TotalBnGral['Neto']['50']+$TotalBnGral['Directo']['50']+$TotalBnGral['Prorateable']['50'] != 0){ ?>
+                <tr>
+                    <td><?php echo "5.0%" ?></td>
+                    <td><?php echo $TotalBnGral['Neto']['50'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['50'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['50'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['50'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['50'] + $TotalBnGral['Prorateable']['50'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['50'] + ($TotalBnGral['Prorateable']['50'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalBnGral['Neto']['10.5']+$TotalBnGral['Directo']['10.5']+$TotalBnGral['Prorateable']['10.5'] != 0){ ?>
+                <tr>
+                    <td><?php echo "10.5%" ?></td>
+                    <td><?php echo $TotalBnGral['Neto']['10.5'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['10.5'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['10.5'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['10.5'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['10.5'] + $TotalBnGral['Prorateable']['10.5'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['10.5'] + ($TotalBnGral['Prorateable']['10.5'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalBnGral['Neto']['21']+$TotalBnGral['Directo']['21']+$TotalBnGral['Prorateable']['21'] != 0){ ?>
+                <tr>
+                    <td><?php echo "21%" ?></td>
+                    <td><?php echo $TotalBnGral['Neto']['21'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['21'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['21'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['21'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['21'] + $TotalBnGral['Prorateable']['21'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['21'] + ($TotalBnGral['Prorateable']['21'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalBnGral['Neto']['27']+$TotalBnGral['Directo']['27']+$TotalBnGral['Prorateable']['27'] != 0){ ?>
+                <tr>
+                    <td><?php echo "27%" ?></td>
+                    <td><?php echo $TotalBnGral['Neto']['27'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['27'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['27'] ?></td>
+                    <td><?php echo $TotalBnGral['Prorateable']['27'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['27'] + $TotalBnGral['Prorateable']['27'] ?></td>
+                    <td><?php echo $TotalBnGral['Directo']['27'] + ($TotalBnGral['Prorateable']['27'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalBnGral['Neto']['total']+$TotalBnGral['Directo']['total']+$TotalBnGral['Prorateable']['total'] != 0) { ?>
+                    <tr>
+                        <td>Totales</td>
+                        <td><?php echo $TotalBnGral['Neto']['total'] ?></td>
+                        <td><?php echo $TotalBnGral['Directo']['total'] ?></td>
+                        <td><?php echo $TotalBnGral['Prorateable']['total'] ?></td>
+                        <td><?php echo $TotalBnGral['Prorateable']['total'] * 0.5000 ?></td>
+                        <td><?php echo $TotalBnGral['Directo']['total'] + $TotalBnGral['Prorateable']['total'] ?></td>
+                        <td><?php echo $TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000) ?></td>
+                    </tr>
+
+                    <?php
+                }
+            }
+            $TotalNoComputable += ($TotalBnGral['Directo']['total'] + $TotalBnGral['Prorateable']['total'])-$TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000));
+            if($TotalLocaciones['mostrar']) {
+                ?>
+                <tr>
+                    <td colspan="7" style='background-color:#87cfeb'>
+                        > OPERACION: Locaciones
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Alicuota</td>
+                    <td>Monto Neto</td>
+                    <td>Directo</td>
+                    <td>Prorrateable</td>
+                    <td>Computable</td>
+                    <td>Facturado</td>
+                    <td>Computable Total</td>
+                </tr>
+                <?php
+                if($TotalLocaciones['Neto']['0']+$TotalLocaciones['Directo']['0']+$TotalLocaciones['Prorateable']['0'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "0%" ?></td>
+                        <td><?php echo $TotalLocaciones['Neto']['0'] ?></td>
+                        <td><?php echo $TotalLocaciones['Directo']['0'] ?></td>
+                        <td><?php echo $TotalLocaciones['Prorateable']['0'] ?></td>
+                        <td><?php echo $TotalLocaciones['Prorateable']['0'] * 0.5000 ?></td>
+                        <td><?php echo $TotalLocaciones['Directo']['0'] + $TotalLocaciones['Prorateable']['0'] ?></td>
+                        <td><?php echo $TotalLocaciones['Directo']['0'] + ($TotalLocaciones['Prorateable']['0'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+                if($TotalLocaciones['Neto']['2.5']+$TotalLocaciones['Directo']['2.5']+$TotalLocaciones['Prorateable']['2.5'] != 0) { ?>
+                <tr>
+                    <td><?php echo "2.5%" ?></td>
+                    <td><?php echo $TotalLocaciones['Neto']['2.5'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['2.5'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['2.5'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['2.5'] * 0.5000 ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['2.5'] + $TotalLocaciones['Prorateable']['2.5'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['2.5'] + ($TotalLocaciones['Prorateable']['2.5'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalLocaciones['Neto']['50']+$TotalLocaciones['Directo']['50']+$TotalLocaciones['Prorateable']['50'] != 0) { ?>
+                <tr>
+                    <td><?php echo "5.0%" ?></td>
+                    <td><?php echo $TotalLocaciones['Neto']['50'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['50'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['50'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['50'] * 0.5000 ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['50'] + $TotalLocaciones['Prorateable']['50'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['50'] + ($TotalLocaciones['Prorateable']['50'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalLocaciones['Neto']['10.5']+$TotalLocaciones['Directo']['10.5']+$TotalLocaciones['Prorateable']['10.5'] != 0) { ?>
+                <tr>
+                    <td><?php echo "10.5%" ?></td>
+                    <td><?php echo $TotalLocaciones['Neto']['10.5'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['10.5'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['10.5'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['10.5'] * 0.5000 ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['10.5'] + $TotalLocaciones['Prorateable']['10.5'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['10.5'] + ($TotalLocaciones['Prorateable']['10.5'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalLocaciones['Neto']['21']+$TotalLocaciones['Directo']['21']+$TotalLocaciones['Prorateable']['21'] != 0) { ?>
+                <tr>
+                    <td><?php echo "21%" ?></td>
+                    <td><?php echo $TotalLocaciones['Neto']['21'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['21'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['21'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['21'] * 0.5000 ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['21'] + $TotalLocaciones['Prorateable']['21'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['21'] + ($TotalLocaciones['Prorateable']['21'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalLocaciones['Neto']['27']+$TotalLocaciones['Directo']['27']+$TotalLocaciones['Prorateable']['27'] != 0) { ?>
+                <tr>
+                    <td><?php echo "27%" ?></td>
+                    <td><?php echo $TotalLocaciones['Neto']['27'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['27'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['27'] ?></td>
+                    <td><?php echo $TotalLocaciones['Prorateable']['27'] * 0.5000 ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['27'] + $TotalLocaciones['Prorateable']['27'] ?></td>
+                    <td><?php echo $TotalLocaciones['Directo']['27'] + ($TotalLocaciones['Prorateable']['27'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalLocaciones['Neto']['total']+$TotalLocaciones['Directo']['total']+$TotalLocaciones['Prorateable']['total'] != 0) { ?>
+                    <tr>
+                        <td>Totales</td>
+                        <td><?php echo $TotalLocaciones['Neto']['total'] ?></td>
+                        <td><?php echo $TotalLocaciones['Directo']['total'] ?></td>
+                        <td><?php echo $TotalLocaciones['Prorateable']['total'] ?></td>
+                        <td><?php echo $TotalLocaciones['Prorateable']['total'] * 0.5000 ?></td>
+                        <td><?php echo $TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'] ?></td>
+                        <td><?php echo $TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+            }
+            $TotalNoComputable += ($TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'])-$TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000));
+            if($TotalPresServ['mostrar']) {
+                ?>
+                <tr>
+                    <td colspan="7" style='background-color:#87cfeb'>
+                        > OPERACION: Prest. Servicios
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Alicuota</td>
+                    <td>Monto Neto</td>
+                    <td>Directo</td>
+                    <td>Prorrateable</td>
+                    <td>Computable</td>
+                    <td>Facturado</td>
+                    <td>Computable Total</td>
+                </tr>
+                <?php
+                if($TotalPresServ['Neto']['0']+$TotalPresServ['Directo']['0']+$TotalPresServ['Prorateable']['0'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "0%" ?></td>
+                        <td><?php echo $TotalPresServ['Neto']['0'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['0'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['0'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['0'] * 0.5000 ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['0'] + $TotalPresServ['Prorateable']['0'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['0'] + ($TotalPresServ['Prorateable']['0'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+                if($TotalPresServ['Neto']['2.5']+$TotalPresServ['Directo']['2.5']+$TotalPresServ['Prorateable']['2.5'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "2.5%" ?></td>
+                        <td><?php echo $TotalPresServ['Neto']['2.5'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['2.5'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['2.5'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['2.5'] * 0.5000 ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['2.5'] + $TotalPresServ['Prorateable']['2.5'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['2.5'] + ($TotalPresServ['Prorateable']['2.5'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+                if($TotalPresServ['Neto']['50']+$TotalPresServ['Directo']['50']+$TotalPresServ['Prorateable']['50'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "5.0%" ?></td>
+                        <td><?php echo $TotalPresServ['Neto']['50'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['50'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['50'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['50'] * 0.5000 ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['50'] + $TotalPresServ['Prorateable']['50'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['50'] + ($TotalPresServ['Prorateable']['50'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+                if($TotalPresServ['Neto']['10.5']+$TotalPresServ['Directo']['10.5']+$TotalPresServ['Prorateable']['10.5'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "10.5%" ?></td>
+                        <td><?php echo $TotalPresServ['Neto']['10.5'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['10.5'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['10.5'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['10.5'] * 0.5000 ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['10.5'] + $TotalPresServ['Prorateable']['10.5'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['10.5'] + ($TotalPresServ['Prorateable']['10.5'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+                if($TotalPresServ['Neto']['21']+$TotalPresServ['Directo']['21']+$TotalPresServ['Prorateable']['21'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "21%" ?></td>
+                        <td><?php echo $TotalPresServ['Neto']['21'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['21'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['21'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['21'] * 0.5000 ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['21'] + $TotalPresServ['Prorateable']['21'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['21'] + ($TotalPresServ['Prorateable']['21'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+                if($TotalPresServ['Neto']['27']+$TotalPresServ['Directo']['27']+$TotalPresServ['Prorateable']['27'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "27%" ?></td>
+                        <td><?php echo $TotalPresServ['Neto']['27'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['27'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['27'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['27'] * 0.5000 ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['27'] + $TotalPresServ['Prorateable']['27'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['27'] + ($TotalPresServ['Prorateable']['27'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+                if($TotalPresServ['Neto']['total']+$TotalPresServ['Directo']['total']+$TotalPresServ['Prorateable']['total'] != 0) { ?>
+                    <tr>
+                        <td>Totales</td>
+                        <td><?php echo $TotalPresServ['Neto']['total'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['total'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['total'] ?></td>
+                        <td><?php echo $TotalPresServ['Prorateable']['total'] * 0.5000 ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'] ?></td>
+                        <td><?php echo $TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+            }
+            $TotalNoComputable += ($TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'])-$TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000));
+            if($TotalBsUso['mostrar']) {
+                ?>
+                <tr>
+                    <td colspan="7" style='background-color:#87cfeb'>
+                        > OPERACION: Bs. Uso
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Alicuota</td>
+                    <td>Monto Neto</td>
+                    <td>Directo</td>
+                    <td>Prorrateable</td>
+                    <td>Computable</td>
+                    <td>Facturado</td>
+                    <td>Computable Total</td>
+                </tr>
+                <?php
+                if($TotalBsUso['Neto']['0']+$TotalBsUso['Directo']['0']+$TotalBsUso['Prorateable']['0'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "0%" ?></td>
+                        <td><?php echo $TotalBsUso['Neto']['0'] ?></td>
+                        <td><?php echo $TotalBsUso['Directo']['0'] ?></td>
+                        <td><?php echo $TotalBsUso['Prorateable']['0'] ?></td>
+                        <td><?php echo $TotalBsUso['Prorateable']['0'] * 0.5000 ?></td>
+                        <td><?php echo $TotalBsUso['Directo']['0'] + $TotalBsUso['Prorateable']['0'] ?></td>
+                        <td><?php echo $TotalBsUso['Directo']['0'] + ($TotalBsUso['Prorateable']['0'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+                if($TotalBsUso['Neto']['2.5']+$TotalBsUso['Directo']['2.5']+$TotalBsUso['Prorateable']['2.5'] != 0) { ?>
+                <tr>
+                    <td><?php echo "2.5%" ?></td>
+                    <td><?php echo $TotalBsUso['Neto']['2.5'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['2.5'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['2.5'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['2.5'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['2.5'] + $TotalBsUso['Prorateable']['2.5'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['2.5'] + ($TotalBsUso['Prorateable']['2.5'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalBsUso['Neto']['50']+$TotalBsUso['Directo']['50']+$TotalBsUso['Prorateable']['50'] != 0) { ?>
+                <tr>
+                    <td><?php echo "5.0%" ?></td>
+                    <td><?php echo $TotalBsUso['Neto']['27'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['50'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['50'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['50'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['50'] + $TotalBsUso['Prorateable']['50'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['50'] + ($TotalBsUso['Prorateable']['50'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalBsUso['Neto']['10.5']+$TotalBsUso['Directo']['10.5']+$TotalBsUso['Prorateable']['10.5'] != 0) { ?>
+                <tr>
+                    <td><?php echo "10.5%" ?></td>
+                    <td><?php echo $TotalBsUso['Neto']['10.5'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['10.5'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['10.5'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['10.5'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['10.5'] + $TotalBsUso['Prorateable']['10.5'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['10.5'] + ($TotalBsUso['Prorateable']['10.5'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalBsUso['Neto']['21']+$TotalBsUso['Directo']['21']+$TotalBsUso['Prorateable']['21'] != 0) { ?>
+                <tr>
+                    <td><?php echo "21%" ?></td>
+                    <td><?php echo $TotalBsUso['Neto']['21'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['21'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['21'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['21'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['21'] + $TotalBsUso['Prorateable']['21'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['21'] + ($TotalBsUso['Prorateable']['21'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalBsUso['Neto']['27']+$TotalBsUso['Directo']['27']+$TotalBsUso['Prorateable']['27'] != 0) { ?>
+                <tr>
+                    <td><?php echo "27%" ?></td>
+                    <td><?php echo $TotalBsUso['Neto']['27'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['27'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['27'] ?></td>
+                    <td><?php echo $TotalBsUso['Prorateable']['27'] * 0.5000 ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['27'] + $TotalBsUso['Prorateable']['27'] ?></td>
+                    <td><?php echo $TotalBsUso['Directo']['27'] + ($TotalBsUso['Prorateable']['27'] * 0.5000) ?></td>
+                </tr>
+                    <?php
+                }
+                if($TotalBsUso['Neto']['total']+$TotalBsUso['Directo']['total']+$TotalBsUso['Prorateable']['total'] != 0) { ?>
+                    <tr>
+                        <td>Totales</td>
+                        <td><?php echo $TotalBsUso['Neto']['total'] ?></td>
+                        <td><?php echo $TotalBsUso['Directo']['total'] ?></td>
+                        <td><?php echo $TotalBsUso['Prorateable']['total'] ?></td>
+                        <td><?php echo $TotalBsUso['Prorateable']['total'] * 0.5000 ?></td>
+                        <td><?php echo $TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'] ?></td>
+                        <td><?php echo $TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+            }
+            $TotalNoComputable += ($TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'])-$TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000));
+            if($TotalOtrosConceptos['mostrar']) {
+                ?>
+                <tr>
+                    <td colspan="7" style='background-color:#87cfeb'>
+                        > OPERACION: Otros Conceptos
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Alicuota</td>
+                    <td>Monto Neto</td>
+                    <td>Directo</td>
+                    <td>Prorrateable</td>
+                    <td>Computable</td>
+                    <td>Facturado</td>
+                    <td>Computable Total</td>
+                </tr>
+                <?php
+                if($TotalOtrosConceptos['Neto']['0']+$TotalOtrosConceptos['Directo']['0']+$TotalOtrosConceptos['Prorateable']['0'] != 0) { ?>
+                    <tr>
+                        <td><?php echo "0%" ?></td>
+                        <td><?php echo $TotalOtrosConceptos['Neto']['total'] ?></td>
+                        <td><?php echo $TotalOtrosConceptos['Directo']['0'] ?></td>
+                        <td><?php echo $TotalOtrosConceptos['Prorateable']['0'] ?></td>
+                        <td><?php echo $TotalOtrosConceptos['Prorateable']['0'] * 0.5000 ?></td>
+                        <td><?php echo $TotalOtrosConceptos['Directo']['0'] + $TotalOtrosConceptos['Prorateable']['0'] ?></td>
+                        <td><?php echo $TotalOtrosConceptos['Directo']['0'] + ($TotalOtrosConceptos['Prorateable']['0'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+                if($TotalOtrosConceptos['Neto']['2.5']+$TotalOtrosConceptos['Directo']['2.5']+$TotalOtrosConceptos['Prorateable']['2.5'] != 0) { ?>
+                <tr>
+                    <td><?php echo "2.5%" ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Neto']['2.5'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['2.5'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['2.5'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000 ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['2.5'] + $TotalOtrosConceptos['Prorateable']['2.5'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['2.5'] + ($TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000) ?></td>
+                </tr>
+                 <?php
+                }
+                if($TotalOtrosConceptos['Neto']['50']+$TotalOtrosConceptos['Directo']['50']+$TotalOtrosConceptos['Prorateable']['50'] != 0) { ?>
+                <tr>
+                    <td><?php echo "5.0%" ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Neto']['50'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['50'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['50'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['50'] * 0.5000 ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['50'] + $TotalOtrosConceptos['Prorateable']['50'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['50'] + ($TotalOtrosConceptos['Prorateable']['50'] * 0.5000) ?></td>
+                </tr>
+                 <?php
+                }
+                if($TotalOtrosConceptos['Neto']['10.5']+$TotalOtrosConceptos['Directo']['10.5']+$TotalOtrosConceptos['Prorateable']['10.5'] != 0) { ?>
+                <tr>
+                    <td><?php echo "10.5%" ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Neto']['10.5'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['10.5'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['10.5'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000 ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['10.5'] + $TotalOtrosConceptos['Prorateable']['10.5'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['10.5'] + ($TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000) ?></td>
+                </tr>
+                 <?php
+                }
+                if($TotalOtrosConceptos['Neto']['21']+$TotalOtrosConceptos['Directo']['21']+$TotalOtrosConceptos['Prorateable']['21'] != 0) { ?>
+                <tr>
+                    <td><?php echo "21%" ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Neto']['21'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['21'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['21'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['21'] * 0.5000 ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['21'] + $TotalOtrosConceptos['Prorateable']['21'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['21'] + ($TotalOtrosConceptos['Prorateable']['21'] * 0.5000) ?></td>
+                </tr>
+                 <?php
+                }
+                if($TotalOtrosConceptos['Neto']['27']+$TotalOtrosConceptos['Directo']['27']+$TotalOtrosConceptos['Prorateable']['27'] != 0) { ?>
+                <tr>
+                    <td><?php echo "27%" ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Neto']['27'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['27'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['27'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['27'] * 0.5000 ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['27'] + $TotalOtrosConceptos['Prorateable']['27'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['27'] + ($TotalOtrosConceptos['Prorateable']['27'] * 0.5000) ?></td>
+                </tr>
+                 <?php
+                }
+                if($TotalOtrosConceptos['Neto']['total']+$TotalOtrosConceptos['Directo']['total']+$TotalOtrosConceptos['Prorateable']['total'] != 0) { ?>
+                <tr>
+                    <td>Totales</td>
+                    <td><?php echo $TotalOtrosConceptos['Neto']['total'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['total'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['total'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Prorateable']['total'] * 0.5000 ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'] ?></td>
+                    <td><?php echo $TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000) ?></td>
+                </tr>
+                <?php
+                }
+            }
+            $TotalNoComputable += ($TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'])-$TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000));
+            if($TotalDcto814['mostrar']) {
+                ?>
+                <tr>
+                    <td colspan="7" style='background-color:#87cfeb'>
+                        > OPERACION: Dcto. 814
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Directo</td>
+                    <td>Prorrateable</td>
+                    <td>Computable</td>
+                    <td>Facturado</td>
+                    <td colspan="2">Computable Total</td>
+                </tr>
+                <?php
+                $TotalDcto814['Directo']['total'] = $TotalDcto814_Directo;
+                if ($TotalDcto814['Neto']['total'] + $TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'] != 0) { ?>
+                    <tr>
+                        <td><?php
+                            echo $TotalDcto814['Directo']['total'] ?></td>
+                        <td><?php echo $TotalDcto814['Prorateable']['total'] ?></td>
+                        <td><?php echo $TotalDcto814['Prorateable']['total'] * 0.5000 ?></td>
+                        <td><?php echo $TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'] ?></td>
+                        <td colspan="2"><?php echo $TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * 0.5000) ?></td>
+                    </tr>
+                    <?php
+                }
+            }
+
             $TotalNoComputable += ($TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'])-$TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * 0.5000);
             echo $this->Form->input('totalnocomputable',
                 [
@@ -2202,33 +2691,33 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 ]
             );
              $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * 0.5000)); ?>
-            <tr>
-                <td colspan="6" style='background-color:#87cfeb'>
-                    > OPERACION: Contrib. Seg. Social (Dto 814/01)
-                </td>
-            </tr>
-            <tr style='background-color:#f0f0f0'>
-                <td>Crédito Fiscal Facturado</td>
-                <td>Crédito Fiscal Computable</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Ver Calculo</td>
-                <td>Ver Calculo</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
+<!--            <tr>-->
+<!--                <td colspan="7" style='background-color:#87cfeb'>-->
+<!--                    > OPERACION: Contrib. Seg. Social (Dto 814/01)-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--            <tr style='background-color:#f0f0f0'>-->
+<!--                <td>Crédito Fiscal Facturado</td>-->
+<!--                <td>Crédito Fiscal Computable</td>-->
+<!--                <td></td>-->
+<!--                <td></td>-->
+<!--                <td></td>-->
+<!--                <td></td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <td>Ver Calculo</td>-->
+<!--                <td>Ver Calculo</td>-->
+<!--                <td></td>-->
+<!--                <td></td>-->
+<!--                <td></td>-->
+<!--                <td></td>-->
+<!--            </tr>-->
         <!----------- Fin Credito Fiscal ---------->
         </table>
 
         <div style="width:100%; height: 10px"></div>
 
-        <table id='divTablaCompras_RestDebFiscal' border="1px solid" onclick="MostrarTabla(this,'compras');" style="margin-bottom:0; cursor: pointer">
+        <table id='divTablaCompras_RestDebFiscal'  onclick="MostrarTabla(this,'compras');" style="margin-bottom:0; cursor: pointer">
         <!------------- Credito Fiscal ---------->
         <tr>
             <td colspan="5" style='background-color:#76b5cd'>
@@ -2238,7 +2727,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             </td>
         </tr>
         </table>
-        <table id='divTablaComprasCredito_RestDebFiscal' border="1px solid" style="display:none">
+        <table id='divTablaComprasCredito_RestDebFiscal'  style="">
         <!---------- TIPO DEBITO: Restitucion debito fiscal ---------->
         <tr>
             <td colspan="5" style='background-color:#87cfeb'>
@@ -2423,8 +2912,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                      <td>2.5</td>
-                      <td>'.$TotalAlicuota2_5.'</td>
-                      <td>'.$TotalAlicuota2_5 * 0.025.'</td>
+                      <td>'.$TotalAlicuota2_5 * 1.025.'</td>
+                      <td>'.$TotalAlicuota2_5 * 0.025 .'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -2434,7 +2923,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>5.0</td>
-                      <td>'.$TotalAlicuota5_0.'</td>
+                      <td>'.$TotalAlicuota5_0 * 1.05.'</td>
                       <td>'.$TotalAlicuota5_0 * 0.05.'</td>
                       <td></td>
                       <td></td>
@@ -2456,7 +2945,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>21.0</td>
-                      <td>'.$TotalAlicuota21_0.'</td>
+                      <td>'.$TotalAlicuota21_0 * 1.21.'</td>
                       <td>'.$TotalAlicuota21_0 * 0.21.'</td>
                       <td></td>
                       <td></td>
@@ -2467,7 +2956,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>27.0</td>
-                      <td>'.$TotalAlicuota27_0.'</td>
+                      <td>'.$TotalAlicuota27_0 * 1.27.'</td>
                       <td>'.$TotalAlicuota27_0 * 0.27.'</td>
                       <td></td>
                       <td></td>
@@ -2549,7 +3038,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                      <td>2.5</td>
-                      <td>'.$TotalAlicuota2_5.'</td>
+                      <td>'.$TotalAlicuota2_5 * 1.025.'</td>
                       <td>'.$TotalAlicuota2_5 * 0.025.'</td>
                       <td></td>
                       <td></td>
@@ -2560,7 +3049,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>5.0</td>
-                      <td>'.$TotalAlicuota5_0.'</td>
+                      <td>'.$TotalAlicuota5_0 * 1.05.'</td>
                       <td>'.$TotalAlicuota5_0 * 0.05.'</td>
                       <td></td>
                       <td></td>
@@ -2571,7 +3060,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>10.5</td>
-                      <td>'.$TotalAlicuota10_5.'</td>
+                      <td>'.$TotalAlicuota10_5 * 1.105.'</td>
                       <td>'.$TotalAlicuota10_5 * 0.105.'</td>
                       <td></td>
                       <td></td>
@@ -2582,7 +3071,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>21.0</td>
-                      <td>'.$TotalAlicuota21_0.'</td>
+                      <td>'.$TotalAlicuota21_0 * 1.21.'</td>
                       <td>'.$TotalAlicuota21_0 * 0.21.'</td>
                       <td></td>
                       <td></td>
@@ -2593,7 +3082,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>27.0</td>
-                      <td>'.$TotalAlicuota27_0.'</td>
+                      <td>'.$TotalAlicuota27_0 * 1.27.'</td>
                       <td>'.$TotalAlicuota27_0 * 0.27.'</td>
                       <td></td>
                       <td></td>
@@ -2701,7 +3190,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $TotalSaldoImpuestoAFavorAFIP = 0;
             $TotalSaldoImpuestoAFavorAFIP = $TotalSaldoTecnicoAPagarPeriodo - $TotalPagosACuenta - $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior  ;
             ?>
-		<table border="1px solid">
+		<table style="margin-top: 60px">
 			<tr style='background-color:#f0f0f0'>
 				<td>Descripción</td>
 				<td style="width:180px">Valor</td>
@@ -2821,10 +3310,13 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         //resulta que esto es un Uso del saldo de libre disponibilidad del periodo anterior asi que aca vamos
                         //a generar un input, el cual va a activar la creacion de un formulario para registrar este uso y disminuir
                         //el saldo del periodo anterior a 0
-                        echo $this->Form->input('usoSLD', array('type'=>'hidden','value'=>$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior));
-                        echo $this->Form->input('usoSLDID', array('type'=>'hidden','value'=>$sldID));
+
                         ?>
                     </span>
+                    <?php
+                    echo $this->Form->input('usoSLD', array('type'=>'hidden','value'=>$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior));
+                    echo $this->Form->input('usoSLDID', array('type'=>'hidden','value'=>$sldID));
+                    ?>
                 </td>
             </tr>
             <tr>
@@ -2860,11 +3352,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             </tr>
 		</table>
 		</div>
-        <div id="divLiquidarIVA">
+        <div id="divLiquidarIVA" class="noExl">
 
         </div>
 	</div>
-    <div id="divContenedorContabilidad" style="margin-top:10px">
+    <div id="divContenedorContabilidad" style="margin-top:10px"  class="noExl">
         <div class="index">
             <?php
             $Asientoid=0;
@@ -2878,6 +3370,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             //ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
             echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
             echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
+            $d = new DateTime( '01-'.$periodo );
             echo $this->Form->input('Asiento.0.fecha',array(
                 'class'=>'datepicker',
                 'type'=>'text',
@@ -2885,7 +3378,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     'text'=>"Fecha:",
                 ),
                 'readonly','readonly',
-                'value'=>date('d-m-Y'),
+                'value'=>$d->format( 't-m-Y' ),
                 'div' => false,
                 'style'=> 'height:9px;display:inline'
             ));
@@ -2924,16 +3417,16 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     'div' => false,
                     'style'=> 'height:9px;display:inline'
                 ));
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['readonly'=>'readonly','value'=>0,]);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['readonly'=>'readonly','value'=>0,]);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarIVA['cuenta_id'],'id'=>'cuenta'.$asientoestandarIVA['cuenta_id']]);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['readonly'=>'readonly','value'=>$asientoestandarIVA['Cuenta']['numero'],'style'=>'width:82px']);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px'])."</br>";
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarIVA['Cuenta']['numero'],'style'=>'width:82px']);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['label'=>($i!=0)?false:'Debe','readonly'=>'readonly','value'=>0,]);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['label'=>($i!=0)?false:'Haber','readonly'=>'readonly','value'=>0,])."</br>";
                 $i++;
             }
 
-            echo $this->Form->submit('Contabilizar',['style'=>'display:none']);
+            echo $this->Form->submit('Contabilizar',['style'=>'']);
             echo $this->Form->end();
             ?>
         </div>

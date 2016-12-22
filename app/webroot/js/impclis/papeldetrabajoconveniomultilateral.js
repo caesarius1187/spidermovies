@@ -243,7 +243,13 @@ function cargarAsiento(){
 	if($('#cuenta319').length > 0){
 		var orden = $('#cuenta319').attr('orden');
 		var saldoAFavorTotal = $("#saldoAFavorTotal").val();
-		$('#Asiento0Movimiento'+orden+'Debe').val(saldoAFavorTotal);
+		var saldoAFavorPeriodoAnt = $("#totalAFavor").val();
+        var difSAF = saldoAFavorTotal*1-saldoAFavorPeriodoAnt*1;
+        if(difSAF>=0){
+            $('#Asiento0Movimiento'+orden+'Debe').val(difSAF);
+        }else{
+            $('#Asiento0Movimiento'+orden+'Haber').val(difSAF*-1);
+        }
 	}
 	// 110404101	I.I.B.B. - Retenciones Capital Federal
 	if($('#cuenta313').length > 0){

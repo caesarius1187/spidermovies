@@ -199,15 +199,29 @@ function loadFormImpuesto(impcliid,cliid){
 			success: function(response) {
 				$('#divEditImpCliMonotributo').html(response);
 				$('#ImpcliEditForm'+impcliid+' input[type="submit"]').hide();
-				$("#ImpcliCategoriamonotributo").after(
-					$('<img>').attr({
-						src: serverLayoutURL+'/img/ii.png',
-						style: 'width:15px;height:15px',
-						title: 'Se cambiara de la categoria '+$('#ImpcliCategoriamonotributo').val()+' a la categoria '+$('#topCategoria').val(),
-						alt: ''
-					})
-				);
-				$("#ImpcliCategoriamonotributo").val($('#topCategoria').val());
+				var mesParaProximaRecategorizacion = $("#mesParaProximaRecategorizacion").val();
+				if(mesParaProximaRecategorizacion==4){
+					//Aca se recategoriza sino no hay q cambiar nada en el impcli
+					$("#ImpcliCategoriamonotributo").after(
+						$('<img>').attr({
+							src: serverLayoutURL+'/img/ii.png',
+							style: 'width:15px;height:15px',
+							title: 'Se cambiara de la categoria '+$('#ImpcliCategoriamonotributo').val()+' a la categoria '+$('#topCategoria').val(),
+							alt: ''
+						})
+					);
+					$("#ImpcliCategoriamonotributo").val($('#topCategoria').val());
+				}else{
+					$("#ImpcliCategoriamonotributo").after(
+						$('<img>').attr({
+							src: serverLayoutURL+'/img/ii.png',
+							style: 'width:15px;height:15px',
+							title: 'NO Se cambiara de la categoria '+$('#ImpcliCategoriamonotributo').val()+' a la categoria '+$('#topCategoria').val()
+								+' Por que no es mes de impacto de recategorizacion.',
+							alt: ''
+						})
+					);
+				}
 				$('#ImpcliEditForm'+impcliid).submit(function(){
 					//serialize form data
 					var formData = $(this).serialize();

@@ -1158,9 +1158,9 @@
                     ?>
                     <td><?php echo number_format($contribucionrenatea, 2, ",", ".");
                         echo $this->Form->input(
-                            'apagar360ContribuciónRENATEA',
+                            'apagar360ContribucionRENATEA',
                             array(
-                                'id'=>'apagar360ContribuciónRENATEA',
+                                'id'=>'apagar360ContribucionRENATEA',
                                 'type'=>'hidden',
                                 'value'=>$contribucionrenatea
                             )
@@ -1642,6 +1642,11 @@
             <?php echo $this->Form->input('orden', array('type' => 'hidden','value'=>0)); ?>
         </div>
     </div>
+    <?php
+    if($tieneMonotributo=='true'){ ?>
+        <div id="divContenedorContabilidad" style="margin-top:10px">  </div>
+        <?php
+    }else{ ?>
     <div id="divContenedorContabilidad" style="margin-top:10px">
         <div class="index" id="AsientoAutomaticoDevengamiento931">
             <?php
@@ -1663,6 +1668,7 @@
             //ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
             echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
             echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
+            $d = new DateTime( '01-'.$periodo );
             echo $this->Form->input('Asiento.0.fecha',array(
                 'class'=>'datepicker',
                 'type'=>'text',
@@ -1670,7 +1676,7 @@
                     'text'=>"Fecha:",
                 ),
                 'readonly','readonly',
-                'value'=>date('d-m-Y'),
+                'value'=>$d->format( 't-m-Y' ),
                 'div' => false,
                 'style'=> 'height:9px;display:inline'
             ));
@@ -1830,10 +1836,10 @@
                     ));
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['readonly' => 'readonly', 'type' => 'hidden', 'value' => $cuentaclienteid]);
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuenta_id', ['readonly' => 'readonly', 'type' => 'hidden', 'orden' => $i, 'value' => $cuentacontribucionindicato, 'id' => 'cuenta' . $cuentacontribucionindicato]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']) ;
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['readonly' => 'readonly', 'value' => $debe,]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['readonly' => 'readonly', 'value' => $haber,]). "</br>";
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', [($i!=0)?false:'Numero','readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', [($i!=0)?false:'Nombre','readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']) ;
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [($i!=0)?false:'Debe','readonly' => 'readonly', 'value' => $debe,]);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [($i!=0)?false:'Haber','readonly' => 'readonly', 'value' => $haber,]). "</br>";
                     $i++;
                 }
             }
@@ -1842,4 +1848,5 @@
             ?>
         </div>
     </div>
+    <?php } ?>
 </div>

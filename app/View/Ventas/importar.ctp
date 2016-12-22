@@ -1,5 +1,4 @@
 <?php
-//ini_set('memory_limit', '-1');
 echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
 echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
     <SCRIPT>
@@ -226,10 +225,8 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
         }
         ?>
     </div>
-<?php //Debugger::dump($ventasArray)?>
     <div  class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
         Ultimas ventas cargadas en el sistema
-
         <table>
             <tr>
                 <td>Punto de Venta</td>
@@ -262,7 +259,6 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
 
             ?>
         </table>
-
     </div>
 <?php
 
@@ -672,6 +668,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                                     $condicioniva = 'Monotributista';
                                                     $classcondicionIVA="controlarInput";
                                                 }
+                                            }else{
+                                                $condicioniva = 'Monotributista';
                                             }
                                             if ($micomprobante['Comprobante']['tipodebitoasociado'] == 'Debito fiscal o bien de uso') {
                                                 $mitipodebito = 'Debito Fiscal';
@@ -691,7 +689,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'style' => 'width:80px',
                                             'div' => array('class' => 'inputAControlar'),
                                             'defaultoption' => $condicioniva,
-                                            'class' => 'filtrocondicioniva '.$classcondicionIVA,
+                                            'class' => 'aplicableATodos filtrocondicioniva '.$classcondicionIVA,
+                                            'inputclass' => 'VentaAddCondicionIVA',
                                         )
                                     );
                                     //esto no trae asi que vamos a tener que elegir
@@ -701,7 +700,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'label' => ($i + 9) % 10 == 0 ? 'Actividad' : '',
                                             'style' => 'width:80px',
                                             'div' => array('class' => 'inputAControlar'),
-                                            'class' => 'filtroactividadcliente',
+                                            'class' => 'aplicableATodos filtroactividadcliente',
+                                            'inputclass' => 'VentaAddActividad',
                                         )
                                     );
                                     //esto no trae asi que vamos a tener que elegir
@@ -710,7 +710,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'label' => ($i + 9) % 10 == 0 ? 'Localidad' : '',
                                             'style' => 'width:150px',
                                             'defaultoptionlocalidade' => $venta['Venta']['puntodeventa'],
-                                            'class' => 'chosen-select',
+                                            'class' => 'aplicableATodos chosen-select',
+                                            'inputclass' => 'VentaAddLocalidad',
                                             'div' => array('class' => 'inputAControlar')
                                         )
                                     );
@@ -720,7 +721,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         'options' => $tipodebitos,
                                         'label' => ($i + 9) % 10 == 0 ? 'Tipo Deb.' : '',
                                         'style' => 'width:83px',
-                                        'class' => 'chosen-select filtrotipodebito',
+                                        'class' => 'aplicableATodos chosen-select filtrotipodebito',
+                                        'inputclass' => 'VentaAddTipoDebito',
                                         'div' => array('class' => 'inputAControlar'),
 
 
@@ -729,7 +731,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         'defaultoption' => $alicuota['alicuotaiva'],
                                         'label' => ($i + 9) % 10 == 0 ? 'Alicuota' : '',
                                         'style' => 'width:55px',
-                                        'class' => 'filtroalicuota'
+                                        'class' => 'aplicableATodos filtroalicuota',
+                                        'inputclass' => 'VentaAddAlicuota',
                                     ));
                                     $importenetogravado = 0;
                                     $tieneMonotributo = $cliente['Cliente']['tieneMonotributo'];
@@ -818,10 +821,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                 </div>
                             </td>
                         </tr>
-
                         <?php
-                    }else{
-
                     }
                 }
                 if($i==100){

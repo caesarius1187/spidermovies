@@ -51,6 +51,7 @@ class SubclientesController extends AppController {
 		if ($this->request->is('post')) {
 			$conditionsSubcliente = array(
 				'Subcliente.cuit' => $this->request->data['Subcliente']['cuit'],
+				'Subcliente.cliente_id' => $this->request->data['Subcliente']['cliente_id'],
 			);
 			if ($this->Subcliente->hasAny($conditionsSubcliente)){
                 $data['respuesta']='Este cliente ya fue creado para este contribuyente';

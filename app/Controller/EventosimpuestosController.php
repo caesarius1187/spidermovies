@@ -98,10 +98,16 @@ class EventosimpuestosController extends AppController {
 				);
 			$eventosAnteriores = $this->Eventosimpuesto->find('all', $optionseventosAnteriores);
 			$numeroAMostrar = 0;
+			$numeroAFavorAMostrar = 0;
 			foreach ($eventosAnteriores as $even) {
 				$numeroAMostrar += $even['Eventosimpuesto']['montovto'];
+				$numeroAFavorAMostrar += $even['Eventosimpuesto']['monc'];
 			}
-			$data['numero']=$numeroAMostrar;
+			if($numeroAMostrar>0){
+				$data['numero']=$numeroAMostrar*-1;
+			}else{
+				$data['numero']=$numeroAFavorAMostrar;
+			}
 			$data['requestData']=$this->request->data;
 			foreach ($this->request->data['Eventosimpuesto'] as $evenData) {
 				switch ($impCli['Impcli']['impuesto_id']){
@@ -171,7 +177,7 @@ class EventosimpuestosController extends AppController {
 						$saldoinicial =  $miConceptosrestante['Conceptosrestante']['monto'];
 						/*Si el Uso saldo ya existe ($evenData['Usosaldo'][0]['Usosaldo']['importe']!=0) tengo que sumar el importe
 						al saldo inicial para revertir el descuento ya realizado y restar el nuevo importe para acomodarlo al nuevo valor*/
-						if($evenData['Usosaldo'][0]['id']!=0){
+						if(isset($evenData['Usosaldo'][0]['id'])&&$evenData['Usosaldo'][0]['id']!=0){
 							$miUsosaldoViejo = $this->Usosaldo->read(null,  $evenData['Usosaldo'][0]['id']);
 							$saldoinicial +=  $miUsosaldoViejo['Usosaldo']['importe'];
 						}

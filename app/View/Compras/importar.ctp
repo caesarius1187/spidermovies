@@ -1,4 +1,13 @@
 <?php
+function customSearch($keyword, $arrayToSearch){
+    foreach($arrayToSearch as $key => $arrayItem){
+        if( stristr( $arrayItem, $keyword ) ){
+            return $key;
+        }
+    }
+    unset($arrayItem);
+    return 0;
+}
 echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
 echo $this->Html->script('compras/importar',array('inline'=>false));?>
 <div class="index" style="width: inherit;float: left;height: 250px;">
@@ -49,13 +58,13 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
         ?>
     </div>
 </div>
-<div class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
+<div class="index" style="width: inherit;float: left;margin-left: -10px;min-height: 250px;">
 	<?php
 	$dirCompras = new Folder($folderCompras, true, 0777);
 	$dirAlicuotas = new Folder($folderAlicuotas, true, 0777);
 	?>
-	Archivos Cargador previamente</br>
-	Compras:</br>
+    Archivos Cargador previamente</br>
+    Compras:</br>
 	<?php
     $comprasArray = array();
 
@@ -63,7 +72,9 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
     $i=0;
     $errorInFileCompra=false;
     $mostrarTabla=false;
-	foreach ($filesCompras as $dirCompra) {
+    $cantComprasYaguardadas=0;
+    $textoCompraYaCargada = "";
+    foreach ($filesCompras as $dirCompra) {
         if(is_readable($dirCompras->pwd() . DS . $dirCompra)){
             $mostrarTabla=true;
         }else{
@@ -83,8 +94,6 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
                 //echo strlen($line)."line lenght";
                 //break;
             }
-            $comprasArray[$i] = array();
-            $comprasArray[$i]['Compra'] = array();
             // process the line read.
             $linecompra = array();
             $linecompra['fecha']=date('d-m-Y',strtotime(substr($line, 0,8)));
@@ -104,7 +113,7 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
             $linecompra['importeimpuestosmunicipales']=substr($line, 194,13).'.'.substr($line, 207, 2);
             $linecompra['importeimpuestosinternos']=substr($line, 209,13).'.'.substr($line, 222, 2);
             $linecompra['codigomoneda']=substr($line, 224,3);
-            $linecompra['cambiotipo']=substr($line, 237,10);
+            $linecompra['cambiotipo']=substr($line, 227,10);
             $linecompra['cantidadalicuotas']=substr($line, 237,1);
             $linecompra['operacioncodigo']=substr($line, 238,1);
             $linecompra['creditofiscalcomputable']=substr($line, 239,15);
@@ -113,15 +122,63 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
             $linecompra['denominacion']=substr($line, 280,30);
             $linecompra['ivacomicion']=substr($line, 310,15);
 //            $linecompra['lineacompleta']=$line;
-            $comprasArray[$i]['Compra']=$linecompra;
-            $i++;
-            $j++;
-            if($i==3500){
-                die($i."hasta aca llegue3".$line);
+            //Antes agregabamos todas las compras a este array pero se congestiona la pantalla
+            //asi que vamos a recorrer las compras ya cargadas para ver si no estamos guardando sin necesidad
+            $compraCargadaPreviamente = false;
+            $comprobanteTipoNuevo = ltrim(customSearch($linecompra['comprobantetipo'],$comprobantes), '0');
+            $pdvNuevo = ltrim($linecompra['puntodeventa'], '0');
+            //$alicuotaNuevo = customSearch($alicuota['alicuotaiva'],$alicuotas);
+            $numeroComprobante = ltrim($linecompra['comprobantenumero'], '0');
+            $provedorNuevo = customSearch(ltrim($linecompra['identificacionnumero'], '0'),$provedores);
+            foreach ($comprasperiodo as $compraYaCargada) {
+                $igualTipoComprobante=false;
+                $igualPuntoDV=false;
+//                $igualAlicuota=false;
+                $igualNumeroComprobante=false;
+                $igualProvedor=false;
+                if($comprobanteTipoNuevo==$compraYaCargada['Compra']['comprobante_id']){
+                    $igualTipoComprobante = true;
+                }
+                if($pdvNuevo==$compraYaCargada['Compra']['puntosdeventa']){
+                    $igualPuntoDV = true;
+                }
+//                if($alicuotaNuevo==$compraYaCargada['Compra']['alicuota']){
+//                    $igualAlicuota = true;
+//                }
+                if($numeroComprobante==$compraYaCargada['Compra']['numerocomprobante']){
+                    $igualNumeroComprobante = true;
+                }
+                if($provedorNuevo==$compraYaCargada['Compra']['numerocomprobante']){
+                    $igualNumeroComprobante = true;
+                }
+                if ($igualTipoComprobante&&$igualPuntoDV/*&&$igualAlicuota*/&&$igualNumeroComprobante){
+                    $textoCompraYaCargada =
+                        $linecompra['comprobantetipo']."-".
+                        $linecompra['puntodeventa']."-".
+                        $numeroComprobante." // ";
+                    $compraCargadaPreviamente = true;
+                    $cantComprasYaguardadas++;
+                    break;
+                }else{
+
+                }
             }
+            if(!$compraCargadaPreviamente&&$i<=100){
+                //la compra no estaba entre las ya guardadas entonces la agrego y subo una posicion
+                if(!isset($comprasArray[$i] )){
+                    $comprasArray[$i] = array();
+                    $comprasArray[$i]['Compra'] = array();
+                }
+                $comprasArray[$i]['Compra']=$linecompra;
+                $i++;
+
+            }
+            $j++;
+            //if($j>100) break;
         }
         $tituloButton= $dirCompra->name;
 //        $tituloButton= $errorInFileCompra?$dirCompra->name." Archivo con Error": $dirCompra->name;
+        echo "";
             echo $this->Form->button(
                 $tituloButton .'</br>
             <label>Compras: '.$j.'</label>',
@@ -141,6 +198,7 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
             //echo "handler cerrado ABIERTO!";
         }
     }
+
     unset($dirCompra); ?>
     </br></br> </br></br></br>Alicuotas:</br>
 	<?php
@@ -213,9 +271,10 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
         }
     }
     unset($dirAlicuota); ?>
+    </br>Compras ya Cargadas Previamente:</br>
+    <?php echo $textoCompraYaCargada;?>
 </div>
 <?php
-//Debugger::dump($comprasArray);
     $ProvedoreNoCargado=array();
     $ComprasConFechasIncorrectas=array();
     foreach ($comprasArray as $compra) {
@@ -320,8 +379,7 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
     ?>
 </div>
 <?php
-} else {
-?>
+} else { ?>
     <div class="index" style="overflow: auto;">
     <?php
     //formulario oculto que va a contener en json todos los datos del formulario que esta debajo(lo hacemos asi para automatizar el envio)
@@ -362,18 +420,8 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
             ),
         )
     );
-    function customSearch($keyword, $arrayToSearch){
-        foreach($arrayToSearch as $key => $arrayItem){
-            if( stristr( $arrayItem, $keyword ) ){
-                return $key;
-            }
-        }
-        unset($arrayItem);
-        return 0;
-    }
     ?>
-    Ventas ya cargadas :
-    <table style="width: 2230px; padding: 0px;margin: 0px;">
+    <table style="width: 2230px; padding: 0px;margin: 0px;" id="tblAddCompras">
      <?php
      $i=1;
      //vamos a recorrer los domicilios de los clientes tratando de usar el fiscal o algun otro
@@ -390,60 +438,20 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
          }
      }
      unset($domicilioCli);
-     $cantComprasYaguardadas=0;
      foreach ($comprasArray as $compra) {
+         if(!isset($compra['Alicuota'])) continue;
          foreach ($compra['Alicuota'] as $alicuota) {
              //hay que controlar que las compras anteriores cargadas no contengan la compra que estamos por mostrar(vamos a incluir solo este periodo)
-
-             $compraCargadaPreviamente = false;
-             $comprobanteTipoNuevo = ltrim(customSearch($compra['Compra']['comprobantetipo'],$comprobantes), '0');
-             $pdvNuevo = ltrim($compra['Compra']['puntodeventa'], '0');
-             $alicuotaNuevo = customSearch($alicuota['alicuotaiva'],$alicuotas);
-             $numeroComprobante = ltrim($compra['Compra']['comprobantenumero'], '0');
-             $provedorNuevo = customSearch(ltrim($compra['Compra']['identificacionnumero'], '0'),$provedores);
-             
-             foreach ($comprasperiodo as $compraYaCargada) {
-                 $igualTipoComprobante=false;
-                 $igualPuntoDV=false;
-                 $igualAlicuota=false;
-                 $igualNumeroComprobante=false;
-                 $igualProvedor=false;
-                 if($comprobanteTipoNuevo==$compraYaCargada['Compra']['comprobante_id']){
-                     $igualTipoComprobante = true;
-                 }
-                 if($pdvNuevo==$compraYaCargada['Compra']['puntosdeventa']){
-                     $igualPuntoDV = true;
-                 }
-                 if($alicuotaNuevo==$compraYaCargada['Compra']['alicuota']){
-                     $igualAlicuota = true;
-                 }
-                 if($numeroComprobante==$compraYaCargada['Compra']['numerocomprobante']){
-                     $igualNumeroComprobante = true;
-                 }
-                 if($provedorNuevo==$compraYaCargada['Compra']['numerocomprobante']){
-                     $igualNumeroComprobante = true;
-                 }
-                 if ($igualTipoComprobante&&$igualPuntoDV&&$igualAlicuota&&$igualNumeroComprobante){
-                     echo
-                         $compra['Compra']['comprobantetipo']."-".
-                         $compra['Compra']['puntodeventa']."-".
-                         $numeroComprobante." // ";
-                     $compraCargadaPreviamente = true;
-                     $cantComprasYaguardadas++;
-                     break;
-                 }
-             }
-              unset($provedore);
-
-             if(!$compraCargadaPreviamente) { ?>
-                 <tr>
+                ?>
+                 <tr id="row<?php echo $i; ?>">
                      <td style="width: 100%;padding: 0px;margin: 0px; " colspan="25">
                          <div style="margin-top: 1px;background-color: white;" class="compraFormVertical">
                              <?php
                              echo $this->Form->input('Compra.' . $i . '.i', array(
-                                     'label' => ($i + 9) % 10 == 0 ? 'N�' : '',
+                                     'label' => ($i + 9) % 10 == 0 ? 'N' : '',
                                      'value' => $i,
                                      'style' => "width: 20px;",
+                                     'class'=>'row'.$i
                                  )
                              );
                              echo $this->Form->input('Compra.' . $i . '.id', array('type' => 'hidden'));
@@ -454,7 +462,8 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                      'label' => ($i + 9) % 10 == 0 ? 'Fecha' : '',
                                      'readonly' => 'readonly',
                                      'default' => date('d-m-Y', strtotime($compra['Compra']['fecha'])),
-                                     'style' => "width:75px"
+                                     'style' => "width:75px",
+                                     'class'=>'row'.$i
                                  )
                              );
                              //Este Array de comprobantes debe incluir array{id,codigo} y se debe seleccionar por codigo
@@ -462,17 +471,20 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                  'defaultoption' => $compra['Compra']['comprobantetipo'],
                                  'style' => "width: 50px;",
                                  'label' => ($i + 9) % 10 == 0 ? 'Comp.' : '',
+                                 'class'=>'row'.$i
                              ));
                              //seleccionar el punto de venta por "numero(nombre)"
                              echo $this->Form->input('Compra.' . $i . '.puntosdeventa', array(
                                  'value' => $compra['Compra']['puntodeventa'],
                                  'label' => ($i + 9) % 10 == 0 ? 'P.Vent.' : '',
                                  'style' => 'width:65px;',
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.numerocomprobante', array(
                                  'value' => ltrim($compra['Compra']['comprobantenumero'], '0'),
                                  'label' => ($i + 9) % 10 == 0 ? 'Num.' : '',
                                  'style' => 'width:60px;',
+                                 'class'=>'row'.$i
                              ));
                              //se supone que cuando generemos este formulario ya van a estar creados todos los subclientes
                              //asi que solo tendriamos queseleccionar por numero de idenficicacion
@@ -483,7 +495,7 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                      'class' => 'chosen-select',
                                      'label' => ($i + 9) % 10 == 0 ? 'Provedor' : '',
                                      'style' => 'width:176px;',
-                                     'class' => 'chosen-select'
+                                     'class' => 'chosen-select row'.$i,
                                  )
                              );
                              //esto no trae asi que vamos a tener que elegir
@@ -493,6 +505,8 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                  'options' => $condicionesiva,
                                  'style' => 'width:80px',
                                  'defaultoption' => 'Responsable Inscripto',
+                                 'inputclass' => 'CompraAddCondicioniva',
+                                 'class'=>'row'.$i.' aplicableATodos'
                              );
                              //este es el ID del comprobante que trajimos para esta compra
                              $tipocreditocompra = 'Credito Fiscal';
@@ -503,6 +517,7 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                  $mismoID=false;
                                  $tipoRestitucion = false;
                                  //echo "comprobanteTipoNuevo: ".$comprobanteTipoNuevo;
+                                 $comprobanteTipoNuevo = ltrim(customSearch($compra['Compra']['comprobantetipo'],$comprobantes), '0');
                                  if($micomprobante['Comprobante']['id']==$comprobanteTipoNuevo){
                                      $mismoID=true;
                                  }
@@ -510,9 +525,9 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                      if ($micomprobante['Comprobante']['tipo'] == 'A') {
                                          $condicionIVAArray['defaultoption'] = 'Responsable Inscripto';
                                      } else if ($micomprobante['Comprobante']['tipo'] == 'B'){
-                                         $condicionIVAArray['defaultoption'] = 'Monotributista';
+                                         $condicionIVAArray['defaultoption'] = 'Responsable Inscripto';
                                      }else{
-                                         $condicionIVAArray['defaultoption'] = "Cons. F/Exento/No Alcanza";
+                                         $condicionIVAArray['defaultoption'] = "Monotributista";
                                      }
                                      if($micomprobante['Comprobante']['tipocreditoasociado']=='Restitucion credito fiscal'){
                                          $tipocreditocompra = 'Restitucion credito fiscal';
@@ -520,10 +535,6 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                      break;
                                  }
                                  $x++;
-                                 if($x>80){
-                                     Debugger::dump($miscomprobantes);
-                                     die("die.no termina mas mis comprobantes");
-                                 }
                              }
                              echo $this->Form->input('Compra.' . $i . '.condicioniva', $condicionIVAArray);
                              echo $this->Form->input('Compra.' . $i . '.actividadcliente_id', array(
@@ -531,13 +542,16 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                  'options' => $actividades,
                                  'label' => ($i + 9) % 10 == 0 ? 'Actividad' : '',
                                  'style' => 'width:80px',
-                                 'div' => array('class' => 'inputAControlar')
+                                 'div' => array('class' => 'inputAControlar'),
+                                 'inputclass' => 'CompraAddActividadCliente',
+                                 'class'=>'row'.$i.' aplicableATodos'
                              ));
                              echo $this->Form->input('Compra.' . $i . '.localidade_id', array(
                                  'class' => "chosen-select",
                                  'label' => ($i + 9) % 10 == 0 ? 'Localidad' : '',
                                  'style' => 'width:150px',
-                                 'class' => 'chosen-select',
+                                 'class' => 'chosen-select row'.$i.' aplicableATodos',
+                                 'inputclass' => 'CompraAddLocalidades',
                                  'div' => array('class' => 'inputAControlar'),
                                  'defaultoptionlocalidade' => $defaultDomicilio,
                              ));
@@ -548,90 +562,122 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                  'options' => $tipocreditos,
                                  'label' => ($i + 9) % 10 == 0 ? 'Tipo Cre.' : '',
                                  'style' => 'width:55px',
-                                 'div' => array('class' => 'inputAControlar')
+                                 'div' => array('class' => 'inputAControlar'),
+                                 'inputclass' => 'CompraAddTipoCredito',
+                                 'class'=>'row'.$i.' aplicableATodos'
                              ));
                              echo $this->Form->input('Compra.' . $i . '.tipogasto_id', array(
                                  'default' => '',
                                  'options' => $tipogastos,
                                  'label' => ($i + 9) % 10 == 0 ? 'Tipo Gasto.' : '',
                                  'style' => 'width:83px',
-                                 'div' => array('class' => 'inputAControlar')
+                                 'div' => array('class' => 'inputAControlar'),
+                                 'inputclass' => 'CompraAddTipoGasto',
+                                 'class'=>'row'.$i.' aplicableATodos'
                              ));
                              echo $this->Form->input('Compra.' . $i . '.tipoiva', array(
                                  'label' => ($i + 9) % 10 == 0 ? 'Tipo(IVA)' : '',
                                  'style' => 'width:55px',
                                  'options' => array('directo' => 'Directo', 'prorateable' => 'Prorateable'),
-                                 'div' => array('class' => 'inputAControlar')
+                                 'div' => array('class' => 'inputAControlar'),
+                                 'inputclass' => 'CompraAddTipoIVA',
+                                 'class'=>'row'.$i.' aplicableATodos'
                              ));
                              echo $this->Form->input('Compra.' . $i . '.imputacion', array(
                                      'type' => 'select',
                                      'style' => 'width:55px',
                                      'label' => ($i + 9) % 10 == 0 ? 'Imput.' : '',
                                      'options' => $imputaciones,
-                                     'div' => array('class' => 'inputAControlar')
+                                     'div' => array('class' => 'inputAControlar'),
+                                     'inputclass' => 'CompraAddTipoImputacio',
+                                     'class'=>'row'.$i.' aplicableATodos'
                                  )
                              );
                              echo $this->Form->input('Compra.' . $i . '.alicuota', array(
                                  'defaultoption' => $alicuota['alicuotaiva'],
                                  'label' => ($i + 9) % 10 == 0 ? 'Alicuota' : '',
                                  'style' => 'width:55px;',
+                                 'inputclass' => 'CompraAddAlicuota',
+                                 'class'=>'row'.$i.' aplicableATodos'
                              ));
                              echo $this->Form->input('Compra.' . $i . '.neto', array(
                                  'style' => 'max-width: 60px;',
                                  'label' => ($i + 9) % 10 == 0 ? 'Neto' : '',
                                  'value' => $alicuota['importenetogravado'] * 1,
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.iva', array(
                                  'style' => 'max-width: 60px;',
                                  'label' => ($i + 9) % 10 == 0 ? 'IVA' : '',
                                  'value' => $alicuota['impuestoliquidado'] * 1,
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.ivapercep', array(
                                  'label' => ($i + 9) % 10 == 0 ? 'IVA Perc.' : '',
                                  'value' => $compra['Compra']['importepercepcionespagosacuentaiva'] * 1,
                                  'style' => 'max-width: 60px;',
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.iibbpercep', array(
                                  'style' => 'max-width: 60px;',
                                  'label' => ($i + 9) % 10 == 0 ? 'IIBB Perc.' : '',
                                  'value' => $compra['Compra']['importeingresosbrutos'] * 1,
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.actvspercep', array(
                                  'style' => 'max-width: 60px;',
                                  'label' => ($i + 9) % 10 == 0 ? 'Ac.Vs.Perc.' : '',
                                  'value' => $compra['Compra']['importeimpuestosmunicipales'] * 1,
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.impinternos', array(
                                  'label' => ($i + 9) % 10 == 0 ? 'Imp.Inter.' : '',
                                  'style' => 'max-width: 60px;',
                                  'value' => $compra['Compra']['importeimpuestosinternos'] * 1,
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.impcombustible', array(
                                  'style' => 'max-width: 60px;',
                                  'label' => ($i + 9) % 10 == 0 ? 'Imp.Comb.' : '',
                                  'value' => 0 * 1,
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.nogravados', array(
                                  'style' => 'max-width: 60px;',
                                  'label' => ($i + 9) % 10 == 0 ? 'No Gravado' : '',
                                  'value' => $compra['Compra']['importeconceptosprecionetogravado'] * 1,
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.exentos', array(
                                  'style' => 'max-width: 60px;',
                                  'label' => ($i + 9) % 10 == 0 ? 'Exento IVA' : '',
                                  'value' => $compra['Compra']['importeoperacionesexentas'] * 1,
+                                 'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.periodo', array('type' => 'hidden', 'value' => $periodo));
                              echo $this->Form->input('Compra.' . $i . '.total', array(
                                  'label' => ($i + 9) % 10 == 0 ? 'Total.' : '',
                                  'style' => 'max-width: 60px;',
                                  'value' => $compra['Compra']['importetotaloperacion'] * 1,
+                                 'class'=>'row'.$i
                              ));
+                             echo $this->Form->button(
+                                 $this->Html->image("cruz.png",
+                                     array(
+                                         "alt" => "eliminar",
+                                         'style'=>'width:20px;height:20px',
+                                     )
+                                 )."",
+                                 array(
+                                     'class'=>"btnAgregar row".$i,
+                                     'escape'=>false,
+                                     'title'=>'eliminar',
+                                     'type'=>"button",
+                                     'style'=>'margin-top:15px; cursor: pointer;',
+                                     'onClick'=>"deleterow(".$i.")"
+                                 )
+                             );
                              $i++;
-                             if($i>80){
-                                 echo memory_get_usage();
-                                 die("die.2");
-                             }
                              ?>
                          </div>
                          <?php
@@ -639,16 +685,15 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                      </td>
                  </tr>
                  <?php
-             }
              if($i==100){
-                 if(count($ventasArray)>100){
-                     echo $cantComprasYaguardadas." Compras ya cargadas, faltan importar estas 100 compras y ".(count($comprasArray)-$i-$cantComprasYaguardadas)." compras mas, por favor continue cargando hasta que
+                 if(count($comprasArray)>100){
+                     echo $cantComprasYaguardadas." Compras ya cargadas, faltan importar estas 100 compras, por favor continue cargando hasta que
                             finalize la carga de todas las compras del archivo";
                  }else{
                      echo $cantComprasYaguardadas." Compras ya cargadas, faltan importar estas ".$i." compras por favor continue cargando hasta que
                             finalize la carga de todas las compras del archivo";
                  }
-                 break ;
+                 break 2;
              }
          }
          unset($alicuota);

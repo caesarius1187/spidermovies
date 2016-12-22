@@ -95,7 +95,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 ?>
             </tr>
             <tr>
-                <td>Excento</td>
+                <td>Exento</td>
                 <?php
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                     echo "<td>";

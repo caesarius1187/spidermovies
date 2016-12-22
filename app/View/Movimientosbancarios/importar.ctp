@@ -198,8 +198,26 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                     )
                 );?>
             </td>
-            <td style="width:150px;"></td>
-            <td style="width:150px;"></td>
+            <td style="width:150px;">
+                <?php
+                echo $this->Form->input('Filtro.0.debito', array(
+                        'empty' => 'filtrar',
+                        'style'=>"width: 150px;",
+                        'type' => "select",
+                        'options' => ['0'=>'0'],
+                    )
+                );?>
+            </td>
+            <td style="width:150px;">
+                <?php
+                echo $this->Form->input('Filtro.0.credito', array(
+                        'empty' => 'filtrar',
+                        'style'=>"width: 150px;",
+                        'type' => "select",
+                        'options' => ['0'=>'0'],
+                    )
+                );?>
+            </td>
             <td style="width:150px;"></td>
             <td style="width:75px;"></td>
             <td style="width:150px;"></td>
@@ -255,14 +273,14 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                              'readonly' => 'readonly',
                              'fechaoriginal' => $movimintosbancario['Movimientosbancario']['fecha'],
                              'default' => date('d/m/Y', strtotime($movimintosbancario['Movimientosbancario']['fecha'])),
-                             'style' => "width:75px"
+                             'style' => "width:80px"
                          )
                      );
 
                      echo $this->Form->input('Movimientosbancario.' . $i . '.concepto', array(
                          'value' => $movimintosbancario['Movimientosbancario']['concepto'],
                          'title' => $movimintosbancario['Movimientosbancario']['concepto'],
-                         'style' => "width: 150px;",
+                         'style' => "width: 200px;",
                          'class' => "filtroconcepto",
                          'label' => ($i + 9) % 10 == 0 ? 'Concepto' : '       ',
                      ));
@@ -270,6 +288,7 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                          'value' => $movimintosbancario['Movimientosbancario']['debe'],
                          'style' => "width: 150px; text-align: right;",
                          'type' => "text",
+                         'class' => "filtrodebito inputDebe",
                          'label' => ($i + 9) % 10 == 0 ? 'Debito' : '    ',
                          "align"=>"right"
                      ));
@@ -277,6 +296,7 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                          'value' => $movimintosbancario['Movimientosbancario']['haber'],
                          'type' => "text",
                          'style' => "width: 150px; text-align: right;",
+                         'class' => "filtrocredito inputHaber",
                          'label' => ($i + 9) % 10 == 0 ? 'Credito' : '     ',
                          "align"=>"right"
                      ));
@@ -285,25 +305,29 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                          'style' => "width: 150px; text-align: right; ",
                          'type' => "text",
                          'label' => ($i + 9) % 10 == 0 ? 'Saldo' : '     ',
-                         'type'=>'text'
+                         'class'=>'inputSaldo'
                      ));
                      //seleccionar el punto de venta por "numero(nombre)"
+                     $codigosAFIP=['1'=>'1','2'=>'2','3'=>'3','4'=>'4','5'=>'5','6'=>'6','7'=>'7','8'=>'8','9'=>'9','10'=>'10','11'=>'11','12'=>'12','99','99'];
                      echo $this->Form->input('Movimientosbancario.' . $i . '.codigoafip', array(
                          'type'=>'select',
                          'empty' => 'sin codigo',
                          'default' => ($movimintosbancario['Movimientosbancario']['haber']>0)?'1':'',
-                         'options' => ['1'=>'1','2'=>'2','3'=>'3','4'=>'4'],
+                         'options' => $codigosAFIP,
                          'label' => ($i + 9) % 10 == 0 ? 'Codigo AFIP.' : '',
                          'style' => 'width:65px;',
+                         'class' => 'aplicableATodos',
+                         'inputclass' => 'MovimientobancarioAddCodigoAFIP',
                      ));
                      echo $this->Form->input('Movimientosbancario.' . $i . '.cuentascliente_id', array(
                          'type'=>'select',
                          'empty' => 'elegir cuenta',
                          'label' => ($i + 9) % 10 == 0 ? 'Cuenta contable.' : '          ',
-                         'class' => "filtrocuentascontable",
+                         'class' => "filtrocuentascontable aplicableATodos",
                          'style' => 'width:160px;',
                          'required' => true,
                          'message'=>'Por favor seleccione una cuenta contable para imputar este movimiento bancario',
+                         'inputclass' => 'MovimientobancarioAddCuentasCliente',
                      ));
                      $i++;
                      ?>

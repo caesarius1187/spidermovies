@@ -14,7 +14,7 @@ if(!$showTheForm){?>
     if( $this->request->data['Impuesto']['organismo']=='banco'||$this->request->data['Impuesto']['organismo']=='sindicato'){ ?>
       <td><?php echo $this->request->data['Impcli']['usuario']; ?></td>
       <td><?php echo $this->request->data['Impcli']['clave']; ?></td>
-    <?php } ?>  
+    <?php } ?>
     <td >
         <a href="#"  onclick="
           loadFormImpuesto(<?php echo $this->request->data['Impcli']['id']; ?>,<?php echo $this->request->data['Impcli']['cliente_id'];?>)" class="button_view"> 
@@ -38,6 +38,11 @@ if(!$showTheForm){?>
             <a href="#"  onclick="loadFormImpuestoProvincias(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
                 <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'imgedit'));?>
             </a>
+        <?php }
+        if( $this->request->data['Impuesto']['organismo']=='banco'){ ?>
+        <a href="#"  onclick="loadCbus(<?php echo  $this->request->data['Impuesto']['id']; ?>)" class="button_view">
+            <?php echo $this->Html->image('cuentabancaria.png', array('alt' => 'open','class'=>'imgedit'));?>
+        </a>
         <?php } ?>
     </td>
 <?php 

@@ -2034,6 +2034,36 @@ transition: all 0.4s ease-in-out;
     visibility: hidden;
     z-index: 109;
 }
+/*Tooltip que aparece en la posicion del div que lo contiene*/
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #1c94c4;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip input {
+    width: 190px;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+/*End Tooltip*/
 #bodyTablaVentas input{
 	max-width: 53px;
 }
@@ -2440,6 +2470,16 @@ transition: all 0.4s ease-in-out;
 	background-color: #FFA500;
 }
 .controlarInput{
+	background-color: #E4E444;
+}
+/*Movimientos Bancarios*/
+.inputDebe{
+	background-color: #77D124;
+}
+.inputHaber{
+	background-color: #77D124;
+}
+.inputSaldo{
 	background-color: #E4E444;
 }
 /*SUSS*/

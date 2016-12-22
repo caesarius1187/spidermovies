@@ -110,7 +110,7 @@
 			</td>			
 			<td style="width:60%">
 				<label id="lblNombreCuenta_<?php echo $CuentaId ?>">
-					<?php echo h($cuenta['Cuenta']['nombre']); ?>
+					<?php echo h($cuenta['cuentascliente']['nombre']==""?$cuenta['Cuenta']['nombre']:$cuenta['cuentascliente']['nombre']); ?>
 				</label>
 			</td>			
 		</tr>		

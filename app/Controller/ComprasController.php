@@ -9,7 +9,22 @@ App::uses('AppController', 'Controller');
 class ComprasController extends AppController {
 
 	public $alicuotas = array("0" => '0',"2.5" => '2.5',"5" => '5',"10.5" => '10.5',"21" => '21',"27" => '27',);
-	public $alicuotascodigo = array("0" => '0% 0003',"2.5" => '2.5% 0001',"5" => '5% 0002',"10.5" => '10.5% 0004',"21" => '21% 0005',"27" => '27% 0006',);
+    public $alicuotascodigo = [
+        "0" => '0% 0003',
+        "2.5" => '2.5% 0001',
+        "5" => '5% 0002',
+        "10.5" => '10.5% 0004',
+        "21" => '21% 0005',
+        "27" => '27% 0006'
+    ];
+    public $alicuotascodigoreverse = [
+        '0003' =>  "0" ,
+        '0001' => "2.5",
+        '0002' => "5",
+        '0004' => "10.5",
+        '0005' => "21" ,
+        '0006' => "27" ,
+    ];
 	public $condicionesiva = array("monotributista" => 'Monotributista',"responsableinscripto" => 'Responsable Inscripto','consf/exento/noalcanza'=>"Cons. F/Exento/No Alcanza",);
 	public $tipocreditos = array('Credito Fiscal'=>'Credito Fiscal','Restitucion credito fiscal'=>'Restitucion credito fiscal');
 	public $imputaciones=array(
@@ -600,6 +615,52 @@ class ComprasController extends AppController {
         $this->set('data', $data);
 		$this->render('serializejson');
 
+	}
+	public function exportartxt($cliid,$periodo){
+		$this->loadModel('Cliente');
+
+        $optionsComptras=[
+            'fields'=>['*','count(*) as cantalicuotas'],
+            'contain'=>[
+                'Comprobante',
+                'Provedore'
+            ],
+            'conditions'=>[
+                'Compra.cliente_id'=>$cliid,
+                'Compra.periodo'=>$periodo
+            ],
+            'group'=>[
+                'Compra.comprobante_id',
+                'Compra.puntosdeventa',
+                //'Compra.alicuota',
+                'Compra.numerocomprobante',
+                'Compra.provedore_id',
+            ]
+        ];
+
+        $compras = $this->Compra->find('all',$optionsComptras);
+        $optionsAlicuotas=[
+            'contain'=>[
+                'Comprobante',
+                'Provedore'
+            ],
+            'conditions'=>[
+                'Compra.cliente_id'=>$cliid,
+                'Compra.periodo'=>$periodo
+            ],
+
+        ];
+
+        $alicuotas = $this->Compra->find('all',$optionsAlicuotas);
+
+		$optionCliente=[
+			'contain'=>[],
+			'condition'=>['Cliente.id'=>$cliid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
+
+        $alicuotascodigoreverse = $this->alicuotascodigoreverse;
+		$this->set(compact('compras','alicuotas','cliente','cliid','periodo','alicuotascodigoreverse'));
 	}
 
 }

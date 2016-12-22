@@ -94,7 +94,7 @@
 						if ($encuadrealicuota['actividadcliente_id']==$actividadcliente['Actividadcliente']['id']) {
 							$encuadreAlicuotaId = $encuadrealicuota['id'];
 							$actividadClienteCodigo = $actividadcliente['Actividade']['descripcion'];
-							$actividadClienteNombre = $actividadcliente['Actividade']['nombre'];
+							$actividadClienteNombre = $actividadcliente['Actividade']['nombre']."-".$actividadcliente['Actividadcliente']['descripcion'];
 							$encuadreAlicuotaAlicuota = $encuadrealicuota['alicuota'];
 							$encuadreAlicuotaConcepto = $encuadrealicuota['concepto'];
 							$encuadreAlicuotaMinimo = $encuadrealicuota['minimo'];
@@ -163,7 +163,8 @@ if($mostrarLista&&!isset($error)){ ?>
  				<td>Localidad</td>
 				<?php } ?>
  				<td>Año</td>
- 				<td>Coeficiente</td>
+				<td>Coeficiente</td>
+				<td>Minimo</td>
  				<td>Sede</td>
  				<td>Ejercicio</td>
  				<?php
@@ -184,7 +185,8 @@ if($mostrarLista&&!isset($error)){ ?>
 						<?php } ?>
 
          				<td><?php echo $impcliprovincia['Impcliprovincia']['ano'];?></td>
-         				<td><?php echo $impcliprovincia['Impcliprovincia']['coeficiente'];?></td>
+						<td><?php echo $impcliprovincia['Impcliprovincia']['coeficiente'];?></td>
+						<td><?php echo $impcliprovincia['Impcliprovincia']['minimo'];?></td>
          				<td><?php echo $impcliprovincia['Impcliprovincia']['sede']? 'SI':'NO';?></td>
          				<td><?php echo $impcliprovincia['Impcliprovincia']['ejercicio'];?></td>
          				<?php

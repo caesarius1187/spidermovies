@@ -199,7 +199,7 @@
 	    echo $this->Form->input('Eventosimpuesto.0.haycambio',array('value'=> true ,'type'=>'hidden','id'=>'EventosimpuestoHaycambios'));
 	    echo $this->Form->input('Eventosimpuesto.0.cliente_id',array('value'=>$clienteid,'type'=>'hidden'));
 	    $botonOK="Aceptar";
-$faltanEventosAMostrar = false;
+        $faltanEventosAMostrar = false;
         switch ($tipopago) {
             case 'unico':
                 $botonOK="Aceptar";
@@ -626,7 +626,7 @@ $faltanEventosAMostrar = false;
                 }
             break;
         }
-foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el evento para ver si ya esta creada este item
+        foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el evento para ver si ya esta creada este item
             if(!$eventosimpuestos[$key]['Eventosimpuesto']['mostrado']){
                 $faltanEventosAMostrar = true;
                 break;

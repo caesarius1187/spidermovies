@@ -69,7 +69,7 @@ class MovimientosbancariosController extends AppController {
 				move_uploaded_file($tmpNameMovimientosbancario, $folderMovimientosbancarios.DS.$fileNameMovimientosbancario);
 			}
 		}
-        $cuentasrelacionadasbancos = $this->Cuenta->cuentasrelacionadasbancos;
+        $cuentasrelacionadasbancos = $this->Cuenta->cuentasDeMovimientoBancario;
 		$cuentasclientes=$this->Cuentascliente->find('list', array(
 				'contain' => array(
 					'Cuenta'

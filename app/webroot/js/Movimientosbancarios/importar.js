@@ -42,8 +42,7 @@ $(document).ready(function() {
     });
     comportamientoDeFiltros();
     aplicarFiltros();
-    $("#loading").css('visibility','hidden')
-
+    $("#loading").css('visibility','hidden');
 });
 //vamos a inicalizar los Filtros
 function comportamientoDeFiltros(){
@@ -52,15 +51,23 @@ function comportamientoDeFiltros(){
     $('#Filtro0Concepto').change(function() {
         aplicarFiltros();
     });
+    $('#Filtro0Debito').change(function() {
+        aplicarFiltros();
+    });
+    $('#Filtro0Credito').change(function() {
+        aplicarFiltros();
+    });
     $('#Filtro0CuentasclienteId').change(function() {
         aplicarFiltros();
     });
+
 }
 function aplicarFiltros(){
     callAlertPopint("Aplicando filtros");
     $("#tablaFormMovimientosbancarios tr").each(function(){
         aplicarControlFiltro($(this));
     });
+    agregarApplyToAllInFirstRow();
 }
 function deleterow(rowid){
     $("#row"+rowid).remove();
@@ -72,6 +79,18 @@ function aplicarControlFiltro(mytr){
     }else{
         mostrarPorConcepto = true;
     }
+    var mostrarPorDebito = false;
+    if($('#Filtro0Debito option:selected').val()!=''){
+        mostrarPorDebito = buscarCoincidenciasFiltroNumero(mytr,'Filtro0Debito','filtrodebito');
+    }else{
+        mostrarPorDebito = true;
+    }
+    var mostrarPorCredito = false;
+    if($('#Filtro0Credito option:selected').val()!=''){
+        mostrarPorCredito = buscarCoincidenciasFiltroNumero(mytr,'Filtro0Credito','filtrocredito');
+    }else{
+        mostrarPorCredito = true;
+    }
     var mostrarPorCuentaContable = false;
     if($('#Filtro0CuentasclienteId option:selected').val()!=''){
         mostrarPorCuentaContable = buscarCoincidenciasFiltro(mytr,'Filtro0CuentasclienteId','filtrocuentascontable');
@@ -80,7 +99,7 @@ function aplicarControlFiltro(mytr){
     }
 
 
-    if(mostrarPorConcepto && mostrarPorCuentaContable){
+    if(mostrarPorConcepto && mostrarPorCuentaContable&&mostrarPorDebito && mostrarPorCredito){
         mytr.show();
     }else{
         mytr.hide();
@@ -118,6 +137,22 @@ function buscarCoincidenciasFiltroTexto(trToShow, idfiltro, clasefiltro){
     });
     return textoEncontrado;
 }
+function buscarCoincidenciasFiltroNumero(trToShow, idfiltro, clasefiltro){
+    var numeroFiltro = $('#'+idfiltro+' option:selected').text();
+
+    var numeroEncontrado =  false;
+    trToShow.find( "."+clasefiltro ).each(function(){
+        var selectedNumero = $(this).val();
+        if(selectedNumero*1 == numeroFiltro*1){
+            numeroEncontrado = true;
+            return;
+        }else{
+            numeroEncontrado = false;
+            return;
+        }
+    });
+    return numeroEncontrado;
+}
 function deletefile(name,cliid,folder,periodo,impcli,cbu) {
     var r = confirm("Esta seguro que desea eliminar este archivo?. Es una accion que no podra deshacer.");
     if (r == true) {
@@ -136,4 +171,48 @@ function deletefile(name,cliid,folder,periodo,impcli,cbu) {
         //     }
         // });
     }
+}
+function agregarApplyToAllInFirstRow(){
+    /*primero tengo que remover todos los tooltips que estaban creados*/
+    $('.aplicableATodos').each(function(){
+        $(this).removeClass('tooltip');
+    });
+    $('.tooltiptext').each(function(){
+        $(this).remove();
+    });
+
+
+    /*ahora agregamos los nuevos*/
+    var row = $('#tablaFormMovimientosbancarios').find('tr:visible:first');
+    $(row).find('.aplicableATodos').each(function(){
+        //$(this).css('background','blue');
+        var myselect = $(this).attr('id');
+        var span = $('<span />')
+            .attr('class', 'tooltiptext')
+            .html(
+                $('<input />',{
+                    'type':'button',
+                    'value':"Aplicar a Todos los visibles",
+                    'onclick':"aplicarATodos('"+myselect+"')"
+                })
+            );
+        $(this).closest('div')
+            .addClass( "tooltip" )
+            .append(
+                span
+            );
+    });
+}
+function aplicarATodos(miinput){
+    var valueAAplicar = $('#'+miinput).val();
+    var inputclass = $('#'+miinput).attr('inputclass');
+    $('select[inputclass="'+inputclass+'"]').each(function() {
+        if($(this).is(":visible")){
+            $(this).val(valueAAplicar).trigger('chosen:updated');;
+        }else if($(this).hasClass('chosen-select')){
+            if($('#'+$(this).attr('id')+'_chosen').is(":visible")) {
+                $(this).val(valueAAplicar).trigger("chosen:updated");
+            }
+        }
+    });
 }

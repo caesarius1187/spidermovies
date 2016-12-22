@@ -125,7 +125,7 @@
 				<?php echo h($cuentascliente['Cuenta']['numero']); ?>
 			</td>
 			<td style="width:50%;text-align:left"> 
-				<?php 
+				<?php
 					$DescCuenta = $cuentascliente['Cuentascliente']['nombre'];
 					$CuentaCliId = $cuentascliente['Cuentascliente']['id'];
 				 ?>

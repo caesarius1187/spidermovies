@@ -6,7 +6,6 @@
  * @package       app.View.Layouts
  * @since         CakePHP(tm) v 0.10.0.1076
  */
-
 $cakeDescription = __d('conta.com.ar', 'Conta');
 ?>
 <!DOCTYPE html>

@@ -223,13 +223,13 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				<?php
 				if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/){
 					foreach ($actividadclientes as $actividadcliente) { ?>
-					<td class="baseRealJurisdiccion cursor" title="<?php echo $actividadcliente['Actividade']['nombre'] ?>"><?php echo $actividadcliente['Actividade']['descripcion']; ?></td>
+					<td class="baseRealJurisdiccion cursor" title="<?php echo $actividadcliente['Actividade']['nombre']."-". $actividadcliente['Actividadcliente']['descripcion'] ?>"><?php echo $actividadcliente['Actividade']['descripcion']; ?></td>
 					<?php }
 					?>
 					<td rowspan="2">Total</td>
 					<?php
 					foreach ($actividadclientes as $actividadcliente) { ?>
-						<td class="prorrateoPorAplicacionArticulo cursor" title="<?php echo $actividadcliente['Actividade']['nombre'] ?>"><?php echo $actividadcliente['Actividade']['descripcion']; ?></td>
+						<td class="prorrateoPorAplicacionArticulo cursor" title="<?php echo $actividadcliente['Actividade']['nombre']."-". $actividadcliente['Actividadcliente']['descripcion'] ?>"><?php echo $actividadcliente['Actividade']['descripcion']; ?></td>
 					<?php }
 					?>
 					<td rowspan="2">Total</td>
@@ -238,7 +238,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				}
 				foreach ($actividadclientes as $actividadcliente) { ?>
 					<td class="baseImponibleProrrateadaActividad" colspan="<?php echo $cuadrosPorActividad; ?>">
-                        <label class="lbl_trunc"><?php echo $actividadcliente['Actividade']['descripcion']." - ".$actividadcliente['Actividade']['nombre']; ?></label>
+                        <label class="lbl_trunc"><?php echo $actividadcliente['Actividade']['descripcion']." - ".$actividadcliente['Actividade']['nombre']."-". $actividadcliente['Actividadcliente']['descripcion']; ?></label>
                     </td>
 				<?php }
 				?>
@@ -341,6 +341,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 						break;									
 						case 6:
 						//E9*90%
+
 						$prorrateoPorAplicacionArticulo = $subtotalProvinciaxActividad * 0.90;
 						case 9:
 						//SI(Q8=9;E9;0)
@@ -382,39 +383,46 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				/*Recorremos actividades para calcular Bases Prorrateadas de la provincia que estamos recorriendo*/
 				foreach ($actividadclientes as $actividadcliente) { 
 					$baseProrrateada = 0;
-					switch ($actividadcliente['Actividade']['articulo']) {
-						case 2/*Regimen General*/:
-							if($impcliprovincia['ejercicio']=='Resto'/*No es primer ejercicio*/){
-								//Total De Ventas en la actividad multiplicado por el coeficiente de la provincia
-								$baseProrrateada = $subtotalVentaxActividad[$actividadcliente['Actividadcliente']['id']]*$impcliprovincia['coeficiente'] ;
-							}else if($impcliprovincia['ejercicio']=='Primero'){
-								$baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
-							}else{
-								$baseProrrateada = $liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']];
-							}
-						break;									
-						case 7:
-						case 10:
-						case 11:
-						case 12:
-							if($impcliprovincia['sede']==1/*Es Sede*/){
-								$baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']]/0.8)*0.2;
-							}
-						break;
-						case 6:
-							if($impcliprovincia['sede']==1/*Es Sede*/){
-								$baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']]/0.9)*0.1;
-							}else{
+                    //este switch me aplica regimen especial o regimen comun para las bases segun las actividades pero esto no se debe hacer si
+                    // estamos haciendo Actividades Economicas, solo si es Convenio
+                    if($impcli['Impcli']['impuesto_id']==21){/*Actividades Economicas*/
+                        $baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
+                    }else {
+                        switch ($actividadcliente['Actividade']['articulo']) {
+                            case 2/*Regimen General*/
+                            :
+                                if ($impcliprovincia['ejercicio'] == 'Resto'/*No es primer ejercicio*/) {
+                                    //Total De Ventas en la actividad multiplicado por el coeficiente de la provincia
+                                    $baseProrrateada = $subtotalVentaxActividad[$actividadcliente['Actividadcliente']['id']] * $impcliprovincia['coeficiente'];
+                                } else if ($impcliprovincia['ejercicio'] == 'Primero') {
+                                    $baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
+                                } else {
+                                    $baseProrrateada = $liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']];
+                                }
+                                break;
+                            case 7:
+                            case 10:
+                            case 11:
+                            case 12:
+                                if ($impcliprovincia['sede'] == 1/*Es Sede*/) {
+                                    $baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] / 0.8) * 0.2;
+                                }
+                                break;
+                            case 6:
+                                if ($impcliprovincia['sede'] == 1/*Es Sede*/) {
+                                    $baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] / 0.9) * 0.1;
+                                } else {
 
-							}
-						break;
-                        case 9:
-                            $baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
-                            break;
-                        default:
-							$baseProrrateada = 0;
-						break;
-					}
+                                }
+                                break;
+                            case 9:
+                                $baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
+                                break;
+                            default:
+                                $baseProrrateada = 0;
+                                break;
+                        }
+                    }
 					?>
 				<td class="baseImponibleProrrateada" id="<?php echo $impcliprovincia['id']."-baseimponible".$actividadcliente['Actividadcliente']['id'] ?>">
 					<!-- Base Prorrateada Bases Imponibles Prorrateadas -->
@@ -428,7 +436,9 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				<?php
 				$alicuotaAMostrar = 0 ;
 				$minimoAMostrar = 0 ;
-                    if(!isset($liquidacionProvincia[$impcliprovincia['id']."-alicuotaAMostrar"][$actividadcliente['Actividadcliente']['id']])){
+				$minimoACargado = 0;
+				$pagadoDuranteElAño = 0;
+					if(!isset($liquidacionProvincia[$impcliprovincia['id']."-alicuotaAMostrar"][$actividadcliente['Actividadcliente']['id']])){
 				$liquidacionProvincia[$impcliprovincia['id']."-alicuotaAMostrar"][$actividadcliente['Actividadcliente']['id']]= 0;
 				$liquidacionProvincia[$impcliprovincia['id']."-minimoAMostrar"][$actividadcliente['Actividadcliente']['id']]= 0;
 				$liquidacionProvincia[$impcliprovincia['id']."-impuestoDeterminado"][$actividadcliente['Actividadcliente']['id']]= 0;
@@ -444,7 +454,18 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 							$minimoAMostrar = $encuadrealicuota['minimo'];
 						}
 					}
-				} ?>
+				}
+				//ya tenemos el minimo que vamos a mostrar(si existe, ahora vamos a comparar con lo ya cargado en el año para esta provincia
+				foreach ($eventosimpuestos as $evenimp){
+					if($evenimp['Eventosimpuesto']['partido_id']== $impcliprovincia['partido_id']){
+						$minimoACargado = $minimoAMostrar*12;
+						$pagadoDuranteElAño += $evenimp['0']['montovto']*1;
+						if(($evenimp['0']['montovto']*1)>($minimoAMostrar*12)){
+							$minimoAMostrar=0;
+						}
+					}
+				}
+					?>
 				<td class="baseImponibleProrrateada" ><!-- Alicuota Bases Imponibles Prorrateadas -->
 					<?php 
 						echo number_format($alicuotaAMostrar, 2, ",", "."); 
@@ -561,6 +582,9 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				<td><!-- A Favor Periodo Anterior -->
 					<?php
 						echo number_format($afavorSubtotal, 2, ",", ".");
+						if($impcli['Impcli']['impuesto_id']==21) {
+							echo $this->Form->input('totalAFavor', array('type' => 'hidden', 'value' => $afavorSubtotal));
+						}
 						$totalGeneralAFavor += $afavorSubtotal;
 					?>
 				</td>
@@ -756,7 +780,9 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 						<?php echo number_format($totalGeneralOtros, 2, ",", ".");?>
 					</td>
 					<td>
-						<?php echo number_format($totalGeneralAFavor, 2, ",", ".");?>
+						<?php echo number_format($totalGeneralAFavor, 2, ",", ".");
+						echo $this->Form->input('totalAFavor', array('type'=>'hidden','value'=>$totalGeneralAFavor));
+						?>
 					</td>
 					<td>
 						<?php echo number_format($totalGeneralTotalRetenciones, 2, ",", ".");?>
@@ -861,87 +887,96 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 			<?php
 			} ?>
 		</table>
-	<?php 
-		//echo json_encode($liquidacionProvincia);
+	<?php
+	if($impcli['Impcli']['impuesto_id']==21) {/*Actividades Economicas*/
+	echo "Lo pagado durante el año fue $".number_format($pagadoDuranteElAño, 2, ",", ".").", y el minimo es $".number_format($minimoACargado, 2, ",", ".");
+	}
+	//echo json_encode($liquidacionProvincia);
 	?>	
 	</div>
 	<div id="divLiquidarConvenioMultilateral">
 	</div>
-	<div id="divContenedorContabilidad" style="margin-top:10px">
-		<div class="index">
-			<?php
-			$Asientoid=0;
-			$movId=[];
-			if(isset($impcli['Asiento'])){
-				if(count($impcli['Asiento'])>0) {
-					$Asientoid = $impcli['Asiento'][0]['id'];
-					foreach ($impcli['Asiento'][0]['Movimiento'] as $mimovimiento) {
-						$movId[$mimovimiento['Cuentascliente']['cuenta_id']] = $mimovimiento['id'];
-					}
-				}
-			}
-			//ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
-			echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
-			echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
-			echo $this->Form->input('Asiento.0.fecha',array(
-				'class'=>'datepicker',
-				'type'=>'text',
-				'label'=>array(
-					'text'=>"Fecha:",
-				),
-				'readonly','readonly',
-				'value'=>date('d-m-Y'),
-				'div' => false,
-				'style'=> 'height:9px;display:inline'
-			));
-			echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento Act. Economicas" ,'style'=>'width:250px']);
-			echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Asiento Automatico periodo: ".$periodo,'style'=>'width:250px']);
-			echo $this->Form->input('Asiento.0.cliente_id',['value'=>$impcli['Cliente']['id'],'type'=>'hidden']);
-			echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcli['Impcli']['id'],'type'=>'hidden']);
-			echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo,'type'=>'hidden']);
-			echo $this->Form->input('Asiento.0.tipoasiento',['value'=>'impuestos','type'=>'hidden'])."</br>";
-			$i=0;
-			foreach ($impcli['Impuesto']['Asientoestandare'] as $asientoestandarCM) {
-				if(!isset($movId[$asientoestandarCM['cuenta_id']])){
-					$movId[$asientoestandarCM['cuenta_id']]=0;
-				}
-				$cuentaclienteid=0;
-				$cuentaclientenombre="0";
-				foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaCm){
-					if($cuentaclientaCm['cuenta_id']==$asientoestandarCM['cuenta_id']){
-						$cuentaclienteid=$cuentaclientaCm['id'];
-						$cuentaclientenombre=$cuentaclientaCm['nombre'];
-						break;
-					}
-				}
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['value'=>$movId[$asientoestandarCM['cuenta_id']],]);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
-					'readonly'=>'readonly',
-					'class'=>'datepicker',
-					'type'=>'hidden',
-					'label'=>array(
-						'text'=>"Vencimiento:",
-						"style"=>"display:inline",
-					),
-					'readonly','readonly',
-					'value'=>date('d-m-Y'),
-					'div' => false,
-					'style'=> 'height:9px;display:inline'
-				));
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['readonly'=>'readonly','value'=>0,]);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['readonly'=>'readonly','value'=>0,]);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarCM['cuenta_id'],'id'=>'cuenta'.$asientoestandarCM['cuenta_id']]);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['readonly'=>'readonly','value'=>$asientoestandarCM['Cuenta']['numero'],'style'=>'width:82px']);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px'])."</br>";
-				$i++;
-			}
-
-			echo $this->Form->submit('Contabilizar',['style'=>'display:none']);
-			echo $this->Form->end();
-			?>
-		</div>
-	</div>
-
-<?php } ?>
+    <?php
+    if($tieneMonotributo=='true'){ ?>
+        <div id="divContenedorContabilidad" style="margin-top:10px">  </div>
+    <?php
+    }else{ ?>
+        <div id="divContenedorContabilidad" style="margin-top:10px">
+            <div class="index">
+                <?php
+                $Asientoid=0;
+                $movId=[];
+                if(isset($impcli['Asiento'])){
+                    if(count($impcli['Asiento'])>0) {
+                        $Asientoid = $impcli['Asiento'][0]['id'];
+                        foreach ($impcli['Asiento'][0]['Movimiento'] as $mimovimiento) {
+                            $movId[$mimovimiento['Cuentascliente']['cuenta_id']] = $mimovimiento['id'];
+                        }
+                    }
+                }
+                //ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
+                echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
+                echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
+				$d = new DateTime( '01-'.$periodo );
+                echo $this->Form->input('Asiento.0.fecha',array(
+                    'class'=>'datepicker',
+                    'type'=>'text',
+                    'label'=>array(
+                        'text'=>"Fecha:",
+                    ),
+                    'readonly','readonly',
+                    'value'=>$d->format( 't-m-Y' ),
+                    'div' => false,
+                    'style'=> 'height:9px;display:inline'
+                ));
+                echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento Act. Economicas" ,'style'=>'width:250px']);
+                echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Asiento Automatico periodo: ".$periodo,'style'=>'width:250px']);
+                echo $this->Form->input('Asiento.0.cliente_id',['value'=>$impcli['Cliente']['id'],'type'=>'hidden']);
+                echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcli['Impcli']['id'],'type'=>'hidden']);
+                echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo,'type'=>'hidden']);
+                echo $this->Form->input('Asiento.0.tipoasiento',['value'=>'impuestos','type'=>'hidden'])."</br>";
+                $i=0;
+                foreach ($impcli['Impuesto']['Asientoestandare'] as $asientoestandarCM) {
+                    if(!isset($movId[$asientoestandarCM['cuenta_id']])){
+                        $movId[$asientoestandarCM['cuenta_id']]=0;
+                    }
+                    $cuentaclienteid=0;
+                    $cuentaclientenombre="0";
+                    foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaCm){
+                        if($cuentaclientaCm['cuenta_id']==$asientoestandarCM['cuenta_id']){
+                            $cuentaclienteid=$cuentaclientaCm['id'];
+                            $cuentaclientenombre=$cuentaclientaCm['nombre'];
+                            break;
+                        }
+                    }
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['value'=>$movId[$asientoestandarCM['cuenta_id']],]);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
+                        'readonly'=>'readonly',
+                        'class'=>'datepicker',
+                        'type'=>'hidden',
+                        'label'=>array(
+                            'text'=>"Vencimiento:",
+                            "style"=>"display:inline",
+                        ),
+                        'readonly','readonly',
+                        'value'=>date('d-m-Y'),
+                        'div' => false,
+                        'style'=> 'height:9px;display:inline'
+                    ));
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarCM['cuenta_id'],'id'=>'cuenta'.$asientoestandarCM['cuenta_id']]);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',[($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarCM['Cuenta']['numero'],'style'=>'width:82px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',[($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[($i!=0)?false:'Debe','readonly'=>'readonly','value'=>0,]);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[($i!=0)?false:'Haber','readonly'=>'readonly','value'=>0,])."</br>";
+                    $i++;
+                }
+                echo $this->Form->submit('Contabilizar',['style'=>'display:none']);
+                echo $this->Form->end();
+                ?>
+            </div>
+        </div>
+<?php
+    }
+} ?>
 </div>

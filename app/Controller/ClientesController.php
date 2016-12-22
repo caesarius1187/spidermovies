@@ -360,7 +360,7 @@ class ClientesController extends AppController {
 			             	),
 			         ),
 		        	'Eventosimpuesto'=>array(
-			      		'fields'=>array('id','item','partido_id','localidade_id','periodo','montovto','impcli_id','tarea5','tarea13'),
+			      		'fields'=>array('id','item','partido_id','localidade_id','periodo','montovto','monc','impcli_id','tarea5','tarea13'),
 			      		'conditions'=>array('Eventosimpuesto.periodo' => $pemes.'-'.$peanio  )
 			      	), 
 		        	'Periodosactivo'=>array(
@@ -586,7 +586,7 @@ class ClientesController extends AppController {
 		   						'Actividade',
 		   					),
 		   					'Comprobante'=>[
-								'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre']
+								'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre','codigo']
 		   					],
 			   				'conditions' => array(					            	
 								'Venta.periodo'=>$periodo
@@ -777,13 +777,14 @@ class ClientesController extends AppController {
 
 		$clienteActividadList=$this->Cliente->Actividadcliente->find('list', array(
 												'contain' => array(
-													'Actividade'
+													'Actividade',
+
 													),
 											   'conditions' => array(
 												                'Actividadcliente.cliente_id' => $id, 
 												            ),
 											   'fields' => array(
-													'Actividadcliente.id','Actividade.nombre'
+													'Actividadcliente.id','Actividade.nombre','Actividadcliente.descripcion'
 														)
 											)
 									);	
@@ -969,6 +970,7 @@ class ClientesController extends AppController {
                     'alias' => 'Impcli',
                     'type'=>'inner',
                     'conditions'=> array(
+                        'Impcli.id = Cbu.impcli_id',
                         'Impcli.cliente_id'=> $id
                     )
                 ),
@@ -1735,20 +1737,20 @@ class ClientesController extends AppController {
 				);
 			$this->set('optionSisFact', $optionSisFact);
 
-			$clienteActividadList = $this->Cliente->Actividadcliente->find('list', array(
-											   'conditions' => array(
-												                'Actividadcliente.cliente_id' => $id, 
-												            ),
-											   'fields' => array(
-													'Actividadcliente.actividade_id'
-														)
-											)
-									);	
-			$this->set('clienteActividadList', $clienteActividadList);
+//			$clienteActividadList = $this->Cliente->Actividadcliente->find('list', array(
+//											   'conditions' => array(
+//												                'Actividadcliente.cliente_id' => $id,
+//												            ),
+//											   'fields' => array(
+//													'Actividadcliente.actividade_id'
+//														)
+//											)
+//									);
+//			$this->set('clienteActividadList', $clienteActividadList);
 			$optionsAct = array(
-					'conditions' => array(
-							'NOT' => array('Actividade.id' => $clienteActividadList)
-						),
+//					'conditions' => array(
+//							'NOT' => array('Actividade.id' => $clienteActividadList)
+//						),
 					'order'=> array('Actividade.descripcion')
 					);
 

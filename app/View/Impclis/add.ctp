@@ -29,6 +29,13 @@ if(isset($respuesta)){
             '.$this->Html->image('localidad.png', array('alt' => 'open','class'=>'imgedit')).'
         </a>';
    }
+    if($impcli['Impuesto']['organismo']=='banco'){
+        $tdImpcliprov.='
+         <a href="#"  onclick="loadCbus('.$impcli['Impcli']['id'].')" class="button_view">
+            '.$this->Html->image("cuentabancaria.png", array('alt' => 'open','class'=>'imgedit')).'
+        </a>
+        ';
+    }
     $miRespuesta['impclirow']= '
     <tr id="rowImpcli'.$impcli['Impcli']['id'].'">                                                
         <td>'.$impcli['Impuesto']['nombre'].'</td>

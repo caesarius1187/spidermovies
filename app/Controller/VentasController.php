@@ -24,6 +24,14 @@ class VentasController extends AppController {
 		'RECE'=>'RECE para aplicativo y web services',
 		'Factura en Linea'=>'Factura en Linea'
 	);
+	public $alicuotascodigoreverse = [
+		'0003' =>  "0" ,
+		'0001' => "2.5",
+		'0002' => "5",
+		'0004' => "10.5",
+		'0005' => "21" ,
+		'0006' => "27" ,
+	];
 
 	/**
  * add method
@@ -698,6 +706,71 @@ class VentasController extends AppController {
 				$this->request->data['Venta'][0]['cliente_id'],
 				$this->request->data['Venta'][0]['periodo']));*/
 	}
+	public function exportartxt($cliid=null,$periodo=null){
+		$this->loadModel('Cliente');
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+
+		$cliente=$this->Cliente->find('first', [
+                'contain'=>[
+				],
+				'conditions' => [
+					'id' => $cliid,
+                 ],
+			]
+        );
+
+        $conditionsVentas = [
+                'fields'=>[
+                    'Venta.*','Count(*) as cantalicuotas','SUM(Venta.total) as totalfactura'
+                ],
+                'group'=>[
+					'Venta.puntosdeventa_id',
+					'Venta.numerocomprobante',
+					'Venta.comprobante_id'
+				],
+                'contain'=>[
+                    'Puntosdeventa'=>[
+                        'fields'=>['id','nombre']
+                    ],
+                    'Subcliente'=>[
+                        'fields'=>['id','nombre','cuit']
+                    ],
+                    'Comprobante'=>[
+                        'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre','codigo']
+                    ],
+                ],
+                'conditions' => [
+                    'Venta.periodo'=>$periodo,
+                    'Venta.cliente_id'=>$cliid
+                ],
+        ];
+        $conditionsAlicuotas = [
+                'Puntosdeventa'=>[
+                    'fields'=>['id','nombre']
+                ],
+                'Subcliente'=>[
+                    'fields'=>['id','nombre','cuit']
+                ],
+                'Localidade'=>[
+                    'Partido',
+                    'fields'=>['id','nombre']
+                ],
+                'Comprobante'=>[
+                    'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre','codigo']
+                ],
+                'conditions' => [
+                    'Venta.periodo'=>$periodo,
+                    'Venta.cliente_id'=>$cliid
+                ],
+        ];
+        $ventas=$this->Venta->find('all', $conditionsVentas);
+        $alicuotas=$this->Venta->find('all', $conditionsAlicuotas);
+		$alicuotascodigoreverse = $this->alicuotascodigoreverse;
+
+		$this->set(compact('ventas','alicuotas','cliente','cliid','periodo','alicuotascodigoreverse'));
+
+    }
 	public function deletefile($name=null,$cliid=null,$folder=null,$periodo=null){
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');

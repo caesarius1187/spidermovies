@@ -412,7 +412,7 @@ class EmpleadosController extends AppController {
 		}
 		$this->request->onlyAllow('post', 'delete');
 		$data=array();
-		if ($this->Subcliente->delete()) {
+		if ($this->Empleado->delete()) {
 			$data['respuesta'] = "El Empleado ha a sido eliminado.";
 			if($this->Empleado->Valorrecibo->deleteAll(array('Valorrecibo.empleado_id' => $id), false)){
 				$data['respuesta'] .= " Se han eliminado los recibos guardados para este empleado";

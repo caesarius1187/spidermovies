@@ -86,7 +86,8 @@ $(document).ready(function() {
 							                      'disabled'=>'disabled'));	       
 			?></td>
 		<td ><?php 
-			echo $this->Form->input('Eventosimpuesto.'.$i.'.montovtoreal',array('type'=>'hidden','value'=>$eventosimpuesto['Eventosimpuesto']['montovto']));
+			echo $this->Form->input('Eventosimpuesto.'.$i.'.montovtoreal',array(
+				'type'=>'hidden','value'=>$eventosimpuesto['Eventosimpuesto']['montovto']));
 			echo $this->Form->input('Eventosimpuesto.'.$i.'.montovto',array(
 												'value'=>"$".number_format($eventosimpuesto['Eventosimpuesto']['montovto'], 2, ",", "."),
 												'disabled'=>'disabled',												

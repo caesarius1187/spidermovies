@@ -55,7 +55,7 @@ class MovimientosController extends AppController {
                                 ],                                
                                 'fields' => [
                                     'Cuentascliente.id',
-                                    'Cuentascliente.descripcioncuenta'
+                                    'Cuentascliente.nombre'
                                 ],
                                 'conditions' => [
                                     'Cuentascliente.cliente_id'=> $ClienteId                        
@@ -64,13 +64,21 @@ class MovimientosController extends AppController {
         $cuentasclientes = $this->Cuentascliente->find('list', $CuentasClientesopt);
         $this->set('cuentasclientes',$cuentasclientes);
 
-        $OpcionesAsientos = [                                                               
-                                'fields' => [
-                                    'Asiento.id',
-                                    'Asiento.descripcion'
-                                ] 
-                              ];
-        $asientos = $this->Asiento->find('list', $OpcionesAsientos);
+        $CuentasClientesopt = [
+            'contain' => [
+                'Movimiento'=>[
+                    'Cuentascliente'=>[
+                        'Cuenta'=>[],
+                        'fields' => [
+                            'Cuentascliente.id',
+                            'Cuentascliente.nombre'
+                        ],
+                    ]
+                ]
+            ],
+            'conditions'=>['Asiento.cliente_id'=>$ClienteId]
+        ];
+        $asientos = $this->Asiento->find('all', $CuentasClientesopt);
         $this->set('asientos',$asientos);
 	}
 }

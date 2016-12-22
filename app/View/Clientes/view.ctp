@@ -517,6 +517,7 @@ if($mostrarView){?>
                      <tr >    
                         <th><?php echo __('Codigo'); ?></th>                          
                         <th><?php echo __('Actividad'); ?></th>                          
+                        <th><?php echo __('Descripcion'); ?></th>                          
                         <th><?php echo __('Acciones'); ?></th>     
                      </tr>  
                      <tr>
@@ -527,9 +528,10 @@ if($mostrarView){?>
               <?php if (!empty($cliente['Actividadcliente'])): ?>      
               <?php foreach ($cliente['Actividadcliente'] as $actividad): ?>     
                      <tr >    
-                        <td><?php echo h($actividad['Actividade']['descripcion']); ?></td> 
-                        <td><?php echo h($actividad['Actividade']['nombre']); ?></td> 
-                        <td class="">
+                        <td><?php echo h($actividad['Actividade']['descripcion']); ?></td>
+                         <td><?php echo h($actividad['Actividade']['nombre']); ?></td>
+                         <td><?php echo h($actividad['descripcion']); ?></td>
+                         <td class="">
                             <?php echo $this->Form->postLink(
                                          $this->Html->image('ic_delete_black_24dp.png', array(
                                             'alt' => 'Eliminar',
@@ -1390,7 +1392,7 @@ if($mostrarView){?>
                 ?>
                 <table cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                        <td colspan="3">
+                        <td colspan="2">
                             <?php echo $this->Form->input('actividade_id',array(
                                                                 'label'=>'Actividad',
                                                                 'class'=>'chosen-select',
@@ -1398,7 +1400,9 @@ if($mostrarView){?>
                                                                 )
                             );?>
                         </td>
-                        
+                        <td colspan="2">
+                            <?php echo $this->Form->input('descripcion');?>
+                        </td>
                     </tr>                                                                                                                                        
                     <tr>
                         <td width="350">&nbsp;</td>
@@ -2084,7 +2088,7 @@ if($mostrarView){?>
             echo $this->Form->input('domicilio_id',array('label'=>'Domicilio'));
             echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
             echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
-            echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Excento Coop. Asistencial','value'=>0))."</br>";
+            echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial','value'=>0))."</br>";
 
             echo $this->Form->input('conyugue',array('label'=>'Conyugue','value'=>0));
             echo $this->Form->input('hijos',array('label'=>'Hijos','value'=>0));

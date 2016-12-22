@@ -87,6 +87,7 @@ function aplicarFiltros(){
     $("#tablaFormVentas tr").each(function(){
         aplicarControlFiltro($(this));
     });
+    agregarApplyToAllInFirstRow();
 }
 function aplicarControlFiltro(mytr){
     var mostrarPorComprobante = false;
@@ -178,4 +179,47 @@ function deletefile(name,cliid,folder,periodo) {
             }
         });
     }
+}
+function agregarApplyToAllInFirstRow(){
+    /*primero tengo que remover todos los tooltips que estaban creados*/
+    $('.aplicableATodos').each(function(){
+        $(this).removeClass('tooltip');
+    });
+    $('.tooltiptext').each(function(){
+        $(this).remove();
+    });
+
+    /*ahora agregamos los nuevos*/
+    var row = $('#tablaFormVentas').find('tr:visible:first');
+    $(row).find('.aplicableATodos').each(function(){
+        //$(this).css('background','blue');
+        var myselect = $(this).attr('id');
+        var span = $('<span />')
+            .attr('class', 'tooltiptext')
+            .html(
+                $('<input />',{
+                    'type':'button',
+                    'value':"Aplicar a Todos los visibles",
+                    'onclick':"aplicarATodos('"+myselect+"')"
+                })
+            );
+        $(this).closest('div')
+            .addClass( "tooltip" )
+            .append(
+                span
+            );
+    });
+}
+function aplicarATodos(miinput){
+    var valueAAplicar = $('#'+miinput).val();
+    var inputclass = $('#'+miinput).attr('inputclass');
+    $('select[inputclass="'+inputclass+'"]').each(function() {
+        if($(this).is(":visible")){
+            $(this).val(valueAAplicar).trigger('chosen:updated');;
+        }else if($(this).hasClass('chosen-select')){
+            if($('#'+$(this).attr('id')+'_chosen').is(":visible")) {
+                $(this).val(valueAAplicar).trigger("chosen:updated");
+            }
+        }
+    });
 }
