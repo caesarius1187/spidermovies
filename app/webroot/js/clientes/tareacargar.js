@@ -1,6 +1,71 @@
 var tblTablaVentas;
 var tblTablaCompras;
 $(document).ready(function() {
+    var beforePrint = function() {
+        $('#header').hide();
+        $('#Formhead').hide();
+        $('#headerCliente').hide();
+        $('#divAllTabs').hide();
+        $('#formOldSueldo').hide();
+        $('#form_empleados').hide();
+        $('.btn_empleados').hide();
+        $('.btn_empleados_liq').hide();
+        $('.btn_cargarliq_selected').hide();
+        $('.btn_cargarliq_liq').hide();
+        $('.btn_cargarliq').hide();
+        $('.btn_sueldo').hide();
+        $('.btn_imprimir').hide();
+        $('#divLiquidarActividadesVariar').hide();
+        $('#TituloPdtSueldo').hide();
+        //$('#index').css('float','left');
+        //$('#padding').css('padding','0px');
+        //$('#padding').css('margin','0px');
+        //$('#index').css('font-size','6px');
+        $('#index').css('border-color','#FFF');
+        //$('#sueldoContent').css('width','648px');
+        //$('#tblLibroSueldo').css('padding','0');
+        //$('#sheetCooperadoraAsistencial').css('width','100%');
+        //$('#sheetCooperadoraAsistencial').css('margin','0');
+        //$('#tblLibroSueldo').css('font-size','9px');
+    };
+    var afterPrint = function() {
+        //$('#index').css('font-size','10px');
+        $('#header').show();
+        $('#Formhead').show();
+        $('#form_empleados').show();
+        $('#headerCliente').show();
+        $('#divAllTabs').show();
+        $('#formOldSueldo').show();
+        $('.btn_empleados').show();
+        $('.btn_empleados_liq').show();
+        $('.btn_cargarliq_selected').show();
+        $('.btn_cargarliq_liq').show();
+        $('.btn_cargarliq').show();
+        $('.btn_sueldo').show();
+        $('.btn_imprimir').show();
+        $('#divLiquidarActividadesVariar').show();
+        $('#TituloPdtSueldo').show();
+        //$('#index').css('float','right');
+        //$('#padding').css('padding','10px 1%');
+        //$('#sueldoContent').css('width','1340px');
+       // $('#tblLibroSueldo').css('padding','0 10%');
+        //$('#sheetCooperadoraAsistencial').css('margin','10px 25px');
+        //$('#sheetCooperadoraAsistencial').css('width','96%');
+        //$('#tblLibroSueldo').css('font-size','12px');
+    };
+    if (window.matchMedia) {
+        var mediaQueryList = window.matchMedia('print');
+        mediaQueryList.addListener(function(mql) {
+            if (mql.matches) {
+                beforePrint();
+            } else {
+                afterPrint();
+            }
+        });
+    }
+    window.onbeforeprint = beforePrint;
+    window.onafterprint = afterPrint;
+
     allcomprobantes =  JSON.parse($('#jsonallcomprobantes').val());
     var tblTablaConceptosrestantes = $('#tblTablaConceptosrestantes').dataTable().api();
     //tblTablaVentas = $('#tablaVentas').dataTable().api();
@@ -350,7 +415,7 @@ $(document).ready(function() {
     var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
     var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
 
-      for (var i = 22 - 1; i >= 0; i--) {
+      for (var i = 24 - 1; i >= 0; i--) {
           var columni = tblTablaConceptosrestantes.column(i);
           columni.visible( false );
       };
@@ -383,81 +448,13 @@ $(document).ready(function() {
     showcolumnConceptoRestante(tblTablaConceptosrestantes,3,true);//Concepto
     showcolumnConceptoRestante(tblTablaConceptosrestantes,9,true);//Monto Retenido
     showcolumnConceptoRestante(tblTablaConceptosrestantes,11,true);//Fecha
-    showcolumnConceptoRestante(tblTablaConceptosrestantes,22,true);//Actions*/
+    showcolumnConceptoRestante(tblTablaConceptosrestantes,24,true);//Actions*/
   }
     function showcolumnConceptoRestante(table,column,visible){
-    var column = table.column( column );
-    column.visible( visible );
-  }
-    prepararParaImprimir();
-    function prepararParaImprimir(){
-        var beforePrint = function() {
-            console.log('Functionality to run before printing.');
-            $('#header').hide();
-            $('#Formhead').hide();
-            $('#headerCliente').hide();
-            $('#divAllTabs').hide();
-            $('#formOldSueldo').hide();
-            $('#form_empleados').hide();
-            $('.btn_empleados').hide();
-            $('.btn_empleados_liq').hide();
-            $('.btn_cargarliq_selected').hide();
-            $('.btn_cargarliq_liq').hide();
-            $('.btn_cargarliq').hide();
-            $('.btn_sueldo').hide();
-            $('.btn_imprimir').hide();
-            $('#divLiquidarActividadesVariar').hide();
-            $('#TituloPdtSueldo').hide();
-            $('#index').css('float','left');
-            $('#padding').css('padding','0px');
-            $('#padding').css('margin','0px');
-            $('#index').css('font-size','6px');
-            $('#index').css('border-color','#FFF');
-            $('#sueldoContent').css('width','648px');
-            $('#tblLibroSueldo').css('padding','0');
-            $('#sheetCooperadoraAsistencial').css('width','100%');
-            $('#sheetCooperadoraAsistencial').css('margin','0');
-            $('#tblLibroSueldo').css('font-size','9px');
-        };
-        var afterPrint = function() {
-            console.log('Functionality to run after printing');
-            $('#index').css('font-size','10px');
-            $('#header').show();
-            $('#Formhead').show();
-            $('#form_empleados').show();
-            $('#headerCliente').show();
-            $('#divAllTabs').show();
-            $('#formOldSueldo').show();
-            $('.btn_empleados').show();
-            $('.btn_empleados_liq').show();
-            $('.btn_cargarliq_selected').show();
-            $('.btn_cargarliq_liq').show();
-            $('.btn_cargarliq').show();
-            $('.btn_sueldo').show();
-            $('.btn_imprimir').show();
-            $('#divLiquidarActividadesVariar').show();
-            $('#TituloPdtSueldo').show();
-            $('#index').css('float','right');
-            $('#padding').css('padding','10px 1%');
-            $('#sueldoContent').css('width','1340px');
-            $('#tblLibroSueldo').css('padding','0 10%');
-            $('#sheetCooperadoraAsistencial').css('margin','10px 25px');
-            $('#sheetCooperadoraAsistencial').css('width','96%');
-            $('#tblLibroSueldo').css('font-size','12px');
-        };
-        if (window.matchMedia) {
-            var mediaQueryList = window.matchMedia('print');
-            mediaQueryList.addListener(function(mql) {
-                if (mql.matches) {
-                    beforePrint;
-                } else {
-                    afterPrint;
-                }
-            });
-        }
-        window.onbeforeprint = beforePrint;
-        window.onafterprint = afterPrint;
-    }
+        var column = table.column( column );
+        column.visible( visible );
+      }
+
 
     /*Cargar Asientos de Venta automaticos*/
     $('#buttonCargarAsientosVenta').bind('click',function (e) {
@@ -851,6 +848,18 @@ $(document).ready(function() {
                 case 2:/*Retenciones*/
                     $("label[for='ConceptosrestanteMontoretenido']").html("Monto Retenido");
                     switch(impuestoseleccionado){
+                        case '174':/*Convenio Multilateral*/
+                            $('#ConceptosrestanteCuit').closest('div').show();
+                            $('#ConceptosrestanteNumerofactura').closest('div').show();
+                            $('#ConceptosrestantePuntosdeventa').closest('div').show();
+                            $('#ConceptosrestanteNumerocomprobante').closest('div').show();
+                            $('#ConceptosrestanteComprobanteId').closest('div').show();
+                            showcolumnConceptoRestante(tblTablaConceptosrestantes,10,true);/*CUIT*/
+                            showcolumnConceptoRestante(tblTablaConceptosrestantes,5,true);/*NumeroComprobante*/
+                            showcolumnConceptoRestante(tblTablaConceptosrestantes,4,true);/*TipoComptobante*/
+                            showcolumnConceptoRestante(tblTablaConceptosrestantes,22,true);/*PuntoDeVenta*/
+                            showcolumnConceptoRestante(tblTablaConceptosrestantes,23,true);/*numeroFactura*/
+                        break
                         case '21':/*Actividades Economicas*/
                             $('#ConceptosrestanteNumeropadron').closest('div').show();
                             $('#ConceptosrestanteAgente').closest('div').show();
@@ -1030,7 +1039,7 @@ $(document).ready(function() {
                         var rowData =
                             [
                                 respuesta.venta.Venta.fecha,
-                                respuesta.comprobante.Comprobante.nombre+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante,
+                                respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante,
                                 respuesta.subcliente.Subcliente.cuit,
                                 respuesta.subcliente.Subcliente.nombre,
                                 respuesta.venta.Venta.condicioniva,
@@ -1125,7 +1134,7 @@ $(document).ready(function() {
                         var rowData =
                             [
                                 respuesta.compra.Compra.fecha,
-                                respuesta.comprobante.Comprobante.nombre+"-"+respuesta.compra.Compra.puntosdeventa+"-"+respuesta.compra.Compra.numerocomprobante,
+                                respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.compra.Compra.puntosdeventa+"-"+respuesta.compra.Compra.numerocomprobante,
                                 respuesta.provedore.Provedore.nombre,
                                 respuesta.compra.Compra.condicioniva,
                                 respuesta.actividadcliente.Actividade.nombre,
@@ -1470,7 +1479,22 @@ $(document).ready(function() {
         numeral.language('id');
     }
 });
-    function calcularFooterTotales(mitabla){
+function openWin()
+{
+    var myWindow=window.open('','','width=1010,height=1000px');
+    myWindow.document.write('<html><head><title>Recibo de sueldo</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
+    myWindow.document.write($("#divToPrintRecibo").html());
+    myWindow.document.close();
+    myWindow.focus();
+    setTimeout(
+        function()
+        {
+            myWindow.print();
+            myWindow.close();
+        }, 1000);
+
+}
+function calcularFooterTotales(mitabla){
         mitabla.columns( '.sum' ).every( function () {
             try {
                 var micolumndata = this.data();
@@ -1479,8 +1503,12 @@ $(document).ready(function() {
                     var sum = this
                         .data()
                         .reduce( function (a,b) {
-
+                            var ab = a+"+"+b;
+                            if (b=="1,51"||b=="7,85"){
+                                alert(b);
+                            }
                             if (a != null && b != null) {
+
                                 if (typeof a === 'string') {
                                     a = a.replace('.', "");
                                     a = a.replace(',', ".");
@@ -1491,12 +1519,18 @@ $(document).ready(function() {
                                     b = b.replace(',', ".");
                                 }
                                 b = Number(b);
-                                return a + b;
+                                if(isNaN(a)||isNaN(b)){
+                                   alert (a );
+                                   alert (b );
+                                }
+                                var resultado = a + b;
+                                alert(resultado);
+                                return resultado;
                             } else {
                                 return 0;
                             }
                         } );
-                    $( this.footer() ).html(sum);
+                    $( this.footer() ).html(sum.toFixed(2));
                 }
             }
             catch (e)
@@ -1505,7 +1539,7 @@ $(document).ready(function() {
             }
         } );
     }
-    function hiddeAllImputsFromConceptosRestantesAddForm(formname,id){
+function hiddeAllImputsFromConceptosRestantesAddForm(formname,id){
         $('#'+formname+' div').hide();
 
         var impcliseleccionado = $("#"+formname+" #ConceptosrestanteImpcliId").val();
@@ -1527,7 +1561,7 @@ $(document).ready(function() {
     var allcomprobantes;
     var tipodecomprobanteseleccionado = 'A';
     var tipodecomprobanteCompraseleccionado = '';
-    function calcularivaytotal(formulario){
+function calcularivaytotal(formulario){
 
         $("#"+formulario+" #VentaComprobanteId").trigger( "change" );
 
@@ -1632,7 +1666,7 @@ $(document).ready(function() {
           }
         }
     }
-    function calcularivaytotalcompra(formulario){
+function calcularivaytotalcompra(formulario){
 
         $("#"+formulario+" #CompraComprobanteId").trigger( "change" );
 
@@ -1698,18 +1732,17 @@ $(document).ready(function() {
         $("#"+formulario+" #CompraTotal").val(total);
         $("#"+formulario+" #CompraIva").val(iva);
     }
-    function adaptarConceptorestanteForm(formnombre,conid){
-
+function adaptarConceptorestanteForm(formnombre,conid){
         hiddeAllImputsFromConceptosRestantesAddForm(formnombre,conid);
         var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
         if(impcliseleccionado==null) return;
         var impuestoseleccionadoNombre = $('#ConceptosrestanteImpcliId option[value="' + impcliseleccionado + '"]').html();
         var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
         switch (impuestoseleccionado){
-          case '21':/*Actividades Economicas*/
-          case '174':/*Convenio Multilateral*/
-            $('#'+formnombre+' #ConceptosrestanteLocalidadeId').closest('div').hide();
-            $('#'+formnombre+' #ConceptosrestantePartidoId').closest('div').show();
+            case '21':/*Actividades Economicas*/
+            case '174':/*Convenio Multilateral*/
+                $('#'+formnombre+' #ConceptosrestanteLocalidadeId').closest('div').hide();
+                $('#'+formnombre+' #ConceptosrestantePartidoId').closest('div').show();
           break;
           default:
             $('#'+formnombre+' #ConceptosrestanteLocalidadeId').closest('div').show();
@@ -1727,36 +1760,44 @@ $(document).ready(function() {
               break;
           case 2:/*Retenciones*/
             switch(impuestoseleccionado){
-              case '21':/*Actividades Economicas*/
-                $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteMonto').closest('div').show();
-              break
-              case '160':/*Ganancia(PF)*/
-              case '5':/*Ganancia(PJ)*/
-                $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-                /*falta:
-                numero certificado
-                decha comprobante
-                descripcion comprobante
-                Fecha Registración DJ Ag Ret
-                */
-              case '19':/*IVA*/
-                $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-                /*falta:
-                numero certificado
-                decha comprobante
-                descripcion comprobante
-                Fecha Registración DJ Ag Ret
-                */
-              break;
+                case '174':/*Convenio Multilateral*/
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerofactura').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestantePuntosdeventa').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteComprobanteId').closest('div').show();
+                    break
+                case '21':/*Actividades Economicas*/
+                    $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteMonto').closest('div').show();
+                break
+                case '160':/*Ganancia(PF)*/
+                case '5':/*Ganancia(PJ)*/
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
+                    /*falta:
+                    numero certificado
+                    decha comprobante
+                    descripcion comprobante
+                    Fecha Registración DJ Ag Ret
+                    */
+                    break;
+                case '19':/*IVA*/
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
+                    /*falta:
+                    numero certificado
+                    decha comprobante
+                    descripcion comprobante
+                    Fecha Registración DJ Ag Ret
+                    */
+                break;
               case '6':/*Actividades Varias*/
                 $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
                 $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
@@ -1764,18 +1805,18 @@ $(document).ready(function() {
                 /*falta:
                 denominacion
                 */
-              break;
+                  break;
               case '10':/*SUSS*/
                 $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
                 $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
                 $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
                 $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-              break;
+                  break;
               default:
                 $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
                 $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
                 $('#'+formnombre+' #ConceptosrestanteComprobanteId').closest('div').show();
-              break;
+                  break;
             }
           case 3:/*Recaudacion Bancaria*/
             switch(impuestoseleccionado){
@@ -2005,7 +2046,7 @@ $(document).ready(function() {
                         var rowData =
                             [
                                 respuesta.venta.Venta.fecha,
-                                respuesta.comprobante.Comprobante.nombre+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante,
+                                respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante,
                                 respuesta.subcliente.Subcliente.cuit,
                                 respuesta.subcliente.Subcliente.nombre,
                                 respuesta.venta.Venta.condicioniva,
@@ -2269,7 +2310,7 @@ $(document).ready(function() {
                       var rowData =
                           [
                               respuesta.compra.Compra.fecha,
-                              respuesta.comprobante.Comprobante.nombre+"-"+respuesta.compra.Compra.puntosdeventa+"-"+respuesta.compra.Compra.numerocomprobante,
+                              respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.compra.Compra.puntosdeventa+"-"+respuesta.compra.Compra.numerocomprobante,
                               respuesta.provedore.Provedore.nombre,
                               respuesta.compra.Compra.condicioniva,
                               respuesta.actividadcliente.Actividade.nombre,
@@ -2634,6 +2675,8 @@ $(document).ready(function() {
             data: data,  // post data
             success: function(response) {
                 $("#sueldoContent").html(response);
+                var recibo = $("#reciboOriginal").html();
+                $("#reciboDuplicado").html(recibo);
             },
             error:function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus);

@@ -26,6 +26,8 @@
 		echo $this->Form->input('regimen');
 		echo $this->Form->input('descripcion');
 		echo $this->Form->input('numeropadron');
+		echo $this->Form->input('numeropadron');
+		echo $this->Form->input('numeropadron');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

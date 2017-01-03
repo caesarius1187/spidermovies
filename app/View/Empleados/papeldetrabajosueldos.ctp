@@ -258,17 +258,14 @@
                         }
                         $headSeccion = false;
                         if($miseccionamostrada!=$miseccionamostrar){
-                            $headSeccion = true;
-
-                            ?>
+                            $headSeccion = true;?>
                             <td rowspan="<?php echo $cantSecciones[$miseccionamostrar];?>" style="font-size: 13px; vertical-align:middle!important;" id="seccion<?php echo $numSeccion;?>" >
                                 <div style="transform: rotate(270deg); float:left;">
                                     <?php
                                     $miseccionamostrada = $miseccionamostrar;
                                     echo $miseccionamostrar;?>
                                 </div>
-                            </td>
-                        <?php
+                            </td><?php
                             $numSeccion ++;
                         }
                         $styleForTd = "
@@ -288,6 +285,7 @@
                             //y mostrar un formulario para modificarlo
                             $valor = 0;
                             $valorreciboid = 0;
+                            $aplicafuncion = true;
                             if(count($conceptoobligatorio['Valorrecibo'])>0){
                                 $valor = $conceptoobligatorio['Valorrecibo'][0]['valor'];
                                 $valorreciboid = $conceptoobligatorio['Valorrecibo'][0]['id'];
@@ -314,7 +312,18 @@
                                     //$valor = $empleado['Empleado']['minimoos'];
                                     break;
                                 case 35:/*Obra Social Extraordinario*/
-                                    //$valor = $empleado['Empleado']['montoose'];
+                                    break;
+                                case 39:/*Afiliado al Sindicato*/
+                                    $valor = $empleado['Empleado']['afiliadosindicato'];
+                                    break;
+                                case 134:/*cuota sindical extra 4*/
+                                    /*si el impcli al que pertenece el convenio es SEC entonces vamos a preguntar si
+                                    tiene activado el "pago del seguro de vida obligatorio*/
+                                    if($empleado['Conveniocolectivotrabajo']['Impuesto']['id']==11/*Es SEC?*/){
+                                        if(!$empleado['Conveniocolectivotrabajo']['Impuesto']['Impcli'][0]['segurovidaobligatorio']*1){
+                                            $aplicafuncion=false;
+                                        }
+                                    }
                                     break;
                                 /*case 36:/*Cuota Sindical aca estabamos guardando la cuota sindical extra en el empleado pero
                                 debe ser la misma para todos dependiendo del convenio
@@ -334,13 +343,12 @@
                             <?php
 
                             $funcionaaplicar="";
-                            if($conceptoobligatorio['calculado']){
+                            if($conceptoobligatorio['calculado']&&$aplicafuncion){
                                 $funcionaaplicar=$conceptoobligatorio['funcionaaplicar'];
                             }else{
-
+                                $funcionaaplicar = "";
                             }
                             $unidadmedida = $conceptoobligatorio['unidaddemedida'];
-
                             $datacell = 0;
                             if(!$conceptoobligatorio['campopersonalizado']){
                                 $datacell = $conceptoobligatorio['Concepto']['codigo'];
@@ -409,7 +417,7 @@
                             <?php
                             if($conceptoobligatorio['calculado']){
                                 echo $this->Form->input('Valorrecibo.'.$i.'.formula',array('type'=>'text',
-                                        'value'=>$conceptoobligatorio['funcionaaplicar'],
+                                        'value'=>$funcionaaplicar,
                                         'posicion'=>$i,
                                         'headseccion'=>$headSeccion?'1':'0',
                                         'seccion'=>$numSeccion-1,

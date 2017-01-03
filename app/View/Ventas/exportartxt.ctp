@@ -9,7 +9,7 @@
         var elHtml = document.getElementById(elId).innerHTML;
         var elTXT = elHtml.replace(/(?:\r\n|\r|\n)/g, '<br />');
         elTXT = elTXT.replace(/&nbsp;/gi," ");
-        elTXT = elTXT.replace(/<br\s*\/?>/mg,"\n");
+        elTXT = elTXT.replace(/<br\s*\/?>/mg,"\r\n");
 
         var link = document.createElement('a');
         mimeType = mimeType || 'text/plain';

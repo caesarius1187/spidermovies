@@ -655,12 +655,104 @@ class ComprasController extends AppController {
 
 		$optionCliente=[
 			'contain'=>[],
-			'condition'=>['Cliente.id'=>$cliid]
+			'conditions'=>['Cliente.id'=>$cliid]
 		];
 		$cliente = $this->Cliente->find('first',$optionCliente);
 
         $alicuotascodigoreverse = $this->alicuotascodigoreverse;
 		$this->set(compact('compras','alicuotas','cliente','cliid','periodo','alicuotascodigoreverse'));
+	}
+	public function exportartxtpercepcionesiibb($cliid,$periodo){
+		$this->loadModel('Cliente');
+		$optionsComptras=[
+			'fields'=>['*','count(*) as cantalicuotas'],
+			'contain'=>[
+				'Comprobante',
+				'Provedore'
+			],
+			'conditions'=>[
+				'Compra.cliente_id'=>$cliid,
+				'Compra.periodo'=>$periodo,
+				'Compra.iibbpercep <> 0',
+			],
+			'group'=>[
+				'Compra.comprobante_id',
+				'Compra.puntosdeventa',
+				//'Compra.alicuota',
+				'Compra.numerocomprobante',
+				'Compra.provedore_id',
+			]
+		];
+
+		$compras = $this->Compra->find('all',$optionsComptras);
+		$optionCliente=[
+			'contain'=>[],
+			'conditions'=>['Cliente.id'=>$cliid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
+		$this->set(compact('compras','cliente','cliid','periodo'));
+	}
+	public function exportartxtpercepcionessifere($cliid,$periodo){
+		$this->loadModel('Cliente');
+		$optionsComptras=[
+			'fields'=>['*','count(*) as cantalicuotas'],
+			'contain'=>[
+				'Localidade'=>['Partido'],
+				'Comprobante',
+				'Provedore'
+			],
+			'conditions'=>[
+				'Compra.cliente_id'=>$cliid,
+				'Compra.periodo'=>$periodo,
+				'Compra.iibbpercep <> 0'
+			],
+			'group'=>[
+				'Compra.comprobante_id',
+				'Compra.puntosdeventa',
+				//'Compra.alicuota',
+				'Compra.numerocomprobante',
+				'Compra.provedore_id',
+			]
+		];
+
+		$compras = $this->Compra->find('all',$optionsComptras);
+		$optionCliente=[
+			'contain'=>[],
+			'conditions'=>['Cliente.id'=>$cliid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
+		$this->set(compact('compras','cliente','cliid','periodo'));
+	}
+	public function exportartxtpercepcionesdgrm($cliid,$periodo){
+		$this->loadModel('Cliente');
+		$optionsComptras=[
+			'fields'=>['*','count(*) as cantalicuotas'],
+			'contain'=>[
+				'Comprobante',
+				'Provedore'
+			],
+			'conditions'=>[
+				'Compra.cliente_id'=>$cliid,
+				'Compra.periodo'=>$periodo,
+				'Compra.actvspercep <> 0',
+				'Compra.localidade_id'=>'48',/*Salta Capital*/
+			],
+			'group'=>[
+				'Compra.comprobante_id',
+				'Compra.puntosdeventa',
+				//'Compra.alicuota',
+				'Compra.numerocomprobante',
+				'Compra.provedore_id',
+			]
+		];
+
+		$compras = $this->Compra->find('all',$optionsComptras);
+		$optionCliente=[
+			'contain'=>[],
+			'conditions'=>['Cliente.id'=>$cliid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
+		$this->set(compact('compras','cliente','cliid','periodo','optionCliente'));
 	}
 
 }

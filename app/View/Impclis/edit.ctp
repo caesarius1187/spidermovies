@@ -49,50 +49,59 @@ if(!$showTheForm){?>
 }else{ ?>
 <td colspan="7">
  <?php   echo $this->Form->create('Impcli',array('controller'=>'Impcli','action'=>'edit',"id"=>"ImpcliEditForm".$this->request->data['Impcli']['id']));?>
-      <table style="width:637px">
-	    <?php echo $this->Form->input('id');?>
-		      <tr>
+        <table style="width:637px">
+            <?php echo $this->Form->input('id');?>
+            <tr>
             <?php echo $this->Form->input('cliente_id',array('type'=>'hidden'));?>
-  		      <td colspan="2"><?php echo $this->Form->input('impuesto_id');?></td>
+                <td colspan="2"><?php echo $this->Form->input('impuesto_id');?></td>
             <?php if( $this->request->data['Impuesto']['organismo']=='banco'||$this->request->data['Impuesto']['organismo']=='sindicato'){?>
-            <td><?php echo $this->Form->input('usuario'); ?></td>
-            <td><?php echo $this->Form->input('clave'); ?></td>
+                <td><?php echo $this->Form->input('usuario'); ?></td>
+                <td><?php echo $this->Form->input('clave'); ?></td>
+            <?php }
+            if( $this->request->data['Impuesto']['id']==11/*SEC*/){?>
+                <?php
+                echo $this->Form->input('segurovidaobligatorio',
+                    [
+                        'label' => 'Contrato Seguro de Vida obligatorio',
+                        'div'=>['style'=>"width: 200px;"]
+                    ]);?>
+                </td>
+            <?php } 
+            if( $this->request->data['Impuesto']['id']==4/*Monotributo*/){?>
+                <td>
+                    <?php
+                    echo $this->Form->input('categoriamonotributo',
+                        [
+                            'label' => 'Categori&oacute;a Monotributo',
+                            'type'=>'select','options'=>$categoriasmonotributos
+                        ]);?>
+                </td>
+                <td >
+                    <?php
+                    echo $this->Form->input('monotributoadherentes',
+                        [
+                            'label' => 'Adherentes',
+                            'div'=>['style'=>"width: 200px;"]
+                        ]);?>
+                </td>
+                <td >
+                <?php
+                    echo $this->Form->input('monotributojubilacion',
+                        [
+                            'label' => 'paga Jubilacion',
+                            'div'=>['style'=>"width: 200px;"]
+                        ]);?>
+                </td>
+                <td >
+                    <?php
+                    echo $this->Form->input('monotributoobrasocial',
+                        [
+                            'label' => 'paga Obra Soc.',
+                            'div'=>['style'=>"width: 200px;"]
+                        ]);?>
+                </td>
             <?php } ?>
-            <?php if( $this->request->data['Impuesto']['id']==4/*Monotributo*/){?>
-            <td>
-                <?php
-                echo $this->Form->input('categoriamonotributo',
-                    [
-                        'label' => 'Categori&oacute;a Monotributo',
-                        'type'=>'select','options'=>$categoriasmonotributos
-                    ]);?>
-            </td>
-            <td >
-                <?php
-                echo $this->Form->input('monotributoadherentes',
-                    [
-                        'label' => 'Adherentes',
-                        'div'=>['style'=>"width: 200px;"]
-                    ]);?>
-            </td>
-            <td >
-            <?php
-                echo $this->Form->input('monotributojubilacion',
-                    [
-                        'label' => 'paga Jubilacion',
-                        'div'=>['style'=>"width: 200px;"]
-                    ]);?>
-            </td>
-            <td >
-                <?php
-                echo $this->Form->input('monotributoobrasocial',
-                    [
-                        'label' => 'paga Obra Soc.',
-                        'div'=>['style'=>"width: 200px;"]
-                    ]);?>
-            </td>
-            <?php } ?>
-            <td width="275"><?php echo $this->Form->input('descripcion', array('label' => 'Descripci&oacute;n'));?></td>   
+                <td width="275"><?php echo $this->Form->input('descripcion', array('label' => 'Descripci&oacute;n'));?></td>
 
             <?php $options  = array(
                     'label' => 'ACEPTAR',

@@ -18,10 +18,16 @@ class Asiento extends AppModel {
 //    601061001 Ventas X1
 //    210401401 IVA Devito Fiscal Gerenal
     public $devengamientoVenta = ['5','601061001','1467'];
-    public $belongsTo = array(
 
-    );
-
+    public $belongsTo = [
+        'Cliente' => [
+            'className' => 'Cliente',
+            'foreignKey' => 'cliente_id',
+            'conditions' => '',
+            'fields' => '',
+            'order' => ''
+        ]
+    ];
     /**
      * hasMany associations
      *

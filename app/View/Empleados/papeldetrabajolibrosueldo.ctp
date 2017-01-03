@@ -245,28 +245,46 @@
         $miempleado['plusvacacional']=$plusvacacional;
         ?>
         <table id="tblLibroSueldo" class="tblInforme" cellspacing="0">
-            <tr><td>Periodo: <?php echo $periodo ?></td></tr>
+            <tr><td colspan="20">Periodo: <?php echo $periodo ?></td></tr>
             <tr>
-                <td>LIBRO DE SUELDOS - LEY 20744 t.c. Art.52 - Hojas moviles</td>
-                <td colspan="2"><?php echo $this->Form->input('hoja')?> </td>
-                <td colspan="2"><?php echo $this->Form->input('tomo')?> </td>
+                <td colspan="20">
+                    LIBRO DE SUELDOS - LEY 20744 t.c. Art.52 - Hojas moviles
+                    <div style="width:50%;float: right">
+                    <?php echo $this->Form->input('hoja',
+                        [
+                            'div'=>false,
+                            'label'=>[
+                                'style'=>'display:inline-block;height: 3px;'
+                            ],
+                            'style'=>'height: 3px;'
+                        ]);
+                        echo $this->Form->input('tomo',[
+                            'div'=>false,
+                            'label'=>[
+                                'style'=>'display:inline-block;height: 3px;'
+                            ],
+                            'style'=>'height: 3px;',
+                        ])?>
+                    </div>
+                </td>
             </tr>
             <tr>
                 <td colspan="20">
                     EMPRESA: <?php echo $empleado['Cliente']['nombre']; ?>
-                    ACTIVIDAD : <?php
-                        foreach ($empleado['Cliente']['Actividadcliente'] as $actividad){
-                            echo $actividad['Actividade']['nombre'];
-                        }  ?>
+                    CUIT: <?php echo $empleado['Cliente']['cuitcontribullente']; ?>
+                    Domicilio: <?php echo $empleado['Domicilio']['calle']; ?>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    Domicilio: <?php echo $empleado['Domicilio']['calle']; ?>
+                <td colspan="20">
+                    ACTIVIDAD : <?php
+                    foreach ($empleado['Cliente']['Actividadcliente'] as $actividad){
+                        echo $actividad['Actividade']['nombre'];
+                    }  ?>
                 </td>
-                <td colspan="2">
-                    CUIT: <?php echo $empleado['Cliente']['cuitcontribullente']; ?>
-                </td>
+            </tr>
+            <tr>
+                <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
             </tr>
             <tr>
                 <td colspan = "20" >
@@ -275,33 +293,29 @@
                 </td>
             </tr><!--5-->
             <tr>
-                <td></td>
-                <td>
+                <td colspan = "20" >
                     * <?php echo $empleado['Domicilio']['Localidade']['Partido']['nombre'] ?>
-                </td>
-                <td>
                     DU N° <?php echo $empleado['Empleado']['dni'] ?>
-                </td>
-                <td>
                     Cargo <?php echo $empleado['Empleado']['categoria'] ?>
+                    <?php echo $empleado['Empleado']['jornada']=='0.5'?"Media":"" ?>
+                    Jornada <?php echo $empleado['Empleado']['jornada']=='0.5'?"":"Completa" ?>
                 </td>
             </tr><!--6-->
             <tr>
-                <td>F. Nacimiento  <?php echo $empleado['Empleado']['nacimiento']; ?></td>
-                <td>F. Ingreso  <?php echo $empleado['Empleado']['fechaingreso']; ?></td>
-                <td>F. Baja  <?php echo $empleado['Empleado']['fechaegreso']; ?></td>
-                <td>
+                <td colspan = "20">F. Nacimiento  <?php echo $empleado['Empleado']['nacimiento']; ?>
+                F. Ingreso  <?php echo $empleado['Empleado']['fechaingreso']; ?>
+                F. Baja  <?php echo $empleado['Empleado']['fechaegreso']; ?>
                     Basico <?php echo $miempleado['basico']; ?>
                 </td>
             </tr><!--7-->
             <tr>
-                <td>MODALIDAD DE CONTRATACION:  <?php echo $empleado['Empleado']['codigoafip']; ?></td>
+                <td colspan = "20"> MODALIDAD DE CONTRATACION:  <?php echo $empleado['Empleado']['codigoafip']; ?></td>
             </tr><!--8-->
             <tr>
                 <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
             </tr><!--9-->
             <tr>
-                <td>
+                <td width="60px">
                     CODIGO
                 </td>
                 <td >
@@ -627,7 +641,7 @@
                     <td colspan="4" align="right">
                        <div style="float:right;"> Firma del Empleado:</div>
                     </td>
-                    <td colspan="10">
+                    <td colspan="10" style="vertical-align: bottom;">
                         <hr width="450px" class="dottedhr" />
                     </td>
                 </tr>
@@ -635,7 +649,9 @@
                     <td colspan="4">
                     </td>
                     <td colspan="10">
+                        <div style="width:100%;text-align: center;">
                         <?php echo $empleado['Empleado']['nombre'];?>
+                        </div>
                     </td>
                 </tr>
             </table>

@@ -16,6 +16,39 @@ class AsientosController extends AppController {
     //no se si tendriamos que guardarlo en una tabla pero por ahora va a servir
 
 	public $components = array('Paginator');
+    public function index($ClienteId,$periodo)
+    {
+        $this->loadModel('Cliente');
+        $this->loadModel('Cuentascliente');
+
+        $clienteOpc = array(
+            'conditions' => array(
+                'Cliente.id'=> $ClienteId
+            ),
+            'recursive' => -1,
+        );
+        $cliente = $this->Cliente->find('first', $clienteOpc);
+        $this->set('cliente',$cliente);
+
+        //$this->Cuentascliente->recursive = -1;
+        $CuentasClientesopt = [
+            'contain' => [
+                'Movimiento'=>[
+//                    'Cuentascliente'=>[
+//                        'Cuenta'=>[],
+//                        'fields' => [
+//                            'Cuentascliente.id',
+//                            'Cuentascliente.nombre'
+//                        ],
+//                    ],
+                ]
+            ],
+            'conditions'=>['Asiento.cliente_id'=>$ClienteId]
+        ];
+        $asientos = $this->Asiento->find('all', $CuentasClientesopt);
+        $this->set('asientos',$asientos);
+    }
+
     public function add() {
         $this->loadModel('Movimiento');
         $this->loadModel('Cuentascliente');

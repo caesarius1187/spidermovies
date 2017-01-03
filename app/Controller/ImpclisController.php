@@ -1383,8 +1383,9 @@ class ImpclisController extends AppController {
 								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
 								'Empleado.fechaegreso is null' ,
 							],
-							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("01-".$periodo)),
+							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
 						),
+						'order'=>['Empleado.cuit']
 					)
 				),
 			),
@@ -1500,7 +1501,6 @@ class ImpclisController extends AppController {
 		);
 		//Impuesto Solicitado (por ef FAESYS)
 		//Impuesto a Liquidar (Por ejemplo SEC)
-
 		$impcliSolicitado = $this->Impcli->find('first', $optionsImpCliSolic);
         $impcliIdAUsar = array();
         if($impcliSolicitado['Impuesto']['delegado']){
@@ -1515,42 +1515,39 @@ class ImpclisController extends AppController {
 		}else{
             $impcliIdAUsar = $impcliSolicitado;
         }
-
         $this->set('impcliSolicitado',$impcliSolicitado);
-        //$this->set('impcliIdAUsar',$impcliIdAUsar);
-
-		$options = array(
-			'contain'=>array(
+		$options = [
+			'contain'=>[
 				'Cliente',
-				'Impuesto'=>array(
-					'Conveniocolectivotrabajo'=>array(
-						'Empleado'=>array(
-							'Puntosdeventa'=>array(
-								'Domicilio'=>array(
-									'Localidade'=>array(
-										'Partido'
-									)
-								)
-							),
-							'Valorrecibo'=>array(
-								'Cctxconcepto'=>array(
+				'Impuesto'=>[
+					'Conveniocolectivotrabajo'=>[
+						'Empleado'=>[
+							'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
+							'Valorrecibo'=>[
+								'Cctxconcepto'=>[
 									'Concepto',
-									'Conveniocolectivotrabajo'=>array(
-
-									)
-								),
-								'conditions'=>array(
+									'Conveniocolectivotrabajo'=>[]
+								],
+								'conditions'=>[
 									'Valorrecibo.periodo'=>$periodo
-								)
-							),
-                            'conditions'=>[
-                                'Empleado.cliente_id'=>$impcliIdAUsar['Impcli']['cliente_id']
-                            ]
-						)
-					),
-				),
-			),
-			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']));
+								]
+							],
+							'conditions'=>[
+								'Empleado.cliente_id' => $impcliIdAUsar['Impcli']['cliente_id'],
+								'OR'=>[
+									'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("28-".$periodo)),
+									'Empleado.fechaegreso is null' ,
+								],
+								'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+							],
+						]
+					],
+				],
+			],
+			'conditions' => [
+				'Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']
+			]
+		];
 		$impcli = $this->Impcli->find('first', $options);
 		$this->set('impcli',$impcli);
 
@@ -1601,9 +1598,16 @@ class ImpclisController extends AppController {
 								'Concepto'
 							),
 							'conditions'=>array(
-								'Valorrecibo.periodo'=>$periodo
+								'Valorrecibo.periodo'=>$periodo,
 							)
 						),
+						'conditions'=>[
+							'OR'=>[
+								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("28-".$periodo)),
+								'Empleado.fechaegreso is null' ,
+							],
+							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+						],
 					)
 				),
 			),

@@ -30,6 +30,8 @@ if(!$mostrarForm) { ?>
     <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["regimen"]?></td>
     <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["descripcion"]?></td>
     <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["numeropadron"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["puntosdeventa"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Conceptosrestante']["numerofactura"]?></td>
     <td class="<?php echo $tdClass?>">
         <?php
         $paramsConceptorestante=$this->data['Conceptosrestante']["id"];
@@ -78,6 +80,8 @@ if(!$mostrarForm) { ?>
 			echo $this->Form->input('regimen');
 			echo $this->Form->input('descripcion');
 			echo $this->Form->input('numeropadron');
+			echo $this->Form->input('puntosdeventa');
+			echo $this->Form->input('numerofactura');
       		echo $this->Form->submit('+', array(
 	              'type'=>'image',
 	              'src' => $this->webroot.'img/check.png',
@@ -86,7 +90,4 @@ if(!$mostrarForm) { ?>
 	              );  
       		echo $this->Form->end();  ?>  
     </td>     
-<?php } ?>                      
-                    
-                      
-        
+<?php } ?>

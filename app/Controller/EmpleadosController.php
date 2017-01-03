@@ -164,6 +164,13 @@ class EmpleadosController extends AppController {
 							),
 							'order'=>array('Cctxconcepto.orden'),
 						),
+						'Impuesto'=>[
+							'Impcli'=>[
+								'conditions'=>[
+									'Impcli.cliente_id'=>$cliid
+								]
+							]
+						],
 					),
 				),
 			'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)

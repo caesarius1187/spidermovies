@@ -94,7 +94,7 @@
                 'label'=> 'Año',
                 'required' => true,
                 'placeholder' => 'Por favor seleccione año',
-                'default' =>  date("Y")
+                'default' =>  date("Y", strtotime("-1 month"))
             )
         ); ?>
       </td><!--Año-->

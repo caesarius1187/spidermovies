@@ -326,4 +326,29 @@ class ConceptosrestantesController extends AppController {
 		$this->render('serializejson');
 
 	}
+	public function exportartxtretencionessifere($cliid,$periodo,$impcli){
+		$this->loadModel('Cliente');
+		$optionsConceptosrestantes=[
+			'contain'=>[
+				'Partido',
+				'Comprobante'
+			],
+			'conditions'=>[
+				'Conceptosrestante.cliente_id'=>$cliid,
+				'Conceptosrestante.periodo'=>$periodo,
+				'Conceptosrestante.impcli_id'=>$impcli,
+				'Conceptosrestante.conceptostipo_id'=>2
+			],
+
+		];
+
+		$conceptosrestantes= $this->Conceptosrestante->find('all',$optionsConceptosrestantes);
+		$optionCliente=[
+			'contain'=>[],
+			'condition'=>['Cliente.id'=>$cliid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
+		$this->set(compact('conceptosrestantes','cliente','cliid','periodo'));
+	}
+
 }

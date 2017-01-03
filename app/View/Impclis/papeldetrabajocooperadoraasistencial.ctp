@@ -19,6 +19,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         $OtrosPagosACuenta = 0 ;
         $Retenciones = 0 ;
 
+        $cantidadDeEmpleados = 0;
         foreach ($impcli['Cliente']['Empleado'] as $empleado) {
             $miempleado = array();
             if(!isset($miempleado['horasDias'])) {
@@ -26,20 +27,20 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 $miempleado['total'] = 0;
             }
             $rem1=0;
-            if(!$empleado['exentocooperadoraasistencial']){
-                foreach ($empleado['Valorrecibo'] as $valorrecibo) {
-                    //Remuneracion 1
-                    if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                        array('27'/*Total Remunerativos C/D*/,'109'/*Total Remunerativos S/D*/), true )
-                    ){
-                        $rem1 += $valorrecibo['valor'];
-                    }
+            foreach ($empleado['Valorrecibo'] as $valorrecibo) {
+                //Remuneracion 1
+                if (
+                in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    array('27'/*Total Remunerativos C/D*/,
+                        '109'/*Total Remunerativos S/D*/), true )
+                ){
+                    $rem1 += $valorrecibo['valor'];
                 }
             }
 
-            $baseimponible+=$rem1;
-
+            if(!$empleado['exentocooperadoraasistencial']) {
+                $baseimponible += $rem1;
+            }
             $miempleado['rem1']=$rem1;
             $empleadoid = $empleado['id'];
             if(!isset($empleadoDatos[$empleadoid]))
@@ -109,7 +110,8 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 <?php
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                     echo "<td>";
-                    echo $empleado['Puntosdeventa']['Domicilio']['Localidade']['Partido']['nombre'];
+                    if(isset($empleado['Puntosdeventa']['Domicilio']))
+                        echo $empleado['Puntosdeventa']['Domicilio']['Localidade']['Partido']['nombre'];
                     echo "</td>";
                 }
                 ?>
@@ -142,15 +144,26 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         Saldo A Favor del Periodo Anterior: $<?php echo number_format($SaldoAFavor, 2, ",", ".") ?></br></br>
 
         <?php
-        $impuestoDeterminado = $impuestoTotal-$Retenciones-$OtrosPagosACuenta-$SaldoAFavor;
+        $title ="";
+        if(count($impcli['Cliente']['Empleado'])<2){
+            //Este Impuesto se empeza a pagar cuando hay al menos 2 empleados
+            $impuestoDeterminado = 0;
+            $title ="El Contribuyente tiene 1 o menos empleados por lo que esta exento de pagar este impuesto";
+        }else{
+            $impuestoDeterminado = $impuestoTotal-$Retenciones-$OtrosPagosACuenta-$SaldoAFavor;
+        }
+        echo '<label title="'.$title.'">';
         echo $impuestoDeterminado<0?'Saldo a Favor':'Impuesto determinado';
-
+        ?>
+        $<?php echo number_format($impuestoDeterminado*-1, 2, ",", ".") ?></br></br>
+        <?php
+        echo "</label>";
         echo $this->Form->input(
             'apagar',
             array(
                 'type'=>'hidden',
                 'id'=> 'apagar',
-                'value'=>$impuestoDeterminado<0?0:$impuestoDeterminado
+                'value'=>$impuestoDeterminado<0?0:$impuestoDeterminado,
             )
         );
         echo $this->Form->input(
@@ -162,20 +175,25 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
             )
         );
 
-        ?>
-        $<?php echo number_format($impuestoDeterminado*-1, 2, ",", ".") ?></br></br>
-        <?php
         $provinciasSubtotal = array();
         foreach ($impcli['Cliente']['Empleado'] as $empleado) {
             $empleadoid = $empleado['id'];
-            $domicilioEmpleadoID = $empleado['Puntosdeventa']['Domicilio']['Localidade']['Partido']['nombre'];
+            $domicilioEmpleadoID = 0;
+            if(isset($empleado['Puntosdeventa']['Domicilio']))
+                $domicilioEmpleadoID = $empleado['Puntosdeventa']['Domicilio']['Localidade']['Partido']['nombre'];
             if(!isset($provinciasSubtotal[$domicilioEmpleadoID])){
                 $provinciasSubtotal[$domicilioEmpleadoID]=0;
             }
-            $provinciasSubtotal[$domicilioEmpleadoID] += $empleadoDatos[$empleadoid]['rem1'];
+            if(!$empleado['exentocooperadoraasistencial']) {
+                $provinciasSubtotal[$domicilioEmpleadoID] += $empleadoDatos[$empleadoid]['rem1'];
+            }
         }
         foreach ($provinciasSubtotal as $key => $item) {
-            $subtotalprov = ($item/$baseimponible*100);
+            if($baseimponible!=0){
+                $subtotalprov = ($item/$baseimponible*100);
+            }else{
+                $subtotalprov = 0;
+            }
             echo $key.": $".number_format($item, 2, ",", ".")." - ".number_format($subtotalprov, 2, ",", ".")." %";
         }
         //Debugger::dump($provinciasSubtotal);

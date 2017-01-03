@@ -18,13 +18,20 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         $nombrecuotaSindical1 = "";
         $nombrecuotaSindical2 = "";
         $nombrecuotaSindical3 = "";
+        $nombrecuotaSindical4 = "";
+
+        $pagaINACAP = false;
+
 
         foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+            /*Aca vamos a ver si para o no paga algunas contribuciones sindicales segun que convenio tenga*/
+
             foreach ($conveniocolectivo['Empleado'] as $empleado) {
                 $jornada = 0;
                 $horasDias = 0;
                 $afiliadoSindicato = 0;
                 $remuneracionCD = 0;
+                $remuneracionSD = 0;
                 $remuneracionSDExceptoIndemnizatorio = 0;
                 $remuneracionSDIndemnizatorio = 0;
                 $remuneracionTotal = 0;
@@ -36,12 +43,14 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 $cuotasindical1 = 0;
                 $cuotasindical2 = 0;
                 $cuotasindical3 = 0;
+                $cuotasindical4 = 0;
 
                 if (!isset($miempleado['horasDias'])) {
                     $miempleado['jornada'] = 0;
                     $miempleado['horasDias'] = 0;
                     $miempleado['afiliadoSindicato'] = false;
                     $miempleado['remuneracionCD'] = 0;
+                    $miempleado['remuneracionSD'] = 0;
                     $miempleado['remuneracionSDExceptoIndemnizatorio'] = 0;
                     $miempleado['remuneracionSDIndemnizatorio'] = 0;
                     $miempleado['remuneracionTotal'] = 0;
@@ -51,6 +60,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     $miempleado['cuotasindical1'] = 0;
                     $miempleado['cuotasindical2'] = 0;
                     $miempleado['cuotasindical3'] = 0;
+                    $miempleado['cuotasindical4'] = 0;
                 }
                 foreach ($empleado['Valorrecibo'] as $valorrecibo) {
                     //Horas Diarias
@@ -71,6 +81,13 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                         array('27'/*Total Remunerativos C/D*/), true)
                     ) {
                         $remuneracionCD += $valorrecibo['valor'];
+                    }
+                    //Remuneracion SD
+                    if (
+                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                        array('109'/*Total Remunerativos S/D*/), true)
+                    ) {
+                        $remuneracionSD += $valorrecibo['valor'];
                     }
                     //Remuneracion SD Excepto Indemnizatorios
                     if (
@@ -136,6 +153,13 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     ) {
                         $cuotasindical3 += $valorrecibo['valor'];
                     }
+                    //Total Cuota Sindical 4
+                    if (
+                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                        array('134'/*Cuota Sindical Extra 4	*/), true)
+                    ) {
+                        $cuotasindical4 += $valorrecibo['valor'];
+                    }
                     //Nombre Cuota Sindical
                     if (
                     in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -164,10 +188,19 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     ) {
                         $nombrecuotaSindical3 = $valorrecibo['Cctxconcepto']['nombre'];
                     }
+                    //Nombre Cuota Sindical 4
+                    if (
+                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                        array('134'/*Cuota extra Sindical 4	*/), true)
+                    ) {
+                        $nombrecuotaSindical4 = $valorrecibo['Cctxconcepto']['nombre'];
+                    }
                 }
                 $miempleado['jornada'] = $jornada;
                 $miempleado['horasDias'] = $horasDias;
                 $miempleado['afiliadoSindicato'] = $afiliadoSindicato;
+                $miempleado['remuneracionCD'] = $remuneracionCD;
+                $miempleado['remuneracionSD'] = $remuneracionSD;
                 $miempleado['remuneracionSDExceptoIndemnizatorio'] = $remuneracionSDExceptoIndemnizatorio;
                 $miempleado['remuneracionSDIndemnizatorio'] = $remuneracionSDIndemnizatorio;
                 $miempleado['remuneracionTotal'] = $remuneracionTotal;
@@ -177,6 +210,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 $miempleado['cuotasindical1'] = $cuotasindical1;
                 $miempleado['cuotasindical2'] = $cuotasindical2;
                 $miempleado['cuotasindical3'] = $cuotasindical3;
+                $miempleado['cuotasindical4'] = $cuotasindical4;
 
                 $empleadoid = $empleado['id'];
                 $empleadoDatos[$empleadoid] = $miempleado;
@@ -203,7 +237,6 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 			}
 			unset($saldosafavor);
 		}
-		//Debugger::dump($empleadoDatos);
 		?>
 		<table id="tblDatosAIngresar" class="tblInforme tbl_border" cellspacing="0">
 			<tr>
@@ -482,7 +515,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
             <tr>
                 <?php
                 $totalCuotaSindical3 = 0;
-                if($nombrecuotaSindical3!=""){
+                if($nombrecuotaSindical3!="") {
                     echo "<td>";
                     echo $nombrecuotaSindical3;
                     echo "</td>";
@@ -496,10 +529,147 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                         $totalCuotaSindical3 += $empleadoDatos[$empleadoid]['cuotasindical3'];
                         echo "</td>";
                     }
-                }?>
-                <td><?php  echo number_format($totalCuotaSindical3, 2, ",", "."); ?></td>
-                <?php
                 }
+                ?>
+                <td><?php  echo number_format($totalCuotaSindical3, 2, ",", "."); ?></td>
+                <?php } ?>
+            </tr>
+            <tr>
+                <?php
+                $totalCuotaSindical4 = 0;
+                if($nombrecuotaSindical4!="") {
+                    echo "<td>";
+                    echo $nombrecuotaSindical4;
+                    echo "</td>";
+
+                foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                    foreach ($conveniocolectivo['Empleado'] as $empleado){
+                        $empleadoid = $empleado['id'];
+                        //en este primer loop vamos a calcular todos los siguientes totales
+                        echo "<td>";
+                        echo $empleadoDatos[$empleadoid]['cuotasindical4'];
+                        $totalCuotaSindical4 += $empleadoDatos[$empleadoid]['cuotasindical4'];
+                        echo "</td>";
+                    }
+                }
+                ?>
+                <td><?php  echo number_format($totalCuotaSindical4, 2, ",", "."); ?></td>
+                <?php } ?>
+            </tr>
+            <tr>
+                <td colspan="150">
+                    Contribuciones Sindicales</td>
+            </tr>
+            <?php
+            $totalContribucion = 0;
+            switch ($impcliSolicitado['Impuesto']['id']) {
+                case '11':/*SEC*/
+
+                    break;
+                case '23':/*FAECYS*/
+                    break;
+                case '24':/*INACAP*/
+                    ?>
+                    <tr>
+                        <td>
+                            INACAP
+                        </td>
+                        <?php
+                            foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                                foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                    $empleadoid = $empleado['id'];
+                                    //en este primer loop vamos a calcular todos los siguientes totales
+                                    echo "<td>";
+                                    echo 64.53;
+                                    $totalContribucion += 64.53;
+                                    echo "</td>";
+                                }
+                            }
+                        ?>
+                        <td>
+                            <?php echo number_format($totalContribucion, 2, ",", "."); ?>
+                        </td>
+                    </tr>
+                <?php
+                    break;
+                case '25':/*UTHGRA*/
+//                    UTHGRA Seguro Sepelio y Vida
+//                    UTHGRA Fdo Convenio FEHGRA
+//                    UTHGRA Contr. Asist Sind - Salta
+//                    UTHGRA Contribución Especial
+                    ?>
+                    <tr>
+                        <td>
+                            UTHGRA Seguro Sepelio y Vida
+                        </td>
+                        <?php
+                        $totalCuotasindical1 =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+                                //en este primer loop vamos a calcular todos los siguientes totales
+                                echo "<td>";
+                                echo $empleadoDatos[$empleadoid]['cuotasindical1'];
+                                $totalCuotasindical1 += $empleadoDatos[$empleadoid]['cuotasindical1'];
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td>
+                            <?php echo number_format($totalCuotasindical1, 2, ",", "."); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            UTHGRA Fdo Convenio FEHGRA
+                        </td>
+                        <?php
+                        $totalConvenioFEGHRA =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+                                //en este primer loop vamos a calcular todos los siguientes totales
+                                echo "<td>";
+                                $convFeg = $empleadoDatos[$empleadoid]['remuneracionSD']+$empleadoDatos[$empleadoid]['remuneracionCD'];
+                                $convFeg = $convFeg*0.02;
+                                echo number_format($convFeg, 2, ",", ".");
+                                $totalConvenioFEGHRA += $convFeg ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td>
+                            <?php echo number_format($totalConvenioFEGHRA, 2, ",", "."); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            UTHGRA Contribución Especial
+                        </td>
+                        <?php
+                        $totalContribucionEspecialUTHGRA =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+                                //en este primer loop vamos a calcular todos los siguientes totales
+                                echo "<td>";
+                                $contUth = 0;
+                                echo number_format($contUth, 2, ",", ".");
+                                $totalContribucionEspecialUTHGRA += $contUth ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td>
+                            <?php echo number_format($totalContribucionEspecialUTHGRA, 2, ",", "."); ?>
+                        </td>
+                    </tr>
+                    <?php
+                    break;
+
+            }
+            ?>
+                <?php
                 //Aca vamos a insertar la logica de Cuando y con que datos generar el input @APagar@ que vamos a usar
                 //despues en JavaScript para cargar el importe en el input @APagar@ del evento impuesto.
                 //Tenemos que ver que impuesto(sindicato) es y en funcion de eso vamos a sacar tal o cual
@@ -508,15 +678,35 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 // una configuracion extra vamos a ir agregando caso por caso
                 $impuestoDeterminado = 0;
                 switch ($impcliSolicitado['Impuesto']['id']){
-                    case '11':
-                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2;
+                    case '11':/*SEC*/
+                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
                         break;
-                    case '23':
+                    case '23':/*FAECYS*/
                         $impuestoDeterminado = $totalCuotaSindical3;
+                        break;
+                    case '24':/*INACAP*/
+                        $impuestoDeterminado = $totalContribucion;
+                        break;
+                    case '25':/*UTHGRA*/
+                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1;
+                        $impuestoDeterminado += $totalCuotasindical1+$totalConvenioFEGHRA+$totalContribucionEspecialUTHGRA;
                         break;
                     default:
                         $impuestoDeterminado = $totalCuotaSindical;
                     break;
+                    /*
+                     * INACAP
+                        Seg Vida Oblig Comercio
+                        UTHGRA Seguro Sepelio y Vida
+                        UTHGRA Fdo Convenio FEHGRA
+                        UTHGRA Contribución Especial
+                        Total UTHGRA
+                        UOCRA Aporte solidario extraordinario
+                        UOCRA Fdo Cese Laboral
+                        UOCRA Aporte FICS
+                        Total UOCRA
+                        UOM Seguro Vida y Sepelio
+*/
                 }
                 echo $this->Form->input(
                     'apagar',
@@ -535,13 +725,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     )
                 );*/
                 ?>
-            </tr>
-            <tr>
-                <td colspan="150">Contribuciones Sindicales</td>
-            </tr>
-            <?php
 
-            ?>
 		</table>
 	</div>
 	<div id="divLiquidarSindicatos">

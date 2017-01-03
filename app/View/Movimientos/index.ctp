@@ -4,95 +4,91 @@
 	});
 	function agregarMovimiento()
 	{
-		var CuentaCliente = $("#chsnCuentasClientes").val();
-		var sDebe = $("#txtDebe").val();
-		var sHaber = $("#txtHaber").val();
-		alert(CuentaCliente);
+		var tablaAsiento = $("#tablasiento");
+		/*Sacar numero de movimiento siguiente*/
+		/*Tengo que agregar cuentacliente_id*/
+		/*Tengo que agregar debe*/
+		/*Tengo que agregar haber*/
+
 	}
 </script>
-<div style="width:98%; margin:1%; height:20px">
-	<div style="float:left"> Cliente: &nbsp;</div> 
-	<div style="float:left">
-		<?php echo $cliente['Cliente']['nombre']; ?>
-		<input id="hdnClienteId" type="hidden" value="<?php echo $cliente['Cliente']['id']; ?>" />
-	</div>
+		<?php
+		$asiento = $asientos[0];
+		?>
+<div class="index" style="float: none;">
+	<h3>Agregar movimiento al asiento</h3>
+	<?php
+	echo $this->Form->create('Movimiento',['class'=>'formTareaCarga']);
+	echo $this->Form->input('cuentascliente',[
+		'type'=>'select',
+		'class'=>'chosen-select',
+		'style'=>'width:80px'
+	]);
+	echo $this->Form->input('debe');
+	echo $this->Form->input('haber');
+	echo $this->Form->end('Agregar');
+	?>
 </div>
-<div class="index">
-	<table>
-	<tr>
-		<td style="text-align: left;">
-			<h2><?php echo __('Movimientos'); ?></h2>
-		</td>	
-		<!--
-		<td style="text-align: right; cursor:pointer;" title="Agregar Movimiento">		
-		<div class="fab blue">
-            <core-icon icon="add" align="center">
-                
-                <?php echo $this->Form->button('+', 
-                                            array('type' => 'button',
-                                                'class' =>"btn_add",
-                                                'onClick' => "agregarMovimiento()"
-                                                )
-                        );?> 
-            </core-icon>
-            <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
-       	</div>
-		</td>
-		-->
-	</tr>
-	</table>	
-	<table id="tblListaMovimientos" cellpadding="0" cellspacing="0" border="0" class="display">
-		<thead>
-			<tr>
-				<th>Asiento</th>
-				<th>fecha Asiento</th>
-				<th>Cuenta</th>
-				<th>Debe</th>
-				<th>Haber</th>				
-				<th class="actions" style="text-align:center"><?php echo __('Acciones'); ?></th>
-			</tr>
-		</thead>
-		<tfoot>
-			<tr>
-				<th></th>
-				<th></th>
-				<th></th>
-                <th></th>  
-                <th></th>				
-                <th></th>				
-			</tr>
-		</tfoot>
-		<tbody>
-		<?php foreach ($asientos as $asiento)
-		{ 
+<div class="index" style="float: none;">
+	<h3>Modificar Asiento</h3>
+	<?php
+	echo $this->Form->create('Asiento',['class'=>'formTareaCarga']);
+	echo $this->Form->input('Asiento.0.id',[
+		'value'=>$asiento['Asiento']['id'],
+		'style'=>"width:auto"
+		]
+	);
+	echo $this->Form->input('Asiento.0.nombre',
+		['value'=>$asiento['Asiento']['nombre'],
+			'style'=>"width:300px"]);
+	echo $this->Form->input('Asiento.0.descripcion',
+		['value'=>$asiento['Asiento']['descripcion'],
+			'style'=>"width:300px"]);
+	echo $this->Form->input('Asiento.0.fecha',
+		['value'=>$asiento['Asiento']['fecha'],
+			'style'=>"width:80px"]);
+	echo "</br>";
+	?>
+
+	<table id="tablaasiento"><?php
+	foreach ($asiento['Movimiento'] as $m => $movimiento){
 		?>
-            <tr class="rowasiento">
-                <td>
-                    <?php echo h($asiento['Asiento']['descripcion']); ?>
-                </td>
-                <td>
-                    <?php echo h($asiento['Asiento']['fecha']); ?>
-                </td>
-            </tr>
-            <?php
-            foreach ($asientos as $asiento){ ?>
-                <tr class="rowmovimientos">
-                    <td>
-                        <?php echo h($movimiento['Cuentascliente']['nombre']); ?>
-                    </td>
-                    <td>
-                        <?php echo h($movimiento['Movimiento']['debe']); ?>
-                    </td>
-                    <td>
-                        <?php echo h($movimiento['Movimiento']['haber']); ?>
-                    </td>
-                    <td class="actions">
-                        <?php //echo $this->Form->button('Editar', array('onClick' => 'editarUsuario('')' )); ?>
-                    </td>
-                </tr>
-            <?php }
-		}
+		<tr>
+			<td style="width: 300px"><?php
+		echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.id',
+			['value'=>$movimiento['id']]);
+		echo $this->Form->label('nombreCuenta',
+				$movimiento['Cuentascliente']['nombre'],
+				[
+					'style'=>"display:initial",
+				]
+			);
+				?>
+			</td>
+			<td><?php
+		echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.debe',
+			['value'=>$movimiento['debe'],
+				'style'=>"width:auto",
+				'label'=>false]);
+		echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.haber',
+			['value'=>$movimiento['haber'],
+				'style'=>"width:auto",
+				'label'=>false]);
 		?>
-		</tbody>
-	</table>		
+			</td>
+		</tr>
+		<?php
+	}
+	?>
+		<tr>
+			<td colspan="20">
+				<?php
+				echo $this->Form->end('Modificar')
+				?>
+			</td>
+		</tr>
+	</table>
+	<?php
+	$this->Form->input('nextmovimiento',['value'=>$m]);
+	?>
 </div>

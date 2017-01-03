@@ -1717,10 +1717,10 @@
                 ));
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarasuss['cuenta_id'],'id'=>'cuenta'.$asientoestandarasuss['cuenta_id']]);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['readonly'=>'readonly','value'=>$asientoestandarasuss['Cuenta']['numero'],'style'=>'width:82px']);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['readonly'=>'readonly','value'=>0,]);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['readonly'=>'readonly','value'=>0,]) . "</br>";
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarasuss['Cuenta']['numero'],'style'=>'width:82px']);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Cuenta','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['label'=>($i!=0)?false:'Debe','readonly'=>'readonly','value'=>0,]);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['label'=>($i!=0)?false:'Haber','readonly'=>'readonly','value'=>0,]) . "</br>";
                 $i++;
             }
             
@@ -1780,10 +1780,10 @@
                     ));
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['readonly' => 'readonly', 'type' => 'hidden', 'value' => $cuentaclienteid]);
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuenta_id', ['readonly' => 'readonly', 'type' => 'hidden', 'orden' => $i, 'value' => $cuentaaportesindicato, 'id' => 'cuenta' . $cuentaaportesindicato]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['readonly' => 'readonly', 'value' => 0,]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['readonly' => 'readonly', 'value' => $valor,]). "</br>";
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['label'=>($i!=0)?false:'Numero','readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['label'=>($i!=0)?false:'Cuenta','readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['label'=>($i!=0)?false:'Debe','readonly' => 'readonly', 'value' => 0,]);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['label'=>($i!=0)?false:'Haber','readonly' => 'readonly', 'value' => $valor,]). "</br>";
                     $i++;
                 }
             }
@@ -1836,10 +1836,10 @@
                     ));
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['readonly' => 'readonly', 'type' => 'hidden', 'value' => $cuentaclienteid]);
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuenta_id', ['readonly' => 'readonly', 'type' => 'hidden', 'orden' => $i, 'value' => $cuentacontribucionindicato, 'id' => 'cuenta' . $cuentacontribucionindicato]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', [($i!=0)?false:'Numero','readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', [($i!=0)?false:'Nombre','readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']) ;
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [($i!=0)?false:'Debe','readonly' => 'readonly', 'value' => $debe,]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [($i!=0)?false:'Haber','readonly' => 'readonly', 'value' => $haber,]). "</br>";
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['label'=>($i!=0)?false:'Numero','readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['label'=>($i!=0)?false:'Nombre','readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']) ;
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['label'=>($i!=0)?false:'Debe','readonly' => 'readonly', 'value' => $debe,]);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['label'=>($i!=0)?false:'Haber','readonly' => 'readonly', 'value' => $haber,]). "</br>";
                     $i++;
                 }
             }

@@ -965,10 +965,10 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     ));
                     echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
                     echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarCM['cuenta_id'],'id'=>'cuenta'.$asientoestandarCM['cuenta_id']]);
-                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',[($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarCM['Cuenta']['numero'],'style'=>'width:82px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',[($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[($i!=0)?false:'Debe','readonly'=>'readonly','value'=>0,]);
-                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[($i!=0)?false:'Haber','readonly'=>'readonly','value'=>0,])."</br>";
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarCM['Cuenta']['numero'],'style'=>'width:82px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['label'=>($i!=0)?false:'Debe','readonly'=>'readonly','value'=>0,]);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['label'=>($i!=0)?false:'Haber','readonly'=>'readonly','value'=>0,])."</br>";
                     $i++;
                 }
                 echo $this->Form->submit('Contabilizar',['style'=>'display:none']);

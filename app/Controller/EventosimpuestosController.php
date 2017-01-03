@@ -341,8 +341,7 @@ class EventosimpuestosController extends AppController {
 			$anoperiodo = substr($periodo, 3, 7);
 			switch ( $mesperiodo) {
 				case '12':
-					
-					if($myImpCli["Impuesto"]["organismo"]=='Sindicato'){
+					if($myImpCli["Impuesto"]["organismo"]=='sindicato'){
 						$fchvto = '15-01-'.($anoperiodo+1);
 						$fchvtoOrigen="VencimientoRecomendado";
 					}else{
@@ -356,7 +355,7 @@ class EventosimpuestosController extends AppController {
 						);
 						$vencimiento = $this->Vencimiento->find('first',$optionsVencimientoImpuesto);
 						if(isset($vencimiento['Vencimiento']['p01'])&&$vencimiento['Vencimiento']['p01']!=0){
-							$strfchvto = strtotime($vencimiento['ano'].'-01-'.$vencimiento['Vencimiento']['p01']);
+							$strfchvto = strtotime($vencimiento['Vencimiento']['ano'].'-01-'.$vencimiento['Vencimiento']['p01']);
 							$fchvto = date('d-m-Y',$strfchvto);
 							$fchvtoOrigen="VencimientoRecomendado";
 						}

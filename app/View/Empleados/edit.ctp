@@ -34,6 +34,7 @@
 	echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
 	echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
 	echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial'));
+	echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
 	echo $this->Form->label("Liquidaciones:");
 	echo $this->Form->input('liquidaprimeraquincena',array('label'=>'Primera Quincena'));
 	echo $this->Form->input('liquidasegundaquincena',array('label'=>'Segunda Quincena'));

@@ -68,7 +68,9 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 		});
 		$(document).ajaxComplete(function () {
 			$("#loading").css('visibility','hidden')
-
+		});
+		$( document ).ajaxError(function( event, request, settings ) {
+			callAlertPopint("La sesion ha finalizado. Por favor inicie sesion en otra pestaña y continue.");
 		});
 		$('#ui-datepicker-div').hide();
 	});

@@ -9,7 +9,7 @@
         var elHtml = document.getElementById(elId).innerHTML;
         var elTXT = elHtml.replace(/(?:\r\n|\r|\n)/g, '<br />');
         elTXT = elTXT.replace(/&nbsp;/gi," ");
-        elTXT = elTXT.replace(/<br\s*\/?>/mg,"\n");
+        elTXT = elTXT.replace(/<br\s*\/?>/mg,"\r\n");
 
         var link = document.createElement('a');
         mimeType = mimeType || 'text/plain';
@@ -66,7 +66,7 @@
 //        $linecompra['comprobantenumero']=substr($line, 16,20);
         $lineaCompra .= str_pad($compra['Compra']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
 //        $linecompra['numerodespacho']=substr($line, 36,16);
-        $lineaCompra .= str_pad(" ", 76, "&nbsp", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(" ", 76, " ", STR_PAD_LEFT);
 //        $linecompra['codigodocumento']=substr($line, 52,2);
         $lineaCompra .= str_pad(80, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
 //        $linecompra['identificacionnumero']=substr($line, 54,20);
@@ -74,8 +74,7 @@
         $identificacionnumero = $compra['Provedore']['cuit'];
         $lineaCompra .= str_pad($identificacionnumero, 20, "0", STR_PAD_LEFT);
 //        $linecompra['nombre']=substr($line, 74,30);
-        $nombreamostrar=    str_replace(" ","&nbsp",$nombreamostrar);
-        $lineaCompra .= str_pad($nombreamostrar, 30, "&nbsp", STR_PAD_RIGHT);
+        $lineaCompra .= str_pad($nombreamostrar, 30, " ", STR_PAD_RIGHT);
 //        $linecompra['importetotaloperacion']=substr($line, 104,13).'.'.substr($line, 117, 2);
         $lineaCompra .= str_pad(number_format($compra['Compra']['total'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importeconceptosprecionetogravado']=substr($line, 119,13).'.'.substr($line, 132, 2);
@@ -112,7 +111,7 @@
         $lineaCompra .= str_pad("0", 11, "0", STR_PAD_LEFT);
 //       TODO: No estamos guardando cuit emisor en compras
 //        $linecompra['denominacion']=substr($line, 280,30);
-        $lineaCompra .= str_pad(" ", 29*5+1, "&nbsp", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(" ", 30, " ", STR_PAD_LEFT);
 //       TODO: No estamos guardando cuit emisor en compras
 //        $linecompra['ivacomicion']=substr($line, 310,15);
         $lineaCompra .= str_pad("0", 15, "0", STR_PAD_LEFT);

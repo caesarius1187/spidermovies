@@ -586,7 +586,13 @@ class ClientesController extends AppController {
 		   						'Actividade',
 		   					),
 		   					'Comprobante'=>[
-								'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre','codigo']
+								'fields'=>[
+									'id',
+									'tipodebitoasociado',
+									'tipocreditoasociado',
+									'nombre',
+									'abreviacion',
+									'codigo']
 		   					],
 			   				'conditions' => array(					            	
 								'Venta.periodo'=>$periodo
@@ -609,7 +615,7 @@ class ClientesController extends AppController {
                                     'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
                                     'Empleado.fechaegreso is null' ,
                                 ],
-                                'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("01-".$periodo)),
+                                'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
 							),
 						),
 				   		'Conceptosrestante'=>array(			
