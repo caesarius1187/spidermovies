@@ -67,7 +67,7 @@
             }else{
                 $lineaCompra .= "0";
             }
-            $lineaCompra .= str_pad(number_format($compra['Compra']['iibbpercep'], 2, ",", ""), 14, "0", STR_PAD_LEFT);
+            $lineaCompra .= str_pad(number_format($compra['Compra']['iibbpercep'], 2, ".", ""), 14, "0", STR_PAD_LEFT);
         echo $lineaCompra."</br>";
     }
     ?></div>

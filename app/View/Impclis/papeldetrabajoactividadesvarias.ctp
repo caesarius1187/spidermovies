@@ -41,47 +41,48 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
         </tr>
     </table>
 	</div> <!--End Clietenes_avance-->
-	<?php if (count($provinciasVentasDiff)!=0||count($provinciasComprasDiff)!=0){ ?>
-<div class="index">
-	Las localidades dadas de alta, actualmente, son: </br><?php 
-	foreach ($provinciasActivadas as $key => $value) {
-		 echo $this->Html->image('test-pass-icon.png',array(
-							'alt' => 'open',
-							'class' => 'btn_exit',						
-                            )
-	 	);
-		echo $value."</br>";
-	}
-	if(count($provinciasVentasDiff)!=0){	
-	?>
-		Las localidades que no estan dadas de alta, y que tienen ventas son: </br>
-		<?php 
-		foreach ($provinciasVentasDiff as $key => $value) {
-			echo $this->Html->image('test-fail-icon.png',array(
-							'alt' => 'open',
-							'class' => 'btn_exit',						
-                            )
-	 		);
-			echo $value."</br>";
-		}
-	}
-	?></br>
 	<?php
-	if(count($provinciasComprasDiff)!=0){	
-	?>
-		Las localidades que no estan dadas de alta, y que tienen compras son: </br>
-		<?php 
-		foreach ($provinciasComprasDiff as $key => $value) {
-			echo $this->Html->image('test-fail-icon.png',array(
-							'alt' => 'open',
-							'class' => 'btn_exit',						
-                            )
-	 		);
+	if (count($provinciasVentasDiff)!=0||count($provinciasComprasDiff)!=0){ ?>
+	<div class="index">
+		Las localidades dadas de alta, actualmente, son: </br><?php
+		foreach ($provinciasActivadas as $key => $value) {
+			 echo $this->Html->image('test-pass-icon.png',array(
+								'alt' => 'open',
+								'class' => 'btn_exit',
+								)
+			);
 			echo $value."</br>";
 		}
-	}
-	?></br>
-	Por favor haga click <?php echo
+		if(count($provinciasVentasDiff)!=0){
+		?>
+			Las localidades que no estan dadas de alta, y que tienen ventas son: </br>
+			<?php
+			foreach ($provinciasVentasDiff as $key => $value) {
+				echo $this->Html->image('test-fail-icon.png',array(
+								'alt' => 'open',
+								'class' => 'btn_exit',
+								)
+				);
+				echo $value."</br>";
+			}
+		}
+		?></br>
+		<?php
+		if(count($provinciasComprasDiff)!=0){
+		?>
+			Las localidades que no estan dadas de alta, y que tienen compras son: </br>
+			<?php
+			foreach ($provinciasComprasDiff as $key => $value) {
+				echo $this->Html->image('test-fail-icon.png',array(
+								'alt' => 'open',
+								'class' => 'btn_exit',
+								)
+				);
+				echo $value."</br>";
+			}
+		}
+		?></br>
+		Por favor haga click <?php echo
 							$this->Html->link("aca",
 												array(
 													'controller' => 'clientes', 
@@ -94,7 +95,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 									); 	
 						?>	
 			          y dé de alta las localidades listadas anteriormente para poder visualizar el informe correctamente</br>
-</div>
+	</div>
 <?php } else { 
 	$provinciasArecorrer = array();
 	$totalesProvincia = array();
@@ -143,7 +144,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 		}	
 	}
 	?>
-	<div class="index" style="overflow:scroll;">
+	<div class="index" style="overflow:auto;">
 		<?php
 		$arrayBasesProrrateadas=array();
 		foreach ($provinciasArecorrer as $miProvincia) { 
@@ -169,6 +170,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 							$baseprorrateadaImpCLI=$basesprorrateada['baseprorrateada'];
 							echo "<td >".number_format($baseprorrateadaImpCLI, 2, ",", ".")."</td>";
 							$arrayBasesProrrateadas[$miProvincia][$actividadcliente['Actividade']['id']]=$baseprorrateadaImpCLI;
+							break;
 						}
 					}
 			 	}
@@ -538,7 +540,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				}
 			}
 			//ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
-			echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
+			echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','controller'=>'asientos','action'=>'add']);
 			echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
 			$d = new DateTime( '01-'.$periodo );
 

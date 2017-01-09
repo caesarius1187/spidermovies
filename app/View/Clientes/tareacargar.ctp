@@ -273,7 +273,6 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               ));
 
             if($tieneMonotributo=='1'){
-
               echo $this->Form->input('alicuota',array(
                   'options' => $alicuotas,
                   'style' => 'width:60px',
@@ -301,11 +300,13 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 ));
                 echo $this->Form->input('tipodebito',array(
                     'options' => $tipodebitos,
-                    'type'=>'hidden',
-                    'style' => 'width:80px'
+                    'value' => 'Debito Fiscal',
+                    'default' => 'Debito Fiscal',
+//                    'type'=>'text',
+                    'style' => 'width:80px',
+                    'div'=>['style'=>'display:none']
                 ));
             }else{
-
                 echo $this->Form->input('alicuota',array(
                   'options' => $alicuotas,
                   'class' => 'chosen-select',

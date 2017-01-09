@@ -915,7 +915,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     }
                 }
                 //ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
-                echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
+                echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','controller'=>'asientos','action'=>'add']);
                 echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
 				$d = new DateTime( '01-'.$periodo );
                 echo $this->Form->input('Asiento.0.fecha',array(

@@ -311,158 +311,159 @@
     </tr>
     <?php } 
     }
-?>
+
     
 
-    <tr>
-        <td id="tdTotGral" colspan="3">
-            <table cellspacing="0" style='padding:0px 9px 0px;width: inherit;' id="tblit">
-                    <tr>    
-                        <td style='border:1px solid #333;text-align:left;' width="85"><span id="lblit" >Vencimientos</span></td>
-                        <td style='border:1px solid #333;text-align:left;' width="115"><span id="lblit" >A Pagar</span></td>
-                        <td style='border:1px solid #333;text-align:left;' width="115"><span id="lblit" >Pagado</span></td>
-                        <td style='border:1px solid #333;text-align:left;' width="115"><span id="lblit" >Deuda</span></td>
-                    </tr>  
-                    <tr>
-                        <td style='border:1px solid #333;text-align:left;text-align:left'><span id="lblit">Hasta d&iacute;a 2</span></td>
-                        <?php
-                         
-                        $planificadoAl2=0;
-                        $pagadoAl2=0;
-
-                        $planificadoAl7=0;
-                        $pagadoAl7=0;
-
-                        $planificadoAl12=0;
-                        $pagadoAl12=0;
-
-                        $planificadoAl18=0;
-                        $pagadoAl18=0;
-                        foreach ($grupoclientesActual as $gcliActual ) {
-                            foreach ($gcliActual['Cliente'] as $cliente) {
-                                foreach ($cliente['Impcli'] as $impcli) {
-                                    if (count($impcli['Periodosactivo'])>0) {
-                                        foreach ($impcli['Eventosimpuesto'] as $eventosimpuesto) {
-                                            if (date("d", strtotime($eventosimpuesto['fchvto'])) < 07) {
-                                                //menor que 07
-                                                $planificadoAl2 += $eventosimpuesto['montovto'];
-                                                $pagadoAl2 += $eventosimpuesto['montorealizado'];
-                                            } else if (date("d", strtotime($eventosimpuesto['fchvto'])) < 12) {
-                                                //menor que 12 y mayor que 07
-                                                $planificadoAl7 += $eventosimpuesto['montovto'];
-                                                $pagadoAl7 += $eventosimpuesto['montorealizado'];
-                                            } else if (date("d", strtotime($eventosimpuesto['fchvto'])) < 18) {
-                                                //menor que 18 y mayor que 12
-                                                $planificadoAl12 += $eventosimpuesto['montovto'];
-                                                $pagadoAl12 += $eventosimpuesto['montorealizado'];
-                                            } else {
-                                                //mayor que 18
-                                                $planificadoAl18 += $eventosimpuesto['montovto'];
-                                                $pagadoAl18 += $eventosimpuesto['montorealizado'];
-                                            }
-                                        }
-                                    }
-                                }
-                                foreach ($cliente['Plandepago'] as $plandepago) { 
-                                    if(date("d",strtotime($plandepago['fchvto']))<07){
-                                        //menor que 07
-                                        $planificadoAl2+=$plandepago['montovto'];
-                                        $pagadoAl2+=$plandepago['montorealizado'];
-                                    }else if(date("d",strtotime($plandepago['fchvto']))<12){
-                                        //menor que 12 y mayor que 07
-                                        $planificadoAl7+=$plandepago['montovto'];
-                                        $pagadoAl7+=$plandepago['montorealizado'];
-                                    } else if(date("d",strtotime($plandepago['fchvto']))<18){
-                                            //menor que 18 y mayor que 12
-                                            $planificadoAl12+=$plandepago['montovto'];
-                                            $pagadoAl12+=$plandepago['montorealizado'];
-                                    }else {
-                                        //mayor que 18
-                                        $planificadoAl18+=$plandepago['montovto'];
-                                        $pagadoAl18+=$plandepago['montorealizado'];
-                                    }
-                                } 
-                            }
-                        }?>                                                                                        
-                        <td style='border:thin solid #333 ;text-align:right;'>
-                            <span id="lblit" ><?php echo "$".number_format($planificadoAl2, 2, ",", ".")?></span>
-                        </td>
-                        <td style='border:thin solid #333 ;text-align:right;'> 
-                            <span id="lblit" ><?php echo "$".number_format($pagadoAl2, 2, ",", ".")?></span>
-                        </td>
-                        <td style='border:thin solid #333 ;text-align:right;'> 
-                            <span id="lblit" ><?php 
-                            $diferencia2 = $planificadoAl2 - $pagadoAl2;
-                            echo "$".number_format($diferencia2, 2, ",", ".")?></span>
-                        </td>                                                                  
-                    </tr>
-                    <tr>
-                        <td style='border:1px solid #333;text-align:left;text-align:left'>
-                            <span id="lblit">
-                                Hasta d&iacute;a 7
-                            </span>
-                        </td>
-                                                                                                                  
-                        <td style='border:thin solid #333 ;text-align:right;'>
-                            <span id="lblit" ><?php echo "$".number_format($planificadoAl7, 2, ",", ".")?></span>
-                        </td>
-                        <td style='border:thin solid #333 ;text-align:right;'> 
-                            <span id="lblit" ><?php echo "$".number_format($pagadoAl7, 2, ",", ".")?></span>
-                        </td>
-                        <td style='border:thin solid #333 ;text-align:right;'> 
-                            <span id="lblit" ><?php $diferencia7 = $planificadoAl7 - $pagadoAl7;
-                            echo "$".number_format($diferencia7, 2, ",", ".")?></span>
-                        </td>                                                                  
-                    </tr>
-                    <tr>
-                        <td style='border:1px solid #333;text-align:left;text-align:left'>
-                            <span id="lblit">
-                                Hasta d&iacute;a 12
-                            </span>
-                        </td>
-                                                                                        
-                        <td style='border:thin solid #333 ;text-align:right;'>
-                            <span id="lblit" ><?php echo "$".number_format($planificadoAl12, 2, ",", ".")?></span>
-                        </td>
-                        <td style='border:thin solid #333 ;text-align:right;'> 
-                            <span id="lblit" ><?php echo "$".number_format($pagadoAl12, 2, ",", ".")?></span>
-                        </td>
-                        <td style='border:thin solid #333 ;text-align:right;'> 
-                            <span id="lblit" ><?php $diferencia12 = $planificadoAl12 - $pagadoAl12;
-                            echo "$".number_format($diferencia12, 2, ",", ".")?></span>
-                        </td>                                                                  
-                    </tr>
-                    <tr>
-                        <td style='border:1px solid #333;text-align:left;text-align:left'>
-                            <span id="lblit">
-                                Hasta d&iacute;a 18
-                            </span>
-                        </td>
-                                                                                         
-                        <td style='border:thin solid #333 ;text-align:right;'>
-                            <span id="lblit" ><?php echo "$".number_format($planificadoAl18, 2, ",", ".")?></span>
-                        </td>
-                        <td style='border:thin solid #333 ;text-align:right;'> 
-                            <span id="lblit" ><?php echo "$".number_format($pagadoAl18, 2, ",", ".")?></span>
-                        </td>
-                        <td style='border:thin solid #333 ;text-align:right;'> 
-                            <span id="lblit" ><?php $diferencia18 = $planificadoAl18 - $pagadoAl18;
-                            echo "$".number_format($diferencia18, 2, ",", ".")?></span>
-                        </td>                                                                  
-                    </tr>
-                    <tr>
-                        <td style='border:1px solid #333;text-align:left;'>
-                            <span id="lblit">
-                                Totales
-                            </span>
-                        </td>
-                        <td style='border:thin solid #333 ;text-align:right;'><?php echo  "$".number_format($planificadoAl2+$planificadoAl7+$planificadoAl12+$planificadoAl18, 2, ",", ".");?></td>
-                        <td style='border:thin solid #333 ;text-align:right;'><?php echo  "$".number_format($pagadoAl2+$pagadoAl7+$pagadoAl12+$pagadoAl18, 2, ",", ".");?></td>
-                        <td style='border:thin solid #333 ;text-align:right;'><?php echo  "$".number_format($diferencia2+$diferencia7+$diferencia12+$diferencia18, 2, ",", ".");?></td>
-                    </tr>
-            </table> 
-        </td>
-    </tr>
+//    <tr>
+//        <td id="tdTotGral" colspan="3">
+//            <table cellspacing="0" style='padding:0px 9px 0px;width: inherit;' id="tblit">
+//                    <tr>
+//                        <td style='border:1px solid #333;text-align:left;' width="85"><span id="lblit" >Vencimientos</span></td>
+//                        <td style='border:1px solid #333;text-align:left;' width="115"><span id="lblit" >A Pagar</span></td>
+//                        <td style='border:1px solid #333;text-align:left;' width="115"><span id="lblit" >Pagado</span></td>
+//                        <td style='border:1px solid #333;text-align:left;' width="115"><span id="lblit" >Deuda</span></td>
+//                    </tr>
+//                    <tr>
+//                        <td style='border:1px solid #333;text-align:left;text-align:left'><span id="lblit">Hasta d&iacute;a 2</span></td>
+//                        <?php
+//
+//                        $planificadoAl2=0;
+//                        $pagadoAl2=0;
+//
+//                        $planificadoAl7=0;
+//                        $pagadoAl7=0;
+//
+//                        $planificadoAl12=0;
+//                        $pagadoAl12=0;
+//
+//                        $planificadoAl18=0;
+//                        $pagadoAl18=0;
+//                        foreach ($grupoclientesActual as $gcliActual ) {
+//                            foreach ($gcliActual['Cliente'] as $cliente) {
+//                                foreach ($cliente['Impcli'] as $impcli) {
+//                                    if (count($impcli['Periodosactivo'])>0) {
+//                                        foreach ($impcli['Eventosimpuesto'] as $eventosimpuesto) {
+//                                            if (date("d", strtotime($eventosimpuesto['fchvto'])) < 07) {
+//                                                //menor que 07
+//                                                $planificadoAl2 += $eventosimpuesto['montovto'];
+//                                                $pagadoAl2 += $eventosimpuesto['montorealizado'];
+//                                            } else if (date("d", strtotime($eventosimpuesto['fchvto'])) < 12) {
+//                                                //menor que 12 y mayor que 07
+//                                                $planificadoAl7 += $eventosimpuesto['montovto'];
+//                                                $pagadoAl7 += $eventosimpuesto['montorealizado'];
+//                                            } else if (date("d", strtotime($eventosimpuesto['fchvto'])) < 18) {
+//                                                //menor que 18 y mayor que 12
+//                                                $planificadoAl12 += $eventosimpuesto['montovto'];
+//                                                $pagadoAl12 += $eventosimpuesto['montorealizado'];
+//                                            } else {
+//                                                //mayor que 18
+//                                                $planificadoAl18 += $eventosimpuesto['montovto'];
+//                                                $pagadoAl18 += $eventosimpuesto['montorealizado'];
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                                foreach ($cliente['Plandepago'] as $plandepago) {
+//                                    if(date("d",strtotime($plandepago['fchvto']))<07){
+//                                        //menor que 07
+//                                        $planificadoAl2+=$plandepago['montovto'];
+//                                        $pagadoAl2+=$plandepago['montorealizado'];
+//                                    }else if(date("d",strtotime($plandepago['fchvto']))<12){
+//                                        //menor que 12 y mayor que 07
+//                                        $planificadoAl7+=$plandepago['montovto'];
+//                                        $pagadoAl7+=$plandepago['montorealizado'];
+//                                    } else if(date("d",strtotime($plandepago['fchvto']))<18){
+//                                            //menor que 18 y mayor que 12
+//                                            $planificadoAl12+=$plandepago['montovto'];
+//                                            $pagadoAl12+=$plandepago['montorealizado'];
+//                                    }else {
+//                                        //mayor que 18
+//                                        $planificadoAl18+=$plandepago['montovto'];
+//                                        $pagadoAl18+=$plandepago['montorealizado'];
+//                                    }
+//                                }
+//                            }
+//                        }?><!--                                                                                        -->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'>-->
+<!--                            <span id="lblit" >--><?php //echo "$".number_format($planificadoAl2, 2, ",", ".")?><!--</span>-->
+<!--                        </td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'> -->
+<!--                            <span id="lblit" >--><?php //echo "$".number_format($pagadoAl2, 2, ",", ".")?><!--</span>-->
+<!--                        </td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'> -->
+<!--                            <span id="lblit" >--><?php //
+//                            $diferencia2 = $planificadoAl2 - $pagadoAl2;
+//                            echo "$".number_format($diferencia2, 2, ",", ".")?><!--</span>-->
+<!--                        </td>                                                                  -->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td style='border:1px solid #333;text-align:left;text-align:left'>-->
+<!--                            <span id="lblit">-->
+<!--                                Hasta d&iacute;a 7-->
+<!--                            </span>-->
+<!--                        </td>-->
+<!--                                                                                                                  -->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'>-->
+<!--                            <span id="lblit" >--><?php //echo "$".number_format($planificadoAl7, 2, ",", ".")?><!--</span>-->
+<!--                        </td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'> -->
+<!--                            <span id="lblit" >--><?php //echo "$".number_format($pagadoAl7, 2, ",", ".")?><!--</span>-->
+<!--                        </td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'> -->
+<!--                            <span id="lblit" >--><?php //$diferencia7 = $planificadoAl7 - $pagadoAl7;
+//                            echo "$".number_format($diferencia7, 2, ",", ".")?><!--</span>-->
+<!--                        </td>                                                                  -->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td style='border:1px solid #333;text-align:left;text-align:left'>-->
+<!--                            <span id="lblit">-->
+<!--                                Hasta d&iacute;a 12-->
+<!--                            </span>-->
+<!--                        </td>-->
+<!--                                                                                        -->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'>-->
+<!--                            <span id="lblit" >--><?php //echo "$".number_format($planificadoAl12, 2, ",", ".")?><!--</span>-->
+<!--                        </td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'> -->
+<!--                            <span id="lblit" >--><?php //echo "$".number_format($pagadoAl12, 2, ",", ".")?><!--</span>-->
+<!--                        </td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'> -->
+<!--                            <span id="lblit" >--><?php //$diferencia12 = $planificadoAl12 - $pagadoAl12;
+//                            echo "$".number_format($diferencia12, 2, ",", ".")?><!--</span>-->
+<!--                        </td>                                                                  -->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td style='border:1px solid #333;text-align:left;text-align:left'>-->
+<!--                            <span id="lblit">-->
+<!--                                Hasta d&iacute;a 18-->
+<!--                            </span>-->
+<!--                        </td>-->
+<!--                                                                                         -->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'>-->
+<!--                            <span id="lblit" >--><?php //echo "$".number_format($planificadoAl18, 2, ",", ".")?><!--</span>-->
+<!--                        </td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'> -->
+<!--                            <span id="lblit" >--><?php //echo "$".number_format($pagadoAl18, 2, ",", ".")?><!--</span>-->
+<!--                        </td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'> -->
+<!--                            <span id="lblit" >--><?php //$diferencia18 = $planificadoAl18 - $pagadoAl18;
+//                            echo "$".number_format($diferencia18, 2, ",", ".")?><!--</span>-->
+<!--                        </td>                                                                  -->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <td style='border:1px solid #333;text-align:left;'>-->
+<!--                            <span id="lblit">-->
+<!--                                Totales-->
+<!--                            </span>-->
+<!--                        </td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'>--><?php //echo  "$".number_format($planificadoAl2+$planificadoAl7+$planificadoAl12+$planificadoAl18, 2, ",", ".");?><!--</td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'>--><?php //echo  "$".number_format($pagadoAl2+$pagadoAl7+$pagadoAl12+$pagadoAl18, 2, ",", ".");?><!--</td>-->
+<!--                        <td style='border:thin solid #333 ;text-align:right;'>--><?php //echo  "$".number_format($diferencia2+$diferencia7+$diferencia12+$diferencia18, 2, ",", ".");?><!--</td>-->
+<!--                    </tr>-->
+<!--            </table> -->
+<!--        </td>-->
+<!--    </tr>-->
+    ?>
     <tr>
         <td align="center" colspan="6">
             <hr width="450px" color="#000000" style='width:100%' />

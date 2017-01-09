@@ -263,7 +263,8 @@ function papelesDeTrabajo(periodo,impcli){
 		            alert(respuesta.invalidFields);
 		          }else{
 					  callAlertPopint(resp);
-		            $('#divLiquidarConvenioMultilateral').hide();
+					  $("#AsientoAddForm").submit();
+					  $('#divLiquidarConvenioMultilateral').hide();
 		          }
 		        }, 
 		        error: function(xhr,textStatus,error){ 

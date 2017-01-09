@@ -66,7 +66,7 @@
 //        $linecompra['comprobantenumero']=substr($line, 16,20);
         $lineaCompra .= str_pad($compra['Compra']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
 //        $linecompra['numerodespacho']=substr($line, 36,16);
-        $lineaCompra .= str_pad(" ", 76, " ", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(" ", 16, " ", STR_PAD_LEFT);
 //        $linecompra['codigodocumento']=substr($line, 52,2);
         $lineaCompra .= str_pad(80, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
 //        $linecompra['identificacionnumero']=substr($line, 54,20);
@@ -120,8 +120,7 @@
     }
     ?></div>
     <h2>Txt Compras Alicuotas</h2>
-    <div class="index" style="overflow-x: auto;" id="divAlicuotas" >
-        <?php
+    <div class="index" style="overflow-x: auto;" id="divAlicuotas" ><?php
         foreach($alicuotas as $c => $alicuota ) {
             $lineaAlicuota = "";
 
@@ -151,8 +150,7 @@
             $lineaAlicuota .= str_pad(number_format($alicuota['Compra']['iva'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             echo $lineaAlicuota."</br>";
         }
-        ?>
-    </div>
+        ?></div>
 </div>
 
 

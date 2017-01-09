@@ -1089,14 +1089,16 @@ class ImpclisController extends AppController {
 								 	)
 								));
 		$strDatePeriodo = '28-'.$periodo;
+
 		$optionsCategoriaMax=array(
 			'fields'=>array('MAX(Categoriamonotributo.vigenciadesde) AS vigenciadesde'),
 			'conditions'=>array(
-					"Categoriamonotributo.vigenciadesde <= '".date('d-m-Y',strtotime($strDatePeriodo))."'",
+					"Categoriamonotributo.vigenciadesde <= '".date('Y-m-D',strtotime($strDatePeriodo))."'",
 				),
 			);
 		$maxcategory=$this->Categoriamonotributo->find('first',$optionsCategoriaMax);
 		$this->set('maxcategory',$maxcategory);
+
 		$optionsCategoria=array(
 			'conditions'=>array(
 					'Categoriamonotributo.vigenciadesde'=>$maxcategory[0]['vigenciadesde']

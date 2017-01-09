@@ -39,7 +39,7 @@ if(!$mostrarForm) { ?>
     <?php } ?>
 <?php }else{ ?>
     <td colspan="20" id="tdcompra<?php echo $comid?>" style="overflow: inherit;">
-        <div   style="overflow-x: auto;">
+        <div  >
       <?php echo $this->Form->create('Compra',array(
                             'controller'=>'Compra',
                             'action'=>'edit',

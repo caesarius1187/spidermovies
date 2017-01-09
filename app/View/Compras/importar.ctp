@@ -152,7 +152,7 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
                     $igualNumeroComprobante = true;
                 }
                 if ($igualTipoComprobante&&$igualPuntoDV/*&&$igualAlicuota*/&&$igualNumeroComprobante){
-                    $textoCompraYaCargada =
+                     $textoCompraYaCargada .=
                         $linecompra['comprobantetipo']."-".
                         $linecompra['puntodeventa']."-".
                         $numeroComprobante." // ";
@@ -178,7 +178,6 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
         }
         $tituloButton= $dirCompra->name;
 //        $tituloButton= $errorInFileCompra?$dirCompra->name." Archivo con Error": $dirCompra->name;
-        echo "";
             echo $this->Form->button(
                 $tituloButton .'</br>
             <label>Compras: '.$j.'</label>',
@@ -224,10 +223,12 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
             // process the line read.
             $lineAlicuota = array();
             $lineAlicuota['comprobantetipo'] = substr($line, 0, 3);
+
             $lineAlicuota['puntodeventa'] = substr($line, 3, 5);
             $lineAlicuota['comprobantenumero'] = substr($line, 8, 20);
             $lineAlicuota['codigodocumento']=substr($line, 28,2);
             $lineAlicuota['identificacionnumero']=substr($line, 30,20);
+
             $lineAlicuota['importenetogravado'] = substr($line, 50, 13).'.'.substr($line, 63, 2);
             $lineAlicuota['alicuotaiva'] = substr($line, 65, 4);
             $lineAlicuota['impuestoliquidado'] = substr($line, 69, 13).'.'.substr($line, 82, 2);
@@ -246,6 +247,8 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
                     }
                     array_push($compra['Alicuota'], $lineAlicuota);
                     $comprasArray[$k]=$compra;
+                }else{
+
                 }
                 $k++;
             }
@@ -271,10 +274,10 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
         }
     }
     unset($dirAlicuota); ?>
-    </br>Compras ya Cargadas Previamente:</br>
-    <?php echo $textoCompraYaCargada;?>
+
 </div>
-<?php
+    </br>Compras ya Cargadas Previamente:</br>
+<?php echo $textoCompraYaCargada;
     $ProvedoreNoCargado=array();
     $ComprasConFechasIncorrectas=array();
     foreach ($comprasArray as $compra) {
@@ -600,10 +603,22 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                  'inputclass' => 'CompraAddAlicuota',
                                  'class'=>'row'.$i.' aplicableATodos'
                              ));
+                             //si el neto es 0 vamos a preguntar si el total es != 0 si es asi
+                             //el neto va a ser igual al total - iva percep iibb percep acvspercep impinter nograbado
+                             $neto = $alicuota['importenetogravado']*1 ;
+                             $total = $compra['Compra']['importetotaloperacion']*1 ;
+                             if($neto==0 && $total!=0){
+                                 $neto = $total;
+                                 $neto -= $compra['Compra']['importepercepcionespagosacuentaiva'] * 1;
+                                 $neto -= $compra['Compra']['importeingresosbrutos'] * 1;
+                                 $neto -= $compra['Compra']['importeimpuestosmunicipales'] * 1;
+                                 $neto -= $compra['Compra']['importeimpuestosinternos'] * 1;
+                                 $neto -= $compra['Compra']['importeconceptosprecionetogravado'] * 1;
+                             }
                              echo $this->Form->input('Compra.' . $i . '.neto', array(
                                  'style' => 'max-width: 60px;',
                                  'label' => ($i + 9) % 10 == 0 ? 'Neto' : '',
-                                 'value' => $alicuota['importenetogravado'] * 1,
+                                 'value' => $neto * 1,
                                  'class'=>'row'.$i
                              ));
                              echo $this->Form->input('Compra.' . $i . '.iva', array(

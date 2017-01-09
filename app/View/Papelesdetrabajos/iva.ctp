@@ -102,67 +102,6 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             $("#divContenedorContabilidad").show();
         }
 	}
-//	function MostrarTabla(oObj, tipo)	{
-//		if (tipo == "ventas")
-//		{
-//			var iActId = (oObj.id).split("_")[1];
-//			var siD = "divTablaTipoDebito_" + iActId;
-//			$('div[id^='+siD+']').each(function(){
-//				$(this).show();
-//			});
-//			$("#"+oObj.id).attr("onclick", "Ocultartablas(this,'ventas');");
-//		}
-//		if (tipo == "compras")
-//		{
-//			var sTipoCredito = (oObj.id).split("_")[1];
-//			$("#divTablaComprasCredito_" + sTipoCredito).show();
-//			$("#"+oObj.id).attr("onclick", "Ocultartablas(this,'compras');");
-//		}
-//	}
-//	function Ocultartablas(oObj, tipo)	{
-//		if (tipo == "ventas")
-//		{
-//			var iActId = (oObj.id).split("_")[1];
-//			var siD = "divTablaTipoDebito_" + iActId;
-//			$('div[id^='+siD+']').each(function(){
-//				$(this).hide();
-//			});
-//			$("#"+oObj.id).attr("onclick", "MostrarTabla(this,'ventas');");
-//		}
-//		if (tipo == "compras")
-//		{
-//			var sTipoCredito = (oObj.id).split("_")[1];
-//			$("#divTablaComprasCredito_" + sTipoCredito).hide();
-//			$("#"+oObj.id).attr("onclick", "MostrarTabla(this,'compras');");
-//		}
-//	}
-//	function MostrarOperaciones(oObj, tipo)	{
-//		if (tipo == "ventas")
-//		{
-//			var iActId = (oObj.id).split("_")[2];
-//			var sTipoDebito = (oObj.id).split("_")[1];
-//			var sId = "divTablaOperaciones_"+iActId+"_"+sTipoDebito+"_";
-//
-//			$('div[id^='+sId+']').each(function(){
-//				$(this).show();
-//			});
-//
-//			$("#"+oObj.id).attr("onclick", "OcultarOperaciones(this,'ventas');");
-//		}
-//	}
-//	function OcultarOperaciones(oObj, tipo)	{
-//		if (tipo == "ventas")
-//		{
-//			var iActId = (oObj.id).split("_")[2];
-//			var sTipoDebito = (oObj.id).split("_")[1];
-//			var sId = "divTablaOperaciones_"+iActId+"_"+sTipoDebito+"_";
-//
-//			$('div[id^='+sId+']').each(function(){
-//				$(this).hide();
-//			});
-//			$("#"+oObj.id).attr("onclick", "MostrarOperaciones(this,'ventas');");
-//		}
-//	}
     function papelesDeTrabajo(periodo,impcli){
         var data = "";
         $.ajax({
@@ -1859,8 +1798,10 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 $TotalBnGral['mostrar']=true;
                 $TotalBnGral['Neto']['total'] += $compra[0]['neto']*$suma;
+                Debugger::dump($compra['Compra']['alicuota']);
                 if($compra['Compra']['alicuota']=='0'){
                     $TotalBnGral['Neto']['0'] += $compra[0]['neto']*$suma;
+                    Debugger::dump($TotalBnGral['Neto']['0']);
                 }elseif ($compra['Compra']['alicuota']=='2.5'){
                     $TotalBnGral['Neto']['2.5'] += $compra[0]['neto']*$suma;
                 }elseif ($compra['Compra']['alicuota']=='5'){
@@ -3368,7 +3309,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 }
             }
             //ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
-            echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
+            echo $this->Form->create('Asiento',[
+                'class'=>'formTareaCarga formAsiento',
+                'controller'=>'asientos',
+                'action'=>'add'
+            ]);
             echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
             $d = new DateTime( '01-'.$periodo );
             echo $this->Form->input('Asiento.0.fecha',array(

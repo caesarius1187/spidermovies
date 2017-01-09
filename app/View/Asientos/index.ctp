@@ -34,12 +34,34 @@
 			success: function(response) {
 					$('#myModal').on('show.bs.modal', function() {
 						$('#myModal').find('.modal-title').html('Editar Asiento');
-						$('#myModal').find('.modal-body').html('<pre>' + response + '</pre>');
+						$('#myModal').find('.modal-body').html(response);
 						// $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
 					});
 					$('#myModal').modal('show');
 					$('.chosen-select').chosen({search_contains:true});
-				$("#MovimientoCuentascliente_chosen").width("80px");
+					$('#AsientoAddForm').submit(function(){
+						//serialize form data
+						var formData = $(this).serialize();
+						//get form action
+						var formUrl = $(this).attr('action');
+						$.ajax({
+							type: 'POST',
+							url: formUrl,
+							data: formData,
+							success: function(data,textStatus,xhr){
+								var respuesta = JSON.parse(data);
+								$('#myModal').modal('hide');
+								callAlertPopint(respuesta.respuesta);
+								editarMovimientos(asientoID);
+							},
+							error: function(xhr,textStatus,error){
+								$('#myModal').modal('hide');
+								callAlertPopint(respuesta.error);
+								alert(textStatus);
+							}
+						});
+						return false;
+					});
 				},
 				error:function (XMLHttpRequest, textStatus, errorThrown) {
 					alert(errorThrown);
@@ -50,17 +72,18 @@
 <div style="width:98%; margin:1%; height:20px">
 	<div style="float:left"> Cliente: &nbsp;</div>
 	<div style="float:left">
-		<?php echo $cliente['Cliente']['nombre']; ?>
+		<?php
+		echo $cliente['Cliente']['nombre']; ?>
 		<input id="hdnClienteId" type="hidden" value="<?php echo $cliente['Cliente']['id']; ?>" />
 	</div>
 </div>
-<div class="index">
+<div class="index" style="float:none;">
 	<table>
 		<tr>
 			<td style="text-align: left;">
 				<h2><?php echo __('Asientos'); ?></h2>
 			</td>
-			<!--
+
 		<td style="text-align: right; cursor:pointer;" title="Agregar Movimiento">
 		<div class="fab blue">
             <core-icon icon="add" align="center">
@@ -75,10 +98,10 @@
             <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
        	</div>
 		</td>
-		-->
+
 		</tr>
 	</table>
-	<table id="tblListaMovimientos" cellpadding="0" cellspacing="0" border="0" class="display">
+	<table id="tblListaMovimientos" cellpadding="0" cellspacing="0" border="0" class="" >
 		<thead>
 		<tr>
 			<th>Asiento</th>
@@ -107,13 +130,13 @@
 			?>
 			<tr class="rowasiento">
 				<td>
-					<?php echo h($asiento['Asiento']['descripcion']); ?>
+					<?php echo $asiento['Asiento']['descripcion']; ?>
 				</td>
 				<td>
-					<?php echo h($asiento['Asiento']['fecha']); ?>
+					<?php echo $asiento['Asiento']['fecha']; ?>
 				</td>
 				<td>
-					<?php echo h($asiento['Asiento']['nombre']); ?>
+					<?php echo $asiento['Asiento']['nombre']; ?>
 				</td>
 				<?php
 				$debe=0;
@@ -124,13 +147,13 @@
 				}
 				?>
 				<td>
-					<?php echo h($debe); ?>
+					<?php echo $debe; ?>
 				</td>
 				<td>
-					<?php echo h($haber); ?>
+					<?php echo $haber; ?>
 				</td>
 				<td>
-					<?php echo h($debe-$haber); ?>
+					<?php echo $debe-$haber; ?>
 				</td>
 				<td class="actions">
 					<?php

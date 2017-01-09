@@ -264,7 +264,7 @@
 				<?php 
 				$topOrden++;
                 echo $this->Form->input('topOrden',array('value'=>$topOrden,'type'=>'hidden'));
-                echo $this->Form->input('mesParaProximaRecategorizacion',array('value'=>$mesParaProximaRecategorizacion,'type'=>'text'));
+                echo $this->Form->input('mesParaProximaRecategorizacion',array('value'=>$mesParaProximaRecategorizacion,'type'=>'hidden'));
 				$selectedCategory = ($topOrden==1)?1:$topOrden-1;
                 echo $this->Form->input('topCategoria',array('value'=>$categoriamonotributos[$selectedCategory]['Categoriamonotributo']['categoria'],'type'=>'hidden'));
 				?>

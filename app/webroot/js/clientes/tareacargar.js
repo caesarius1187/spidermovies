@@ -1494,6 +1494,21 @@ function openWin()
         }, 1000);
 
 }
+function openWinLibroSueldo()
+{
+    var myWindow=window.open('','','width=1010,height=1000px');
+    myWindow.document.write('<html><head><title>Libro de sueldo</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
+    myWindow.document.write($("#sheetCooperadoraAsistencial").html());
+    myWindow.document.close();
+    myWindow.focus();
+    setTimeout(
+        function()
+        {
+            myWindow.print();
+            myWindow.close();
+        }, 1000);
+
+}
 function calcularFooterTotales(mitabla){
         mitabla.columns( '.sum' ).every( function () {
             try {
@@ -1503,10 +1518,6 @@ function calcularFooterTotales(mitabla){
                     var sum = this
                         .data()
                         .reduce( function (a,b) {
-                            var ab = a+"+"+b;
-                            if (b=="1,51"||b=="7,85"){
-                                alert(b);
-                            }
                             if (a != null && b != null) {
 
                                 if (typeof a === 'string') {
@@ -1519,18 +1530,19 @@ function calcularFooterTotales(mitabla){
                                     b = b.replace(',', ".");
                                 }
                                 b = Number(b);
-                                if(isNaN(a)||isNaN(b)){
-                                   alert (a );
-                                   alert (b );
-                                }
                                 var resultado = a + b;
-                                alert(resultado);
                                 return resultado;
                             } else {
                                 return 0;
                             }
                         } );
-                    $( this.footer() ).html(sum.toFixed(2));
+                    if (typeof sum === 'string') {
+                        sum = sum.replace('.', "");
+                        sum = sum.replace(',', ".");
+                        $( this.footer() ).html((sum*1).toFixed(2));
+                    }else{
+                        $( this.footer() ).html(sum.toFixed(2));
+                    }
                 }
             }
             catch (e)
@@ -1968,7 +1980,7 @@ function adaptarConceptorestanteForm(formnombre,conid){
             // $("#"+rowid).html(response);
             $('#myModal').on('show.bs.modal', function() {
                 $('#myModal').find('.modal-title').html('Editar Venta');
-                $('#myModal').find('.modal-body').html('<pre>' + response + '</pre>');
+                $('#myModal').find('.modal-body').html(response);
                 // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
             });
 
@@ -2172,7 +2184,7 @@ function adaptarConceptorestanteForm(formnombre,conid){
             // $(rowid).html(response);
             $('#myModal').on('show.bs.modal', function() {
                 $('#myModal').find('.modal-title').html('Editar Compra');
-                $('#myModal').find('.modal-body').html('<pre>' + response + '</pre>');
+                $('#myModal').find('.modal-body').html(response);
                 // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
             });
 
@@ -2444,7 +2456,7 @@ function adaptarConceptorestanteForm(formnombre,conid){
                 //$(".tdViewConceptosrestanteO"+conid).hide();
                 $('#myModal').on('show.bs.modal', function() {
                     $('#myModal').find('.modal-title').html('Editar Venta');
-                    $('#myModal').find('.modal-body').html('<pre>' + response + '</pre>');
+                    $('#myModal').find('.modal-body').html(response);
                     // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
                 });
 

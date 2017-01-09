@@ -16,8 +16,9 @@ class AsientosController extends AppController {
     //no se si tendriamos que guardarlo en una tabla pero por ahora va a servir
 
 	public $components = array('Paginator');
-    public function index($ClienteId,$periodo)
+    public function index($ClienteId = null,$periodo = null ,$cuentacliente = null)
     {
+        $this->loadModel('Movimiento');
         $this->loadModel('Cliente');
         $this->loadModel('Cuentascliente');
 
@@ -31,6 +32,9 @@ class AsientosController extends AppController {
         $this->set('cliente',$cliente);
 
         //$this->Cuentascliente->recursive = -1;
+
+
+
         $CuentasClientesopt = [
             'contain' => [
                 'Movimiento'=>[
@@ -43,12 +47,34 @@ class AsientosController extends AppController {
 //                    ],
                 ]
             ],
-            'conditions'=>['Asiento.cliente_id'=>$ClienteId]
+            'conditions'=>[
+                'Asiento.cliente_id'=>$ClienteId
+            ]
         ];
+
+        if($cuentacliente!=null){
+            //Ahora vamos a buscar los asientos que tengas movimientos que impacten en esta cuenta cliente
+            //primero vamos a buscar los movimientos que tengan esta cuenta cliente
+            //y vamos a recojer los id's de los asientos esos
+
+            $opcionesMovimientos = [
+                'contain'=>[],
+                'fields'=>['Movimiento.id','Movimiento.asiento_id'],
+                'conditions'=>[
+                    'Movimiento.cuentascliente_id'=>$cuentacliente
+                ]
+            ];
+            $movimientos = $this->Movimiento->find('all',$opcionesMovimientos);
+            $asientosqueimpactan = [];
+            foreach ($movimientos as $movimiento) {
+                $asientosqueimpactan[] = $movimiento['Movimiento']['asiento_id'];
+            }
+            $CuentasClientesopt['conditions']['Asiento.id'] =  $asientosqueimpactan;
+            $this->layout = 'ajax';
+        }
         $asientos = $this->Asiento->find('all', $CuentasClientesopt);
         $this->set('asientos',$asientos);
     }
-
     public function add() {
         $this->loadModel('Movimiento');
         $this->loadModel('Cuentascliente');
