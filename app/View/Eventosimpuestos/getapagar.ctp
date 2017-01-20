@@ -10,9 +10,7 @@ $(document).ready(function() {
 });
 </SCRIPT>
 <div>
-	
-</div>
-<?php /*Este es el formulario para PAGAR papeles de Trabajo YA generados */ ?> 	
+<?php /*Este es el formulario para PAGAR papeles de Trabajo YA generados */ ?>
 <h3><?php echo __('Papeles preparados para pagar en : '.$impclinombre); ?></h3>
 <?php echo $this->Form->create('Eventosimpuesto',array('action'=>'realizartarea13', 'id'=>'FormPagarEventoImpuesto')); ?>
 <table cellpadding="0" cellspacing="0" id="tablePapelesPreparados" class="tbl_getpagar">
@@ -134,9 +132,262 @@ $(document).ready(function() {
 	<div style="width:100%; float:right;">
 		<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>
 		<a href="#" onclick="$('#FormPagarEventoImpuesto').submit();" class="btn_aceptar" style="margin-top:14px">Aceptar</a>
-		<?php  $this->Form->end();?>
+		<?php echo $this->Form->end();?>
+	</div>
+</div>
+<div>
+	<div class="index">
+		<h3><?php echo __('Contabilizar Pago de : '.$impclinombre); ?></h3>
+		<?php
+		$id = 0;
+		$nombre = "Asiento devengamiento Pago de impuesto: ".$impclinombre;
+		$descripcion = "Asiento automatico";
+		$fecha = date('d-m-Y');
+		$miAsiento=array();
+		if(!isset($miAsiento['Movimiento'])){
+			$miAsiento['Movimiento']=array();
+		}
+
+		if(isset($asientoyacargado['Asiento'])){
+			$miAsiento = $asientoyacargado['Asiento'];
+			$id = $miAsiento['id'];
+			$nombre = $miAsiento['nombre'];
+			$descripcion = $miAsiento['descripcion'];
+			$fecha = date('d-m-Y',strtotime($miAsiento['fecha']));
+		}
+
+		echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add']);
+		echo $this->Form->input('Asiento.0.id',['default'=>$id]);
+		echo $this->Form->input('Asiento.0.nombre',['default'=>$nombre]);
+		echo $this->Form->input('Asiento.0.descripcion',['default'=>$descripcion]);
+		echo $this->Form->input('Asiento.0.fecha',['default'=>$fecha]);
+		echo $this->Form->input('Asiento.0.cliente_id',['default'=>$cliid,'type'=>'hidden']);
+		echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo]);
+		echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcliid,'type'=>'hidden']);
+		echo $this->Form->input('Asiento.0.tipoasiento',['default'=>'pagoimpuestos','type'=>'hidden']);
+		/*1.Preguntar si existe la cuenta cliente que apunte a la cuenta 8(idDeCuenta) */
+		/*2. Si no existe se la crea y la traigo*/
+		/*3. Si existe la traigo*/
+		$i=0;
+		echo "</br>";
+		$cuentaclienteid = 0;
+		$asientoestandares=$impuesto['Asientoestandare'];
+		foreach ($asientoestandares as $asientoestandar) {
+			$cuentaclienteid = $asientoestandar['Cuenta']['Cuentascliente'][0]['id'];
+			/*lo mismo que hicimos con el asiento vamos a hacer con los movimientos, si existe un movimiento
+                    con la cuentacliente_id que estamos queriendo armar rellenamos los datos*/
+			$movid=0;
+			$asiento_id=0;
+			$debe=0;
+			$haber=0;
+			$key=0;
+
+			if(isset($asientoyacargado['Movimiento'])) {
+				foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento){
+					if(!isset($asientoyacargado['Movimiento'][$kMov]['cargado'])) {
+						$asientoyacargado['Movimiento'][$kMov]['cargado'] = false;
+					}
+					if($cuentaclienteid==$movimiento['cuentascliente_id']){
+
+						$key=$kMov;
+						$movid=$movimiento['id'];
+						$asiento_id=$movimiento['asiento_id'];
+						$debe=$movimiento['debe'];
+						$haber=$movimiento['haber'];
+						$asientoyacargado['Movimiento'][$kMov]['cargado']=true;
+					}
+				}
+			}
+			/*Aca vamos a reescribir el debe y el haber si es que corresponde para esta cuenta con este cliente*/
+			//Este switch controla todas las cuetnas que hay en "ventas" obligadamente
+			switch ($asientoestandar['Cuenta']['id']){
+				/*Casos comun a todas las ventas*/
+				case '1518'/*110399001 Cliente xx*/:
+				case '1868'/*110399001 Cliente xx*/:
+				case '1500'/*110399001 Cliente xx*/:
+				case '1468'/*110399001 Cliente xx*/:
+				case '1492'/*110399001 Cliente xx*/:
+				case '1426'/*110399001 Cliente xx*/:
+				case '1427'/*110399001 Cliente xx*/:
+				case '1397'/*110399001 Cliente xx*/:
+				case '1403'/*110399001 Cliente xx*/:
+				case '1406'/*110399001 Cliente xx*/:
+				case '3375'/*110399001 Cliente xx*/:
+				case '1412'/*110399001 Cliente xx*/:
+				case '1428'/*110399001 Cliente xx*/:
+				case '1401'/*110399001 Cliente xx*/:
+				case '1402'/*110399001 Cliente xx*/:
+				case '1414'/*110399001 Cliente xx*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+					}
+				$debe = $cuentaAPagar;
+				break;
+				case '1383'/*210302001 Ap. Seguridad Social a Pagar*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+						if($eventosimpuesto['Eventosimpuesto']['item']=='301EmpleadorAportesSegSocial'){
+							$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+						}
+					}
+					$debe = $cuentaAPagar;
+					break;
+				case '1384'/*210302002 Ap. Obra Social a Pagar*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+						if($eventosimpuesto['Eventosimpuesto']['item']=='302AportesObrasSociales'){
+							$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+						}
+					}
+					$debe = $cuentaAPagar;
+					break;
+				case '1419'/*210303001 Contr. Seg. Social a Pagar*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+						if($eventosimpuesto['Eventosimpuesto']['item']=='351ContribucionesSegSocial'){
+							$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+						}
+					}
+					$debe = $cuentaAPagar;
+					break;
+				case '1420'/*210303002 Contr. Obra Social a Pagar*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+						if($eventosimpuesto['Eventosimpuesto']['item']=='352ContribucionesObraSocial'){
+							$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+						}
+					}
+					$debe = $cuentaAPagar;
+					break;
+				case '1421'/*210303003 ART a Pagar*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+						if($eventosimpuesto['Eventosimpuesto']['item']=='312AsegRiesgodeTrabajoL24557'){
+							$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+						}
+					}
+					$debe = $cuentaAPagar;
+					break;
+				case '1422'/*210303004 Seguro de Vida Colectivo a Pag*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+						if($eventosimpuesto['Eventosimpuesto']['item']=='28SegurodeVidaColectivo'){
+							$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+						}
+					}
+					$debe = $cuentaAPagar;
+					break;
+				case '1423'/*210303005 RENATRE a pagar*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+						if($eventosimpuesto['Eventosimpuesto']['item']=='935RENATEA'){
+							$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+						}
+					}
+					$debe = $cuentaAPagar;
+					break;
+				case '3377'/*210302062 Ap. RENATEA a Pagar */:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+						if($eventosimpuesto['Eventosimpuesto']['item']=='360ContribuciónRENATEA'){
+							$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+						}
+					}
+					$debe = $cuentaAPagar;
+					break;
+			}
+			/*ACA Vamos a dividir las consultas segun el tipo de categoria que pague el cliente*/
+//        foreach ($pagacategoria as $categoriaAPagar){
+//            switch ($categoriaAPagar){
+//                case 'primeracateg':
+//
+//                    break;
+//            }
+//        }
+
+			//este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
+			//echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.key',['default'=>$key]);
+			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
+			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
+			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',[
+				'default'=>$cuentaclienteid,
+				'defaultoption'=>$cuentaclienteid,
+				'class'=>'chosen-select-cuenta',
+			]);
+			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
+				'type'=>'hidden',
+				'readonly','readonly',
+				'value'=>date('d-m-Y'),
+			));
+			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['default'=>$debe]);
+			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['default'=>$haber]);
+			echo "</br>";
+			$i++;
+		}
+		/*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
+        entonces tenemos que recorrer los movimientos y aquellos que esten marcados como cargado=false se deben mostrar*/
+		foreach ($cuentaspagoimpuestos as $kMov => $cuentaspagoimpuesto) {
+			$movid = 0;
+			$asiento_id = 0;
+			$debe = 0;
+			$haber = 0;
+			$cuentaclienteid = $cuentaspagoimpuesto['Cuentascliente'][0]['id'];
+			if(isset($asientoyacargado['Movimiento'])) {
+				foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento) {
+					if($cuentaclienteid==$movimiento['cuentascliente_id']) {
+						$movid = $movimiento['id'];
+						$asiento_id = $movimiento['asiento_id'];
+					}
+				}
+			}
+			switch ($cuentaspagoimpuesto['Cuenta']['id']){
+				/*Casos comun a todas las ventas*/
+				case '5' /*110101002 Caja Efectivo*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+					}
+					$haber = $cuentaAPagar;
+					break;
+			}
+			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
+			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
+			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['default' => $cuentaclienteid]);
+			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
+				'type'=>'hidden',
+				'readonly','readonly',
+				'value'=>date('d-m-Y'),
+			));
+			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['default' => $debe]);
+			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['default' => $haber]);
+			echo "</br>";
+			$i++;
+		}
+		echo $this->Form->end('Guardar asiento');
+
+		?>
 	</div>
 
+</div>
 
 
 

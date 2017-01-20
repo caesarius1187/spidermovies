@@ -1861,6 +1861,17 @@ transition: all 0.4s ease-in-out;
 }
 .tblReciboSueldo table td{
 	font-size: 8px;
+	height: 6px;
+}
+.tblReciboSueldo table tr{
+	height: 6px;
+}
+.tdWithBorder{
+	border: 1px solid #000000;
+}
+.tdWithLeftRightBorder{
+	border-left: 1px solid #000000;
+	border-right: 1px solid #000000;
 }
 .tblInforme table{
 	margin-bottom: 0px;
@@ -1979,6 +1990,16 @@ transition: all 0.4s ease-in-out;
 	display: inline;
 	height: 25px;
 	width: 70px;
+}
+.formAsiento input{
+	display: inline;
+	height: 25px;
+	width: 125px;
+}
+.formAsiento div select{
+	display: inline;
+	height: 25px;
+	width: 300px;
 }
 .formTareaCarga input[type=checkbox] {
 	clear: left;

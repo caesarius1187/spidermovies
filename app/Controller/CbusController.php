@@ -32,7 +32,9 @@ class CbusController extends AppController {
             tenga su propia cuenta cliente*/
             $cuentasDeBancoActivables = $this->Cuenta->cuentasDeBancoActivables;
             $optionsImpcli = [
-                'contain'=>['Impuesto'],
+                'contain'=>[
+                    'Impuesto'
+                ],
                 'conditions'=>[
                     'Impcli.id' => $this->request->data['Cbu']['impcli_id']
                 ]
@@ -132,74 +134,6 @@ class CbusController extends AppController {
                     }
                 }
             }
-//            $cuentasAcreditacionTransferencia = ['1','2','3','4','5','7','8','9','10','11','12','13'];
-//            //estas cuentas son individualizadas por cada CBU para relacionar Acreditaciones
-//            foreach ($cuentasAcreditacionTransferencia as $cuentasAcreditacion){
-//                $conditionsCuentascliente = array(
-//                    'Cuentascliente.cliente_id' => $impcli['Impcli']['cliente_id'],
-//                    'Cuentascliente.cuenta_id' => $cuentasAcreditacion
-//                );
-//                if (!$this->Cuentascliente->hasAny($conditionsCuentascliente)){
-//                    /*Ahora si estamos seguro de que esta cuenta no esta activada y podemos activarla
-//                    para este cliente y relacionarla al CBU*/
-//                    $conditionsCuentas=[
-//                        'conditions'=>['Cuenta.id'=>$cuentasAcreditacion]
-//                    ];
-//                    $cuentaACargar = $this->Cuenta->find('first', $conditionsCuentas);
-//                    $nombreCuentaMovAc = "Banco ".$impcli['Impuesto']['nombre']." - Cuenta ".$this->request->data['Cbu']['numerocuenta'];
-//                    $nombreCuentaMovAc += " ".$cuentaACargar['Cuenta']['nombre'];
-//
-//                    $this->Cuentascliente->create();
-//                    $this->Cuentascliente->set('cliente_id',$impcli['Impcli']['cliente_id']);
-//                    $this->Cuentascliente->set('cuenta_id',$cuentasAcreditacion);
-//                    $this->Cuentascliente->set('nombre',$nombreCuentaMovAc);
-//                    if ($this->Cuentascliente->save())
-//                    {
-//                        $data['respuesta']='Cuenta de Acreditacion activada correctamente.';
-//                    }
-//                    else
-//                    {
-//                        $data['respuesta']='Error al guardar cuenta de Acreditacion. Por favor intente nuevamente.';
-//                    }
-//                    $CuentaClienteNuevaId = $this->Cuentascliente->getLastInsertId();
-//                    $this->request->data['Cbu']['cuentascliente_id'] = $CuentaClienteNuevaId;
-//                    break;
-//                }
-//            }
-//            $cuentasExtraccionTransferencia = ['1','2','3','4','5','7','8','9','10','11','12','13'];
-//            //estas cuentas son individualizadas por cada CBU para relacionar Extracciones
-//            foreach ($cuentasExtraccionTransferencia as $cuentasExtraccion){
-//                $conditionsCuentascliente = array(
-//                    'Cuentascliente.cliente_id' => $impcli['Impcli']['cliente_id'],
-//                    'Cuentascliente.cuenta_id' => $cuentasExtraccion
-//                );
-//                if (!$this->Cuentascliente->hasAny($conditionsCuentascliente)){
-//                    /*Ahora si estamos seguro de que esta cuenta no esta activada y podemos activarla
-//                    para este cliente y relacionarla al CBU*/
-//                    $conditionsCuentas=[
-//                        'conditions'=>['Cuenta.id'=>$cuentasExtraccion]
-//                    ];
-//                    $cuentaACargar = $this->Cuenta->find('first', $conditionsCuentas);
-//                    $nombreCuentaMovEx = "Banco ".$impcli['Impuesto']['nombre']." - Cuenta ".$this->request->data['Cbu']['numerocuenta'];
-//                    $nombreCuentaMovEx += " ".$cuentaACargar['Cuenta']['nombre'];
-//
-//                    $this->Cuentascliente->create();
-//                    $this->Cuentascliente->set('cliente_id',$impcli['Impcli']['cliente_id']);
-//                    $this->Cuentascliente->set('cuenta_id',$cuentasExtraccion);
-//                    $this->Cuentascliente->set('nombre',$nombreCuentaMovEx);
-//                    if ($this->Cuentascliente->save())
-//                    {
-//                        $data['respuesta']='Cuenta de Extraccion activada correctamente.';
-//                    }
-//                    else
-//                    {
-//                        $data['respuesta']='Error al guardar cuenta de Extraccion. Por favor intente nuevamente.';
-//                    }
-//                    $CuentaClienteNuevaId = $this->Cuentascliente->getLastInsertId();
-//                    $this->request->data['Cbu']['cuentascliente_id'] = $CuentaClienteNuevaId;
-//                    break;
-//                }
-//            }
 
             /*FIN relacion de cuentas para asientos de movimientos bancarios*/
             if ($this->Cbu->save($this->request->data))

@@ -15,8 +15,6 @@ class EventosimpuestosController extends AppController {
  */
 	public $components = array('Paginator');
 
-
-
 	public function realizareventoimpuesto($id = null,$tarea = null,$periodo= null,$implcid= null,$estadoTarea=null) {
 	 	$this->request->onlyAllow('ajax');
 		
@@ -445,17 +443,50 @@ class EventosimpuestosController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('getpapelestrabajo');
 	}
-	public function getapagar($periodo,$impcli){
+	public function getapagar($periodo=null,$impcli=null,$cliid=null){
 		$this->loadModel('Impcli');
 		$this->loadModel('Partido');
 		$this->loadModel('Localidade');
 		$this->loadModel('Deposito');
+		$this->loadModel('Cuentascliente');
+		$this->loadModel('Asiento');
+		$this->loadModel('Cuenta');
 		//4 formas de pagar impuestos Provincia, Municipio, Item , unico
 		//Elementos del Fomulario de Pagar Papeles de Trabajo ya generados
 		$options = array(
+			'contain'=>[
+				'Impuesto'=>[
+					'Asientoestandare'=>[
+						'conditions'=>[
+							'tipoasiento'=>'apagar'
+						],
+						'Cuenta'=>[
+							'Cuentascliente'=>[
+								'conditions'=>[
+									'Cuentascliente.cliente_id'=>$cliid
+								]
+							]
+						]
+					],
+				],
+			],
 			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcli)
 		);
 		$myImpCli = $this->Impcli->find('first', $options);
+		$secrearoncuentas = false;
+		foreach ($myImpCli['Impuesto']['Asientoestandare'] as $asientoestandar) {
+			if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
+				$this->Cuentascliente->create();
+				$this->Cuentascliente->set('cliente_id',$cliid);
+				$this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
+				$this->Cuentascliente->set('nombre',$asientoestandar['Cuenta']['nombre']);
+				$this->Cuentascliente->save();
+				$secrearoncuentas=true;
+			}
+		}
+		if($secrearoncuentas){
+			$myImpCli = $this->Impcli->find('first', $options);
+		}
 		$options = array(
 			'conditions' => array(
 				'Eventosimpuesto.impcli_id'=> $impcli,
@@ -472,13 +503,92 @@ class EventosimpuestosController extends AppController {
 		$this->set('impclinombre',$myImpCli["Impuesto"]["nombre"]);
 		$this->set('periodo',$periodo);
 		$this->set('cliid', $myImpCli["Impcli"]["cliente_id"]);
+		/*ACA empezamos todas als consultas que necesitamos para hacer la contabilidad*/
+		$cuentasDeAsientoPago=[
+			'5',/*110101002 Caja Efectivo*/
+		];
+		//Aca vamos a agregar el plan de pago y la cuenta de intereses segun que Tipo de organismo sea
 
-        /*En esta seccion vamosa  buscar los Saldos de libre disponi*/
+		switch ($myImpCli["Impuesto"]["organismo"]){
+			case 'afip':
+				$cuentasDeAsientoPago[]='1575'/*210701001 Plan de Pagos AFIP N°*/;
+				$cuentasDeAsientoPago[]='2523'/*505040101 Intereses Generales*/;
+				break;
+			case 'dgr':
+				$cuentasDeAsientoPago[]='1597'/*210702001 Plan de Pagos DGR N°*/;
+				$cuentasDeAsientoPago[]='2526'/*505040201 Intereses Generales*/;
+				break;
+			case 'dgrm':
+				$cuentasDeAsientoPago[]='1603'/*210703000 Planes de Pago DGRM°*/;
+				$cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
+				break;
+			case 'otros':
+				break;
+			case 'sindicato':
+				break;
+			case 'banco':
+				break;
+		}
+		$optionsCuentasclientes = array(
+			'contain'=>[
+				'Cuentascliente'=>[
+					'conditions'=>[
+						'Cuentascliente.cliente_id'=>$cliid
+					]
+				]
+			],
+			'conditions' => array('Cuenta.id' => $cuentasDeAsientoPago)
+		);
+		$cuentaspagoimpuestos = $this->Cuenta->find('all', $optionsCuentasclientes);
+		$secrearoncuentas = false;
+		foreach ($cuentaspagoimpuestos as $cuentaspagoimpuesto) {
+			if(count($cuentaspagoimpuesto['Cuentascliente'])==0){
+				$this->Cuentascliente->create();
+				$this->Cuentascliente->set('cliente_id',$cliid);
+				$this->Cuentascliente->set('cuenta_id',$cuentaspagoimpuesto['Cuenta']['id']);
+				$this->Cuentascliente->set('nombre',$cuentaspagoimpuesto['Cuenta']['nombre']);
+				$this->Cuentascliente->save();
+				$secrearoncuentas=true;
+			}
+		}
+		if($secrearoncuentas){
+			$cuentaspagoimpuestos = $this->Cuenta->find('all', $optionsCuentasclientes);
+		}
+		$this->set('cuentaspagoimpuestos', $cuentaspagoimpuestos);
 
-		$this->layout = 'ajax';
+		$CuentasClientesopt = [
+			'contain' => [
+				'Cuenta'
+			],
+			'fields' => [
+				'Cuentascliente.id',
+				'Cuentascliente.nombre',
+				'Cuenta.numero',
+			],
+			'conditions' => [
+				'Cuentascliente.cliente_id'=> $myImpCli["Impcli"]["cliente_id"]
+			]
+		];
+		$cuentasclientes = $this->Cuentascliente->find('list', $CuentasClientesopt);
+		$this->set('cuentasclientes',$cuentasclientes);
+
+		$options = [
+			'contain'=>[
+				'Movimiento',
+			],
+			'conditions' => [
+				'Asiento.tipoasiento'=> 'pagoimpuestos',
+				'Asiento.periodo'=>$periodo,
+				'Asiento.impcli_id'=>$myImpCli["Impcli"]["id"]
+			],
+		];
+		$asientoyacargado = $this->Asiento->find('first', $options);
+		$this->set('asientoyacargado',$asientoyacargado);
+
+		if($this->request->is('ajax')){
+			$this->layout = 'ajax';
+		}
 		$this->render('getapagar');
-
-
 	}
 	public function realizartarea13() {/*PAGAR*/
 	 	$this->request->onlyAllow('ajax');
@@ -516,7 +626,6 @@ class EventosimpuestosController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('serializejson');
 	}
-	
 	public function delete($id = null) {
 		$this->Eventosimpuesto->id = $id;
 		if (!$this->Eventosimpuesto->exists()) {

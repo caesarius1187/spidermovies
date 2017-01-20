@@ -69,4 +69,22 @@ class MovimientosController extends AppController {
 
         $this->layout = 'ajax';
 	}
+    public function delete ($moviid){
+        $this->Movimiento->id = $moviid;
+        if (!$this->Movimiento->exists()) {
+            throw new NotFoundException(__('Invalid Movimiento'));
+        }
+
+        $this->request->onlyAllow('post', 'delete');
+        $data=[];
+        if ($this->Movimiento->delete()) {
+           $data['respuesta']='El movimiento ha sido eliminado';
+        } else {
+            $data['respuesta']='El movimiento NO ha sido eliminado. Por favor intente de nuevo mas tarde';
+        }
+        $this->set('data',$data);
+        $this->autoRender=false;
+        $this->layout = 'ajax';
+        $this->render('serializejson');
+    }
 }

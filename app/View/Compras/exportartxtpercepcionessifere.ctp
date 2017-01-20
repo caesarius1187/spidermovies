@@ -74,7 +74,7 @@
             $lineaCompra .= str_pad($compra['Compra']['numerocomprobante'], 8, "0", STR_PAD_LEFT);
 //            Tipo de comprobante,39,39
 //            Letra de comprobante,40,40
-            $lineaCompra .= str_pad($compra["Comprobante"]['abreviacion2'], 3, "0", STR_PAD_LEFT);
+            $lineaCompra .= str_pad($compra["Comprobante"]['abreviacion2'], 2, "0", STR_PAD_LEFT);
 //            Importe percibido 41,51
             if($compra['Compra']["tipocredito"]=='Restitucion credito fiscal'){
                 $lineaCompra .= "-";

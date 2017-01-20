@@ -375,7 +375,9 @@
                 in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                     array('123'/*Contribucion tarea Diff*/), true )
                 ){
-                    $seguridadsocialcontribtareadif = $valorrecibo['valor'];
+                    if($valorrecibo['valor']*1!=0){
+                        $seguridadsocialcontribtareadif = $valorrecibo['valor'];
+                    }
                 }
             }
             //Remuneracion 4 Segunda Parte
@@ -1666,7 +1668,7 @@
                 }
             }
             //ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
-            echo $this->Form->create('Asiento',['class'=>'formTareaCarga','controller'=>'asientos','action'=>'add']);
+            echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','controller'=>'asientos','action'=>'add']);
             echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
             $d = new DateTime( '01-'.$periodo );
             echo $this->Form->input('Asiento.0.fecha',array(
@@ -1680,7 +1682,7 @@
                 'div' => false,
                 'style'=> 'height:9px;display:inline'
             ));
-            echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento IVA" ,'style'=>'width:250px']);
+            echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento SUSS" ,'style'=>'width:250px']);
             echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Asiento Automatico periodo: ".$periodo,'style'=>'width:250px']);
             echo $this->Form->input('Asiento.0.cliente_id',['value'=>$impcli['Cliente']['id'],'type'=>'hidden']);
             echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcli['Impcli']['id'],'type'=>'hidden']);
@@ -1729,6 +1731,13 @@
             
             //hay aportes y contribuciones sindicales que dan de alta ciertas cuentas relacionadas a los sindicatos que paga el cliente
             //estas cuentas deben ser mostradas en el asiento solo si estan activadas en una cuentacliente
+
+            echo $this->Form->input('cuentasdeSUSSAportesSindicatos',[
+                'id'=> "cuentasdeSUSSAportesSindicatos",
+                'value'=>json_encode($aportesSindicatos),
+                'type'=>'hidden'
+            ]);
+
             foreach ($aportesSindicatos as $cuentaaportesindicato) {
                 if(!isset($movId[$cuentaaportesindicato])){
                     $movId[$cuentaaportesindicato]=0;

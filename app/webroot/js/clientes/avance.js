@@ -443,7 +443,8 @@ $(document).ready(function() {
               divPagosVacio = true;
           if(haycambios||divPagosVacio){
               var impcli = $('#EventosimpuestoRealizartarea5Form #Eventosimpuesto0ImpcliId').val();
-              loadPagar(periodoSel,impcli);
+              var cliid = $('#EventosimpuestoRealizartarea5Form #Eventosimpuesto0ClienteId').val();
+              loadPagar(periodoSel,impcli,cliid);
               $('#EventosimpuestoHaycambios').val(0);
           }
       }
@@ -609,11 +610,42 @@ $(document).ready(function() {
       }
   }
 /* 11 ver Tarea Pagar -- Mostrar el formulario para pagar papeles de trabajo del impcli del periodo*/
-  function loadPagar(periodo,impcli){
+    function catchFormAsiento(idForm){
+        $('#'+idForm).submit(function(){
+            //desactivar los inputs q son para agregar movimientos
+            $("#rowdecarga :input").prop("disabled", true);
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: formUrl,
+                data: formData,
+                success: function(data,textStatus,xhr){
+                    var respuesta = JSON.parse(data);
+                    // $('#myModal').modal('hide');
+                    // $('#myModalFormAgregarAsiento').modal('hide');
+                    callAlertPopint(respuesta.respuesta);
+                    // reiniciarFormAgregarAsiento()
+                },
+                error: function(xhr,textStatus,error){
+                    // $('#myModal').modal('hide');
+                    // $('#myModalFormAgregarAsiento').modal('hide');
+                    callAlertPopint(respuesta.error);
+                    alert(textStatus);
+                }
+            });
+            $("#rowdecarga :input").prop("disabled", false);
+            return false;
+        });
+    }
+  function loadPagar(periodo,impcli,cliid){
+
      var data = "";
          $.ajax({
                type: "post",  // Request method: post, get
-               url: serverLayoutURL+"/eventosimpuestos/getapagar/"+periodo+"/"+impcli, // URL to request
+               url: serverLayoutURL+"/eventosimpuestos/getapagar/"+periodo+"/"+impcli+"/"+cliid, // URL to request
                data: data,  // post data
                success: function(response) {
                   //Aqui vamos a poner los listeners para los formularios para Pagar Papeles Preparados
@@ -623,7 +655,8 @@ $(document).ready(function() {
                     checkVencimientoPagado(i);
                     i++;
                   }
-                  $('#FormPagarEventoImpuesto').submit(function(){ 
+                   catchFormAsiento("AsientoAddForm");
+                   $('#FormPagarEventoImpuesto').submit(function(){
                     //vamos a controlar que los campos monto vencimiento sean iguales a los montos pagados
                     //serialize form data
                     var formData = $(this).serialize(); 
@@ -642,6 +675,7 @@ $(document).ready(function() {
                         $('#buttonImpCli'+impcli).removeClass('buttonImpcli0');
                         $('#buttonImpCli'+impcli).removeClass('buttonImpcli2');
                         $('#buttonImpCli'+impcli).addClass('buttonImpcli4');
+                        $("#AsientoAddForm").submit();
                         return false;
                       }, 
                       error: function(xhr,textStatus,error){ 

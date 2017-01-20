@@ -690,7 +690,14 @@ if($mostrarView){?>
                                 </a>
                                 <a href="#"  onclick="deleteImpcli(<?php echo$impcli['id']; ?>)" class="button_view"> 
                                  <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
-                                </a>                               
+                                </a>
+                                <?php
+                                if($impcli['impuesto_id']==5/*Ganancias Sociedades*/||$impcli['impuesto_id']==160/*Ganancias Personas Físicas*/){?>
+                                    <a href="#"  onclick="loadFormImpuestoCuentasganancias(<?php echo$impcli['cliente_id']; ?>)" class="button_view">
+                                        <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                    </a>
+                                <?php }
+                                ?>
                             </td>
                         </tr>
                      <?php endif;    ?>
@@ -781,7 +788,8 @@ if($mostrarView){?>
                                         <a href="#"  onclick="loadFormImpuestoProvincias(<?php echo$impcli['id']; ?>)" class="button_view"> 
                                          <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'imgedit'));?>
                                         </a>
-                                        <?php } ?>
+                                        <?php }
+                                        ?>
                                     </td>
                                 </tr>
                              <?php endif;    ?>

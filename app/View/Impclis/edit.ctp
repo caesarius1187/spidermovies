@@ -39,6 +39,11 @@ if(!$showTheForm){?>
                 <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'imgedit'));?>
             </a>
         <?php }
+            if($impcli['impuesto_id']==5/*Ganancias Sociedades*/||$impcli['impuesto_id']==160/*Ganancias Personas Físicas*/){?>
+            <a href="#"  onclick="loadFormImpuestoCuentasganancias(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
+                <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'imgedit'));?>
+            </a>
+        <?php }
         if( $this->request->data['Impuesto']['organismo']=='banco'){ ?>
         <a href="#"  onclick="loadCbus(<?php echo  $this->request->data['Impuesto']['id']; ?>)" class="button_view">
             <?php echo $this->Html->image('cuentabancaria.png', array('alt' => 'open','class'=>'imgedit'));?>

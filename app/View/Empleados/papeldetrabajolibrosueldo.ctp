@@ -1,14 +1,15 @@
 <?php
     echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
     echo $this->Form->input('empidPDT',array('value'=>$empid,'type'=>'hidden'));
+ echo $this->Form->button('Imprimir',
+    array('type' => 'button',
+        'class' =>"btn_imprimir",
+        'onClick' => "openWinLibroSueldo()"
+    )
+);
 ?>
-    <div id="sheetCooperadoraAsistencial" class="index" style="margin: 10px 25px;">
-        <?php echo $this->Form->button('Imprimir',
-            array('type' => 'button',
-                'class' =>"btn_imprimir",
-                'onClick' => "PrintElem($('#sheetCooperadoraAsistencial'))"
-            )
-        );
+    <div id="sheetCooperadoraAsistencial" class="index" style="margin: 10px 0px;">
+       <?php
         $empleadoDatos = array();
         $miempleado = array();
         if(!isset($miempleado['horasDias'])) {
@@ -256,14 +257,14 @@
                             'label'=>[
                                 'style'=>'display:inline-block;height: 3px;'
                             ],
-                            'style'=>'height: 3px;'
+                            'style'=>'height: 3px;max-width:30px'
                         ]);
                         echo $this->Form->input('tomo',[
                             'div'=>false,
                             'label'=>[
                                 'style'=>'display:inline-block;height: 3px;'
                             ],
-                            'style'=>'height: 3px;',
+                            'style'=>'height: 3px;max-width:30px',
                         ])?>
                     </div>
                 </td>
