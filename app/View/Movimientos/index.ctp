@@ -37,22 +37,27 @@
 <div class="index" style="float: none;">
 	<h3>Agregar movimiento al asiento</h3>
 	<?php
-	echo $this->Form->create('Movimiento',['class'=>'formTareaCarga']);
+	echo $this->Form->create('Movimiento',['class'=>'formTareaCarga','id'=>'FormAgregaMovimiento']);
 	echo $this->Form->input('cuentascliente',[
-		'style'=>'width:200px',
-		'div'=>['style'=>'width:200px'],
+		'id'=>'FormEditaMovimientoCuentascliente',
+		'style'=>'width:300px',
+		'div'=>['style'=>'width:300px'],
 		'type'=>'select',
 		'class'=>'chosen-select',
 	]);
 	echo $this->Form->input('debe');
 	echo $this->Form->input('haber');
+	echo $this->Form->input('fecha',['type'=>'hidden','value'=>date('d-m-Y')]);
 	echo $this->Form->end('Agregar');
 	?>
 </div>
 <div class="index" style="float: none;">
 	<h3>Modificar Asiento</h3>
 	<?php
-	echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add','controller'=>'asientos']);
+	echo $this->Form->create('Asiento',[
+		'class'=>'formTareaCarga formAsiento',
+		'action'=>'add','controller'=>'asientos',
+		'id'=>'FormEditAsiento']);
 	echo $this->Form->input('Asiento.0.id',[
 		'value'=>$asiento['Asiento']['id'],
 		]
@@ -74,10 +79,10 @@
 	echo "</br>";
 	?>
 
-	<table id="tablaasiento"><?php
+	<table id="tablaModificarAsiento" class="tbl_border"><?php
 	foreach ($asiento['Movimiento'] as $m => $movimiento){
 		?>
-		<tr>
+		<tr id="movimientoeditnumero<?php echo $m ?>" >
 			<td style="width: 300px"><?php
 				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.id',
 					['value'=>$movimiento['id']]);
@@ -115,21 +120,20 @@
 			['value'=>$movimiento['haber'],
 				'style'=>"width:auto",
 				'label'=>false]);
-		?>
+		echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20'
+		,'onClick'=>"deleteRowMovimientoEdit(".$m.")"));
+
+				?>
 			</td>
 		</tr>
 		<?php
 	}
 	?>
-		<tr>
-			<td colspan="20">
-				<?php
-				echo $this->Form->end('Modificar')
-				?>
-			</td>
-		</tr>
 	</table>
 	<?php
-	$this->Form->input('nextmovimiento',['value'=>$m]);
+	echo $this->Form->end('Modificar')
+	?>
+	<?php
+	echo $this->Form->input('topmovimiento',['value'=>$m]);
 	?>
 </div>

@@ -375,7 +375,9 @@
                 in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                     array('123'/*Contribucion tarea Diff*/), true )
                 ){
-                    $seguridadsocialcontribtareadif = $valorrecibo['valor'];
+                    if($valorrecibo['valor']*1!=0){
+                        $seguridadsocialcontribtareadif = $valorrecibo['valor'];
+                    }
                 }
             }
             //Remuneracion 4 Segunda Parte
@@ -1729,6 +1731,13 @@
             
             //hay aportes y contribuciones sindicales que dan de alta ciertas cuentas relacionadas a los sindicatos que paga el cliente
             //estas cuentas deben ser mostradas en el asiento solo si estan activadas en una cuentacliente
+
+            echo $this->Form->input('cuentasdeSUSSAportesSindicatos',[
+                'id'=> "cuentasdeSUSSAportesSindicatos",
+                'value'=>json_encode($aportesSindicatos),
+                'type'=>'hidden'
+            ]);
+
             foreach ($aportesSindicatos as $cuentaaportesindicato) {
                 if(!isset($movId[$cuentaaportesindicato])){
                     $movId[$cuentaaportesindicato]=0;

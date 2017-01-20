@@ -205,7 +205,7 @@ class ConceptosrestantesController extends AppController {
 
         if( $this->request->data['Impcli']['impuesto_id']==19/*IVA*/){
             $conceptostipos[1]='Saldo de Libre Disponibilidad';
-            Debugger::dump($conceptostipos);
+            //Debugger::dump($conceptostipos);
         }
 		$this->set(compact('partidos', 'localidades', 'comprobantes', 'conceptostipos'));
 

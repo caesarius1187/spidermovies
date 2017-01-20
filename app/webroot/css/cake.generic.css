@@ -1996,6 +1996,11 @@ transition: all 0.4s ease-in-out;
 	height: 25px;
 	width: 125px;
 }
+.formAsiento div select{
+	display: inline;
+	height: 25px;
+	width: 300px;
+}
 .formTareaCarga input[type=checkbox] {
 	clear: left;
 	float: left;

@@ -136,23 +136,38 @@ function cargarAsiento(){
 	// 210302071
 	// 210302081
 	// 210302091
+	var totalAportesSindicales=0;
+	var cuentasdeSUSSAportesSindicatos = jQuery.parseJSON($("#cuentasdeSUSSAportesSindicatos").val());
+
+	cuentasdeSUSSAportesSindicatos.forEach(
+		function(item,index){
+			var cuenta = '#cuenta'+item;
+			if($(cuenta).length > 0){
+				var orden = $(cuenta).attr('orden');
+				var aporte = $('#Asiento0Movimiento'+orden+'Haber').val()*1;
+				totalAportesSindicales += aporte;
+			}
+		}
+	);
     /*FIN Aportes Sindicales*/
 
     // 210402201	Cooperadora Asistencial a Pagar /*Este concepto debe estar en el pdt de Cooperadora Asistensial*/
 	// 210301001	Sueldos - Personal XX
-    if($('#cuenta1378').length > 0){
-        var orden = $('#cuenta1378').attr('orden');
-        var redondeoTotal = $("#redondeoTotal").val();
-        var RemuneracionTotal = $("#RemuneracionTotal").val();
-        var apagar301EmpleadorAportesSegSocial = $("#apagar301EmpleadorAportesSegSocial").val();
-        var apagar302AportesObrasSociales = $("#apagar302AportesObrasSociales").val();
-        // =(redondeoTotal+RemuneracionTotal)-apagar301EmpleadorAportesSegSocial-apagar302AportesObrasSociales-SUMA(E32:E43)
-        var sueldospersonal =
-            (redondeoTotal*1+RemuneracionTotal*1)-
-            apagar301EmpleadorAportesSegSocial*1-
-            apagar302AportesObrasSociales*1;
-        $('#Asiento0Movimiento'+orden+'Haber').val(sueldospersonal);
-    }
+	if($('#cuenta1378').length > 0){
+		var orden = $('#cuenta1378').attr('orden');
+		var redondeoTotal = $("#redondeoTotal").val();
+		var RemuneracionTotal = $("#RemuneracionTotal").val();
+		var apagar301EmpleadorAportesSegSocial = $("#apagar301EmpleadorAportesSegSocial").val();
+		var apagar302AportesObrasSociales = $("#apagar302AportesObrasSociales").val();
+		// =(redondeoTotal+RemuneracionTotal)-apagar301EmpleadorAportesSegSocial-apagar302AportesObrasSociales-SUMA(E32:E43)
+		var sueldospersonal =
+			(redondeoTotal*1+RemuneracionTotal*1)-
+			apagar301EmpleadorAportesSegSocial*1-
+			apagar302AportesObrasSociales*1-
+			totalAportesSindicales*1;
+		$('#Asiento0Movimiento'+orden+'Haber').val(sueldospersonal);
+		//Falta restar APORTES DE Sindicatos
+	}
     
     /*Ahora debemos preguntar que sindicato tiene el empleado y eso debe sumar a la cuenta relacionada al sindicato*/
 }

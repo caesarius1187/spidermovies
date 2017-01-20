@@ -571,33 +571,6 @@ class ClientesController extends AppController {
 	   	$this->set('periodo',$periodo);	  
 		$cliente=$this->Cliente->find('first', array(
 				   'contain'=>array(
-				   		'Venta'=>array(					   			
-			   				'Puntosdeventa'=>array(
-			   						'fields'=>array('id','nombre')
-			   					),	
-		   					'Subcliente'=>array(
-		   						'fields'=>array('id','nombre','cuit')
-		   					),	
-		   					'Localidade'=>array(
-		   						'Partido',
-		   						'fields'=>array('id','nombre')
-		   					),
-		   					'Actividadcliente'=>array(
-		   						'Actividade',
-		   					),
-		   					'Comprobante'=>[
-								'fields'=>[
-									'id',
-									'tipodebitoasociado',
-									'tipocreditoasociado',
-									'nombre',
-									'abreviacion',
-									'codigo']
-		   					],
-			   				'conditions' => array(					            	
-								'Venta.periodo'=>$periodo
-				   			),	
-				   		),
 					   	'Sueldo'=>array(
 						   'conditions' => array(
 							   'Sueldo.periodo'=>$periodo
@@ -757,8 +730,7 @@ class ClientesController extends AppController {
         $cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;  
         $cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;  
         $cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;  
-
-	   	$this->set('cliente',$cliente);
+	   	$this->set(compact('cliente'));
 
 	   	$optionspuntosdeventa = array(
 	   		'conditions' =>array('Puntosdeventa.cliente_id' => $id,),

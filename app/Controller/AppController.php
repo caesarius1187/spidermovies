@@ -52,7 +52,7 @@ class AppController extends Controller {
 	);
 
 	public function beforeFilter() {
-		set_time_limit(0);
+//		set_time_limit(0);
         $this->Auth->allow('login');
     }
 

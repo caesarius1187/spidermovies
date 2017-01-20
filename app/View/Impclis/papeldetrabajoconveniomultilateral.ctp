@@ -385,8 +385,10 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					$baseProrrateada = 0;
                     //este switch me aplica regimen especial o regimen comun para las bases segun las actividades pero esto no se debe hacer si
                     // estamos haciendo Actividades Economicas, solo si es Convenio
+					$title="Base Prorrateada";
                     if($impcli['Impcli']['impuesto_id']==21){/*Actividades Economicas*/
                         $baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
+						$title = "Base no prorrateada por articulo";
                     }else {
                         switch ($actividadcliente['Actividade']['articulo']) {
                             case 2/*Regimen General*/
@@ -394,9 +396,14 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                                 if ($impcliprovincia['ejercicio'] == 'Resto'/*No es primer ejercicio*/) {
                                     //Total De Ventas en la actividad multiplicado por el coeficiente de la provincia
                                     $baseProrrateada = $subtotalVentaxActividad[$actividadcliente['Actividadcliente']['id']] * $impcliprovincia['coeficiente'];
-                                } else if ($impcliprovincia['ejercicio'] == 'Primero') {
+									$title = "Articulo 2, Ejercicio resto :".$subtotalVentaxActividad[$actividadcliente['Actividadcliente']['id']]."*".$impcliprovincia['coeficiente'];;
+								} else if ($impcliprovincia['ejercicio'] == 'Primero') {
+									$title = "Articulo distinto de 2, Ejercicio primero :"
+										.$liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
                                     $baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
-                                } else {
+								} else {
+									$title = "Articulo distinto de 2, Ejercicio ultimo :".
+										$liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']];
                                     $baseProrrateada = $liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']];
                                 }
                                 break;
@@ -405,26 +412,30 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                             case 11:
                             case 12:
                                 if ($impcliprovincia['sede'] == 1/*Es Sede*/) {
-                                    $baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] / 0.8) * 0.2;
+									$title = "Articulo 12, Sede :(".$liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']]."/ 0.8) * 0.2";
+										$baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] / 0.8) * 0.2;
                                 }
                                 break;
                             case 6:
                                 if ($impcliprovincia['sede'] == 1/*Es Sede*/) {
-                                    $baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] / 0.9) * 0.1;
+									$title = "Articulo 6, Sede :(".$liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']]."/ 0.9) * 0.1";
+									$baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] / 0.9) * 0.1;
                                 } else {
 
                                 }
                                 break;
                             case 9:
                                 $baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
-                                break;
+								$title = "Articulo 9:".$liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
+								break;
                             default:
+								$title = "Base = 0 por no aplicar en ningun articulo";
                                 $baseProrrateada = 0;
                                 break;
                         }
                     }
 					?>
-				<td class="baseImponibleProrrateada" id="<?php echo $impcliprovincia['id']."-baseimponible".$actividadcliente['Actividadcliente']['id'] ?>">
+				<td title="<?php echo $title ?>" class="baseImponibleProrrateada" id="<?php echo $impcliprovincia['id']."-baseimponible".$actividadcliente['Actividadcliente']['id'] ?>">
 					<!-- Base Prorrateada Bases Imponibles Prorrateadas -->
 					<span style="color:#0C0">
 					<?php echo number_format($baseProrrateada, 2, ",", ".");
@@ -951,17 +962,9 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     }
                     echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['value'=>$movId[$asientoestandarCM['cuenta_id']],]);
                     echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
-                        'readonly'=>'readonly',
-                        'class'=>'datepicker',
                         'type'=>'hidden',
-                        'label'=>array(
-                            'text'=>"Vencimiento:",
-                            "style"=>"display:inline",
-                        ),
                         'readonly','readonly',
                         'value'=>date('d-m-Y'),
-                        'div' => false,
-                        'style'=> 'height:9px;display:inline'
                     ));
                     echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
                     echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarCM['cuenta_id'],'id'=>'cuenta'.$asientoestandarCM['cuenta_id']]);

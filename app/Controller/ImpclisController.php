@@ -172,14 +172,7 @@ class ImpclisController extends AppController {
                             //Si es sindicato vamos a crear una cuenta ed aporte y conyt
                             break;
                     }
-//                    $optionsImpcli = [
-//                        'contain'=>['Impuesto'],
-//                        'conditions'=>[
-//                            'Impcli.id' => $this->request->data['Cbu']['impcli_id']
-//                        ]
-//                    ];
-//                    $impcli = $this->Impcli->find('first',$optionsImpcli);
-                    $CuentaClienteNuevaId = 0;
+					$CuentaClienteNuevaId = 0;
                     foreach ($cuentasImpuestoAActivar as $cuentaactivable){
                         $conditionsCuentascliente = array(
                             'Cuentascliente.cliente_id' => $this->request->data['Impcli']['cliente_id'],
@@ -242,9 +235,7 @@ class ImpclisController extends AppController {
                                 break;//este break me garantiza que se cree solo 1 de estas cuentas relacionadas al impuesto
                                 //Ahora cuando haya prenombres voy a preguntar si ya use todos ya hihago el break;
                             }
-
                         }
-
                     }
                     $numnombre=0;
                     foreach ($cuentasUnica2 as $cuentaactivableunica2){
@@ -280,8 +271,7 @@ class ImpclisController extends AppController {
 
                         }
                     }
-				}
-				else{
+				}else{
 					$this->set('respuesta','Error: NO se relaciono impuesto para cliente. Intente de nuevo.');	
 					$this->autoRender=false; 
 					$this->layout = 'ajax';
@@ -475,7 +465,12 @@ class ImpclisController extends AppController {
 		$options = array(
 			'contain'=>array(
                 'Impuesto'=>[
-                    'Asientoestandare'=>['Cuenta'],
+                    'Asientoestandare'=>[
+						'conditions'=>[
+							'tipoasiento'=>'impuestos'
+						],
+						'Cuenta'
+					],
                 ],
 				'Cliente'=>[
 					'Cuentascliente'=>[
@@ -688,7 +683,12 @@ class ImpclisController extends AppController {
 		$options = [
 			'contain'=>[
                 'Impuesto'=>[
-                    'Asientoestandare'=>['Cuenta'],
+                    'Asientoestandare'=>[
+						'conditions'=>[
+							'tipoasiento'=>'impuestos'
+						],
+						'Cuenta'
+					],
                 ],
 				'Cliente'=>[
                     'Cuentascliente'=>[
@@ -1350,7 +1350,12 @@ class ImpclisController extends AppController {
 		$options = array(
 			'contain'=>array(
                 'Impuesto'=>[
-                    'Asientoestandare'=>['Cuenta'],
+                    'Asientoestandare'=>[
+						'conditions'=>[
+							'tipoasiento'=>'impuestos'
+						],
+						'Cuenta'
+					],
                 ],
 				'Asiento'=>[
 					'Movimiento'=>['Cuentascliente'],

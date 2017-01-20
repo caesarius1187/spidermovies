@@ -44,11 +44,11 @@
         </div>
         <div style="width:auto; float: left;">
             <a id="aExportarFacturas" href="#" class="buttonImpcli" style="margin-right: 8px;width: initial;"
-               onclick="downloadInnerHtml('<?php echo $cliente["Cliente"]['nombre']."-".$periodo; ?>ventas.txt','divFacturas','text/html')">
+               onclick="downloadInnerHtml('<?php echo $cliente["Cliente"]['nombre']."-".$periodo; ?>Compras.txt','divFacturas','text/html')">
                 Descargar Compras Facturas
             </a>
             <a id="aExportarAlicuotas" href="#" class="buttonImpcli" style="margin-right: 8px;width: initial;"
-               onclick="downloadInnerHtml('<?php echo $cliente["Cliente"]['nombre']."-".$periodo; ?>alicuotas.txt','divAlicuotas','text/html')">
+               onclick="downloadInnerHtml('<?php echo $cliente["Cliente"]['nombre']."-".$periodo; ?>Alicuotas.txt','divAlicuotas','text/html')">
                 Descargar Compras Alicuotas
             </a>
         </div>

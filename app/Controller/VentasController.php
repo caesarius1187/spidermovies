@@ -33,7 +33,272 @@ class VentasController extends AppController {
 		'0006' => "27" ,
 	];
 
-	/**
+	public function index($id=null,$periodo=null,$page=null)
+	{
+		$this->loadModel('Cliente');
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+
+		//A: Es menor que periodo Hasta
+		$esMenorQueHasta = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+		//B: Es mayor que periodo Desde
+		$esMayorQueDesde = array(
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+				),
+			)
+		);
+		//C: Tiene Periodo Hasta 0 NULL
+		$periodoNull = array(
+			'OR'=>array(
+				array('Periodosactivo.hasta'=>null),
+				array('Periodosactivo.hasta'=>""),
+			)
+		);
+		$conditionsImpCliHabilitados = array(
+			//El periodo esta dentro de un desde hasta
+			'AND'=> array(
+				$esMayorQueDesde,
+				'OR'=> array(
+					$esMenorQueHasta,
+					$periodoNull
+				)
+			)
+		);
+
+		$this->set('periodo',$periodo);
+		if($page==null){
+			$page = 1;
+		}
+		$cliente=$this->Cliente->find('first', array(
+				'contain'=>array(
+//					'Venta'=>array(
+//						'fields'=>['id','fecha','condicioniva','condicioniva','numerocomprobante','alicuota','tipodebito'
+//							,'neto','iva','ivapercep','iibbpercep','actvspercep','impinternos','nogravados','excentos'
+//							,'exentosactividadeseconomicas','exentosactividadesvarias','total'],
+//						'Puntosdeventa'=>array(
+//							'fields'=>array('id','nombre')
+//						),
+//						'Subcliente'=>array(
+//							'fields'=>array('id','nombre','cuit')
+//						),
+//						'Localidade'=>array(
+//							'Partido',
+//							'fields'=>array('id','nombre')
+//						),
+//						'Actividadcliente'=>array(
+//							'Actividade',
+//						),
+//						'Comprobante'=>[
+//							'fields'=>[
+//								'id',
+//								'tipodebitoasociado',
+//								'tipocreditoasociado',
+//								'nombre',
+//								'abreviacion',
+//								'codigo']
+//						],
+//						'conditions' => array(
+//							'Venta.periodo'=>$periodo
+//						),
+//						'offset'=>$page,
+//						'limit'=>1000
+//					),
+					'Impcli'=>[
+						'Cbu'=>[
+							'Movimientosbancario'=>[
+								'Cbu',
+								'Cuentascliente',
+								'conditions'=>[
+									'Movimientosbancario.periodo'=>$periodo,
+								]
+							],
+						],
+						'Periodosactivo'=>[
+							'conditions'=>$conditionsImpCliHabilitados
+						]
+					]
+				),
+				'conditions' => array(
+					'id' => $id,
+				),
+			)
+		);
+		$ventas=$this->Venta->find('all', array(
+						'contain'=>[],
+						'fields'=>['id','fecha','condicioniva','condicioniva','numerocomprobante','alicuota','tipodebito'
+							,'neto','iva','ivapercep','iibbpercep','actvspercep','impinternos','nogravados','excentos'
+							,'exentosactividadeseconomicas','exentosactividadesvarias','total',
+							'Puntosdeventa.nombre','Subcliente.nombre','Subcliente.cuit','Localidade.nombre',
+							'Partido.nombre','Actividade.nombre','Actividade.nombre','Comprobante.tipodebitoasociado'
+							,'Comprobante.tipocreditoasociado','Comprobante.nombre','Comprobante.abreviacion','Comprobante.codigo'],
+						'joins'=>[
+							[
+								'table' => 'puntosdeventas',
+								'alias' => 'Puntosdeventa',
+//								'fields'=> ['id','nombre'],
+								'type' => 'INNER',
+								'conditions' => array(
+									'Puntosdeventa.id = Venta.puntosdeventa_id',
+								)
+							],
+							[
+								'table' => 'subclientes',
+								'alias' => 'Subcliente',
+//								'fields'=> ['id','nombre','cuit'],
+								'type' => 'INNER',
+								'conditions' => array(
+									'Subcliente.id = Venta.subcliente_id',
+								)
+							],
+							[
+								'table' => 'localidades',
+								'alias' => 'Localidade',
+//								'fields'=> ['id','nombre'],
+								'type' => 'INNER',
+								'conditions' => array(
+									'Localidade.id = Venta.localidade_id',
+								)
+							],
+							[
+								'table' => 'partidos',
+								'alias' => 'Partido',
+//								'fields'=> ['id','nombre'],
+								'type' => 'INNER',
+								'conditions' => array(
+									'Partido.id = Localidade.partido_id',
+								)
+							],
+							[
+								'table' => 'actividadclientes',
+								'alias' => 'Actividadcliente',
+								'type' => 'INNER',
+								'conditions' => array(
+									'Actividadcliente.id = Venta.actividadcliente_id',
+								)
+							],
+							[
+								'table' => 'actividades',
+								'alias' => 'Actividade',
+								'type' => 'INNER',
+								'conditions' => array(
+									'Actividadcliente.actividade_id = Actividade.id',
+								)
+							],
+							[
+								'table' => 'comprobantes',
+								'alias' => 'Comprobante',
+								'type' => 'INNER',
+//								'fields'=>[
+//									'id',
+//									'tipodebitoasociado',
+//									'tipocreditoasociado',
+//									'nombre',
+//									'abreviacion',
+//									'codigo'],
+								'conditions' => array(
+									'Comprobante.id = Venta.comprobante_id',
+								)
+							]
+						],
+						'conditions' => array(
+							'Venta.periodo'=>$periodo,
+							'Venta.cliente_id'=>$id
+						),
+//						'offset'=>$page,
+//						'limit'=>1000
+					)
+		);
+
+/*AFIP*/
+		$tieneMonotributo=False;
+		$tieneIVA=False;
+		$tieneIVAPercepciones=False;
+		$tieneImpuestoInterno=False;
+		/*DGR*/
+		$tieneAgenteDePercepcionIIBB=False;
+		/*DGRM*/
+		$tieneAgenteDePercepcionActividadesVarias=False;
+		foreach ($cliente['Impcli'] as $impcli) {
+			/*AFIP*/
+			if($impcli['impuesto_id']==4/*Monotributo*/){
+				//Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Monotributista Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=True;
+					$tieneIVA=False;
+				}
+			}
+			if($impcli['impuesto_id']==19/*IVA*/){
+				//Tiene IVA asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Responsable Inscripto Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=False;
+					$tieneIVA=True;
+				}
+			}
+			if($impcli['impuesto_id']==184/*IVA Percepciones*/){
+				//Tiene IVA Percepciones asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene IVA Percepciones Activo en este periodo
+					$tieneIVAPercepciones=True;
+				}
+			}
+			if($impcli['impuesto_id']==185/*Impuesto Interno*/){
+				//Tiene Impuesto Interno asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Impuesto Interno Activo en este periodo
+					$tieneImpuestoInterno=True;
+				}
+			}
+			/*DGR*/
+			if($impcli['impuesto_id']==173/*Agente de Percepcion IIBB*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion IIBB Activo en este periodo
+					$tieneAgenteDePercepcionIIBB=True;
+				}
+			}
+			/*DGRM*/
+			if($impcli['impuesto_id']==186/*Agente de Percepcion de Actividades Varias*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion de Actividades Varias Activo en este periodo
+					$tieneAgenteDePercepcionActividadesVarias=True;
+				}
+			}
+		}
+		$cliente['Cliente']['tieneMonotributo'] = $tieneMonotributo;
+		$cliente['Cliente']['tieneIVA'] = $tieneIVA;
+		$cliente['Cliente']['tieneIVAPercepciones'] = $tieneIVAPercepciones;
+		$cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;
+		$cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;
+		$cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;
+
+		unset($cliente['Impcli']);
+
+		$this->set(compact('cliente'));
+		$this->set(compact('ventas'));
+//		if($this->request->is('ajax')){
+			$this->layout = 'ajax';
+//		}
+
+	}
+		/**
  * add method
  *
  * @return void

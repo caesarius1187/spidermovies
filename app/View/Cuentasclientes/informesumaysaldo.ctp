@@ -22,12 +22,17 @@ echo $this->Html->script('cuentasclientes/informesumaysaldo',array('inline'=>fal
         echo $this->Form->input('periodo',['type'=>'hidden','value'=>$periodo])?>
     </div>
     <div style="float:right; width:45%">
-        <?php echo $this->Form->button('Asientos',
-            array('type' => 'button',
-                'class' =>"btn_realizar_tarea",
-                'div' => false,
-                'style' => array('style' => 'float:right'),
-                'onClick' => "realizarEventoCliente('".$periodo."',".$cliente["Cliente"]['id'].",'realizado')"
+        <?php
+        echo $this->Html->link(
+            "Asientos",
+            array(
+                'controller' => 'asientos',
+                'action' => 'index',
+                $cliente["Cliente"]['id'],
+                $periodo
+            ),
+            array('class' => 'buttonImpcli',
+                'style'=> 'margin-right: 8px;width: initial;'
             )
         );
         echo $this->Form->button('Imprimir',

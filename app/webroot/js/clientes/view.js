@@ -1304,6 +1304,89 @@ function setOnChangeLocalidad(jsonactividadcliente){
 		$("#ImpcliprovinciaLocalidadeId").trigger('change');
 	});
 }
+function loadFormImpuestoCuentasganancias(cliid){
+    jQuery(document).ready(function($) {
+        var data ="";
+        $.ajax({
+            type: "get",  // Request method: post, get
+            url: serverLayoutURL+"/cuentasganancias/index/"+cliid,
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $("#form_impcli_dgrm_provincia").html(response);
+                $('.chosen-select').chosen({search_contains:true});
+                location.href='#nuevo_IMPProv';
+                $(".inputcategoria").change(function () {
+                    var categoriaelegida = $(this).val();
+                    var posicion = $(this).attr('posicion');
+                    var miCategoria = $('#Cuentasganancia'+posicion+'CuentaId');
+                    miCategoria.empty();
+                    var options;
+                    switch (categoriaelegida){
+                        
+                        /*$categorias = [
+                         'primeracateg'=>'primera',
+                         'segundacateg'=>'segunda',
+                         'terceracateg'=>'tercera empresas',
+                         'terceracateg45'=>'tercera otros',
+                         'cuartacateg'=>'cuarta'
+                         ];*/
+                        case 'primeracateg':
+                            options = jQuery.parseJSON($("#cuentascategoriaprimera").val());
+                            break;
+                        case 'segundacateg':
+                            options = jQuery.parseJSON($("#cuentascategoriasegunda").val());
+                            break;
+                        case 'terceracateg':
+                            options = jQuery.parseJSON($("#cuentascategoriatercera").val());
+                            break;
+                        case 'terceracateg45':
+                            options = jQuery.parseJSON($("#cuentascategoriaterceraotros").val());
+                            break;
+                        case 'cuartacateg':
+                            options = jQuery.parseJSON($("#cuentascategoriacuarta").val());
+                            break;
+                    };
+                    $.each(options, function(key, value) {
+                        miCategoria
+                            .append($("<option></option>")
+                                .attr("value",key)
+                                .text(value));
+                    });
+                });
+                $(".inputcategoria").trigger("change");
+                $('#CuentasgananciaIndexForm').submit(function(){
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(data,textStatus,xhr){
+                            try {
+                                var respuesta = jQuery.parseJSON(data);
+                                callAlertPopint(respuesta.respuesta);
+                            }catch (Exception){
+                                callAlertPopint("Ocurrio un problema por favor intente mas tarde");
+                            }
+                        },
+                        error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                            location.href='#close';
+                        }
+                    });
+                    return false;
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                callAlertPopint(textStatus);
+            }
+        });
+    });
+}
+
 function loadFormImpuesto(impcliid,cliid){
 	jQuery(document).ready(function($) {
 		var data ="";

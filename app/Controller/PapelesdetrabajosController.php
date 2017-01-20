@@ -51,7 +51,12 @@ class PapelesdetrabajosController extends AppController {
 			'contain' => [
 				'Impcli'=>[
 					'Impuesto'=>[
-						'Asientoestandare'=>['Cuenta'],
+						'Asientoestandare'=>[
+							'conditions'=>[
+								'tipoasiento'=>'impuestos'
+							],
+							'Cuenta'
+						],
 					],
 					'Eventosimpuesto'=>[
 						'conditions'=>[

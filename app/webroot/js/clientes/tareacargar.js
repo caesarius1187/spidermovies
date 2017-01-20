@@ -68,131 +68,13 @@ $(document).ready(function() {
 
     allcomprobantes =  JSON.parse($('#jsonallcomprobantes').val());
     var tblTablaConceptosrestantes = $('#tblTablaConceptosrestantes').dataTable().api();
-    //tblTablaVentas = $('#tablaVentas').dataTable().api();
     var nombrecliente = $('#clientenombre').val();
     var periodo = $('#periododefault').val();
 
-    tblTablaVentas = $('#tablaVentas').DataTable( {
-        dom: 'Bfrtip',
-        lengthMenu: [
-            [ 10, 25, 50, -1 ],
-            [ '10', '25', '50', 'todas' ]
-        ],
-        buttons: [
-            {
-                extend: 'collection',
-                text: 'Columnas',
-                autoClose: true,
-                buttons: [
-                    {
-                        text: 'Conmutar Fecha',
-                        action: function ( e, dt, node, config ) {
-                            dt.column( 0 ).visible( ! dt.column( 0 ).visible() );
-                        }
-                    },
-                    {
-                        text: 'Conmutar Comprobante',
-                        action: function ( e, dt, node, config ) {
-                            dt.column( 1 ).visible( ! dt.column( 1 ).visible() );
-                        }
-                    },
-                    {
-                        text: 'Conmutar CUIT',
-                        action: function ( e, dt, node, config ) {
-                            dt.column( 2 ).visible( ! dt.column( 2 ).visible() );
-                        }
-                    },
-                    {
-                        text: 'Conmutar Nombre',
-                        action: function ( e, dt, node, config ) {
-                            dt.column( 3 ).visible( ! dt.column( 3 ).visible() );
-                        }
-                    },
-                    {
-                        text: 'Conmutar Condicion IVA',
-                        action: function ( e, dt, node, config ) {
-                            dt.column( 4 ).visible( ! dt.column( 4 ).visible() );
-                        }
-                    },
-                    {
-                        text: 'Conmutar Actividad',
-                        action: function ( e, dt, node, config ) {
-                            dt.column( 5 ).visible( ! dt.column( 5 ).visible() );
-                        }
-                    },
-                    {
-                        text: 'Conmutar Localidad',
-                        action: function ( e, dt, node, config ) {
-                            dt.column( 6 ).visible( ! dt.column( 6 ).visible() );
-                        }
-                    },
-                    {
-                        text: 'Conmutar Debito',
-                        action: function ( e, dt, node, config ) {
-                            dt.column( 7 ).visible( ! dt.column( 7 ).visible() );
-                        }
-                    },
-                    {
-                        text: 'Conmutar Acciones',
-                        action: function ( e, dt, node, config ) {
-                            dt.column( -1 ).visible( ! dt.column( -1 ).visible() );
-                        }
-                    }
-                ]
-            },
-            {
-                extend: 'pageLength',
-                text: 'Ver',
-            },
-            {
-                extend: 'csv',
-                text: 'CSV',
-                title: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo,
-                exportOptions: {
-                    columns: ':visible'
-                }
-            },
-            {
-                extend: 'excel',
-                text: 'Excel',
-                title: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo,
-                exportOptions: {
-                    columns: ':visible'
-                }
-            },
-            {
-                extend: 'pdf',
-                text: 'PDF',
-                title: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo,
-                exportOptions: {
-                    columns: ':visible'
-                },
-                orientation: 'landscape',
-                download: 'open',
-                message: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+    //Ahora la tabla de ventas la vamos a tener que cargar por ajax asi que las configuraciones de esta tabla deben
+    //hacerse una vez finalizada esa carga
+    cargaryconfigurarTablaVentas();
 
-            },
-            {
-                extend: 'copy',
-                text: 'Copiar',
-                exportOptions: {
-                    columns: ':visible'
-                }
-            },
-            {
-                extend: 'print',
-                text: 'Imprimir',
-                exportOptions: {
-                    columns: ':visible'
-                },
-                orientation: 'landscape',
-                message: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
-            },
-        ],
-    } );
-
-    $('#bodyTablaVentas').width("100%");
-    // tblTablaCompras = $('#tablaCompras').dataTable().api();
     tblTablaCompras = $('#tablaCompras').DataTable( {
         dom: 'Bfrtip',
         lengthMenu: [
@@ -398,17 +280,242 @@ $(document).ready(function() {
     var tblTablaConceptosRestantes = $('#tblTablaConceptosrestantes').dataTable().api();
     var tblTablaMovimientosBancarios = $('#tblTablaMovimientosBancarios').dataTable().api();
 
-    calcularFooterTotales(tblTablaVentas);
     calcularFooterTotales(tblTablaCompras);
     $('.chosen-select').chosen({search_contains:true});
 
-    ventasOnChange();
     comprasOnChange();
     conceptosRestantesOnChange();
     addFormSubmitCatchs();
     tabsFuncionalidad();
     cctxconeptosOnChange();
+    function cargaryconfigurarTablaVentas(){
 
+        var data="";
+        var clienteid = $('#cliid').val();
+        var periodo = $('#periodo').val();
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/ventas/index/"+clienteid+"/"+periodo,
+
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $("#divTablaVentas").html(response);
+                tblTablaVentas = $('#tablaVentas').DataTable( {
+                    dom: 'Bfrtip',
+                    lengthMenu: [
+                        [ 10, 25, 50, -1 ],
+                        [ '10', '25', '50', 'todas' ]
+                    ],
+                    buttons: [
+                        {
+                            extend: 'collection',
+                            text: 'Columnas',
+                            autoClose: true,
+                            buttons: [
+                                {
+                                    text: 'Conmutar Fecha',
+                                    action: function ( e, dt, node, config ) {
+                                        dt.column( 0 ).visible( ! dt.column( 0 ).visible() );
+                                    }
+                                },
+                                {
+                                    text: 'Conmutar Comprobante',
+                                    action: function ( e, dt, node, config ) {
+                                        dt.column( 1 ).visible( ! dt.column( 1 ).visible() );
+                                    }
+                                },
+                                {
+                                    text: 'Conmutar CUIT',
+                                    action: function ( e, dt, node, config ) {
+                                        dt.column( 2 ).visible( ! dt.column( 2 ).visible() );
+                                    }
+                                },
+                                {
+                                    text: 'Conmutar Nombre',
+                                    action: function ( e, dt, node, config ) {
+                                        dt.column( 3 ).visible( ! dt.column( 3 ).visible() );
+                                    }
+                                },
+                                {
+                                    text: 'Conmutar Condicion IVA',
+                                    action: function ( e, dt, node, config ) {
+                                        dt.column( 4 ).visible( ! dt.column( 4 ).visible() );
+                                    }
+                                },
+                                {
+                                    text: 'Conmutar Actividad',
+                                    action: function ( e, dt, node, config ) {
+                                        dt.column( 5 ).visible( ! dt.column( 5 ).visible() );
+                                    }
+                                },
+                                {
+                                    text: 'Conmutar Localidad',
+                                    action: function ( e, dt, node, config ) {
+                                        dt.column( 6 ).visible( ! dt.column( 6 ).visible() );
+                                    }
+                                },
+                                {
+                                    text: 'Conmutar Debito',
+                                    action: function ( e, dt, node, config ) {
+                                        dt.column( 7 ).visible( ! dt.column( 7 ).visible() );
+                                    }
+                                },
+                                {
+                                    text: 'Conmutar Acciones',
+                                    action: function ( e, dt, node, config ) {
+                                        dt.column( -1 ).visible( ! dt.column( -1 ).visible() );
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            extend: 'pageLength',
+                            text: 'Ver',
+                        },
+                        {
+                            extend: 'csv',
+                            text: 'CSV',
+                            title: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo,
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        },
+                        {
+                            extend: 'excel',
+                            text: 'Excel',
+                            title: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo,
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        },
+                        {
+                            extend: 'pdf',
+                            text: 'PDF',
+                            title: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo,
+                            exportOptions: {
+                                columns: ':visible'
+                            },
+                            orientation: 'landscape',
+                            download: 'open',
+                            message: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+
+                        },
+                        {
+                            extend: 'copy',
+                            text: 'Copiar',
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        },
+                        {
+                            extend: 'print',
+                            text: 'Imprimir',
+                            exportOptions: {
+                                columns: ':visible'
+                            },
+                            orientation: 'landscape',
+                            message: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+                        },
+                    ],
+                } );
+                $('#bodyTablaVentas').width("100%");
+                calcularFooterTotales(tblTablaVentas);
+                ventasOnChange();
+                $('#saveVentasForm').submit(function(){
+                    var formData = $(this).serialize();
+                    var formUrl = $(this).attr('action');
+                    //Controles de inputs
+                    var fecha = $('#VentaFecha').val();
+                    var ventaNumeroComprobante = $('#VentaNumerocomprobante').val();
+                    if(fecha==null || fecha == ""){
+                        callAlertPopint('Debes seleccionar una fecha');
+                        return false;
+                    }
+                    if(ventaNumeroComprobante==null || ventaNumeroComprobante == ""){
+                        return false;
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(data,textStatus,xhr){
+                            var respuesta = JSON.parse(data);
+                            if(respuesta.venta.Venta!=null){
+                                //Incrementar en 1 el numero de comprobante
+                                $( "#VentaNumerocomprobante" ).val($( "#VentaNumerocomprobante" ).val()*1 + 1);
+                                //Agregar la fila nueva a la tabla
+                                var  tdClass = "tdViewVenta"+respuesta.venta_id;
+                                var positivo = 1;
+                                if(respuesta.venta.Venta.tipodebito=='Restitucion debito fiscal'){
+                                    positivo = positivo*-1;
+                                }
+                                var rowData =
+                                    [
+                                        respuesta.venta.Venta.fecha,
+                                        respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante,
+                                        respuesta.subcliente.Subcliente.cuit,
+                                        respuesta.subcliente.Subcliente.nombre,
+                                        respuesta.venta.Venta.condicioniva,
+                                        respuesta.actividadcliente.Actividade.nombre,
+                                        respuesta.localidade.Localidade.nombre,
+                                    ];
+
+                                if(!respuesta.tieneMonotributo){
+                                    rowData.push(respuesta.venta.Venta.tipodebito);
+                                    rowData.push(respuesta.venta.Venta.alicuota+"%");
+                                    rowData.push(respuesta.venta.Venta.neto*positivo);
+                                    rowData.push(respuesta.venta.Venta.iva*positivo);
+                                }
+                                if(respuesta.tieneIVAPercepciones){
+                                    rowData.push(respuesta.venta.Venta.ivapercep*positivo);
+                                }
+                                if(respuesta.tieneAgenteDePercepcionIIBB){
+                                    rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
+                                }
+                                if(respuesta.tieneAgenteDePercepcionActividadesVarias){
+                                    rowData.push(respuesta.venta.Venta.actvspercep*positivo);
+                                }
+                                if(respuesta.tieneImpuestoInterno){
+                                    rowData.push(respuesta.venta.Venta.impinternos*positivo);
+                                }
+                                if(!respuesta.tieneMonotributo) {
+                                    rowData.push(respuesta.venta.Venta.nogravados * positivo);
+                                    rowData.push(respuesta.venta.Venta.excentos * positivo);
+                                }
+                                rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);
+                                rowData.push(respuesta.venta.Venta.exentosactividadesvarias*positivo);
+                                rowData.push(respuesta.venta.Venta.total*positivo);
+                                var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarVenta('+respuesta.venta_id+')" alt="">';
+                                tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarVenta('+respuesta.venta_id+')" alt="">';
+                                rowData.push(tdactions);
+
+                                var rowIndex = $('#tablaVentas').dataTable().fnAddData(rowData);
+                                var row = $('#tablaVentas').dataTable().fnGetNodes(rowIndex);
+                                $(row).attr( 'id', "rowventa"+respuesta.venta_id );
+                                calcularFooterTotales(tblTablaVentas);
+                            }else{
+                                callAlertPopint(respuesta.respuesta);
+                            }
+                        },
+                        error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                        }
+                    });
+                    return false;
+                });
+                //Fin Configuracion Tabla Ventas
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
+
+
+
+    }
     function hiddeAllImputsFromConceptosRestantesAddForm(){
     $('#saveConceptosrestantesForm div').hide();
     
@@ -469,8 +576,18 @@ $(document).ready(function() {
             // URL to request
             data: data,  // post data
             success: function(response) {
-                $("#divAsientosVenta").html(response);
-                location.href="#popinAsientosVenta";
+
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Asiento automatico de venta');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                $('.chosen-select-cuenta').chosen({
+                    search_contains:true,
+                    include_group_label_in_selected:true
+                });
+                
                 $('#AsientoAddForm').submit(function(){
                     //serialize form data
                     var formData = $(this).serialize();
@@ -514,8 +631,17 @@ $(document).ready(function() {
             // URL to request
             data: data,  // post data
             success: function(response) {
-                $("#divAsientosVenta").html(response);
-                location.href="#popinAsientosVenta";
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Asiento automatico de compra');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                $('.chosen-select-cuenta').chosen({
+                    search_contains:true,
+                    include_group_label_in_selected:true
+                });
+
                 $('#AsientoAddForm').submit(function(){
                     //serialize form data
                     var formData = $(this).serialize();
@@ -547,6 +673,7 @@ $(document).ready(function() {
             }
         });
     });
+
     function ventasOnChange(){
         /*Ventas On Change*/
         $("#VentaIvapercep").on('change paste', function() {
@@ -1008,88 +1135,6 @@ $(document).ready(function() {
     }
     
     function addFormSubmitCatchs(){
-        $('#saveVentasForm').submit(function(){
-            var formData = $(this).serialize();
-            var formUrl = $(this).attr('action');
-            //Controles de inputs
-            var fecha = $('#VentaFecha').val();
-            var ventaNumeroComprobante = $('#VentaNumerocomprobante').val();
-            if(fecha==null || fecha == ""){
-                callAlertPopint('Debes seleccionar una fecha');
-                return false;
-            }
-            if(ventaNumeroComprobante==null || ventaNumeroComprobante == ""){
-                return false;
-            }
-            $.ajax({
-                type: 'POST',
-                url: formUrl,
-                data: formData,
-                success: function(data,textStatus,xhr){
-                    var respuesta = JSON.parse(data);
-                    if(respuesta.venta.Venta!=null){
-                        //Incrementar en 1 el numero de comprobante
-                        $( "#VentaNumerocomprobante" ).val($( "#VentaNumerocomprobante" ).val()*1 + 1);
-                        //Agregar la fila nueva a la tabla
-                        var  tdClass = "tdViewVenta"+respuesta.venta_id;
-                        var positivo = 1;
-                        if(respuesta.venta.Venta.tipodebito=='Restitucion debito fiscal'){
-                            positivo = positivo*-1;
-                        }
-                        var rowData =
-                            [
-                                respuesta.venta.Venta.fecha,
-                                respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante,
-                                respuesta.subcliente.Subcliente.cuit,
-                                respuesta.subcliente.Subcliente.nombre,
-                                respuesta.venta.Venta.condicioniva,
-                                respuesta.actividadcliente.Actividade.nombre,
-                                respuesta.localidade.Localidade.nombre,
-                            ];
-
-                        if(!respuesta.tieneMonotributo){
-                            rowData.push(respuesta.venta.Venta.tipodebito);
-                            rowData.push(respuesta.venta.Venta.alicuota+"%");
-                            rowData.push(respuesta.venta.Venta.neto*positivo);
-                            rowData.push(respuesta.venta.Venta.iva*positivo);
-                        }
-                        if(respuesta.tieneIVAPercepciones){
-                            rowData.push(respuesta.venta.Venta.ivapercep*positivo);
-                        }
-                        if(respuesta.tieneAgenteDePercepcionIIBB){
-                            rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
-                        }
-                        if(respuesta.tieneAgenteDePercepcionActividadesVarias){
-                            rowData.push(respuesta.venta.Venta.actvspercep*positivo);
-                        }
-                        if(respuesta.tieneImpuestoInterno){
-                            rowData.push(respuesta.venta.Venta.impinternos*positivo);
-                        }
-                        if(!respuesta.tieneMonotributo) {
-                            rowData.push(respuesta.venta.Venta.nogravados * positivo);
-                            rowData.push(respuesta.venta.Venta.excentos * positivo);
-                        }
-                        rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);
-                        rowData.push(respuesta.venta.Venta.exentosactividadesvarias*positivo);
-                        rowData.push(respuesta.venta.Venta.total*positivo);
-                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarVenta('+respuesta.venta_id+')" alt="">';
-                        tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarVenta('+respuesta.venta_id+')" alt="">';
-                        rowData.push(tdactions);
-
-                        var rowIndex = $('#tablaVentas').dataTable().fnAddData(rowData);
-                        var row = $('#tablaVentas').dataTable().fnGetNodes(rowIndex);
-                        $(row).attr( 'id', "rowventa"+respuesta.venta_id );
-                        calcularFooterTotales(tblTablaVentas);
-                    }else{
-                        callAlertPopint(respuesta.respuesta);
-                    }
-                },
-                error: function(xhr,textStatus,error){
-                    callAlertPopint(textStatus);
-                }
-            });
-            return false;
-        });
         $('#saveComprasForm').submit(function(){
             //serialize form data
             var formData = $(this).serialize();
@@ -1479,6 +1524,57 @@ $(document).ready(function() {
         numeral.language('id');
     }
 });
+function contabilizarBanco(periodo,cliid,bancimpcli,cbuid){
+    var data="";
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/asientos/contabilizarbanco/"+cliid+"/"+periodo+"/"+bancimpcli+"/"+cbuid,
+        // URL to request
+        data: data,  // post data
+        success: function(response) {
+            $('#myModal').on('show.bs.modal', function() {
+                $('#myModal').find('.modal-title').html('Asiento automatico de banco');
+                $('#myModal').find('.modal-body').html(response);
+                // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+            });
+            $('#myModal').modal('show');
+            $('.chosen-select-cuenta').chosen({
+                search_contains:true,
+                include_group_label_in_selected:true
+            });
+
+            $('#AsientoAddForm').submit(function(){
+                //serialize form data
+                var formData = $(this).serialize();
+                //get form action
+                var formUrl = $(this).attr('action');
+                //aca tenemos que sacar todos los disabled para que se envien los campos
+                $('#AsientoAddForm input').each(function(){
+                    $(this).removeAttr('disabled');
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(data,textStatus,xhr){
+                        var respuesta = JSON.parse(data);
+                        $('#myModal').modal('hide');
+                        callAlertPopint(respuesta.respuesta);
+                    },
+                    error: function(xhr,textStatus,error){
+                        alert(textStatus);
+                    }
+                });
+                return false;
+            });
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+            alert(XMLHttpRequest);
+            alert(errorThrown);
+        }
+    });
+}
 function openWin()
 {
     var myWindow=window.open('','','width=1010,height=1000px');
@@ -1877,29 +1973,29 @@ function adaptarConceptorestanteForm(formnombre,conid){
         }
     }
     function reloadInputDates(){
-    var d = new Date( );
-    d.setMonth( d.getMonth( ) - 1 );
-    (function($){
-       $( "input.datepicker" ).datepicker({
-        yearRange: "-100:+50",
-        changeMonth: true,
-        changeYear: true,
-        constrainInput: false,
-        dateFormat: 'dd-mm-yy',
-        defaultDate: d,
-      });
-      $( "input.datepicker-dia" ).datepicker({
-        yearRange: "-100:+50",
-        changeMonth: false,
-        changeYear: false,
-        constrainInput: false,
-        dateFormat: 'dd',
-        defaultDate: d,
-
-      });
-    })(jQuery);
+        var d = new Date( );
+        d.setMonth( d.getMonth( ) - 1 );
+        (function($){
+           $( "input.datepicker" ).datepicker({
+            yearRange: "-100:+50",
+            changeMonth: true,
+            changeYear: true,
+            constrainInput: false,
+            dateFormat: 'dd-mm-yy',
+            defaultDate: d,
+          });
+          $( "input.datepicker-dia" ).datepicker({
+            yearRange: "-100:+50",
+            changeMonth: false,
+            changeYear: false,
+            constrainInput: false,
+            dateFormat: 'dd',
+            defaultDate: d,
     
-  }
+          });
+        })(jQuery);
+        
+      }
 /*Show Hide from Tabs*/
     function showVentas(){
       $('.tabVentas').show();
@@ -2698,6 +2794,122 @@ function adaptarConceptorestanteForm(formnombre,conid){
         return false;
     }
 /*fin Update Sueldos*/
+/*Update Movimientos bancarios*/
+function modificarMovimientosbancario(movbid){
+    var cliid = $("#cliid").val();
+    var data ="";
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/movimientosbancarios/edit/"+movbid+"/"+cliid,
+
+        // URL to request
+        data: data,  // post data
+        success: function(response) {
+            //var oldRow = $("#rowconceptorestante"+conid).html();
+            var rowid="rowmovimientosbancarios"+movbid;
+            //var oldrow = $("#"+rowid).html();
+            //$("#"+rowid).html(oldrow+response);
+            //$(".tdViewConceptosrestanteO"+conid).hide();
+            $('#myModal').on('show.bs.modal', function() {
+                $('#myModal').find('.modal-title').html('Editar Movimiento Bancario');
+                $('#myModal').find('.modal-body').html(response);
+                // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+            });
+
+            $('#myModal').modal('show');
+            // $('#myModal input[0]').focus();
+            reloadInputDates();
+            $('.chosen-select').chosen({search_contains:true});
+            $('#MovimientosBancarioFormEdit'+movbid).submit(function(){
+                //serialize form data
+                var formData = $(this).serialize();
+                //get form action
+                var formUrl = $(this).attr('action');
+                $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(response2,textStatus,xhr){
+                        var respuesta = JSON.parse(response2);
+                        callAlertPopint(respuesta.respuesta);
+                        var movimientobancario = respuesta.movimientosbancario.Movimientosbancario
+                        if(movimientobancario!=null){
+                            //Agregar la fila nueva a la tabla
+                            var  tdClass = "tdViewMovimientosbancario"+movbid;
+                            var rowData =
+                                [
+                                    respuesta.movimientosbancario.Cbu.cbu,
+                                    movimientobancario.fecha,
+                                    movimientobancario.concepto,
+                                    movimientobancario.debito,
+                                    movimientobancario.credito,
+                                    movimientobancario.saldo,
+                                    respuesta.movimientosbancario.Cuentascliente.Cuenta.nombre,
+                                    movimientobancario.codigoafip
+                                ];
+                            var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarMovimientosbancario('+movbid+')" alt="">';
+                            tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarMovimientosbancario('+movbid+')" alt="">';
+                            rowData.push(tdactions);
+
+                            $('#tblTablaMovimientosBancarios').dataTable().fnDeleteRow($("#rowmovimientosbancarios"+movbid));
+
+                            var rowIndex = $('#tblTablaMovimientosBancarios').dataTable().fnAddData(rowData);
+                            var row = $('#tblTablaMovimientosBancarios').dataTable().fnGetNodes(rowIndex);
+                            $(row).attr( 'id', "rowmovimientosbancarios"+respuesta.conid );
+                            //calcularFooterTotales(tblTablaVentas);
+                            $('#myModal').modal('hide');
+
+                            //.data(rowData)
+
+                            /*TODO: ReDraw pendiente
+                             *aca nos falta completar el "redibujado de la tabla, se actualizan los datos pero
+                             * no se por que no se redibuja la tabla */
+                        }
+                    },
+                    error: function(xhr,textStatus,error){
+                        alert(textStatus);
+                    }
+                });
+                return false;
+            });
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+}
+function eliminarMovimientosbancario(movbid){
+    var r = confirm("Esta seguro que desea eliminar este pago a cuenta?. Es una accion que no podra deshacer.");
+    if (r == true) {
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/conceptosrestantes/delete/"+conresid, // URL to request
+            data: "",  // post data
+            success: function(response) {
+                var mirespuesta = jQuery.parseJSON(response);
+                if(mirespuesta.error==0){
+                    callAlertPopint(mirespuesta.respuesta);
+                    $('#tblTablaConceptosrestantes').dataTable().fnDeleteRow($("#rowconceptorestante"+conresid));
+                }else if(mirespuesta.error==1){
+                    callAlertPopint(mirespuesta.respuesta);
+                }else{
+                    callAlertPopint("Error por favor intente mas tarde");
+                }
+
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
+    } else {
+        txt = "No se a eliminado la compra";
+        callAlertPopint(txt);
+    }/*
+     */
+}
+/*fin Update Movimientos bancarios*/
 function imprimirElemento(elemento){
     PopupPrint($(elem).html());
 }
