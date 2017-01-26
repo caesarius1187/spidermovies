@@ -18,6 +18,11 @@
             $miempleado['adicionales'] = 0;
             $miempleado['antiguedad'] = 0;
             $miempleado['presentismo'] = 0;
+            $miempleado['sac'] = 0;
+            $miempleado['acuerdonoremunerativo'] = 0;
+            $miempleado['antiguedadnoremunerativo'] = 0;
+            $miempleado['presentismonoremunerativo'] = 0;
+            $miempleado['sacnoremunerativo'] = 0;
             $miempleado['otros'] = 0;
             $miempleado['jubilacion'] = 0;
             $miempleado['ley19032'] = 0;
@@ -29,6 +34,7 @@
             $miempleado['cuotasindical1'] = 0;
             $miempleado['cuotasindical2'] = 0;
             $miempleado['cuotasindical3'] = 0;
+            $miempleado['cuotasindical4'] = 0;
             $miempleado['totalremuneracion'] = 0;
             $miempleado['totaldescuento'] = 0;
             $miempleado['neto'] = 0;
@@ -44,6 +50,13 @@
         $sueldo=0;
         $antiguedad = 0;
         $presentismo = 0;
+
+        $sac = 0;
+        $acuerdonoremunerativo = 0;
+        $antiguedadnoremunerativo = 0;
+        $presentismonoremunerativo = 0;
+        $sacnoremunerativo = 0;
+
         $ley19032 = 0;
         $otros = 0;
         $obrasocial = 0;
@@ -58,6 +71,9 @@
         $cuotasindical2nombre = "";
         $cuotasindical3 = 0;
         $cuotasindical3nombre = "";
+        $cuotasindical4 = 0;
+        $cuotasindical4nombre = "";
+
         $totalremuneracion = 0;
         $totaldescuento = 0;
         $neto = 0;
@@ -88,6 +104,32 @@
             if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                 array('77'/*Presentismo*/), true )){
                 $presentismo += $valorrecibo['valor'];
+            }
+
+            //S.A.C. Remunerativo 1
+            if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('92'/*S.A.C. Remunerativo 1*/), true )){
+                $sac += $valorrecibo['valor'];
+            }
+            //Acuerdo 1
+            if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('95'/*Acuerdo 1*/), true )){
+                $acuerdonoremunerativo += $valorrecibo['valor'];
+            }
+            //Por Antigüedad
+            if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('104'/*Por Antigüedad*/), true )){
+                $antiguedadnoremunerativo += $valorrecibo['valor'];
+            }
+            //Presentismo no remunerativo
+            if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('97'/*Presentismo no remunerativo*/), true )){
+                $presentismonoremunerativo += $valorrecibo['valor'];
+            }
+            //S.A.C. Proporcional no remunerativo
+            if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('102'/*S.A.C. Proporcional no remunerativo*/), true )){
+                $presentismonoremunerativo += $valorrecibo['valor'];
             }
              //Otros
             if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -158,7 +200,14 @@
                 $cuotasindical3 += $valorrecibo['valor'];
                 $cuotasindical3nombre = $valorrecibo['Cctxconcepto']['nombre'];
             }
-
+            //Cuota Sindical 4
+            if (
+            in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('134'/*Cuota Sindical 4*/), true )
+            ){
+                $cuotasindical4 += $valorrecibo['valor'];
+                $cuotasindical4nombre = $valorrecibo['Cctxconcepto']['nombre'];
+            }
             //Total Remunerativos
             if (
             in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -222,6 +271,11 @@
         $miempleado['adicionales']=$adicionales;
         $miempleado['antiguedad']=$antiguedad;
         $miempleado['presentismo']=$presentismo;
+        $miempleado['sac'] = $sac;
+        $miempleado['acuerdonoremunerativo'] = $acuerdonoremunerativo;
+        $miempleado['antiguedadnoremunerativo'] = $antiguedadnoremunerativo;
+        $miempleado['presentismonoremunerativo'] = $presentismonoremunerativo;
+        $miempleado['sacnoremunerativo'] = $sacnoremunerativo;
         $miempleado['jubilacion']=$jubilacion;
         $miempleado['ley19032']=$ley19032;
         $miempleado['obrasocial']=$obrasocial;
@@ -236,6 +290,8 @@
         $miempleado['cuotasindical2nombre']=$cuotasindical2nombre;
         $miempleado['cuotasindical3']=$cuotasindical3;
         $miempleado['cuotasindical3nombre']=$cuotasindical3nombre;
+        $miempleado['cuotasindical4']=$cuotasindical4;
+        $miempleado['cuotasindical4nombre']=$cuotasindical4nombre;
         $miempleado['totalremuneracion']=$totalremuneracion;
         $miempleado['totaldescuento']=$totaldescuento;
         $miempleado['neto']=$neto;
@@ -245,416 +301,498 @@
         $miempleado['acuerdoremunerativo']=$acuerdoremunerativo;
         $miempleado['plusvacacional']=$plusvacacional;
         ?>
-        <table id="tblLibroSueldo" class="tblInforme" cellspacing="0">
-            <tr><td colspan="20">Periodo: <?php echo $periodo ?></td></tr>
-            <tr>
-                <td colspan="20">
-                    LIBRO DE SUELDOS - LEY 20744 t.c. Art.52 - Hojas moviles
-                    <div style="width:50%;float: right">
-                    <?php echo $this->Form->input('hoja',
-                        [
-                            'div'=>false,
-                            'label'=>[
-                                'style'=>'display:inline-block;height: 3px;'
-                            ],
-                            'style'=>'height: 3px;max-width:30px'
-                        ]);
-                        echo $this->Form->input('tomo',[
-                            'div'=>false,
-                            'label'=>[
-                                'style'=>'display:inline-block;height: 3px;'
-                            ],
-                            'style'=>'height: 3px;max-width:30px',
-                        ])?>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="20">
-                    EMPRESA: <?php echo $empleado['Cliente']['nombre']; ?>
-                    CUIT: <?php echo $empleado['Cliente']['cuitcontribullente']; ?>
-                    Domicilio: <?php echo $empleado['Domicilio']['calle']; ?>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="20">
-                    ACTIVIDAD : <?php
-                    foreach ($empleado['Cliente']['Actividadcliente'] as $actividad){
-                        echo $actividad['Actividade']['nombre'];
-                    }  ?>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
-            </tr>
-            <tr>
-                <td colspan = "20" >
-                    L.P.: <?php echo $empleado['Empleado']['nombre'] ?>
-                    CUIL <?php echo $empleado['Empleado']['cuit'] ?>
-                </td>
-            </tr><!--5-->
-            <tr>
-                <td colspan = "20" >
-                    * <?php echo $empleado['Domicilio']['Localidade']['Partido']['nombre'] ?>
-                    DU N° <?php echo $empleado['Empleado']['dni'] ?>
-                    Cargo <?php echo $empleado['Empleado']['categoria'] ?>
-                    <?php echo $empleado['Empleado']['jornada']=='0.5'?"Media":"" ?>
-                    Jornada <?php echo $empleado['Empleado']['jornada']=='0.5'?"":"Completa" ?>
-                </td>
-            </tr><!--6-->
-            <tr>
-                <td colspan = "20">F. Nacimiento  <?php echo $empleado['Empleado']['nacimiento']; ?>
-                F. Ingreso  <?php echo $empleado['Empleado']['fechaingreso']; ?>
-                F. Baja  <?php echo $empleado['Empleado']['fechaegreso']; ?>
-                    Basico <?php echo $miempleado['basico']; ?>
-                </td>
-            </tr><!--7-->
-            <tr>
-                <td colspan = "20"> MODALIDAD DE CONTRATACION:  <?php echo $empleado['Empleado']['codigoafip']; ?></td>
-            </tr><!--8-->
-            <tr>
-                <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
-            </tr><!--9-->
-            <tr>
-                <td width="60px">
-                    CODIGO
-                </td>
-                <td >
-                    HABERES CON/SIN APORTE
-                </td>
-                <td>
-                    IMPORTE
-                </td>
-                <td>
-                    CODIGO
-                </td>
-                <td>
-                    DESCUENTOS
-                </td>
-                <td>
-                    IMPORTE
-                </td>
-            </tr><!--10-->
-            <tr>
-                <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
-            </tr><!--11-->
-            <?php
-            //aca vamos a mostrar las rows solo si sus valoresrecibos son > 0 sino no tiene sentido
-            //SUELDO MENSUAL
-            ?>
-            <tr>
-                <td>1</td>
-                <td>
-                    SUELDO MENSUAL
-                </td>
-                <td>
-                    <?php echo $miempleado['sueldo']; ?>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <?php
-            if($miempleado['antiguedad']*1>0){ ?>
-            <tr>
-                <td>71</td>
-                <td>
-                    ANTIGÜEDAD
-                </td>
-                <td>
-                    <?php echo $miempleado['antiguedad']; ?>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <?php }
-            if($miempleado['presentismo']*1>0){ ?>
-                <tr>
-                    <td>91</td>
-                    <td>
-                        PRESENTISMO BASICO
-                    </td>
-                    <td>
-                        <?php echo $miempleado['presentismo']; ?>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            <?php }
-            if($miempleado['adicionalcomplementarioss']*1>0){ ?>
-                <tr>
-                    <td>122</td>
-                    <td>
-                        Adicional Complemento SS
-                    </td>
-                    <td>
-                        <?php echo $miempleado['adicionalcomplementarioss']; ?>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            <?php }
-            if($miempleado['acuerdoremunerativo']*1>0){ ?>
-                <tr>
-                    <td>146</td>
-                    <td>
-                        Acuerdo Remunerativo
-                    </td>
-                    <td>
-                        <?php echo $miempleado['acuerdoremunerativo']; ?>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            <?php }
-            if($miempleado['plusvacacional']*1>0){ ?>
-                <tr>
-                    <td>000</td>
-                    <td>
-                        Plus Vacacional
-                    </td>
-                    <td>
-                        <?php echo $miempleado['plusvacacional']; ?>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            <?php }
-            if($miempleado['jubilacion']*1>0){ ?>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        701
-                    </td>
-                    <td>
-                        JUBILACION
-                    </td>
-                    <td>
-                        <?php echo $miempleado['jubilacion']; ?>
-                    </td>
-                </tr>
-            <?php }
-            if($miempleado['ley19032']*1>0){ ?>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        706
-                    </td>
-                    <td>
-                        LEY 19032-INSSJP
-                    </td>
-                    <td>
-                        <?php echo $miempleado['ley19032']; ?>
-                    </td>
-                </tr>
-            <?php }
-            if($miempleado['obrasocial']*1>0){ ?>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        721
-                    </td>
-                    <td>
-                        <?php echo $miempleado['obrasocialnombre']; ?>
+    <table id="tblLibroSueldo" class="tblInforme" cellspacing="0">
+        <tr><td colspan="20"></td></tr>
+        <tr>
+            <td colspan="20">
+                LIBRO DE SUELDOS - LEY 20744 t.c. Art.52 - Hojas moviles Periodo: <?php echo $periodo ?>
+                <div style="float: right">
+                <?php echo $this->Form->input('hoja',
+                    [
+                        'div'=>false,
+                        'label'=>[
+                            'style'=>'display:inline-block;height: 3px;font-size:10px'
+                        ],
+                        'style'=>'height: 5px;max-width:30px'
+                    ]); ?> &nbsp; &nbsp; <?php
+                    echo $this->Form->input('tomo',[
+                        'div'=>false,
+                        'value'=>$empleado['Cliente']['padron'],
+                        'label'=>[
+                            'style'=>'display:inline-block;height: 3px;font-size:10px',
+                            'text'=>'Padron'
+                        ],
+                        'style'=>'height: 5px;max-width:30px',
+                    ])?>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="20">
+                Empresa: <?php echo $empleado['Cliente']['nombre']; ?>
+                CUIT: <?php echo $empleado['Cliente']['cuitcontribullente']; ?>
+                Domicilio: <?php echo $empleado['Domicilio']['calle']." ".
+                    $empleado['Domicilio']['Localidade']['Partido']['nombre']." ".
+                    $empleado['Domicilio']['Localidade']['nombre']." "; ?>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="20">
+                Actividad : <?php
+                foreach ($empleado['Cliente']['Actividadcliente'] as $actividad){
+                    echo $actividad['Actividade']['nombre'];
+                }  ?>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
+        </tr>
+        <tr>
+            <td colspan = "20" >
+                L.P.: <?php echo $empleado['Empleado']['legajo']." Apellido y nombre: ".$empleado['Empleado']['nombre'] ?>
+                CUIL: <?php echo $empleado['Empleado']['cuit'] ?>
+                Provincia: <?php echo $empleado['Domicilio']['Localidade']['Partido']['nombre'] ?>
+                DNI N° <?php echo $empleado['Empleado']['dni'] ?>
+                Cargo: <?php echo $empleado['Empleado']['categoria'] ?>
+                <?php echo $empleado['Empleado']['jornada']=='0.5'?"Media":"" ?>
+                Jornada: <?php echo $empleado['Empleado']['jornada']=='0.5'?"":"Completa" ?>
+                F. Ingreso:  <?php echo date('d-m-Y',strtotime($empleado['Empleado']['fechaingreso'])); ?>
+                Basico: <?php echo number_format($miempleado['basico'], 2, ",", "."); ?>
+                Modalid ad de contratacion:  <?php echo $empleado['Empleado']['codigoafip']; ?>
+            </td>
+        </tr><!--5-->
+        <tr>
+            <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
+        </tr><!--7-->
+        <tr>
+            <td width="60px">
+                Codigo
+            </td>
+            <td >
+                Haberes con/sin aporte
+            </td>
+            <td>
+                Importe
+            </td>
+            <td>
+                Codigo
+            </td>
+            <td>
+                Descuentos
+            </td>
+            <td>
+                Importe
+            </td>
+        </tr><!--10-->
+        <tr>
+            <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
+        </tr><!--11-->
+        <?php
+        //aca vamos a mostrar las rows solo si sus valoresrecibos son > 0 sino no tiene sentido
+        //SUELDO MENSUAL
+        ?>
+        <tr>
+            <td>1</td>
+            <td>
+                Sueldo mensual
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['sueldo'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <?php
+        if($miempleado['antiguedad']*1>0){ ?>
+        <tr>
+            <td>71</td>
+            <td>
+                Antigüedad
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['antiguedad'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['presentismo']*1>0){ ?>
+        <tr>
+            <td>91</td>
+            <td>
+                Presentismo basico
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['presentismo'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['adicionalcomplementarioss']*1>0){ ?>
+        <tr>
+            <td>122</td>
+            <td>
+                Adicional Complemento SS
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['adicionalcomplementarioss'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['acuerdoremunerativo']*1>0){ ?>
+        <tr>
+            <td>146</td>
+            <td>
+                Acuerdo Remunerativo
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['acuerdoremunerativo'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['sac']*1>0){ ?>
+        <tr>
+            <td>281</td>
+            <td>
+                S.A.C.
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['sac'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['acuerdonoremunerativo']*1>0){ ?>
+        <tr>
+            <td>301</td>
+            <td>
+                Acuerdo no remunerativo
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['acuerdonoremunerativo'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['antiguedadnoremunerativo']*1>0){ ?>
+        <tr>
+            <td>331</td>
+            <td>
+               Antig. No Remunerativa
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['antiguedadnoremunerativo'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['presentismonoremunerativo']*1>0){ ?>
+        <tr>
+            <td>351</td>
+            <td>
+               Presentismo no remunerativo
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['presentismonoremunerativo'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['sacnoremunerativo']*1>0){ ?>
+        <tr>
+            <td>481</td>
+            <td>
+               SAC no remunerativo
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['sacnoremunerativo'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
 
-                    </td>
-                    <td>
-                        <?php echo $miempleado['obrasocial']; ?>
-                    </td>
-                </tr>
-            <?php }
-            if($miempleado['obrasocialextraordinario']*1>0){ ?>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        722
-                    </td>
-                    <td>
-                        <?php echo $miempleado['obrasocialextraordinarionombre']; ?>
+    if($miempleado['plusvacacional']*1>0){ ?>
+        <tr>
+            <td>000</td>
+            <td>
+                Plus Vacacional
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['plusvacacional'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['jubilacion']*1>0){ ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                701
+            </td>
+            <td>
+                Jubilacion
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['jubilacion'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['ley19032']*1>0){ ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                706
+            </td>
+            <td>
+                Ley 19032-INSSJP
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['ley19032'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['obrasocial']*1>0){ ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                721
+            </td>
+            <td>
+                <?php echo $miempleado['obrasocialnombre']; ?>
 
-                    </td>
-                    <td>
-                        <?php echo $miempleado['obrasocialextraordinario']; ?>
-                    </td>
-                </tr>
-            <?php }
-            if($miempleado['cuotasindical']*1>0){ ?>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        821
-                    </td>
-                    <td>
-                        <?php echo $miempleado['cuotasindicalnombre']; ?>
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['obrasocial'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['obrasocialextraordinario']*1>0){ ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                722
+            </td>
+            <td>
+                <?php echo $miempleado['obrasocialextraordinarionombre']; ?>
 
-                    </td>
-                    <td>
-                        <?php echo $miempleado['cuotasindical']; ?>
-                    </td>
-                </tr>
-            <?php }
-            if($miempleado['cuotasindical1']*1>0){ ?>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        822
-                    </td>
-                    <td>
-                        <?php echo $miempleado['cuotasindical1nombre']; ?>
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['obrasocialextraordinario'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['cuotasindical']*1>0){ ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                821
+            </td>
+            <td>
+                <?php echo $miempleado['cuotasindicalnombre']; ?>
 
-                    </td>
-                    <td>
-                        <?php echo $miempleado['cuotasindical1']; ?>
-                    </td>
-                </tr>
-            <?php }
-            if($miempleado['cuotasindical2']*1>0){ ?>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        823
-                    </td>
-                    <td>
-                        <?php echo $miempleado['cuotasindical2nombre']; ?>
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['cuotasindical'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['cuotasindical1']*1>0){ ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                822
+            </td>
+            <td>
+                <?php echo $miempleado['cuotasindical1nombre']; ?>
 
-                    </td>
-                    <td>
-                        <?php echo $miempleado['cuotasindical2']; ?>
-                    </td>
-                </tr>
-            <?php }
-            if($miempleado['cuotasindical3']*1>0){ ?>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                        825
-                    </td>
-                    <td>
-                        <?php echo $miempleado['cuotasindical3nombre']; ?>
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['cuotasindical1'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['cuotasindical2']*1>0){ ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                823
+            </td>
+            <td>
+                <?php echo $miempleado['cuotasindical2nombre']; ?>
 
-                    </td>
-                    <td>
-                        <?php echo $miempleado['cuotasindical3']; ?>
-                    </td>
-                </tr>
-            <?php }
-            if($miempleado['redondeo']*1>0){ ?>
-                <tr>
-                    <td>980</td>
-                    <td>
-                        REDONDEO
-                    </td>
-                    <td>
-                        <?php echo $miempleado['redondeo']; ?>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            <?php } ?>
-                <tr>
-                    <td>990</td>
-                    <td>
-                        TOTAL REMUNERACIONES
-                    </td>
-                    <td>
-                        <?php echo $totalremuneracion; ?>
-                    </td>
-                    <td>990</td>
-                    <td>
-                        TOTAL DESCUENTOS
-                    </td>
-                    <td>
-                        <?php echo $totaldescuento; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td></td>
-                    <td>
-                        NETO:
-                    </td>
-                    <td>
-                        <?php echo $neto; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
-                </tr>
-                <tr>
-                    <td>991</td>
-                    <td>
-                        T.HABERES C/APORTES
-                    </td>
-                    <td>
-                        <?php echo $neto; ?>
-                    </td>
-                    <td>991</td>
-                    <td>
-                        T.RETEN. DE LEY
-                    </td>
-                    <td>
-                        <?php echo $totaldescuento; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>990</td>
-                    <td>
-                        TOTAL REMUNERACIONES
-                    </td>
-                    <td>
-                        <?php echo $remuneracioncd; ?>
-                    </td>
-                    <td></td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr><td>&nbsp;</td></tr>
-                <tr><td>&nbsp;</td></tr>
-                <tr>
-                    <td colspan="4" align="right">
-                       <div style="float:right;"> Firma del Empleado:</div>
-                    </td>
-                    <td colspan="10" style="vertical-align: bottom;">
-                        <hr width="450px" class="dottedhr" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                    </td>
-                    <td colspan="10">
-                        <div style="width:100%;text-align: center;">
-                        <?php echo $empleado['Empleado']['nombre'];?>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        <?php //Debugger::dump($empleadoDatos);?>
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['cuotasindical2'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['cuotasindical4']*1>0){ ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                824
+            </td>
+            <td>
+                <?php echo $miempleado['cuotasindical4nombre']; ?>
+
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['cuotasindical4'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['cuotasindical3']*1>0){ ?>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                825
+            </td>
+            <td>
+                <?php echo $miempleado['cuotasindical3nombre']; ?>
+
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['cuotasindical3'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['redondeo']*1>0){ ?>
+        <tr>
+            <td>980</td>
+            <td>
+                Redondeo
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($neto*1-$miempleado['redondeo']*1, 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php } ?>
+        <tr>
+            <td>990</td>
+            <td>
+                Total remuneraciones
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($totalremuneracion, 2, ",", "."); ?>
+            </td>
+            <td>990</td>
+            <td>
+                Total descuentos
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($totaldescuento, 2, ",", "."); ?>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td></td>
+            <td>
+                Neto:
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($neto, 2, ",", "."); ?>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="20"> <hr width="450px" class="dottedhr" /></td>
+        </tr>
+        <!--
+        <tr>
+            <td>991</td>
+            <td>
+                T.Haberes c/aportes
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($neto, 2, ",", "."); ?>
+            </td>
+            <td>991</td>
+            <td>
+                T.reten. de ley
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($totaldescuento, 2, ",", "."); ?>
+            </td>
+        </tr>
+        <tr>
+            <td>990</td>
+            <td>
+                Total remuneraciones
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($remuneracioncd, 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
+        -->
+        <tr><td>&nbsp;</td></tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td colspan="4" align="right">
+               <div style="float:right;"> Firma del Empleado:</div>
+            </td>
+            <td colspan="10" style="vertical-align: bottom;">
+                <hr width="450px" class="dottedhr" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4">
+            </td>
+            <td colspan="10">
+                <div style="width:100%;text-align: center;">
+                <?php echo $empleado['Empleado']['nombre'];?>
+                </div>
+            </td>
+        </tr>
+    </table>
 </div>

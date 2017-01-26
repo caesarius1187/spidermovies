@@ -15,6 +15,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         <?php
         $empleadoDatos = array();
         $baseimponible = 0 ;
+        $baseimponibleexenta = 0 ;
         $SaldoAFavor = 0 ;
         $OtrosPagosACuenta = 0 ;
         $Retenciones = 0 ;
@@ -32,14 +33,15 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 if (
                 in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                     array('27'/*Total Remunerativos C/D*/,
-                        '109'/*Total Remunerativos S/D*/), true )
+//                        '109'/*Total Remunerativos S/D*/
+                    ), true )
                 ){
                     $rem1 += $valorrecibo['valor'];
                 }
             }
-
-            if(!$empleado['exentocooperadoraasistencial']) {
-                $baseimponible += $rem1;
+            $baseimponible += $rem1;
+            if($empleado['exentocooperadoraasistencial']) {
+                $baseimponibleexenta += $rem1;
             }
             $miempleado['rem1']=$rem1;
             $empleadoid = $empleado['id'];
@@ -110,8 +112,8 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 <?php
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                     echo "<td>";
-                    if(isset($empleado['Puntosdeventa']['Domicilio']))
-                        echo $empleado['Puntosdeventa']['Domicilio']['Localidade']['Partido']['nombre'];
+                    if(isset($empleado['Domicilio']))
+                        echo $empleado['Domicilio']['Localidade']['Partido']['nombre'];
                     echo "</td>";
                 }
                 ?>
@@ -135,10 +137,11 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         Alicuota: 2% </br>
         <?php
         $impuestoTotal = 0;
-        $impuestoTotal = $baseimponible*0.02;
+        $impuestoTotal = ($baseimponible)*0.02;
+        $impuestoExento = ($baseimponibleexenta)*0.02;
         ?>
         Impuesto: $<?php echo number_format($impuestoTotal, 2, ",", ".") ?></br></br>
-
+        Exento: $<?php echo number_format($impuestoExento, 2, ",", ".") ?></br>
         Retenciones: $<?php echo number_format($Retenciones, 2, ",", ".") ?></br>
         Otros Pagos a Cuenta: $<?php echo number_format($OtrosPagosACuenta, 2, ",", ".") ?></br>
         Saldo A Favor del Periodo Anterior: $<?php echo number_format($SaldoAFavor, 2, ",", ".") ?></br></br>
@@ -150,7 +153,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
             $impuestoDeterminado = 0;
             $title ="El Contribuyente tiene 1 o menos empleados por lo que esta exento de pagar este impuesto";
         }else{
-            $impuestoDeterminado = $impuestoTotal-$Retenciones-$OtrosPagosACuenta-$SaldoAFavor;
+            $impuestoDeterminado = $impuestoTotal-$impuestoExento-$Retenciones-$OtrosPagosACuenta-$SaldoAFavor;
         }
         echo '<label title="'.$title.'">';
         echo $impuestoDeterminado<0?'Saldo a Favor':'Impuesto determinado';
@@ -179,8 +182,8 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         foreach ($impcli['Cliente']['Empleado'] as $empleado) {
             $empleadoid = $empleado['id'];
             $domicilioEmpleadoID = 0;
-            if(isset($empleado['Puntosdeventa']['Domicilio']))
-                $domicilioEmpleadoID = $empleado['Puntosdeventa']['Domicilio']['Localidade']['Partido']['nombre'];
+            if(isset($empleado['Domicilio']))
+                $domicilioEmpleadoID = $empleado['Domicilio']['Localidade']['Partido']['nombre'];
             if(!isset($provinciasSubtotal[$domicilioEmpleadoID])){
                 $provinciasSubtotal[$domicilioEmpleadoID]=0;
             }

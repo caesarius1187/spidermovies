@@ -1,5 +1,25 @@
-$.noConflict();  //Not to conflict with other scripts
+
 jQuery(document).ready(function($) {
+    $.noConflict();  //Not to conflict with other scripts
+    $.fn.filterGroups = function( options ) {
+        var settings = $.extend( {}, options);
+
+        return this.each(function(){
+
+            var $select = $(this);
+            // Clone the optgroups to data, then remove them from dom
+            $select.data('fg-original-groups', $select.find('optgroup').clone()).children('optgroup').remove();
+
+            $(settings.groupSelector).change(function(){
+                var $this = $(this);
+                var optgroup_label = $(this).find('option:selected').text();
+                var $optgroup =  $select.data('fg-original-groups').filter('optgroup[label=' + optgroup_label + ']').clone();
+                $select.children('optgroup').remove();
+                $select.append($optgroup);
+            }).change();
+
+        });
+    };
 	/*Index*/
         $('#txtBuscarClintes').keyup(function () {
             var valThis = this.value.toLowerCase();
@@ -408,6 +428,11 @@ jQuery(document).ready(function($) {
             });
             return false;
         });
+        // $("#EmpleadoConveniocolectivotrabajoId").change(function () {
+        //     $('#EmpleadoCargoId').filterGroups({groupSelector: '#EmpleadoConveniocolectivotrabajoId', });
+        // });
+        $('#EmpleadoCargoId').filterGroups({groupSelector: '#EmpleadoConveniocolectivotrabajoId', });
+
         catchEliminarProvedore();
         catchEliminarEmpleado();
         catchEliminarSubcliente();

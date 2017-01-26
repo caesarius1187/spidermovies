@@ -398,6 +398,13 @@ class Empleado extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'Cargo' => array(
+			'className' => 'Cargo',
+			'foreignKey' => 'cargo_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
 		)
 	);
 

@@ -58,6 +58,19 @@ class Conveniocolectivotrabajo extends AppModel {
 			'exclusive' => '',
 			'finderQuery' => '',
 			'counterQuery' => ''
+		),
+		'Cargo' => array(
+			'className' => 'Cargo',
+			'foreignKey' => 'conveniocolectivotrabajo_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
 		)
 	);
 

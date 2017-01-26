@@ -287,7 +287,7 @@ class EventosimpuestosController extends AppController {
 		$myImpCli = $this->Impcli->find('first', $options);
 
 		$this->set('conceptosrestantesimpcli',$myImpCli["Conceptosrestante"]);
-
+	
 		$options = array(
 			'contain'=>array(
 				'Conceptosrestante'=>array(
@@ -346,8 +346,8 @@ class EventosimpuestosController extends AppController {
 						$optionsVencimientoImpuesto = array(
 						'conditions'=>array(
 								'SUBSTRING("'.$periodo.'",4,7)+1 = Vencimiento.ano*1',
-								'Vencimiento.desde <= SUBSTRING("'.$cliente['Organismosxcliente'][0]['usuario'].'",-1)',
-								'Vencimiento.hasta >= SUBSTRING("'.$cliente['Organismosxcliente'][0]['usuario'].'",-1)',
+								'Vencimiento.desde <= SUBSTRING("'.$cliente['Cliente']['cuitcontribullente'].'",-1)',
+								'Vencimiento.hasta >= SUBSTRING("'.$cliente['Cliente']['cuitcontribullente'].'",-1)',
 								'Vencimiento.impuesto_id'=>$myImpCli["Impuesto"]["id"],
 							),
 						);

@@ -580,8 +580,8 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                                     $empleadoid = $empleado['id'];
                                     //en este primer loop vamos a calcular todos los siguientes totales
                                     echo "<td>";
-                                    echo 64.53;
-                                    $totalContribucion += 64.53;
+                                    echo 68.29;
+                                    $totalContribucion += 68.29;
                                     echo "</td>";
                                 }
                             }
@@ -630,7 +630,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                                 $empleadoid = $empleado['id'];
                                 //en este primer loop vamos a calcular todos los siguientes totales
                                 echo "<td>";
-                                $convFeg = $empleadoDatos[$empleadoid]['remuneracionSD']+$empleadoDatos[$empleadoid]['remuneracionCD'];
+                                $convFeg = $empleadoDatos[$empleadoid]['remuneracionCD'];
                                 $convFeg = $convFeg*0.02;
                                 echo number_format($convFeg, 2, ",", ".");
                                 $totalConvenioFEGHRA += $convFeg ;
@@ -679,7 +679,13 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 $impuestoDeterminado = 0;
                 switch ($impcliSolicitado['Impuesto']['id']){
                     case '11':/*SEC*/
-                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
+                        $impuestoDeterminado =
+                            $totalCuotaSindical+
+                            $totalCuotaSindical1+
+                            $totalCuotaSindical2
+//                            $totalCuotaSindical3+
+//                            $totalCuotaSindical4
+                        ;
                         break;
                     case '23':/*FAECYS*/
                         $impuestoDeterminado = $totalCuotaSindical3;

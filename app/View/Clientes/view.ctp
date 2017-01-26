@@ -2095,6 +2095,7 @@ if($mostrarView){?>
             );
             echo $this->Form->input('domicilio_id',array('label'=>'Domicilio'));
             echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
+            echo $this->Form->input('cargo_id',array('label'=>'Cargo', 'required'=>true,));
             echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
             echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial','value'=>0))."</br>";
 

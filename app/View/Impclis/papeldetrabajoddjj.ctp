@@ -156,7 +156,7 @@
         </tr>
         <tr>
             <td colspan="20">
-                <?php echo $this->Form->input('domicilio_id', array('label' => '','empty'=>'La actividad se desarrolla sin local')); ?>
+                <?php echo $this->Form->input('condicionpropietario', array('label' => '','type'=>'textarea')); ?>
             </td>
         </tr>
         <tr>
@@ -274,15 +274,15 @@
             <?php
             $nohaycompra = true;
             foreach ($compraskw as $compra) {
-                if ($compra['Compra']['tipogasto_id'] == '19'/*Luz*/ && $periodo0 == $compra[0]['periodo']) {
+                if ($compra['Compra']['tipogasto_id'] == '19'/*Luz*/ && $periodo0 == $compra['Compra']['periodo']) {
                     echo "
-                        <td>" . $compra[0]['periodo'] . "</td>
-                        <td>" . $compra[0]['provedore_id'] . "</td>
+                        <td>" . $compra['Compra']['periodo'] . "</td>
+                        <td>" . $compra['Provedore']['cuit'] . "</td>
                         <td>" . $compra[0]['kw'] . "</td>
                         <td>" . $compra[0]['total'] . "</td>
                         <td>" . $compra[0]['total'] . "</td>
                         ";
-                    $mnohaycompra = false;
+                    $nohaycompra = false;
                 }
             }
             unset($compra);
@@ -298,15 +298,15 @@
             <?php
             $nohaycompra = true;
             foreach ($compraskw as $compra) {
-                if ($compra['Compra']['tipogasto_id'] == '19'/*Luz*/ && $periodo1 == $compra[0]['periodo']) {
+                if ($compra['Compra']['tipogasto_id'] == '19'/*Luz*/ && $periodo1 == $compra['Compra']['periodo']) {
                     echo "
-                        <td>" . $compra[0]['periodo'] . "</td>
-                        <td>" . $compra[0]['provedore_id'] . "</td>
+                        <td>" . $compra['Compra']['periodo'] . "</td>
+                        <td>" . $compra['Provedore']['cuit'] . "</td>
                         <td>" . $compra[0]['kw'] . "</td>
                         <td>" . $compra[0]['total'] . "</td>
                         <td>" . $compra[0]['total'] . "</td>
                         ";
-                    $mnohaycompra = false;
+                    $nohaycompra = false;
                 }
             }
             unset($compra);
@@ -322,15 +322,15 @@
             <?php
             $nohaycompra = true;
             foreach ($compraskw as $compra) {
-                if ($compra['Compra']['tipogasto_id'] == '19'/*Luz*/ && $periodo2 == $compra[0]['periodo']) {
+                if ($compra['Compra']['tipogasto_id'] == '19'/*Luz*/ && $periodo2 == $compra['Compra']['periodo']) {
                     echo "
-                        <td>" . $compra[0]['periodo'] . "</td>
-                        <td>" . $compra[0]['provedore_id'] . "</td>
+                        <td>" . $compra['Compra']['periodo'] . "</td>
+                        <td>" . $compra['Provedore']['cuit'] . "</td>
                         <td>" . $compra[0]['kw'] . "</td>
                         <td>" . $compra[0]['total'] . "</td>
                         <td>" . $compra[0]['total'] . "</td>
                         ";
-                    $mnohaycompra = false;
+                    $nohaycompra = false;
                 }
             }
             unset($compra);
@@ -345,16 +345,17 @@
         <tr>
             <?php
             $nohaycompra = true;
+
             foreach ($compraskw as $compra) {
-                if ($compra['Compra']['tipogasto_id'] == '19'/*Luz*/ && $periodo3 == $compra[0]['periodo']) {
+                if ($compra['Compra']['tipogasto_id'] == '19'/*Luz*/ && $periodo3 == $compra['Compra']['periodo']) {
                     echo "
-                        <td>" . $compra[0]['periodo'] . "</td>
-                        <td>" . $compra[0]['provedore_id'] . "</td>
+                        <td>" . $compra['Compra']['periodo'] . "</td>
+                        <td>" . $compra['Provedore']['cuit'] . "</td>
                         <td>" . $compra[0]['kw'] . "</td>
                         <td>" . $compra[0]['total'] . "</td>
                         <td>" . $compra[0]['total'] . "</td>
                         ";
-                    $mnohaycompra = false;
+                    $nohaycompra = false;
                 }
             }
             unset($compra);

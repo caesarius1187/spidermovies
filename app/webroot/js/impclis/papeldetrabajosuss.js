@@ -116,9 +116,9 @@ function cargarAsiento(){
         var apagar28SegurodeVidaColectivo = $("#apagar28SegurodeVidaColectivo").val();
         $('#Asiento0Movimiento'+orden+'Haber').val(apagar28SegurodeVidaColectivo);
     }
-	// 210303005	RENATRE a pagar
-    if($('#cuenta1422').length > 0){
-        var orden = $('#cuenta1422').attr('orden');
+	// 210303005	RENATRE a pagar	!= de renatea????
+    if($('#cuenta1423').length > 0){
+        var orden = $('#cuenta1423').attr('orden');
         var apagar360ContribucionRENATEA = $("#apagar360ContribucionRENATEA").val();
         $('#Asiento0Movimiento'+orden+'Haber').val(apagar360ContribucionRENATEA);
     }
@@ -168,8 +168,25 @@ function cargarAsiento(){
 		$('#Asiento0Movimiento'+orden+'Haber').val(sueldospersonal);
 		//Falta restar APORTES DE Sindicatos
 	}
-    
-    /*Ahora debemos preguntar que sindicato tiene el empleado y eso debe sumar a la cuenta relacionada al sindicato*/
+    /*Aca vamos a identificar la cuenta de perdida Contribucion INACAP A PAGAR y vamos asignarle el valor de su debe
+    * en la cuenta de pasivo Contribucion INACAP*/
+	if($('#cuenta1427').length > 0){
+		var orden = $('#cuenta1427').attr('orden');
+		var cuentasdeSUSSContribucionesSindicatos = jQuery.parseJSON($("#cuentasdeSUSSContribucionesSindicatos").val());
+		cuentasdeSUSSContribucionesSindicatos.forEach(
+			function(item,index){
+				var cuenta = '#cuenta'+item;
+				if($(cuenta).length > 0){
+					var ordencont = $(cuenta).attr('orden');
+					var cuentanombre = $('#Asiento0Movimiento'+ordencont+'Nombre').val();
+					if(cuentanombre=='Contribucion-INACAP-'){
+						var debe = $('#Asiento0Movimiento'+ordencont+'Debe').val()*1;
+						$('#Asiento0Movimiento'+orden+'Haber').val(debe);
+					}
+				}
+			}
+		);
+	}
 }
 function catchAsiento(){
 	$('#AsientoAddForm').submit(function(){

@@ -125,16 +125,16 @@ class ImpclisController extends AppController {
                             $cuentasUnica1 = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;/*Contribuciones*/
                             $prenombres1[0] = "Contribucion";
                             $postnombres1[0] = "";
-                            $prenombres1[1] = "Contribucion";
-                            $postnombres1[1] = "A Pagar";
+//                            $prenombres1[1] = "Contribucion";
+//                            $postnombres1[1] = "A Pagar";
 
                             break;
                         case'11':/*SEC*//*Aca solo los que tienen seg vida obl y apórte*/
                             $cuentasUnica1 = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;/*Contribuciones*/
                             $prenombres1[0] = "Cont.Seg. De Vida Oblig. Mercantil";
                             $postnombres1[0] = "";
-                            $prenombres1[1] = "Cont.Seg. De Vida Oblig. Mercantil";
-                            $postnombres1[1] = "A Pagar";
+//                            $prenombres1[1] = "Cont.Seg. De Vida Oblig. Mercantil";
+//                            $postnombres1[1] = "A Pagar";
 
                             $prenombres2[0] = "Aporte";
                             $postnombres2[0] = "";
@@ -1032,10 +1032,10 @@ class ImpclisController extends AppController {
 		);
 		$esMenorQuePeriodoFINCompraConsulta = array(
 			'OR'=>array(
-	    		'SUBSTRING(Compra.periodo,4,7)*1 < '.$añoinicioDelAño.'*1',
+	    		'SUBSTRING(Compra.periodo,4,7)*1 < '.$añoPeriodo.'*1',
 	    		'AND'=>array(
-	    			'SUBSTRING(Compra.periodo,4,7)*1 <= '.$añoinicioDelAño.'*1',
-	    			'SUBSTRING(Compra.periodo,1,2) <= '.$mesinicioDelAño.'*1'
+	    			'SUBSTRING(Compra.periodo,4,7)*1 <= '.$añoPeriodo.'*1',
+	    			'SUBSTRING(Compra.periodo,1,2) <= '.$mesPeriodo.'*1'
 	    			),												            		
 	    		)
 		);
@@ -1106,7 +1106,8 @@ class ImpclisController extends AppController {
 			'order'=>array('Categoriamonotributo.orden')
 			);
 		$categoriamonotributos = $this->Categoriamonotributo->find('all',$optionsCategoria);
-		$this->set(compact('impcliid','periodo','periodoDeInicio','ventas','compras','domicilios','categoriamonotributos','actividadclientes'));
+		$this->set(compact('impcliid','periodo','periodoDeInicio','ventas','compras','domicilios'
+			,'categoriamonotributos','actividadclientes'));
 
 
     }
@@ -1219,6 +1220,7 @@ class ImpclisController extends AppController {
             ),
             'conditions'=>array(
                 'Venta.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+				"Subcliente.cuit <> '20000000001'",
                 'AND'=>array(
                     $esMayorQuePeriodoInicioCuatrimestre,
                     $esMenorQuePeriodoFINConsulta
@@ -1241,10 +1243,10 @@ class ImpclisController extends AppController {
         );
         $esMenorQuePeriodoFINCompraConsulta = array(
             'OR'=>array(
-                'SUBSTRING(Compra.periodo,4,7)*1 < '.$añoinicioDelAño.'*1',
+                'SUBSTRING(Compra.periodo,4,7)*1 < '.$añoPeriodo.'*1',
                 'AND'=>array(
-                    'SUBSTRING(Compra.periodo,4,7)*1 <= '.$añoinicioDelAño.'*1',
-                    'SUBSTRING(Compra.periodo,1,2) <= '.$mesinicioDelAño.'*1'
+                    'SUBSTRING(Compra.periodo,4,7)*1 <= '.$añoPeriodo.'*1',
+                    'SUBSTRING(Compra.periodo,1,2) <= '.$mesPeriodo.'*1'
                 ),
             )
         );
@@ -1281,8 +1283,8 @@ class ImpclisController extends AppController {
                 'Puntosdeventa'=>array('id','nombre'),//
             ),
             'fields'=>array(
-                'MAX(numerocomprobante) as maxnumerocomprobante',
-                'MIN(numerocomprobante) as minnumerocomprobante',
+                'MAX(numerocomprobante*1) as maxnumerocomprobante',
+                'MIN(numerocomprobante*1) as minnumerocomprobante',
                 'SUM(total) as total',
             ),
             'conditions'=>array(
@@ -1306,12 +1308,19 @@ class ImpclisController extends AppController {
         //Kilowats
         $compraskw = $this->Compra->find('all',array(
             'fields' => array('SUM(Compra.total) AS total','SUM(Compra.kw) AS kw','SUM(Compra.superficie) AS superficie','Compra.periodo','Compra.imputacion','Compra.tipogasto_id'),
-            'conditions'=>array(
+            'contain'=>[
+				'Provedore'=>[
+					'fields'=>[
+						'Provedore.cuit'
+					]
+				]
+			],
+			'conditions'=>array(
                 'Compra.tipogasto_id'=> array(19/*Factura de Luz*/,21/*Alquileres*/) ,
                 'Compra.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
                 'AND'=>array(
                     $esMayorQuePeriodoInicioCuatrimestreCompra,
-                    $esMenorQuePeriodoFINCompraConsulta
+					$esMenorQuePeriodoFINCompraConsulta
                 )
             ),
             'group'=>array(
@@ -1359,7 +1368,10 @@ class ImpclisController extends AppController {
                 ],
 				'Asiento'=>[
 					'Movimiento'=>['Cuentascliente'],
-					'conditions'=>['periodo'=>$periodo]
+					'conditions'=>[
+						'periodo'=>$periodo,
+						'tipoasiento'=>'impuestos'
+					]
 				],
 				'Cliente'=>array(
 					'Cuentascliente'=>[
@@ -1593,11 +1605,9 @@ class ImpclisController extends AppController {
 			'contain'=>array(
 				'Cliente'=>array(
 					'Empleado'=>array(
-						'Puntosdeventa'=>array(
-							'Domicilio'=>array(
-								'Localidade'=>array(
-									'Partido'
-								)
+						'Domicilio'=>array(
+							'Localidade'=>array(
+								'Partido'
 							)
 						),
 						'Valorrecibo'=>array(

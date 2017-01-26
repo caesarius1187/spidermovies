@@ -263,7 +263,6 @@ class EmpleadosController extends AppController {
 		$this->render('papeldetrabajosueldos');
 	}
     public function papeldetrabajolibrosueldo($empid=null,$periodo=null){
-
         $options = array(
             'contain'=>array(
                 'Domicilio'=>array(
@@ -300,7 +299,16 @@ class EmpleadosController extends AppController {
         $this->render('papeldetrabajolibrosueldo');
     }
     public function papeldetrabajorecibosueldo($empid=null,$periodo=null){
-
+		$this->loadModel('Vencimiento');
+		$this->loadModel('Impcli');
+		$this->loadModel('Impuesto');
+		$timePeriodo = strtotime("01-".$periodo ." -1 months");
+		$periodoPrevio = date("m-Y",$timePeriodo);
+		$fchvto = date('d-m-Y',$timePeriodo);
+		$fchvtoOrigen="diaDeHoy";
+		$pemes = substr($periodoPrevio, 0, 2);
+		$peanio = substr($periodoPrevio, 3);
+		
         $options = array(
             'contain'=>array(
                 'Domicilio'=>array(
@@ -308,12 +316,19 @@ class EmpleadosController extends AppController {
                         'Partido'
                     )
                 ),
-                'Cliente'=>array(
+                'Cliente'=>[
+					'Impcli'=>[
+						'Impuesto'=>[
 
-                    'Actividadcliente'=>array(
+						],
+						'conditions'=>[
+							'Impcli.impuesto_id'=>'10'/*SUSS*/
+						]
+					],
+                    'Actividadcliente'=>[
                         'Actividade'
-                    )
-                ),
+                    ]
+                ],
                 'Valorrecibo'=>array(
                     'Cctxconcepto'=>array(
                         'Concepto',
@@ -332,6 +347,111 @@ class EmpleadosController extends AppController {
         $empleado = $this->Empleado->find('first', $options);
         $this->set('empleado',$empleado);
         $this->set(compact('empid','periodo'));
+		//Aca vamos a hacer las busquedas pertinentes para mostrar la ultima fecha de vencimiento del SUSS
+		// para este contribuyente y para que seleccione el banco en el que lo hizo
+
+		$cliusuarioafip = $empleado["Cliente"]["cuitcontribullente"];
+
+		switch ($pemes) {
+			case '12':
+
+			default:
+				$optionsVencimientoImpuesto = array(
+					'conditions'=>array(
+						$peanio.'*1 = Vencimiento.ano*1',
+						'Vencimiento.desde <= SUBSTRING("'.$cliusuarioafip.'",-1)',
+						'Vencimiento.hasta >= SUBSTRING("'.$cliusuarioafip.'",-1)',
+						'Vencimiento.impuesto_id'=>$empleado['Cliente']['Impcli'][0]["Impuesto"]["id"],
+					),
+				);
+				$vencimiento = $this->Vencimiento->find('first',$optionsVencimientoImpuesto);
+				if(isset($vencimiento['Vencimiento']['p'.$pemes])&&$vencimiento['Vencimiento']['p'.$pemes]!=0){
+					$strfchvto = strtotime($vencimiento['Vencimiento']['ano'].'-'.$pemes.'-'.$vencimiento['Vencimiento']['p'.$pemes]);
+					$fchvto = date('d-m-Y',$strfchvto);
+					$fchvtoOrigen="VencimientoRecomendado";
+				}
+				break;
+		}
+		$this->set(compact('fchvto','fchvtoOrigen'));
+
+		//A: Es menor que periodo Hasta
+		$esMenorQueHasta = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+		//B: Es mayor que periodo Desde
+		$esMayorQueDesde = array(
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+				),
+			)
+		);
+		//C: Tiene Periodo Hasta 0 NULL
+		$periodoNull = array(
+			'OR'=>array(
+				array('Periodosactivo.hasta'=>null),
+				array('Periodosactivo.hasta'=>""),
+			)
+		);
+		$conditionsImpCliHabilitadosImpuestos = array(
+			//El periodo esta dentro de un desde hasta
+			'AND'=> array(
+				'Periodosactivo.impcli_id = Impcli.id',
+				$esMayorQueDesde,
+				'OR'=> array(
+					$esMenorQueHasta,
+					$periodoNull
+				)
+			)
+
+		);
+		$clienteImpuestosOptions = array(
+			'conditions' => array(
+				'Impcli.cliente_id'=> $empleado['Cliente']['id']
+			),
+			'fields'=>array('Impcli.id','Impuesto.nombre'),
+			'joins'=>array(
+				array('table'=>'impuestos',
+					'alias' => 'Impuesto',
+					'type'=>'inner',
+					'conditions'=> array(
+						'Impcli.impuesto_id = Impuesto.id',
+						'AND'=>array(
+							'Impuesto.organismo = "banco"'
+						)
+					)
+				),
+				array('table'=>'periodosactivos',
+					'alias' => 'Periodosactivo',
+					'type'=>'inner',
+					'conditions'=> array(
+						$conditionsImpCliHabilitadosImpuestos
+					)
+				),
+			),
+
+		);
+		$impclis=$this->Impcli->find('list',$clienteImpuestosOptions);
+		$this->set('impclis', $impclis);
+
+		$bancosOptions = array(
+			'conditions' => array(
+				'Impuesto.organismo'=> 'banco'
+			),
+		);
+		$impuestos=$this->Impuesto->find('list',$bancosOptions);
+		$this->set('impuestos', $impuestos);
+
+
         $this->autoRender=false;
         $this->layout = 'ajax';
         $this->render('papeldetrabajorecibosueldo');

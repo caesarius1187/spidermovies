@@ -1853,11 +1853,17 @@ transition: all 0.4s ease-in-out;
 	width: 100%;
     padding: 0 10%;
     font-family: 'RobotoDraft',sans-serif;
-    font-size: 12px;
+    font-size: 10px;
 	margin-bottom: 0px;
 }
 .tblReciboSueldo{
 	border-spacing: 0px;
+}
+.tblReciboSueldo table{
+	border-spacing: 0px;
+	border-radius: 15px;
+	border: 2px solid #000000;
+	margin: 10px 0px;
 }
 .tblReciboSueldo table td{
 	font-size: 8px;
@@ -1867,11 +1873,17 @@ transition: all 0.4s ease-in-out;
 	height: 6px;
 }
 .tdWithBorder{
-	border: 1px solid #000000;
+	border: 1px solid rgb(180, 176, 176);
 }
 .tdWithLeftRightBorder{
-	border-left: 1px solid #000000;
-	border-right: 1px solid #000000;
+	border-left: 1px solid rgb(180, 176, 176);
+	border-right: 1px solid rgb(180, 176, 176);
+}
+.tdWithText{
+	line-height: 160%; font-size: 1em
+}
+.tdWithNumber{
+	text-align: right;
 }
 .tblInforme table{
 	margin-bottom: 0px;

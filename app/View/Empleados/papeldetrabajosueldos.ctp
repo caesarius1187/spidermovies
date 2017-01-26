@@ -284,6 +284,7 @@
                             //aca podriamos buscar el valor que ya guardardamos para este concepto
                             //y mostrar un formulario para modificarlo
                             $valor = 0;
+                            $porcentaje = 0;
                             $valorreciboid = 0;
                             $aplicafuncion = true;
                             if(count($conceptoobligatorio['Valorrecibo'])>0){
@@ -322,6 +323,12 @@
                                     if($empleado['Conveniocolectivotrabajo']['Impuesto']['id']==11/*Es SEC?*/){
                                         if(!$empleado['Conveniocolectivotrabajo']['Impuesto']['Impcli'][0]['segurovidaobligatorio']*1){
                                             $aplicafuncion=false;
+                                        }else{
+                                            //aca tambien tenemos que ver si el IMPCLI(SEC) tiene el dato "primasvo" y asignarlo
+                                            //a el % que tendria q usar este campillo
+                                            if($empleado['Conveniocolectivotrabajo']['Impuesto']['Impcli'][0]['primasvo']*1!=0){
+                                                $porcentaje = $empleado['Conveniocolectivotrabajo']['Impuesto']['Impcli'][0]['primasvo'];
+                                            }
                                         }
                                     }
                                     break;
@@ -336,7 +343,7 @@
                                     $conceptoobligatorio['porcentaje']=$empleado['Empleado']['porcentajecse'];
                                     break;*/
                             }
-                            echo $conceptoobligatorio['nombre'].":";
+                            echo $conceptoobligatorio['nombre'];
                             ?>
                         </td>
                         <td >
@@ -400,9 +407,14 @@
                                     if($conceptoobligatorio['conporcentaje']){
                                         //vamos a sacar el codigo del porcentaje que va ha ser
                                         $porcentajeDataCell = "B".substr($datacell, 1);
+                                        //si $porcentaje es != 0 es por que ya le asignamos algun valor
+                                        if($porcentaje==0){
+                                            $porcentaje = $conceptoobligatorio['porcentaje'];
+                                        }
+
                                         echo $this->Form->input('Valorrecibo.'.$i.'.porcentaje',array(
                                                     'type'=>'text',
-                                                    'value'=>$conceptoobligatorio['porcentaje'],
+                                                    'value'=>$porcentaje,
                                                     'data-cell'=>$porcentajeDataCell ,
                                                     'style' => 'width:28px'
                                                 )

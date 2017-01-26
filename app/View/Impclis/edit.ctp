@@ -39,7 +39,7 @@ if(!$showTheForm){?>
                 <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'imgedit'));?>
             </a>
         <?php }
-            if($impcli['impuesto_id']==5/*Ganancias Sociedades*/||$impcli['impuesto_id']==160/*Ganancias Personas Físicas*/){?>
+            if($this->request->data['Impuesto']['id']==5/*Ganancias Sociedades*/||$this->request->data['Impuesto']['id']==160/*Ganancias Personas Físicas*/){?>
             <a href="#"  onclick="loadFormImpuestoCuentasganancias(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
                 <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'imgedit'));?>
             </a>
@@ -64,6 +64,7 @@ if(!$showTheForm){?>
                 <td><?php echo $this->Form->input('clave'); ?></td>
             <?php }
             if( $this->request->data['Impuesto']['id']==11/*SEC*/){?>
+                <td>
                 <?php
                 echo $this->Form->input('segurovidaobligatorio',
                     [
@@ -71,7 +72,15 @@ if(!$showTheForm){?>
                         'div'=>['style'=>"width: 200px;"]
                     ]);?>
                 </td>
-            <?php } 
+                <td>
+                <?php
+                echo $this->Form->input('primasvo',
+                    [
+                        'label' => 'Prima Seg. Vida Oblig. por empleado',
+                        'div'=>['style'=>"width: 200px;"]
+                    ]);?>
+                </td>
+            <?php }
             if( $this->request->data['Impuesto']['id']==4/*Monotributo*/){?>
                 <td>
                     <?php

@@ -1577,6 +1577,10 @@ function contabilizarBanco(periodo,cliid,bancimpcli,cbuid){
 }
 function openWin()
 {
+
+    $("#reciboOriginal #bancos").hide();
+    $("#reciboOriginal #bancoempleados").hide();
+
     var myWindow=window.open('','','width=1010,height=1000px');
     myWindow.document.write('<html><head><title>Recibo de sueldo</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
     myWindow.document.write($("#divToPrintRecibo").html());
@@ -1587,11 +1591,15 @@ function openWin()
         {
             myWindow.print();
             myWindow.close();
+            $("#reciboOriginal #bancos").show();
+            $("#reciboOriginal #bancoempleados").show();
         }, 1000);
 
 }
 function openWinLibroSueldo()
 {
+    $("#sueldoContent #tomo").hide();
+    $("#sueldoContent #hoja").hide();
     var myWindow=window.open('','','width=1010,height=1000px');
     myWindow.document.write('<html><head><title>Libro de sueldo</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
     myWindow.document.write($("#sheetCooperadoraAsistencial").html());
@@ -1602,6 +1610,8 @@ function openWinLibroSueldo()
         {
             myWindow.print();
             myWindow.close();
+            $("#sueldoContent #tomo").show();
+            $("#sueldoContent #hoja").show();
         }, 1000);
 
 }
@@ -2767,6 +2777,13 @@ function adaptarConceptorestanteForm(formnombre,conid){
             data: data,  // post data
             success: function(response) {
                 $("#sueldoContent").html(response);
+                $("#sueldoContent #hoja").change(function () {
+                    $("label[for='hoja']").html("Hoja: "+$(this).val());
+                });
+                $("#sueldoContent #tomo").change(function () {
+                    $("label[for='tomo']").html("Padron: "+$(this).val());
+                });
+                $("#sueldoContent #tomo").trigger('change');
             },
             error:function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus);
@@ -2785,6 +2802,20 @@ function adaptarConceptorestanteForm(formnombre,conid){
                 $("#sueldoContent").html(response);
                 var recibo = $("#reciboOriginal").html();
                 $("#reciboDuplicado").html(recibo);
+                $("#reciboDuplicado #firmaempleador").html("<b>Firma empleador</b>");
+
+                $("#reciboOriginal #bancos").change(function () {
+                    $("#reciboOriginal #pbanco").html($("#reciboOriginal #bancos option:selected").text());
+                    $("#reciboDuplicado #pbanco").html($("#reciboOriginal #bancos option:selected").text());
+                });
+                $("#reciboOriginal #bancoempleados").change(function () {
+                    $("#reciboOriginal #pbancoempleado").html($("#reciboOriginal #bancoempleados option:selected").text());
+                    $("#reciboDuplicado #pbancoempleado").html($("#reciboOriginal #bancoempleados option:selected").text());
+                });
+                $("#reciboDuplicado #bancos").hide();
+                $("#reciboOriginal #bancos").trigger('change');
+                $("#reciboDuplicado #bancoempleados").hide();
+                $("#reciboOriginal #bancoempleados").trigger('change');
             },
             error:function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus);

@@ -1504,6 +1504,7 @@ class ClientesController extends AppController {
 		$this->loadModel('Domicilio');
 		$this->loadModel('Conveniocolectivotrabajo');
 		$this->loadModel('Empleado');
+		$this->loadModel('Cargo');
 
 		if(!is_null($id)){
 			$containCliAuth = array(
@@ -1803,6 +1804,16 @@ class ClientesController extends AppController {
 		$this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
 		$this->set('tipoempresa',$this->Empleado->tipoempresa);
 		$this->set('codigozona',$this->Empleado->codigozona);
+		$this->set('cargos',$this->Cargo->find('list',[
+					'contain'=>[
+						'Conveniocolectivotrabajo'
+					],
+					'fields'=>[
+						'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
+					]
+				]
+			)
+		);
 
 	}
 	public function habilitar($id=null) {

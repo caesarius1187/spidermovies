@@ -154,7 +154,7 @@
             /*Aca voy a averiguar si paga INACAP ( si tiene SEC paga INACAP) */
             $contibuciones=[];
             if($empleado['Conveniocolectivotrabajo']['impuesto_id']=='11'/*SEC*/){
-                $contibuciones['INACAP']=12905.75*0.005; //Esto tiene q salir de la escala salarial
+                $contibuciones['INACAP']=13658.32*0.005*(count($impcli['Cliente']['Empleado'])); //Esto tiene q salir de la escala salarial
                 $contibuciones['SEC']=8; //Esto tiene q salir de la escala salarial
             }
 
@@ -164,7 +164,9 @@
                     array('36'/*cuota sindical*/,'37'/*cuota sindical 1*/,'38'/*cuota sindical 2*/,), true )){
                     if(isset($empleado['Conveniocolectivotrabajo']['Impuesto']['nombre'])){
                         $nombresindicato=$empleado['Conveniocolectivotrabajo']['Impuesto']['nombre'];
-                        $sindicatos['sindicato'][$nombresindicato] = 0;//El sindicato propiamente dicho
+                        if(!isset($sindicatos['sindicato'][$nombresindicato])){
+                            $sindicatos['sindicato'][$nombresindicato] = 0;//El sindicato propiamente dicho
+                        }
                     }
                     $sindicatos['sindicato'][$nombresindicato] += $valorrecibo['valor'];
                 }
@@ -179,7 +181,9 @@
                         }else{
                             $nombresindicato=$nombresindicato." extra";
                         }
-                        $sindicatosextra['sindicatoextra'][$nombresindicato] = 0;//el sindicato asociado por ej FAECYS etc.
+                        if(!isset($sindicatosextra['sindicatoextra'][$nombresindicato])){
+                            $sindicatosextra['sindicatoextra'][$nombresindicato] = 0;//el sindicato asociado por ej FAECYS etc.
+                        }
                     }
                     $sindicatosextra['sindicatoextra'][$nombresindicato] += $valorrecibo['valor'];
                 }
@@ -478,7 +482,7 @@
             $ContribucionesOStotal = $ContribucionesOScontribucionos+$ContribucionesOScontribucionadicionalos-$ContribucionesOSANSSAL;
             //Aporte OS aporte os
             if($rem4<$minimoANSSAL){
-                $AporteOSaporteos = $rem4 * 0.024;
+                $AporteOSaporteos = $rem4 * 0.027;
             }else{
                 $AporteOSaporteos = $rem4 * 0.0255;
             }
@@ -500,7 +504,6 @@
             //Aporte OS Total
             $AporteOStotal = $AporteOSaporteos+$AporteOSaporteadicionalos-$AporteOSANSSAL+$AporteOSadicionaladherente;
             //ART
-            //Debugger::dump($rem9);
             if($coberturaart){
                 $ARTart = (($rem9 *$impcli['Cliente']['alicuotaart']) / 100) + $impcli['Cliente']['fijoart'];
             }
@@ -1737,7 +1740,11 @@
                 'value'=>json_encode($aportesSindicatos),
                 'type'=>'hidden'
             ]);
-
+            echo $this->Form->input('cuentasdeSUSSContribucionesSindicatos',[
+                'id'=> "cuentasdeSUSSContribucionesSindicatos",
+                'value'=>json_encode($contribucionesSindicatos),
+                'type'=>'hidden'
+            ]);
             foreach ($aportesSindicatos as $cuentaaportesindicato) {
                 if(!isset($movId[$cuentaaportesindicato])){
                     $movId[$cuentaaportesindicato]=0;
@@ -1747,6 +1754,7 @@
                 $cuentaclientenumero="dar de alta cuenta de sindicato faltante";//$asientoestandarasuss['Cuenta']['nombre'];
                 $mostrar=false;
                 foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaSUSS){
+                    //si esta activada la cuenta de este sindicato entonces muestro
                     if($cuentaclientaSUSS['cuenta_id']==$cuentaaportesindicato){
                         $cuentaclienteid=$cuentaclientaSUSS['id'];
                         $cuentaclientenombre=$cuentaclientaSUSS['nombre'];
@@ -1756,7 +1764,8 @@
                     }
                 }
                 if($mostrar) {
-                    /*Aca vamos a recorrer los sindicatos que hemos buscado para preguntar si calculamos el valor de el que va a mostrarse*/
+                    /*Aca vamos a recorrer los sindicatos que hemos buscado para preguntar
+                                                si calculamos el valor de el que va a mostrarse*/
                     $valor = 0;
                     foreach ($sindicatos['sindicato'] as $nomSindicato => $sindicato) {
                         $nombre = "Aporte-".$nomSindicato."-";
@@ -1818,16 +1827,17 @@
                     $haber =0;
                     foreach ($contibuciones as $nomContribucion => $monto) {
                         $nombre1 = "Contribucion-".$nomContribucion."-";
-                        $nombre2 = "Contribucion-".$nomContribucion."-A Pagar";
+                        //$nombre2 = "Contribucion-".$nomContribucion."-A Pagar";
                         $nombre3 = "Cont.Seg. De Vida Oblig. Mercantil-".$nomContribucion."-";
-                        $nombre4 = "Cont.Seg. De Vida Oblig. Mercantil-".$nomContribucion."-A Pagar";
+                        //$nombre4 = "Cont.Seg. De Vida Oblig. Mercantil-".$nomContribucion."-A Pagar";
                         if($nombre1==$cuentaclientenombre||$nombre3==$cuentaclientenombre){
                             $debe = $monto;
-                        }elseif ($nombre2==$cuentaclientenombre||$nombre4==$cuentaclientenombre){
-                            $haber = $monto;
-                        }else{
-//                            echo $cuentaclientenombre."=".$nombre1."</br>";
                         }
+//                      elseif ($nombre2==$cuentaclientenombre||$nombre4==$cuentaclientenombre){
+//                            $haber = $monto;
+//                        }else{
+////                            echo $cuentaclientenombre."=".$nombre1."</br>";
+//                        }
                     }
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['value' => $movId[$cuentacontribucionindicato],]);
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.fecha', array(
