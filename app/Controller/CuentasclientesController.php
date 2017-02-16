@@ -77,6 +77,10 @@ class CuentasclientesController extends AppController {
 	public function informesumaysaldo($clienteid = null, $periodo = null){
 		$this->loadModel('Cliente');
 		$this->loadModel('Movimiento');
+
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+
 		$optionCliente = [
 			'contain' => [
 				'Cuentascliente'=>[
@@ -86,25 +90,34 @@ class CuentasclientesController extends AppController {
 							'Saldocuentacliente.periodo'=>$periodo
 						],
 					],
-					'Movimiento',
+					'Movimiento'=>[
+						'conditions'=>[
+							"Movimiento.asiento_id IN (
+								SELECT id FROM asientos as Asiento 
+								WHERE Asiento.cliente_id = ".$clienteid."
+								AND  Asiento.periodo = '".$periodo."'
+							)"
+						]
+					],
 					'conditions'=>[
+
 					]
 				],
 			],
 			'conditions' => ['Cliente.id'=>$clienteid]
 		];
 		$cliente = $this->Cliente->find('first',$optionCliente);
-		for ($i=0;$i<count($cliente['Cuentascliente'])-1;$i++){
-			for ($j=$i;$j<count($cliente['Cuentascliente']);$j++) {
-				$burbuja = $cliente['Cuentascliente'][$i]['Cuenta']['numero'];
-				$aux = $cliente['Cuentascliente'][$j]['Cuenta']['numero'];
-				if($burbuja>$aux){
-					$myaux=$cliente['Cuentascliente'][$i];
-					$cliente['Cuentascliente'][$i]=$cliente['Cuentascliente'][$j];
-					$cliente['Cuentascliente'][$j]=$myaux;
-				}
-			}
-		}
+//		for ($i=0;$i<count($cliente['Cuentascliente'])-1;$i++){
+//			for ($j=$i;$j<count($cliente['Cuentascliente']);$j++) {
+//				$burbuja = $cliente['Cuentascliente'][$i]['Cuenta']['numero'];
+//				$aux = $cliente['Cuentascliente'][$j]['Cuenta']['numero'];
+//				if($burbuja>$aux){
+//					$myaux=$cliente['Cuentascliente'][$i];
+//					$cliente['Cuentascliente'][$i]=$cliente['Cuentascliente'][$j];
+//					$cliente['Cuentascliente'][$j]=$myaux;
+//				}
+//			}
+//		}
 		$this->set('cliente',$cliente);
 		$this->set('periodo',$periodo);
 	}

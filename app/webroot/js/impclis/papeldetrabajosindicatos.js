@@ -1,5 +1,22 @@
 $(document).ready(function() { 
-       papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+	$( "#clickExcel" ).click(function() {
+    	$("#tblSindicatos").prepend(
+    		$("<tr>").append(
+				$("<td>")
+					.attr("colspan","25")
+					.html($('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+$('#impclinombre').val())
+    			)
+    		);
+        $("#tblSindicatos").table2excel({
+            // exclude CSS class
+            exclude: ".noExl",
+            name: $('#impclinombre').val(),
+            filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+$('#impclinombre').val()
+
+        });
+    });
+    papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+	catchAsiento();
 });
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";
@@ -50,16 +67,19 @@ function papelesDeTrabajo(periodo,impcli){
 		        type: 'POST', 
 		        url: formUrl, 
 		        data: formData, 
-		        success: function(data,textStatus,xhr){ 
-		          var respuesta = jQuery.parseJSON(data);
-		          var resp = respuesta.respuesta;
-		          var error=respuesta.error;
-		          if(error!=0){
-		            alert(respuesta.validationErrors);
-		            alert(respuesta.invalidFields);
-		          }else{
-		            $('#divLiquidarConvenioMultilateral').hide();
-		          }
+		        success: function(data,textStatus,xhr){
+					$('#AsientoAddForm').submit();
+		          	var respuesta = jQuery.parseJSON(data);
+		          	var resp = respuesta.respuesta;
+					callAlertPopint(resp);
+
+		          	var error=respuesta.error;
+		          	if(error!=0){
+		            	alert(respuesta.validationErrors);
+		            	alert(respuesta.invalidFields);
+		          	}else{
+		           	 	$('#divLiquidarSindicatos').hide();
+		          	}
 		        }, 
 		        error: function(xhr,textStatus,error){ 
 		          callAlertPopint(textStatus); 
@@ -75,5 +95,28 @@ function papelesDeTrabajo(periodo,impcli){
 	 }
 	});
   return false;
+}
+function catchAsiento(){
+	$('#AsientoAddForm').submit(function(){
+		//serialize form data
+		var formData = $(this).serialize();
+		//get form action
+		var formUrl = $(this).attr('action');
+		$.ajax({
+			type: 'POST',
+			url: formUrl,
+			data: formData,
+			success: function(data,textStatus,xhr){
+				var respuesta = jQuery.parseJSON(data);
+				var resp = respuesta.respuesta;
+				callAlertPopint(resp);
+			},
+			error: function(xhr,textStatus,error){
+				callAlertPopint(textStatus);
+				return false;
+			}
+		});
+		return false;
+	});
 }
 

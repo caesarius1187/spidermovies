@@ -1,5 +1,11 @@
-<?php echo $this->Html->script('jquery-ui',array('inline'=>false));?>
-<?php echo $this->Html->script('clientes/view',array('inline'=>false));?>
+<?php
+echo $this->Html->css('bootstrapmodal');
+echo $this->Html->script('jquery-ui',array('inline'=>false));
+echo $this->Html->script('clientes/view',array('inline'=>false));
+echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
+
+?>
+
 <!--Div izquierdo que muestra lista de grupo de clientes con sus clientes-->
 <?php 
 $widthDivClientes=25;
@@ -998,16 +1004,16 @@ if($mostrarView){?>
                                 <td><?php echo $impcli['usuario']; ?></td>
                                 <td><?php echo $impcli['clave']; ?></td>                           
                                 <td>
-                                    <a href="#"  onclick="loadFormImpuesto(<?php echo$impcli['id']; ?>,<?php echo $impcli['cliente_id'];?>)" class="button_view"> 
+                                    <a href="#"  onclick="loadFormImpuesto(<?php echo $impcli['id']; ?>,<?php echo $impcli['cliente_id'];?>)" class="button_view">
                                         <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
                                     </a>
-                                    <a href="#"  onclick="loadFormImpuestoPeriodos(<?php echo$impcli['id']; ?>)" class="button_view"> 
+                                    <a href="#"  onclick="loadFormImpuestoPeriodos(<?php echo $impcli['id']; ?>)" class="button_view">
                                         <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'imgedit'));?>
                                     </a>
-                                    <a href="#"  onclick="deleteImpcli(<?php echo$impcli['id']; ?>)" class="button_view"> 
+                                    <a href="#"  onclick="deleteImpcli(<?php echo $impcli['id']; ?>)" class="button_view">
                                         <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
                                     </a>
-                                    <a href="#"  onclick="loadCbus(<?php echo$impcli['id']; ?>)" class="button_view">
+                                    <a href="#"  onclick="loadCbus(<?php echo $impcli['id']; ?>)" class="button_view">
                                         <?php echo $this->Html->image('cuentabancaria.png', array('alt' => 'open','class'=>'imgedit'));?>
                                     </a>
                                 </td>
@@ -2086,6 +2092,13 @@ if($mostrarView){?>
                     'required'=>true,
                     'readonly'=>'readonly')
             );
+            echo $this->Form->input('fechaalta', array(
+                    'class'=>'datepicker',
+                    'type'=>'text',
+                    'label'=>'Alta',
+                    'required'=>true,
+                    'readonly'=>'readonly')
+            );
             echo $this->Form->input('fechaegreso', array(
                     'class'=>'datepicker',
                     'type'=>'text',
@@ -2128,4 +2141,25 @@ if($mostrarView){?>
 
 <!-- Fin Popin Nuevo Punto de venta -->
 <?php }//fin if(mostrarView) ?>
-<!-- Fin Popin Nuevo ImpClis DGRM --> 
+<!-- Fin Popin Nuevo ImpClis DGRM -->
+<!-- Popin Modal para edicion de ventas a utilizar por datatables-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" style="width:90%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <p>One fine body&hellip;</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

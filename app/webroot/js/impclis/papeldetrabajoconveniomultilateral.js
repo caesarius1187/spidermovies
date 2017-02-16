@@ -1,5 +1,12 @@
 $(document).ready(function() {
     $( "#clickExcel" ).click(function() {
+    	$("#pdtconveniomultilateral").prepend(
+    		$("<tr>").append(
+				$("<td>")
+					.attr("colspan","25")
+					.html($('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"Conveniomultilateral")
+    			)
+    		);
         $("#pdtconveniomultilateral").table2excel({
             // exclude CSS class
             exclude: ".noExl",
@@ -250,6 +257,12 @@ function cargarAsiento(){
         }else{
             $('#Asiento0Movimiento'+orden+'Haber').val(difSAF*-1);
         }
+	}
+	// 110404301	I.I.B.B. - Pagos a cuenta
+	if($('#cuenta3378').length > 0){
+		var orden = $('#cuenta3378').attr('orden');
+		var pagosACuentaTotal = $("#pagosACuentaTotal").val();
+		$('#Asiento0Movimiento'+orden+'Haber').val(pagosACuentaTotal);
 	}
 	// 110404101	I.I.B.B. - Retenciones Capital Federal
 	if($('#cuenta313').length > 0){

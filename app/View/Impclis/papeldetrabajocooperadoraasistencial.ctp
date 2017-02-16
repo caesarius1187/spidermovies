@@ -1,13 +1,27 @@
-<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false)); ?>
-<?php echo $this->Html->script('impclis/papeldetrabajocooperadoraasistencial',array('inline'=>false)); ?>
-<?php echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
-echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));?>
+<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false)); 
+echo $this->Html->script('jquery.table2excel',array('inline'=>false));
+echo $this->Html->script('impclis/papeldetrabajocooperadoraasistencial',array('inline'=>false)); 
+echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
+echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
+echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));?>
 <div class="index">
     <div id="Formhead" class="clientes papeldetrabajosuss index" style="margin-bottom:10px;">
         <h2>Cooperadora Asistencial:</h2>
         Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
         CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
         Periodo: <?php echo $periodo; ?>
+        <?php echo $this->Form->button('Imprimir',
+            array('type' => 'button',
+                'class' =>"btn_imprimir",
+                'onClick' => "imprimir()"
+            )
+        );?>
+        <?php echo $this->Form->button('Excel',
+            array('type' => 'button',
+                'id'=>"clickExcel",
+                'class' =>"btn_imprimir",
+            )
+        );?>
     </div>
     <div id="sheetCooperadoraAsistencial" class="index">
         <!--Esta es la tabla original y vamos a recorrer todos los empleados por cada una de las
@@ -72,7 +86,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
         }
         //Debugger::dump($empleadoDatos);
         ?>
-        <table id="tblDatosAIngresar" class="tblInforme tbl_border" cellspacing="0">
+        <table id="tblDatosAIngresar" class="tblInforme tbl_border" cellspacing="0" >
             <tr>
                 <td>Legajo</td>
                 <?php
@@ -113,7 +127,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                     echo "<td>";
                     if(isset($empleado['Domicilio']))
-                        echo $empleado['Domicilio']['Localidade']['Partido']['nombre'];
+                        echo $empleado['Domicilio']['Localidade']['nombre'];
                     echo "</td>";
                 }
                 ?>
@@ -130,78 +144,82 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 }
                 ?>
             </tr>
+            <tr>
+                <td colspan="50">
+                    Impuesto</br>
+                    Cantidad de empleados : <?php echo count($impcli['Cliente']['Empleado']) ?></br>
+                    Base imponible: $<?php echo number_format($baseimponible, 2, ",", ".") ?></br>
+                    Alicuota: 2% </br>
+                    <?php
+                    $impuestoTotal = 0;
+                    $impuestoTotal = ($baseimponible)*0.02;
+                    $impuestoExento = ($baseimponibleexenta)*0.02;
+                    ?>
+                    Impuesto: $<?php echo number_format($impuestoTotal, 2, ",", ".") ?></br></br>
+                    Exento: $<?php echo number_format($impuestoExento, 2, ",", ".") ?></br>
+                    Retenciones: $<?php echo number_format($Retenciones, 2, ",", ".") ?></br>
+                    Otros Pagos a Cuenta: $<?php echo number_format($OtrosPagosACuenta, 2, ",", ".") ?></br>
+                    Saldo A Favor del Periodo Anterior: $<?php echo number_format($SaldoAFavor, 2, ",", ".") ?></br></br>
+
+                    <?php
+                    $title ="";
+                    if(count($impcli['Cliente']['Empleado'])<2){
+                        //Este Impuesto se empeza a pagar cuando hay al menos 2 empleados
+                        $impuestoDeterminado = 0;
+                        $title ="El Contribuyente tiene 1 o menos empleados por lo que esta exento de pagar este impuesto";
+                    }else{
+                        $impuestoDeterminado = $impuestoTotal-$impuestoExento-$Retenciones-$OtrosPagosACuenta-$SaldoAFavor;
+                    }
+                    echo '<label title="'.$title.'">';
+                    echo $impuestoDeterminado<0?'Saldo a Favor':'Impuesto determinado';
+                    ?>
+                    $<?php echo number_format($impuestoDeterminado*-1, 2, ",", ".") ?></br></br>
+                    <?php
+                    echo "</label>";
+                    echo $this->Form->input(
+                        'apagar',
+                        array(
+                            'type'=>'hidden',
+                            'id'=> 'apagar',
+                            'value'=>$impuestoDeterminado<0?0:$impuestoDeterminado,
+                        )
+                    );
+                    echo $this->Form->input(
+                        'afavor',
+                        array(
+                            'type'=>'hidden',
+                            'id'=> 'afavor',
+                            'value'=>$impuestoDeterminado<0?$impuestoDeterminado*-1:0
+                        )
+                    );
+
+                    $provinciasSubtotal = array();
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        $empleadoid = $empleado['id'];
+                        $domicilioEmpleadoID = 0;
+                        if(isset($empleado['Domicilio']))
+                            $domicilioEmpleadoID = $empleado['Domicilio']['Localidade']['nombre'];
+                        if(!isset($provinciasSubtotal[$domicilioEmpleadoID])){
+                            $provinciasSubtotal[$domicilioEmpleadoID]=0;
+                        }
+                        if(!$empleado['exentocooperadoraasistencial']) {
+                            $provinciasSubtotal[$domicilioEmpleadoID] += $empleadoDatos[$empleadoid]['rem1'];
+                        }
+                    }
+                    foreach ($provinciasSubtotal as $key => $item) {
+                        if($baseimponible!=0){
+                            $subtotalprov = ($item/$baseimponible*100);
+                        }else{
+                            $subtotalprov = 0;
+                        }
+                        echo $key.": $".number_format($item, 2, ",", ".")." - ".number_format($subtotalprov, 2, ",", ".")." %";
+                    }
+                    //Debugger::dump($provinciasSubtotal);
+                    //Debugger::dump($empleadoDatos);
+                    ?>
+                </td>
+            </tr>
         </table>
-        Impuesto</br>
-        Cantidad de empleados : <?php echo count($impcli['Cliente']['Empleado']) ?></br>
-        Base imponible: $<?php echo number_format($baseimponible, 2, ",", ".") ?></br>
-        Alicuota: 2% </br>
-        <?php
-        $impuestoTotal = 0;
-        $impuestoTotal = ($baseimponible)*0.02;
-        $impuestoExento = ($baseimponibleexenta)*0.02;
-        ?>
-        Impuesto: $<?php echo number_format($impuestoTotal, 2, ",", ".") ?></br></br>
-        Exento: $<?php echo number_format($impuestoExento, 2, ",", ".") ?></br>
-        Retenciones: $<?php echo number_format($Retenciones, 2, ",", ".") ?></br>
-        Otros Pagos a Cuenta: $<?php echo number_format($OtrosPagosACuenta, 2, ",", ".") ?></br>
-        Saldo A Favor del Periodo Anterior: $<?php echo number_format($SaldoAFavor, 2, ",", ".") ?></br></br>
-
-        <?php
-        $title ="";
-        if(count($impcli['Cliente']['Empleado'])<2){
-            //Este Impuesto se empeza a pagar cuando hay al menos 2 empleados
-            $impuestoDeterminado = 0;
-            $title ="El Contribuyente tiene 1 o menos empleados por lo que esta exento de pagar este impuesto";
-        }else{
-            $impuestoDeterminado = $impuestoTotal-$impuestoExento-$Retenciones-$OtrosPagosACuenta-$SaldoAFavor;
-        }
-        echo '<label title="'.$title.'">';
-        echo $impuestoDeterminado<0?'Saldo a Favor':'Impuesto determinado';
-        ?>
-        $<?php echo number_format($impuestoDeterminado*-1, 2, ",", ".") ?></br></br>
-        <?php
-        echo "</label>";
-        echo $this->Form->input(
-            'apagar',
-            array(
-                'type'=>'hidden',
-                'id'=> 'apagar',
-                'value'=>$impuestoDeterminado<0?0:$impuestoDeterminado,
-            )
-        );
-        echo $this->Form->input(
-            'afavor',
-            array(
-                'type'=>'hidden',
-                'id'=> 'afavor',
-                'value'=>$impuestoDeterminado<0?$impuestoDeterminado*-1:0
-            )
-        );
-
-        $provinciasSubtotal = array();
-        foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-            $empleadoid = $empleado['id'];
-            $domicilioEmpleadoID = 0;
-            if(isset($empleado['Domicilio']))
-                $domicilioEmpleadoID = $empleado['Domicilio']['Localidade']['Partido']['nombre'];
-            if(!isset($provinciasSubtotal[$domicilioEmpleadoID])){
-                $provinciasSubtotal[$domicilioEmpleadoID]=0;
-            }
-            if(!$empleado['exentocooperadoraasistencial']) {
-                $provinciasSubtotal[$domicilioEmpleadoID] += $empleadoDatos[$empleadoid]['rem1'];
-            }
-        }
-        foreach ($provinciasSubtotal as $key => $item) {
-            if($baseimponible!=0){
-                $subtotalprov = ($item/$baseimponible*100);
-            }else{
-                $subtotalprov = 0;
-            }
-            echo $key.": $".number_format($item, 2, ",", ".")." - ".number_format($subtotalprov, 2, ",", ".")." %";
-        }
-        //Debugger::dump($provinciasSubtotal);
-        //Debugger::dump($empleadoDatos);
-        ?>
     </div>
     <div id="divLiquidarCooperadoraAsistencial">
     </div>

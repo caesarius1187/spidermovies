@@ -1,7 +1,10 @@
 <?php
+echo $this->Html->script('jquery-ui',array('inline'=>false));
 echo $this->Html->css('bootstrapmodal');
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 echo $this->Html->script('cuentasclientes/informesumaysaldo',array('inline'=>false));
+echo $this->Html->script('asientos/index',array('inline'=>false));
+
 ?>
 <?php
 /**
@@ -11,6 +14,7 @@ echo $this->Html->script('cuentasclientes/informesumaysaldo',array('inline'=>fal
  * Time: 12:15 PM
  */
 ?>
+
 <div class="index" style="padding: 0px 1%; margin-bottom: 10px;" id="headerCliente">
     <div style="width:30%; float: left;padding-top:10px">
         Contribuyente: <?php echo $cliente["Cliente"]['nombre'];
@@ -78,30 +82,30 @@ echo $this->Html->script('cuentasclientes/informesumaysaldo',array('inline'=>fal
                 $debitos = 0;
                 $creditos = 0;
                 foreach ($cuentascliente['Movimiento'] as $movimiento){
-                $debitos+= $movimiento['debe'];
-                $creditos+= $movimiento['haber'];
-                $saldoCalculado += $movimiento['debe'];
-                $saldoCalculado -= $movimiento['haber'];
+                    $debitos+= $movimiento['debe'];
+                    $creditos+= $movimiento['haber'];
+                    $saldoCalculado += $movimiento['debe'];
+                    $saldoCalculado -= $movimiento['haber'];
                 }
                 ?>
                 <td>
-                    <?php echo $debitos; ?>
+                    <?php echo number_format($debitos, 2, ",", "."); ?>
                 </td>
                 <td>
-                    <?php echo $creditos; ?>
+                    <?php echo number_format($creditos, 2, ",", "."); ?>
                 </td>
                 <td>
-                <?php echo $saldoCalculado; ?>
+                <?php echo number_format($saldoCalculado, 2, ",", "."); ?>
                 </td>
                 <?php
                 $saldoanterior=0;
-                if(isset($cuentascliente['Saldocuentacliente'][0]['saldoanterior'])){
-                    $saldoanterior = $cuentascliente['Saldocuentacliente'][0]['saldoanterior'];
-                }
+//                if(isset($cuentascliente['Saldocuentacliente'][0]['saldoanterior'])){
+//                    $saldoanterior = $cuentascliente['Saldocuentacliente'][0]['saldoanterior'];
+//                }
                 $saldoactual=0;
-                if(isset($cuentascliente['Saldocuentacliente'][0]['saldoactual'])){
-                    $saldoactual = $cuentascliente['Saldocuentacliente'][0]['saldoactual'];
-                }
+//                if(isset($cuentascliente['Saldocuentacliente'][0]['saldoactual'])){
+//                    $saldoactual = $cuentascliente['Saldocuentacliente'][0]['saldoactual'];
+//                }
                 ?>
                 <td>
                     <?php echo $saldoanterior; ?>

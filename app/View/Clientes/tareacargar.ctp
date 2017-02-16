@@ -635,6 +635,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 <th style="width: 76px;" class="sum">Total</th>
                   <th style="width: 76px;" class="sum">KW</th>
                   <th>Acciones</th>
+                  <th>Creado</th>
               </tr>
             </thead>
             <tbody id="bodyTablaCompras">
@@ -689,6 +690,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     echo $this->Form->end();
                     ?>
                   </td><!--23-->
+                    <td class="<?php echo $tdClass?>"><?php echo $compra["created"]; ?></td><!--21-->
                 </tr>
                 <?php
               }
@@ -718,7 +720,8 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                   <th ></th><!--20-->
                   <th ></th><!--21-->
                   <th></th><!--22-->
-                  <th></th><!--23-->
+                  <th></th><!--23 Acciones-->
+                  <th></th><!--24 Creado-->
                 </tr>
               </tfoot>
           </table>
@@ -794,8 +797,10 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
           </div>
           <div id="form_empleados" class="tabNovedades index" style="width:96%;float:left;">
                 <?php
+                $arrayEmpleados=[];
                 foreach ($cliente['Empleado'] as $empleadolista) {
                     $classButtonEmpleado = "btn_empleados";
+                    $arrayEmpleados[]=$empleadolista['id'];
                     if(count($empleadolista['Valorrecibo'])>0){
                         $classButtonEmpleado = "btn_empleados_liq";
                     }
@@ -811,7 +816,75 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 }
                 ?>
           </div>
-          <div style="overflow:auto;width:96%; float:left;min-height: 400px; margin-top: 10px" class="tareaCargarIndexTable tabNovedades index" id="divSueldoForm">
+            <div id="form_FuncionImprimir" class="tabNovedades index" style="width:96%;float:left;">
+                <?php
+                echo $this->Form->input('arrayEmpleados',[
+                    'type'=>'hidden',
+                    'value'=>json_encode($arrayEmpleados)
+                ]);
+                echo $this->Form->button(
+                    "Libros de sueldos Primera Quincena",
+                    array(
+                        'class'=>'btn_sueldo',
+                        'style'=>'width:inherit',
+                        'onClick'=>"cargarTodosLosLibros(1)",
+                        'id'=>'buttonImprimirRecibos',
+                    ),
+                    array()
+                );
+                echo $this->Form->button(
+                    "Recibos de sueldos Primera Quincena",
+                    array(
+                        'class'=>'btn_sueldo',
+                        'style'=>'width:inherit',
+                        'onClick'=>"cargarTodosLosRecibos(1)",
+                        'id'=>'buttonImprimirRecibos',
+                    ),
+                    array()
+                );
+                echo $this->Form->button(
+                    "Libros de sueldos Segunda Quincena",
+                    array(
+                        'class'=>'btn_sueldo',
+                        'style'=>'width:inherit',
+                        'onClick'=>"cargarTodosLosLibros(2)",
+                        'id'=>'buttonImprimirRecibos',
+                    ),
+                    array()
+                );
+                echo $this->Form->button(
+                    "Recibos de sueldos Segunda Quincena",
+                    array(
+                        'class'=>'btn_sueldo',
+                        'style'=>'width:inherit',
+                        'onClick'=>"cargarTodosLosRecibos(2)",
+                        'id'=>'buttonImprimirRecibos',
+                    ),
+                    array()
+                );
+                echo $this->Form->button(
+                    "Libros de sueldos Mensual",
+                    array(
+                        'class'=>'btn_sueldo',
+                        'style'=>'width:inherit',
+                        'onClick'=>"cargarTodosLosLibros(3)",
+                        'id'=>'buttonImprimirRecibos',
+                    ),
+                    array()
+                );
+                echo $this->Form->button(
+                    "Recibos de sueldos Mensual",
+                    array(
+                        'class'=>'btn_sueldo',
+                        'style'=>'width:inherit',
+                        'onClick'=>"cargarTodosLosRecibos(3)",
+                        'id'=>'buttonImprimirRecibos',
+                    ),
+                    array()
+                );
+                ?>
+            </div>
+          <div style="overflow:auto;width:96%; min-height: 400px; margin-top: 10px" class="tareaCargarIndexTable tabNovedades index" id="divSueldoForm">
 
           </div>
         <?php /**************************************************************************/ ?>
@@ -875,13 +948,22 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     'style' => 'width:150px;'));
                 echo $this->Form->input('periodo',array('value'=>$periodo,'type'=>'hidden'));
                 echo $this->Form->input('concepto',array('label'=>'Concepto'));
+                echo $this->Form->input('numerocomprobante', array(
+                        'label'=> 'N° Comprobante',
+                    )
+                );
                 echo $this->Form->input('comprobante_id', array(
                         'label'=> 'Tipo Comprobante','empty'=>'Seleccionar Tipo Comprobante',
                     )
                 );
 
-                echo $this->Form->input('numerocomprobante', array(
-                        'label'=> 'N° Comprobante',
+                echo $this->Form->input('puntosdeventa', array(
+                        'label'=> 'Punto de venta',
+                        'type'=> 'text',
+                    )
+                );
+                echo $this->Form->input('numerofactura', array(
+                        'label'=> 'N° Factura',
                     )
                 );
 
@@ -926,15 +1008,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 echo $this->Form->input('regimen',array());
                 echo $this->Form->input('descripcion',array('style' => 'width:200px;'));
                 echo $this->Form->input('numeropadron',array());
-                echo $this->Form->input('puntosdeventa', array(
-                        'label'=> 'Punto de venta',
-                        'type'=> 'text',
-                    )
-                );
-                echo $this->Form->input('numerofactura', array(
-                        'label'=> 'N° Factura',
-                    )
-                );
+                echo $this->Form->input('ordendepago',array());
                 echo $this->Form->submit('+', array('type'=>'image',
                     'src' => $this->webroot.'img/add_view.png',
                     'class'=>'imgedit',
@@ -970,7 +1044,8 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     <th>Numero Padron</th><!-21-->
                     <th>Punto de Venta</th><!-22-->
                     <th>Numero Factura</th><!-23-->
-                    <th>Actions</th><!-24-->
+                    <th>Orden de pago</th><!-24-->
+                    <th>Actions</th><!-25-->
                 </tr>
                 </thead>
                 <tbody id="bodyTablaConceptosrestantes">
@@ -1024,6 +1099,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                         <td class="<?php echo $tdClass?>"><?php echo $conceptorestante["numeropadron"]?></td>
                         <td class="<?php echo $tdClass?>"><?php echo $conceptorestante["puntosdeventa"]?></td>
                         <td class="<?php echo $tdClass?>"><?php echo $conceptorestante["numerofactura"]?></td>
+                        <td class="<?php echo $tdClass?>"><?php echo $conceptorestante["ordendepago"]?></td>
                         <td class="<?php echo $tdClass?>">
                             <?php
                             $paramsConceptorestante=$conceptorestante["id"];
@@ -1053,8 +1129,44 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
 
             foreach ($cliente["Impcli"] as $bancimpcli) {
                 foreach ($bancimpcli["Cbu"] as $cbu) {
+                    $abreviacionCBUTipo = "";
+                    switch ($cbu['tipocuenta']) {
+                        case 'Caja de Ahorro en Euros':
+                        $abreviacionCBUTipo = "CA €";
+                        break;
+                        case 'Caja de Ahorro en Moneda Local':
+                        $abreviacionCBUTipo = "CA $";
+                        break;
+                        case 'Caja de Ahorro en U$S':
+                            $abreviacionCBUTipo = "CA U$ S";
+                        break;
+                        case 'Cuenta Corriente en Euros':
+                            $abreviacionCBUTipo = "CC €";
+                        break;
+                        case 'Cuenta Corriente en Moneda Local':
+                        $abreviacionCBUTipo = "CC $";
+                        break;
+                        case 'Cuenta Corriente en U$S':
+                            $abreviacionCBUTipo = "CC U$ S";
+                        break;
+                        case 'Otras':
+                            $abreviacionCBUTipo = "Otras";
+                        break;
+                        case 'Plazo Fijo en Euros':
+                            $abreviacionCBUTipo = "PF €";
+                        break;
+                        case 'Plazo Fijo en U$S':
+                            $abreviacionCBUTipo = "PF U$ S";
+                        break;
+                        case 'Plazo Fijo en Moneda Local':
+                            $abreviacionCBUTipo = "PF $";
+                        break;
+                        default:
+                            $abreviacionCBUTipo = "cc $";
+                        break;
+                    }
                     echo $this->Html->link(
-                        "Importar Resumen Bancario ".$cbu['numerocuenta'],
+                        "Imp.Res.Banc. ".$cbu['numerocuenta']." ".$abreviacionCBUTipo,
                         array(
                             'controller' => 'movimientosbancarios',
                             'action' => 'importar',
@@ -1068,7 +1180,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                         )
                     );
                     if(!$tieneMonotributo) {
-                         echo $this->Form->button('Contabilizar Banco CBU: '.$cbu['cbu'],
+                         echo $this->Form->button('Cont.Banc. CBU: '.$cbu['cbu']." ".$abreviacionCBUTipo,
                             array('type' => 'button',
                                 'class' =>"btn_realizar_tarea",
                                 'div' => false,
@@ -1112,52 +1224,65 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
             echo $this->Form->end();  ?>
         </div>
         <div style="overflow:auto;width:96%; float:left;margin-top:10px;min-height: 400px;" class="tareaCargarIndexTable tabBancos index">
-        <table class="" style="border:1px solid white" id="tblTablaMovimientosBancarios">
-            <thead>
-                <tr>
-                    <th>Cbu</th><!-0-->
-                    <th>Fecha</th><!-0-->
-                    <th>Concepto</th><!-2-->
-                    <th>Debito</th><!-3-->
-                    <th>Credito</th><!-3-->
-                    <th>Saldo</th><!-3-->
-                    <th>Cuenta</th><!-1-->
-                    <th>Codigo AFIP</th><!-3-->
-                    <th>Actions</th><!-4-->
-                </tr>
+            <table class="" style="border:1px solid white" id="tblTablaMovimientosBancarios">
+                <thead>
+                    <tr>
+                        <th>Cbu</th><!-0-->
+                        <th>Fecha</th><!-0-->
+                        <th>Concepto</th><!-2-->
+                        <th class="sum">Debito</th><!-3-->
+                        <th class="sum">Credito</th><!-3-->
+                        <th>Saldo</th><!-3-->
+                        <th>Cuenta</th><!-1-->
+                        <th>Codigo AFIP</th><!-3-->
+                        <th>Actions</th><!-4-->
+                    </tr>
                 </thead>
                 <tbody id="bodyTablaConceptosrestantes">
-                <?php
-                foreach($cliente["Impcli"] as $impcli ){
-                    foreach ($impcli['Cbu'] as $cbu){
-                        foreach ($cbu['Movimientosbancario'] as $movimientobancario){
-                        $tdClass = "tdViewMovimientosBancario".$movimientobancario["id"];
-                        ?>
-                        <tr id="rowmovimientosbancarios<?php echo $movimientobancario["id"]?>" class="movimientosbancario<?php echo $movimientobancario["id"];?>">
-                            <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["Cbu"]['cbu']?></td>
-                            <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["fecha"]?></td>
-                            <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["concepto"]?></td>
-                            <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["debito"]?></td>
-                            <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["credito"]?></td>
-                            <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["saldo"]?></td>
-                            <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["Cuentascliente"]['nombre']?></td>
-                            <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["codigoafip"]?></td>
-                            <td class="<?php echo $tdClass?>">
-                                <?php
-                                $paramsConceptorestante=$movimientobancario["id"];
-                                echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarMovimientosbancario(".$paramsConceptorestante.")"));
-                                echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarMovimientosbancario(".$paramsConceptorestante.")"));
-                                echo $this->Form->end();  ?>
-                            </td>
-                        </tr>
-                    <?php }
+                    <?php
+                    foreach($cliente["Impcli"] as $impcli ){
+                        foreach ($impcli['Cbu'] as $cbu){
+                            foreach ($cbu['Movimientosbancario'] as $movimientobancario){
+                            $tdClass = "tdViewMovimientosBancario".$movimientobancario["id"];
+                            ?>
+                            <tr id="rowmovimientosbancarios<?php echo $movimientobancario["id"]?>" class="movimientosbancario<?php echo $movimientobancario["id"];?>">
+                                <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["Cbu"]['cbu']?></td>
+                                <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["fecha"]?></td>
+                                <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["concepto"]?></td>
+                                <td class="<?php echo $tdClass?>"><?php echo number_format($movimientobancario["debito"], 2, ",", ".")?></td>
+                                <td class="<?php echo $tdClass?>"><?php echo number_format($movimientobancario["credito"], 2, ",", ".")?></td>
+                                <td class="<?php echo $tdClass?>"><?php echo number_format($movimientobancario["saldo"], 2, ",", ".")?></td>
+                                <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["Cuentascliente"]['nombre']?></td>
+                                <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["codigoafip"]?></td>
+                                <td class="<?php echo $tdClass?>">
+                                    <?php
+                                    $paramsConceptorestante=$movimientobancario["id"];
+                                    echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarMovimientosbancario(".$paramsConceptorestante.")"));
+                                    echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarMovimientosbancario(".$paramsConceptorestante.")"));
+                                    echo $this->Form->end();  ?>
+                                </td>
+                            </tr>
+                        <?php }
+                        }
                     }
-                }
-                ?>
+                    ?>
                 </tbody>
+                <tfoot>
+                <tr>
+                    <th></th><!-0-->
+                    <th></th><!-0-->
+                    <th></th><!-2-->
+                    <th></th><!-3-->
+                    <th></th><!-3-->
+                    <th></th><!-3-->
+                    <th></th><!-1-->
+                    <th></th><!-3-->
+                    <th></th><!-4-->
+                </tr>
+                </tfoot>
             </table>
         </div>
-  </div>
+    </div>
 </div>
 <?php /**************************************************************************/ ?>
 <?php /**************************************************************************/ ?>

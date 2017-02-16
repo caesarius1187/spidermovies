@@ -1,5 +1,14 @@
 var ordenTxt = 0;
 $(document).ready(function() {
+	$( "#clickExcel" ).click(function() {
+		$("#tblDatosAIngresar").table2excel({
+			// exclude CSS class
+			exclude: ".noExl",
+			name: "SUSS",
+			filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"SUSS"
+
+		});
+	});
 	papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
 	var tblDatosAIngresar = $('#tblDatosAIngresar');
     tblDatosAIngresar.floatThead();
@@ -12,7 +21,22 @@ $(document).ready(function() {
 	catchAsiento();
     CambiarTab("papeldetrabajo");
 });
+function openWin()
+{
 
+	var myWindow=window.open('','','width=1010,height=1000px');
+	myWindow.document.write('<html><head><title>SUSS</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
+	myWindow.document.write($("#sheetCooperadoraAsistencial").html());
+	myWindow.document.close();
+	myWindow.focus();
+	setTimeout(
+		function()
+		{
+			myWindow.print();
+			myWindow.close();
+
+		}, 1000);
+}
 function cargarAsiento(){
 	// 503020017	Mano de Obra Salta
 	if($('#cuenta2250').length > 0){
@@ -122,6 +146,12 @@ function cargarAsiento(){
         var apagar360ContribucionRENATEA = $("#apagar360ContribucionRENATEA").val();
         $('#Asiento0Movimiento'+orden+'Haber').val(apagar360ContribucionRENATEA);
     }
+	// 210301002	Embargos
+    if($('#cuenta1379').length > 0){
+        var orden = $('#cuenta1379').attr('orden');
+        var apagarEmbargos = $("#apagarEmbargos").val();
+        $('#Asiento0Movimiento'+orden+'Haber').val(apagarEmbargos);
+    }
 
     /*Aportes Sindicales*/
 	// 210302021
@@ -168,6 +198,7 @@ function cargarAsiento(){
 		$('#Asiento0Movimiento'+orden+'Haber').val(sueldospersonal);
 		//Falta restar APORTES DE Sindicatos
 	}
+
     /*Aca vamos a identificar la cuenta de perdida Contribucion INACAP A PAGAR y vamos asignarle el valor de su debe
     * en la cuenta de pasivo Contribucion INACAP*/
 	if($('#cuenta1427').length > 0){
@@ -210,7 +241,6 @@ function catchAsiento(){
 		});
 		return false;
 	});
-
 }
 function pad(n, width, z) {
     z = z || '0';

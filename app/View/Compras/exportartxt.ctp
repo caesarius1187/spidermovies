@@ -68,36 +68,48 @@
 //        $linecompra['numerodespacho']=substr($line, 36,16);
         $lineaCompra .= str_pad(" ", 16, " ", STR_PAD_LEFT);
 //        $linecompra['codigodocumento']=substr($line, 52,2);
-        $lineaCompra .= str_pad(80, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
-//        $linecompra['identificacionnumero']=substr($line, 54,20);
-        $nombreamostrar = $compra['Provedore']['nombre'];
         $identificacionnumero = $compra['Provedore']['cuit'];
+        if(strlen($identificacionnumero)<=8)/*ES UN DNI!!!!*/
+        {
+            $lineaCompra .= str_pad(96, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
+        }else{
+            $lineaCompra .= str_pad(80, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
+        }
+//        $linecompra['identificacionnumero']=substr($line, 54,20);
+        $nombreamostrar = substr($compra['Provedore']['nombre'], 0, 29);
         $lineaCompra .= str_pad($identificacionnumero, 20, "0", STR_PAD_LEFT);
 //        $linecompra['nombre']=substr($line, 74,30);
-        $lineaCompra .= str_pad($nombreamostrar, 30, " ", STR_PAD_RIGHT);
+        $lineaCompra .= str_pad( $nombreamostrar, 30, " ", STR_PAD_RIGHT);
 //        $linecompra['importetotaloperacion']=substr($line, 104,13).'.'.substr($line, 117, 2);
-        $lineaCompra .= str_pad(number_format($compra['Compra']['total'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(number_format($compra[0]['total'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importeconceptosprecionetogravado']=substr($line, 119,13).'.'.substr($line, 132, 2);
-        $lineaCompra .= str_pad(number_format($compra['Compra']['nogravados'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(number_format($compra[0]['nogravados'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importeoperacionesexentas']=substr($line, 134,13).'.'.substr($line, 147, 2);
-        $lineaCompra .= str_pad(number_format($compra['Compra']['exentos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(number_format($compra[0]['exentos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importepercepcionespagosacuentaiva']=substr($line, 149,13).'.'.substr($line, 162, 2);
-        $lineaCompra .= str_pad(number_format($compra['Compra']['ivapercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(number_format($compra[0]['ivapercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importepercepcionespagosacuentaimpuestosnacionales']=substr($line, 164,13).'.'.substr($line, 177, 2);
         $lineaCompra .= str_pad(number_format(0, 2, "", ""), 15, "0", STR_PAD_LEFT);
         //TODO: No estamos guardando importepercepcionespagosacuentaimpuestosnacionales en compras
 //        $linecompra['importeingresosbrutos']=substr($line, 179,13).'.'.substr($line, 192, 2);
-        $lineaCompra .= str_pad(number_format($compra['Compra']['iibbpercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(number_format($compra[0]['iibbpercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importeimpuestosmunicipales']=substr($line, 194,13).'.'.substr($line, 207, 2);
-        $lineaCompra .= str_pad(number_format($compra['Compra']['actvspercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(number_format($compra[0]['actvspercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importeimpuestosinternos']=substr($line, 209,13).'.'.substr($line, 222, 2);
-        $lineaCompra .= str_pad(number_format($compra['Compra']['impinternos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+        $lineaCompra .= str_pad(number_format($compra[0]['impinternos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['codigomoneda']=substr($line, 224,3);
         $lineaCompra .= str_pad("PES", 3, " ", STR_PAD_LEFT);
 //        $linecompra['cambiotipo']=substr($line, 227,10);
         $lineaCompra .= str_pad("0001000000", 10, "0", STR_PAD_LEFT);
 //        $linecompra['cantidadalicuotas']=substr($line, 237,1);
-        $lineaCompra .= str_pad($compra[0]['cantalicuotas'], 1, "0", STR_PAD_LEFT);
+        /*
+         * Facturas, Notas de Credito y Notas de Debito B => No tienen alicuotas (to do lo q sea B)
+         * */
+            if($compra["Comprobante"]['tipo']=="B"||$compra["Comprobante"]['tipo']=="C"){
+                $lineaCompra .= str_pad(0, 1, "0", STR_PAD_LEFT);
+            }else{
+                $lineaCompra .= str_pad($compra[0]['cantalicuotas'], 1, "0", STR_PAD_LEFT);
+            }
         //Buscar cantidad de alicuotas para esta factura
 //        $linecompra['operacioncodigo']=substr($line, 238,1);
         $lineaCompra .= str_pad("0", 1, "0", STR_PAD_LEFT);

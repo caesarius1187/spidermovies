@@ -82,6 +82,7 @@ if(!$mostrarForm) { ?>
 			echo $this->Form->input('numeropadron');
 			echo $this->Form->input('puntosdeventa');
 			echo $this->Form->input('numerofactura');
+			echo $this->Form->input('ordendepago');
       		echo $this->Form->submit('+', array(
 	              'type'=>'image',
 	              'src' => $this->webroot.'img/check.png',

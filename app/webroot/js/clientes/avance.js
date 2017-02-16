@@ -257,7 +257,11 @@ $(document).ready(function() {
           data: data,  // post data
           success: function(response) {
             //alert(response);
-            $('#divpopPapelesDeTrabajo').html(response);
+              $('#myModal').on('show.bs.modal', function() {
+                  $('#myModal').find('.modal-title').html('Asiento automatico de banco');
+                  $('#myModal').find('.modal-body').html(response);
+                  // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+              });
             $(document).ready(function() {
                 $( "input.datepicker" ).datepicker({
                   yearRange: "-100:+50",
@@ -267,47 +271,49 @@ $(document).ready(function() {
                   dateFormat: 'dd-mm-yy',
                 });
               });
-            location.href='#popInPapelesDeTrabajo';
-            $( "#vencimientogeneral" ).change(function(){
+              $('#myModal').modal('show');
+              $( "#vencimientogeneral" ).change(function(){
               $('#EventosimpuestoRealizartarea5Form .hiddendatepicker').val( $( "#vencimientogeneral" ).val());
             });
-            $( "#vencimientogeneral" ).trigger( "change" );
+              $( "#vencimientogeneral" ).trigger( "change" );
             $('#EventosimpuestoRealizartarea5Form').submit(function(){
                 $('.inputtodisable').prop("disabled", false);
                 //serialize form data
-              var formData = $(this).serialize(); 
-              //get form action 
-              var formUrl = $(this).attr('action'); 
-              $.ajax({ 
-                type: 'POST', 
-                url: formUrl, 
-                data: formData, 
-                success: function(data,textStatus,xhr){ 
-                  var respuesta = jQuery.parseJSON(data);
-                  var resp = respuesta.respuesta;
-                  var error=respuesta.error;
-                  if(error!=0){
-                    alert(respuesta.validationErrors);
-                    alert(respuesta.invalidFields);
+                var formData = $(this).serialize();
+                //get form action
+                var formUrl = $(this).attr('action');
+                $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(data,textStatus,xhr){
+                      var respuesta = jQuery.parseJSON(data);
+                      var resp = respuesta.respuesta;
+                      var error=respuesta.error;
+                      if(error!=0){
+                        alert(respuesta.validationErrors);
+                        alert(respuesta.invalidFields);
+                          $('#myModal').modal('hide');
+                          return false;
+                      }else{
+                        //papelesDeTrabajo(periodo,impcli);
+                      }
+                      $('#EventosimpuestoHaycambios').val(1);
+                      /*var cellid = 'cellimp'+clienteid+'-tarea5-'+impcliid;
+                      $('#'+cellid).removeClass('pendiente');
+                      $('#'+cellid).addClass('realizado');
+                      var cellData = ' <img src="'+serverLayoutURL+'/img/edit.png" width="20" title="Papeles de Trabajo" height="20" onclick="papelesDeTrabajo('+"'"+periodo+"'"+','+impcliid+')" alt=""><label for="'+cant+'">'+cant+'</label> ';
+                      $('#'+cellid).html(cellData);*/
+                        $('#buttonImpCli'+impcli+' label').html("$"+respuesta.numero);
+                        $('#buttonImpCli'+impcli).removeClass('buttonImpcli0');
+                        $('#buttonImpCli'+impcli).addClass('buttonImpcli2');
+                        $('#myModal').modal('hide');
+                     },
+                    error: function(xhr,textStatus,error){
+                      callAlertPopint(textStatus);
                       return false;
-                  }else{
-                    //papelesDeTrabajo(periodo,impcli);
-                  }
-                  $('#EventosimpuestoHaycambios').val(1);
-                  /*var cellid = 'cellimp'+clienteid+'-tarea5-'+impcliid;
-                  $('#'+cellid).removeClass('pendiente');
-                  $('#'+cellid).addClass('realizado');
-                  var cellData = ' <img src="'+serverLayoutURL+'/img/edit.png" width="20" title="Papeles de Trabajo" height="20" onclick="papelesDeTrabajo('+"'"+periodo+"'"+','+impcliid+')" alt=""><label for="'+cant+'">'+cant+'</label> ';
-                  $('#'+cellid).html(cellData);*/
-                    $('#buttonImpCli'+impcli+' label').html("$"+respuesta.numero);
-                    $('#buttonImpCli'+impcli).removeClass('buttonImpcli0');
-                    $('#buttonImpCli'+impcli).addClass('buttonImpcli2');
-                },
-                error: function(xhr,textStatus,error){ 
-                  callAlertPopint(textStatus); 
-                  return false;
-                } 
-              }); 
+                    }
+                });
                   return false;
             });               
           },

@@ -555,6 +555,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             <?php
             $i=1;
             $cantVentasYaguardadas = 0;
+            $misVentasYaCargadas = "";
             foreach ($ventasArray as $keyVenta => $venta) {
                 $numalicuota=0;
                 foreach ($venta['Alicuota'] as $keyAlicuota => $alicuota) {
@@ -584,7 +585,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                             $igualNumeroComprobante = true;
                         }
                         if ($igualTipoComprobante&&$igualPuntoDV&&$igualAlicuota&&$igualNumeroComprobante){
-                            echo
+                            $misVentasYaCargadas =
                                 $venta['Venta']['comprobantetipo']."-".
                                 $venta['Venta']['puntodeventa']."-".
                                 $numeroComprobante." // ";
@@ -663,11 +664,10 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                                 //y si no tiene cuit voy a marcar monotributista pero tengo q resaltarlo
                                                 //para que se chekee si hay que buscar ese cuit y chekiar q no sea excento
                                                 if($venta['Venta']['identificacionnumero'] == '20000000001'){
-                                                    $condicioniva = '"Cons. F/Exento/No Alcanza"';
                                                 }else{
-                                                    $condicioniva = 'Monotributista';
                                                     $classcondicionIVA="controlarInput";
                                                 }
+                                                $condicioniva = '"Cons. F/Exento/No Alcanza"';
                                             }else{
                                                 $condicioniva = 'Monotributista';
                                             }
@@ -679,8 +679,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             break;
                                         }
                                     }
-                                    if($venta['Venta']['nombre']=='Consumidor Final'){
-                                        $condicioniva = "Cons. F/Exento/No Alcanza";
+                                    if($venta['Venta']['identificacionnumero'] == '20000000001'){
+                                        $condicioniva = '"Cons. F/Exento/No Alcanza"';
                                     }
                                     echo $this->Form->input('Venta.' . $i . '.condicioniva', array(
                                             'type' => 'select',
@@ -848,7 +848,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                 )
             );
         }
-        echo $this->Form->end(); ?>
+        echo $this->Form->end();
+        echo $misVentasYaCargadas; ?>
     </div>
     <?php
 }

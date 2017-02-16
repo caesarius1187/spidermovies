@@ -33,6 +33,8 @@ class ClientesController extends AppController {
 		$this->redirect(array('action' => 'view'));	
 	}
 	public function avance() {
+		$this->Components->unload('DebugKit.Toolbar');
+
 		$this->loadModel('Impcli');
 		$this->loadModel('Tareasxclientesxestudio');
 		$this->loadModel('Tareascliente');
@@ -590,6 +592,9 @@ class ClientesController extends AppController {
                                 ],
                                 'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
 							),
+							'order'=>[
+								'Empleado.legajo*1'
+							],
 						),
 				   		'Conceptosrestante'=>array(			
 				   			'Impcli'=>array(
@@ -1537,7 +1542,7 @@ class ClientesController extends AppController {
 											      	),
 											      'Personasrelacionada',
 												  'Subcliente'=>['limit' => 200,],
-												  'Provedore'=>['limit' => 200,],
+												  'Provedore'=>['limit' => 250,],
 												  'Empleado'=>array(
                                                       'order'=>'(Empleado.legajo * 1)'
                                                   ),
@@ -1760,7 +1765,7 @@ class ClientesController extends AppController {
 				);
 			$grupoclientes = $this->Cliente->Grupocliente->find('list',array('conditions' =>$conditionsGcli));
 
-			$categoriasmonotributos = array('B'=>'B','C'=>'C','D'=>'D','E'=>'E','F'=>'F','G'=>'G','H'=>'H','I'=>'I','J'=>'J','K'=>'K','L'=>'L');
+			$categoriasmonotributos = array('A'=>'A','B'=>'B','C'=>'C','D'=>'D','E'=>'E','F'=>'F','G'=>'G','H'=>'H','I'=>'I','J'=>'J','K'=>'K','L'=>'L');
 			$this->set(compact('grupoclientes','categoriasmonotributos'));
 			$mostrarView=true;
 

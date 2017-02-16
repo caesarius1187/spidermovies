@@ -23,7 +23,6 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
         });
         papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
         var beforePrint = function() {
-            console.log('Functionality to run before printing.');
             $('#header').hide();
             $('.Formhead').hide();
             $('#divContenedorVentas').show();
@@ -37,7 +36,6 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             $('#index').css('border-color','#FFF');
         };
         var afterPrint = function() {
-            console.log('Functionality to run after printing');
             $('#index').css('font-size','14px');
             $('#header').show();
             $('.Formhead').show();
@@ -284,8 +282,8 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
         if($('#cuenta287').length > 0){
             var orden = $('#cuenta287').attr('orden');
             var saldotecnico = $("#saldoTecnico").val();
-            var saldotecnicoperiodoant = $("#spnSaldoAFavorPeriodoAnt").html();
-            var difST = saldotecnico*1-saldotecnicoperiodoant*1;
+            var saldotecnicoperiodoant = $("#spnSaldoAFavorPeriodoAnt").html().replace(".", "").replace(",", ".");
+            var difST = parseFloat(saldotecnico)-parseFloat(saldotecnicoperiodoant);
             if(difST>=0){
                 $('#Asiento0Movimiento'+orden+'Debe').val(difST);
             }else{
@@ -297,8 +295,8 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             var orden = $('#cuenta290').attr('orden');
             var saldoLD = $("#saldoLD").val();
             $('#Asiento0Movimiento'+orden+'Debe').val(saldoLD);
-            var saldoLDperiodoant = $("#spnSaldoAFavorLibreDispPeriodoAnteriorNetousos").html();
-            var difSLD = saldoLD*1-saldoLDperiodoant*1;
+            var saldoLDperiodoant = $("#spnSaldoAFavorLibreDispPeriodoAnteriorNetousos").html().replace(".", "").replace(",", ".");
+            var difSLD = parseFloat(saldoLD)-parseFloat(saldoLDperiodoant);
             if(difSLD>=0){
                 $('#Asiento0Movimiento'+orden+'Debe').val(difSLD);
             }else{
@@ -343,6 +341,25 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             var apagar = $("#apagar").val();
             $('#Asiento0Movimiento'+orden+'Haber').val(apagar);
         }
+        /*************/
+        //Carga del 2do asiento que es el de Devengamiento del Decreto 814
+        //  608100054   IVA - Dto 814 Contrapartida
+        var totaldecreto814 = $("#totaldecreto814").val()*1;
+        if($('#cuenta3332').length > 0){
+            var orden = $('#cuenta3332').attr('orden');
+            $('#Asiento1Movimiento'+orden+'Haber').val(totaldecreto814);
+        }
+        //  110403401   IVA - Credito Fiscal
+        if($('#cuenta286').length > 0){
+            var orden=0
+            $('#cuenta286').each(function () {
+                var asiento = $('#cuenta286').attr('asiento');
+                if(asiento=='1'){
+                    orden = $('#cuenta286').attr('orden');
+                }
+            });
+            $('#Asiento1Movimiento'+orden+'Debe').val(totaldecreto814);
+        }
 
     }
     function catchAsientoIVA(){
@@ -383,13 +400,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <label>INFORME IVA</label>
         <label>Contribuyente: <?php echo $cliente['Cliente']['nombre']; ?> </label>
         <label>Periodo: <?php echo $periodo; ?></label>
-        <?php echo $this->Form->button('Imprimir',
+        <?php
+        echo $this->Form->button('Imprimir',
             array('type' => 'button',
                 'class' =>"btn_imprimir",
                 'onClick' => "imprimir()"
             )
         );?>
-        <?php echo $this->Form->button('Excel',
+        <?php
+        echo $this->Form->button('Excel',
             array('type' => 'button',
                 'id'=>"clickExcel",
                 'class' =>"btn_imprimir",
@@ -419,7 +438,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <?php foreach ($actividades as $actividad){ ?>
         <div style="width:100%; height: 10px"></div>
         <?php
-        $ActividadCliente_id = $actividad['Actividadcliente']['actividade_id'];
+        $ActividadCliente_id = $actividad['Actividadcliente']['id'];
         ?>
         <div id='divContenedorTablaActividad_<?php echo $ActividadCliente_id; ?>'>
             <table id='divTituloActividad_<?php echo $ActividadCliente_id; ?>'  style="margin-bottom:0; cursor: pointer" onclick="MostrarTabla(this, 'ventas');">
@@ -427,7 +446,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td colspan="5" style='background-color:#76b5cd'>
                     <b>
                     <?php
-                        echo 'ACTIVIDAD: '. $actividad['Actividade']['nombre'];
+                        echo 'ACTIVIDAD: '. $actividad['Actividade']['nombre']."-".$actividad['Actividadcliente']['descripcion'];
                     ?>
                     </b>
                     </td>
@@ -443,20 +462,27 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </tr>
                 </table>
                 <?php
+                // > > Operaciones con Responsables Inscriptos
                 $Alicuota0 = false;
                 $TotalAlicuota0 = 0;
+                $TotalAlicuota0IVA = 0;
                 $Alicuota2_5 = false;
                 $TotalAlicuota2_5 = 0;
+                $TotalAlicuota2_5IVA = 0;
                 $Alicuota5_0 = false;
                 $TotalAlicuota5_0 = 0;
+                $TotalAlicuota5_0IVA = 0;
                 $Alicuota10_5 = false;
                 $TotalAlicuota10_5 = 0;
+                $TotalAlicuota10_5IVA = 0;
                 $Alicuota21_0 = false;
                 $TotalAlicuota21_0 = 0;
+                $TotalAlicuota21_0IVA = 0;
                 $Alicuota27_0 = false;
                 $TotalAlicuota27_0 = 0;
+                $TotalAlicuota27_0IVA = 0;
                 foreach ($ventas as $venta){
-                    if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
+                    if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                     {
                         if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
                         {
@@ -464,43 +490,50 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             {
                                 $Alicuota0 = true;
                                 $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                                $TotalAlicuota0IVA += $venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                             {
                                 $Alicuota2_5 = true;
                                 $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                                $TotalAlicuota2_5IVA += $venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
                             {
                                 $Alicuota5_0 = true;
                                 $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                                $TotalAlicuota5_0IVA += $venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
                             {
                                 $Alicuota10_5 = true;
                                 $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                                $TotalAlicuota10_5IVA += $venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
                             {
                                 $Alicuota21_0 = true;
                                 $TotalAlicuota21_0 = $TotalAlicuota21_0 + + $venta['Venta']['neto'];
+                                $TotalAlicuota21_0IVA += + $venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
                             {
                                 $Alicuota27_0 = true;
                                 $TotalAlicuota27_0 = $TotalAlicuota27_0 + + $venta['Venta']['neto'];
+                                $TotalAlicuota27_0IVA += + $venta['Venta']['iva'];
                             }
                         }
                     }
 
                 };
-                if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
-                { ?>
+                if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
+                {
+                    // > > Operaciones con Responsables Inscriptos?>
                     <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_RespInsc' style="">
                         <table   >
                             <tr>
                                 <td colspan="5" style='background-color:#87cfeb'>
-                                    > > OPERACION: Responsable Inscripto
+                                    > > Operaciones con Responsables Inscriptos
                                 </td>
                             </tr>
                             <tr style='background-color:#f0f0f0'>
@@ -512,24 +545,24 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             </tr>
                             <tr>
                                 <?php
-                                    if($Alicuota0)
-                                    {
-                                        echo '<tr>
-                                                  <td style="width:20%">0</td>
-                                                  <td style="width:20%">'.$TotalAlicuota0.'</td>
-                                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                                  <td style="width:20%">0</td>
-                                                  </tr>
-                                            ';
-                                    }
+//                                    if($Alicuota0)
+//                                    {
+//                                        echo '<tr>
+//                                                  <td style="width:20%">0</td>
+//                                                  <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+//                                                  <td style="width:20%"></td>
+//                                                  <td style="width:20%"></td>
+//                                                  <td style="width:20%"></td>
+//                                                  </tr>
+//                                            ';
+//                                    }
                                     if($Alicuota2_5)
                                     {
                                         echo '<tr>
                                               <td style="width:20%">2.5</td>
-                                              <td style="width:20%">'.$TotalAlicuota2_5.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota2_5, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota2_5IVA, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota2_5IVA, 2, ",", ".").'</td>
                                               <td style="width:20%">0</td>
                                               </tr>
                                         ';
@@ -538,9 +571,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                     {
                                         echo '<tr>
                                               <td style="width:20%">5.0</td>
-                                              <td style="width:20%">'.$TotalAlicuota5_0.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota5_0, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota5_0IVA, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota5_0IVA, 2, ",", ".").'</td>
                                               <td style="width:20%">0</td>
                                               </tr>
                                         ';
@@ -549,9 +582,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                     {
                                         echo '<tr>
                                               <td style="width:20%">10.5</td>
-                                              <td style="width:20%">'.$TotalAlicuota10_5.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota10_5, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota10_5IVA, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota10_5IVA, 2, ",", ".").'</td>
                                               <td style="width:20%">0</td>
                                               </tr>
                                         ';
@@ -560,9 +593,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                     {
                                         echo '<tr>
                                               <td style="width:20%">21.0</td>
-                                              <td style="width:20%">'.$TotalAlicuota21_0.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota21_0, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota21_0IVA, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota21_0IVA, 2, ",", ".").'</td>
                                               <td style="width:20%">0</td>
                                               </tr>
                                         ';
@@ -571,9 +604,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                     {
                                         echo '<tr>
                                               <td style="width:20%">27.0</td>
-                                              <td style="width:20%">'.$TotalAlicuota27_0.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
-                                              <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota27_0, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota27_0IVA, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota27_0IVA, 2, ",", ".").'</td>
                                               <td style="width:20%">0</td>
                                               </tr>
                                         ';
@@ -581,12 +614,12 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                     if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
                                     {
                                         $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-                                        $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                        $TotalDebitoFiscal = $TotalAlicuota2_5IVA + $TotalAlicuota5_0IVA + $TotalAlicuota10_5IVA + $TotalAlicuota21_0IVA + $TotalAlicuota27_0IVA ;
                                         echo '<tr>
                                               <td style="width:20%">Totales</td>
-                                              <td style="width:20%">'.$TotalNeto.'</td>
-                                              <td style="width:20%">'.$TotalDebitoFiscal.'</td>
-                                              <td style="width:20%">'.$TotalDebitoFiscal.'</td>
+                                              <td style="width:20%">'.number_format($TotalNeto, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalDebitoFiscal, 2, ",", ".").'</td>
+                                              <td style="width:20%">'.number_format($TotalDebitoFiscal, 2, ",", ".").'</td>
                                               <td style="width:20%">0</td>
                                             </tr>
                                         ';
@@ -597,65 +630,248 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         </table>
                     </div>
                 <?php }
+
+                //> > Operaciones con Consumidores finales, Exentos y No alcanzados
                 $Alicuota0 = false;
                 $TotalAlicuota0 = 0;
+                $TotalAlicuota0IVA = 0;
                 $Alicuota2_5 = false;
                 $TotalAlicuota2_5 = 0;
+                $TotalAlicuota2_5IVA = 0;
                 $Alicuota5_0 = false;
                 $TotalAlicuota5_0 = 0;
+                $TotalAlicuota5_0IVA = 0;
                 $Alicuota10_5 = false;
                 $TotalAlicuota10_5 = 0;
+                $TotalAlicuota10_5IVA = 0;
                 $Alicuota21_0 = false;
                 $TotalAlicuota21_0 = 0;
+                $TotalAlicuota21_0IVA = 0;
                 $Alicuota27_0 = false;
                 $TotalAlicuota27_0 = 0;
+                $TotalAlicuota27_0IVA = 0;
+
+                foreach ($ventas as $venta){
+                    if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
+                    {
+                        if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
+                        {
+                            $totalacomputar = $venta['Venta']['total']-$venta['Venta']['excentos']-$venta['Venta']['nogravados'];
+                            if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
+                            {
+                                $Alicuota0 = true;
+                                $TotalAlicuota0 += $totalacomputar;
+                                $TotalAlicuota0IVA += $venta['Venta']['iva'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
+                            {
+                                $Alicuota2_5 = true;
+                                $TotalAlicuota2_5 += $totalacomputar;
+                                $TotalAlicuota2_5IVA += $venta['Venta']['iva'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
+                            {
+                                $Alicuota5_0 = true;
+                                $TotalAlicuota5_0  += $totalacomputar;
+                                $TotalAlicuota5_0IVA  += $venta['Venta']['iva'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
+                            {
+                                $Alicuota10_5 = true;
+                                $TotalAlicuota10_5 += $totalacomputar;
+                                $TotalAlicuota10_5IVA += $venta['Venta']['iva'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
+                            {
+                                $Alicuota21_0 = true;
+                                $TotalAlicuota21_0 +=$totalacomputar;
+                                $TotalAlicuota21_0IVA +=$venta['Venta']['iva'];
+                            }
+                            if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
+                            {
+                                $Alicuota27_0 = true;
+                                $TotalAlicuota27_0 += $totalacomputar;
+                                $TotalAlicuota27_0IVA += $venta['Venta']['iva'];
+                            }
+                        }
+                    }
+                };
+
+
+                if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+                    //> > Operaciones con Consumidores finales, Exentos y No alcanzados?>
+                    <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_ConsF'
+                         style="">
+                        <table >
+                            <tr>
+                                <td colspan="5" style='background-color:#87cfeb'>
+                                    > > Operaciones con Consumidores finales, Exentos y No alcanzados
+                                </td>
+                            </tr>
+                            <tr style='background-color:#f0f0f0'>
+                                <td style="width:20%">Alicuota</td>
+                                <td style="width:20%">Monto total facturado</td>
+                                <td style="width:20%">Debito Fiscal</td>
+                                <td style="width:20%"></td>
+                                <td style="width:20%"></td>
+                            </tr>
+                            <tr>
+
+                                <?php
+//                                if($Alicuota0)
+//                                {
+//                                    echo '<tr>
+//                                  <td style="width:20%">0</td>
+//                                  <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+//                                  <td style="width:20%">0</td>
+//                                  <td style="width:20%"></td>
+//                                  <td style="width:20%">0</td>
+//                                  </tr>
+//                            ';
+//                                }
+                                if ($Alicuota2_5) {
+                                    echo '<tr>
+                                  <td style="width:20%">2.5</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota2_5 , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota2_5IVA, 2, ",", "."). '</td>
+                                  <td style="width:20%"></td>
+                                  <td style="width:20%"></td>
+                                  </tr>
+                            ';
+                                }
+                                if ($Alicuota5_0) {
+                                    echo '<tr>
+                                  <td style="width:20%">5.0</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota5_0 , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota5_0IVA , 2, ",", "."). '</td>
+                                  <td style="width:20%"></td>
+                                  <td style="width:20%"></td>
+                                  </tr>
+                            ';
+                                }
+                                if ($Alicuota10_5) {
+                                    echo '<tr>
+                                  <td style="width:20%">10.5</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota10_5  , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota10_5IVA  , 2, ",", "."). '</td>
+                                  <td style="width:20%"></td>
+                                  <td style="width:20%"></td>
+                                  </tr>
+                            ';
+                                }
+                                if ($Alicuota21_0) {
+                                    echo '<tr>
+                                  <td style="width:20%">21.0</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota21_0  , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota21_0IVA , 2, ",", "."). '</td>
+                                  <td style="width:20%"></td>
+                                  <td style="width:20%"></td>
+                                  </tr>
+                            ';
+                                }
+                                if ($Alicuota27_0) {
+                                    echo '<tr>
+                                  <td style="width:20%">27.0</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota27_0  , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota27_0IVA  , 2, ",", "."). '</td>
+                                  <td style="width:20%"></td>
+                                  <td style="width:20%"></td>
+                                  </tr>
+                            ';
+                                }
+                                if ($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+                                    $TotalNeto = $TotalAlicuota0 + $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
+                                    $TotalDebitoFiscal = $TotalAlicuota2_5IVA + $TotalAlicuota5_0IVA + $TotalAlicuota10_5IVA +
+                                        $TotalAlicuota21_0IVA + $TotalAlicuota27_0IVA ;
+                                    echo '<tr>
+                                  <td style="width:20%">Totales</td>
+                                  <td style="width:20%">' . number_format($TotalNeto  , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalDebitoFiscal  , 2, ",", "."). '</td>
+                                  <td style="width:20%"></td>
+                                  <td style="width:20%"></td>
+                                </tr>
+                            ';
+                                    $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
+                                }
+                                ?>
+                            </tr>
+                        </table>
+                    </div>
+                    <?php
+                }
+
+
+                $Alicuota0 = false;
+                $TotalAlicuota0 = 0;
+                $TotalAlicuota0IVA = 0;
+                $Alicuota2_5 = false;
+                $TotalAlicuota2_5 = 0;
+                $TotalAlicuota2_5IVA = 0;
+                $Alicuota5_0 = false;
+                $TotalAlicuota5_0 = 0;
+                $TotalAlicuota5_0IVA = 0;
+                $Alicuota10_5 = false;
+                $TotalAlicuota10_5 = 0;
+                $TotalAlicuota10_5IVA = 0;
+                $Alicuota21_0 = false;
+                $TotalAlicuota21_0 = 0;
+                $TotalAlicuota21_0IVA = 0;
+                $Alicuota27_0 = false;
+                $TotalAlicuota27_0 = 0;
+                $TotalAlicuota27_0IVA = 0;
                 foreach ($ventas as $venta){
                     //endforeach;
                     //echo $venta['Actividadcliente']['actividade_id']. ' - '.$ActividadCliente_id;
-                    if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
+                    if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                     {
                         if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'monotributista')
                         {
                             if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                             {
                                 $Alicuota0 = true;
-                                $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                                $TotalAlicuota0 += $venta['Venta']['total'];
+                                $TotalAlicuota0IVA += $venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                             {
                                 $Alicuota2_5 = true;
-                                $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                                $TotalAlicuota2_5 += $venta['Venta']['total'];
+                                $TotalAlicuota2_5IVA += $venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
                             {
                                 $Alicuota5_0 = true;
-                                $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                                $TotalAlicuota5_0  += $venta['Venta']['total'];
+                                $TotalAlicuota5_0IVA  += $venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
                             {
                                 $Alicuota10_5 = true;
-                                $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                                $TotalAlicuota10_5 += $venta['Venta']['total'];
+                                $TotalAlicuota10_5IVA += $venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
                             {
                                 $Alicuota21_0 = true;
-                                $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
+                                $TotalAlicuota21_0 +=$venta['Venta']['total'];
+                                $TotalAlicuota21_0IVA +=$venta['Venta']['iva'];
                             }
                             if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
                             {
                                 $Alicuota27_0 = true;
-                                $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                                $TotalAlicuota27_0 += $venta['Venta']['total'];
+                                $TotalAlicuota27_0IVA += $venta['Venta']['iva'];
                             }
                         }
                     }
                 };
-                if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0){
-                ?>
+                if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0){
+                    // > > Operaciones con Monotributistas - Régimen Simplificado?>
                     <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_Monotributista' style="">
                         <table   >
                             <tr>
                                 <td colspan="5" style='background-color:#87cfeb'>
-                                    > > OPERACION: Monotributista
+                                    > > Operaciones con Monotributistas - Régimen Simplificado
                                 </td>
                             </tr>
                             <tr style='background-color:#f0f0f0'>
@@ -668,23 +884,24 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             <tr>
 
                             <?php
-                                if($Alicuota0)
-                                {
-                                    echo '<tr>
-                                                      <td style="width:20%">0</td>
-                                                      <td style="width:20%">'.$TotalAlicuota0.'</td>
-                                                      <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                                      <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                                      <td style="width:20%">0</td>
-                                                      </tr>
-                                                ';
-                                }
+                                //no debo mostrar alicuota 0
+//                                if($Alicuota0)
+//                                {
+//                                    echo '<tr>
+//                                              <td style="width:20%">0</td>
+//                                              <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+//                                              <td style="width:20%"></td>
+//                                              <td style="width:20%"></td>
+//                                              <td style="width:20%"></td>
+//                                          </tr>
+//                                                ';
+//                                }
                                 if($Alicuota2_5)
                                 {
                                     echo '<tr>
                                           <td style="width:20%">2.5</td>
-                                          <td style="width:20%">'.$TotalAlicuota2_5.'</td>
-                                          <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota2_5, 2, ",", ".").'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota2_5IVA , 2, ",", ".").'</td>
                                           <td style="width:20%"></td>
                                           <td style="width:20%"></td>
                                           </tr>
@@ -694,8 +911,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                 {
                                     echo '<tr>
                                           <td style="width:20%">5.0</td>
-                                          <td style="width:20%">'.$TotalAlicuota5_0.'</td>
-                                          <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota5_0, 2, ",", ".").'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota5_0IVA, 2, ",", ".").'</td>
                                           <td style="width:20%"></td>
                                           <td style="width:20%"></td>
                                           </tr>
@@ -705,8 +922,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                 {
                                     echo '<tr>
                                           <td style="width:20%">10.5</td>
-                                          <td style="width:20%">'.$TotalAlicuota10_5.'</td>
-                                          <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota10_5, 2, ",", ".").'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota10_5IVA, 2, ",", ".").'</td>
                                           <td style="width:20%"></td>
                                           <td style="width:20%"></td>
                                           </tr>
@@ -716,8 +933,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                 {
                                     echo '<tr>
                                           <td style="width:20%">21.0</td>
-                                          <td style="width:20%">'.$TotalAlicuota21_0.'</td>
-                                          <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota21_0, 2, ",", ".").'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota21_0IVA, 2, ",", ".").'</td>
                                           <td style="width:20%"></td>
                                           <td style="width:20%"></td>
                                           </tr>
@@ -727,8 +944,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                 {
                                     echo '<tr>
                                           <td style="width:20%">27.0</td>
-                                          <td style="width:20%">'.$TotalAlicuota27_0.'</td>
-                                          <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota27_0, 2, ",", ".").'</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota27_0IVA, 2, ",", ".").'</td>
                                           <td style="width:20%"></td>
                                           <td style="width:20%"></td>
                                           </tr>
@@ -737,11 +954,12 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                 if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
                                 {
                                     $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-                                    $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                    $TotalDebitoFiscal = $TotalAlicuota2_5IVA + $TotalAlicuota5_0IVA + $TotalAlicuota10_5IVA
+                                        + $TotalAlicuota21_0IVA + $TotalAlicuota27_0IVA;
                                     echo '<tr>
                                           <td style="width:20%">Totales</td>
-                                          <td style="width:20%">'.$TotalNeto.'</td>
-                                          <td style="width:20%">'.$TotalDebitoFiscal.'</td>
+                                          <td style="width:20%">'.number_format($TotalNeto, 2, ",", ".").'</td>
+                                          <td style="width:20%">'.number_format($TotalDebitoFiscal, 2, ",", ".").'</td>
                                           <td style="width:20%"></td>
                                           <td style="width:20%"></td>
                                         </tr>
@@ -754,157 +972,58 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </div>
                 <?php
                 }
-            $Alicuota0 = false;
-            $TotalAlicuota0 = 0;
-            $Alicuota2_5 = false;
-            $TotalAlicuota2_5 = 0;
-            $Alicuota5_0 = false;
-            $TotalAlicuota5_0 = 0;
-            $Alicuota10_5 = false;
-            $TotalAlicuota10_5 = 0;
-            $Alicuota21_0 = false;
-            $TotalAlicuota21_0 = 0;
-            $Alicuota27_0 = false;
-            $TotalAlicuota27_0 = 0;
-            foreach ($ventas as $venta){
-                if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
-                {
-                    if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
+
+
+                $ExentoYNoGravado = false;
+                $TotalExentoYNoGravado  = 0;
+
+                foreach ($ventas as $venta){
+                    if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                     {
-                        if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
+                        if ($venta['Venta']['tipodebito'] == 'Debito Fiscal')
                         {
-                            $Alicuota0 = true;
-                            $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
-                        }
-                        if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
-                        {
-                            $Alicuota2_5 = true;
-                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
-                        }
-                        if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
-                        {
-                            $Alicuota5_0 = true;
-                            $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
-                        }
-                        if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
-                        {
-                            $Alicuota10_5 = true;
-                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
-                        }
-                        if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
-                        {
-                            $Alicuota21_0 = true;
-                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
-                        }
-                        if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
-                        {
-                            $Alicuota27_0 = true;
-                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                            if(($venta['Venta']['nogravados']*1)>0){
+                                $ExentoYNoGravado = true;
+                            }
+                            $TotalExentoYNoGravado += $venta['Venta']['nogravados'];
+                            $TotalExentoYNoGravado += $venta['Venta']['excentos'];
                         }
                     }
-                }
-            };
-            if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
-                ?>
+                };
+                if($ExentoYNoGravado) {
+                //> > OPERACION: No gravadas y exentas?>
                 <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_DebitoFiscal_ConsF'
                      style="">
                     <table >
                         <tr>
                             <td colspan="5" style='background-color:#87cfeb'>
-                                > > OPERACION: Cons. F, Exent. y No Alcan.
+                                > > Operaciones No Gravadas y Exentas
                             </td>
                         </tr>
                         <tr style='background-color:#f0f0f0'>
-                            <td style="width:20%">Alicuota</td>
                             <td style="width:20%">Monto total facturado</td>
-                            <td style="width:20%">Debito Fiscal</td>
+                            <td style="width:20%"></td>
+                            <td style="width:20%"></td>
                             <td style="width:20%"></td>
                             <td style="width:20%"></td>
                         </tr>
                         <tr>
-
                             <?php
-                            if($Alicuota0)
-                            {
-                                echo '<tr>
-                                  <td style="width:20%">0</td>
-                                  <td style="width:20%">'.$TotalAlicuota0.'</td>
-                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                  <td style="width:20%">0</td>
-                                  </tr>
+                            echo '<tr>
+                              <td style="width:20%">'.number_format($TotalExentoYNoGravado, 2, ",", ".").'</td>
+                              <td style="width:20%"></td>
+                              <td style="width:20%"></td>
+                              <td style="width:20%"></td>
+                              <td style="width:20%"></td>
+                              </tr>
                             ';
-                            }
-                            if ($Alicuota2_5) {
-                                echo '<tr>
-                                  <td style="width:20%">2.5</td>
-                                  <td style="width:20%">' . $TotalAlicuota2_5 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota2_5 * 0.025 . '</td>
-                                  <td style="width:20%"></td>
-                                  <td style="width:20%"></td>
-                                  </tr>
-                            ';
-                            }
-                            if ($Alicuota5_0) {
-                                echo '<tr>
-                                  <td style="width:20%">5.0</td>
-                                  <td style="width:20%">' . $TotalAlicuota5_0 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota5_0 * 0.05 . '</td>
-                                  <td style="width:20%"></td>
-                                  <td style="width:20%"></td>
-                                  </tr>
-                            ';
-                            }
-                            if ($Alicuota10_5) {
-                                echo '<tr>
-                                  <td style="width:20%">10.5</td>
-                                  <td style="width:20%">' . $TotalAlicuota10_5 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota10_5 * 0.105 . '</td>
-                                  <td style="width:20%"></td>
-                                  <td style="width:20%"></td>
-                                  </tr>
-                            ';
-                            }
-                            if ($Alicuota21_0) {
-                                echo '<tr>
-                                  <td style="width:20%">21.0</td>
-                                  <td style="width:20%">' . $TotalAlicuota21_0 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota21_0 * 0.21 . '</td>
-                                  <td style="width:20%"></td>
-                                  <td style="width:20%"></td>
-                                  </tr>
-                            ';
-                            }
-                            if ($Alicuota27_0) {
-                                echo '<tr>
-                                  <td style="width:20%">27.0</td>
-                                  <td style="width:20%">' . $TotalAlicuota27_0 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota27_0 * 0.27 . '</td>
-                                  <td style="width:20%"></td>
-                                  <td style="width:20%"></td>
-                                  </tr>
-                            ';
-                            }
-                            if ($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
-                                $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-                                $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
-                                echo '<tr>
-                                  <td style="width:20%">Totales</td>
-                                  <td style="width:20%">' . $TotalNeto . '</td>
-                                  <td style="width:20%">' . $TotalDebitoFiscal . '</td>
-                                  <td style="width:20%"></td>
-                                  <td style="width:20%"></td>
-                                </tr>
-                            ';
-                                $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalDebitoFiscal;
-                            }
                             ?>
                         </tr>
                     </table>
                 </div>
                 <?php
-            }
-            ?>
+                }
+                ?>
         </div>
         <!---------- FIN TIPO DEBITo: Debito Fiscal ---------->
         <!---------- TIPO DEBITo: Bines de Uso ---------->
@@ -919,55 +1038,67 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             <?php
             $Alicuota0 = false;
             $TotalAlicuota0 = 0;
+            $TotalAlicuota0IVA = 0;
             $Alicuota2_5 = false;
             $TotalAlicuota2_5 = 0;
+            $TotalAlicuota2_5IVA = 0;
             $Alicuota5_0 = false;
             $TotalAlicuota5_0 = 0;
+            $TotalAlicuota5_0IVA = 0;
             $Alicuota10_5 = false;
             $TotalAlicuota10_5 = 0;
+            $TotalAlicuota10_5IVA = 0;
             $Alicuota21_0 = false;
             $TotalAlicuota21_0 = 0;
+            $TotalAlicuota21_0IVA = 0;
             $Alicuota27_0 = false;
             $TotalAlicuota27_0 = 0;
+            $TotalAlicuota27_0IVA = 0;
             foreach ($ventas as $venta){
-                if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
+                if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                 {
                     if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
                     {
                         if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                         {
                             $Alicuota0 = true;
-                            $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                            $TotalAlicuota0 += $venta['Venta']['total'];
+                            $TotalAlicuota0IVA += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                         {
                             $Alicuota2_5 = true;
-                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                            $TotalAlicuota2_5 += $venta['Venta']['total'];
+                            $TotalAlicuota2_5IVA += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
                         {
                             $Alicuota5_0 = true;
-                            $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                            $TotalAlicuota5_0  += $venta['Venta']['total'];
+                            $TotalAlicuota5_0IVA  += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
                         {
                             $Alicuota10_5 = true;
-                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                            $TotalAlicuota10_5 += $venta['Venta']['total'];
+                            $TotalAlicuota10_5IVA += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
                         {
                             $Alicuota21_0 = true;
-                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + + $venta['Venta']['neto'];
+                            $TotalAlicuota21_0 +=$venta['Venta']['total'];
+                            $TotalAlicuota21_0IVA +=$venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
                         {
                             $Alicuota27_0 = true;
-                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + + $venta['Venta']['neto'];
+                            $TotalAlicuota27_0 += $venta['Venta']['total'];
+                            $TotalAlicuota27_0IVA += $venta['Venta']['iva'];
                         }
                     }
                 }
             };
-            if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
                 ?>
                 <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_RespInsc' style="">
                     <table >
@@ -986,23 +1117,23 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <tr>
 
                             <?php
-                            if($Alicuota0)
-                            {
-                                echo '<tr>
-                                  <td style="width:20%">0</td>
-                                  <td style="width:20%">'.$TotalAlicuota0.'</td>
-                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                  <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                  <td style="width:20%">0</td>
-                                  </tr>
-                            ';
-                            }
+//                            if($Alicuota0)
+//                            {
+//                                echo '<tr>
+//                                  <td style="width:20%">0</td>
+//                                  <td style="width:20%">'.number_format($TotalAlicuota0  , 2, ",", ".").'</td>
+//                                  <td style="width:20%">0</td>
+//                                  <td style="width:20%">0</td>
+//                                  <td style="width:20%">0</td>
+//                                  </tr>
+//                            ';
+//                            }
                             if ($Alicuota2_5) {
                                 echo '<tr>
                                   <td style="width:20%">2.5</td>
-                                  <td style="width:20%">' . $TotalAlicuota2_5 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota2_5 * 0.025 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota2_5 * 0.025 . '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota2_5   , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota2_5IVA, 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota2_5IVA, 2, ",", "."). '</td>
                                   <td style="width:20%">0</td>
                                   </tr>
                             ';
@@ -1010,9 +1141,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             if ($Alicuota5_0) {
                                 echo '<tr>
                                   <td style="width:20%">5.0</td>
-                                  <td style="width:20%">' . $TotalAlicuota5_0 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota5_0 * 0.05 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota5_0 * 0.05 . '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota5_0, 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota5_0IVA, 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota5_0IVA, 2, ",", "."). '</td>
                                   <td style="width:20%">0</td>
                                   </tr>
                             ';
@@ -1020,9 +1151,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             if ($Alicuota10_5) {
                                 echo '<tr>
                                   <td style="width:20%">10.5</td>
-                                  <td style="width:20%">' . $TotalAlicuota10_5 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota10_5 * 0.105 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota10_5 * 0.105 . '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota10_5 , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota10_5IVA, 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota10_5IVA, 2, ",", "."). '</td>
                                   <td style="width:20%">0</td>
                                   </tr>
                             ';
@@ -1030,9 +1161,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             if ($Alicuota21_0) {
                                 echo '<tr>
                                   <td style="width:20%">21.0</td>
-                                  <td style="width:20%">' . $TotalAlicuota21_0 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota21_0 * 0.21 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota21_0 * 0.21 . '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota21_0 , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota21_0IVA, 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota21_0IVA, 2, ",", "."). '</td>
                                   <td style="width:20%">0</td>
                                   </tr>
                             ';
@@ -1040,21 +1171,22 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             if ($Alicuota27_0) {
                                 echo '<tr>
                                   <td style="width:20%">27.0</td>
-                                  <td style="width:20%">' . $TotalAlicuota27_0 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota27_0 * 0.27 . '</td>
-                                  <td style="width:20%">' . $TotalAlicuota27_0 * 0.27 . '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota27_0 , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota27_0IVA, 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalAlicuota27_0IVA, 2, ",", "."). '</td>
                                   <td style="width:20%">0</td>
                                   </tr>
                             ';
                             }
                             if ($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
-                                $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-                                $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                $TotalNeto = $TotalAlicuota0 + $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
+                                $TotalDebitoFiscal = $TotalAlicuota2_5IVA + $TotalAlicuota5_0IVA + $TotalAlicuota10_5IVA
+                                    + $TotalAlicuota21_0IVA + $TotalAlicuota27_0IVA;
                                 echo '<tr>
                                   <td style="width:20%">Totales</td>
-                                  <td style="width:20%">' . $TotalNeto . '</td>
-                                  <td style="width:20%">' . $TotalDebitoFiscal . '</td>
-                                  <td style="width:20%">' . $TotalDebitoFiscal . '</td>
+                                  <td style="width:20%">' . number_format($TotalNeto, 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalDebitoFiscal , 2, ",", "."). '</td>
+                                  <td style="width:20%">' . number_format($TotalDebitoFiscal , 2, ",", "."). '</td>
                                   <td style="width:20%">0</td>
                                 </tr>
                             ';
@@ -1068,55 +1200,67 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             }
             $Alicuota0 = false;
             $TotalAlicuota0 = 0;
+            $TotalAlicuota0IVA = 0;
             $Alicuota2_5 = false;
             $TotalAlicuota2_5 = 0;
+            $TotalAlicuota2_5IVA = 0;
             $Alicuota5_0 = false;
             $TotalAlicuota5_0 = 0;
+            $TotalAlicuota5_0IVA = 0;
             $Alicuota10_5 = false;
             $TotalAlicuota10_5 = 0;
+            $TotalAlicuota10_5IVA = 0;
             $Alicuota21_0 = false;
             $TotalAlicuota21_0 = 0;
+            $TotalAlicuota21_0IVA = 0;
             $Alicuota27_0 = false;
             $TotalAlicuota27_0 = 0;
+            $TotalAlicuota27_0IVA = 0;
             foreach ($ventas as $venta){
-                if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
+                if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                 {
                     if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'monotributista')
                     {
                         if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                         {
                             $Alicuota0 = true;
-                            $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                            $TotalAlicuota0 += $venta['Venta']['total'];
+                            $TotalAlicuota0IVA += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                         {
                             $Alicuota2_5 = true;
-                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                            $TotalAlicuota2_5 += $venta['Venta']['total'];
+                            $TotalAlicuota2_5IVA += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
                         {
                             $Alicuota5_0 = true;
-                            $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                            $TotalAlicuota5_0  += $venta['Venta']['total'];
+                            $TotalAlicuota5_0IVA  += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
                         {
                             $Alicuota10_5 = true;
-                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                            $TotalAlicuota10_5 += $venta['Venta']['total'];
+                            $TotalAlicuota10_5IVA += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
                         {
                             $Alicuota21_0 = true;
-                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
+                            $TotalAlicuota21_0 +=$venta['Venta']['total'];
+                            $TotalAlicuota21_0IVA +=$venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
                         {
                             $Alicuota27_0 = true;
-                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                            $TotalAlicuota27_0 += $venta['Venta']['total'];
+                            $TotalAlicuota27_0IVA += $venta['Venta']['iva'];
                         }
                     }
                 }
             };
-            if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
             ?>
                 <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_Monotributista' style="">
                     <table   >
@@ -1135,23 +1279,23 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <tr>
 
                         <?php
-                            if($Alicuota0)
-                            {
-                                echo '<tr>
-                                      <td style="width:20%">0</td>
-                                      <td style="width:20%">'.$TotalAlicuota0.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                      <td style="width:20%">0</td>
-                                      </tr>
-                                ';
-                            }
+//                            if($Alicuota0)
+//                            {
+//                                echo '<tr>
+//                                      <td style="width:20%">0</td>
+//                                      <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+//                                      <td style="width:20%"></td>
+//                                      <td style="width:20%"></td>
+//                                      <td style="width:20%"></td>
+//                                      </tr>
+//                                ';
+//                            }
                             if($Alicuota2_5)
                             {
                                 echo '<tr>
                                      <td>2.5</td>
-                                      <td>'.$TotalAlicuota2_5.'</td>
-                                      <td>'.$TotalAlicuota2_5 * 0.025.'</td>
+                                      <td>'.number_format($TotalAlicuota2_5, 2, ",", ".").'</td>
+                                      <td>'.number_format($TotalAlicuota2_5IVA, 2, ",", ".").'</td>
                                       <td></td>
                                       <td></td>
                                       </tr>
@@ -1161,8 +1305,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             {
                                 echo '<tr>
                                       <td style="width:20%">5.0</td>
-                                      <td style="width:20%">'.$TotalAlicuota5_0.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota5_0, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota5_0IVA, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                       </tr>
@@ -1172,8 +1316,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             {
                                 echo '<tr>
                                       <td style="width:20%">10.5</td>
-                                      <td style="width:20%">'.$TotalAlicuota10_5.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota10_5, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota10_5IVA, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                       </tr>
@@ -1183,8 +1327,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             {
                                 echo '<tr>
                                       <td style="width:20%">21.0</td>
-                                      <td style="width:20%">'.$TotalAlicuota21_0.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota21_0, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota21_0IVA, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                       </tr>
@@ -1194,8 +1338,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             {
                                 echo '<tr>
                                       <td style="width:20%">27.0</td>
-                                      <td style="width:20%">'.$TotalAlicuota27_0.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota27_0, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota27_0IVA, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                       </tr>
@@ -1203,12 +1347,13 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             }
                             if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
                             {
-                                $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-                                $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                $TotalNeto = $TotalAlicuota0 + $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
+                                $TotalDebitoFiscal = $TotalAlicuota2_5IVA + $TotalAlicuota5_0IVA + $TotalAlicuota10_5IVA
+                                    + $TotalAlicuota21_0IVA + $TotalAlicuota27_0IVA;
                                 echo '<tr>
                                       <td style="width:20%">Totales</td>
-                                      <td style="width:20%">'.$TotalNeto.'</td>
-                                      <td style="width:20%">'.$TotalDebitoFiscal.'</td>
+                                      <td style="width:20%">'.number_format($TotalNeto, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalDebitoFiscal, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                     </tr>
@@ -1223,56 +1368,68 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             }
             $Alicuota0 = false;
             $TotalAlicuota0 = 0;
+            $TotalAlicuota0IVA = 0;
             $Alicuota2_5 = false;
             $TotalAlicuota2_5 = 0;
+            $TotalAlicuota2_5IVA = 0;
             $Alicuota5_0 = false;
             $TotalAlicuota5_0 = 0;
+            $TotalAlicuota5_0IVA = 0;
             $Alicuota10_5 = false;
             $TotalAlicuota10_5 = 0;
+            $TotalAlicuota10_5IVA = 0;
             $Alicuota21_0 = false;
             $TotalAlicuota21_0 = 0;
+            $TotalAlicuota21_0IVA = 0;
             $Alicuota27_0 = false;
             $TotalAlicuota27_0 = 0;
+            $TotalAlicuota27_0IVA = 0;
 
             foreach ($ventas as $venta){
-                if($venta['Actividadcliente']['actividade_id'] == $ActividadCliente_id)
+                if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                 {
                     if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
                     {
                         if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                         {
                             $Alicuota0 = true;
-                            $TotalAlicuota0 = $TotalAlicuota0 + $venta['Venta']['neto'];
+                            $TotalAlicuota0 += $venta['Venta']['total'];
+                            $TotalAlicuota0IVA += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50')
                         {
                             $Alicuota2_5 = true;
-                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                            $TotalAlicuota2_5 += $venta['Venta']['total'];
+                            $TotalAlicuota2_5IVA += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00')
                         {
                             $Alicuota5_0 = true;
-                            $TotalAlicuota5_0  = $TotalAlicuota5_0  + $venta['Venta']['neto'];
+                            $TotalAlicuota5_0  += $venta['Venta']['total'];
+                            $TotalAlicuota5_0IVA  += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50')
                         {
                             $Alicuota10_5 = true;
-                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                            $TotalAlicuota10_5 += $venta['Venta']['total'];
+                            $TotalAlicuota10_5IVA += $venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00')
                         {
                             $Alicuota21_0 = true;
-                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
+                            $TotalAlicuota21_0 +=$venta['Venta']['total'];
+                            $TotalAlicuota21_0IVA +=$venta['Venta']['iva'];
                         }
                         if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00')
                         {
                             $Alicuota27_0 = true;
-                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                            $TotalAlicuota27_0 += $venta['Venta']['total'];
+                            $TotalAlicuota27_0IVA += $venta['Venta']['iva'];
                         }
                     }
                 }
             };
-            if($Alicuota0 || $Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
+            if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0) {
                 ?>
                 <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_BsUso_ConsF' style="">
                     <table   >
@@ -1291,23 +1448,23 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <tr>
 
                         <?php
-                            if($Alicuota0)
-                            {
-                                echo '<tr>
-                                          <td style="width:20%">0</td>
-                                          <td style="width:20%">'.$TotalAlicuota0.'</td>
-                                          <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                          <td style="width:20%">'.$TotalAlicuota0 * 0.025.'</td>
-                                          <td style="width:20%">0</td>
-                                          </tr>
-                                    ';
-                            }
+//                            if($Alicuota0)
+//                            {
+//                                echo '<tr>
+//                                          <td style="width:20%">0</td>
+//                                          <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+//                                          <td style="width:20%"></td>
+//                                          <td style="width:20%"></td>
+//                                          <td style="width:20%"></td>
+//                                          </tr>
+//                                    ';
+//                            }
                             if($Alicuota2_5)
                             {
                                 echo '<tr>
                                       <td style="width:20%">2.5</td>
-                                      <td style="width:20%">'.$TotalAlicuota2_5.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota2_5 * 0.025.'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota2_5, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota2_5IVA, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                       </tr>
@@ -1317,8 +1474,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             {
                                 echo '<tr>
                                       <td style="width:20%">5.0</td>
-                                      <td style="width:20%">'.$TotalAlicuota5_0.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota5_0 * 0.05.'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota5_0, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota5_0IVA, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                       </tr>
@@ -1328,8 +1485,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             {
                                 echo '<tr>
                                       <td style="width:20%">10.5</td>
-                                      <td style="width:20%">'.$TotalAlicuota10_5.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota10_5 * 0.105.'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota10_5, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota10_5IVA, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                       </tr>
@@ -1339,8 +1496,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             {
                                 echo '<tr>
                                       <td style="width:20%">21.0</td>
-                                      <td style="width:20%">'.$TotalAlicuota21_0.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota21_0 * 0.21.'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota21_0, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota21_0IVA, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                       </tr>
@@ -1350,8 +1507,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             {
                                 echo '<tr>
                                       <td style="width:20%">27.0</td>
-                                      <td style="width:20%">'.$TotalAlicuota27_0.'</td>
-                                      <td style="width:20%">'.$TotalAlicuota27_0 * 0.27.'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota27_0, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota27_0IVA, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                       </tr>
@@ -1360,11 +1517,12 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
                             {
                                 $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-                                $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                                $TotalDebitoFiscal = $TotalAlicuota2_5IVA + $TotalAlicuota5_0IVA + $TotalAlicuota10_5IVA
+                                    + $TotalAlicuota21_0IVA + $TotalAlicuota27_0IVA;
                                 echo '<tr>
                                       <td style="width:20%">Totales</td>
-                                      <td style="width:20%">'.$TotalNeto.'</td>
-                                      <td style="width:20%">'.$TotalDebitoFiscal.'</td>
+                                      <td style="width:20%">'.number_format($TotalNeto, 2, ",", ".").'</td>
+                                      <td style="width:20%">'.number_format($TotalDebitoFiscal, 2, ",", ".").'</td>
                                       <td style="width:20%"></td>
                                       <td style="width:20%"></td>
                                     </tr>
@@ -1393,36 +1551,51 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 
         <?php
             $TotalBsGral = 0;
+            $TotalBsGralNeto = 0;
             $TotalLocaciones = 0;
+            $TotalLocacionesNeto = 0;
             $TotalPresServ = 0;
+            $TotalPresServNeto = 0;
             $TotalBsUso = 0;
+            $TotalBsUsoNeto = 0;
             $TotalOtrosConceptos = 0;
+            $TotalOtrosConceptosNeto = 0;
             $TotalDcto814 = 0;
 
 
         $TotalPercepcionesIVA = 0;
             foreach ($compras as $compra) {
                 //Debugger::dump($compra);
-                if ($compra['Actividadcliente']['actividade_id'] == $ActividadCliente_id) {
+                if ($compra['Actividadcliente']['id'] == $ActividadCliente_id) {
                     if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' ) {
-                        if ($compra['Compra']['imputacion'] == 'Bs en Gral') {
-                            $TotalBsGral = $TotalBsGral + $compra[0]['iva'];
+                        if ($compra['Compra']['alicuota'] == '0' || $compra['Compra']['alicuota'] == '')
+                        {
+
+                        }else{
+                            if ($compra['Compra']['imputacion'] == 'Bs en Gral') {
+                                $TotalBsGral += $compra[0]['iva'];
+                                $TotalBsGralNeto += $compra[0]['neto'];
+                            }
+                            if ($compra['Compra']['imputacion'] == 'Locaciones') {
+                                $TotalLocaciones += $compra[0]['iva'];
+                                $TotalLocacionesNeto += $compra[0]['neto'];
+                            }
+                            if ($compra['Compra']['imputacion'] == 'Prest. Servicios') {
+                                $TotalPresServ += $compra[0]['iva'];
+                                $TotalPresServNeto += $compra[0]['neto'];
+                            }
+                            if ($compra['Compra']['imputacion'] == 'Bs Uso') {
+                                $TotalBsUso += $compra[0]['iva'];
+                                $TotalBsUsoNeto += $compra[0]['neto'];
+                            }
+                            if ($compra['Compra']['imputacion'] == 'Otros Conceptos') {
+                                $TotalOtrosConceptos += $compra[0]['iva'];
+                                $TotalOtrosConceptosNeto += $compra[0]['neto'];
+                            }
                         }
-                        if ($compra['Compra']['imputacion'] == 'Locaciones') {
-                            $TotalLocaciones = $TotalLocaciones + $compra[0]['iva'];
-                        }
-                        if ($compra['Compra']['imputacion'] == 'Prest. Servicios') {
-                            $TotalPresServ = $TotalPresServ + $compra[0]['iva'];
-                        }
-                        if ($compra['Compra']['imputacion'] == 'Bs Uso') {
-                            $TotalBsUso = $TotalBsUso + $compra[0]['iva'];
-                        }
-                        if ($compra['Compra']['imputacion'] == 'Otros Conceptos') {
-                            $TotalOtrosConceptos = $TotalOtrosConceptos + $compra[0]['
-                            '];
-                        }
+
                         /*
-                         * No vamos a agrgar el Dcto 814 como una compra por que afectara otros impuestos, ahroa se agrega como un pago a cuenta
+                         * No vamos a agrgar el Dcto 814 como una compra por que afectara otros impuestos, aahora se agrega como un pago a cuenta
                          * if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Dcto 814')
                         {
                             //Aca se debe sumar solo si el Dcto814 es del Tipo Restitucion Credito Fiscal
@@ -1431,7 +1604,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     }
                 }
                 //aca vamos a calcular las perceptiones tambien, acumulando una sola vez para todas las actividades
-                $TotalPercepcionesIVA = $TotalPercepcionesIVA + $compra[0]['ivapercep'];
+                if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' ) {
+                    $TotalPercepcionesIVA -= $compra[0]['ivapercep'];
+                }else{
+                    $TotalPercepcionesIVA += $compra[0]['ivapercep'];
+                }
             };
             echo $this->Form->input('totalpercepciones',
                 [
@@ -1451,15 +1628,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </td>
                 </tr>
                 <tr style='background-color:#f0f0f0'>
-                    <td>Facturado</td>
-                    <td></td>
+                    <td>Monto Neto Grabado</td>
+                    <td>IVA</td>
                     <td></td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td><?php echo $TotalBsGral ?></td>
-                    <td></td>
+                    <td><?php echo number_format($TotalBsGralNeto, 2, ",", ".") ?></td>
+                    <td><?php echo number_format($TotalBsGral, 2, ",", ".") ?></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -1477,15 +1654,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </td>
                 </tr>
                 <tr style='background-color:#f0f0f0'>
-                    <td>Facturado</td>
-                    <td></td>
+                    <td>Monto Neto Grabado</td>
+                    <td>IVA</td>
                     <td></td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td><?php echo $TotalLocaciones ?></td>
-                    <td></td>
+                    <td><?php echo number_format($TotalLocacionesNeto, 2, ",", ".") ?></td>
+                    <td><?php echo number_format($TotalLocaciones, 2, ",", ".") ?></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -1503,15 +1680,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </td>
                 </tr>
                 <tr style='background-color:#f0f0f0'>
-                    <td>Facturado</td>
-                    <td></td>
+                    <td>Monto Neto Grabado</td>
+                    <td>IVA</td>
                     <td></td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td><?php echo $TotalPresServ ?></td>
-                    <td></td>
+                    <td><?php echo number_format($TotalPresServNeto , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalPresServ , 2, ",", ".")?></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -1529,15 +1706,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </td>
                 </tr>
                 <tr style='background-color:#f0f0f0'>
-                    <td>Facturado</td>
-                    <td></td>
+                    <td>Monto Neto Grabado</td>
+                    <td>IVA</td>
                     <td></td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td><?php echo $TotalBsUso ?></td>
-                    <td></td>
+                    <td><?php echo number_format($TotalBsUsoNeto , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso , 2, ",", ".")?></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -1555,15 +1732,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </td>
                 </tr>
                 <tr style='background-color:#f0f0f0'>
-                    <td>Facturado</td>
-                    <td></td>
+                    <td>Monto Neto Grabado</td>
+                    <td>IVA</td>
                     <td></td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td><?php echo $TotalOtrosConceptos ?></td>
-                    <td></td>
+                    <td><?php echo number_format($TotalOtrosConceptosNeto , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos , 2, ",", ".")?></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -1581,14 +1758,14 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     </td>
                 </tr>
                 <tr style='background-color:#f0f0f0'>
-                    <td>Facturado</td>
+                    <td>Monto Neto Grabado</td>
                     <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
                 </tr>
                 <tr>
-                    <td><?php echo $TotalDcto814 ?></td>
+                    <td><?php echo number_format($TotalDcto814 , 2, ",", ".")?></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -1792,16 +1969,14 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             if($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal')
             {
                 //$suma = -1;
-                break;
+                continue;
             }
             if ($compra['Compra']['imputacion'] == 'Bs en Gral')
             {
                 $TotalBnGral['mostrar']=true;
                 $TotalBnGral['Neto']['total'] += $compra[0]['neto']*$suma;
-                Debugger::dump($compra['Compra']['alicuota']);
                 if($compra['Compra']['alicuota']=='0'){
                     $TotalBnGral['Neto']['0'] += $compra[0]['neto']*$suma;
-                    Debugger::dump($TotalBnGral['Neto']['0']);
                 }elseif ($compra['Compra']['alicuota']=='2.5'){
                     $TotalBnGral['Neto']['2.5'] += $compra[0]['neto']*$suma;
                 }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2095,83 +2270,83 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 if($TotalBnGral['Neto']['0']+$TotalBnGral['Directo']['0']+$TotalBnGral['Prorateable']['0'] != 0){ ?>
                 <tr>
                     <td><?php echo "0%" ?></td>
-                    <td><?php echo $TotalBnGral['Neto']['0'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['0'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['0'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['0'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['0'] + $TotalBnGral['Prorateable']['0'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['0'] + ($TotalBnGral['Prorateable']['0'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBnGral['Neto']['0'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['0'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['0'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['0'] + $TotalBnGral['Prorateable']['0'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['0'] + ($TotalBnGral['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                 <?php }
                 if($TotalBnGral['Neto']['2.5']+$TotalBnGral['Directo']['2.5']+$TotalBnGral['Prorateable']['2.5'] != 0) { ?>
                     <tr>
                         <td><?php echo "2.5%" ?></td>
-                        <td><?php echo $TotalBnGral['Neto']['2.5'] ?></td>
-                        <td><?php echo $TotalBnGral['Directo']['2.5'] ?></td>
-                        <td><?php echo $TotalBnGral['Prorateable']['2.5'] ?></td>
-                        <td><?php echo $TotalBnGral['Prorateable']['2.5'] * 0.5000 ?></td>
-                        <td><?php echo $TotalBnGral['Directo']['2.5'] + $TotalBnGral['Prorateable']['2.5'] ?></td>
-                        <td><?php echo $TotalBnGral['Directo']['2.5'] + ($TotalBnGral['Prorateable']['2.5'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalBnGral['Neto']['2.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['2.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['2.5'] + $TotalBnGral['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['2.5'] + ($TotalBnGral['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                 <?php
                 }
                 if($TotalBnGral['Neto']['50']+$TotalBnGral['Directo']['50']+$TotalBnGral['Prorateable']['50'] != 0){ ?>
                 <tr>
                     <td><?php echo "5.0%" ?></td>
-                    <td><?php echo $TotalBnGral['Neto']['50'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['50'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['50'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['50'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['50'] + $TotalBnGral['Prorateable']['50'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['50'] + ($TotalBnGral['Prorateable']['50'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBnGral['Neto']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['50'] + $TotalBnGral['Prorateable']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['50'] + ($TotalBnGral['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalBnGral['Neto']['10.5']+$TotalBnGral['Directo']['10.5']+$TotalBnGral['Prorateable']['10.5'] != 0){ ?>
                 <tr>
                     <td><?php echo "10.5%" ?></td>
-                    <td><?php echo $TotalBnGral['Neto']['10.5'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['10.5'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['10.5'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['10.5'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['10.5'] + $TotalBnGral['Prorateable']['10.5'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['10.5'] + ($TotalBnGral['Prorateable']['10.5'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBnGral['Neto']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['10.5'] + $TotalBnGral['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['10.5'] + ($TotalBnGral['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalBnGral['Neto']['21']+$TotalBnGral['Directo']['21']+$TotalBnGral['Prorateable']['21'] != 0){ ?>
                 <tr>
                     <td><?php echo "21%" ?></td>
-                    <td><?php echo $TotalBnGral['Neto']['21'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['21'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['21'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['21'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['21'] + $TotalBnGral['Prorateable']['21'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['21'] + ($TotalBnGral['Prorateable']['21'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBnGral['Neto']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['21'] + $TotalBnGral['Prorateable']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['21'] + ($TotalBnGral['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalBnGral['Neto']['27']+$TotalBnGral['Directo']['27']+$TotalBnGral['Prorateable']['27'] != 0){ ?>
                 <tr>
                     <td><?php echo "27%" ?></td>
-                    <td><?php echo $TotalBnGral['Neto']['27'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['27'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['27'] ?></td>
-                    <td><?php echo $TotalBnGral['Prorateable']['27'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['27'] + $TotalBnGral['Prorateable']['27'] ?></td>
-                    <td><?php echo $TotalBnGral['Directo']['27'] + ($TotalBnGral['Prorateable']['27'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBnGral['Neto']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['27'] + $TotalBnGral['Prorateable']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBnGral['Directo']['27'] + ($TotalBnGral['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalBnGral['Neto']['total']+$TotalBnGral['Directo']['total']+$TotalBnGral['Prorateable']['total'] != 0) { ?>
                     <tr>
                         <td>Totales</td>
-                        <td><?php echo $TotalBnGral['Neto']['total'] ?></td>
-                        <td><?php echo $TotalBnGral['Directo']['total'] ?></td>
-                        <td><?php echo $TotalBnGral['Prorateable']['total'] ?></td>
-                        <td><?php echo $TotalBnGral['Prorateable']['total'] * 0.5000 ?></td>
-                        <td><?php echo $TotalBnGral['Directo']['total'] + $TotalBnGral['Prorateable']['total'] ?></td>
-                        <td><?php echo $TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalBnGral['Neto']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['total'] + $TotalBnGral['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
 
                     <?php
@@ -2199,84 +2374,84 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 if($TotalLocaciones['Neto']['0']+$TotalLocaciones['Directo']['0']+$TotalLocaciones['Prorateable']['0'] != 0) { ?>
                     <tr>
                         <td><?php echo "0%" ?></td>
-                        <td><?php echo $TotalLocaciones['Neto']['0'] ?></td>
-                        <td><?php echo $TotalLocaciones['Directo']['0'] ?></td>
-                        <td><?php echo $TotalLocaciones['Prorateable']['0'] ?></td>
-                        <td><?php echo $TotalLocaciones['Prorateable']['0'] * 0.5000 ?></td>
-                        <td><?php echo $TotalLocaciones['Directo']['0'] + $TotalLocaciones['Prorateable']['0'] ?></td>
-                        <td><?php echo $TotalLocaciones['Directo']['0'] + ($TotalLocaciones['Prorateable']['0'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalLocaciones['Neto']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Directo']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Prorateable']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Directo']['0'] + $TotalLocaciones['Prorateable']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Directo']['0'] + ($TotalLocaciones['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
                 if($TotalLocaciones['Neto']['2.5']+$TotalLocaciones['Directo']['2.5']+$TotalLocaciones['Prorateable']['2.5'] != 0) { ?>
                 <tr>
                     <td><?php echo "2.5%" ?></td>
-                    <td><?php echo $TotalLocaciones['Neto']['2.5'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['2.5'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['2.5'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['2.5'] * 0.5000 ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['2.5'] + $TotalLocaciones['Prorateable']['2.5'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['2.5'] + ($TotalLocaciones['Prorateable']['2.5'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalLocaciones['Neto']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['2.5'] + $TotalLocaciones['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['2.5'] + ($TotalLocaciones['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalLocaciones['Neto']['50']+$TotalLocaciones['Directo']['50']+$TotalLocaciones['Prorateable']['50'] != 0) { ?>
                 <tr>
                     <td><?php echo "5.0%" ?></td>
-                    <td><?php echo $TotalLocaciones['Neto']['50'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['50'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['50'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['50'] * 0.5000 ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['50'] + $TotalLocaciones['Prorateable']['50'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['50'] + ($TotalLocaciones['Prorateable']['50'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalLocaciones['Neto']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['50'] + $TotalLocaciones['Prorateable']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['50'] + ($TotalLocaciones['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalLocaciones['Neto']['10.5']+$TotalLocaciones['Directo']['10.5']+$TotalLocaciones['Prorateable']['10.5'] != 0) { ?>
                 <tr>
                     <td><?php echo "10.5%" ?></td>
-                    <td><?php echo $TotalLocaciones['Neto']['10.5'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['10.5'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['10.5'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['10.5'] * 0.5000 ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['10.5'] + $TotalLocaciones['Prorateable']['10.5'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['10.5'] + ($TotalLocaciones['Prorateable']['10.5'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalLocaciones['Neto']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['10.5'] + $TotalLocaciones['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['10.5'] + ($TotalLocaciones['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalLocaciones['Neto']['21']+$TotalLocaciones['Directo']['21']+$TotalLocaciones['Prorateable']['21'] != 0) { ?>
                 <tr>
                     <td><?php echo "21%" ?></td>
-                    <td><?php echo $TotalLocaciones['Neto']['21'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['21'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['21'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['21'] * 0.5000 ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['21'] + $TotalLocaciones['Prorateable']['21'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['21'] + ($TotalLocaciones['Prorateable']['21'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalLocaciones['Neto']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['21'] + $TotalLocaciones['Prorateable']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['21'] + ($TotalLocaciones['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalLocaciones['Neto']['27']+$TotalLocaciones['Directo']['27']+$TotalLocaciones['Prorateable']['27'] != 0) { ?>
                 <tr>
                     <td><?php echo "27%" ?></td>
-                    <td><?php echo $TotalLocaciones['Neto']['27'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['27'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['27'] ?></td>
-                    <td><?php echo $TotalLocaciones['Prorateable']['27'] * 0.5000 ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['27'] + $TotalLocaciones['Prorateable']['27'] ?></td>
-                    <td><?php echo $TotalLocaciones['Directo']['27'] + ($TotalLocaciones['Prorateable']['27'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalLocaciones['Neto']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['27'] + $TotalLocaciones['Prorateable']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['27'] + ($TotalLocaciones['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalLocaciones['Neto']['total']+$TotalLocaciones['Directo']['total']+$TotalLocaciones['Prorateable']['total'] != 0) { ?>
                     <tr>
                         <td>Totales</td>
-                        <td><?php echo $TotalLocaciones['Neto']['total'] ?></td>
-                        <td><?php echo $TotalLocaciones['Directo']['total'] ?></td>
-                        <td><?php echo $TotalLocaciones['Prorateable']['total'] ?></td>
-                        <td><?php echo $TotalLocaciones['Prorateable']['total'] * 0.5000 ?></td>
-                        <td><?php echo $TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'] ?></td>
-                        <td><?php echo $TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalLocaciones['Neto']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Directo']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2303,84 +2478,84 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 if($TotalPresServ['Neto']['0']+$TotalPresServ['Directo']['0']+$TotalPresServ['Prorateable']['0'] != 0) { ?>
                     <tr>
                         <td><?php echo "0%" ?></td>
-                        <td><?php echo $TotalPresServ['Neto']['0'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['0'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['0'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['0'] * 0.5000 ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['0'] + $TotalPresServ['Prorateable']['0'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['0'] + ($TotalPresServ['Prorateable']['0'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalPresServ['Neto']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['0'] + $TotalPresServ['Prorateable']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['0'] + ($TotalPresServ['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
                 if($TotalPresServ['Neto']['2.5']+$TotalPresServ['Directo']['2.5']+$TotalPresServ['Prorateable']['2.5'] != 0) { ?>
                     <tr>
                         <td><?php echo "2.5%" ?></td>
-                        <td><?php echo $TotalPresServ['Neto']['2.5'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['2.5'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['2.5'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['2.5'] * 0.5000 ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['2.5'] + $TotalPresServ['Prorateable']['2.5'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['2.5'] + ($TotalPresServ['Prorateable']['2.5'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalPresServ['Neto']['2.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['2.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['2.5'] + $TotalPresServ['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['2.5'] + ($TotalPresServ['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
                 if($TotalPresServ['Neto']['50']+$TotalPresServ['Directo']['50']+$TotalPresServ['Prorateable']['50'] != 0) { ?>
                     <tr>
                         <td><?php echo "5.0%" ?></td>
-                        <td><?php echo $TotalPresServ['Neto']['50'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['50'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['50'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['50'] * 0.5000 ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['50'] + $TotalPresServ['Prorateable']['50'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['50'] + ($TotalPresServ['Prorateable']['50'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalPresServ['Neto']['50'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['50'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['50'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['50'] + $TotalPresServ['Prorateable']['50'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['50'] + ($TotalPresServ['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
                 if($TotalPresServ['Neto']['10.5']+$TotalPresServ['Directo']['10.5']+$TotalPresServ['Prorateable']['10.5'] != 0) { ?>
                     <tr>
                         <td><?php echo "10.5%" ?></td>
-                        <td><?php echo $TotalPresServ['Neto']['10.5'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['10.5'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['10.5'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['10.5'] * 0.5000 ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['10.5'] + $TotalPresServ['Prorateable']['10.5'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['10.5'] + ($TotalPresServ['Prorateable']['10.5'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalPresServ['Neto']['10.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['10.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['10.5'] + $TotalPresServ['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['10.5'] + ($TotalPresServ['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
                 if($TotalPresServ['Neto']['21']+$TotalPresServ['Directo']['21']+$TotalPresServ['Prorateable']['21'] != 0) { ?>
                     <tr>
                         <td><?php echo "21%" ?></td>
-                        <td><?php echo $TotalPresServ['Neto']['21'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['21'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['21'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['21'] * 0.5000 ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['21'] + $TotalPresServ['Prorateable']['21'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['21'] + ($TotalPresServ['Prorateable']['21'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalPresServ['Neto']['21'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['21'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['21'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['21'] + $TotalPresServ['Prorateable']['21'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['21'] + ($TotalPresServ['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
                 if($TotalPresServ['Neto']['27']+$TotalPresServ['Directo']['27']+$TotalPresServ['Prorateable']['27'] != 0) { ?>
                     <tr>
                         <td><?php echo "27%" ?></td>
-                        <td><?php echo $TotalPresServ['Neto']['27'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['27'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['27'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['27'] * 0.5000 ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['27'] + $TotalPresServ['Prorateable']['27'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['27'] + ($TotalPresServ['Prorateable']['27'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalPresServ['Neto']['27'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['27'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['27'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['27'] + $TotalPresServ['Prorateable']['27'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['27'] + ($TotalPresServ['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
                 if($TotalPresServ['Neto']['total']+$TotalPresServ['Directo']['total']+$TotalPresServ['Prorateable']['total'] != 0) { ?>
                     <tr>
                         <td>Totales</td>
-                        <td><?php echo $TotalPresServ['Neto']['total'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['total'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['total'] ?></td>
-                        <td><?php echo $TotalPresServ['Prorateable']['total'] * 0.5000 ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'] ?></td>
-                        <td><?php echo $TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalPresServ['Neto']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2407,84 +2582,84 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 if($TotalBsUso['Neto']['0']+$TotalBsUso['Directo']['0']+$TotalBsUso['Prorateable']['0'] != 0) { ?>
                     <tr>
                         <td><?php echo "0%" ?></td>
-                        <td><?php echo $TotalBsUso['Neto']['0'] ?></td>
-                        <td><?php echo $TotalBsUso['Directo']['0'] ?></td>
-                        <td><?php echo $TotalBsUso['Prorateable']['0'] ?></td>
-                        <td><?php echo $TotalBsUso['Prorateable']['0'] * 0.5000 ?></td>
-                        <td><?php echo $TotalBsUso['Directo']['0'] + $TotalBsUso['Prorateable']['0'] ?></td>
-                        <td><?php echo $TotalBsUso['Directo']['0'] + ($TotalBsUso['Prorateable']['0'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalBsUso['Neto']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Directo']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Prorateable']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Directo']['0'] + $TotalBsUso['Prorateable']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Directo']['0'] + ($TotalBsUso['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
                 if($TotalBsUso['Neto']['2.5']+$TotalBsUso['Directo']['2.5']+$TotalBsUso['Prorateable']['2.5'] != 0) { ?>
                 <tr>
                     <td><?php echo "2.5%" ?></td>
-                    <td><?php echo $TotalBsUso['Neto']['2.5'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['2.5'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['2.5'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['2.5'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['2.5'] + $TotalBsUso['Prorateable']['2.5'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['2.5'] + ($TotalBsUso['Prorateable']['2.5'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBsUso['Neto']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['2.5'] + $TotalBsUso['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['2.5'] + ($TotalBsUso['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalBsUso['Neto']['50']+$TotalBsUso['Directo']['50']+$TotalBsUso['Prorateable']['50'] != 0) { ?>
                 <tr>
                     <td><?php echo "5.0%" ?></td>
-                    <td><?php echo $TotalBsUso['Neto']['27'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['50'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['50'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['50'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['50'] + $TotalBsUso['Prorateable']['50'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['50'] + ($TotalBsUso['Prorateable']['50'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBsUso['Neto']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['50'] + $TotalBsUso['Prorateable']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['50'] + ($TotalBsUso['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalBsUso['Neto']['10.5']+$TotalBsUso['Directo']['10.5']+$TotalBsUso['Prorateable']['10.5'] != 0) { ?>
                 <tr>
                     <td><?php echo "10.5%" ?></td>
-                    <td><?php echo $TotalBsUso['Neto']['10.5'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['10.5'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['10.5'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['10.5'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['10.5'] + $TotalBsUso['Prorateable']['10.5'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['10.5'] + ($TotalBsUso['Prorateable']['10.5'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBsUso['Neto']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['10.5'] + $TotalBsUso['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['10.5'] + ($TotalBsUso['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalBsUso['Neto']['21']+$TotalBsUso['Directo']['21']+$TotalBsUso['Prorateable']['21'] != 0) { ?>
                 <tr>
                     <td><?php echo "21%" ?></td>
-                    <td><?php echo $TotalBsUso['Neto']['21'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['21'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['21'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['21'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['21'] + $TotalBsUso['Prorateable']['21'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['21'] + ($TotalBsUso['Prorateable']['21'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBsUso['Neto']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['21'] + $TotalBsUso['Prorateable']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['21'] + ($TotalBsUso['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalBsUso['Neto']['27']+$TotalBsUso['Directo']['27']+$TotalBsUso['Prorateable']['27'] != 0) { ?>
                 <tr>
                     <td><?php echo "27%" ?></td>
-                    <td><?php echo $TotalBsUso['Neto']['27'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['27'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['27'] ?></td>
-                    <td><?php echo $TotalBsUso['Prorateable']['27'] * 0.5000 ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['27'] + $TotalBsUso['Prorateable']['27'] ?></td>
-                    <td><?php echo $TotalBsUso['Directo']['27'] + ($TotalBsUso['Prorateable']['27'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalBsUso['Neto']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['27'] + $TotalBsUso['Prorateable']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['27'] + ($TotalBsUso['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
                 if($TotalBsUso['Neto']['total']+$TotalBsUso['Directo']['total']+$TotalBsUso['Prorateable']['total'] != 0) { ?>
                     <tr>
                         <td>Totales</td>
-                        <td><?php echo $TotalBsUso['Neto']['total'] ?></td>
-                        <td><?php echo $TotalBsUso['Directo']['total'] ?></td>
-                        <td><?php echo $TotalBsUso['Prorateable']['total'] ?></td>
-                        <td><?php echo $TotalBsUso['Prorateable']['total'] * 0.5000 ?></td>
-                        <td><?php echo $TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'] ?></td>
-                        <td><?php echo $TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalBsUso['Neto']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Directo']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2511,84 +2686,84 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 if($TotalOtrosConceptos['Neto']['0']+$TotalOtrosConceptos['Directo']['0']+$TotalOtrosConceptos['Prorateable']['0'] != 0) { ?>
                     <tr>
                         <td><?php echo "0%" ?></td>
-                        <td><?php echo $TotalOtrosConceptos['Neto']['total'] ?></td>
-                        <td><?php echo $TotalOtrosConceptos['Directo']['0'] ?></td>
-                        <td><?php echo $TotalOtrosConceptos['Prorateable']['0'] ?></td>
-                        <td><?php echo $TotalOtrosConceptos['Prorateable']['0'] * 0.5000 ?></td>
-                        <td><?php echo $TotalOtrosConceptos['Directo']['0'] + $TotalOtrosConceptos['Prorateable']['0'] ?></td>
-                        <td><?php echo $TotalOtrosConceptos['Directo']['0'] + ($TotalOtrosConceptos['Prorateable']['0'] * 0.5000) ?></td>
+                        <td><?php echo number_format($TotalOtrosConceptos['Neto']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalOtrosConceptos['Directo']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalOtrosConceptos['Directo']['0'] + $TotalOtrosConceptos['Prorateable']['0'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalOtrosConceptos['Directo']['0'] + ($TotalOtrosConceptos['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
                 if($TotalOtrosConceptos['Neto']['2.5']+$TotalOtrosConceptos['Directo']['2.5']+$TotalOtrosConceptos['Prorateable']['2.5'] != 0) { ?>
                 <tr>
                     <td><?php echo "2.5%" ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Neto']['2.5'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['2.5'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['2.5'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000 ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['2.5'] + $TotalOtrosConceptos['Prorateable']['2.5'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['2.5'] + ($TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Neto']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['2.5'] + $TotalOtrosConceptos['Prorateable']['2.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['2.5'] + ($TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
                 if($TotalOtrosConceptos['Neto']['50']+$TotalOtrosConceptos['Directo']['50']+$TotalOtrosConceptos['Prorateable']['50'] != 0) { ?>
                 <tr>
                     <td><?php echo "5.0%" ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Neto']['50'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['50'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['50'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['50'] * 0.5000 ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['50'] + $TotalOtrosConceptos['Prorateable']['50'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['50'] + ($TotalOtrosConceptos['Prorateable']['50'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Neto']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['50'] + $TotalOtrosConceptos['Prorateable']['50'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['50'] + ($TotalOtrosConceptos['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
                 if($TotalOtrosConceptos['Neto']['10.5']+$TotalOtrosConceptos['Directo']['10.5']+$TotalOtrosConceptos['Prorateable']['10.5'] != 0) { ?>
                 <tr>
                     <td><?php echo "10.5%" ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Neto']['10.5'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['10.5'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['10.5'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000 ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['10.5'] + $TotalOtrosConceptos['Prorateable']['10.5'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['10.5'] + ($TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Neto']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['10.5'] + $TotalOtrosConceptos['Prorateable']['10.5'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['10.5'] + ($TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
                 if($TotalOtrosConceptos['Neto']['21']+$TotalOtrosConceptos['Directo']['21']+$TotalOtrosConceptos['Prorateable']['21'] != 0) { ?>
                 <tr>
                     <td><?php echo "21%" ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Neto']['21'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['21'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['21'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['21'] * 0.5000 ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['21'] + $TotalOtrosConceptos['Prorateable']['21'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['21'] + ($TotalOtrosConceptos['Prorateable']['21'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Neto']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['21'] + $TotalOtrosConceptos['Prorateable']['21'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['21'] + ($TotalOtrosConceptos['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
                 if($TotalOtrosConceptos['Neto']['27']+$TotalOtrosConceptos['Directo']['27']+$TotalOtrosConceptos['Prorateable']['27'] != 0) { ?>
                 <tr>
                     <td><?php echo "27%" ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Neto']['27'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['27'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['27'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['27'] * 0.5000 ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['27'] + $TotalOtrosConceptos['Prorateable']['27'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['27'] + ($TotalOtrosConceptos['Prorateable']['27'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Neto']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['27'] + $TotalOtrosConceptos['Prorateable']['27'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['27'] + ($TotalOtrosConceptos['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
                 if($TotalOtrosConceptos['Neto']['total']+$TotalOtrosConceptos['Directo']['total']+$TotalOtrosConceptos['Prorateable']['total'] != 0) { ?>
                 <tr>
                     <td>Totales</td>
-                    <td><?php echo $TotalOtrosConceptos['Neto']['total'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['total'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['total'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Prorateable']['total'] * 0.5000 ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'] ?></td>
-                    <td><?php echo $TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000) ?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Neto']['total'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['total'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['total'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'] , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
                 </tr>
                 <?php
                 }
@@ -2614,11 +2789,18 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 if ($TotalDcto814['Neto']['total'] + $TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'] != 0) { ?>
                     <tr>
                         <td><?php
-                            echo $TotalDcto814['Directo']['total'] ?></td>
-                        <td><?php echo $TotalDcto814['Prorateable']['total'] ?></td>
-                        <td><?php echo $TotalDcto814['Prorateable']['total'] * 0.5000 ?></td>
-                        <td><?php echo $TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'] ?></td>
-                        <td colspan="2"><?php echo $TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * 0.5000) ?></td>
+                            echo number_format($TotalDcto814['Directo']['total'] , 2, ",", ".");
+                            echo $this->Form->input('totaldecreto814',
+                                [
+                                    'type'=>'hidden',
+                                    'value'=>$TotalDcto814_Directo
+                                ]
+                            );
+                            ?></td>
+                        <td><?php echo number_format($TotalDcto814['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalDcto814['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'] , 2, ",", ".")?></td>
+                        <td colspan="2"><?php echo number_format($TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * 0.5000), 2, ",", ".") ?></td>
                     </tr>
                     <?php
                 }
@@ -2727,9 +2909,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                      <td>2.5</td>
-                      <td>'.$TotalAlicuota2_5.'</td>
-                      <td>'.$TotalAlicuota2_5 * 0.025.'</td>
-                      <td>'.$TotalAlicuota2_5 * 0.025.'</td>
+                      <td>'.number_format($TotalAlicuota2_5, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota2_5 * 0.025, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota2_5 * 0.025, 2, ",", ".").'</td>
                       <td>0</td>
                       </tr>
                 ';
@@ -2738,9 +2920,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>5.0</td>
-                      <td>'.$TotalAlicuota5_0.'</td>
-                      <td>'.$TotalAlicuota5_0 * 0.05.'</td>
-                      <td>'.$TotalAlicuota5_0 * 0.05.'</td>
+                      <td>'.number_format($TotalAlicuota5_0, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota5_0 * 0.05, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota5_0 * 0.05, 2, ",", ".").'</td>
                       <td>0</td>
                       </tr>
                 ';
@@ -2749,9 +2931,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>10.5</td>
-                      <td>'.$TotalAlicuota10_5.'</td>
-                      <td>'.$TotalAlicuota10_5 * 0.105.'</td>
-                      <td>'.$TotalAlicuota10_5 * 0.105.'</td>
+                      <td>'.number_format($TotalAlicuota10_5, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota10_5 * 0.105, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota10_5 * 0.105, 2, ",", ".").'</td>
                       <td>0</td>
                       </tr>
                 ';
@@ -2760,9 +2942,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>21.0</td>
-                      <td>'.$TotalAlicuota21_0.'</td>
-                      <td>'.$TotalAlicuota21_0 * 0.21.'</td>
-                      <td>'.$TotalAlicuota21_0 * 0.21.'</td>
+                      <td>'.number_format($TotalAlicuota21_0, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota21_0 * 0.21, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota21_0 * 0.21, 2, ",", ".").'</td>
                       <td>0</td>
                       </tr>
                 ';
@@ -2771,9 +2953,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>27.0</td>
-                      <td>'.$TotalAlicuota27_0.'</td>
-                      <td>'.$TotalAlicuota27_0 * 0.27.'</td>
-                      <td>'.$TotalAlicuota27_0 * 0.27.'</td>
+                      <td>'.number_format($TotalAlicuota27_0, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota27_0 * 0.27, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota27_0 * 0.27, 2, ",", ".").'</td>
                       <td>0</td>
                       </tr>
                 ';
@@ -2784,9 +2966,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
                 echo '<tr>
                       <td>Totales</td>
-                      <td>'.$TotalNeto.'</td>
-                      <td>'.$TotalDebitoFiscal.'</td>
-                      <td>'.$TotalDebitoFiscal.'</td>
+                      <td>'.number_format($TotalNeto, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalDebitoFiscal, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalDebitoFiscal, 2, ",", ".").'</td>
                       <td>0</td>
                     </tr>
                 ';
@@ -2820,52 +3002,51 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $TotalAlicuota27_0 = 0;
 
             foreach ($ventas as $venta) {
-
                 if ($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal') {
                     if ($venta['Venta']['condicioniva'] == 'monotributista') {
                         if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50') {
                             $Alicuota2_5 = true;
-                            $TotalAlicuota2_5 = $TotalAlicuota2_5 + $venta['Venta']['neto'];
+                            $TotalAlicuota2_5 += $venta['Venta']['total'];
                         }
                         if ($venta['Venta']['alicuota'] == '5.0' || $venta['Venta']['alicuota'] == '5.00') {
                             $Alicuota5_0 = true;
-                            $TotalAlicuota5_0 = $TotalAlicuota5_0 + $venta['Venta']['neto'];
+                            $TotalAlicuota5_0 += $venta['Venta']['total'];
                         }
                         if ($venta['Venta']['alicuota'] == '10.5' || $venta['Venta']['alicuota'] == '10.50') {
                             $Alicuota10_5 = true;
-                            $TotalAlicuota10_5 = $TotalAlicuota10_5 + $venta['Venta']['neto'];
+                            $TotalAlicuota10_5 += $venta['Venta']['total'];
                         }
                         if ($venta['Venta']['alicuota'] == '21.0' || $venta['Venta']['alicuota'] == '21.00') {
                             $Alicuota21_0 = true;
-                            $TotalAlicuota21_0 = $TotalAlicuota21_0 + $venta['Venta']['neto'];
+                            $TotalAlicuota21_0 += $venta['Venta']['total'];
                         }
                         if ($venta['Venta']['alicuota'] == '27.0' || $venta['Venta']['alicuota'] == '27.00') {
                             $Alicuota27_0 = true;
-                            $TotalAlicuota27_0 = $TotalAlicuota27_0 + $venta['Venta']['neto'];
+                            $TotalAlicuota27_0 += $venta['Venta']['total'];
                         }
                     }
                 }
-
             }
         ?>
         <?php
             if($Alicuota2_5)
             {
-                echo '<tr>
-                     <td>2.5</td>
-                      <td>'.$TotalAlicuota2_5 * 1.025.'</td>
-                      <td>'.$TotalAlicuota2_5 * 0.025 .'</td>
-                      <td></td>
-                      <td></td>
-                      </tr>
+                echo '
+                <tr>
+                    <td>2.5</td>
+                    <td>'.number_format($TotalAlicuota2_5 , 2, ",", ".").'</td>
+                    <td>'.number_format(($TotalAlicuota2_5/1.025) , 2, ",", ".").'</td>
+                    <td></td>
+                    <td></td>
+                </tr>
                 ';
             }
             if($Alicuota5_0)
             {
                 echo '<tr>
                       <td>5.0</td>
-                      <td>'.$TotalAlicuota5_0 * 1.05.'</td>
-                      <td>'.$TotalAlicuota5_0 * 0.05.'</td>
+                      <td>'.number_format($TotalAlicuota5_0 , 2, ",", ".").'</td>
+                      <td>'.number_format(($TotalAlicuota5_0 /1.05)* 0.05, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -2875,8 +3056,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>10.5</td>
-                      <td>'.$TotalAlicuota10_5.'</td>
-                      <td>'.$TotalAlicuota10_5 * 0.105.'</td>
+                      <td>'.number_format($TotalAlicuota10_5, 2, ",", ".").'</td>
+                      <td>'.number_format(($TotalAlicuota10_5/1.105) * 0.105, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -2886,8 +3067,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>21.0</td>
-                      <td>'.$TotalAlicuota21_0 * 1.21.'</td>
-                      <td>'.$TotalAlicuota21_0 * 0.21.'</td>
+                      <td>'.number_format($TotalAlicuota21_0 , 2, ",", ".").'</td>
+                      <td>'.number_format(($TotalAlicuota21_0/1.21) * 0.21, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -2897,8 +3078,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>27.0</td>
-                      <td>'.$TotalAlicuota27_0 * 1.27.'</td>
-                      <td>'.$TotalAlicuota27_0 * 0.27.'</td>
+                      <td>'.number_format($TotalAlicuota27_0 , 2, ",", ".").'</td>
+                      <td>'.number_format(($TotalAlicuota27_0/1.27) * 0.27, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -2907,11 +3088,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
             {
                 $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-                $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                $TotalDebitoFiscal = (($TotalAlicuota2_5/1.025) * 0.025) + (($TotalAlicuota5_0 /1.05)* 0.05) + (($TotalAlicuota10_5/1.105) * 0.105) + (($TotalAlicuota21_0/1.21) * 0.21) + (($TotalAlicuota27_0/1.27) * 0.27);
                 echo '<tr>
                       <td>Totales</td>
-                      <td>'.$TotalNeto.'</td>
-                      <td>'.$TotalDebitoFiscal.'</td>
+                      <td>'.number_format($TotalNeto, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalDebitoFiscal, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                     </tr>
@@ -2979,8 +3160,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                      <td>2.5</td>
-                      <td>'.$TotalAlicuota2_5 * 1.025.'</td>
-                      <td>'.$TotalAlicuota2_5 * 0.025.'</td>
+                      <td>'.number_format($TotalAlicuota2_5 * 1.025, 2, ",", ".").'</td>
+                      <td>'.number_format(($TotalAlicuota2_5) * 0.025, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -2990,8 +3171,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>5.0</td>
-                      <td>'.$TotalAlicuota5_0 * 1.05.'</td>
-                      <td>'.$TotalAlicuota5_0 * 0.05.'</td>
+                      <td>'.number_format($TotalAlicuota5_0 * 1.05, 2, ",", ".").'</td>
+                      <td>'.number_format(($TotalAlicuota5_0 )* 0.05, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -3001,8 +3182,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>10.5</td>
-                      <td>'.$TotalAlicuota10_5 * 1.105.'</td>
-                      <td>'.$TotalAlicuota10_5 * 0.105.'</td>
+                      <td>'.number_format($TotalAlicuota10_5 * 1.105, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota10_5 * 0.105, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -3012,8 +3193,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>21.0</td>
-                      <td>'.$TotalAlicuota21_0 * 1.21.'</td>
-                      <td>'.$TotalAlicuota21_0 * 0.21.'</td>
+                      <td>'.number_format($TotalAlicuota21_0 * 1.21, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota21_0 * 0.21, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -3023,8 +3204,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             {
                 echo '<tr>
                       <td>27.0</td>
-                      <td>'.$TotalAlicuota27_0 * 1.27.'</td>
-                      <td>'.$TotalAlicuota27_0 * 0.27.'</td>
+                      <td>'.number_format($TotalAlicuota27_0 * 1.27, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalAlicuota27_0 * 0.27, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                       </tr>
@@ -3033,11 +3214,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             if($Alicuota2_5 || $Alicuota5_0 || $Alicuota10_5 || $Alicuota21_0 || $Alicuota27_0)
             {
                 $TotalNeto = $TotalAlicuota2_5 + $TotalAlicuota5_0 + $TotalAlicuota10_5 + $TotalAlicuota21_0 + $TotalAlicuota27_0;
-                $TotalDebitoFiscal = ($TotalAlicuota2_5 * 0.025) + ($TotalAlicuota5_0 * 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
+                $TotalDebitoFiscal = (($TotalAlicuota2_5) * 0.025) + (($TotalAlicuota5_0 )* 0.05) + ($TotalAlicuota10_5 * 0.105) + ($TotalAlicuota21_0 * 0.21) + ($TotalAlicuota27_0 * 0.27);
                 echo '<tr>
                       <td>Totales</td>
-                      <td>'.$TotalNeto.'</td>
-                      <td>'.$TotalDebitoFiscal.'</td>
+                      <td>'.number_format($TotalNeto, 2, ",", ".").'</td>
+                      <td>'.number_format($TotalDebitoFiscal, 2, ",", ".").'</td>
                       <td></td>
                       <td></td>
                     </tr>
@@ -3139,7 +3320,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 			<tr>
 				<td>Total del Débito Fiscal</td>
 				<td style="width:180px">
-					<spam id="spnTotalDeditoFiscal"><?php echo $TotalDebitoFiscal_SumaTotal; ?><spam>
+					<spam id="spnTotalDeditoFiscal"><?php echo number_format($TotalDebitoFiscal_SumaTotal, 2, ",", "."); ?><spam>
                     <?php
                     echo $this->Form->input('totaldebitofiscal',
                         [
@@ -3154,7 +3335,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 				<td>Total del Crédito Fiscal</td>
 				<td style="width:180px">
 					<span id="spnTotalCreditoFiscal">
-					    <?php echo $TotalCreditoFiscal_SumaTotal; ?>
+					    <?php echo number_format($TotalCreditoFiscal_SumaTotal, 2, ",", "."); ?>
 					</span>
                     <?php
                     echo $this->Form->input('totalcreditofiscal',
@@ -3170,7 +3351,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 				<td>Ajuste Anual de Crédito Fiscal por Operaciones Exentas - A favor del Responsable</td>
 				<td style="width:180px">
                     <span id="spnCredFiscalxOpExcResp">
-					    <?php echo $AjusteAnualAFavorResponsable; ?>
+					    <?php echo number_format($AjusteAnualAFavorResponsable, 2, ",", "."); ?>
 					</span>
 				</td>
 			</tr>
@@ -3178,7 +3359,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 				<td>Ajuste Anual de Crédito Fiscal por Operaciones Exentas - A favor de AFIP</td>
 				<td style="width:180px">
                      <span id=spnCredFiscalxOpExcAFIP">
-					    <?php echo $AjusteAnualAFavorAFIP; ?>
+					    <?php echo number_format($AjusteAnualAFavorAFIP, 2, ",", "."); ?>
 					</span>
 				</td>
 			</tr>
@@ -3186,7 +3367,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 				<td>Saldo Técnico a Favor del Responsable del Periodo anterior</td>
 				<td style="width:180px">
                     <span id="spnSaldoAFavorPeriodoAnt">
-					    <?php echo $TotalSaldoTecnicoAFavorRespPeriodoAnterior; ?>
+					    <?php echo number_format($TotalSaldoTecnicoAFavorRespPeriodoAnterior, 2, ",", "."); ?>
 					</span>
 				</td>
 			</tr>
@@ -3194,7 +3375,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 <td>Saldo Técnico a Favor del Responsable del Periodo</td>
                 <td style="width:180px">
                     <span id="spnTotalSaldoTecnicoAFavorResp">
-                        <?php echo $TotalSaldoTecnicoAFavorRespPeriodo;?>
+                        <?php echo number_format($TotalSaldoTecnicoAFavorRespPeriodo, 2, ",", ".");?>
                     </span>
                 </td>
             </tr>
@@ -3202,7 +3383,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 <td>Subtotal Saldo Técnico a favor de la AFIP del Periodo</td>
                 <td style="width:180px">
                     <span id="spnTotalSaldoTecnicoAFavorAFIP">
-                        <?php echo $TotalSaldoTecnicoAPagarPeriodo?>
+                        <?php echo number_format($TotalSaldoTecnicoAPagarPeriodo, 2, ",", ".")?>
                     </span>
                 </td>
             </tr>
@@ -3210,7 +3391,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 				<td>Diferimiento F. 518</td>
 				<td style="width:180px">
                     <span id="spnDiferimientoF518">
-                        <?php echo $Diferimiento518?>
+                        <?php echo number_format($Diferimiento518, 2, ",", ".")?>
                     </span>
 				</td>
 			</tr>
@@ -3218,7 +3399,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 				<td>Bonos Fiscales - Decreto 1145/09 y/o Decreto 852/14</td>
 				<td style="width:180px">
                      <span id="spnBonosFiscales">
-                        <?php echo $BonosFiscales?>
+                        <?php echo number_format($BonosFiscales, 2, ",", ".")?>
                     </span>
 				</td>
 			</tr>
@@ -3226,7 +3407,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 				<td>Saldo Técnico a Favor de la AFIP del Periodo</td>
 				<td style="width:180px">
 					<span id="spnSaldoTecnicoAFavorAFIPPeriodo">
-                        <?php echo $TotalSaldoTecnicoAPagarPeriodo;?>
+                        <?php echo number_format($TotalSaldoTecnicoAPagarPeriodo, 2, ",", ".");?>
                     </span>
 				</td>
 			</tr>
@@ -3235,7 +3416,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 				<td style="width:180px">
 					<span id="spnSaldoTecnicoAfavorContribuyentePeriodo">
                         <?php echo
-                        $TotalSaldoTecnicoAFavorRespPeriodo>0?$TotalSaldoTecnicoAFavorRespPeriodo:0;
+                        $TotalSaldoTecnicoAFavorRespPeriodo>0?number_format($TotalSaldoTecnicoAFavorRespPeriodo, 2, ",", "."):0;
                         echo $this->Form->input('saldoTecnico', array('type'=>'hidden','value'=>$TotalSaldoTecnicoAFavorRespPeriodo>0?$TotalSaldoTecnicoAFavorRespPeriodo:0));
                         ?>
                         </span>
@@ -3247,7 +3428,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 <td style="width:180px">
                     <span id="spnSaldoAFavorLibreDispPeriodoAnteriorNetousos">
                         <?php
-                        echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior:0;
+                        echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior>0?number_format($TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior, 2, ",", "."):0;
                         //resulta que esto es un Uso del saldo de libre disponibilidad del periodo anterior asi que aca vamos
                         //a generar un input, el cual va a activar la creacion de un formulario para registrar este uso y disminuir
                         //el saldo del periodo anterior a 0
@@ -3263,7 +3444,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             <tr>
                 <td>Total Retenciones, Percepciones y Pagos a cuenta computables en el periodo neto de restituciones</td>
                 <td style="width:180px">
-                    <span id="spnTotalRetencionesyPercepciones"><?php echo $TotalPagosACuenta>0?$TotalPagosACuenta:0;?></span>
+                    <span id="spnTotalRetencionesyPercepciones"><?php echo $TotalPagosACuenta>0?number_format($TotalPagosACuenta, 2, ",", "."):0;?></span>
                     <?php
                     echo $this->Form->input('totalretenciones', array('type'=>'hidden','value'=>$TotalPagosACuenta-$TotalPercepcionesIVA));
                     ?>
@@ -3274,7 +3455,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 <td style="width:180px">
                     <span id="spnSaldoAFavorLibreDispNetousos">
                         <?php
-                        echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0;
+                        echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?number_format($TotalSaldoLibreDisponibilidadAFavorRespPeriodo, 2, ",", "."):0;
                         echo $this->Form->input('saldoLD', array('type'=>'hidden','value'=>$TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0));
                         ?>
                     </span>
@@ -3285,7 +3466,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 <td style="width:180px">
                     <span id="spnSaldoAFavorLibreDispNetousos">
                         <?php
-                            echo $TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0;
+                            echo $TotalSaldoImpuestoAFavorAFIP>0?number_format($TotalSaldoImpuestoAFavorAFIP, 2, ",", "."):0;
 						    echo $this->Form->input('apagar', array('type'=>'hidden','value'=>$TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0));
 						?>
                     </span>
@@ -3300,12 +3481,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
     <div id="divContenedorContabilidad" style="margin-top:10px"  class="noExl">
         <div class="index">
             <?php
+            //Asiento Devengamiento del IVA
             $Asientoid=0;
             $movId=[];
-            if(count($cliente['Impcli'][0]['Asiento'])>0){
-                $Asientoid=$cliente['Impcli'][0]['Asiento'][0]['id'];
-                foreach ($cliente['Impcli'][0]['Asiento'][0]['Movimiento'] as $mimovimiento){
-                    $movId[$mimovimiento['Cuentascliente']['cuenta_id']] = $mimovimiento['id'];
+            foreach ($cliente['Impcli'][0]['Asiento'] as $asientodevengamientoIVA) {
+                if($asientodevengamientoIVA['tipoasiento']=="impuestos"){
+                    $Asientoid=$asientodevengamientoIVA['id'];
+                    foreach ($asientodevengamientoIVA['Movimiento'] as $mimovimiento){
+                        $movId[$mimovimiento['Cuentascliente']['cuenta_id']] = $mimovimiento['id'];
+                    }
                 }
             }
             //ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
@@ -3336,6 +3520,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $i=0;
 
             foreach ($cliente['Impcli'][0]['Impuesto']['Asientoestandare'] as $asientoestandarIVA) {
+                if($asientoestandarIVA['tipoasiento']!='impuestos')continue;
                 if(!isset($movId[$asientoestandarIVA['cuenta_id']])){
                     $movId[$asientoestandarIVA['cuenta_id']]=0;
                 }
@@ -3366,11 +3551,86 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarIVA['cuenta_id'],'id'=>'cuenta'.$asientoestandarIVA['cuenta_id']]);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarIVA['Cuenta']['numero'],'style'=>'width:82px']);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['label'=>($i!=0)?false:'Debe','readonly'=>'readonly','value'=>0,]);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['label'=>($i!=0)?false:'Haber','readonly'=>'readonly','value'=>0,])."</br>";
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['label'=>($i!=0)?false:'Debe','value'=>0,]);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['label'=>($i!=0)?false:'Haber','value'=>0,])."</br>";
                 $i++;
             }
 
+            //Asiento Devengamiento del Decreto 814
+            $Asientoid=0;
+            $movId=[];
+            foreach ($cliente['Impcli'][0]['Asiento'] as $asientodevengamientoIVA) {
+                if($asientodevengamientoIVA['tipoasiento']=="impuestos2"){
+                    $Asientoid=$asientodevengamientoIVA['id'];
+                    foreach ($asientodevengamientoIVA['Movimiento'] as $mimovimiento){
+                        $movId[$mimovimiento['Cuentascliente']['cuenta_id']] = $mimovimiento['id'];
+                    }
+                }
+            }
+            echo $this->Form->input('Asiento.1.id',['value'=>$Asientoid]);
+            $d = new DateTime( '01-'.$periodo );
+            echo $this->Form->input('Asiento.1.fecha',array(
+                'class'=>'datepicker',
+                'type'=>'text',
+                'label'=>array(
+                    'text'=>"Fecha:",
+                ),
+                'readonly','readonly',
+                'value'=>$d->format( 't-m-Y' ),
+                'div' => false,
+                'style'=> 'height:9px;display:inline'
+            ));
+            echo $this->Form->input('Asiento.1.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento Decreto 814" ,'style'=>'width:250px']);
+            echo $this->Form->input('Asiento.1.descripcion',['readonly'=>'readonly','value'=>"Asiento Automatico periodo: ".$periodo,'style'=>'width:250px']);
+            echo $this->Form->input('Asiento.1.cliente_id',['value'=>$cliente['Cliente']['id'],'type'=>'hidden']);
+            echo $this->Form->input('Asiento.1.impcli_id',['value'=>$cliente['Impcli'][0]['id'],'type'=>'hidden']);
+            echo $this->Form->input('Asiento.1.periodo',['value'=>$periodo,'type'=>'hidden']);
+            echo $this->Form->input('Asiento.1.tipoasiento',['value'=>'impuestos2','type'=>'hidden'])."</br>";
+            $i=0;
+
+            foreach ($cliente['Impcli'][0]['Impuesto']['Asientoestandare'] as $asientoestandarIVA) {
+                if($asientoestandarIVA['tipoasiento']!='impuestos2')continue;
+                if(!isset($movId[$asientoestandarIVA['cuenta_id']])){
+                    $movId[$asientoestandarIVA['cuenta_id']]=0;
+                }
+                $cuentaclienteid=0;
+                $cuentaclientenombre="0";
+                foreach ($cliente['Cuentascliente'] as $cuentaclientaIVA){
+                    if($cuentaclientaIVA['cuenta_id']==$asientoestandarIVA['cuenta_id']){
+                        $cuentaclienteid=$cuentaclientaIVA['id'];
+                        $cuentaclientenombre=$cuentaclientaIVA['nombre'];
+                        break;
+                    }
+                }
+                echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.id',['value'=>$movId[$asientoestandarIVA['cuenta_id']],]);
+                echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.fecha', array(
+                    'readonly'=>'readonly',
+                    'class'=>'datepicker',
+                    'type'=>'hidden',
+                    'label'=>array(
+                        'text'=>"Vencimiento:",
+                        "style"=>"display:inline",
+                    ),
+                    'readonly','readonly',
+                    'value'=>date('d-m-Y'),
+                    'div' => false,
+                    'style'=> 'height:9px;display:inline'
+                ));
+                echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
+                echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.cuenta_id',
+                    [
+                        'asiento'=>'1',
+                        'readonly'=>'readonly',
+                        'type'=>'hidden',
+                        'orden'=>$i,'value'=>$asientoestandarIVA['cuenta_id'],
+                        'id'=>'cuenta'.$asientoestandarIVA['cuenta_id']
+                    ]);
+                echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarIVA['Cuenta']['numero'],'style'=>'width:82px']);
+                echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
+                echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.debe',['label'=>($i!=0)?false:'Debe','value'=>0,]);
+                echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.haber',['label'=>($i!=0)?false:'Haber','value'=>0,])."</br>";
+                $i++;
+            }
             echo $this->Form->submit('Contabilizar',['style'=>'']);
             echo $this->Form->end();
             ?>

@@ -61,7 +61,8 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
     $movimientosbancariosArray = [];
     $conceptos = [];
     $moneyChars = ['.','$'];
-	foreach ($filesMovimientosbancarios as $dirMovimientosbancario) {
+    $movimientosRepetidos = "";
+    foreach ($filesMovimientosbancarios as $dirMovimientosbancario) {
         if(is_readable($dirMovimientosbancarios->pwd() . DS . $dirMovimientosbancario)){
             $mostrarTabla=true;
         }else{
@@ -71,21 +72,17 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
         $dirMovimientosbancario = new File($dirMovimientosbancarios->pwd() . DS . $dirMovimientosbancario);
         $dirMovimientosbancario->open();
         $contents = $dirMovimientosbancario->read();
-	    // $file->delete(); // I am deleting this file
+        // $file->delete(); // I am deleting this file
         $handler = $dirMovimientosbancario->handle;
         $j=0;
-
         while (($line = fgetcsv($handler, 1000, ";")) !== false) {
 
-            $movimientosbancariosArray[$i] = array();
-            $movimientosbancariosArray[$i]['Movimientosbancario'] = array();
+
             // process the line read.
             $linemovimiento = array();
             $linemovimiento['fecha']= str_replace("/", "-", $line[0]);
             $linemovimiento['concepto']=utf8_decode($line[1]);
-            if(!in_array(utf8_decode($line[1]), $conceptos)){
-                array_push($conceptos,utf8_decode($line[1]));
-            }
+
             $debe = $line[2]?0:$line[2];
             $debe = str_replace($moneyChars, "", $line[2]);
             $debe = str_replace(",", ".", $debe) + 0;
@@ -98,13 +95,72 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
             $linemovimiento['haber']=$haber;
             $linemovimiento['saldo']=$saldo;
 
-            $movimientosbancariosArray[$i]['Movimientosbancario']=$linemovimiento;
-            $i++;
-            $j++;
-            if($i==3500){
-                die($i."hasta aca llegue3".$line);
+            //Primero vamos a ver si este movimiento no fue cargado anteriormente
+            //para ello vamos a recorrer los ya cargados y fijarnos si coincide fecha concepto debito credito y saldo
+            $mismaFecha = false;
+            $mismoDebito = false;
+            $mismoCredito = false;
+            $mismoSaldo = false;
+            $mismoConcepto = false;
+            $cargarMovimientoEnForm = true;
+            foreach ($movimientosbancariosperiodo as $movimientosyacargados) {
+                //vamos a transformar las dos fechas para que no haya confucion
+                $fechacargada = date('d-m-Y',strtotime($movimientosyacargados['Movimientosbancario']['fecha']));
+                $fechanueva = date('d-m-Y',strtotime($linemovimiento['fecha']));
+                if($fechacargada==$fechanueva){
+                    $mismaFecha = true;
+                }
+                if($movimientosyacargados['Movimientosbancario']['debito']==$linemovimiento['debe']){
+                    $mismoDebito = true;
+                }
+                if($movimientosyacargados['Movimientosbancario']['credito']==$linemovimiento['haber']){
+                    $mismoCredito = true;
+                }
+                if($movimientosyacargados['Movimientosbancario']['saldo']==$linemovimiento['saldo']){
+                    $mismoSaldo = true;
+                }
+                if($movimientosyacargados['Movimientosbancario']['concepto']==$linemovimiento['concepto']){
+                    $mismoConcepto = true;
+                }
+//                if(($mismaFecha*1+$mismoDebito*1+$mismoCredito*1+$mismoSaldo*1+$mismoConcepto*1)>2){
+//                    echo ($mismaFecha*1)." ".($mismoDebito*1)." ".($mismoCredito*1)." ".($mismoSaldo*1)." ".($mismoConcepto*1)."</br>";
+//                    echo "2 o mas : Ya Cargado ".date('d-m-Y',strtotime($movimientosyacargados['Movimientosbancario']['fecha']))."-".
+//                        $movimientosyacargados['Movimientosbancario']['concepto']."-".
+//                        $movimientosyacargados['Movimientosbancario']['debito']."-".
+//                        $movimientosyacargados['Movimientosbancario']['credito']."-".
+//                        $movimientosyacargados['Movimientosbancario']['saldo']."</br> ".
+//                        " Nuevo Movimiento ".date('d-m-Y',strtotime($linemovimiento['fecha']))."-".
+//                        $linemovimiento['concepto']."-".
+//                        $linemovimiento['debe']."-".
+//                        $linemovimiento['haber']."-".
+//                        $linemovimiento['saldo']."</br> "
+//                    ;
+//                }
+                if( $mismaFecha&&$mismoDebito&&$mismoCredito&&$mismoSaldo&&$mismoConcepto){
+                    $movimientosRepetidos .= date('d-m-Y',strtotime($movimientosyacargados['Movimientosbancario']['fecha']))."-".
+                        $movimientosyacargados['Movimientosbancario']['concepto']."-".
+                        $movimientosyacargados['Movimientosbancario']['debito']."-".
+                        $movimientosyacargados['Movimientosbancario']['credito']."-".
+                        $movimientosyacargados['Movimientosbancario']['saldo']."</br> ";
+                    $cargarMovimientoEnForm = false;
+                    break;
+                }
+                $j++;
+            }
+            if($cargarMovimientoEnForm){
+                if(!in_array(utf8_decode($line[1]), $conceptos)){
+                    array_push($conceptos,utf8_decode($line[1]));
+                }
+                $movimientosbancariosArray[$i] = array();
+                $movimientosbancariosArray[$i]['Movimientosbancario'] = array();
+                $movimientosbancariosArray[$i]['Movimientosbancario']=$linemovimiento;
+                $i++;
+                if($i==3500){
+//                        die($i."hasta aca llegue3".$line);
+                }
             }
         }
+
         $tituloButton= $dirMovimientosbancario->name;
 //        $tituloButton= $errorInFileCompra?$dirCompra->name." Archivo con Error": $dirCompra->name;
             echo $this->Form->button(
@@ -174,7 +230,13 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
         return 0;
     }
     ?>
-    Movimientos Bancarios ya cargados :
+    Info: Este formulario de importación permite cargar los movimientos bancarios de una cuenta a partir de un csv que cuente con las
+    siguientes columnas (sin cabecera) </br>1: Fecha</br>2: Concepto</br>3: Debito</br>4: Credito</br>5: Saldo</br>
+    Tambien te permite asignarle un codigo de AFIP a los movimientos y una cuenta contable a la que se imputara el mismo.
+    </br>Solo se cargarán los registros que tengan asignadas una cuenta contable.
+    </br>Si un registro ya se ha guardado no se cargará en el formulario.
+    Deberá ser editado desde la seccion de carga. Si es necesario.
+    </br>Movimientos Bancarios ya cargados :
     <?php
     $i=1;
     foreach ($movimientosbancariosperiodo as $movimientosyacargados) {
@@ -184,6 +246,11 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
         $movimientosyacargados['Movimientosbancario']['credito']."-".
         $movimientosyacargados['Movimientosbancario']['saldo']."</br> ";
     } ?>
+    Movimientos Repetidos :
+    <?php
+    $i=1;
+    echo $movimientosRepetidos;
+    ?>
     <table id="filtros" style="width: 1000px;" >
         <tr>
             <td style="width:20px;"></td>
@@ -233,7 +300,11 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
     </table>
     <table style="width: 2230px; padding: 0px;margin: 0px;" id="tablaFormMovimientosbancarios">
     <?php
-    foreach ($movimientosbancariosArray as $movimintosbancario){?>
+    foreach ($movimientosbancariosArray as $movimintosbancario){
+        if($movimintosbancario['Movimientosbancario']['concepto']==""){
+            continue;
+        }
+        ?>
          <tr id="row<?php echo $i?>">
              <td><?php
                  echo $this->Form->button(
@@ -272,7 +343,7 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                              'label' => ($i + 9) % 10 == 0 ? 'Fecha' : '     ',
                              'readonly' => 'readonly',
                              'fechaoriginal' => $movimintosbancario['Movimientosbancario']['fecha'],
-                             'default' => date('d/m/Y', strtotime($movimintosbancario['Movimientosbancario']['fecha'])),
+                             'default' => date('d-m-Y', strtotime($movimintosbancario['Movimientosbancario']['fecha'])),
                              'style' => "width:80px"
                          )
                      );
@@ -323,9 +394,10 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                          'type'=>'select',
                          'empty' => 'elegir cuenta',
                          'label' => ($i + 9) % 10 == 0 ? 'Cuenta contable.' : '          ',
+                         'orden' => $i,
                          'class' => "filtrocuentascontable aplicableATodos",
                          'style' => 'width:160px;',
-                         'required' => true,
+                         'required' => false,
                          'message'=>'Por favor seleccione una cuenta contable para imputar este movimiento bancario',
                          'inputclass' => 'MovimientobancarioAddCuentasCliente',
                      ));
@@ -336,7 +408,7 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
 
          </tr>
          <?php
-     }
+    }
      ?>
     </table>
     <?php

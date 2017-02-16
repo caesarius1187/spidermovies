@@ -173,15 +173,26 @@ div.actions h3 {
 	padding-top:0;
 	color:#777;
 }
+.pagebreak { page-break-before: always; }
 @media screen {
 	.aimprimir{
 		width: 100%;
 	}
 }
 @media print {
+	/*.pagebreak { page-break-before: always; }*/
 	.aimprimir{
 		width: 500px;
 		font-size: 8px;
+	}
+	div {
+		float: none !important;
+	}
+	.divToLeft{
+		float: left !important;
+	}
+	.divToRight{
+		float: right !important;
 	}
 }
 
@@ -1866,11 +1877,18 @@ transition: all 0.4s ease-in-out;
 	margin: 10px 0px;
 }
 .tblReciboSueldo table td{
-	font-size: 8px;
+	font-size: 10px;
 	height: 6px;
 }
 .tblReciboSueldo table tr{
 	height: 6px;
+}
+.trConceptoRecibo{
+	height: 4px;
+	padding: 0px 5px;
+}
+.trConceptoRecibo td{
+	height: 4px;
 }
 .tdWithBorder{
 	border: 1px solid rgb(180, 176, 176);
@@ -2295,7 +2313,7 @@ transition: all 0.4s ease-in-out;
     padding: 3px 2px;
     display: inline-block;
     position: relative;
-    width: 155px;
+    width: 160px;
     height: 45px;
     line-height: 20px;
     border-radius: 2px;
@@ -2317,7 +2335,7 @@ transition: all 0.4s ease-in-out;
     padding: 3px 2px;
     display: inline-block;
     position: relative;
-    width: 155px;
+    width: 160px;
     height: 45px;
     line-height: 20px;
     border-radius: 2px;
@@ -2338,7 +2356,7 @@ transition: all 0.4s ease-in-out;
     padding: 3px 2px;
     display: inline-block;
     position: relative;
-    width: 155px;
+    width: 160px;
     height: 45px;
     line-height: 20px;
     border-radius: 2px;
@@ -2361,7 +2379,7 @@ transition: all 0.4s ease-in-out;
     padding: 3px 2px;
     display: inline-block;
     position: relative;
-    width: 155px;
+    width: 160px;
     height: 45px;
     line-height: 20px;
     border-radius: 2px;

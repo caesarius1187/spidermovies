@@ -1,5 +1,21 @@
 $(document).ready(function() { 
-       papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+	$( "#clickExcel" ).click(function() {
+    	$("#sheetCooperadoraAsistencial").prepend(
+    		$("<tr>").append(
+				$("<td>")
+					.attr("colspan","25")
+					.html($('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"Cooperadora Asistencial")
+    			)
+    		);
+        $("#sheetCooperadoraAsistencial").table2excel({
+            // exclude CSS class
+            exclude: ".noExl",
+            name: "CooperadoraAsistencial",
+            filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"Cooperadora Asistencial"
+
+        });
+    });
+   papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
 });
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";

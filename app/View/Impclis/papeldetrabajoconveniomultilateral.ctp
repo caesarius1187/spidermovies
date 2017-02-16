@@ -417,14 +417,20 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                                 }
                                 break;
                             case 6:
-                                if ($impcliprovincia['sede'] == 1/*Es Sede*/) {
-									$title = "Articulo 6, Sede :(".$liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']]."/ 0.9) * 0.1";
-									$baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] / 0.9) * 0.1;
-                                } else {
+								if ($impcliprovincia['ejercicio'] == 'Primero') {
+									$baseProrrateada = $liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] ;
+									$title = "Articulo 6, Primer Ejercicio : ".$liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']];
+								}else{
+									if ($impcliprovincia['sede'] == 1/*Es Sede*/) {
+										$title = "Articulo 6, Sede :(" . $liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] . "/ 0.9) * 0.1";
+										$baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] / 0.9) * 0.1;
+									} else {
 
-                                }
+									}
+								}
                                 break;
                             case 9:
+
                                 $baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
 								$title = "Articulo 9:".$liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
 								break;
@@ -788,7 +794,10 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                         ?>
 					</td>
 					<td>
-						<?php echo number_format($totalGeneralOtros, 2, ",", ".");?>
+						<?php
+						echo number_format($totalGeneralOtros, 2, ",", ".");
+						echo $this->Form->input('pagosACuentaTotal', array('type'=>'hidden','value'=>$totalGeneralOtros));
+						?>
 					</td>
 					<td>
 						<?php echo number_format($totalGeneralAFavor, 2, ",", ".");

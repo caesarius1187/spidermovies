@@ -164,7 +164,7 @@ $(document).ready(function() {
 		echo $this->Form->input('Asiento.0.cliente_id',['default'=>$cliid,'type'=>'hidden']);
 		echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo]);
 		echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcliid,'type'=>'hidden']);
-		echo $this->Form->input('Asiento.0.tipoasiento',['default'=>'pagoimpuestos','type'=>'hidden']);
+		echo $this->Form->input('Asiento.0.tipoasiento',['value'=>'pagos','type'=>'hidden']);
 		/*1.Preguntar si existe la cuenta cliente que apunte a la cuenta 8(idDeCuenta) */
 		/*2. Si no existe se la crea y la traigo*/
 		/*3. Si existe la traigo*/
@@ -182,26 +182,10 @@ $(document).ready(function() {
 			$haber=0;
 			$key=0;
 
-			if(isset($asientoyacargado['Movimiento'])) {
-				foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento){
-					if(!isset($asientoyacargado['Movimiento'][$kMov]['cargado'])) {
-						$asientoyacargado['Movimiento'][$kMov]['cargado'] = false;
-					}
-					if($cuentaclienteid==$movimiento['cuentascliente_id']){
 
-						$key=$kMov;
-						$movid=$movimiento['id'];
-						$asiento_id=$movimiento['asiento_id'];
-						$debe=$movimiento['debe'];
-						$haber=$movimiento['haber'];
-						$asientoyacargado['Movimiento'][$kMov]['cargado']=true;
-					}
-				}
-			}
 			/*Aca vamos a reescribir el debe y el haber si es que corresponde para esta cuenta con este cliente*/
 			//Este switch controla todas las cuetnas que hay en "ventas" obligadamente
 			switch ($asientoestandar['Cuenta']['id']){
-				/*Casos comun a todas las ventas*/
 				case '1518'/*110399001 Cliente xx*/:
 				case '1868'/*110399001 Cliente xx*/:
 				case '1500'/*110399001 Cliente xx*/:
@@ -218,6 +202,7 @@ $(document).ready(function() {
 				case '1401'/*110399001 Cliente xx*/:
 				case '1402'/*110399001 Cliente xx*/:
 				case '1414'/*110399001 Cliente xx*/:
+				case '260'/*110399001 Cliente xx*/:
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -313,18 +298,26 @@ $(document).ready(function() {
 					}
 					$debe = $cuentaAPagar;
 					break;
+				default:
+					
+					break;
 			}
-			/*ACA Vamos a dividir las consultas segun el tipo de categoria que pague el cliente*/
-//        foreach ($pagacategoria as $categoriaAPagar){
-//            switch ($categoriaAPagar){
-//                case 'primeracateg':
-//
-//                    break;
-//            }
-//        }
+			if(isset($asientoyacargado['Movimiento'])) {
+				foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento){
+					if(!isset($asientoyacargado['Movimiento'][$kMov]['cargado'])) {
+						$asientoyacargado['Movimiento'][$kMov]['cargado'] = false;
+					}
+					if($cuentaclienteid==$movimiento['cuentascliente_id']){
 
-			//este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
-			//echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.key',['default'=>$key]);
+						$key=$kMov;
+						$movid=$movimiento['id'];
+						$asiento_id=$movimiento['asiento_id'];
+						$debe=$movimiento['debe'];
+						$haber=$movimiento['haber'];
+						$asientoyacargado['Movimiento'][$kMov]['cargado']=true;
+					}
+				}
+			}
 			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
 			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
 			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',[
@@ -342,22 +335,13 @@ $(document).ready(function() {
 			echo "</br>";
 			$i++;
 		}
-		/*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
-        entonces tenemos que recorrer los movimientos y aquellos que esten marcados como cargado=false se deben mostrar*/
+		//cuentas comun a todos los pagos
 		foreach ($cuentaspagoimpuestos as $kMov => $cuentaspagoimpuesto) {
 			$movid = 0;
 			$asiento_id = 0;
 			$debe = 0;
 			$haber = 0;
 			$cuentaclienteid = $cuentaspagoimpuesto['Cuentascliente'][0]['id'];
-			if(isset($asientoyacargado['Movimiento'])) {
-				foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento) {
-					if($cuentaclienteid==$movimiento['cuentascliente_id']) {
-						$movid = $movimiento['id'];
-						$asiento_id = $movimiento['asiento_id'];
-					}
-				}
-			}
 			switch ($cuentaspagoimpuesto['Cuenta']['id']){
 				/*Casos comun a todas las ventas*/
 				case '5' /*110101002 Caja Efectivo*/:
@@ -369,6 +353,19 @@ $(document).ready(function() {
 					$haber = $cuentaAPagar;
 					break;
 			}
+			if(isset($asientoyacargado['Movimiento'])) {
+				if(!isset($asientoyacargado['Movimiento'][$kMov]['cargado'])) {
+					$asientoyacargado['Movimiento'][$kMov]['cargado'] = false;
+				}
+				foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento) {
+					if($cuentaclienteid==$movimiento['cuentascliente_id']) {
+						$movid = $movimiento['id'];
+						$asiento_id = $movimiento['asiento_id'];
+						$asientoyacargado['Movimiento'][$kMov]['cargado']=true;
+					}
+				}
+			}
+
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['default' => $cuentaclienteid]);
@@ -382,8 +379,35 @@ $(document).ready(function() {
 			echo "</br>";
 			$i++;
 		}
+		/*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
+        entonces tenemos que recorrer los movimientos y aquellos que esten marcados como cargado=false se deben mostrar*/
+		if(isset($asientoyacargado['Movimiento'])) {
+			foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento) {
+				$movid = 0;
+				$debe = 0;
+				$haber = 0;
+				if(!$asientoyacargado['Movimiento'][$kMov]['cargado']) {
+					$movid = $movimiento['id'];
+					$asiento_id = $movimiento['asiento_id'];
+					$debe = $movimiento['debe'];
+					$haber = $movimiento['haber'];
+					$asientoyacargado['Movimiento'][$kMov]['cargado']=true;
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id', ['default' => $movid]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id', ['default' => $movimiento['cuentascliente_id']]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
+						'type'=>'hidden',
+						'readonly','readonly',
+						'value'=>date('d-m-Y'),
+					));
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe', ['value' => $debe]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber', ['value' => $haber]);
+					echo "</br>";
+					$i++;
+				}
+			}
+		}
 		echo $this->Form->end('Guardar asiento');
-
 		?>
 	</div>
 

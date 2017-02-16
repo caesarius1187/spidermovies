@@ -45,11 +45,11 @@
         <div style="width:auto; float: left;">
             <a id="aExportarFacturas" href="#" class="buttonImpcli" style="margin-right: 8px;width: initial;"
                onclick="downloadInnerHtml('<?php echo $cliente["Cliente"]['nombre']."-".$periodo; ?>ventas.txt','divFacturas','text/html')">
-                Descargar Compras Facturas
+                Descargar Ventas Facturas
             </a>
             <a id="aExportarAlicuotas" href="#" class="buttonImpcli" style="margin-right: 8px;width: initial;"
                onclick="downloadInnerHtml('<?php echo $cliente["Cliente"]['nombre']."-".$periodo; ?>alicuotas.txt','divAlicuotas','text/html')">
-                Descargar Compras Alicuotas
+                Descargar Ventas Alicuotas
             </a>
         </div>
     </div>
@@ -70,17 +70,18 @@
     //        $lineVenta['comprobantenumerohasta']=substr($line, 36,20);
             $lineVenta .= str_pad($venta['Venta']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
     //        $lineVenta['codigodocumento']=substr($line, 56,2);
-            $lineVenta .= str_pad(80, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
-    //        $lineVenta['identificacionnumero']=substr($line, 58,20);
+
+            //si CUIT mostrar 80, SI DNI(lenght = 8) mostrar 96
             $nombreamostrar = $venta['Subcliente']['nombre'];
             $identificacionnumero = $venta['Subcliente']['cuit'];
-            if($nombreamostrar==$identificacionnumero){
-                $identificacionnumero = "";
+            if(strlen($identificacionnumero)<=8)/*ES UN DNI!!!!*/
+            {
+                $lineVenta .= str_pad(96, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
+            }else{
+                $lineVenta .= str_pad(80, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
             }
-            if($nombreamostrar=='Consumidor Final') {
-                $nombreamostrar = "";
-                $identificacionnumero = "";
-            }
+    //        $lineVenta['identificacionnumero']=substr($line, 58,20);
+
             $lineVenta .= str_pad($identificacionnumero, 20, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
     //        $lineVenta['nombre']=substr($line, 78,30);
             $lineVenta .= str_pad($nombreamostrar, 30, " ", STR_PAD_RIGHT);

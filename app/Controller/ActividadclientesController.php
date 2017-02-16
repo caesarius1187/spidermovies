@@ -106,6 +106,52 @@ class ActividadclientesController extends AppController {
 			throw new NotFoundException(__('Invalid actividadcliente'));
 		}
 		$this->request->onlyAllow('post');
+
+		//No tenemos que eliminar la actividad si tiene cosas relacionadas a ella.
+		if (!$this->Actividadcliente->exists($id)) {
+			throw new NotFoundException(__('Invalid actividadcliente'));
+		}
+		$options = [
+			'contain'=>[
+				'Venta'=>[
+				],
+				'Compra'=>[
+				],
+				'Encuadrealicuota'=>[
+				],
+				'Basesprorrateada'=>[
+				],
+				'Cuentasganancia'=>[
+				],
+
+			],
+			'conditions' => [
+				'Actividadcliente.' . $this->Actividadcliente->primaryKey => $id
+			]
+		];
+		$actividadcliente = $this->Actividadcliente->find('first', $options);
+		Debugger::dump($actividadcliente);
+		if(count($actividadcliente['Venta'])>0){
+			$this->Session->setFlash(__('La Actividad del Cliente tiene Ventas relacionadas y por eso no se puede eliminar. 
+			Eliminelas y luego intente borrar esta actividad.'));
+			return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $cliid));
+		}
+		if(count($actividadcliente['Compra'])>0){
+			$this->Session->setFlash(__('La Actividad del Cliente tiene Compras relacionadas y por eso no se puede eliminar. 
+			Eliminelas y luego intente borrar esta actividad.'));
+			return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $cliid));
+		}
+		if(count($actividadcliente['Encuadrealicuota'])>0){
+			$this->Session->setFlash(__('La Actividad del Cliente tiene Encuadre alicuotas de IIBB relacionados y por eso no se puede eliminar. 
+			Eliminelos y luego intente borrar esta actividad.'));
+			return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $cliid));
+		}
+		if(count($actividadcliente['Cuentasganancia'])>0){
+			$this->Session->setFlash(__('La Actividad del Cliente tiene Cuentas de Ganancia y por eso no se puede eliminar. 
+			Eliminelas y luego intente borrar esta actividad.'));
+			return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $cliid));
+		}
+
 		if ($this->Actividadcliente->delete()) {
 			$this->Session->setFlash(__('La Actividad del Cliente ha sido eliminada.'));
 		} else {

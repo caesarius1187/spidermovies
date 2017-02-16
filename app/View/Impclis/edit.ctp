@@ -45,7 +45,7 @@ if(!$showTheForm){?>
             </a>
         <?php }
         if( $this->request->data['Impuesto']['organismo']=='banco'){ ?>
-        <a href="#"  onclick="loadCbus(<?php echo  $this->request->data['Impuesto']['id']; ?>)" class="button_view">
+        <a href="#"  onclick="loadCbus(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
             <?php echo $this->Html->image('cuentabancaria.png', array('alt' => 'open','class'=>'imgedit'));?>
         </a>
         <?php } ?>

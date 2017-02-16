@@ -132,6 +132,7 @@ class MovimientosbancariosController extends AppController {
 	public function importar($cliid=null,$periodo=null,$impcliid=null,$cbuid=null){
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');
+		$this->Components->unload('DebugKit.Toolbar');
 		$this->loadModel('Cuentascliente');
 		$this->loadModel('Cliente');
 		$this->loadModel('Cuenta');
@@ -247,5 +248,23 @@ class MovimientosbancariosController extends AppController {
                 $cbuid
 			)
 		);
+	}
+	public function delete($id = null) {
+		$this->Movimientosbancario->id = $id;
+		if (!$this->Movimientosbancario->exists()) {
+			throw new NotFoundException(__('Invalid Movimientosbancario'));
+		}
+		$this->request->onlyAllow('post');
+		$data = array();
+		if ($this->Movimientosbancario->delete()) {
+			$data['respuesta'] = 'Movimiento bancario eliminado con exito.';
+			$data['error'] = 0;
+		} else {
+			$data['respuesta'] = 'Movimiento bancario NO eliminado. Por favor intente mas tarde.';
+			$data['error'] = 1;
+		}
+		$this->layout = 'ajax';
+		$this->set('data', $data);
+		$this->render('serializejson');
 	}
 }

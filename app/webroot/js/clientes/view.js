@@ -1,4 +1,3 @@
-
 jQuery(document).ready(function($) {
     $.noConflict();  //Not to conflict with other scripts
     $.fn.filterGroups = function( options ) {
@@ -943,12 +942,20 @@ function loadFormImpuestoProvincias(impcliid){
 			// URL to request
 			data: data,  // post data
 			success: function(response) {
-				$("#form_impcli_dgrm_provincia").html(response);
+				//$("#form_impcli_dgrm_provincia").html(response);
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Agregar Provincia');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+
+
 				$('.chosen-select').chosen({search_contains:true});
 				//aca vamos a sacar el json con las actividadesclientes que tienen actividades que tienen alicuotas cargadas
 				var jsonactividadcliente = jQuery.parseJSON($('#ImpcliprovinciaJsonactividadcliente').val());
 				setOnChangeProvincia(jsonactividadcliente);
-				location.href='#nuevo_IMPProv';
+				// location.href='#nuevo_IMPProv';
 				$("#ImpcliprovinciaCoeficiente").on('change', function() {
 					if(this.value>1){
 						this.value=0;
@@ -968,6 +975,7 @@ function loadFormImpuestoProvincias(impcliid){
 						data: formData,
 						success: function(data,textStatus,xhr){
 							try {
+                                $('#myModal').modal('hide');
 								var respuesta = jQuery.parseJSON(data);
 								callAlertPopint(respuesta.respuesta);
 							}catch (Exception){
@@ -1000,7 +1008,12 @@ function loadFormImpuestoLocalidades(impcliid){
 			// URL to request
 			data: data,  // post data
 			success: function(response) {
-				$("#form_impcli_dgrm_provincia").html(response);
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Agregar Localidad');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
 				try {
 					$('.chosen-select').chosen({search_contains:true});
 					//aca vamos a sacar el json con las actividadesclientes que tienen actividades que tienen alicuotas cargadas
@@ -1017,7 +1030,8 @@ function loadFormImpuestoLocalidades(impcliid){
 							url: formUrl,
 							data: formData,
 							success: function(data,textStatus,xhr){
-								var respuesta = jQuery.parseJSON(data);
+                                $('#myModal').modal('hide');
+                                var respuesta = jQuery.parseJSON(data);
 								callAlertPopint(respuesta.respuesta);
 								setTimeout(function(){
 									loadFormImpuestoProvincias(impcliid);
@@ -1034,8 +1048,6 @@ function loadFormImpuestoLocalidades(impcliid){
 				catch(err) {
 
 				}
-
-				location.href='#nuevo_IMPProv';
 
 			},
 			error:function (XMLHttpRequest, textStatus, errorThrown) {
@@ -1378,8 +1390,10 @@ function loadFormImpuestoCuentasganancias(cliid){
                                 .attr("value",key)
                                 .text(value));
                     });
+                    miCategoria.val($(miCategoria).attr('defaultoption'))
                 });
                 $(".inputcategoria").trigger("change");
+
                 $('#CuentasgananciaIndexForm').submit(function(){
                     //serialize form data
                     var formData = $(this).serialize();
@@ -1455,29 +1469,75 @@ function loadFormImpuesto(impcliid,cliid){
 	});
 }
 function deleteImpcliProvincia(impcliprovinciaid){
-	jQuery(document).ready(function($) {
-		var r = confirm("Esta seguro que desea eliminar esta provincia?.");
-		if (r == true) {
-			$.ajax({
-				type: "post",  // Request method: post, get
-				url: serverLayoutURL+"/impcliprovincias/delete/"+impcliprovinciaid, // URL to request
-				data: "",  // post data
-				success: function(response) {
-					var midata = jQuery.parseJSON(response);
-					callAlertPopint(midata.respuesta);
-					$('#rowImpcliProvincia'+impcliprovinciaid).hide();
-				},
-				error:function (XMLHttpRequest, textStatus, errorThrown) {
-					alert(textStatus);
-					alert(XMLHttpRequest);
-					alert(errorThrown);
-				}
-			});
+    jQuery(document).ready(function($) {
+        var r = confirm("Esta seguro que desea eliminar esta provincia?.");
+        if (r == true) {
+            $.ajax({
+                type: "post",  // Request method: post, get
+                url: serverLayoutURL+"/impcliprovincias/delete/"+impcliprovinciaid, // URL to request
+                data: "",  // post data
+                success: function(response) {
+                    var midata = jQuery.parseJSON(response);
+                    $('#myModal').modal('hide');
+                    callAlertPopint(midata.respuesta);
+                    $('#rowImpcliProvincia'+impcliprovinciaid).hide();
+                },
+                error:function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                    alert(XMLHttpRequest);
+                    alert(errorThrown);
+                }
+            });
 
-		} else {
-			txt = "No se a eliminado el impuesto";
-		}
-	});
+        } else {
+            txt = "No se a eliminado el impuesto";
+        }
+    });
+}
+function editImpcliProvincia(impcliprovinciaid,impcliid){
+    jQuery(document).ready(function($) {
+        $.ajax({
+            type: "GET",  // Request method: post, get
+            url: serverLayoutURL+"/impcliprovincias/edit/"+impcliprovinciaid+"/"+impcliid, // URL to request
+            data: "",  // post data
+            success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Modificar Localidad/Provincia');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                $('#ImpcliprovinciaEditForm').submit(function(){
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(data,textStatus,xhr){
+                            location.href='#close';
+                            var respuesta = jQuery.parseJSON(data);
+                            $('#myModal').modal('hide');
+                            callAlertPopint(respuesta.respuesta);
+                        },
+                        error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                            location.href='#close';
+                        }
+                    });
+                    return false;
+                });
+
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
+    });
 }
 function loadCbus(impcliid){
     jQuery(document).ready(function($) {
@@ -1492,6 +1552,51 @@ function loadCbus(impcliid){
                 $("#form_cbus").width("600px");
                 location.href='#load_cbuform';
                 $('#CbuAddForm').submit(function(){
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(data,textStatus,xhr){
+                            location.href='#close';
+                            var respuesta = jQuery.parseJSON(data);;
+                            callAlertPopint(respuesta.respuesta);
+                            setTimeout(function(){
+                                loadCbus(impcliid);
+                            }, 3000);
+                        },
+                        error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                            location.href='#close';
+                        }
+                    });
+                    return false;
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                callAlertPopint(textStatus);
+                callAlertPopint(XMLHttpRequest);
+                callAlertPopint(errorThrown);
+            }
+        });
+    });
+}
+function loadModificarCbu(impcliid,cbuid){
+    jQuery(document).ready(function($) {
+        var data ="";
+        $.ajax({
+            type: "get",  // Request method: post, get
+            url: serverLayoutURL+"/cbus/edit/"+cbuid+"/"+impcliid,
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $("#form_cbus").html(response);
+                $("#form_cbus").width("600px");
+                location.href='#load_cbuform';
+                $('#CbuEditForm').submit(function(){
                     //serialize form data
                     var formData = $(this).serialize();
                     //get form action
@@ -1749,6 +1854,7 @@ function loadFormEmpleado(empid){
                 $('.chosen-select').chosen({search_contains:true});
                 location.href='#modificar_empleado';
                 reloadDatePickers();
+                $('#EmpleadoEditForm #EmpleadoCargoId').filterGroups({groupSelector: '#EmpleadoEditForm #EmpleadoConveniocolectivotrabajoId', });
                 $('#EmpleadoEditForm').submit(function(){
                     //serialize form data
                     var formData = $(this).serialize();

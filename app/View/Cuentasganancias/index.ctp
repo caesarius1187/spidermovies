@@ -39,11 +39,12 @@ echo $this->Form->create('Cuentasganancia',[
     'controller'=>'cuentasganancias',
     'action'=>'index'
 ]);
+//Debugger::dump($cliente['Actividadcliente']);
 foreach ($cliente['Actividadcliente'] as $a => $actividade){
     ?>
     <div>
     <?php
-    echo $this->Form->label($actividade['Actividade']['nombre']);
+    echo $this->Form->label('',$actividade['Actividade']['nombre']);
             //vamos a ver si ya esta creada esta cuenta cliente para esta actividad
     $numeroDecuentaYaseleccionada = 0;
     $idCuentasganancia = 0;
@@ -64,6 +65,7 @@ foreach ($cliente['Actividadcliente'] as $a => $actividade){
     echo $this->Form->input('Cuentasganancia.'.$a.'.cuentascliente_id',[
         'type'=>'hidden',
         'value'=>$idCuentascliente,
+        'dafaultvalue'=>$idCuentascliente,
     ]);
     echo $this->Form->input('Cuentasganancia.'.$a.'.actividadcliente_id',[
         'type'=>'hidden',

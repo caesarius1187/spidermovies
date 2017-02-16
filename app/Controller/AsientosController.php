@@ -22,6 +22,9 @@ class AsientosController extends AppController {
         $this->loadModel('Cliente');
         $this->loadModel('Cuentascliente');
 
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+
         $clienteOpc = array(
             'conditions' => array(
                 'Cliente.id'=> $ClienteId
@@ -36,20 +39,16 @@ class AsientosController extends AppController {
 
 
 
-        $CuentasClientesopt = [
+        $AsientosOpt = [
             'contain' => [
                 'Movimiento'=>[
-//                    'Cuentascliente'=>[
-//                        'Cuenta'=>[],
-//                        'fields' => [
-//                            'Cuentascliente.id',
-//                            'Cuentascliente.nombre'
-//                        ],
-//                    ],
+                    'conditions'=>[
+                    ]
                 ]
             ],
             'conditions'=>[
-                'Asiento.cliente_id'=>$ClienteId
+                'Asiento.cliente_id'=>$ClienteId,
+                'SUBSTRING(Asiento.periodo,4,7)*1 = '.$peanio.'*1',
             ]
         ];
 
@@ -62,7 +61,7 @@ class AsientosController extends AppController {
                 'contain'=>[],
                 'fields'=>['Movimiento.id','Movimiento.asiento_id'],
                 'conditions'=>[
-                    'Movimiento.cuentascliente_id'=>$cuentacliente
+                    'Movimiento.cuentascliente_id'=>$cuentacliente,
                 ]
             ];
             $movimientos = $this->Movimiento->find('all',$opcionesMovimientos);
@@ -70,10 +69,11 @@ class AsientosController extends AppController {
             foreach ($movimientos as $movimiento) {
                 $asientosqueimpactan[] = $movimiento['Movimiento']['asiento_id'];
             }
-            $CuentasClientesopt['conditions']['Asiento.id'] =  $asientosqueimpactan;
+            $AsientosOpt['conditions']['Asiento.id'] =  $asientosqueimpactan;
             $this->layout = 'ajax';
         }
-        $asientos = $this->Asiento->find('all', $CuentasClientesopt);
+        $asientos = $this->Asiento->find('all', $AsientosOpt);
+
         $this->set('asientos',$asientos);
         $cuentaclienteOptions = [
             'conditions' => [
@@ -106,60 +106,62 @@ class AsientosController extends AppController {
         if ($this->request->is('post')) {
             $this->Asiento->create();
             $respuesta = array('respuesta'=>'');
+            foreach ($this->request->data['Asiento'] as $a => $asientoAGuardar){
+                $this->request->data('Asiento.'.$a.'.fecha',date('Y-m-d',strtotime($this->request->data['Asiento'][$a]['fecha'])));
+                $respuesta['data']=$this->request->data;
+                if ($this->Asiento->saveAll($this->request->data['Asiento'])) {
+                    $respuesta['respuesta'] .= "El Asiento se guardo correctamente.</br>";
+                    $asientoid=0;
+                    if($this->request->data['Asiento'][$a]['id']==0){
+                        $asientoid = $this->Asiento->getLastInsertID();
+                    }else{
+                        $asientoid = $this->request->data['Asiento'][$a]['id'];
+                    }
+                    foreach ($this->request->data['Asiento'][$a]['Movimiento'] as $k => $movimiento){
+                        $movimiento['fecha']= date('Y-m-d',strtotime($movimiento['fecha']));
+                        $movimiento['asiento_id'] = $asientoid;
+                        //aca vamos a controlar que el asiento apunte a una cuenta cliente
+                        //y si no apunta vamos a preguntar si hay una cuenta disponible para crear una cuenta cliente
+                        // y utilizarla automaticamente para este movimiento dando de alta la cuenta para el cliente
 
-            $this->request->data('Asiento.0.fecha',date('Y-m-d',strtotime($this->request->data['Asiento'][0]['fecha'])));
-            $respuesta['data']=$this->request->data;
-            if ($this->Asiento->saveAll($this->request->data['Asiento'])) {
-                $respuesta['respuesta'] = "El Asiento se guardo correctamente.</br>";
-                $asientoid=0;
-                if($this->request->data['Asiento'][0]['id']==0){
-                    $asientoid = $this->Asiento->getLastInsertID();
-                }else{
-                    $asientoid = $this->request->data['Asiento'][0]['id'];
-                }
-                foreach ($this->request->data['Asiento'][0]['Movimiento'] as $k => $movimiento){
-                    $movimiento['fecha']= date('Y-m-d',strtotime($movimiento['fecha']));
-                    $movimiento['asiento_id'] = $asientoid;
-                    //aca vamos a controlar que el asiento apunte a una cuenta cliente
-                    //y si no apunta vamos a preguntar si hay una cuenta disponible para crear una cuenta cliente
-                    // y utilizarla automaticamente para este movimiento dando de alta la cuenta para el cliente
-
-                    if($movimiento['cuentascliente_id']==0)
-                    {
-                        if(isset($movimiento['cuenta_id']))
+                        if($movimiento['cuentascliente_id']==0)
                         {
-                            $optionsCuenta = [
-                                'contain'=>[],
-                                'conditions' => ['Cuenta.id' => $movimiento['cuenta_id']],
-                                'fields'=> ['Cuenta.nombre']
-                            ];
-                            $CuentaDesc = $this->Cuenta->find('first', $optionsCuenta);
+                            if(isset($movimiento['cuenta_id']))
+                            {
+                                $optionsCuenta = [
+                                    'contain'=>[],
+                                    'conditions' => ['Cuenta.id' => $movimiento['cuenta_id']],
+                                    'fields'=> ['Cuenta.nombre']
+                                ];
+                                $CuentaDesc = $this->Cuenta->find('first', $optionsCuenta);
 
-                            $this->Cuentascliente->create();
-                            $this->Cuentascliente->set('cliente_id',$this->request->data['Asiento'][0]['cliente_id']);
-                            $this->Cuentascliente->set('cuenta_id',$movimiento['cuenta_id']);
-                            $this->Cuentascliente->set('nombre',$CuentaDesc['Cuenta']['nombre']);
-                            if ($this->Cuentascliente->save())
-                            {
-                                $movimiento['cuentascliente_id'] = $this->Cuentascliente->getLastInsertID();
-                                $respuesta['respuesta'].='Cuenta activada correctamente.</br>';
-                            }
-                            else
-                            {
-                                $respuesta['respuesta'].='Error al guardar cuenta. Por favor intente nuevamente.</br>';
+                                $this->Cuentascliente->create();
+                                $this->Cuentascliente->set('cliente_id',$this->request->data['Asiento'][0]['cliente_id']);
+                                $this->Cuentascliente->set('cuenta_id',$movimiento['cuenta_id']);
+                                $this->Cuentascliente->set('nombre',$CuentaDesc['Cuenta']['nombre']);
+                                if ($this->Cuentascliente->save())
+                                {
+                                    $movimiento['cuentascliente_id'] = $this->Cuentascliente->getLastInsertID();
+                                    $respuesta['respuesta'].='Cuenta activada correctamente.</br>';
+                                }
+                                else
+                                {
+                                    $respuesta['respuesta'].='Error al guardar cuenta. Por favor intente nuevamente.</br>';
+                                }
                             }
                         }
-                    }
 
-                    if ($this->Movimiento->saveAll($movimiento)) {
-                        $respuesta['respuesta'].= "El Movimiento se guardo correctamente.</br>";
-                    } else {
-                        $respuesta['respuesta'].="El Movimiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
+                        if ($this->Movimiento->saveAll($movimiento)) {
+                            $respuesta['respuesta'].= "El Movimiento se guardo correctamente.</br>";
+                        } else {
+                            $respuesta['respuesta'].="El Movimiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
+                        }
                     }
+                }else {
+                    $respuesta['respuesta'].="El Asiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
                 }
-            }else {
-                $respuesta['respuesta']="El Asiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
             }
+
         }
         $this->set('data',$respuesta);
         $this->autoRender=false;
@@ -626,12 +628,12 @@ class AsientosController extends AppController {
                 'Movimiento',
             ],
             'conditions' => [
-                'Asiento.tipoasiento'=> 'bancos',
+                'Asiento.tipoasiento'=> ['bancos','bancosretiros'],
                 'Asiento.periodo'=>$periodo,
                 'Asiento.cliente_id'=>$cliid
             ],
         ];
-        $asientoyacargado = $this->Asiento->find('first', $options);
+        $asientoyacargado = $this->Asiento->find('all', $options);
         //Vamos a agrupar y sumar las compras gravadas y las no gravadas
         $this->set(compact('cliid','cliente','periodo','cuentasclientes','asientoyacargado','movimientosbancarios'));
         if($this->request->is('ajax')){

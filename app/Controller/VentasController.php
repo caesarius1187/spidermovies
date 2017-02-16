@@ -685,6 +685,7 @@ class VentasController extends AppController {
 
 	}
 	public function importar($cliid=null,$periodo=null){
+		set_time_limit (360);
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');
 		$this->loadModel('Subcliente');

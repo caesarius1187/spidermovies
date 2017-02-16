@@ -18,7 +18,7 @@ class Cuenta extends AppModel {
 
 	public $cuentasDeBancoActivables = ['17','18','19','20','21','22','23','24','25','26','27'];
 	public $cuentasDeMovimientoBancarioAActivar = [
-		'5','16','251','1215','1216','1217','1218','1219','3279','3350','2545','2546','298','318','317'];
+		'5','16','251','1215','1216','1217','1218','1219','3279','3350','2545','2546','298','318','317','3379','2799'];
 
 	public $cuentasDeMovimientoBancario =
 		['5','16','17','18','19','20','21','22','23','24','25','26','27','251','286','298','316','317','318','333','1215',
@@ -30,7 +30,7 @@ class Cuenta extends AppModel {
 			'1600','1601','1602','1604','1605','1606','1607','1608','1609','2386','2387','2388','2391','2396','2400',
 			'2401','2402','2405','2410','2414','2415','2416','2419','2424','2428','2429','2430','2433','2438','2443',
 			'2444','2447','2452','2456','2460','2468','2472','2480','2484','2492','2496','2504','2508','2523','2545',
-			'2546','2585','3279','3350'];
+			'2546','2585','3279','3350','3379','2799'];
 	
 	public $cuentasComisionGastosInteresesOtros = [
 		'2386','2387','2388','2391','2396','2400','2401','2402','2405','2410','2414','2415','2416','2419','2424','2428',
@@ -39,7 +39,7 @@ class Cuenta extends AppModel {
 	];
 
 
-    public $cuentasdeIVA = ['1467','287','290','286','288','289','2344','1468'];/*falta el del decreto 814*/
+    public $cuentasdeIVA = ['1467','287','290','286','288','289','2344','1468','3332'];
     //210401401	IVA - Débito Fiscal General
     //110403402	IVA - Saldo a Favor Técnico
     //110403406	IVA - Saldo a Favor Libre Disp
@@ -59,7 +59,7 @@ class Cuenta extends AppModel {
 //    110405102	Act. Vs. - Percepciones 		43,73
 //    210403101	Actividades Varias a Pagar		534,83
 
-    public $cuentasdeActEconomicas = ['2577','319','313','316','1492'];
+    public $cuentasdeActEconomicas = ['2577','319','313','316','1492','3378'];
     //506210001	Ingresos Brutos Capital Federal	0,00	0
     //110404301	I.I.B.B. - Saldo a Favor Capital Federal	0,00	0
     //110404101	I.I.B.B. - Retenciones Capital Federal	0	0,00
@@ -67,10 +67,8 @@ class Cuenta extends AppModel {
     //210402101	Ingresos Brutos a Pagar	0,00	0,00
 
     public $cuentasdeSUSS = ['2250','2253','2254','2255','2256',
-        '2257','2345',
-        '307','1383','1384','1419','1420','1421','1422','1423',
-        '1500','1378',
-        '3338','1427'];
+        '2257','2345','307','1383','1384','1419','1420','1421',
+		'1422','1423','1500','1378','3338','1427','2277'];
 	//503020001 Mano de Obra Capital Federal
 	//503030001	Contr. Seg. Social
 	//503030002	Contr. Obra Social
@@ -92,11 +90,19 @@ class Cuenta extends AppModel {
 
     //608100099	Beneficios Fiscales
 
+	//Cuentas de Contribuciones de sindicatos en PASIVO
+	public $cuentasdeSUSSContribucionesSindicatosPASIVO = [
+		'1424','1425','1426','1427','1428','1429','1430','1431'
+		,'1432','1433','1434','1435','1436','1437','1438','1439'
+		,'1440','1441','1442','1443'
+	];
+
+	//Cuentas de Contribuciones de sindicatos en PERDIDA
 
     public $cuentasdeSUSSContribucionesSindicatos = [
 		'2258','2259',
         '2260','2261','2262','2263','2264','2265','2266','2267','2268','2269',
-        '2270','2271','2272','2273','2274','2275','2276','2277','2278','2279',
+        '2270','2271','2272','2273','2274','2275','2276','2278','2279',
         '2280','2281','2282','2283'];
     //503030009	Contr. Seg. De Vida Oblig. Mercantil
     //503030042	Contr. UTHGRA

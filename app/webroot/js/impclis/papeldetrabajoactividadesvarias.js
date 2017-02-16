@@ -1,5 +1,12 @@
 $(document).ready(function() {
 	$( "#clickExcel" ).click(function() {
+		$("#pdtactividadesvarias").prepend(
+    		$("<tr>").append(
+				$("<td>")
+					.attr("colspan","25")
+					.html($('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"ActividadesVarias")
+    			)
+    		);
 		$("#pdtactividadesvarias").table2excel({
 			// exclude CSS class
 			exclude: ".noExl",
@@ -145,8 +152,15 @@ function cargarAsiento(){
     // 110405103	Act. Vs. - Saldo a Favor
     if($('#cuenta334').length > 0){
         var orden = $('#cuenta334').attr('orden');
-        var totalafavor = $("#totalafavor").val();
-        $('#Asiento0Movimiento'+orden+'Debe').val(totalafavor);
+        var totalafavor = parseFloat($("#totalafavor").val());
+        var totalafavorperiodoanterior =  parseFloat($("#totalafavorperiodoanterior").val());
+		var diferencia = totalafavor-totalafavorperiodoanterior;
+		if(diferencia>0){
+			$('#Asiento0Movimiento'+orden+'Debe').val(diferencia);
+		}else{
+			$('#Asiento0Movimiento'+orden+'Haber').val(diferencia*-1);
+		}
+
     }
     // 110405101	Act. Vs. - Retenciones
     if($('#cuenta332').length > 0){

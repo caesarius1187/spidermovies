@@ -45,7 +45,7 @@
         <div style="width:auto; float: left;">
             <a id="aExportarFacturas" href="#" class="buttonImpcli" style="margin-right: 8px;width: initial;"
                onclick="downloadInnerHtml('<?php echo $cliente["Cliente"]['nombre']."-".$periodo; ?>retencionessifere.txt','divFacturas','text/html')">
-                Descargar Percepciones IIBB
+                Descargar Retenciones IIBB
             </a>
         </div>
     </div>

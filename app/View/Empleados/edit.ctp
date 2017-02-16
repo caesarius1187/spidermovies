@@ -22,6 +22,14 @@
 			'default'=>$this->request->data['Empleado']['fechaingreso']?$this->request->data['Empleado']['fechaingreso']:null,
 			'readonly'=>'readonly')
 	);
+	echo $this->Form->input('fechaaltaedit', array(
+			'class'=>'datepicker',
+			'type'=>'text',
+			'label'=>'Alta',
+			'required'=>true,
+			'default'=>$this->request->data['Empleado']['fechaalta']?$this->request->data['Empleado']['fechaalta']:null,
+			'readonly'=>'readonly')
+	);
 	echo $this->Form->input('fechaegresoedit', array(
 			'class'=>'datepicker',
 			'type'=>'text',
@@ -32,6 +40,7 @@
 	//Debugger::dump($puntosdeventas);
 	echo $this->Form->input('domicilio_id',array('label'=>'Domicilio','options'=>$domicilios));
 	echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
+	echo $this->Form->input('cargo_id',array('label'=>'Cargo', 'required'=>true,));
 	echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
 	echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial'));
 	echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));

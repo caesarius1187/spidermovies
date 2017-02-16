@@ -693,6 +693,8 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
                                  )
                              );
                              $i++;
+                             if($i>100)
+                                die("1");
                              ?>
                          </div>
                          <?php

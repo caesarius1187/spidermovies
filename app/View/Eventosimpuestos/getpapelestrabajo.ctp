@@ -1,3 +1,35 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".inputWithTwoDecimals").each(function () {
+            $(this).change(setTwoNumberDecimal);
+        });
+        $(".inputMontovto").each(function () {
+            $(this).change(addTolblTotalAPagar);
+        });
+        $(".inputMonc").each(function () {
+            $(this).change(addTolblTotalAFavor);
+        });
+    });
+    function setTwoNumberDecimal(event) {
+        this.value = parseFloat(this.value).toFixed(2);
+    }
+    function addTolblTotalAPagar(event) {
+//        $("#lblTotalAPagar").val(0) ;
+        var montovtosubtotal = 0;
+        $(".inputMontovto").each(function () {
+            montovtosubtotal = montovtosubtotal*1 + this.value*1;
+        });
+        $("#lblTotalAPagar").text(parseFloat(montovtosubtotal).toFixed(2)) ;
+    }
+    function addTolblTotalAFavor(event) {
+//        $("#lblTotalAFavor").val(0) ;
+        var moncsubtotal = 0;
+        $(".inputMonc").each(function () {
+            moncsubtotal = moncsubtotal*1 + this.value*1;
+        });
+        $("#lblTotalAFavor").text(parseFloat(moncsubtotal).toFixed(2)) ;
+    }
+</script>
 <div class="index_pdt" style="border-color: #FFF">
     <?php
     $labelClifch = $cliente['Cliente']['nombre'];
@@ -160,6 +192,9 @@
 <div id="divPrepararPapelesDeTrabajo" class="tareapapeldetrabajo index_pdt">
     <div id="form_prepararPapeles" class="prepararPapeles"  style="float: left; width:100%">
         <?php
+        $totalAPagar=0;
+        $totalAFavor=0;
+
         //Aca vamos a personalizar distintos formularios dependiendo de que impuesto sea el que necesitamos ejecutar, ya que si bien son parecidos algunos de ellos tienen particularidades
         ?>
         <div id="divVencimiento" style="margin-bottom: 20px;">
@@ -216,6 +251,8 @@
                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
                     $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+                    $totalAPagar+=$montovto;
+                    $totalAFavor+=$montoc;
 
                 }
                 echo $this->Form->input('Eventosimpuesto.0.id',array('type'=>'hidden','value'=>$eventoid,));
@@ -229,10 +266,22 @@
                                                   'style'=>'width:80px',
                                                   'value'=>date('d-m-Y',strtotime($fchvto)),
                                                   ));
-                echo $this->Form->input('Eventosimpuesto.0.montovto',array('label'=>'Monto a Pagar','default'=>"0", 'style'=>'width:113px','value'=>$montovto,));
+                echo $this->Form->input('Eventosimpuesto.0.montovto',[
+                    'label'=>'Monto a Pagar',
+                    'default'=>"0",
+                    'style'=>'width:113px',
+                    'value'=>$montovto,
+                    'class'=>'inputWithTwoDecimals inputMontovto',
+                ]);
                 //los sindicatos no tienen monto a favor ni el impuesto Autonomo(id=14)
                 if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14/*Imp: Autonomo*/){
-                    echo $this->Form->input('Eventosimpuesto.0.monc',array('label'=>'Monto a Favor','default'=>"0",'style'=>'width:113px','value'=>$montoc));
+                    echo $this->Form->input('Eventosimpuesto.0.monc',[
+                        'label'=>'Monto a Favor',
+                        'default'=>"0",
+                        'style'=>'width:113px',
+                        'class'=>'inputWithTwoDecimals inputMonc',
+                        'value'=>$montoc]
+                    );
                 }
                 echo $this->Form->input('Eventosimpuesto.0.descripcion',array('default'=>"-", 'style'=>'width:100px','value'=>$descripcion));
 
@@ -274,20 +323,29 @@
                             $montoc = 0;
                             $descripcion = '';
                             $mybaseprorrateada = array();
+                            $repetido = 0;
                             foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada estprovincia
                                 if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
                                     $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
                                 }
                                 if($eventosimpuesto['Eventosimpuesto']['partido_id']==$impcliprovincia['partido_id']){
+                                    $repetido++;
+                                    if($repetido>1){
+                                        $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                                    }else{
+                                        $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+                                    }
                                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
                                     $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
-                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+
                                     if(isset($eventosimpuesto['Basesprorrateada'])){
                                         $mybaseprorrateada = $eventosimpuesto['Basesprorrateada'];
                                     }
+                                    $totalAPagar+=$montovto;
+                                    $totalAFavor+=$montoc;
                                 }
                             }
                             //hay que mostrar un formulario para cada provincia que este dada de alta en estos impuestos
@@ -303,10 +361,21 @@
                                                               'style'=>'width:80px',
                                                               'value'=>date('d-m-Y',strtotime($fchvto)),
                                                               ));
-                            echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.montovto',array('label'=>$eventoPos==0?'Monto a Pagar':'','default'=>$montovto, 'style'=>'width:113px'));
+                            echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.montovto',[
+                                'label'=>$eventoPos==0?'Monto a Pagar':'',
+                                'default'=>$montovto,
+                                'style'=>'width:113px',
+                                'class'=>'inputWithTwoDecimals inputMontovto',
+                            ]);
                             //los sindicatos no tienen monto a favor ni el impuesto Autonomo(id=14)
                             if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14/*Imp: Autonomo*/){
-                                echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.monc',array('label'=>$eventoPos==0?'Monto a Favor':'','default'=>$montoc,'style'=>'width:113px'));
+                                echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.monc',[
+                                    'label'=>$eventoPos==0?'Monto a Favor':'',
+                                    'default'=>$montoc,
+                                    'style'=>'width:113px',
+                                    'class'=>'inputWithTwoDecimals inputMonc',
+                                    ]
+                                );
                             }
                             $eventoPosBase=0;
                             //vamos a crear una base prorrateada para cada actividad para cada provincia (o sea para cada eventoimpuesto)
@@ -383,10 +452,21 @@
                                                           'style'=>'width:80px',
                                                           'value'=>date('d-m-Y',strtotime($fchvto)),
                                                           ));
-                        echo $this->Form->input('Eventosimpuesto.0.montovto',array('label'=>'Monto a Pagar','default'=>"0", 'style'=>'width:113px'));
+                        echo $this->Form->input('Eventosimpuesto.0.montovto',[
+                            'label'=>'Monto a Pagar',
+                            'default'=>"0",
+                            'style'=>'width:113px',
+                            'class'=>'inputWithTwoDecimals inputMontovto',
+                        ]);
                         //los sindicatos no tienen monto a favor ni el impuesto Autonomo(id=14)
                         if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14/*Imp: Autonomo*/){
-                            echo $this->Form->input('Eventosimpuesto.0.monc',array('label'=>'Monto a Favor','default'=>"0",'style'=>'width:113px'));
+                            echo $this->Form->input('Eventosimpuesto.0.monc',[
+                                'label'=>'Monto a Favor',
+                                'default'=>"0",
+                                'style'=>'width:113px',
+                                'class'=>'inputWithTwoDecimals inputMonc',
+                                ]
+                            );
                         }
                         echo $this->Form->input('Eventosimpuesto.0.descripcion',array('default'=>"-", 'style'=>'width:100px'));
                     break;
@@ -404,10 +484,21 @@
                                                       'style'=>'width:80px',
                                                       'value'=>date('d-m-Y',strtotime($fchvto)),
                                                       ));
-                    echo $this->Form->input('Eventosimpuesto.0.montovto',array('label'=>'Monto a Pagar','default'=>"0", 'style'=>'width:113px'));
+                    echo $this->Form->input('Eventosimpuesto.0.montovto',[
+                        'label'=>'Monto a Pagar',
+                        'default'=>"0",
+                        'style'=>'width:113px',
+                        'class'=>'inputWithTwoDecimals inputMontovto',
+                    ]);
                     //los sindicatos no tienen monto a favor ni el impuesto Autonomo(id=14)
                     if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14/*Imp: Autonomo*/){
-                        echo $this->Form->input('Eventosimpuesto.0.monc',array('label'=>'Monto a Favor','default'=>"0",'style'=>'width:113px'));
+                        echo $this->Form->input('Eventosimpuesto.0.monc',[
+                            'label'=>'Monto a Favor',
+                            'default'=>"0",
+                            'style'=>'width:113px',
+                            'class'=>'inputWithTwoDecimals inputMonc',
+                            ]
+                        );
                     }
                     echo $this->Form->input('Eventosimpuesto.0.descripcion',array('default'=>"-", 'style'=>'width:100px'));
                 }
@@ -436,6 +527,8 @@
                                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
                                     $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+                                    $totalAPagar+=$montovto;
+                                    $totalAFavor+=$montoc;
                                 }
                             }
                             //hay que mostrar un formulario para cada provincia que este dada de alta en estos impuestos
@@ -451,10 +544,21 @@
                                                               'style'=>'width:80px',
                                                               'value'=>date('d-m-Y',strtotime($fchvto)),
                                                               ));
-                            echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.montovto',array('label'=>$eventoPos==0?'Monto a Pagar':'','default'=>$montovto, 'style'=>'width:113px'));
+                            echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.montovto',[
+                                'label'=>$eventoPos==0?'Monto a Pagar':'',
+                                'default'=>$montovto,
+                                'style'=>'width:113px',
+                                'class'=>'inputWithTwoDecimals inputMontovto',
+                            ]);
                             //los sindicatos no tienen monto a favor ni el impuesto Autonomo(id=14)
                             if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14/*Imp: Autonomo*/){
-                                echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.monc',array('label'=>$eventoPos==0?'Monto a Favor':'','default'=>$montoc,'style'=>'width:113px'));
+                                echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.monc',[
+                                    'label'=>$eventoPos==0?'Monto a Favor':'',
+                                    'default'=>$montoc,
+                                    'style'=>'width:113px',
+                                    'class'=>'inputWithTwoDecimals inputMonc',
+                                    ]
+                                );
                             }
                             $eventoPos++;
                             echo "</br>";
@@ -474,7 +578,12 @@
                                                           'style'=>'width:80px',
                                                           'value'=>date('d-m-Y',strtotime($fchvto)),
                                                           ));
-                        echo $this->Form->input('Eventosimpuesto.0.montovto',array('label'=>'Monto a Pagar','default'=>"0", 'style'=>'width:113px'));
+                        echo $this->Form->input('Eventosimpuesto.0.montovto',[
+                            'label'=>'Monto a Pagar',
+                            'default'=>"0",
+                            'style'=>'width:113px',
+                            'class'=>'inputWithTwoDecimals inputMontovto',
+                        ]);
                         //los sindicatos no tienen monto a favor ni el impuesto Autonomo(id=14)
                         if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14/*Imp: Autonomo*/){
                             echo $this->Form->input('Eventosimpuesto.0.monc',array('label'=>'Monto a Favor','default'=>"0",'style'=>'width:113px'));
@@ -496,10 +605,20 @@
                                                       'style'=>'width:80px',
                                                       'value'=>date('d-m-Y',strtotime($fchvto)),
                                                       ));
-                    echo $this->Form->input('Eventosimpuesto.0.montovto',array('label'=>'Montos a Pagar','default'=>"0", 'style'=>'width:113px'));
+                    echo $this->Form->input('Eventosimpuesto.0.montovto',[
+                        'label'=>'Montos a Pagar',
+                        'default'=>"0",
+                        'style'=>'width:113px',
+                        'class'=>'inputWithTwoDecimals inputMontovto',
+                    ]);
                     //los sindicatos no tienen monto a favor ni el impuesto Autonomo(id=14)
                     if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14/*Imp: Autonomo*/){
-                        echo $this->Form->input('Eventosimpuesto.0.monc',array('label'=>'Monto a Favor','default'=>"0",'style'=>'width:113px'));
+                        echo $this->Form->input('Eventosimpuesto.0.monc',[
+                            'label'=>'Monto a Favor',
+                            'default'=>"0",
+                            'style'=>'width:113px',
+                            'class'=>'inputWithTwoDecimals inputMonc',
+                        ]);
                     }
                     echo $this->Form->input('Eventosimpuesto.0.descripcion',array('default'=>"-", 'style'=>'width:100px'));
                   }
@@ -543,6 +662,8 @@
                             $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
                             $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
                             $eventosimpuestoUsosaldo = $eventosimpuestos[$key]['Usosaldo'];
+                            $totalAPagar+=$montovto;
+                            $totalAFavor+=$montoc;
                         }
                     }
                     echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.id',array('type'=>'hidden','value'=>$eventoid));
@@ -553,7 +674,7 @@
                         'type'=>'select',
                         'options'=>$itemsACompletar,
                         'default'=>$keyOS,
-                        'disabled'=>'disabled',
+//                        'disabled'=>'disabled',
                         'title'=>$valueOS,
                         'class'=>'inputtodisable',
                         'label'=>$eventoPos==0?'Item':'')
@@ -565,9 +686,21 @@
                                                                 'style'=>'width:80px',
                                                                 'value'=>date('d-m-Y',strtotime($fchvto)),
                                                               ));
-                    echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.montovto',array('label'=>$eventoPos==0?'Monto a Pagar':'','default'=>"0", 'style'=>'width:113px','value'=>$montovto));
+                    echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.montovto',[
+                        'label'=>$eventoPos==0?'Monto a Pagar':'',
+                        'default'=>"0",
+                        'style'=>'width:113px',
+                        'value'=>$montovto,
+                        'class'=>'inputWithTwoDecimals inputMontovto',
+                    ]);
                     if($daAFavor) {
-                        echo $this->Form->input('Eventosimpuesto.' . $eventoPos . '.monc', array('label' => $eventoPos==0?'Monto a Favor':'', 'default' => "0", 'style' => 'width:113px', 'value' => $montoc)) . "</br>";
+                        echo $this->Form->input('Eventosimpuesto.' . $eventoPos . '.monc', [
+                            'label' => $eventoPos==0?'Monto a Favor':'',
+                            'default' => "0",
+                            'style' => 'width:113px',
+                            'value' => $montoc,
+                            'class'=>'inputWithTwoDecimals inputMonc',
+                            ]) . "</br>";
                     }
 
                     $eventoPos++;
@@ -633,12 +766,28 @@
             }else{
 
             }
-        }  	     
-	     echo '<div style="width:100%; float:right;"><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
+        }
+        echo $this->Form->label('','Total a pagar: $',[
+            'style'=>"display: inline;"
+        ]);
+        echo $this->Form->label('lblTotalAPagar',
+            number_format($totalAPagar, 2, ",", "."),
+            [
+                'id'=>'lblTotalAPagar',
+                'style'=>"display: inline;"
+            ]
+        );
+        echo $this->Form->label('',' Total a favor: $',['style'=>"display: inline;"]);
+        echo $this->Form->label('lblTotalAFavor',
+                number_format($totalAFavor, 2, ",", "."),
+                [
+                    'id'=>'lblTotalAFavor',
+                    'style'=>"display: inline;"
+                ]
+        );
 
-         echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a></div>'
-       ;?>
-	    <?php
+	    echo '<div style="width:100%; float:right;"><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
+        echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a></div>';
         if(isset($itemsACompletar)){
             echo $this->Form->input('Eventosimpuesto.0.cantItems', array('type'=>'hidden','value'=>count($itemsACompletar)));
             echo $this->Form->input('Eventosimpuesto.0.jsonItems', array('type'=>'hidden','value'=>json_encode($itemsACompletar)));
@@ -726,6 +875,7 @@
             </table>
         <?php } ?>
 	</div>
+
 </div><?php /*Fin Preparar Papeles de Trabajo*/?>
 <div id="divContabilidadImpuestos"  class="tareaContabilidadImpuestos index_pdt" style="display:none;">
 </div>

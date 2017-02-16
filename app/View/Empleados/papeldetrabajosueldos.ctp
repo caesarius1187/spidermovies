@@ -40,6 +40,24 @@
             ),
             array()
         );
+        echo $this->Form->button(
+            "Libro de Sueldo PQ",
+            array(
+                'class'=>'btn_sueldo',
+                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',1)",
+                'id'=>'buttonLibroSueldo',
+            ),
+            array()
+        );
+        echo $this->Form->button(
+            "Recibo de Sueldo PQ",
+            array(
+                'class'=>'btn_sueldo',
+                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',1)",
+                'id'=>'buttonReciboSueldo',
+            ),
+            array()
+        );
     }
     if($empleado['Empleado']['liquidasegundaquincena']){
         $classAMostrar="btn_cargarliq";
@@ -58,6 +76,24 @@
             ),
             array()
         );
+        echo $this->Form->button(
+            "Libro de Sueldo SQ",
+            array(
+                'class'=>'btn_sueldo',
+                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',2)",
+                'id'=>'buttonLibroSueldo',
+            ),
+            array()
+        );
+        echo $this->Form->button(
+            "Recibo de Sueldo SQ",
+            array(
+                'class'=>'btn_sueldo',
+                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',2)",
+                'id'=>'buttonReciboSueldo',
+            ),
+            array()
+        );
     }
     if($empleado['Empleado']['liquidamensual']) {
         $classAMostrar = "btn_cargarliq";
@@ -73,6 +109,24 @@
                 'class' => $classAMostrar,
                 'onClick' => "cargarSueldoEmpleado('" . $empleado['Empleado']['cliente_id'] . "','" . $periodo . "','" . $empleado['Empleado']['id'] . "',3)",
                 'id' => 'buttonQuincena1',
+            ),
+            array()
+        );
+        echo $this->Form->button(
+            "Libro de Sueldo M",
+            array(
+                'class'=>'btn_sueldo',
+                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',3)",
+                'id'=>'buttonLibroSueldo',
+            ),
+            array()
+        );
+        echo $this->Form->button(
+            "Recibo de Sueldo M",
+            array(
+                'class'=>'btn_sueldo',
+                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',3)",
+                'id'=>'buttonReciboSueldo',
             ),
             array()
         );
@@ -131,24 +185,7 @@
             array()
         );
     }
-    echo $this->Form->button(
-        "Libro de Sueldo",
-        array(
-            'class'=>'btn_sueldo',
-            'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."')",
-            'id'=>'buttonLibroSueldo',
-        ),
-        array()
-    );
-    echo $this->Form->button(
-        "Recibo de Sueldo",
-        array(
-            'class'=>'btn_sueldo',
-            'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."')",
-            'id'=>'buttonReciboSueldo',
-        ),
-        array()
-    );
+
      echo $this->Form->create('Valorrecibo',array(
          'class'=>'formTareaCarga',
          'inputDefaults' => array(
@@ -294,16 +331,30 @@
 
                             }
                             switch ($conceptoobligatorio['Concepto']['id']){
-                                case 11:/*Periodo*/
+                                case 9:/*Precio de la Hora*/
+                                    /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                      tiene un precio de la hora cargado*/
+                                    if(isset($empleado['Cargo']['preciohora'])&&$empleado['Cargo']['preciohora']*1!=0){
+                                        $valor = $empleado['Cargo']['preciohora']*1;
+                                    }
+                                    break;
+                                case 10:/*Jornal*/
+                                    /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                      tiene un jornal cargado*/
+                                    if(isset($empleado['Cargo']['jornal'])&&$empleado['Cargo']['jornal']*1!=0){
+                                        $valor = $empleado['Cargo']['jornal']*1;
+                                    }
+                                    break;
+                                case 11:/*Jornada*/
                                     $valor = $empleado['Empleado']['jornada'];
+                                    break;
+                                case 16:/*Ingreso*/
+                                    $valor = $empleado['Empleado']['fechaingreso'];
                                     break;
                                 case 17:/*Periodo*/
                                     $pemes = substr($periodo, 0, 2);
                                     $peanio = substr($periodo, 3);
                                     $valor = date("Y-m-d",(mktime(0,0,0,$pemes+1,1,$peanio)-1));
-                                    break;
-                                case 16:/*Ingreso*/
-                                    $valor = $empleado['Empleado']['fechaingreso'];
                                     break;
                                 case 33:/*Obra Social*/
                                     //$conceptoobligatorio['nombre'] = $empleado['Empleado']['obrasocial'];
@@ -316,6 +367,34 @@
                                     break;
                                 case 39:/*Afiliado al Sindicato*/
                                     $valor = $empleado['Empleado']['afiliadosindicato'];
+                                    break;
+                                case 52:/*Sueldo basico*/
+                                        /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo 
+                                        tiene un sueldo basico cargado*/
+                                        if(isset($empleado['Cargo']['sueldobasico'])&&$empleado['Cargo']['sueldobasico']*1!=0){
+                                            $valor = $empleado['Cargo']['sueldobasico']*1;
+                                        }
+                                    break;
+                                case 53:/*Acuerdos No Remunerativos*/
+                                        /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                        tiene un Acuerdos No Remunerativos cargado*/
+                                        if(isset($empleado['Cargo']['acuerdonoremunerativo'])&&$empleado['Cargo']['acuerdonoremunerativo']*1!=0){
+                                            $valor = $empleado['Cargo']['acuerdonoremunerativo']*1;
+                                        }
+                                    break;
+                                case 54:/*Sueldo Sereno(UOCRA)*/
+                                        /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                        tiene un sueldo sereno cargado*/
+                                        if(isset($empleado['Cargo']['sueldosereno'])&&$empleado['Cargo']['sueldosereno']*1!=0){
+                                            $valor = $empleado['Cargo']['sueldosereno']*1;
+                                        }
+                                    break;
+                                case 126:/*Acuerdos Remunerativos*/
+                                        /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                        tiene un Acuerdos Remunerativos cargado*/
+                                        if(isset($empleado['Cargo']['acuerdoremunerativo'])&&$empleado['Cargo']['acuerdoremunerativo']*1!=0){
+                                            $valor = $empleado['Cargo']['acuerdoremunerativo']*1;
+                                        }
                                     break;
                                 case 134:/*cuota sindical extra 4*/
                                     /*si el impcli al que pertenece el convenio es SEC entonces vamos a preguntar si

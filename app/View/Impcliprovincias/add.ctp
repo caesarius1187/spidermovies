@@ -175,32 +175,34 @@ if($mostrarLista&&!isset($error)){ ?>
  				<td>Acciones</td>
 	    	</thead>
 	    	<tbody>
-	         <?php
+		 	<?php
 	            foreach ($impcliprovincias as $impcliprovincia) { ?>
          			<tr id="#rowImpcliProvincia<?php echo $impcliprovincia['Impcliprovincia']['id']; ?>">  
 						<?php if($cargarProvincia){?>
-         				<td><?php echo $impcliprovincia['Partido']['nombre'];?></td>
+						<td><?php echo $impcliprovincia['Partido']['nombre'];?></td>
 						<?php }else{ ?>
-         				<td><?php echo $impcliprovincia['Localidade']['nombre'];?></td>
+						<td><?php echo $impcliprovincia['Localidade']['nombre'];?></td>
 						<?php } ?>
-
          				<td><?php echo $impcliprovincia['Impcliprovincia']['ano'];?></td>
 						<td><?php echo $impcliprovincia['Impcliprovincia']['coeficiente'];?></td>
 						<td><?php echo $impcliprovincia['Impcliprovincia']['minimo'];?></td>
          				<td><?php echo $impcliprovincia['Impcliprovincia']['sede']? 'SI':'NO';?></td>
          				<td><?php echo $impcliprovincia['Impcliprovincia']['ejercicio'];?></td>
          				<?php
-							foreach ($impcliprovincia['Encuadrealicuota'] as $key => $encuadrealicuota) {
+						foreach ($impcliprovincia['Encuadrealicuota'] as $key => $encuadrealicuota) {
 							echo "<td>".$encuadrealicuota['alicuota']."</td>";
-							}
+						}
 						?>
-         				<td> 
+         				<td>
          					<a href="#"  onclick="deleteImpcliProvincia(<?php echo $impcliprovincia['Impcliprovincia']['id']; ?>)" class="button_view"> 
                                  <?php echo $this->Html->image('delete.png', array('alt' => 'open','title' => 'Eliminar','class'=>'imgedit'));?>
                             </a>
+							<a href="#"  onclick="editImpcliProvincia('<?php echo $impcliprovincia['Impcliprovincia']['id']?>','<?php echo $impcliprovincia['Impcliprovincia']['impcli_id']?>')" class="button_view">
+								<?php echo $this->Html->image('edit.png', array('alt' => 'open','title' => 'Eliminar','class'=>'imgedit'));?>
+							</a>
                     	</td>
          			</tr>            
-	           <?php } ?>
+		   	<?php } ?>
 	    	</tbody>
 	</table>
 <?php }?>

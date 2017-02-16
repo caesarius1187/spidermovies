@@ -151,6 +151,21 @@ if(isset($error)){ ?>
                 }
                 $debe = $cuenta110405102;
                 break;
+            case '316'/*110404201 IIBB Percepciones*/:
+                $cuenta110404201 = 0;
+                //Cargar la compra actvspercep
+                foreach ($comprasgravadas as $comprasgravada) {
+                    if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
+                        continue;
+                    }
+                    $suma = 1;
+                    if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                        $suma=-1;
+                    }
+                    $cuenta110404201+=$comprasgravada[0]['iibbpercep']*$suma;
+                }
+                $debe = $cuenta110404201;
+                break;
             case '352'/*110499001 Provedores */:
                 $cuenta110499001 = 0;
                 //Cargar la compra ivapercep

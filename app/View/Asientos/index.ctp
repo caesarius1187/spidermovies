@@ -16,12 +16,14 @@
 echo $this->Html->script('asientos/index',array('inline'=>false));
 ?>
 
-<div style="width:98%; margin:1%; height:20px">
-	<div style="float:left"> Cliente: &nbsp;</div>
-	<div style="float:left">
-		<?php
-		echo $cliente['Cliente']['nombre']; ?>
-		<input id="hdnClienteId" type="hidden" value="<?php echo $cliente['Cliente']['id']; ?>" />
+<div class="index" style="padding: 0px 1%; margin-bottom: 10px;" id="headerCliente">
+	<div style="width:30%; float: left;padding-top:10px">
+		Cliente: <?php echo $cliente["Cliente"]['nombre'];
+		echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);?>
+	</div>
+	<div style="width:25%; float: left;padding-top:10px">
+		Periodo: <?php echo $periodo;
+		echo $this->Form->input('periododefault',['type'=>'hidden','value'=>$periodo])?>
 	</div>
 </div>
 <div class="index" style="float:none;">
@@ -48,6 +50,7 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 		<thead>
 		<tr>
 			<th>Asiento</th>
+			<th>Periodo</th>
 			<th>fecha Asiento</th>
 			<th>Cuenta</th>
 			<th>Debe</th>
@@ -58,6 +61,7 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 		</thead>
 		<tfoot>
 		<tr>
+			<th></th>
 			<th></th>
 			<th></th>
 			<th></th>
@@ -76,6 +80,9 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 					<?php echo $asiento['Asiento']['descripcion']; ?>
 				</td>
 				<td>
+					<?php echo $asiento['Asiento']['periodo']; ?>
+				</td>
+				<td>
 					<?php echo $asiento['Asiento']['fecha']; ?>
 				</td>
 				<td>
@@ -90,13 +97,13 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 				}
 				?>
 				<td>
-					<?php echo $debe; ?>
+					<?php echo number_format($debe, 2, ",", "."); ?>
 				</td>
 				<td>
-					<?php echo $haber; ?>
+					<?php echo number_format($haber, 2, ",", "."); ?>
 				</td>
 				<td>
-					<?php echo $debe-$haber; ?>
+					<?php echo number_format($debe-$haber, 2, ",", "."); ?>
 				</td>
 				<td class="actions">
 					<?php
@@ -133,14 +140,23 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 </div>
 <!-- /.modal -->
 <?php
+$hiddenCuentasValue= "";
+$hiddenDebe=0;
+$hiddenHaber=0;
+
+if(isset($movimiento['cuentascliente_id'])){
+	$hiddenCuentasValue= $movimiento['cuentascliente_id'];
+	$hiddenDebe=$movimiento['debe'];
+	$hiddenHaber=$movimiento['haber'];
+}
 echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
-[
-'type'=>'select',
-'options'=>$cuentasclientes,
-'value'=>$movimiento['cuentascliente_id'],
-'class'=>'chosen-select',
-'div'=>['style'=>'display:none'],
-]);?>
+	[
+		'type'=>'select',
+		'options'=>$cuentasclientes,
+		'value'=>$hiddenCuentasValue ,
+		'class'=>'chosen-select',
+		'div'=>['style'=>'display:none'],
+	]);?>
 <!-- Popin Modal para Agregar Asientos-->
 <div class="modal fade" id="myModalFormAgregarAsiento" tabindex="-1" role="dialog">
 	<div class="modal-dialog" style="width:90%;">
@@ -170,6 +186,9 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
 					echo $this->Form->input('Asiento.0.nombre',
 						['value'=>"",'required'=>"required",
 							'style'=>"width:300px"]);
+					echo $this->Form->input('Asiento.0.periodo',
+						['value'=>$periodo,'type'=>"hidden",
+							'style'=>"width:300px"]);
 					echo $this->Form->input('Asiento.0.descripcion',
 						['value'=>"",
 							'required'=>"required",
@@ -195,7 +214,7 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
 									['value'=>0]);
 								echo $this->Form->input('Asiento.0.Movimiento.kkk.cuentascliente_id',
 									[
-										'value'=>$movimiento['cuentascliente_id'],
+										'value'=>$hiddenCuentasValue,
 										'class'=>'chosen-select',
 									]);
 
@@ -206,12 +225,13 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
 										'type'=>'hidden',
 										'class'=>"datepicker",
 									]);
+
 								echo $this->Form->input('Asiento.0.Movimiento.kkk.debe',
-									['value'=>$movimiento['debe'],
+									['value'=>$hiddenDebe,
 										'style'=>"width:auto",
 										'label'=>'Debe']);
 								echo $this->Form->input('Asiento.0.Movimiento.kkk.haber',
-									['value'=>$movimiento['haber'],
+									['value'=>$hiddenHaber,
 										'style'=>"width:auto",
 										'label'=>'Haber']);
 

@@ -143,36 +143,37 @@ class EmpleadosController extends AppController {
 		}
 		$optionsempleados = array(
 			'contain'=>array(
-					'Conveniocolectivotrabajo'=>array(
-						'Cctxconcepto'=>array(
-							'Concepto',
-							'Valorrecibo'=>array(
-								'conditions'=>array(
-									'Valorrecibo.empleado_id'=>$empleadoamostrar,
-                                    'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
-                                    'Valorrecibo.periodo'=>$periodo,
-								)
-							),
+				'Cargo',
+				'Conveniocolectivotrabajo'=>array(
+					'Cctxconcepto'=>array(
+						'Concepto',
+						'Valorrecibo'=>array(
 							'conditions'=>array(
-								'OR'=>array(
-									'AND'=>array(
-										'Cctxconcepto.cliente_id' => $cliid,
-										'Cctxconcepto.campopersonalizado' => 1,
-									),
-									'Cctxconcepto.campopersonalizado' => 0,
-								),
-							),
-							'order'=>array('Cctxconcepto.orden'),
+								'Valorrecibo.empleado_id'=>$empleadoamostrar,
+								'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
+								'Valorrecibo.periodo'=>$periodo,
+							)
 						),
-						'Impuesto'=>[
-							'Impcli'=>[
-								'conditions'=>[
-									'Impcli.cliente_id'=>$cliid
-								]
-							]
-						],
+						'conditions'=>array(
+							'OR'=>array(
+								'AND'=>array(
+									'Cctxconcepto.cliente_id' => $cliid,
+									'Cctxconcepto.campopersonalizado' => 1,
+								),
+								'Cctxconcepto.campopersonalizado' => 0,
+							),
+						),
+						'order'=>array('Cctxconcepto.orden'),
 					),
+					'Impuesto'=>[
+						'Impcli'=>[
+							'conditions'=>[
+								'Impcli.cliente_id'=>$cliid
+							]
+						]
+					],
 				),
+			),
 			'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)
 		);
 		$empleado = $this->Empleado->find('first', $optionsempleados);
@@ -262,7 +263,7 @@ class EmpleadosController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('papeldetrabajosueldos');
 	}
-    public function papeldetrabajolibrosueldo($empid=null,$periodo=null){
+    public function papeldetrabajolibrosueldo($empid=null,$periodo=null,$tipoliquidacion=null){
         $options = array(
             'contain'=>array(
                 'Domicilio'=>array(
@@ -285,7 +286,7 @@ class EmpleadosController extends AppController {
                     ),
                     'conditions'=>array(
                         'Valorrecibo.periodo'=>$periodo,
-                        'Valorrecibo.tipoliquidacion'=>array(1,2,3)
+						'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
                     )
                 ),
             ),
@@ -298,7 +299,7 @@ class EmpleadosController extends AppController {
         $this->layout = 'ajax';
         $this->render('papeldetrabajolibrosueldo');
     }
-    public function papeldetrabajorecibosueldo($empid=null,$periodo=null){
+    public function papeldetrabajorecibosueldo($empid=null,$periodo=null,$tipoliquidacion=null){
 		$this->loadModel('Vencimiento');
 		$this->loadModel('Impcli');
 		$this->loadModel('Impuesto');
@@ -338,8 +339,9 @@ class EmpleadosController extends AppController {
                     ),
                     'conditions'=>array(
                         'Valorrecibo.periodo'=>$periodo,
-                        'Valorrecibo.tipoliquidacion'=>array(1,2,3)
-                    )
+						'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
+
+					)
                 ),
             ),
             'conditions' => array('Empleado.id' => $empid)
@@ -468,10 +470,14 @@ class EmpleadosController extends AppController {
             if(isset($this->request->data['Empleado']['fechaingresoedit'])){
                 $this->request->data['Empleado']['fechaingreso']=$this->request->data['Empleado']['fechaingresoedit'];
             }
+			if(isset($this->request->data['Empleado']['fechaaltaedit'])){
+                $this->request->data['Empleado']['fechaalta']=$this->request->data['Empleado']['fechaaltaedit'];
+            }
             if(isset($this->request->data['Empleado']['fechaegresoedit'])){
                 $this->request->data['Empleado']['fechaegreso']=$this->request->data['Empleado']['fechaegresoedit'];
             }
 			$this->request->data('Empleado.fechaingreso',date('Y-m-d',strtotime($this->request->data['Empleado']['fechaingreso'])));
+			$this->request->data('Empleado.fechaalta',date('Y-m-d',strtotime($this->request->data['Empleado']['fechaalta'])));
 			if($this->request->data['Empleado']['fechaegreso']) {
 				$this->request->data('Empleado.fechaegreso', date('Y-m-d', strtotime($this->request->data['Empleado']['fechaegreso'])));
 			}
@@ -480,10 +486,10 @@ class EmpleadosController extends AppController {
 				if(!isset($respuesta['data']['Empleado']['id'])||$respuesta['data']['Empleado']['id']==''){
 					$respuesta['data']['Empleado']['id'] = $this->Empleado->getLastInsertID();
 				}
-				$respuesta['respuesta'] = 'Se ah guardado el empleado con exito';
+				$respuesta['respuesta'] = 'Se ha guardado el empleado con exito';
 			} else {
 				$respuesta['error'] = '1';
-				$respuesta['respuesta'] = 'NO se ah guardado el empleado con exito. Por favor intente de nuevo mas tarde.';
+				$respuesta['respuesta'] = 'NO se ha guardado el empleado con exito. Por favor intente de nuevo mas tarde.';
 			}
 		}
 		$this->set('respuesta',$respuesta);
@@ -503,6 +509,7 @@ class EmpleadosController extends AppController {
 	public function edit($id = null) {
 		$this->loadModel('Domicilio');
 		$this->loadModel('Conveniocolectivotrabajo');
+		$this->loadModel('Cargo');
 		if (!$this->Empleado->exists($id)) {
 			throw new NotFoundException(__('Invalid empleado'));
 		}
@@ -519,6 +526,18 @@ class EmpleadosController extends AppController {
 
 		$conveniocolectivotrabajos = $this->Conveniocolectivotrabajo->find('list');
 		$this->set('conveniocolectivotrabajos', $conveniocolectivotrabajos);
+
+		$this->set('cargos',$this->Cargo->find('list',[
+				'contain'=>[
+					'Conveniocolectivotrabajo'
+				],
+				'fields'=>[
+					'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
+				]
+			]
+		)
+		);
+
 		$this->autoRender=false;
 		$this->layout = 'ajax';
 		$this->render('edit');

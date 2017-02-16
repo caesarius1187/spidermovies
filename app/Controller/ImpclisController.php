@@ -133,12 +133,12 @@ class ImpclisController extends AppController {
                             $cuentasUnica1 = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;/*Contribuciones*/
                             $prenombres1[0] = "Cont.Seg. De Vida Oblig. Mercantil";
                             $postnombres1[0] = "";
-//                            $prenombres1[1] = "Cont.Seg. De Vida Oblig. Mercantil";
-//                            $postnombres1[1] = "A Pagar";
+//                          $prenombres1[1] = "Cont.Seg. De Vida Oblig. Mercantil";
+//                          $postnombres1[1] = "A Pagar";
 
-                            $prenombres2[0] = "Aporte";
-                            $postnombres2[0] = "";
-                            $cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Aportes*/
+							$cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Aportes*/
+							$prenombres2[0] = "Aporte";
+							$postnombres2[0] = "";
                             break;
                         case'155':/*UOM*/
                         case'25':/*UTHGRA*/
@@ -167,6 +167,15 @@ class ImpclisController extends AppController {
                         $cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Aportes*/
                         //$cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Contribuciones*/
                         break;
+						case '190':/*Segur de vida obligatorio SEC*/
+							$prenombres2[0] = "Aporte";
+							$postnombres2[0] = "";
+							$cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Aportes*/
+
+							$cuentasUnica1 = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;/*Contribuciones*/
+							$prenombres1[0] = "Contribucion";
+							$postnombres1[0] = "";
+							break;
 						/*Fin Sindicatos*/
                         default:
                             //Si es sindicato vamos a crear una cuenta ed aporte y conyt
@@ -406,7 +415,7 @@ class ImpclisController extends AppController {
 		$this->set('showTheForm',$this->request->is('post'));
 
 		$this->layout = 'ajax';
-		$categoriasmonotributos = array('B'=>'B','C'=>'C','D'=>'D','E'=>'E','F'=>'F','G'=>'G','H'=>'H','I'=>'I','J'=>'J','K'=>'K','L'=>'L');
+		$categoriasmonotributos = array('A'=>'A','B'=>'B','C'=>'C','D'=>'D','E'=>'E','F'=>'F','G'=>'G','H'=>'H','I'=>'I','J'=>'J','K'=>'K','L'=>'L');
 		$this->set(compact('categoriasmonotributos'));
 		$this->render('edit');	
 	}
@@ -798,7 +807,8 @@ class ImpclisController extends AppController {
 		// ya tenemos los array donde estan las provincias activadas, las de las compras y las de las ventas hay que compararlas y generar alertas para que
 		// el informe controle y no te deje avanzar hasta que el array de compras y de ventas este vacio
 		$provinciasVentasDiff = array_diff($provinciasVentas,$provinciasActivadas);
-		$provinciasComprasDiff = array_diff($provinciasCompras,$provinciasActivadas);
+		//Las compras no deben bloquear el calculod e este papel de trabajo;
+		$provinciasComprasDiff = []; // array_diff($provinciasCompras,$provinciasActivadas);
 		$this->set(compact('provinciasActivadas','provinciasVentas','provinciasCompras','provinciasVentasDiff','provinciasComprasDiff'));
 
         //Aca vamos a buscar si tiene Monotributo
@@ -1332,6 +1342,9 @@ class ImpclisController extends AppController {
         $this->layout = 'ajax';
     }
 	public function papeldetrabajosuss($impcliid=null,$periodo=null){
+
+		$this->Components->unload('DebugKit.Toolbar');
+
 		$this->loadModel('Empleado');
         $this->loadModel('Cuenta');
         $this->loadModel('Asiento');
@@ -1339,8 +1352,9 @@ class ImpclisController extends AppController {
         $cuentasdeSUSS = $this->Cuenta->cuentasdeSUSS;
         $asientodevengamientoSUSS = $this->Asiento->devengamientoSUSS;
         $contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
+        $contribucionesSindicatosPasivo = $this->Cuenta->cuentasdeSUSSContribucionesSindicatosPASIVO;
         $aportesSindicatos = $this->Cuenta->cuentasdeSUSSAportesSindicatos;
-        $this->set(compact('contribucionesSindicatos','aportesSindicatos'));
+        $this->set(compact('contribucionesSindicatos','contribucionesSindicatosPasivo','aportesSindicatos'));
 
         //El asiento devengamiento del 931 tambien incluye aportes y contribuciones de sindicatos
         $asientodevengamientoSUSS  = array_merge(
@@ -1358,16 +1372,18 @@ class ImpclisController extends AppController {
 
 		$options = array(
 			'contain'=>array(
-                'Impuesto'=>[
-                    'Asientoestandare'=>[
+				'Impuesto'=>[
+					'Asientoestandare'=>[
 						'conditions'=>[
 							'tipoasiento'=>'impuestos'
 						],
 						'Cuenta'
 					],
-                ],
+				],
 				'Asiento'=>[
-					'Movimiento'=>['Cuentascliente'],
+					'Movimiento'=>[
+						'Cuentascliente'
+					],
 					'conditions'=>[
 						'periodo'=>$periodo,
 						'tipoasiento'=>'impuestos'
@@ -1381,9 +1397,9 @@ class ImpclisController extends AppController {
 						]
 					],
 					'Empleado'=>array(
-                        'Conveniocolectivotrabajo'=>[
-                          'Impuesto'
-                        ],
+						'Conveniocolectivotrabajo'=>[
+							'Impuesto'
+						],
 						'Valorrecibo'=>array(
 							'Cctxconcepto'=>array(
 								'Concepto',
@@ -1475,29 +1491,29 @@ class ImpclisController extends AppController {
             )
         );
 
-        $cliente=$this->Cliente->find('first', array(
-                'contain'=>array(
-                    'Impcli'=>[
-                        'Periodosactivo'=>[
-                            'conditions'=>$conditionsImpCliHabilitados
-                        ],
-                        'conditions'=>['Impcli.impuesto_id'=>'4']
-                    ]
-                ),
-                'conditions' => array(
-                    'id' => $impcli['Cliente']['id'],
-                ),
-            )
-        );
+		$cliente=$this->Cliente->find('first', array(
+				'contain'=>array(
+					'Impcli'=>[
+						'Periodosactivo'=>[
+							'conditions'=>$conditionsImpCliHabilitados
+						],
+						'conditions'=>['Impcli.impuesto_id'=>'4']
+					]
+				),
+				'conditions' => array(
+					'id' => $impcli['Cliente']['id'],
+				),
+			)
+		);
 
         $tieneMonotributo=False;
         $tieneIVA = False;
 
-        foreach ($cliente['Impcli'] as $impcli) {
+        foreach ($cliente['Impcli'] as $cliImp) {
             /*AFIP*/
-            if ($impcli['impuesto_id'] == 4/*Monotributo*/) {
+            if ($cliImp['impuesto_id'] == 4/*Monotributo*/) {
                 //Tiene Monotributo asignado pero hay que ver si tiene periodos activos
-                if (Count($impcli['Periodosactivo']) != 0) {
+                if (Count($cliImp['Periodosactivo']) != 0) {
                     //Aca estamos Seguros que es un Monotributista Activo en este periodo
                     //Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
                     $tieneMonotributo = True;
@@ -1505,17 +1521,45 @@ class ImpclisController extends AppController {
                 }
             }
         }
-        $this->set(compact('tieneMonotributo','tieneIVA'));
+        $this->set(compact('cliente','tieneMonotributo','tieneIVA'));
 	}
 	public function papeldetrabajosindicatos($impcliid=null,$periodo=null){
+		$this->Components->unload('DebugKit.Toolbar');
+
 		$this->loadModel('Conceptosrestante');
+		$this->loadModel('Cuenta');
+		$contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
+		$this->set(compact('contribucionesSindicatos'));
+		$optionsCuentasContribucionesSindicatos = [
+			'contain'=>[
+
+			],
+			'conditions' => [
+				'Cuenta.' . $this->Cuenta->primaryKey => $contribucionesSindicatos
+			]
+		];
+		$cuentasContribucionesSindicatos = $this->Cuenta->find('all', $optionsCuentasContribucionesSindicatos);
+		$this->set('cuentasContribucionesSindicatos',$cuentasContribucionesSindicatos);
+
 		//Aca vamos a controlar que el sindicato que estamos por liquidar
 		//sea un sindicato con Convenios y no uno que apunte a otro sindicato.
 		//Y si es un sindicato que apunta a otro sindicato buscar el "otro sindicato" para liquidar el primero.
 		//Por ejemplo el sindicato SEC tiene CCT(convenio colectivo de trabajo) Comercio, pero los empleados que estan en el convenio de comercio
 		//pagan FAESYS tambien, pero cuando liquidamos FAESYS no tenemos convenios asociados, por eso Faesys apuntara a SEC para su liquidacion
 		$optionsImpCliSolic = array(
-			'contain' => array('Impuesto','Cliente'),
+			'contain' => array(
+				'Impuesto',
+				'Cliente',
+				'Asiento'=>[
+					'Movimiento'=>[
+						'Cuentascliente'
+					],
+					'conditions'=>[
+						'periodo'=>$periodo,
+						'tipoasiento'=>'impuestos'
+					]
+				],
+			),
 			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
 		);
 		//Impuesto Solicitado (por ef FAESYS)
@@ -1537,7 +1581,14 @@ class ImpclisController extends AppController {
         $this->set('impcliSolicitado',$impcliSolicitado);
 		$options = [
 			'contain'=>[
-				'Cliente',
+				'Cliente'=>[
+					'Cuentascliente'=>[
+						'Cuenta',
+						'conditions'=>[
+							'Cuentascliente.cuenta_id' => $contribucionesSindicatos,
+						]
+					],
+				],
 				'Impuesto'=>[
 					'Conveniocolectivotrabajo'=>[
 						'Empleado'=>[
@@ -1554,7 +1605,7 @@ class ImpclisController extends AppController {
 							'conditions'=>[
 								'Empleado.cliente_id' => $impcliIdAUsar['Impcli']['cliente_id'],
 								'OR'=>[
-									'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("28-".$periodo)),
+									'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
 									'Empleado.fechaegreso is null' ,
 								],
 								'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
@@ -1562,6 +1613,7 @@ class ImpclisController extends AppController {
 						]
 					],
 				],
+
 			],
 			'conditions' => [
 				'Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']
@@ -1620,7 +1672,7 @@ class ImpclisController extends AppController {
 						),
 						'conditions'=>[
 							'OR'=>[
-								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("28-".$periodo)),
+								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
 								'Empleado.fechaegreso is null' ,
 							],
 							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),

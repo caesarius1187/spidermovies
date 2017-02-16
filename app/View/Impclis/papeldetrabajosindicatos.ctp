@@ -1,13 +1,29 @@
-<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false)); ?>
-<?php echo $this->Html->script('impclis/papeldetrabajosindicatos',array('inline'=>false)); ?>
-<?php echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
-echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));?>
+<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false)); 
+echo $this->Html->script('jquery.table2excel',array('inline'=>false));
+echo $this->Html->script('impclis/papeldetrabajosindicatos',array('inline'=>false)); 
+echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
+echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
+echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));
+echo $this->Form->input('impclinombre',array('value'=>$impcliSolicitado['Impuesto']['nombre'],'type'=>'hidden'));?>
+
 <div class="index">
 	<div id="Formhead" class="clientes papeldetrabajosindicato index" style="margin-bottom:10px;">
 		<h2>Sindicato: <?php echo $impcliSolicitado['Impuesto']['nombre']; ?></h2>
 		Contribuyente: <?php echo $impcliSolicitado['Cliente']['nombre']; ?></br>
 		CUIT: <?php echo $impcliSolicitado['Cliente']['cuitcontribullente']; ?></br>
 		Periodo: <?php echo $periodo; ?>
+        <?php echo $this->Form->button('Imprimir',
+            array('type' => 'button',
+                'class' =>"btn_imprimir",
+                'onClick' => "imprimir()"
+            )
+        );?>
+        <?php echo $this->Form->button('Excel',
+            array('type' => 'button',
+                'id'=>"clickExcel",
+                'class' =>"btn_imprimir",
+            )
+        );?>
 	</div>
 	<div id="sheetSindicato" class="index">
 		<!--Esta es la tabla original y vamos a recorrer todos los empleados por cada una de las
@@ -31,6 +47,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 $horasDias = 0;
                 $afiliadoSindicato = 0;
                 $remuneracionCD = 0;
+                $SACremunerativo = 0;
                 $remuneracionSD = 0;
                 $remuneracionSDExceptoIndemnizatorio = 0;
                 $remuneracionSDIndemnizatorio = 0;
@@ -50,6 +67,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     $miempleado['horasDias'] = 0;
                     $miempleado['afiliadoSindicato'] = false;
                     $miempleado['remuneracionCD'] = 0;
+                    $miempleado['SACremunerativo'] = 0;
                     $miempleado['remuneracionSD'] = 0;
                     $miempleado['remuneracionSDExceptoIndemnizatorio'] = 0;
                     $miempleado['remuneracionSDIndemnizatorio'] = 0;
@@ -81,6 +99,13 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                         array('27'/*Total Remunerativos C/D*/), true)
                     ) {
                         $remuneracionCD += $valorrecibo['valor'];
+                    }
+                    //SAC remunerativo
+                    if (
+                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                        array('92'/*SAC remunerativo 1*/), true)
+                    ) {
+                        $SACremunerativo += $valorrecibo['valor'];
                     }
                     //Remuneracion SD
                     if (
@@ -200,6 +225,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                 $miempleado['horasDias'] = $horasDias;
                 $miempleado['afiliadoSindicato'] = $afiliadoSindicato;
                 $miempleado['remuneracionCD'] = $remuneracionCD;
+                $miempleado['SACremunerativo'] = $SACremunerativo;
                 $miempleado['remuneracionSD'] = $remuneracionSD;
                 $miempleado['remuneracionSDExceptoIndemnizatorio'] = $remuneracionSDExceptoIndemnizatorio;
                 $miempleado['remuneracionSDIndemnizatorio'] = $remuneracionSDIndemnizatorio;
@@ -238,7 +264,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 			unset($saldosafavor);
 		}
 		?>
-		<table id="tblDatosAIngresar" class="tblInforme tbl_border" cellspacing="0">
+		<table class="tblInforme tbl_border" cellspacing="0" id="tblSindicatos">
 			<tr>
 				<td>Legajo</td>
 				<?php
@@ -562,6 +588,8 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
             </tr>
             <?php
             $totalContribucion = 0;
+            $apagarcontribuciones = 0;
+            $totalConvenioFEGHRA =0;
             switch ($impcliSolicitado['Impuesto']['id']) {
                 case '11':/*SEC*/
 
@@ -579,10 +607,17 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                                 foreach ($conveniocolectivo['Empleado'] as $empleado) {
                                     $empleadoid = $empleado['id'];
                                     //en este primer loop vamos a calcular todos los siguientes totales
-                                    echo "<td>";
-                                    echo 68.29;
-                                    $totalContribucion += 68.29;
-                                    echo "</td>";
+                                    //Solo calcular este INACAP si es comercio
+                                    if($empleado['conveniocolectivotrabajo_id']=='3'){
+                                        echo "<td>";
+                                        echo 13658.32*0.005;
+                                        $totalContribucion += 13658.32*0.005 ;
+                                        $apagarcontribuciones += 13658.32*0.005 ;
+                                        echo "</td>";
+                                    }else{
+                                        echo "<td>0</td>";
+                                    }
+
                                 }
                             }
                         ?>
@@ -611,6 +646,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                                 echo "<td>";
                                 echo $empleadoDatos[$empleadoid]['cuotasindical1'];
                                 $totalCuotasindical1 += $empleadoDatos[$empleadoid]['cuotasindical1'];
+                                $apagarcontribuciones += $empleadoDatos[$empleadoid]['cuotasindical1'];
                                 echo "</td>";
                             }
                         }
@@ -624,16 +660,16 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                             UTHGRA Fdo Convenio FEHGRA
                         </td>
                         <?php
-                        $totalConvenioFEGHRA =0;
                         foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
                             foreach ($conveniocolectivo['Empleado'] as $empleado) {
                                 $empleadoid = $empleado['id'];
                                 //en este primer loop vamos a calcular todos los siguientes totales
                                 echo "<td>";
-                                $convFeg = $empleadoDatos[$empleadoid]['remuneracionCD'];
+                                $convFeg = $empleadoDatos[$empleadoid]['remuneracionTotal'];
                                 $convFeg = $convFeg*0.02;
                                 echo number_format($convFeg, 2, ",", ".");
                                 $totalConvenioFEGHRA += $convFeg ;
+                                $apagarcontribuciones += $convFeg ;
                                 echo "</td>";
                             }
                         }
@@ -656,6 +692,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                                 $contUth = 0;
                                 echo number_format($contUth, 2, ",", ".");
                                 $totalContribucionEspecialUTHGRA += $contUth ;
+                                $apagarcontribuciones += $contUth ;
                                 echo "</td>";
                             }
                         }
@@ -666,7 +703,73 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     </tr>
                     <?php
                     break;
+                case '41':/*UOCRA*/ ?>
+                    <tr>
+                        <td>
+                            UOCRA Fdo Cese Laboral
+                        </td>
+                        <?php
+                        $totalContribucionFdoCeseLaboral =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+                                //El primer año se paga el 12% y despues el 8%
+                                echo "<td>";
+                                $periodoALiquidar = new DateTime(date('Y-m-d',strtotime('01'.$periodo)));
+                                $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
+                                $diff = $fechaIngreso->diff($periodoALiquidar);
+                                if($diff->y>1){
+                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
+                                }else{
+                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
+                                }
 
+                                echo number_format($contUocraFdoCeseLaboral, 2, ",", ".");
+                                $totalContribucionFdoCeseLaboral += $contUocraFdoCeseLaboral ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td>
+                            <?php echo number_format($totalContribucionFdoCeseLaboral, 2, ",", "."); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            UOCRA Aporte FICS
+                        </td>
+                        <?php
+                        $totalContribucionUocraAporteFics =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+                                //en este primer loop vamos a calcular todos los siguientes totales
+                                echo "<td>";
+                                $periodoALiquidar = new DateTime(date('Y-m-d',strtotime('01'.$periodo)));
+                                $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
+                                $diff = $fechaIngreso->diff($periodoALiquidar);
+                                $contUocraFdoCeseLaboral=0;
+                                if($diff->y>1){
+                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
+                                }else{
+                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
+                                }
+                                $contUocraAporteFics = $contUocraFdoCeseLaboral*0.02 ;
+
+                                echo number_format($contUocraAporteFics, 2, ",", ".");
+                                $totalContribucionUocraAporteFics += $contUocraAporteFics ;
+                                $apagarcontribuciones += $contUocraAporteFics ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td>
+                            <?php echo number_format($totalContribucionUocraAporteFics, 2, ",", "."); ?>
+                        </td>
+                    </tr>
+
+                <?php
+                    break;
             }
             ?>
                 <?php
@@ -697,6 +800,11 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1;
                         $impuestoDeterminado += $totalCuotasindical1+$totalConvenioFEGHRA+$totalContribucionEspecialUTHGRA;
                         break;
+                    case '41':/*UOCRA*/
+                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2;
+                        $impuestoDeterminado += $totalContribucionUocraAporteFics;
+                        break;
+
                     default:
                         $impuestoDeterminado = $totalCuotaSindical;
                     break;
@@ -712,7 +820,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                         UOCRA Aporte FICS
                         Total UOCRA
                         UOM Seguro Vida y Sepelio
-*/
+                    */
                 }
                 echo $this->Form->input(
                     'apagar',
@@ -722,18 +830,114 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                         'value'=>$impuestoDeterminado<0?0:$impuestoDeterminado
                     )
                 );
-                /*echo $this->Form->input(
-                    'afavor',
+                /*Tambien tengo que definir un campo hidden que me acumule el total de contribuciones de un impuesto*/
+                echo $this->Form->input(
+                    'apagarcontribuciones',
                     array(
                         'type'=>'hidden',
-                        'id'=> 'afavor',
-                        'value'=>$impuestoDeterminado<0?$impuestoDeterminado:0
+                        'id'=> 'apagarcontribuciones',
+                        'value'=>$apagarcontribuciones
                     )
-                );*/
+                );
                 ?>
 
 		</table>
 	</div>
 	<div id="divLiquidarSindicatos">
 	</div>
+    <div id="divContenedorContabilidad" style="margin-top:10px">
+        <div class="index" id="AsientoAutomaticoDevengamiento931">
+            <?php
+            $Asientoid=0;
+            $movId=[];
+            if(isset($impcliSolicitado['Asiento'])) {
+                if (count($impcliSolicitado['Asiento']) > 0) {
+                    foreach ($impcliSolicitado['Asiento'] as $asiento){
+                        if($asiento['tipoasiento']=='impuestos'){
+                            $Asientoid = $asiento['id'];
+                            foreach ($asiento['Movimiento'] as $mimovimiento) {
+                                $movId[$mimovimiento['Cuentascliente']['cuenta_id']] = $mimovimiento['id'];
+                            }
+                        }
+                    }
+                }
+            }
+            //ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
+            echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','controller'=>'asientos','action'=>'add']);
+            echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
+            $d = new DateTime( '01-'.$periodo );
+            echo $this->Form->input('Asiento.0.fecha',array(
+                'class'=>'datepicker',
+                'type'=>'text',
+                'label'=>array(
+                    'text'=>"Fecha:",
+                ),
+                'readonly','readonly',
+                'value'=>$d->format( 't-m-Y' ),
+                'div' => false,
+                'style'=> 'height:9px;display:inline'
+            ));
+            echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento SUSS" ,'style'=>'width:250px']);
+            echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Asiento Automatico periodo: ".$periodo,'style'=>'width:250px']);
+            echo $this->Form->input('Asiento.0.cliente_id',['value'=>$impcli['Cliente']['id'],'type'=>'hidden']);
+            echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcliSolicitado['Impcli']['id'],'type'=>'hidden']);
+            echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo,'type'=>'hidden']);
+            echo $this->Form->input('Asiento.0.tipoasiento',['value'=>'impuestos','type'=>'hidden'])."</br>";
+            $i=0;
+            //los asientos estandares son los que van a darle forma a la parte estatica del asiento
+            foreach ($cuentasContribucionesSindicatos as $asientoestandarasuss) {
+                if(!isset($movId[$asientoestandarasuss['Cuenta']['id']])){
+                    $movId[$asientoestandarasuss['Cuenta']['id']]=0;
+                }
+                $cuentaclienteid=0;
+                $cuentaclientenombre=$asientoestandarasuss['Cuenta']['nombre'];
+                $mostrar=false;
+                foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaSUSS){
+                    if(
+                        $cuentaclientaSUSS['cuenta_id']==
+                        $asientoestandarasuss['Cuenta']['id']){
+                        $cuentaclienteid=$cuentaclientaSUSS['id'];
+                        $cuentaclientenombre=$cuentaclientaSUSS['nombre'];
+                        $mostrar=true;
+                        break;
+                    }
+                }
+                $debe=0;
+                $haber=0;
+                if($mostrar) {
+                    $nombre = "Contribucion-".$impcliSolicitado['Impuesto']['nombre']."-";
+                    if($nombre==$cuentaclientenombre){
+                        $debe = $apagarcontribuciones;
+                    }
+                    $nombre = "Contribucion-".$impcliSolicitado['Impuesto']['nombre']."-A Pagar";
+                    if($nombre==$cuentaclientenombre){
+                        $haber = $apagarcontribuciones;
+                    }
+
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['value' => $movId[$asientoestandarasuss['Cuenta']['id']],]);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.fecha', array(
+                        'readonly' => 'readonly',
+                        'class' => 'datepicker',
+                        'type' => 'hidden',
+                        'label' => array(
+                            'text' => "Vencimiento:",
+                            "style" => "display:inline",
+                        ),
+                        'readonly', 'readonly',
+                        'value' => date('d-m-Y'),
+                        'div' => false,
+                        'style' => 'height:9px;display:inline'
+                    ));
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['readonly' => 'readonly', 'type' => 'hidden', 'value' => $cuentaclienteid]);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuenta_id', ['readonly' => 'readonly', 'type' => 'hidden', 'orden' => $i, 'value' => $asientoestandarasuss['Cuenta']['id'], 'id' => 'cuenta' . $asientoestandarasuss['Cuenta']['id']]);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['label' => ($i != 0) ? false : 'Numero', 'readonly' => 'readonly', 'value' => $asientoestandarasuss['Cuenta']['numero'], 'style' => 'width:82px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['label' => ($i != 0) ? false : 'Cuenta', 'readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['label' => ($i != 0) ? false : 'Debe', 'readonly' => 'readonly', 'value' => $debe,]);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['label' => ($i != 0) ? false : 'Haber', 'readonly' => 'readonly', 'value' => $haber,]) . "</br>";
+                    $i++;
+                }
+            }
+            ?>
+            </div>
+    </div>
 </div>

@@ -1,39 +1,7 @@
-<script type="text/javascript">
-	$(document).ready(function() {		
-		$('.chosen-select').chosen({search_contains:true});
-		$('#AsientoAddForm').submit(function(){
-			//serialize form data
-			var formData = $(this).serialize();
-			//get form action
-			var formUrl = $(this).attr('action');
-			$.ajax({
-				type: 'POST',
-				url: formUrl,
-				data: formData,
-				success: function(data,textStatus,xhr){
-					var respuesta = JSON.parse(data);
-					callAlertPopint(respuesta.respuesta);
-				},
-				error: function(xhr,textStatus,error){
-					alert(textStatus);
-				}
-			});
-			return false;
-		});
-	});
-	function agregarMovimiento()
-	{
-		var tablaAsiento = $("#tablasiento");
-		/*Sacar numero de movimiento siguiente*/
-		/*Tengo que agregar cuentacliente_id*/
-		/*Tengo que agregar debe*/
-		/*Tengo que agregar haber*/
-	}
-
-</script>
-		<?php
-		$asiento = $asientos[0];
-		?>
+<?php
+echo $this->Html->script('movimientos/index',array('inline'=>true));
+$asiento = $asientos[0];
+?>
 <div class="index" style="float: none;">
 	<h3>Agregar movimiento al asiento</h3>
 	<?php
@@ -80,6 +48,8 @@
 	?>
 
 	<table id="tablaModificarAsiento" class="tbl_border"><?php
+		$totalDebe=0;
+		$totalHaber=0;
 	foreach ($asiento['Movimiento'] as $m => $movimiento){
 		?>
 		<tr id="movimientoeditnumero<?php echo $m ?>" >
@@ -113,13 +83,18 @@
 			</td>
 			<td><?php
 		echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.debe',
-			['value'=>$movimiento['debe'],
+			[
+				'value'=> number_format($movimiento['debe'], 2, ".", ""),
 				'style'=>"width:auto",
+				'class'=>"inputDebe",
 				'label'=>false]);
+		$totalDebe+=number_format($movimiento['debe'], 2,'.','');
 		echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.haber',
-			['value'=>$movimiento['haber'],
+			['value'=>number_format($movimiento['haber'], 2, ".", ""),
+				'class'=>"inputHaber",
 				'style'=>"width:auto",
 				'label'=>false]);
+		$totalHaber+=number_format($movimiento['haber'], 2, ".", "");
 		echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20'
 		,'onClick'=>"deleteRowMovimientoEdit(".$m.")"));
 
@@ -129,11 +104,53 @@
 		<?php
 	}
 	?>
+		
+		<tr>
+			<td>Totales</td>
+			<td><?php
+				echo $this->Form->label('','Total a debe: $',[
+					'style'=>"display: inline;"
+				]);
+				echo $this->Form->label('lblTotalDebe',
+				number_format($totalDebe, 2, ".", ""),
+					[
+						'id'=>'lblTotalDebe',
+						'style'=>"display: inline;"
+					]
+				);
+				echo $this->Form->label('',' Total Haber: $',['style'=>"display: inline;"]);
+				echo $this->Form->label('lblTotalHaber',
+					number_format($totalHaber, 2, ".", ""),
+					[
+						'id'=>'lblTotalHaber',
+						'style'=>"display: inline;"
+					]
+				);
+				if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
+					echo $this->Html->image('test-pass-icon.png',array(
+							'id' => 'iconDebeHaber',
+							'alt' => 'open',
+							'class' => 'btn_exit',
+							'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+						)
+					);
+				}else{
+					echo $this->Html->image('test-fail-icon.png',array(
+							'id' => 'iconDebeHaber',
+							'alt' => 'open',
+							'class' => 'btn_exit',
+							'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+						)
+					);
+				}
+				?>
+			</td>
+		</tr>
 	</table>
 	<?php
 	echo $this->Form->end('Modificar')
 	?>
 	<?php
-	echo $this->Form->input('topmovimiento',['value'=>$m]);
+	echo $this->Form->input('topmovimiento',['value'=>$m,'type'=>'hidden']);
 	?>
 </div>

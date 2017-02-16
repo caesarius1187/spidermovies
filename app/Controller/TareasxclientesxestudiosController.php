@@ -140,19 +140,16 @@ class TareasxclientesxestudiosController extends AppController {
 	}
 	
 	public function modificarResponsable($data=null) {
-	
 		if ($this->request->is('post')) {
 			$id=$this->request->data['tareasxclientesxestudio']['idtarea'];
 			$userid=$this->request->data['tareasxclientesxestudio']['users'];
 			if (!$this->Tareasxclientesxestudio->exists($id)) {
 				$this->Session->setFlash(__('La tarea NO cambio de responsable. Por favor, pruebe de nuevo.'));
-
 			}else{
 				$this->Tareasxclientesxestudio->read(null, $id);
 				$this->Tareasxclientesxestudio->set('user_id',$userid);
 				if ($this->Tareasxclientesxestudio->save()) {
 					$this->Session->setFlash(__('La tarea cambio de responsable.'));
-
 				}
 			}
 		}

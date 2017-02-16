@@ -13,6 +13,16 @@ $(document).ready(function() {
                 }
             }
         }
+        /* Aca vamos a controlar que los movimientos a los que no se les haya asignado una cuenta contable no se carguen*/
+        $(".filtrocuentascontable").each(function () {
+            if(!$(this).val()){
+                //no se selecciono nada
+                var orden = $(this).attr('orden');
+                deleterow(orden);
+            }
+        });
+
+
         //serialize form data
         var formData = $(this).serialize();
         //get form action

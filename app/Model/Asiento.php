@@ -12,7 +12,11 @@ class Asiento extends AppModel {
      */
     //Aca vamos a guardar las cuentas relacionadas con algunos asientos especiales que vamos a autoatizar
     public $devengamientoSUSS = ['2250','2253','2254','2255','2256','2257','2345'
-    ,'307','1383','1384','1419','1420','1421','1422','1423','1500','1378'];/*+Aportes + Contribuciones*/
+    ,'307','1383','1384','1419','1420','1421','1422','1423','1500','1378',
+        '1424','1425','1426','1427','1428','1429','1430','1431'
+        ,'1432','1433','1434','1435','1436','1437','1438','1439'
+        ,'1440','1441','1442','1443'
+    ];/*+Aportes + Contribuciones  Perdida+ Contribuciones Pasivo*/
 
 //    110101002 Caja Efectivo
 //    601061001 Ventas X1

@@ -53,7 +53,7 @@ class PapelesdetrabajosController extends AppController {
 					'Impuesto'=>[
 						'Asientoestandare'=>[
 							'conditions'=>[
-								'tipoasiento'=>'impuestos'
+								'tipoasiento'=>['impuestos','impuestos2']
 							],
 							'Cuenta'
 						],

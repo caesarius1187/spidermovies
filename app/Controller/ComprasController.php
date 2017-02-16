@@ -134,11 +134,19 @@ class ComprasController extends AppController {
 				$optionsComprobante = array('contain'=>[],'conditions'=>array('Comprobante.id' => $this->request->data['Compra']['comprobante_id']));
 				$optionsTipoGasto = array('contain'=>[],'conditions'=>array('Tipogasto.id' => $this->request->data['Compra']['tipogasto_id']));
 				$optionsProverode = array('contain'=>[],'conditions'=>array('Provedore.id'=>$this->request->data['Compra']['provedore_id']));
-				$optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Compra']['localidade_id']));
+				$optionsLocalidade = [
+					'contain'=>[
+						'Partido'
+					],
+					'conditions'=>[
+						'Localidade.id'=>$this->request->data['Compra']['localidade_id']
+					]
+				];
 				$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Compra']['actividadcliente_id']));
 
                 $this->request->data('Compra.fecha',date('d-m-Y',strtotime($this->request->data['Compra']['fecha'])));
                 $this->request->data['Compra']['fecha'] = date('d-m-Y',strtotime($this->request->data['Compra']['fecha']));
+				$this->request->data['Compra']['created'] = date('Y-m-d hh:mm:ss');
 				$data = array(
 		            "respuesta" => "La Compra ha sido creada.",
 		            "compra_id" => $this->Compra->getLastInsertID(),
@@ -163,7 +171,7 @@ class ComprasController extends AppController {
 			else{
 				$data = array(
 		        	"respuesta" => "La Compra NO ha sido creada.Intentar de nuevo mas tarde",
-		            "venta_id" => $this->Compra->getLastInsertID()
+		            "venta_id" => 0
 		        );
 			}
 			$this->layout = 'ajax';
@@ -230,6 +238,7 @@ class ComprasController extends AppController {
 	}
 	public function importar($cliid=null,$periodo=null){
 		App::uses('Folder', 'Utility');
+		set_time_limit (360);
 		App::uses('File', 'Utility');
 		$this->loadModel('Provedore');
 		$this->loadModel('Localidade');
@@ -467,8 +476,19 @@ class ComprasController extends AppController {
                     );
 					$optionsTipoGasto = array('contain'=>[],'conditions'=>array('Tipogasto.id' => $this->request->data['Compra']['tipogasto_id']));
 					$optionsProverode = array('contain'=>[],'conditions'=>array('Provedore.id'=>$this->request->data['Compra']['provedore_id']));
-					$optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Compra']['localidade_id']));
+					$optionsLocalidade = [
+						'contain'=>[
+							'Partido'
+						],
+						'conditions'=>[
+							'Localidade.id'=>$this->request->data['Compra']['localidade_id']
+						]
+					];
 					$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Compra']['actividadcliente_id']));
+
+					$this->request->data('Compra.fecha',date('d-m-Y',strtotime($this->request->data['Compra']['fecha'])));
+					$this->request->data['Compra']['fecha'] = date('d-m-Y',strtotime($this->request->data['Compra']['fecha']));
+					$this->request->data['Compra']['created'] = $compra['Compra']['created'];
 
 					$data = array(
 						"respuesta" => "La Compra ha sido modificada.",
@@ -620,7 +640,10 @@ class ComprasController extends AppController {
 		$this->loadModel('Cliente');
 
         $optionsComptras=[
-            'fields'=>['*','count(*) as cantalicuotas'],
+            'fields'=>['*','count(*) as cantalicuotas'
+				,'sum(total) as total','sum(nogravados) as nogravados','sum(exentos) as exentos'
+				,'sum(ivapercep) as ivapercep','sum(iibbpercep) as iibbpercep','sum(actvspercep) as actvspercep'
+				,'sum(impinternos) as impinternos'],
             'contain'=>[
                 'Comprobante',
                 'Provedore'

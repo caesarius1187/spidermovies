@@ -1,6 +1,10 @@
 <?php
     echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
     echo $this->Form->input('empidPDT',array('value'=>$empid,'type'=>'hidden'));
+    if(count($empleado['Valorrecibo'])==0){
+        //este empleado no tiene liquidacion
+        return "";
+    }
  echo $this->Form->button('Imprimir',
     array('type' => 'button',
         'class' =>"btn_imprimir",
@@ -8,20 +12,48 @@
     )
 );
 ?>
-    <div id="sheetCooperadoraAsistencial" class="index" style="margin: 10px 0px;">
-       <?php
+<div id="divLibroSueldo">
+    <div id="libroSueldoContent<?php echo $empid; ?>" name="" class="index" style="margin: 10px 0px; /*page-break-before:always*/">
+        <?php
+        $liquidacion = $empleado['Valorrecibo'][0]['tipoliquidacion'];
         $empleadoDatos = array();
         $miempleado = array();
         if(!isset($miempleado['horasDias'])) {
             $miempleado['basico'] = 0;
             $miempleado['sueldo'] = 0;
+            $miempleado['inasistencia'] = 0;
+            $miempleado['suspensiones'] = 0;
+            $miempleado['vacacionesremunerativas'] = 0;
+            $miempleado['vacacionescantidad'] = 0;
+            $miempleado['feriadoscantidad'] = 0;
+            $miempleado['feriadospagos'] = 0;
+
+            $miempleado['horasDecoracion'] = 0;
+            $miempleado['horasDecoracionCantidad'] = 0;
+            $miempleado['horasSubmuracion'] = 0;
+            $miempleado['horasSubmuracionCantidad'] = 0;
+            $miempleado['horasZanja'] = 0;
+            $miempleado['horasZanjaCantidad'] = 0;
+            $miempleado['horasHormigon'] = 0;
+            $miempleado['horasHormigonCantidad'] = 0;
+
+            $miempleado['feriadosnoremunerativo'] = 0;
+            $miempleado['horas50cantidad'] = 0;
+            $miempleado['horas100cantidad'] = 0;
+            $miempleado['horas50remunerativa'] = 0;
+            $miempleado['horas100remunerativa'] = 0;
+            $miempleado['horas50noremunerativo'] = 0;
+            $miempleado['horas100noremunerativo'] = 0;
+            $miempleado['feriadosnoremunerativo'] = 0;
             $miempleado['adicionales'] = 0;
             $miempleado['antiguedad'] = 0;
+            $miempleado['acuerdoremunerativonobasico'] = 0;
             $miempleado['presentismo'] = 0;
             $miempleado['sac'] = 0;
             $miempleado['acuerdonoremunerativo'] = 0;
             $miempleado['antiguedadnoremunerativo'] = 0;
             $miempleado['presentismonoremunerativo'] = 0;
+            $miempleado['vacacionesnoremunerativas'] = 0;
             $miempleado['sacnoremunerativo'] = 0;
             $miempleado['otros'] = 0;
             $miempleado['jubilacion'] = 0;
@@ -35,9 +67,11 @@
             $miempleado['cuotasindical2'] = 0;
             $miempleado['cuotasindical3'] = 0;
             $miempleado['cuotasindical4'] = 0;
+            $miempleado['renatea'] = 0;
             $miempleado['totalremuneracion'] = 0;
             $miempleado['totaldescuento'] = 0;
             $miempleado['neto'] = 0;
+            $miempleado['embargo'] = 0;
             $miempleado['redondeo'] = 0;
             $miempleado['remuneracioncd'] = 0;
             $miempleado['adicionalcomplementarioss'] = 0;
@@ -48,15 +82,38 @@
         $basico=0;
         $adicionales=0;
         $sueldo=0;
-        $antiguedad = 0;
-        $presentismo = 0;
+        $inasistencia=0;
+        $suspensiones=0;
+        $vacacionesremunerativas=0;
+        $vacacionescantidad=0;
+        $feriadoscantidad=0;
+        $feriadospagos=0;
+        $feriadosnoremunerativo = 0;
+        $horas50cantidad = 0;
+        $horas100cantidad = 0;
+        $horas50remunerativa = 0;
+        $horas100remunerativa = 0;
+        $horas50noremunerativo = 0;
+        $horas100noremunerativo = 0;
 
+        $horasDecoracion = 0;
+        $horasDecoracionCantidad = 0;
+        $horasSubmuracion = 0;
+        $horasSubmuracionCantidad = 0;
+        $horasZanja = 0;
+        $horasZanjaCantidad = 0;
+        $horasHormigon = 0;
+        $horasHormigonCantidad = 0;
+
+        $antiguedad = 0;
+        $acuerdoremunerativonobasico = 0;
+        $presentismo = 0;
         $sac = 0;
         $acuerdonoremunerativo = 0;
         $antiguedadnoremunerativo = 0;
         $presentismonoremunerativo = 0;
+        $vacacionesnoremunerativas = 0;
         $sacnoremunerativo = 0;
-
         $ley19032 = 0;
         $otros = 0;
         $obrasocial = 0;
@@ -73,17 +130,19 @@
         $cuotasindical3nombre = "";
         $cuotasindical4 = 0;
         $cuotasindical4nombre = "";
-
+        $renatea = 0;
         $totalremuneracion = 0;
         $totaldescuento = 0;
         $neto = 0;
         $redondeo = 0;
+        $embargo = 0;
         $remuneracioncd = 0;
         $adicionalcomplementarioss = 0;
         $acuerdoremunerativo = 0;
         $plusvacacional = 0;
 
         foreach ($empleado['Valorrecibo'] as $valorrecibo) {
+
             //Basico
             if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='52'/*Total basicos*/){
                 $basico = $valorrecibo['valor']; // este no se deberia acumular
@@ -92,13 +151,98 @@
             if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='6'/*sueldo basico*/){
                 $sueldo += $valorrecibo['valor'];
             }
+            //Horas Decoracion
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='144'/*Horas Decoracion*/){
+                $horasDecoracion += $valorrecibo['valor'];
+            }
+            //Horas Decoracion Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='140'/*Horas Decoracion Cantidad*/){
+                $horasDecoracionCantidad += $valorrecibo['valor'];
+            }
+            //Horas Submuracion
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='145'/*Horas Submuracion*/){
+                $horasSubmuracion += $valorrecibo['valor'];
+            }
+            //Horas Submuracion Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='141'/*Horas Submuracion Cantidad*/){
+                $horasSubmuracion += $valorrecibo['valor'];
+            }
+            //Horas Zanja
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='146'/*Horas Zanja */){
+                $horasZanja += $valorrecibo['valor'];
+            }
+            //Horas Zanja  Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='142'/*Horas Zanja  Cantidad*/){
+                $horasZanjaCantidad += $valorrecibo['valor'];
+            }
+            //Horas Hormigon
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='147'/*Horas Hormigon */){
+                $horasHormigon += $valorrecibo['valor'];
+            }
+            //Horas Hormigon  Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='143'/*Horas Hormigon  Cantidad*/){
+                $horasHormigonCantidad += $valorrecibo['valor'];
+            }
             if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='20'/*Vacaciones Remunerativas*/){
-                $sueldo -= $valorrecibo['valor'];
+                $vacacionesremunerativas += $valorrecibo['valor'];
+            }
+            //Inasistencia
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='68'/*inasistencia*/){
+                $inasistencia += $valorrecibo['valor'];
+            }
+            //Suspensiones
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='136'/*Suspensiones*/){
+                $suspensiones += $valorrecibo['valor'];
+            }
+            //Vacaciones Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='13'/*Vacaciones*/){
+                $vacacionescantidad += $valorrecibo['valor'];
+            }
+            //Feriados Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='5'/*Dias Feriados*/){
+                $feriadoscantidad += $valorrecibo['valor'];
+            }
+            //Feriados Pagos
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='19'/*Dias Feriados Pagos*/){
+                $feriadospagos += $valorrecibo['valor'];
+            }
+            //Feriados No Remunerativo
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='137'/*Dias Feriados Pagos*/){
+                $feriadosnoremunerativo += $valorrecibo['valor'];
+            }
+            // Horas al 50 Remunerativa
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='25'/*Dias Feriados Pagos*/){
+                $horas50remunerativa += $valorrecibo['valor'];
+            }
+            // Horas al 50 Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='22'/*Dias Feriados Pagos*/){
+                $horas50cantidad += $valorrecibo['valor'];
+            }
+            // Horas al 100 Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='23'/*Dias Feriados Pagos*/){
+                $horas100cantidad += $valorrecibo['valor'];
+            }
+            // Horas al 100 Remunerativa
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='26'/*Dias Feriados Pagos*/){
+                $horas100remunerativa += $valorrecibo['valor'];
+            }
+            // Horas al 50  NO Remunerativa
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='138'/*Horas extras al 50%*/){
+                $horas50noremunerativo += $valorrecibo['valor'];
+            }
+            // Horas al 100 NO Remunerativa
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='139'/*Horas extras al 100%*/){
+                $horas100noremunerativo += $valorrecibo['valor'];
             }
             //Antiguedad
             if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                 array('18'/*Antiguedad*/), true )){
                 $antiguedad += $valorrecibo['valor'];
+            }
+            //acuerdoremunerativonobasico
+            if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('129'/*acuerdoremunerativonobasico*/), true )){
+                $acuerdoremunerativonobasico += $valorrecibo['valor'];
             }
             //Presentismo
             if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -125,6 +269,11 @@
             if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                 array('97'/*Presentismo no remunerativo*/), true )){
                 $presentismonoremunerativo += $valorrecibo['valor'];
+            }
+            //Vacaciones no remunerativas
+            if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('96'/*vacacionesnoremunerativas*/), true )){
+                $vacacionesnoremunerativas += $valorrecibo['valor'];
             }
             //S.A.C. Proporcional no remunerativo
             if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -208,6 +357,13 @@
                 $cuotasindical4 += $valorrecibo['valor'];
                 $cuotasindical4nombre = $valorrecibo['Cctxconcepto']['nombre'];
             }
+            //RENATEA Aporte
+            if (
+            in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('121'/*RENATEA Aporte*/), true )
+            ){
+                $renatea += $valorrecibo['valor'];
+            }
             //Total Remunerativos
             if (
             in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -229,10 +385,17 @@
             ){
                 $neto += $valorrecibo['valor'];
             }
+            //embargo
+            if (
+            in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('131'/*embargo*/), true )
+            ){
+                $embargo += $valorrecibo['valor'];
+            }
             //Redondeo
             if (
             in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                array('125'/*Redondeo*/), true )
+                array('124'/*Redondeo*/), true )
             ){
                 $redondeo += $valorrecibo['valor'];
             }
@@ -267,14 +430,39 @@
         }
 
         $miempleado['sueldo']=$sueldo;
+        $miempleado['inasistencia']=$inasistencia;
+        $miempleado['suspensiones']=$suspensiones;
+        $miempleado['vacacionesremunerativas']=$vacacionesremunerativas;
+        $miempleado['vacacionescantidad']=$vacacionescantidad;
+        $miempleado['feriadoscantidad']=$feriadoscantidad;
+        $miempleado['feriadospagos']=$feriadospagos;
+
+        $miempleado['horasDecoracion'] = $horasDecoracion;
+        $miempleado['horasDecoracionCantidad'] = $horasDecoracionCantidad;
+        $miempleado['horasSubmuracion'] = $horasSubmuracion;
+        $miempleado['horasSubmuracionCantidad'] = $horasSubmuracionCantidad;
+        $miempleado['horasZanja'] = $horasZanja;
+        $miempleado['horasZanjaCantidad'] = $horasZanjaCantidad;
+        $miempleado['horasHormigon'] = $horasHormigon;
+        $miempleado['horasHormigonCantidad'] = $horasHormigonCantidad;
+
+        $miempleado['feriadosnoremunerativo'] = $feriadosnoremunerativo;
+        $miempleado['horas50remunerativa'] = $horas50remunerativa;
+        $miempleado['horas100remunerativa'] = $horas100remunerativa;
+        $miempleado['horas50noremunerativo'] = $horas50noremunerativo;
+        $miempleado['horas100noremunerativo'] = $horas100noremunerativo;
+        $miempleado['horas50cantidad'] = $horas50cantidad;
+        $miempleado['horas100cantidad'] = $horas100cantidad;
         $miempleado['basico']=$basico;
         $miempleado['adicionales']=$adicionales;
         $miempleado['antiguedad']=$antiguedad;
+        $miempleado['acuerdoremunerativonobasico']=$acuerdoremunerativonobasico;
         $miempleado['presentismo']=$presentismo;
         $miempleado['sac'] = $sac;
         $miempleado['acuerdonoremunerativo'] = $acuerdonoremunerativo;
         $miempleado['antiguedadnoremunerativo'] = $antiguedadnoremunerativo;
         $miempleado['presentismonoremunerativo'] = $presentismonoremunerativo;
+        $miempleado['vacacionesnoremunerativas'] = $vacacionesnoremunerativas;
         $miempleado['sacnoremunerativo'] = $sacnoremunerativo;
         $miempleado['jubilacion']=$jubilacion;
         $miempleado['ley19032']=$ley19032;
@@ -292,10 +480,12 @@
         $miempleado['cuotasindical3nombre']=$cuotasindical3nombre;
         $miempleado['cuotasindical4']=$cuotasindical4;
         $miempleado['cuotasindical4nombre']=$cuotasindical4nombre;
+        $miempleado['renatea']=$renatea;
         $miempleado['totalremuneracion']=$totalremuneracion;
         $miempleado['totaldescuento']=$totaldescuento;
         $miempleado['neto']=$neto;
         $miempleado['redondeo']=$redondeo;
+        $miempleado['embargo']=$embargo;
         $miempleado['remuneracioncd']=$remuneracioncd;
         $miempleado['adicionalcomplementarioss']=$adicionalcomplementarioss;
         $miempleado['acuerdoremunerativo']=$acuerdoremunerativo;
@@ -306,9 +496,21 @@
         <tr>
             <td colspan="20">
                 LIBRO DE SUELDOS - LEY 20744 t.c. Art.52 - Hojas moviles Periodo: <?php echo $periodo ?>
-                <div style="float: right">
+                <?php
+                switch ($liquidacion){
+                    case '1':
+                        echo "Primera Quincena";
+                        break;
+                    case '2':
+                        echo "Segunda Quincena";
+                        break;
+                }
+                ?>
+                <div style="float: right" class="divToRight">
                 <?php echo $this->Form->input('hoja',
                     [
+                        'value'=>'1',
+                        'class'=>'hideOnPrint',
                         'div'=>false,
                         'label'=>[
                             'style'=>'display:inline-block;height: 3px;font-size:10px'
@@ -317,6 +519,7 @@
                     ]); ?> &nbsp; &nbsp; <?php
                     echo $this->Form->input('tomo',[
                         'div'=>false,
+                        'class'=>'hideOnPrint',
                         'value'=>$empleado['Cliente']['padron'],
                         'label'=>[
                             'style'=>'display:inline-block;height: 3px;font-size:10px',
@@ -341,6 +544,7 @@
                 Actividad : <?php
                 foreach ($empleado['Cliente']['Actividadcliente'] as $actividad){
                     echo $actividad['Actividade']['nombre'];
+                    break;
                 }  ?>
             </td>
         </tr>
@@ -356,7 +560,7 @@
                 Cargo: <?php echo $empleado['Empleado']['categoria'] ?>
                 <?php echo $empleado['Empleado']['jornada']=='0.5'?"Media":"" ?>
                 Jornada: <?php echo $empleado['Empleado']['jornada']=='0.5'?"":"Completa" ?>
-                F. Ingreso:  <?php echo date('d-m-Y',strtotime($empleado['Empleado']['fechaingreso'])); ?>
+                F. Ingreso:  <?php echo date('d-m-Y',strtotime($empleado['Empleado']['fechaalta'])); ?>
                 Basico: <?php echo number_format($miempleado['basico'], 2, ",", "."); ?>
                 Modalid ad de contratacion:  <?php echo $empleado['Empleado']['codigoafip']; ?>
             </td>
@@ -375,9 +579,6 @@
                 Importe
             </td>
             <td>
-                Codigo
-            </td>
-            <td>
                 Descuentos
             </td>
             <td>
@@ -390,8 +591,9 @@
         <?php
         //aca vamos a mostrar las rows solo si sus valoresrecibos son > 0 sino no tiene sentido
         //SUELDO MENSUAL
-        ?>
-        <tr>
+        if($miempleado['sueldo']*1>0) {
+            ?>
+            <tr>
             <td>1</td>
             <td>
                 Sueldo mensual
@@ -401,9 +603,121 @@
             </td>
             <td></td>
             <td></td>
-            <td></td>
-        </tr>
-        <?php
+            </tr>
+            <?php
+        }
+        if($miempleado['horasDecoracion']*1>0) {
+            ?>
+            <tr>
+                <td>2</td>
+                <td>
+                    Horas Decoracion
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['horasDecoracion'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <?php
+        }
+        if($miempleado['horasSubmuracion']*1>0) {
+            ?>
+            <tr>
+                <td>3</td>
+                <td>
+                    Horas Submuracion
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['horasSubmuracion'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <?php
+        }
+        if($miempleado['horasZanja']*1>0) {
+            ?>
+            <tr>
+                <td>4</td>
+                <td>
+                    Horas Zanja
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['horasZanja'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <?php
+        }
+        if($miempleado['horasHormigon']*1>0) {
+            ?>
+            <tr>
+                <td>5</td>
+                <td>
+                    Horas Hormigon
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['horasHormigon'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <?php
+        }
+        if($miempleado['inasistencia']*1>0){ ?>
+            <tr>
+                <td>7</td>
+                <td>
+                    Inasistencias
+                </td>
+                <td class="tdWithNumber">
+                    -<?php echo number_format($miempleado['inasistencia'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
+        if($miempleado['suspensiones']*1>0){ ?>
+            <tr>
+                <td>8</td>
+                <td>
+                    Suspensiones
+                </td>
+                <td class="tdWithNumber">
+                    -<?php echo number_format($miempleado['suspensiones'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
+        if($miempleado['feriadospagos']*1>0){ ?>
+            <tr>
+                <td>21</td>
+                <td>
+                   Feriados Pagos
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['feriadospagos'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
+        if($miempleado['vacacionesremunerativas']*1>0){ ?>
+            <tr>
+                <td>51</td>
+                <td>
+                    Vacaciones Remunerativas
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['vacacionesremunerativas'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
         if($miempleado['antiguedad']*1>0){ ?>
         <tr>
             <td>71</td>
@@ -415,9 +729,9 @@
             </td>
             <td></td>
             <td></td>
-            <td></td>
         </tr>
     <?php }
+
     if($miempleado['presentismo']*1>0){ ?>
         <tr>
             <td>91</td>
@@ -428,6 +742,31 @@
                 <?php echo number_format($miempleado['presentismo'], 2, ",", "."); ?>
             </td>
             <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['horas50remunerativa']*1>0){ ?>
+        <tr>
+            <td>101</td>
+            <td>
+                Horas al 50
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['horas50remunerativa'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+        if($miempleado['horas100remunerativa']*1>0){ ?>
+        <tr>
+            <td>102</td>
+            <td>
+                Horas al 100
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['horas100remunerativa'], 2, ",", "."); ?>
+            </td>
             <td></td>
             <td></td>
         </tr>
@@ -443,7 +782,6 @@
             </td>
             <td></td>
             <td></td>
-            <td></td>
         </tr>
     <?php }
     if($miempleado['acuerdoremunerativo']*1>0){ ?>
@@ -456,6 +794,18 @@
                 <?php echo number_format($miempleado['acuerdoremunerativo'], 2, ",", "."); ?>
             </td>
             <td></td>
+            <td></td>
+        </tr>
+    <?php }
+        if($miempleado['acuerdoremunerativonobasico']*1>0){ ?>
+        <tr>
+            <td>146</td>
+            <td>
+                Acuerdo Remunerativo
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['acuerdoremunerativonobasico'], 2, ",", "."); ?>
+            </td>
             <td></td>
             <td></td>
         </tr>
@@ -471,7 +821,6 @@
             </td>
             <td></td>
             <td></td>
-            <td></td>
         </tr>
     <?php }
     if($miempleado['acuerdonoremunerativo']*1>0){ ?>
@@ -483,7 +832,6 @@
             <td class="tdWithNumber">
                 <?php echo number_format($miempleado['acuerdonoremunerativo'], 2, ",", "."); ?>
             </td>
-            <td></td>
             <td></td>
             <td></td>
         </tr>
@@ -499,6 +847,18 @@
             </td>
             <td></td>
             <td></td>
+        </tr>
+    <?php }
+    if($miempleado['vacacionesnoremunerativas']*1>0){ ?>
+        <tr>
+            <td>321</td>
+            <td>
+               Vacaciones. No Remunerativas
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['vacacionesnoremunerativas'], 2, ",", "."); ?>
+            </td>
+            <td></td>
             <td></td>
         </tr>
     <?php }
@@ -513,9 +873,47 @@
             </td>
             <td></td>
             <td></td>
-            <td></td>
         </tr>
     <?php }
+        if($miempleado['feriadosnoremunerativo']*1>0){ ?>
+            <tr>
+                <td>352</td>
+                <td>
+                    Feriados No Remunerativos
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['feriadosnoremunerativo'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
+        if($miempleado['horas50noremunerativo']*1>0){ ?>
+            <tr>
+                <td>353</td>
+                <td>
+                    Horas al 50
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['horas50noremunerativo'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
+        if($miempleado['horas100noremunerativo']*1>0){ ?>
+            <tr>
+                <td>354</td>
+                <td>
+                    Horas al 100
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['horas100noremunerativo'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
     if($miempleado['sacnoremunerativo']*1>0){ ?>
         <tr>
             <td>481</td>
@@ -525,7 +923,6 @@
             <td class="tdWithNumber">
                 <?php echo number_format($miempleado['sacnoremunerativo'], 2, ",", "."); ?>
             </td>
-            <td></td>
             <td></td>
             <td></td>
         </tr>
@@ -542,17 +939,16 @@
             </td>
             <td></td>
             <td></td>
-            <td></td>
         </tr>
     <?php }
     if($miempleado['jubilacion']*1>0){ ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
             <td>
                 701
             </td>
+            <td></td>
+            <td></td>
+
             <td>
                 Jubilacion
             </td>
@@ -563,12 +959,12 @@
     <?php }
     if($miempleado['ley19032']*1>0){ ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
             <td>
                 706
             </td>
+            <td></td>
+            <td></td>
+
             <td>
                 Ley 19032-INSSJP
             </td>
@@ -579,12 +975,12 @@
     <?php }
     if($miempleado['obrasocial']*1>0){ ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
             <td>
                 721
             </td>
+            <td></td>
+            <td></td>
+
             <td>
                 <?php echo $miempleado['obrasocialnombre']; ?>
 
@@ -596,12 +992,12 @@
     <?php }
     if($miempleado['obrasocialextraordinario']*1>0){ ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
             <td>
                 722
             </td>
+            <td></td>
+            <td></td>
+
             <td>
                 <?php echo $miempleado['obrasocialextraordinarionombre']; ?>
 
@@ -613,12 +1009,12 @@
     <?php }
     if($miempleado['cuotasindical']*1>0){ ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
             <td>
                 821
             </td>
+            <td></td>
+            <td></td>
+
             <td>
                 <?php echo $miempleado['cuotasindicalnombre']; ?>
 
@@ -630,12 +1026,12 @@
     <?php }
     if($miempleado['cuotasindical1']*1>0){ ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
             <td>
                 822
             </td>
+            <td></td>
+            <td></td>
+
             <td>
                 <?php echo $miempleado['cuotasindical1nombre']; ?>
 
@@ -647,12 +1043,12 @@
     <?php }
     if($miempleado['cuotasindical2']*1>0){ ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
             <td>
                 823
             </td>
+            <td></td>
+            <td></td>
+
             <td>
                 <?php echo $miempleado['cuotasindical2nombre']; ?>
 
@@ -664,12 +1060,12 @@
     <?php }
     if($miempleado['cuotasindical4']*1>0){ ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
             <td>
                 824
             </td>
+            <td></td>
+            <td></td>
+
             <td>
                 <?php echo $miempleado['cuotasindical4nombre']; ?>
 
@@ -681,18 +1077,48 @@
     <?php }
     if($miempleado['cuotasindical3']*1>0){ ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
             <td>
                 825
             </td>
+            <td></td>
+            <td></td>
+
             <td>
                 <?php echo $miempleado['cuotasindical3nombre']; ?>
 
             </td>
             <td class="tdWithNumber">
                 <?php echo number_format($miempleado['cuotasindical3'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['renatea']*1>0){ ?>
+        <tr>
+            <td>
+                825
+            </td>
+            <td></td>
+            <td></td>
+
+            <td>
+                RENATEA Aporte
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['renatea'], 2, ",", "."); ?>
+            </td>
+        </tr>
+    <?php }
+    if($miempleado['embargo']*1>0){ ?>
+        <tr>
+            <td>902</td>
+            <td>
+            </td>
+            <td >
+            </td>
+            <td>Embargo judicial</td>
+            <td class="tdWithNumber"> <?php
+                echo number_format($miempleado['embargo'] , 2, ",", ".");
+                ?>
             </td>
         </tr>
     <?php }
@@ -703,9 +1129,10 @@
                 Redondeo
             </td>
             <td class="tdWithNumber">
-                <?php echo number_format($neto*1-$miempleado['redondeo']*1, 2, ",", "."); ?>
+                <?php
+                    echo number_format($miempleado['redondeo'] , 2, ",", ".");
+                ?>
             </td>
-            <td></td>
             <td></td>
             <td></td>
         </tr>
@@ -718,7 +1145,6 @@
             <td class="tdWithNumber">
                 <?php echo number_format($totalremuneracion, 2, ",", "."); ?>
             </td>
-            <td>990</td>
             <td>
                 Total descuentos
             </td>
@@ -728,10 +1154,7 @@
         </tr>
         <tr>
             <td></td>
-            <td>
-            </td>
-            <td>
-            </td>
+            <td></td>
             <td></td>
             <td>
                 Neto:
@@ -778,7 +1201,7 @@
         <tr><td>&nbsp;</td></tr>
         <tr><td>&nbsp;</td></tr>
         <tr>
-            <td colspan="4" align="right">
+            <td colspan="3" align="right">
                <div style="float:right;"> Firma del Empleado:</div>
             </td>
             <td colspan="10" style="vertical-align: bottom;">
@@ -786,7 +1209,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="4">
+            <td colspan="3">
             </td>
             <td colspan="10">
                 <div style="width:100%;text-align: center;">
@@ -796,3 +1219,5 @@
         </tr>
     </table>
 </div>
+</div>
+<div  style="width:100%;height: 1px; page-break-before:always"></div>

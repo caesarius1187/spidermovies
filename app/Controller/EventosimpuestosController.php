@@ -577,7 +577,7 @@ class EventosimpuestosController extends AppController {
 				'Movimiento',
 			],
 			'conditions' => [
-				'Asiento.tipoasiento'=> 'pagoimpuestos',
+				'Asiento.tipoasiento'=> 'pagos',
 				'Asiento.periodo'=>$periodo,
 				'Asiento.impcli_id'=>$myImpCli["Impcli"]["id"]
 			],
