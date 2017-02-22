@@ -1200,6 +1200,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
             );
             echo $this->Form->input('periodo',array('value'=>$periodo,'type'=>'hidden'));
             echo $this->Form->input('cbu_id',array('label'=>'CBU'));
+            echo $this->Form->input('ordencarga', array('label'=>'Orden',));
             echo $this->Form->input('fecha', array(
                     'class'=>'datepicker',
                     'type'=>'text',
@@ -1228,14 +1229,15 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 <thead>
                     <tr>
                         <th>Cbu</th><!-0-->
-                        <th>Fecha</th><!-0-->
-                        <th>Concepto</th><!-2-->
-                        <th class="sum">Debito</th><!-3-->
-                        <th class="sum">Credito</th><!-3-->
-                        <th>Saldo</th><!-3-->
-                        <th>Cuenta</th><!-1-->
-                        <th>Codigo AFIP</th><!-3-->
-                        <th>Actions</th><!-4-->
+                        <th>Orden</th><!-1-->
+                        <th>Fecha</th><!-2-->
+                        <th>Concepto</th><!-3-->
+                        <th class="sum">Debito</th><!-4-->
+                        <th class="sum">Credito</th><!-5-->
+                        <th>Saldo</th><!-6-->
+                        <th>Cuenta</th><!-7-->
+                        <th>Codigo AFIP</th><!-8-->
+                        <th>Actions</th><!-9-->
                     </tr>
                 </thead>
                 <tbody id="bodyTablaConceptosrestantes">
@@ -1247,6 +1249,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                             ?>
                             <tr id="rowmovimientosbancarios<?php echo $movimientobancario["id"]?>" class="movimientosbancario<?php echo $movimientobancario["id"];?>">
                                 <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["Cbu"]['cbu']?></td>
+                                <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["ordencarga"]?></td>
                                 <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["fecha"]?></td>
                                 <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["concepto"]?></td>
                                 <td class="<?php echo $tdClass?>"><?php echo number_format($movimientobancario["debito"], 2, ",", ".")?></td>
@@ -1270,14 +1273,15 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 <tfoot>
                 <tr>
                     <th></th><!-0-->
-                    <th></th><!-0-->
+                    <th></th><!-1-->
                     <th></th><!-2-->
                     <th></th><!-3-->
-                    <th></th><!-3-->
-                    <th></th><!-3-->
-                    <th></th><!-1-->
-                    <th></th><!-3-->
                     <th></th><!-4-->
+                    <th></th><!-5-->
+                    <th></th><!-6-->
+                    <th></th><!-7-->
+                    <th></th><!-8-->
+                    <th></th><!-9-->
                 </tr>
                 </tfoot>
             </table>

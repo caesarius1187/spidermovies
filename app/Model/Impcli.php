@@ -58,6 +58,13 @@ class Impcli extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'Autonomocategoria' => array(
+			'className' => 'Autonomocategoria',
+			'foreignKey' => 'autonomocategoria_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
 		)
 	);
 
@@ -121,6 +128,19 @@ class Impcli extends AppModel {
 		),
 		'Asiento' => array(
 			'className' => 'Asiento',
+			'foreignKey' => 'impcli_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
+		'Cbu' => array(
+			'className' => 'Cbu',
 			'foreignKey' => 'impcli_id',
 			'dependent' => false,
 			'conditions' => '',

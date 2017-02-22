@@ -344,7 +344,7 @@ class ClientesController extends AppController {
 			      		'conditions' => array(
 				                'Eventoscliente.periodo =' => $pemes.'-'.$peanio  
 				            ),
-			      		'fields'=>array('id','periodo','cliente_id','tarea1','tarea3','tarea14','banco','tarjetadecredito','fcventa','descargawebafip','fccompra','libroivaventas','fcluz','sueldos','librounico'),
+			      		'fields'=>array('id','periodo','cliente_id','tarea1','tarea3','tarea4','tarea14','banco','tarjetadecredito','fcventa','descargawebafip','fccompra','libroivaventas','fcluz','sueldos','librounico'),
 			      	),
 			      'Honorario'=>array(
 			      		'conditions' => array(
@@ -369,6 +369,13 @@ class ClientesController extends AppController {
 		        	 		'conditions'=>$conditionsImpCliHabilitados,
 		        	 	),
 		      		'fields'=>array('Impcli.id','Impcli.cliente_id','Impcli.impuesto_id'),
+//				  	'conditions'=>[
+//						"Impcli.impuesto_id NOT IN
+//						(
+//							select id from
+//							impuestos as Impuesto
+//							where Impuesto.organismo == 'banco')",
+//					]
 					)									       
 			    ),
 			   'conditions' => $conditionsClientesAvance,
@@ -1510,6 +1517,7 @@ class ClientesController extends AppController {
 		$this->loadModel('Conveniocolectivotrabajo');
 		$this->loadModel('Empleado');
 		$this->loadModel('Cargo');
+		$this->loadModel('Autonomocategoria');
 
 		if(!is_null($id)){
 			$containCliAuth = array(
@@ -1558,7 +1566,8 @@ class ClientesController extends AppController {
 	  										      	'order'=>array('Puntosdeventa.nombre')
 											      	),
 											      'Impcli'=>array(
-											         'Impuesto'=>array(
+													  'Autonomocategoria',
+													  'Impuesto'=>array(
 											            'fields'=>array('id','nombre','organismo'),								             
 											         ),
 										        	 'Periodosactivo'=>array(
@@ -1579,26 +1588,26 @@ class ClientesController extends AppController {
 			$this->set('cliente', $clientes3);
 							
 			$resAfip = $this->Impuesto->find('all', 
-				array(
-				    'contain' => array(
-				    	'Impcli' => array(
-					    	'Periodosactivo'=>array(
-								'conditions' => array(
-				                	'OR'=>array(
+				[
+				    'contain' => [
+				    	'Impcli' => [
+					    	'Periodosactivo'=>[
+								'conditions' => [
+				                	'OR'=>[
 			                			'Periodosactivo.hasta' => '', 
 										'Periodosactivo.hasta IS NULL',
-		                			)				                	
-					            ),
-		        	 		), 
-		        	 		'conditions' => array(
-					                'cliente_id' => $id, 
-					            ),
-				    	),
-	    			),
-	    			'conditions' => array(
+		                			]
+								],
+							],
+		        	 		'conditions' => [
+					                'cliente_id' => $id,
+							],
+						],
+					],
+	    			'conditions' => [
 					                'organismo' => 'afip',
-					            ),
-				)
+					],
+				]
 			);
 			$this->set('impuestosafip', $resAfip);
 
@@ -1767,6 +1776,10 @@ class ClientesController extends AppController {
 
 			$categoriasmonotributos = array('A'=>'A','B'=>'B','C'=>'C','D'=>'D','E'=>'E','F'=>'F','G'=>'G','H'=>'H','I'=>'I','J'=>'J','K'=>'K','L'=>'L');
 			$this->set(compact('grupoclientes','categoriasmonotributos'));
+
+			$autonomocategorias = $this->Autonomocategoria->find('list');
+			$this->set('autonomocategorias', $autonomocategorias);
+
 			$mostrarView=true;
 
 		}else{

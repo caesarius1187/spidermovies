@@ -96,24 +96,24 @@ jQuery(document).ready(function($) {
         $("#saveDatosPersonalesForm #ClienteTipopersona").on('change', function() {
             switch(this.value){
                 case "fisica":
-                    $("#saveDatosPersonalesForm #ClienteEditLabelNombre").text("Apellido y Nombre");
+                    $("#saveDatosPersonalesForm #clienteEditLabelNombre").text("Apellido y Nombre");
                     $('#saveDatosPersonalesForm #ClienteTipopersonajuridica').val("");
-                    $('#saveDatosPersonalesForm #ClienteTipopersonajuridica').attr('disabled', true);
+                    $('#saveDatosPersonalesForm #ClienteTipopersonajuridica').closest( "div" ).hide();
 
-                    $("#saveDatosPersonalesForm #ClienteDni").attr('disabled', false);
+                    $("#saveDatosPersonalesForm #ClienteDni").closest( "div" ).show();
 
                     $("#saveDatosPersonalesForm #ClienteModificacionescontrato").val("");
-                    $("#saveDatosPersonalesForm #ClienteModificacionescontrato").attr('disabled', true);
+                    $("#saveDatosPersonalesForm #ClienteModificacionescontrato").closest( "div" ).hide();
                     break;
                 case "juridica":
                     $("#saveDatosPersonalesForm #clienteEditLabelNombre").text("Razon Social");
 
-                    $('#saveDatosPersonalesForm #ClienteTipopersonajuridica').attr('disabled', false);
+                    $('#saveDatosPersonalesForm #ClienteTipopersonajuridica').closest( "div" ).show();
 
-                    $("#saveDatosPersonalesForm #ClienteModificacionescontrato").attr('disabled', false);
+                    $("#saveDatosPersonalesForm #ClienteModificacionescontrato").closest( "div" ).show();
 
                     $("#saveDatosPersonalesForm #ClienteDni").val("");
-                    $("#saveDatosPersonalesForm #ClienteDni").attr('disabled', true);
+                    $("#saveDatosPersonalesForm #ClienteDni") .closest( "div" ).hide();
                     break;
             }
             if($('#ClienteTipopersona').val()=='juridica'){
@@ -121,6 +121,7 @@ jQuery(document).ready(function($) {
 
             }
         });
+        $("#saveDatosPersonalesForm #ClienteTipopersona").trigger('change');
         $('#saveDatosPersonalesForm').submit(function(){
             //serialize form data
             var formData = $(this).serialize();
@@ -222,6 +223,12 @@ jQuery(document).ready(function($) {
             }else{
                 $("#FormImpcliAFIP #tdcategoriamonotributo").show();
             }
+            if($(this).val()!=14/*Id Impuesto Autonomo*/){
+                $("#FormImpcliAFIP #tdcategoriaautonomo").hide();
+            }else{
+                $("#FormImpcliAFIP #tdcategoriaautonomo").show();
+            }
+
         });
         $("#FormImpcliAFIP #ImpcliImpuestoId").trigger("change");
         catchImpCliDGR();

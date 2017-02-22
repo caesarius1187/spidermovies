@@ -83,6 +83,15 @@
                     'escape' => false
                 ));
                 break;
+            case 14/*Autonomo*/:
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoAutonomo('."'".$periodo."'".','."'".$impcliid."'".')',
+                    'escape' => false
+                ));
+                break;
 		    case 19/*IVA*/:
                 $mostrarAlertaVentasComprasConceptos = true;
                 echo $this->Form->button('Papel de Trabajo', array(
@@ -245,12 +254,15 @@
                 $descripcion = '';
 
                 foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
+                    if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
+                        $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=0;
+                    }
                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
                     $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
-                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=1;
                     $totalAPagar+=$montovto;
                     $totalAFavor+=$montoc;
 
@@ -326,14 +338,14 @@
                             $repetido = 0;
                             foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada estprovincia
                                 if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
-                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=0;
                                 }
                                 if($eventosimpuesto['Eventosimpuesto']['partido_id']==$impcliprovincia['partido_id']){
                                     $repetido++;
                                     if($repetido>1){
-                                        $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                                        $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=0;
                                     }else{
-                                        $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+                                        $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=1;
                                     }
                                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
                                     $fchvto = $eventosimpuesto['Eventosimpuesto']['fchvto'];
@@ -518,7 +530,7 @@
                             foreach ($eventosimpuestos as $key => $eventosimpuesto){
                                 //vamos a buscar el evento para ver si ya esta creada estprovincia
                                 if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
-                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=0;
                                 }
                                 if($eventosimpuesto['Eventosimpuesto']['localidade_id']==$impcliprovincia['localidade_id']){
                                     $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
@@ -526,7 +538,7 @@
                                     $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                                     $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                                     $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
-                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+                                    $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=1;
                                     $totalAPagar+=$montovto;
                                     $totalAFavor+=$montoc;
                                 }
@@ -652,7 +664,7 @@
                     $eventosimpuestoUsosaldo = array();
                     foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
                         if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
-                            $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=false;
+                            $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=0;
                         }
                         if($eventosimpuesto['Eventosimpuesto']['item']==$keyOS){
                             $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
@@ -660,7 +672,7 @@
                             $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                             $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                             $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
-                            $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=true;
+                            $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=1;
                             $eventosimpuestoUsosaldo = $eventosimpuestos[$key]['Usosaldo'];
                             $totalAPagar+=$montovto;
                             $totalAFavor+=$montoc;
@@ -760,7 +772,7 @@
             break;
         }
         foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el evento para ver si ya esta creada este item
-            if(!$eventosimpuestos[$key]['Eventosimpuesto']['mostrado']){
+            if(!$eventosimpuesto['Eventosimpuesto']['mostrado']){
                 $faltanEventosAMostrar = true;
                 break;
             }else{

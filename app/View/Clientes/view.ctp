@@ -269,6 +269,7 @@ if($mostrarView){?>
                         </td>
                         <td>
                             <?php echo $this->Form->input('tipopersonajuridica',array('label'=>'Tipo de Persona Jur&iacute;dica','style'=>'width:180px')); ?>
+                            <?php echo $this->Form->input('dni',array('label'=>'DNI', 'style'=>'width:180px','maxlength'=>'8','class'=>'numeric')); ?>
                         </td>
                         <td>
                             <?php echo $this->Form->input('grupocliente_id',array('label'=>'Grupo Clientes', 'style'=>'width:180px')); ?> 
@@ -281,7 +282,7 @@ if($mostrarView){?>
                                                                             'style'=>'width:200px')
                                                                             )); ?></td>
                         <td><?php echo $this->Form->input('cuitcontribullente',array('label'=>'CUIT','style'=>'width:180px','maxlength'=>'11','class'=>'numeric')); ?></td>
-                        <td><?php echo $this->Form->input('dni',array('label'=>'DNI', 'style'=>'width:180px','maxlength'=>'8','class'=>'numeric')); ?></td>
+                        <td></td>
                     </tr>    
                     <tr> 
                         <td>
@@ -679,9 +680,16 @@ if($mostrarView){?>
                     <?php if ($impcli['Impuesto']['organismo']=='afip'): ?>    
                          <tr id="rowImpcli<?php echo $impcli['id']?>" >                                                
                             <td><?php echo $impcli['Impuesto']['nombre']; ?>
-                             <?php if($impcli['Impuesto']['id']==4){
-                                    echo "<span>".$impcli['categoriamonotributo']."</span>";
-                                }?></td>
+                             <?php
+                                if($impcli['Impuesto']['id']==4/*Monotributo*/){
+                                    echo "<span>-".$impcli['categoriamonotributo']."</span>";
+                                }
+                                if($impcli['Impuesto']['id']==14/*Autonomo*/){
+                                    if(isset($impcli['Autonomocategoria']['codigo'])){
+                                        echo "<span>-".$impcli['Autonomocategoria']['codigo']."</span>";
+                                    }
+                                }
+                                ?></td>
                             <td>
                             <?php if(count($impcli['Periodosactivo'])){
                                 echo $impcli['Periodosactivo'][0]['desde'];
@@ -1624,9 +1632,23 @@ if($mostrarView){?>
                         </td>
                     </tr>                                    
                     <tr>  
-                        <td id="tdcategoriamonotributo"><?php echo $this->Form->input('categoriamonotributo', array('label' => 'Categori&oacutea Monotributo','style'=>'width:95%','type'=>'select','options'=>$categoriasmonotributos));?>
+                        <td id="tdcategoriamonotributo">
+                            <?php
+                                echo $this->Form->input('categoriamonotributo',
+                                    array('label' => 'Categori&oacutea Monotributo','style'=>'width:95%','type'=>'select','options'=>$categoriasmonotributos));
+                            ?>
                         </td>
-                        <td colspan="3"><?php echo $this->Form->input('descripcion', array('label' => 'Descripci&oacuten','style'=>'width:95%'));?>
+                        <td id="tdcategoriaautonomo">
+                            <?php
+                                echo $this->Form->input('autonomocategoria_id',
+                                    array('label' => 'Categori&oacutea Auto&oacutenomo','style'=>'width:95%','type'=>'select'));
+                            ?>
+                        </td>
+                        <td colspan="3">
+                            <?php
+                                echo $this->Form->input('descripcion',
+                                    array('label' => 'Descripci&oacuten','style'=>'width:95%'));
+                            ?>
                         </td>
 
                     </tr>

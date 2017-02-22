@@ -254,9 +254,6 @@ if(count($empleado['Valorrecibo'])==0){
                         if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='20'/*Vacaciones Remunerativas*/){
                             $vacacionesremunerativas += $valorrecibo['valor'];
                         }
-                        if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='20'/*Vacaciones Remunerativas*/){
-                            $vacacionesremunerativas += $valorrecibo['valor'];
-                        }
                         //Inasistencias
                         if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='68'/*Inasistencias*/){
                             $inasistencias += $valorrecibo['valor'];

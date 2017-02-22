@@ -1,15 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: caesarius
- * Date: 03/11/2016
- * Time: 12:33 PM
- */
-echo $this->Html->script('movimientos/index',array('inline'=>true));
-
-?>
-<?php
-if(isset($error)){ ?>
+ //echo $this->Html->script('movimientos/index',array('inline'=>false));
+    if(isset($error)){
+    ?>
     <h2><?php echo $error; ?></h2>
     <?php
     return;
@@ -24,13 +16,14 @@ if(isset($error)){ ?>
     $descripcion = "Asiento automatico de Acreditaciones Bancarias";
     $fecha = date('d-m-Y');
     $miAsiento=array();
+    $misMovimientos=array();
     if(!isset($miAsiento['Movimiento'])){
         $miAsiento['Movimiento']=array();
     }
-
     foreach ($asientoyacargado as $asiento){
-        if($asiento['tipoasiento']=='bancos'){
-            $miAsiento = $asientoyacargado['Asiento'];
+        if($asiento['Asiento']['tipoasiento']=='bancos'){
+            $miAsiento = $asiento['Asiento'];
+            $misMovimientos = $asiento['Movimiento'];
             $id = $miAsiento['id'];
             $nombre = $miAsiento['nombre'];
             $descripcion = $miAsiento['descripcion'];
@@ -40,11 +33,12 @@ if(isset($error)){ ?>
 
     //Asiento de acreditaciones
     echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add']);
-    echo $this->Form->input('Asiento.0.id',['default'=>$id]);
-    echo $this->Form->input('Asiento.0.nombre',['default'=>$nombre]);
-    echo $this->Form->input('Asiento.0.descripcion',['default'=>$descripcion]);
-    echo $this->Form->input('Asiento.0.fecha',['default'=>$fecha]);
-    echo $this->Form->input('Asiento.0.cliente_id',['default'=>$cliid,'type'=>'hidden']);
+    echo $this->Form->input('Asiento.0.id',['value'=>$id]);
+    echo $this->Form->input('Asiento.0.nombre',['value'=>$nombre]);
+    echo $this->Form->input('Asiento.0.descripcion',['value'=>$descripcion]);
+    echo $this->Form->input('Asiento.0.fecha',['value'=>$fecha]);
+    echo $this->Form->input('Asiento.0.cliente_id',['value'=>$cliid,'type'=>'hidden']);
+    echo $this->Form->input('Asiento.0.cbu_id',['value'=>$cbuid,'type'=>'hidden']);
     echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo]);
     echo $this->Form->input('Asiento.0.tipoasiento',['default'=>'bancos','type'=>'hidden']);
     /*1.Preguntar si existe la cuenta cliente que apunte a la cuenta 8(idDeCuenta) */
@@ -55,40 +49,58 @@ if(isset($error)){ ?>
     $cuentaclienteid = 0;
     $totalDebe=0;
     $totalHaber=0;
-    foreach ($movimientosbancarios as $movimiento) {
-         $mostrar = false;//este mostrar se va a hacer true solo si existe un movimiento ya cargado o si el debito o el credito son > 0
-         $cuentaclienteid = $movimiento['Cuentascliente']['id'];
-        $cuentaclientenombre = $movimiento['Cuentascliente']['nombre'];
-        $cuentaid = $movimiento['Cuenta']['id'];
-        $cuentanumero = $movimiento['Cuenta']['numero'];
+    $totalDebito=0;
+    $totalCredito=0;
+    foreach ($miscuentasclientes as $movimiento) {
+        foreach ($movimiento['Movimientosbancario'] as $movimientobancario ){
+            $totalDebito += $movimientobancario['debito']*1;
+            $totalCredito += $movimientobancario['credito']*1;
+        }
+    }
+    foreach ($miscuentasclientes as $micuentacliente) {
+        $mostrar = false;//este mostrar se va a hacer true solo si existe un movimiento ya cargado o si el debito o el credito son > 0
+        $cuentadelCBU = false;
+        $cuentaclienteid = $micuentacliente['Cuentascliente']['id'];
+        $cuentaclientenombre = $micuentacliente['Cuentascliente']['nombre'];
+        $cuentaid = $micuentacliente['Cuenta']['id'];
+        $cuentanumero = $micuentacliente['Cuenta']['numero'];
         /*lo mismo que hicimos con el asiento vamos a hacer con los movimientos, si existe un movimiento
                 con la cuentacliente_id que estamos queriendo armar rellenamos los datos*/
         $movid=0;
         $asiento_id=0;
         $key=0;
-        if(isset($asientoyacargado['Movimiento'])) {
-            foreach ($asientoyacargado['Movimiento'] as $movimientoyacargado){
-                if($cuentaclienteid==$movimientoyacargado['cuentascliente_id']){
-                    $movid=$movimientoyacargado['id'];
-                    $asiento_id=$movimientoyacargado['asiento_id'];
-                    $mostrar = true;
-                }
+        foreach ($misMovimientos as $movimientoyacargado) {
+            if ($cuentaclienteid == $movimientoyacargado['cuentascliente_id']) {
+                $movid = $movimientoyacargado['id'];
+                $asiento_id = $id;
+                $mostrar = true;
             }
+
+        }
+        if ($cuentaclienteid == $cliente['Impcli'][0]['Cbu'][0]['cuentascliente_id']) {
+            $mostrar = true;
+            $cuentadelCBU = true;
         }
         //vamos a acumular los movimientos bancarios cargados con su debe y haber para cada cuenta
         $debito = 0;
         $credito = 0;
-        foreach ($movimiento['Movimientosbancario'] as $movimientobancario ){
-            //Como este es el asiento de acreditaciones vamos a cargar solo el HABER
-            if($movimientobancario['debito']*1==0){
-//                $debito += str_replace(".",",",$movimientobancario['debito'])*1;
-                $credito += str_replace(".",",",$movimientobancario['credito'])*1;
-                $mostrar = true;
+        if($cuentadelCBU){
+            $debito = $totalCredito;
+            $credito = 0;
+        }else{
+            foreach ($micuentacliente['Movimientosbancario'] as $movimientobancario ){
+                //Como este es el asiento de acreditaciones vamos a cargar solo el HABER
+                if($movimientobancario['debito']*1==0){
+                    $credito += $movimientobancario['credito']*1;
+                    $mostrar = true;
+                }
             }
         }
+
         if($mostrar){
+
             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
-            echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
+            echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$id,'type'=>'hidden']);
             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',[
                 'readonly'=>'readonly',
                 'type'=>'hidden',
@@ -114,7 +126,8 @@ if(isset($error)){ ?>
                 'readonly','readonly',
                 'value'=>date('d-m-Y'),
             ));
-            echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
                 'class'=>"inputDebe",
                 'label'=>($i!=0)?false:'Debe',
                 'value'=>number_format($debito, 2, ".", ""),
@@ -130,30 +143,33 @@ if(isset($error)){ ?>
             $i++;
         }
     }
+
     //Asiento de retiros
     $id = 0;
     $nombre = "Asiento devengamiento Bancos: ".$periodo;
     $descripcion = "Asiento automatico de Retiros Bancarios";
     $fecha = date('d-m-Y');
     $miAsiento=array();
+    $misMovimientos=array();
     if(!isset($miAsiento['Movimiento'])){
         $miAsiento['Movimiento']=array();
     }
     foreach ($asientoyacargado as $asiento){
-        if($asiento['tipoasiento']=='bancosretiros'){
-            $miAsiento = $asientoyacargado['Asiento'];
+        if($asiento['Asiento']['tipoasiento']=='bancosretiros'){
+            $miAsiento = $asiento['Asiento'];
+            $misMovimientos = $asiento['Movimiento'];
             $id = $miAsiento['id'];
             $nombre = $miAsiento['nombre'];
             $descripcion = $miAsiento['descripcion'];
             $fecha = date('d-m-Y',strtotime($miAsiento['fecha']));
         }
     }
-    echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add']);
     echo $this->Form->input('Asiento.1.id',['default'=>$id]);
     echo $this->Form->input('Asiento.1.nombre',['default'=>$nombre]);
     echo $this->Form->input('Asiento.1.descripcion',['default'=>$descripcion]);
     echo $this->Form->input('Asiento.1.fecha',['default'=>$fecha]);
     echo $this->Form->input('Asiento.1.cliente_id',['default'=>$cliid,'type'=>'hidden']);
+    echo $this->Form->input('Asiento.1.cbu_id',['value'=>$cbuid,'type'=>'hidden']);
     echo $this->Form->input('Asiento.1.periodo',['value'=>$periodo]);
     echo $this->Form->input('Asiento.1.tipoasiento',['default'=>'bancosretiros','type'=>'hidden']);
     /*1.Preguntar si existe la cuenta cliente que apunte a la cuenta 8(idDeCuenta) */
@@ -162,42 +178,48 @@ if(isset($error)){ ?>
     $i=0;
     echo "</br>";
     $cuentaclienteid = 0;
-    $totalDebe=0;
-    $totalHaber=0;
-    foreach ($movimientosbancarios as $movimiento) {
+    foreach ($miscuentasclientes as $micuentacliente) {
         $mostrar = false;//este mostrar se va a hacer true solo si existe un movimiento ya cargado o si el debito o el credito son > 0
-        $cuentaclienteid = $movimiento['Cuentascliente']['id'];
-        $cuentaclientenombre = $movimiento['Cuentascliente']['nombre'];
-        $cuentaid = $movimiento['Cuenta']['id'];
-        $cuentanumero = $movimiento['Cuenta']['numero'];
+        $cuentaclienteid = $micuentacliente['Cuentascliente']['id'];
+        $cuentaclientenombre = $micuentacliente['Cuentascliente']['nombre'];
+        $cuentaid = $micuentacliente['Cuenta']['id'];
+        $cuentanumero = $micuentacliente['Cuenta']['numero'];
         /*lo mismo que hicimos con el asiento vamos a hacer con los movimientos, si existe un movimiento
                 con la cuentacliente_id que estamos queriendo armar rellenamos los datos*/
         $movid=0;
         $asiento_id=0;
         $key=0;
-        if(isset($asientoyacargado['Movimiento'])) {
-            foreach ($asientoyacargado['Movimiento'] as $movimientoyacargado){
-                if($cuentaclienteid==$movimientoyacargado['cuentascliente_id']){
-                    $movid=$movimientoyacargado['id'];
-                    $asiento_id=$movimientoyacargado['asiento_id'];
-                    $mostrar = true;
-                }
+        $cuentadelCBU=false;
+        foreach ($misMovimientos as $movimientoyacargado) {
+            if($cuentaclienteid==$movimientoyacargado['cuentascliente_id']){
+                $movid=$movimientoyacargado['id'];
+                $asiento_id=$id;
+                $mostrar = true;
             }
+        }
+        if ($cuentaclienteid == $cliente['Impcli'][0]['Cbu'][0]['cuentascliente_id']) {
+            $mostrar = true;
+            $cuentadelCBU = true;
         }
         //vamos a acumular los movimientos bancarios cargados con su debe y haber para cada cuenta
         $debito = 0;
         $credito = 0;
-        foreach ($movimiento['Movimientosbancario'] as $movimientobancario ){
-            //Como este es el asiento de acreditaciones vamos a cargar solo el HABER
-            if($movimientobancario['credito']*1==0){
-                $debito += str_replace(".",",",$movimientobancario['debito'])*1;
-//                $credito += str_replace(".",",",$movimientobancario['credito'])*1;
-                $mostrar = true;
+        if($cuentadelCBU){
+            $debito = 0;
+            $credito = $totalDebito;
+        }else{
+            foreach ($micuentacliente['Movimientosbancario'] as $movimientobancario ){
+                //Como este es el asiento de acreditaciones vamos a cargar solo el HABER
+                if($movimientobancario['credito']*1==0){
+                    $debito += $movimientobancario['debito']*1;
+                    $mostrar = true;
+                }
             }
         }
+
         if($mostrar){
             echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.id',['default'=>$movid]);
-            echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
+            echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.asiento_id',['value'=>$id,'type'=>'hidden']);
             echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.cuenta_id',[
                 'readonly'=>'readonly',
                 'type'=>'hidden',

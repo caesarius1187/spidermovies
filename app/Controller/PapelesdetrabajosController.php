@@ -176,5 +176,47 @@ class PapelesdetrabajosController extends AppController {
 
 
 	}
+	public function autonomo($impcliid=null, $periodo=null){
+		$this->loadModel('Autonomocategoria');
+		$this->loadModel('Impcli');
+		$optionCategorias = [
+			'order'=>[
+				'rubro',
+				'tipo',
+				'tabla',
+				'categoria',
+			]
+		];
+		$autonomocategorias = $this->Autonomocategoria->find('all',$optionCategorias);
+		$options = [
+			'conditions' => ['Impcli.id' => $impcliid],
+			'contain' => [
+				'Cliente'=>[
+					'Cuentascliente'
+				],
+				'Asiento'=>[
+					'Movimiento'=>[
+						'Cuentascliente'
+					],
+					'conditions'=>[
+						'Asiento.periodo'=>$periodo,
+						'Asiento.tipoasiento'=>'impuestos'
+					]
+				],
+				'Impuesto'=>[
+					'Asientoestandare'=>[
+						'conditions'=>[
+							'tipoasiento'=>['impuestos']
+						],
+						'Cuenta'
+					],
+				],
+			],
+
+		];
+		$impcli = $this->Impcli->find('first', $options);
+
+		$this->set(compact('autonomocategorias','impcli','periodo','impcliid'));
+	}
 
 }

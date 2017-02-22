@@ -284,6 +284,9 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 			$totalGeneralAPagar = 0;
 			$totalGeneralAFavor = 0;
 			$totalGeneralAFavorDelContribuyente = 0;
+			$pagadoDuranteElAño = 0;
+			$minimoACargado = 0;
+
 			foreach ($impcli['Impcliprovincia'] as $impcliprovincia) { ?>
 			<tr>
 				<td>
@@ -381,7 +384,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				}
 				$subTotalBaseImponibleProrrateada = array();
 				/*Recorremos actividades para calcular Bases Prorrateadas de la provincia que estamos recorriendo*/
-				foreach ($actividadclientes as $actividadcliente) { 
+				foreach ($actividadclientes as $actividadcliente) {
 					$baseProrrateada = 0;
                     //este switch me aplica regimen especial o regimen comun para las bases segun las actividades pero esto no se debe hacer si
                     // estamos haciendo Actividades Economicas, solo si es Convenio
@@ -453,8 +456,6 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 				<?php
 				$alicuotaAMostrar = 0 ;
 				$minimoAMostrar = 0 ;
-				$minimoACargado = 0;
-				$pagadoDuranteElAño = 0;
 					if(!isset($liquidacionProvincia[$impcliprovincia['id']."-alicuotaAMostrar"][$actividadcliente['Actividadcliente']['id']])){
 				$liquidacionProvincia[$impcliprovincia['id']."-alicuotaAMostrar"][$actividadcliente['Actividadcliente']['id']]= 0;
 				$liquidacionProvincia[$impcliprovincia['id']."-minimoAMostrar"][$actividadcliente['Actividadcliente']['id']]= 0;

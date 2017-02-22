@@ -382,6 +382,7 @@ label {
 	display: block;
 	font-size: 90%;
 	margin-bottom:3px;
+	color: #000000;
 }
 input, textarea {
 	clear: both;

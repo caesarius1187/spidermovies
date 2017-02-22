@@ -56,6 +56,7 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
 
 	$filesMovimientosbancarios = $dirMovimientosbancarios->find('.*\.csv');
     $i=0;
+    $ordenImportacion=0;
     $errorInFileMovimientosbancarios=false;
     $mostrarTabla=false;
     $movimientosbancariosArray = [];
@@ -94,7 +95,8 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
             $linemovimiento['debe']=$debe;
             $linemovimiento['haber']=$haber;
             $linemovimiento['saldo']=$saldo;
-
+            $linemovimiento['ordencarga']=$ordenImportacion;
+            $ordenImportacion++;
             //Primero vamos a ver si este movimiento no fue cargado anteriormente
             //para ello vamos a recorrer los ya cargados y fijarnos si coincide fecha concepto debito credito y saldo
             $mismaFecha = false;
@@ -337,6 +339,11 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                      echo $this->Form->input('Movimientosbancario.' . $i . '.periodo', array('type' => 'hidden','value' => $periodo));
                      echo $this->Form->input('Movimientosbancario.' . $i . '.impcli_id', array('type' => 'hidden', 'value' => $impcliid));
                      echo $this->Form->input('Movimientosbancario.' . $i . '.cbu_id', array('type' => 'hidden', 'value' => $cbuid));
+                     echo $this->Form->input('Movimientosbancario.' . $i . '.ordencarga', array(
+                             'label' => ($i + 9) % 10 == 0 ? 'Orden' : '     ',
+                             'value' => $movimintosbancario['Movimientosbancario']['ordencarga']
+                         )
+                     );
                      echo $this->Form->input('Movimientosbancario.' . $i . '.fecha', array(
                              'class' => 'datepicker',
                              'type' => 'text',
@@ -379,7 +386,20 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                          'class'=>'inputSaldo'
                      ));
                      //seleccionar el punto de venta por "numero(nombre)"
-                     $codigosAFIP=['1'=>'1','2'=>'2','3'=>'3','4'=>'4','5'=>'5','6'=>'6','7'=>'7','8'=>'8','9'=>'9','10'=>'10','11'=>'11','12'=>'12','99','99'];
+                     $codigosAFIP=[
+                         '1'=>'1',
+                         '2'=>'2',
+                         '3'=>'3',
+                         '4'=>'4',
+                         '5'=>'5',
+                         '6'=>'6',
+                         '7'=>'7',
+                         '8'=>'8',
+                         '9'=>'9',
+                         '10'=>'10',
+                         '11'=>'11',
+                         '12'=>'12',                         
+                         '99'=>'99'];
                      echo $this->Form->input('Movimientosbancario.' . $i . '.codigoafip', array(
                          'type'=>'select',
                          'empty' => 'sin codigo',
@@ -405,7 +425,6 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                      ?>
                  </div>
              </td>
-
          </tr>
          <?php
     }
@@ -423,6 +442,5 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
         }
         echo $this->Form->end();
     echo $this->Form->input('Movimientosbancario.1.cantmovimientos', array('value'=>$i,'type'=>'hidden'));
-
     ?>
 </div>

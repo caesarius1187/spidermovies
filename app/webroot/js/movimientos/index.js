@@ -15,6 +15,7 @@ $(document).ready(function() {
             success: function(data,textStatus,xhr){
                 var respuesta = JSON.parse(data);
                 callAlertPopint(respuesta.respuesta);
+                $('#myModal').modal('hide');
             },
             error: function(xhr,textStatus,error){
                 alert(textStatus);

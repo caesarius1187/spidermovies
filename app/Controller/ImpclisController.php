@@ -379,7 +379,10 @@ class ImpclisController extends AppController {
 				}else{ 
 					echo 'Impuesto No Modificado'; 
 				} 
-				$options = array('conditions' => array('Impcli.' . $this->Impcli->primaryKey => $id));
+				$options = [
+					'contain'=>['Autonomocategoria','Impuesto'],
+					'conditions' => ['Impcli.' . $this->Impcli->primaryKey => $id]
+				];
 				$this->request->data = $this->Impcli->find('first', $options);
 				return ;
 			} else {
@@ -393,8 +396,10 @@ class ImpclisController extends AppController {
 		$clientes = $this->Impcli->Cliente->find('list');
 		$impuestos = $this->Impcli->Impuesto->find('list');
 		$this->set(compact('clientes', 'impuestos'));
+
 	}
 	public function editajax($id=null,$cliid = null) {
+		$this->loadModel('Autonomocategoria');
 
 	 	//$this->request->onlyAllow('ajax');
 		$this->loadModel('Clientes');
@@ -417,6 +422,10 @@ class ImpclisController extends AppController {
 		$this->layout = 'ajax';
 		$categoriasmonotributos = array('A'=>'A','B'=>'B','C'=>'C','D'=>'D','E'=>'E','F'=>'F','G'=>'G','H'=>'H','I'=>'I','J'=>'J','K'=>'K','L'=>'L');
 		$this->set(compact('categoriasmonotributos'));
+
+		$autonomocategorias = $this->Autonomocategoria->find('list');
+		$this->set('autonomocategorias', $autonomocategorias);
+
 		$this->render('edit');	
 	}
 /**

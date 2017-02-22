@@ -109,7 +109,7 @@ class AsientosController extends AppController {
             foreach ($this->request->data['Asiento'] as $a => $asientoAGuardar){
                 $this->request->data('Asiento.'.$a.'.fecha',date('Y-m-d',strtotime($this->request->data['Asiento'][$a]['fecha'])));
                 $respuesta['data']=$this->request->data;
-                if ($this->Asiento->saveAll($this->request->data['Asiento'])) {
+                if ($this->Asiento->save($this->request->data['Asiento'][$a])) {
                     $respuesta['respuesta'] .= "El Asiento se guardo correctamente.</br>";
                     $asientoid=0;
                     if($this->request->data['Asiento'][$a]['id']==0){
@@ -151,7 +151,7 @@ class AsientosController extends AppController {
                             }
                         }
 
-                        if ($this->Movimiento->saveAll($movimiento)) {
+                        if ($this->Movimiento->save($movimiento)) {
                             $respuesta['respuesta'].= "El Movimiento se guardo correctamente.</br>";
                         } else {
                             $respuesta['respuesta'].="El Movimiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
@@ -563,6 +563,9 @@ class AsientosController extends AppController {
             'contain'=>[
                 'Impcli'=>[
                     'Cbu'=>[
+                        'Cuentascliente'=>[
+                          'Cuenta'
+                        ],
                         'conditions'=>[
                             'Cbu.id' => $cbuid,
                         ]
@@ -594,7 +597,7 @@ class AsientosController extends AppController {
                 'Cuentascliente.cuenta_id'=>$cuentasDeMovimientoBancario,
             ],
         );
-        $movimientosbancarios = $this->Cuentascliente->find('all', $options);
+        $miscuentasclientes = $this->Cuentascliente->find('all', $options);
         /*Aca vamos a armar la lista de cuentas incluidas en el asiento estandar
         para traer las cuentas cliente relacionadas*/
         //ahora vamos a listar las cuentas clientes activadas y pero con el nombre de la cuenta
@@ -630,12 +633,13 @@ class AsientosController extends AppController {
             'conditions' => [
                 'Asiento.tipoasiento'=> ['bancos','bancosretiros'],
                 'Asiento.periodo'=>$periodo,
-                'Asiento.cliente_id'=>$cliid
+                'Asiento.cliente_id'=>$cliid,
+                'Asiento.cbu_id'=>$cbuid,
             ],
         ];
         $asientoyacargado = $this->Asiento->find('all', $options);
         //Vamos a agrupar y sumar las compras gravadas y las no gravadas
-        $this->set(compact('cliid','cliente','periodo','cuentasclientes','asientoyacargado','movimientosbancarios'));
+        $this->set(compact('cliid','cliente','cbuid','bancimpcli','periodo','cuentasclientes','asientoyacargado','miscuentasclientes'));
         if($this->request->is('ajax')){
             $this->layout = 'ajax';
         }

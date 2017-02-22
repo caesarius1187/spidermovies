@@ -3,6 +3,9 @@ if(!$showTheForm){?>
     <td><?php echo $this->request->data['Impuesto']['nombre']; 
         if( $this->request->data['Impuesto']['id']==4/*Monotributo*/){ 
           echo $this->request->data['Impcli']['categoriamonotributo']; 
+        }
+        if( $this->request->data['Impuesto']['id']==14/*Autonomo*/){
+          echo $this->request->data['Autonomocategoria']['codigo'];
         }?></td>
     <td>
         <?php //echo $this->request->data['Impcli']['descripcion'];              
@@ -114,7 +117,19 @@ if(!$showTheForm){?>
                             'div'=>['style'=>"width: 200px;"]
                         ]);?>
                 </td>
+            <?php }
+            if( $this->request->data['Impuesto']['id']==14/*Autonomo*/){?>
+                <td>
+                    <?php
+                    echo $this->Form->input('autonomocategoria_id',
+                        [
+                            'label' => 'Categor&iacute;a Aut&oacute;nomo',
+                            'type'=>'select',
+                            'options'=>$autonomocategorias
+                        ]);?>
+                </td>
             <?php } ?>
+
                 <td width="275"><?php echo $this->Form->input('descripcion', array('label' => 'Descripci&oacute;n'));?></td>
 
             <?php $options  = array(

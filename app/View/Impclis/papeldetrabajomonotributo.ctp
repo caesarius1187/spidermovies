@@ -357,11 +357,11 @@
 				</td>
 			</tr>
 			<tr><td colspan="5">Faltan <?php echo $mesParaProximaRecategorizacion-1; ?> meses para recategorizacion </td></tr>
-			<?php 
-			//tenemos que ver cuanto falta para la proxima recategorizacion! 
+			<?php
+			//tenemos que ver cuanto falta para la proxima recategorizacion!
 			for ($i=$mesParaProximaRecategorizacion-1; $i > 0 ; $i--) { ?>
 			<tr>
-				<td><?php 
+				<td><?php
 					$nextPeriodo = '01-'.$periodo.' +'.($mesParaProximaRecategorizacion-$i).' months';
 					echo date('m-Y',strtotime($nextPeriodo)); ?></td>
 				<td>
@@ -376,7 +376,7 @@
 				<td>
 					<?php echo ($categoriaActual['Categoriamonotributo']['alquileranualmaximo']-$subtotalCuatrimestreAlquiler)/$mesParaProximaRecategorizacion; ?>
 				</td>
-			</tr>		
+			</tr>
 			<?php }
 			?>
 		</table>

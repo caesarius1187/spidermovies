@@ -319,39 +319,45 @@ $(document).ready(function() {
                         }
                     },
                     {
-                        text: 'Conmutar Concepto',
+                        text: 'Conmutar Orden',
                         action: function ( e, dt, node, config ) {
                             dt.column( 2 ).visible( ! dt.column( 2 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Debito',
+                        text: 'Conmutar Concepto',
                         action: function ( e, dt, node, config ) {
                             dt.column( 3 ).visible( ! dt.column( 3 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Credito',
+                        text: 'Conmutar Debito',
                         action: function ( e, dt, node, config ) {
                             dt.column( 4 ).visible( ! dt.column( 4 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Saldo',
+                        text: 'Conmutar Credito',
                         action: function ( e, dt, node, config ) {
                             dt.column( 5 ).visible( ! dt.column( 5 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Cuenta',
+                        text: 'Conmutar Saldo',
                         action: function ( e, dt, node, config ) {
                             dt.column( 6 ).visible( ! dt.column( 6 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Codigo AFIP',
+                        text: 'Conmutar Cuenta',
                         action: function ( e, dt, node, config ) {
                             dt.column( 7 ).visible( ! dt.column( 7 ).visible() );
+                        }
+                    },
+                    {
+                        text: 'Conmutar Codigo AFIP',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 8 ).visible( ! dt.column( 8 ).visible() );
                         }
                     },
                     {
@@ -1512,6 +1518,7 @@ $(document).ready(function() {
                         var rowData =
                             [
                                 conceptoCargado.cbu_id,
+                                conceptoCargado.ordencarga,
                                 conceptoCargado.fecha,
                                 conceptoCargado.concepto,
                                 conceptoCargado.debito,
@@ -1691,16 +1698,11 @@ $(document).ready(function() {
                     search_contains:true,
                     include_group_label_in_selected:true
                 });
-
                 $('#AsientoAddForm').submit(function(){
                     //serialize form data
                     var formData = $(this).serialize();
                     //get form action
                     var formUrl = $(this).attr('action');
-                    //aca tenemos que sacar todos los disabled para que se envien los campos
-                    $('#AsientoAddForm input').each(function(){
-                        $(this).removeAttr('disabled');
-                    });
                     $.ajax({
                         type: 'POST',
                         url: formUrl,
@@ -1716,6 +1718,12 @@ $(document).ready(function() {
                     });
                     return false;
                 });
+                $(".inputDebe").each(function () {
+                    $(this).change(addTolblTotalDebeAsieto);
+                });
+                $(".inputHaber").each(function () {
+                    $(this).change(addTolblTotalhaberAsieto);
+                });
             },
             error:function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus);
@@ -1723,6 +1731,34 @@ $(document).ready(function() {
                 alert(errorThrown);
             }
         });
+    }
+    function setTwoNumberDecimal(event) {
+        this.value = parseFloat(this.value).toFixed(2);
+    }
+    function addTolblTotalDebeAsieto(event) {
+        var debesubtotal = 0;
+        $(".inputDebe").each(function () {
+            debesubtotal = debesubtotal*1 + this.value*1;
+        });
+        $("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+        showIconDebeHaber()
+    }
+    function addTolblTotalhaberAsieto(event) {
+    //        $("#lblTotalAFavor").val(0) ;
+        var habersubtotal = 0;
+        $(".inputHaber").each(function () {
+            habersubtotal = habersubtotal*1 + this.value*1;
+        });
+        $("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+        showIconDebeHaber()
+    }
+    function showIconDebeHaber(){
+        if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
+            $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+        }else{
+            $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+        }
+
     }
     function openWin()
     {
@@ -3188,6 +3224,7 @@ $(document).ready(function() {
                             var rowData =
                                 [
                                     respuesta.movimientosbancario.Cbu.cbu,
+                                    movimientobancario.ordencarga,
                                     movimientobancario.fecha,
                                     movimientobancario.concepto,
                                     movimientobancario.debito,

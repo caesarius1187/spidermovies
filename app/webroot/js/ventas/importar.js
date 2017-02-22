@@ -1,4 +1,10 @@
 $(document).ready(function() {
+    window.addEventListener("beforeunload", function (e) {
+        var confirmationMessage = "Esta seguro?";
+
+        e.returnValue = confirmationMessage;     // Gecko, Trident, Chrome 34+
+        return confirmationMessage;              // Gecko, WebKit, Chrome <34
+    });
     $("#loading").css('visibility','visible')
     callAlertPopint("Automatizando Seleccion");
     $("#VentaImportar").find('select').each(function(){

@@ -339,11 +339,17 @@ $(document).ready(function() {
     function verPapelDeTrabajoCooperadoraAsistencial(periodo,impcliid){
         var win = window.open(serverLayoutURL+'/impclis/papeldetrabajocooperadoraasistencial/'+impcliid+'/'+periodo , '_blank');
     }
+    function verPapelDeTrabajoAutonomo(periodo,impcliid){
+        var win = window.open(serverLayoutURL+'/papelesdetrabajos/autonomo/'+impcliid+'/'+periodo , '_blank');
+    }
     function verPapelDeTrabajoSindicato(periodo,impcliid){
         var win = window.open(serverLayoutURL+'/impclis/papeldetrabajosindicatos/'+impcliid+'/'+periodo , '_blank');
     }
     function verPapelDeTrabajoIVA(periodo,impcliid){
         var win = window.open(serverLayoutURL+'/papelesdetrabajos/iva/'+impcliid+'/'+periodo , '_blank');
+    }
+    function verCuentasDepuradas(cliid,periodo){
+        var win = window.open(serverLayoutURL+'/controles/cuentasdepuradas/'+cliid+'/'+periodo , '_blank');
     }
 /* 5  agregar Papel de Trabajo -- ejecutar la funcion que agrega el papel de trabajo cargado en el formulario*/
   function agregarPapeldeTrabajo(){
