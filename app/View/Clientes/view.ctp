@@ -563,68 +563,6 @@ if($mostrarView){?>
             </td>
         </tr>       
  <?php /**************************************************************************/ ?>
- <?php /*****************************Facturacion***********************************/ ?>
- <?php /**************************************************************************/ ?>       
-        <tr class="rowheaderfacturacion"> <!--5. Facturacion-->
-        	<th colspan="7" class="tbl_view_th1">
-                <h2 class="h2header" id="lblFacturacion">
-       			<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgFacturacion','class'=>'imgOpenClose'));?>
-        		<?php echo __('Facturaci&oacuten'); ?>
-        	   </h2>
-            </th>
-            <th class="tbl_view_th2">
-                 <a href="#editarFacturacion"  class="button_view"> 
-                    <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?> 
-                </a>    
-            </th>
-            </tr>
-            <tr class="facturacion">
-                <td> <!--5.1 Tabla facturacion-->
-                    <table class="tbl_related">
-                    <tr class="facturacion">    
-                        <td><?php echo __('CPA'); ?></td>     
-                        <td><?php echo h($cliente['Cliente']['cpa']); ?></td>             
-                    </tr>        
-                    <tr class="facturacion" >    
-                      	<td colspan="4"><?php echo __('Tipo de Factura que emite'); ?></td> 
-                    </tr>  
-                    <tr class="facturacion">    
-                        <td><?php echo __('A'); ?></td>     
-                        <td><?php 
-                        if($cliente['Cliente']['emitefacturaa']){
-                            echo h("Si");
-                        }else{
-                             echo h("No");
-                        }; ?></td>  
-                        <td><?php echo __('Vencimiento del CAI'); ?></td>     
-                        <td><?php echo h(date('d-m-Y',strtotime($cliente['Cliente']['vtocaia'])));?></td>             
-                    </tr>
-                    <tr class="facturacion">    
-                        <td><?php echo __('B'); ?></td>     
-                        <td><?php 
-                        if($cliente['Cliente']['emitefacturab']){
-                            echo h("Si");
-                        }else{
-                             echo h("No");
-                        }; ?></td>  
-                        <td><?php echo __('Vencimiento del CAI'); ?></td>     
-                        <td><?php echo h(date('d-m-Y',strtotime($cliente['Cliente']['vtocaib'])));?></td>             
-                    </tr>
-                    <tr class="facturacion">    
-                        <td><?php echo __('C'); ?></td>     
-                         <td><?php 
-                        if($cliente['Cliente']['emitefacturac']){
-                            echo h("Si");
-                        }else{
-                             echo h("No");
-                        }; ?></td> 
-                        <td><?php echo __('Vencimiento del CAI'); ?></td>     
-                        <td><?php echo h(date('d-m-Y',strtotime($cliente['Cliente']['vtocaic'])));?></td>             
-                    </tr> 
-                    </table> 
-                </tD>
-            </tr>     
- <?php /**************************************************************************/ ?>
  <?php /*****************************AFIP*****************************************/ ?>
  <?php /**************************************************************************/ ?>
  	<tr class="rowheaderafip"> <!--7. AFIP-->
@@ -1138,6 +1076,18 @@ if($mostrarView){?>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr class="subcliente">
+            <td colspan = "20">
+                <table id="subclientesDatatable"  class="tbl_related">>
+                    <tr class="subcliente">
+                        <th><?php echo __('CUIT'); ?></th>
+                        <th><?php echo __('DNI'); ?></th>
+                        <th><?php echo __('Nombre'); ?></th>
+                        <th class=""><?php echo __('Acciones'); ?></th>
                     </tr>
                 </table>
             </td>

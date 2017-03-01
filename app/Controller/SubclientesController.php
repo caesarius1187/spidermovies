@@ -20,9 +20,17 @@ class SubclientesController extends AppController {
  *
  * @return void
  */
-	public function index() {
-		/*$this->Puntosdeventa->recursive = 0;
-		$this->set('puntosdeventa', $this->Paginator->paginate());*/
+	public function index($cliid=null) {
+		$optionsSubcliente=[
+			'contain',
+			'condition'=>[
+				'Subcliente.cliente_id'=>$cliid
+			]
+		];
+		$subclientes = $this->Subcliente->find('all',$optionsSubcliente) = 0;
+		$this->set('data',$subclientes);
+		$this->layout = 'ajax';
+		$this->render('serializejson');
 	}
 
 /**

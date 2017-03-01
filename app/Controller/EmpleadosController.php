@@ -264,34 +264,38 @@ class EmpleadosController extends AppController {
 		$this->render('papeldetrabajosueldos');
 	}
     public function papeldetrabajolibrosueldo($empid=null,$periodo=null,$tipoliquidacion=null){
-        $options = array(
-            'contain'=>array(
-                'Domicilio'=>array(
-                    'Localidade'=>array(
+        $options = [
+            'contain'=>[
+                'Domicilio'=>[
+                    'Localidade'=>[
                         'Partido'
-                    )
-                ),
-                'Cliente'=>array(
-
-                    'Actividadcliente'=>array(
+                    ]
+                ],
+                'Cliente'=>[
+                    'Actividadcliente'=>[
                         'Actividade'
-                    )
-                ),
-                'Valorrecibo'=>array(
-                    'Cctxconcepto'=>array(
+                    ],
+					'Impcli'=>[
+						'conditions'=>[
+							'Impcli.impuesto_id'=>10/*vamos a llevar el suss para sacar los datos*/
+						]
+					],
+                ],
+                'Valorrecibo'=>[
+                    'Cctxconcepto'=>[
                         'Concepto',
-                        'Conveniocolectivotrabajo'=>array(
+                        'Conveniocolectivotrabajo'=>[
 
-                        )
-                    ),
-                    'conditions'=>array(
+                        ]
+                    ],
+                    'conditions'=>[
                         'Valorrecibo.periodo'=>$periodo,
 						'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
-                    )
-                ),
-            ),
+                    ]
+                ],
+            ],
             'conditions' => array('Empleado.id' => $empid)
-        );
+        ];
         $empleado = $this->Empleado->find('first', $options);
         $this->set('empleado',$empleado);
         $this->set(compact('empid','periodo'));

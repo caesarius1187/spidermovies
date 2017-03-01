@@ -12,8 +12,8 @@
     <h3><?php echo __('Banco '.$cliente['Impcli'][0]['Impuesto']['nombre'].' CBU: '.$cliente['Impcli'][0]['Cbu'][0]['cbu']); ?></h3>
     <?php
     $id = 0;
-    $nombre = "Asiento devengamiento Bancos: ".$periodo;
-    $descripcion = "Asiento automatico de Acreditaciones Bancarias";
+    $nombre = "Devengamiento: ".$cliente['Impcli'][0]['Cbu'][0]['cbu']."-".$cliente['Impcli'][0]['Cbu'][0]['tipocuenta'];
+    $descripcion = "Automatico de Acreditaciones Bancarias";
     $fecha = date('d-m-Y');
     $miAsiento=array();
     $misMovimientos=array();
@@ -146,8 +146,8 @@
 
     //Asiento de retiros
     $id = 0;
-    $nombre = "Asiento devengamiento Bancos: ".$periodo;
-    $descripcion = "Asiento automatico de Retiros Bancarios";
+    $nombre = "Devengamiento: ".$cliente['Impcli'][0]['Cbu'][0]['cbu']."-".$cliente['Impcli'][0]['Cbu'][0]['tipocuenta'];
+    $descripcion = "Automatico de Retiros Bancarios";
     $fecha = date('d-m-Y');
     $miAsiento=array();
     $misMovimientos=array();
@@ -239,7 +239,7 @@
                 'readonly'=>'readonly',
                 'value'=>$cuentaclientenombre,
                 'type'=>'text',
-                'style'=>'width:250px']);
+                'style'=>'width:450px']);
             echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.fecha', array(
                 'type'=>'hidden',
                 'readonly','readonly',

@@ -107,8 +107,8 @@ class ComprasController extends AppController {
 			$optionsCompra = array(
 					'Compra.cliente_id'=>$this->request->data['Compra']['cliente_id'],
 					'Compra.comprobante_id'=>$this->request->data['Compra']['comprobante_id'],
-					'Compra.puntosdeventa'=>$this->request->data['Compra']['puntosdeventa'],
-					'Compra.numerocomprobante'=>$this->request->data['Compra']['numerocomprobante'],
+					'Compra.puntosdeventa*1'=>$this->request->data['Compra']['puntosdeventa']*1,
+					'Compra.numerocomprobante*1'=>$this->request->data['Compra']['numerocomprobante']*1,
 					'Compra.alicuota'=>$this->request->data['Compra']['alicuota'],
 					'Compra.provedore_id'=>$this->request->data['Compra']['provedore_id'],
 				);

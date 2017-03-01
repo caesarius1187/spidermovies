@@ -969,7 +969,7 @@ class ClientesController extends AppController {
         $cbus = $this->Cbu->find('list',$clienteCbuOptions);
         $this->set(compact('cbus'));
 	}
-	function informepagosdelmes($data=null) {
+	public function informepagosdelmes($data=null) {
 		$pemes="";
 		$peanio="";
 		$this->loadModel('Grupocliente');
@@ -1298,7 +1298,12 @@ class ClientesController extends AppController {
                                     'conditions'=>$conditionsImpCliHabilitados,
                                 ),
                                 'conditions'=>array(
-                                    'Impcli.impuesto_id NOT IN (select id from impuestos where impuestos.organismo = "banco")'
+                                    'Impcli.impuesto_id NOT IN (
+                                    		SELECT id 
+                                    		FROM impuestos 
+                                    		WHERE impuestos.organismo = "banco"
+                                    		AND impuestos.tipo = "informativo"
+                                    		)'
                                 )
 					       	),
 					       	'Plandepago'=>array(

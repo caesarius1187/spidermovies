@@ -512,8 +512,8 @@
                     <td style='border:1px solid #333;text-align:left;' width="125px">
                         Datos Ad.
                     </td>
-                    <td style='border:1px solid #333;text-align:left;' width="60px">
-                        Form.
+                    <td style='border:1px solid #333;text-align:left;' width="60px" title="Formulario">
+                        F.
                     </td>
                     <td style='border:1px solid #333;text-align:left;' width="95px">
                         A Favor
@@ -572,7 +572,7 @@
                                     echo $impcli['Eventosimpuesto'][0]["descripcion"];
                                 }?>
                             </td>
-                            <td style='border:thin solid #333 ;text-align:left;' align="left">
+                            <td style='border:thin solid #333 ;text-align:left;' align="left" title="formulario">
                                 <?php
                                 echo $impcli['Impuesto']["descripcion"]?>
                             </td>
@@ -650,10 +650,10 @@
                     <td style='border:thin solid #333 ;background:#CCCCCC;' align='left'>
                         Total 
                     </td>
-                    <td style='border:thin solid #333 ;background:#CCCCCC;' align='right'>
+                    <td style='border:thin solid #333 ;background:#CCCCCC;text-align:right;' align='right'>
                         $<?php echo number_format($tpla, 2, ",", ".");?>
                     </td>                               
-                    <td style='border:thin solid #333 ;background:#CCCCCC;' align='right'>
+                    <td style='border:thin solid #333 ;background:#CCCCCC;text-align:right;' align='right'>
                         $<?php echo number_format($tpag, 2, ",", ".");?>
                     </td>                        
                 </tr>
@@ -667,7 +667,7 @@
                     <td style='border:thin solid #333 ;background:#CCCCCC;' align='left'>
                         Deuda 
                     </td>
-                    <td style='border:thin solid #333 ;background:#CCCCCC;' align='right'>
+                    <td style='border:thin solid #333 ;background:#CCCCCC;text-align:right;' align='right'>
                         $<?php 
                         $saldo= $tpla - $tpag;
                         echo number_format($saldo, 2, ",", ".");

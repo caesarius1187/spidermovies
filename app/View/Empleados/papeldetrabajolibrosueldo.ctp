@@ -27,7 +27,6 @@
             $miempleado['vacacionescantidad'] = 0;
             $miempleado['feriadoscantidad'] = 0;
             $miempleado['feriadospagos'] = 0;
-
             $miempleado['horasDecoracion'] = 0;
             $miempleado['horasDecoracionCantidad'] = 0;
             $miempleado['horasSubmuracion'] = 0;
@@ -36,7 +35,6 @@
             $miempleado['horasZanjaCantidad'] = 0;
             $miempleado['horasHormigon'] = 0;
             $miempleado['horasHormigonCantidad'] = 0;
-
             $miempleado['feriadosnoremunerativo'] = 0;
             $miempleado['horas50cantidad'] = 0;
             $miempleado['horas100cantidad'] = 0;
@@ -70,6 +68,9 @@
             $miempleado['renatea'] = 0;
             $miempleado['totalremuneracion'] = 0;
             $miempleado['totaldescuento'] = 0;
+
+            $miempleado['anticipos'] = 0;
+
             $miempleado['neto'] = 0;
             $miempleado['embargo'] = 0;
             $miempleado['redondeo'] = 0;
@@ -95,7 +96,6 @@
         $horas100remunerativa = 0;
         $horas50noremunerativo = 0;
         $horas100noremunerativo = 0;
-
         $horasDecoracion = 0;
         $horasDecoracionCantidad = 0;
         $horasSubmuracion = 0;
@@ -104,7 +104,6 @@
         $horasZanjaCantidad = 0;
         $horasHormigon = 0;
         $horasHormigonCantidad = 0;
-
         $antiguedad = 0;
         $acuerdoremunerativonobasico = 0;
         $presentismo = 0;
@@ -134,6 +133,7 @@
         $totalremuneracion = 0;
         $totaldescuento = 0;
         $neto = 0;
+        $anticipos = 0;
         $redondeo = 0;
         $embargo = 0;
         $remuneracioncd = 0;
@@ -385,6 +385,13 @@
             ){
                 $neto += $valorrecibo['valor'];
             }
+            //anticipos
+            if (
+            in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('132'/*anticipos*/), true )
+            ){
+                $anticipos += $valorrecibo['valor'];
+            }
             //embargo
             if (
             in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -484,6 +491,7 @@
         $miempleado['totalremuneracion']=$totalremuneracion;
         $miempleado['totaldescuento']=$totaldescuento;
         $miempleado['neto']=$neto;
+        $miempleado['anticipos']=$anticipos;
         $miempleado['redondeo']=$redondeo;
         $miempleado['embargo']=$embargo;
         $miempleado['remuneracioncd']=$remuneracioncd;
@@ -517,10 +525,16 @@
                         ],
                         'style'=>'height: 5px;max-width:30px'
                     ]); ?> &nbsp; &nbsp; <?php
+                    //vamos a buscar el numero de padron del impuesto SUSS
+                    $numeroPadron = 0;
+                    if(isset($empleado['Cliente']['Impcli'][0])){
+                        $numeroPadron = $empleado['Cliente']['Impcli'][0]['padron'];
+                    }
                     echo $this->Form->input('tomo',[
                         'div'=>false,
                         'class'=>'hideOnPrint',
-                        'value'=>$empleado['Cliente']['padron'],
+                        //Esto lo tengo que sacar del Impcli SUSS/*impuesto_id = 10*/
+                        'value'=>$numeroPadron,
                         'label'=>[
                             'style'=>'display:inline-block;height: 3px;font-size:10px',
                             'text'=>'Padron'
@@ -836,44 +850,44 @@
             <td></td>
         </tr>
     <?php }
-    if($miempleado['antiguedadnoremunerativo']*1>0){ ?>
-        <tr>
-            <td>331</td>
-            <td>
-               Antig. No Remunerativa
-            </td>
-            <td class="tdWithNumber">
-                <?php echo number_format($miempleado['antiguedadnoremunerativo'], 2, ",", "."); ?>
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
+        if($miempleado['vacacionesnoremunerativas']*1>0){ ?>
+            <tr>
+                <td>321</td>
+                <td>
+                   Vacaciones. No Remunerativas
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['vacacionesnoremunerativas'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
     <?php }
-    if($miempleado['vacacionesnoremunerativas']*1>0){ ?>
-        <tr>
-            <td>321</td>
-            <td>
-               Vacaciones. No Remunerativas
-            </td>
-            <td class="tdWithNumber">
-                <?php echo number_format($miempleado['vacacionesnoremunerativas'], 2, ",", "."); ?>
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
+        if($miempleado['antiguedadnoremunerativo']*1>0){ ?>
+            <tr>
+                <td>331</td>
+                <td>
+                    Antig. No Remunerativa
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['antiguedadnoremunerativo'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
     <?php }
-    if($miempleado['presentismonoremunerativo']*1>0){ ?>
-        <tr>
-            <td>351</td>
-            <td>
-               Presentismo no remunerativo
-            </td>
-            <td class="tdWithNumber">
-                <?php echo number_format($miempleado['presentismonoremunerativo'], 2, ",", "."); ?>
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
+        if($miempleado['presentismonoremunerativo']*1>0){ ?>
+            <tr>
+                <td>351</td>
+                <td>
+                   Presentismo no remunerativo
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['presentismonoremunerativo'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
     <?php }
         if($miempleado['feriadosnoremunerativo']*1>0){ ?>
             <tr>
@@ -1122,6 +1136,20 @@
             </td>
         </tr>
     <?php }
+    if($miempleado['anticipos']*1>0){ ?>
+        <tr>
+            <td>911</td>
+            <td>
+            </td>
+            <td >
+            </td>
+            <td>Anticipos</td>
+            <td class="tdWithNumber"> <?php
+                echo number_format($miempleado['anticipos'] , 2, ",", ".");
+                ?>
+            </td>
+        </tr>
+    <?php }
     if($miempleado['redondeo']*1>0){ ?>
         <tr>
             <td>980</td>
@@ -1143,13 +1171,13 @@
                 Total remuneraciones
             </td>
             <td class="tdWithNumber">
-                <?php echo number_format($totalremuneracion, 2, ",", "."); ?>
+                <?php echo number_format($totalremuneracion+$miempleado['redondeo'], 2, ",", "."); ?>
             </td>
             <td>
                 Total descuentos
             </td>
             <td class="tdWithNumber">
-                <?php echo number_format($totaldescuento, 2, ",", "."); ?>
+                <?php echo number_format($totaldescuento+$miempleado['embargo']+$miempleado['anticipos'], 2, ",", "."); ?>
             </td>
         </tr>
         <tr>

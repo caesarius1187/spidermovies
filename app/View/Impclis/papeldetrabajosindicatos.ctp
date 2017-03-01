@@ -82,62 +82,62 @@ echo $this->Form->input('impclinombre',array('value'=>$impcliSolicitado['Impuest
                 }
                 foreach ($empleado['Valorrecibo'] as $valorrecibo) {
                     //Horas Diarias
-                    if ($valorrecibo['Cctxconcepto']['Concepto']['id'] == '11'/*Jornada*/) {
+                    if ($valorrecibo['Cctxconcepto']['concepto_id'] == '11'/*Jornada*/) {
                         $jornada += $valorrecibo['valor'];
                     }
                     //Horas Diarias
-                    if ($valorrecibo['Cctxconcepto']['Concepto']['id'] == '112'/*Horas*/) {
+                    if ($valorrecibo['Cctxconcepto']['concepto_id'] == '112'/*Horas*/) {
                         $horasDias += $valorrecibo['valor'];
                     }
                     //Afiliado al Sindicato
-                    if ($valorrecibo['Cctxconcepto']['Concepto']['id'] == '39'/*Afiliado al Sindicato*/) {
+                    if ($valorrecibo['Cctxconcepto']['concepto_id'] == '39'/*Afiliado al Sindicato*/) {
                         $afiliadoSindicato += $valorrecibo['valor'];
                     }
                     //Remuneracion CD
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('27'/*Total Remunerativos C/D*/), true)
                     ) {
                         $remuneracionCD += $valorrecibo['valor'];
                     }
                     //SAC remunerativo
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('92'/*SAC remunerativo 1*/), true)
                     ) {
                         $SACremunerativo += $valorrecibo['valor'];
                     }
                     //Remuneracion SD
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('109'/*Total Remunerativos S/D*/), true)
                     ) {
                         $remuneracionSD += $valorrecibo['valor'];
                     }
                     //Remuneracion SD Excepto Indemnizatorios
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('103'/*Total Rem. S/D Excepto Indemnizatorio*/), true)
                     ) {
                         $remuneracionSDExceptoIndemnizatorio += $valorrecibo['valor'];
                     }
                     //Total Rem. S/D Indemnizatorios
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('108'/*Total Rem. S/D Indemnizatorio*/), true)
                     ) {
                         $remuneracionSDIndemnizatorio += $valorrecibo['valor'];
                     }
                     //Total Remuneracion
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('44'/*Remuneración Total	*/), true)
                     ) {
                         $remuneracionTotal += $valorrecibo['valor'];
                     }
                     //Total Aportes
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('45'/*Aportes	*/), true)
                     ) {
                         $aportes += $valorrecibo['valor'];
@@ -145,77 +145,77 @@ echo $this->Form->input('impclinombre',array('value'=>$impcliSolicitado['Impuest
 
                     //Total Neto
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('46'/*Neto	*/), true)
                     ) {
                         $neto += $valorrecibo['valor'];
                     }
                     //Total Cuota Sindical
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('36'/*Cuota Sindical	*/), true)
                     ) {
                         $cuotasindical += $valorrecibo['valor'];
                     }
                     //Total Cuota Sindical1
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('37'/*Cuota Sindical Extra 1	*/), true)
                     ) {
                         $cuotasindical1 += $valorrecibo['valor'];
                     }
                     //Total Cuota Sindical 2
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('38'/*Cuota Sindical Extra 2	*/), true)
                     ) {
                         $cuotasindical2 += $valorrecibo['valor'];
                     }
                     //Total Cuota Sindical 3
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('114'/*Cuota Sindical Extra 3	*/), true)
                     ) {
                         $cuotasindical3 += $valorrecibo['valor'];
                     }
                     //Total Cuota Sindical 4
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('134'/*Cuota Sindical Extra 4	*/), true)
                     ) {
                         $cuotasindical4 += $valorrecibo['valor'];
                     }
                     //Nombre Cuota Sindical
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('36'/*Cuota Sindical	*/), true)
                     ) {
                         $nombrecuotaSindical = $valorrecibo['Cctxconcepto']['nombre'];
                     }
                     //Nombre Cuota Sindical 1
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('37'/*Cuota extra Sindical 1 	*/), true)
                     ) {
                         $nombrecuotaSindical1 = $valorrecibo['Cctxconcepto']['nombre'];
                     }
                     //Nombre Cuota Sindical 2
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('38'/*Cuota extra Sindical 2	*/), true)
                     ) {
                         $nombrecuotaSindical2 = $valorrecibo['Cctxconcepto']['nombre'];
                     }
                     //Nombre Cuota Sindical 3
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('114'/*Cuota extra Sindical 3	*/), true)
                     ) {
                         $nombrecuotaSindical3 = $valorrecibo['Cctxconcepto']['nombre'];
                     }
                     //Nombre Cuota Sindical 4
                     if (
-                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
                         array('134'/*Cuota extra Sindical 4	*/), true)
                     ) {
                         $nombrecuotaSindical4 = $valorrecibo['Cctxconcepto']['nombre'];

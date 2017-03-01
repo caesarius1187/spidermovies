@@ -249,34 +249,34 @@ $(document).ready(function() {
       );
   }
 /* 5  ver Tarea Papeles de Trabajo -- Mostrar el formulario para papeles de trabajo del impcli del periodo*/
-  function papelesDeTrabajo(periodo,impcli){
+    function papelesDeTrabajo(periodo,impcli){
         var data = "";
         $.ajax({
-          type: "post",  // Request method: post, get
-          url: serverLayoutURL+"/eventosimpuestos/getpapelestrabajo/"+periodo+"/"+impcli, // URL to request
-          data: data,  // post data
-          success: function(response) {
-            //alert(response);
-              $('#myModal').on('show.bs.modal', function() {
-                  $('#myModal').find('.modal-title').html('Asiento automatico de banco');
-                  $('#myModal').find('.modal-body').html(response);
-                  // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
-              });
-            $(document).ready(function() {
-                $( "input.datepicker" ).datepicker({
-                  yearRange: "-100:+50",
-                  changeMonth: true,
-                  changeYear: true,
-                  constrainInput: false,
-                  dateFormat: 'dd-mm-yy',
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/eventosimpuestos/getpapelestrabajo/"+periodo+"/"+impcli, // URL to request
+            data: data,  // post data
+            success: function(response) {
+                //alert(response);
+                $('#myModal').on('show.bs.modal', function() {
+                      $('#myModal').find('.modal-title').html('Asiento automatico de banco');
+                      $('#myModal').find('.modal-body').html(response);
+                      // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
                 });
-              });
-              $('#myModal').modal('show');
-              $( "#vencimientogeneral" ).change(function(){
-              $('#EventosimpuestoRealizartarea5Form .hiddendatepicker').val( $( "#vencimientogeneral" ).val());
-            });
-              $( "#vencimientogeneral" ).trigger( "change" );
-            $('#EventosimpuestoRealizartarea5Form').submit(function(){
+                $('#myModal').modal('show');
+                $(document).ready(function() {
+                    $( "input.datepicker" ).datepicker({
+                      yearRange: "-100:+50",
+                      changeMonth: true,
+                      changeYear: true,
+                      constrainInput: false,
+                      dateFormat: 'dd-mm-yy',
+                    });
+                });
+                $( "#vencimientogeneral" ).change(function(){
+                    $('#EventosimpuestoRealizartarea5Form .hiddendatepicker').val( $( "#vencimientogeneral" ).val());
+                });
+                $( "#vencimientogeneral" ).trigger( "change" );
+                $('#EventosimpuestoRealizartarea5Form').submit(function(){
                 $('.inputtodisable').prop("disabled", false);
                 //serialize form data
                 var formData = $(this).serialize();
@@ -316,10 +316,10 @@ $(document).ready(function() {
                 });
                   return false;
             });               
-          },
-         error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
-         }
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+            }
         });
         return false;
     }
@@ -653,7 +653,6 @@ $(document).ready(function() {
         });
     }
   function loadPagar(periodo,impcli,cliid){
-
      var data = "";
          $.ajax({
                type: "post",  // Request method: post, get

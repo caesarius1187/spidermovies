@@ -564,11 +564,12 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
             $AporteOStotal = $AporteOSaporteos+$AporteOSaporteadicionalos-$AporteOSANSSAL+$AporteOSadicionaladherente;
             //ART
             if($coberturaart){
-                $ARTart = (($rem9 *$impcli['Cliente']['alicuotaart']) / 100) + $impcli['Cliente']['fijoart'];
+
+                $ARTart = (($rem9 *$impcli['Impcli']['alicuotaart']) / 100) + $impcli['Impcli']['fijoart'];
             }
             //Seguro de Vida obligatorio Seguro de Vida
             If($segurodevida){
-                $SeguroDeVidaObligatorio = $impcli['Cliente']['segurodevida'];
+                $SeguroDeVidaObligatorio = $impcli['Impcli']['segurodevida'];
             }
             $codigoafip = $empleado['codigoafip'];
             $miempleado['horasDias']=$horasDias;

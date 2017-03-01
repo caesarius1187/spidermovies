@@ -66,6 +66,40 @@ if(!$showTheForm){?>
                 <td><?php echo $this->Form->input('usuario'); ?></td>
                 <td><?php echo $this->Form->input('clave'); ?></td>
             <?php }
+            if( $this->request->data['Impuesto']['id']==10/*SUSS*/){?>
+                <td>
+                <?php
+                echo $this->Form->input('alicuotaart',
+                    [
+                        'label' => 'Alicuota ART',
+                        'div'=>['style'=>"width: 200px;"]
+                    ]);?>
+                </td>
+                <td>
+                <?php
+                echo $this->Form->input('fijoart',
+                    [
+                        'label' => 'Cuota Fija LRT',
+                        'div'=>['style'=>"width: 200px;"]
+                    ]);?>
+                </td>
+                <td>
+                <?php
+                echo $this->Form->input('segurodevida',
+                    [
+                        'label' => 'Seguro de vida',
+                        'div'=>['style'=>"width: 200px;"]
+                    ]);?>
+                </td>
+                <td>
+                <?php
+                echo $this->Form->input('padron',
+                    [
+                        'label' => 'Padron',
+                        'div'=>['style'=>"width: 200px;"]
+                    ]);?>
+                </td>
+            <?php }
             if( $this->request->data['Impuesto']['id']==11/*SEC*/){?>
                 <td>
                 <?php

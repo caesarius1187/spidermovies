@@ -41,7 +41,6 @@ if(count($empleado['Valorrecibo'])==0){
                         $miempleado['antiguedadnoremunerativo'] = 0;
                         $miempleado['presentismonoremunerativo'] = 0;
                         $miempleado['vacacionesnoremunerativas'] = 0;
-
                         $miempleado['horasDecoracion'] = 0;
                         $miempleado['horasDecoracionCantidad'] = 0;
                         $miempleado['horasSubmuracion'] = 0;
@@ -50,7 +49,6 @@ if(count($empleado['Valorrecibo'])==0){
                         $miempleado['horasZanjaCantidad'] = 0;
                         $miempleado['horasHormigon'] = 0;
                         $miempleado['horasHormigonCantidad'] = 0;
-
                         $miempleado['feriadosnoremunerativo'] = 0;
                         $miempleado['horas50cantidad'] = 0;
                         $miempleado['horas100cantidad'] = 0;
@@ -71,14 +69,13 @@ if(count($empleado['Valorrecibo'])==0){
                         $miempleado['cuotasindical1'] = 0;
                         $miempleado['cuotasindical2'] = 0;
                         $miempleado['cuotasindical3'] = 0;
-
                         $miempleado['cuotasindical4'] = 0;
                         $miempleado['renatea'] = 0;
-
                         $miempleado['totalremuneracion'] = 0;
                         $miempleado['totalremuneracionsd'] = 0;
                         $miempleado['totaldescuento'] = 0;
                         $miempleado['neto'] = 0;
+                        $miempleado['anticipos'] = 0;
                         $miempleado['redondeo'] = 0;
                         $miempleado['embargo'] = 0;
                         $miempleado['remuneracioncd'] = 0;
@@ -100,7 +97,6 @@ if(count($empleado['Valorrecibo'])==0){
                     $vacacionescantidad=0;
                     $feriadoscantidad=0;
                     $feriadospagos=0;
-
                     $horasDecoracion = 0;
                     $horasDecoracionCantidad = 0;
                     $horasSubmuracion = 0;
@@ -109,7 +105,6 @@ if(count($empleado['Valorrecibo'])==0){
                     $horasZanjaCantidad = 0;
                     $horasHormigon = 0;
                     $horasHormigonCantidad = 0;
-
                     $feriadosnoremunerativo = 0;
                     $horas50cantidad = 0;
                     $horas100cantidad = 0;
@@ -141,15 +136,14 @@ if(count($empleado['Valorrecibo'])==0){
                     $cuotasindical2nombre = "";
                     $cuotasindical3 = 0;
                     $cuotasindical3nombre = "";
-
                     $cuotasindical4 = 0;
                     $cuotasindical4nombre = "";
                     $renatea= 0;
-
                     $totalremuneracion = 0;
                     $totalremuneracionsd= 0;
                     $totaldescuento = 0;
                     $neto = 0;
+                    $anticipos = 0;
                     $redondeo = 0;
                     $embargo = 0;
                     $remuneracioncd = 0;
@@ -430,6 +424,13 @@ if(count($empleado['Valorrecibo'])==0){
                         ){
                             $neto += $valorrecibo['valor'];
                         }
+                        //Anticipos
+                        if (
+                        in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                            array('132'/*Anticipos*/), true )
+                        ){
+                            $anticipos += $valorrecibo['valor'];
+                        }
                         //Redondeo
                         if (
                         in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -533,6 +534,7 @@ if(count($empleado['Valorrecibo'])==0){
                     $miempleado['totalremuneracionsd']=$totalremuneracionsd;
                     $miempleado['totaldescuento']=$totaldescuento;
                     $miempleado['neto']=$neto;
+                    $miempleado['anticipos']=$anticipos;
                     $miempleado['embargo']=$embargo;
                     $miempleado['redondeo']=$redondeo;
                     $miempleado['remuneracioncd']=$remuneracioncd;
@@ -1370,6 +1372,26 @@ if(count($empleado['Valorrecibo'])==0){
                             </td>
                         </tr>
                         <?php }
+                        if($miempleado['anticipos']*1>0){ ?>
+                        <tr class="trConceptoRecibo">
+                            <td class="tdWithLeftRightBorder">
+                                911
+                            </td>
+                            <td class="tdWithLeftRightBorder">
+                                Anticipos
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                                1
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                                <?php echo number_format($miempleado['anticipos']*1, 2, ",", "."); ?>
+                            </td>
+                        </tr>
+                        <?php }
                         if($miempleado['redondeo']*1>0){ ?>
                         <tr class="trConceptoRecibo">
                             <td class="tdWithLeftRightBorder">
@@ -1408,12 +1430,19 @@ if(count($empleado['Valorrecibo'])==0){
                                     .$empleado['Domicilio']['Localidade']['nombre']
                                 ?>
                             </td>
-                            <td class="tdWithBorder tdWithNumber" style="text-align: right;"><?php echo number_format($miempleado['totalremuneracion'], 2, ",", ".");?></td>
+                            <td class="tdWithBorder tdWithNumber" style="text-align: right;"><?php
+                                echo number_format($miempleado['totalremuneracion'], 2, ",", ".");?>
+                            </td>
                             <?php
-                            $totalRemSD = $miempleado['redondeo']*1 + $miempleado['totalremuneracionsd']*1;
+                            $totalRemSD = $miempleado['redondeo']*1 + $miempleado['totalremuneracionsd']*1
+                                        ;
                             ?>
                             <td class="tdWithBorder tdWithNumber" style="text-align: right;"><?php echo number_format($totalRemSD, 2, ",", ".");?></td>
-                            <td class="tdWithBorder tdWithNumber" style="text-align: right;"><?php echo number_format($miempleado['totaldescuento']*1+$miempleado['embargo']*1, 2, ",", ".");?></td>
+                            <td class="tdWithBorder tdWithNumber" style="text-align: right;">
+                                <?php
+                                echo number_format(
+                                    $miempleado['totaldescuento']*1+
+                                    $miempleado['embargo']*1+$miempleado['anticipos']*1 , 2, ",", ".");?></td>
                         </tr>
                         <tr>
                             <td colspan="3" rowspan="2" class="tdWithBorder" style="vertical-align: text-top;text-align:

@@ -1604,8 +1604,6 @@ class ImpclisController extends AppController {
 							'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
 							'Valorrecibo'=>[
 								'Cctxconcepto'=>[
-									'Concepto',
-									'Conveniocolectivotrabajo'=>[]
 								],
 								'conditions'=>[
 									'Valorrecibo.periodo'=>$periodo

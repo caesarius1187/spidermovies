@@ -130,7 +130,6 @@ class ActividadclientesController extends AppController {
 			]
 		];
 		$actividadcliente = $this->Actividadcliente->find('first', $options);
-		Debugger::dump($actividadcliente);
 		if(count($actividadcliente['Venta'])>0){
 			$this->Session->setFlash(__('La Actividad del Cliente tiene Ventas relacionadas y por eso no se puede eliminar. 
 			Eliminelas y luego intente borrar esta actividad.'));

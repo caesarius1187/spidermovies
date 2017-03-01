@@ -571,6 +571,7 @@ $(document).ready(function() {
                         return false;
                     }
                     if(ventaNumeroComprobante==null || ventaNumeroComprobante == ""){
+                        callAlertPopint('Debes ingresar un numero de comprobante');
                         return false;
                     }
                     $.ajax({
@@ -813,11 +814,17 @@ $(document).ready(function() {
             }
         });
     });
-
+    function pad (str, max) {
+        str = str.toString();
+        return str.length < max ? pad("0" + str, max) : str;
+    }
     function ventasOnChange(){
         /*Ventas On Change*/
         $("#VentaIvapercep").on('change paste', function() {
             calcularivaytotal("saveVentasForm");
+        });
+        $("#VentaNumerocomprobante").on('change paste', function() {
+            $("#VentaNumerocomprobante").val(pad ($("#VentaNumerocomprobante").val(), 8));
         });
         $("#VentaImpinternos").on('change paste', function() {
             calcularivaytotal("saveVentasForm");

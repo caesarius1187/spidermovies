@@ -564,7 +564,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                     $comprobanteTipoNuevo = ltrim(customSearch($venta['Venta']['comprobantetipo'],$comprobantes), '0');
                     $pdvNuevo = ltrim(customSearch($venta['Venta']['puntodeventa'],$puntosdeventas), '0');
                     $alicuotaNuevo = customSearch($alicuota['alicuotaiva'],$alicuotas);
-                    $numeroComprobante = ltrim($venta['Venta']['comprobantenumero'], '0');
+                    $numeroComprobante = $venta['Venta']['comprobantenumero'];
                     $clienteNuevo = customSearch(ltrim($venta['Venta']['identificacionnumero'], '0'),$subclientes);
 
                     foreach ($ventasperiodo as $ventaYaCargada) {
@@ -581,7 +581,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                         if($alicuotaNuevo==$ventaYaCargada['Venta']['alicuota']){
                             $igualAlicuota = true;
                         }
-                        if($numeroComprobante==$ventaYaCargada['Venta']['numerocomprobante']){
+                        if($numeroComprobante*1==$ventaYaCargada['Venta']['numerocomprobante']*1){
                             $igualNumeroComprobante = true;
                         }
                         if ($igualTipoComprobante&&$igualPuntoDV&&$igualAlicuota&&$igualNumeroComprobante){
@@ -635,7 +635,9 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         'class' => 'filtropuntodeventa',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.numerocomprobante', array(
-                                        'value' => $numeroComprobante,
+
+                                        //el numero de comprobante deberia tener 20 digitos pero tiene 8 entonces vamos a tomar los ultimos 8
+                                        'value' => $peanio = substr($numeroComprobante, -8),
                                         'label' => ($i + 9) % 10 == 0 ? 'Num.' : '',
                                         'style' => 'width:60px;',
                                     ));

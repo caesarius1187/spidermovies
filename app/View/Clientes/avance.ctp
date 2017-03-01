@@ -480,13 +480,13 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaFild, $clien
               $paramsPrepPapeles= "'".$cliente['Cliente']['id']."','".$periodoSel."'";
 
               echo $context->Form->button(
-                  'Cuentas depuradas',
-                  array(
+                  'Acreditaciones depuradas',
+                  [
                       'class'=>$buttonclass,
                       'onClick'=>"verCuentasDepuradas(".$paramsPrepPapeles.")",
                       'id'=>'buttonCuentaDepurada'.$cliente['Cliente']['id'],
-                  ),
-                  array()
+                  ],
+                  []
               );
             }
           } else if ($tareaFild=="tarea14"){

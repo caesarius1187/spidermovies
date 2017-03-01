@@ -131,15 +131,37 @@ class PuntosdeventasController extends AppController {
  * @return void
  */
 	public function delete($id = null) {
-		/*$this->Contacto->id = $id;
-		if (!$this->Contacto->exists()) {
-			throw new NotFoundException(__('Invalid contacto'));
+		$this->Puntosdeventa->id = $id;
+		if (!$this->Puntosdeventa->exists()) {
+			throw new NotFoundException(__('Invalid Puntosdeventa'));
+		}
+		$options = [
+			'contain'=>[
+				'Venta'=>[
+				],
+				'Empleado'=>[
+				],
+			],
+			'conditions' => [
+				'Puntosdeventa.' . $this->Puntosdeventa->primaryKey => $id
+			]
+		];
+		$puntosdeventa = $this->Puntosdeventa->find('first', $options);
+		if(count($puntosdeventa['Venta'])>0){
+			$this->Session->setFlash(__('El Punto de venta tiene Ventas relacionadas y por eso no se puede eliminar. 
+			Eliminelas y luego intente borrar este punto de venta.'));
+			return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $puntosdeventa['cliente_id']));
+		}
+		if(count($puntosdeventa['Empleado'])>0){
+			$this->Session->setFlash(__('El Punto de venta tiene Empleados relacionados y por eso no se puede eliminar. 
+			Eliminelos y luego intente borrar este punto de venta.'));
+			return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $puntosdeventa['cliente_id']));
 		}
 		$this->request->onlyAllow('post', 'delete');
-		if ($this->Contacto->delete()) {
-			$this->Session->setFlash(__('The contacto has been deleted.'));
+		if ($this->Puntosdeventa->delete()) {
+			$this->Session->setFlash(__('El Punto de venta ha sido eliminado.'));
 		} else {
-			$this->Session->setFlash(__('The contacto could not be deleted. Please, try again.'));
+			$this->Session->setFlash(__('El Punto de venta NO ha sido eliminado. Por favor intentelo de nuevo mas tarde'));
 		}
-		return $this->redirect(array('action' => 'index'));*/
+		return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $puntosdeventa['cliente_id']));
 	}}

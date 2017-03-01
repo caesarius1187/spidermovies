@@ -86,12 +86,10 @@ jQuery(document).ready(function($) {
 			}
 		});
 	});
-
 	/*Labels*/
         $("#liclientes").addClass("active");
         showDatosCliente();
         activateLabelsFunctionality();
-
 	/*Contribuyente*/
         $("#saveDatosPersonalesForm #ClienteTipopersona").on('change', function() {
             switch(this.value){
@@ -458,6 +456,22 @@ jQuery(document).ready(function($) {
         $('.chosen-select').chosen({search_contains:true});
 });
 /*Labels*/
+function loadSubclientes(cliid){
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/subclientes/index/"+cliid,
+        // URL to request
+        data: data,  // post data
+        success: function(response) {
+
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+            callAlertPopint(textStatus);
+            callAlertPopint(XMLHttpRequest);
+            callAlertPopint(errorThrown);
+        }
+    });
+}
 function activateLabelsFunctionality(){
 	jQuery(document).ready(function($) {	
 	   	$( "#lblDatosPeronales" ).click(function() {		
@@ -496,15 +510,15 @@ function activateLabelsFunctionality(){
 			 	 $("#imgPersona").attr('src',serverLayoutURL+"/img/mas2.png");
 		 	}
 		});
-		$( "#lblFacturacion" ).click(function() {		
-		 if($('.facturacion').is(":visible")){
-		 	 $('.facturacion').hide();
-			 	 $("#imgFacturacion").attr('src',serverLayoutURL+"/img/menos2.png");
-		 	}else{
-	 		 $('.facturacion').show();
-			 	 $("#imgFacturacion").attr('src',serverLayoutURL+"/img/mas2.png");
-		 	}
-		});
+		// $( "#lblFacturacion" ).click(function() {
+		//  if($('.facturacion').is(":visible")){
+		//  	 $('.facturacion').hide();
+		// 	 	 $("#imgFacturacion").attr('src',serverLayoutURL+"/img/menos2.png");
+		//  	}else{
+	 	// 	 $('.facturacion').show();
+		// 	 	 $("#imgFacturacion").attr('src',serverLayoutURL+"/img/mas2.png");
+		//  	}
+		// });
 		$( "#lblAFIP" ).click(function() {		
 		 if($('.afip').is(":visible")){
 		 	 $('.afip').hide();
@@ -565,6 +579,9 @@ function activateLabelsFunctionality(){
 				$("#imgSubclientes").attr('src',serverLayoutURL+"/img/menos2.png");
 			}else{
 				$('.subcliente').show();
+                if($('#tablaSubclienteVacia').val()){
+                    loadSubclientes();
+                }
 				$("#imgSubclientes").attr('src',serverLayoutURL+"/img/mas2.png");
 			}
 		});

@@ -320,7 +320,7 @@ class VentasController extends AppController {
 						'Venta.cliente_id'=>$this->request->data['Venta']['cliente_id'],
 						'Venta.comprobante_id'=>$this->request->data['Venta']['comprobante_id'],
  						'Venta.puntosdeventa_id'=>$this->request->data['Venta']['puntosdeventa_id'],
- 						'Venta.numerocomprobante'=>$this->request->data['Venta']['numerocomprobante'],
+ 						'Venta.numerocomprobante*1'=>$this->request->data['Venta']['numerocomprobante']*1,
  					);
 	 		}else{
 	 			//Es Responsable Inscripto comprobar por numero de comprobante y por alicuota
@@ -328,7 +328,7 @@ class VentasController extends AppController {
 						'Venta.cliente_id'=>$this->request->data['Venta']['cliente_id'],
 						'Venta.comprobante_id'=>$this->request->data['Venta']['comprobante_id'],
  						'Venta.puntosdeventa_id'=>$this->request->data['Venta']['puntosdeventa_id'],
- 						'Venta.numerocomprobante'=>$this->request->data['Venta']['numerocomprobante'],
+ 						'Venta.numerocomprobante*1'=>$this->request->data['Venta']['numerocomprobante']*1,
  						'Venta.alicuota'=>$this->request->data['Venta']['alicuota'],
  					);	 			
 	 		}
@@ -908,7 +908,7 @@ class VentasController extends AppController {
 				'Puntosdeventa'
 			),
 			'fields'=>array(
-				'MAX(numerocomprobante) as maxnumerocomprobante'
+				'MAX(numerocomprobante*1) as maxnumerocomprobante'
 			),
 			'group'=>array('Venta.puntosdeventa_id','Venta.comprobante_id'),
 			'conditions'=>array(

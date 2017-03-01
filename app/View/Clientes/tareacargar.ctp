@@ -1248,7 +1248,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                             $tdClass = "tdViewMovimientosBancario".$movimientobancario["id"];
                             ?>
                             <tr id="rowmovimientosbancarios<?php echo $movimientobancario["id"]?>" class="movimientosbancario<?php echo $movimientobancario["id"];?>">
-                                <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["Cbu"]['cbu']?></td>
+                                <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["Cbu"]['cbu']."-".$movimientobancario["Cbu"]['tipocuenta']?></td>
                                 <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["ordencarga"]?></td>
                                 <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["fecha"]?></td>
                                 <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["concepto"]?></td>

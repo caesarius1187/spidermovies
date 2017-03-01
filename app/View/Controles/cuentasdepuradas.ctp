@@ -39,6 +39,7 @@
         $misperiodos[$periodoainicializar]['ventas']=[];
         $misperiodos[$periodoainicializar]['ventas']['neto']=0;
         $misperiodos[$periodoainicializar]['ventas']['iva']=0;
+        $misperiodos[$periodoainicializar]['ventas']['total']=0;
     }
     foreach ($ventas as $venta){
         $ventaperiodo = $venta['Venta']['periodo'];
@@ -46,13 +47,16 @@
             $misperiodos[$ventaperiodo]['ventas']=[];
             $misperiodos[$ventaperiodo]['ventas']['neto']=0;
             $misperiodos[$ventaperiodo]['ventas']['iva']=0;
+            $misperiodos[$ventaperiodo]['ventas']['total']=0;
         }
         if($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso'){
             $misperiodos[$ventaperiodo]['ventas']['neto']+=$venta[0]['neto'];
             $misperiodos[$ventaperiodo]['ventas']['iva']+=$venta[0]['iva'];
+            $misperiodos[$ventaperiodo]['ventas']['total']+=$venta[0]['total'];
         }else if($venta['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
             $misperiodos[$ventaperiodo]['ventas']['neto']-=$venta[0]['neto'];
             $misperiodos[$ventaperiodo]['ventas']['iva']-=$venta[0]['iva'];
+            $misperiodos[$ventaperiodo]['ventas']['total']-=$venta[0]['total'];
         }
     }
     $misCBUs = [];
@@ -111,13 +115,13 @@
         $styleGreen = "background-color: lightgreen;";
         $styleRed = "background-color: red;";
         foreach ($periodosAnio as $periodoAMostrar){
-            $totalVentaPeriodo = $misperiodos[$periodoAMostrar]['ventas']['neto']+$misperiodos[$periodoAMostrar]['ventas']['iva'];
+            $totalVentaPeriodo = $misperiodos[$periodoAMostrar]['ventas']['total'];
             echo "
             <tr>
                 <td>".$periodoAMostrar."</td>
                 <td>".$misperiodos[$periodoAMostrar]['ventas']['neto']."</td>
                 <td>".$misperiodos[$periodoAMostrar]['ventas']['iva']."</td>
-                <td>".$totalVentaPeriodo."</td>";
+                <td>".$misperiodos[$periodoAMostrar]['ventas']['total']."</td>";
             $misperiodos[$periodoAMostrar]['totalacreditacionsindepurar']=0;
             $misperiodos[$periodoAMostrar]['totalacreditaciondepuradas']=0;
             foreach ($misCBUs as $micbu){

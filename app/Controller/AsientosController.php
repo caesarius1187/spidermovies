@@ -34,11 +34,6 @@ class AsientosController extends AppController {
         $cliente = $this->Cliente->find('first', $clienteOpc);
         $this->set('cliente',$cliente);
         $this->set('periodo',$periodo);
-
-        //$this->Cuentascliente->recursive = -1;
-
-
-
         $AsientosOpt = [
             'contain' => [
                 'Movimiento'=>[
