@@ -51,6 +51,7 @@ class ActividadclientesController extends AppController {
 		$error = 0;
 		if ($this->request->is('post')) {
 			$this->Actividadcliente->create();
+			$this->request->data('Actividadcliente.baja',date('Y-m-d',strtotime($this->request->data['Actividadcliente']['baja'])));
 			if ($this->Actividadcliente->save($this->request->data)) {
 				$respuesta='The actividadcliente has been saved.';
 				$opcActividades = array('conditions' => array('Actividadcliente.id' =>  $this->Actividadcliente->getLastInsertID() ));
@@ -77,20 +78,24 @@ class ActividadclientesController extends AppController {
 		if (!$this->Actividadcliente->exists($id)) {
 			throw new NotFoundException(__('Invalid actividadcliente'));
 		}
-		if ($this->request->is(array('post', 'put'))) {
+		$mostrarFormulario=true;
+		if ($this->request->is(array('post'))) {
+			if($this->request->data['Actividadcliente']['baja'.$id]!=""){
+				$this->request->data('Actividadcliente.baja',date('Y-m-d',strtotime($this->request->data['Actividadcliente']['baja'.$id])));
+			}
 			if ($this->Actividadcliente->save($this->request->data)) {
-				$this->Session->setFlash(__('The actividadcliente has been saved.'));
-				return $this->redirect(array('action' => 'index'));
+				$mostrarFormulario=false;
 			} else {
-				$this->Session->setFlash(__('The actividadcliente could not be saved. Please, try again.'));
+
 			}
 		} else {
-			$options = array('conditions' => array('Actividadcliente.' . $this->Actividadcliente->primaryKey => $id));
-			$this->request->data = $this->Actividadcliente->find('first', $options);
+
 		}
-		$clientes = $this->Actividadcliente->Cliente->find('list');
-		$actividades = $this->Actividadcliente->Actividade->find('list');
-		$this->set(compact('clientes', 'actividades'));
+		$options = array('conditions' => array('Actividadcliente.' . $this->Actividadcliente->primaryKey => $id));
+		$actividadcliente = $this->Actividadcliente->find('first', $options);
+		$this->request->data = $actividadcliente;
+		$this->set(compact('mostrarFormulario', 'actividadcliente'));
+		$this->layout = 'ajax';
 	}
 
 /**

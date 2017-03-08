@@ -71,7 +71,7 @@
             <td>
                 <?php 
                      echo $this->Form->input('fchfincliente', array(
-                                'class'=>'datepicker', 
+                                'class'=>'datepicker-month-year',
                                 'type'=>'text',
                                 'label'=>'Cliente hasta',  
                                 'style' => 'width:200px',                                  

@@ -63,7 +63,8 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
         Ventas:</br>
         <?php
         $ventasArray = array();
-
+        /*************************************************************************************************************/
+        //Aca vamos a leer los TXT y ponerlos en el array de ventas
         $filesVentas = $dirVentas->find('.*\.txt');
         $i=0;
         $errorInFileVenta=false;
@@ -134,7 +135,7 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 $ventasArray[$i]['Venta']=$lineVenta;
                 $i++;
                 $j++;
-               // $line="";
+                // $line="";
                 unset($lineVenta);
             }
             $tituloButton= $errorInFileVenta?$dirVenta->name." Archivo con Error": $dirVenta->name;
@@ -156,9 +157,111 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 //echo "handler cerrado ABIERTO!";
             }
         }
+
+        /*************************************************************************************************************/
+        //Aca vamos a leer los CSV y ponerlos en el array de ventas
+        $errorInFileMovimientosbancarios=false;
+        $mostrarTabla=false;
+        $moneyChars = ['.','$'];
+
+        $filesVentas = $dirVentas->find('.*\.csv');
+        $i=0;
+        $errorInFileVenta=false;
+
+
+        foreach ($filesVentas as $dirVenta) {
+            if(is_readable($dirVentas->pwd() . DS . $dirVenta)){
+                $mostrarTabla=true;
+            }else{
+                echo "No se puede acceder al archivo:".$dirVenta."</br>";
+                break;
+            }
+
+            $dirVenta = new File($dirVentas->pwd() . DS . $dirVenta);
+            $dirVenta->open();
+            $contents = $dirVenta->read();
+            // $file->delete(); // I am deleting this file
+            $handler = $dirVenta->handle;
+            $j=0;
+
+            while (($line = fgetcsv($handler, 1000, ";")) !== false) {
+//                $line = utf8_decode($line);
+                if($line[0]=="fecha"||$line[0]==""||$line[1]==""||$line[2]==""||$line[3]==""||$line[4]==""){
+                    continue;
+                }
+                $ventasArray[$i] = array();
+                $ventasArray[$i]['Venta'] = array();
+                // process the line read.
+                $lineVenta = array();
+                $lineVenta['fecha']=date('d-m-Y',strtotime(str_replace("/", "-", $line[0])));
+                $lineVenta['comprobantetipo']=$line[1];
+                $lineVenta['puntodeventa']=$line[2];
+                $lineVenta['comprobantenumero']=$line[3];
+                $lineVenta['comprobantenumerohasta']=$line[4];
+                $lineVenta['codigodocumento']=$line[5];
+                $lineVenta['identificacionnumero']=$line[6];
+                $lineVenta['nombre']=$line[7];
+                //aveces la identificacionnumero viene vacia (todos 0) entonces vamos a poner el nombre
+                // en estos casos como identificacion numero
+                if(ltrim($lineVenta['identificacionnumero'],'0')==''){
+                    $lineVenta['identificacionnumero'] = $lineVenta['nombre'];
+                }
+                //hay algunos casos donde los registros vienen sin nombre y sin cuit, en estos casos
+                //vamos a poner que el subcliente es un consumidor final y lo vamos a cargar
+                //el formato del consumidor final es
+                //Nombre:   Consumidor Final
+                //CUIT:     20000000001
+                //DNI:      20000000001
+                if(ltrim($lineVenta['identificacionnumero'],' ')=='' && ltrim($lineVenta['nombre'],' ')==''){
+                    $lineVenta['nombre'] = 'Consumidor Final';
+                    $lineVenta['identificacionnumero'] = '20000000001';
+                }
+                $lineVenta['importetotaloperacion']= floatval(str_replace(',', '.', str_replace('.', '', $line[8])));
+                $lineVenta['importeconceptosprecionetogravado']= floatval(str_replace(',', '.', str_replace('.', '', $line[9])));
+                $lineVenta['percepcionesnocategorizados']= floatval(str_replace(',', '.', str_replace('.', '', $line[10])));
+                $lineVenta['importeoperacionesexentas']= floatval(str_replace(',', '.', str_replace('.', '', $line[11])));
+                $lineVenta['importepercepcionespagosacuenta']= floatval(str_replace(',', '.', str_replace('.', '', $line[12])));
+                $lineVenta['importeingresosbrutos']= floatval(str_replace(',', '.', str_replace('.', '', $line[13])));
+                $lineVenta['importeimpuestosmunicipales']= floatval(str_replace(',', '.', str_replace('.', '', $line[14])));
+                $lineVenta['importeimpuestosinternos']= floatval(str_replace(',', '.', str_replace('.', '', $line[15])));
+                $lineVenta['codigomoneda']=$line[16];
+                $lineVenta['cambiotipo']=$line[17];
+                $lineVenta['cantidadalicuotas']=$line[18];
+                $lineVenta['operacioncodigo']=$line[19];
+                $lineVenta['otrostributos']=$line[20];
+                $lineVenta['fechavencimientopago']=$line[21];
+                $ventasArray[$i]['Venta']=$lineVenta;
+                $i++;
+                $j++;
+                // $line="";
+                unset($lineVenta);
+            }
+            $tituloButton= $errorInFileVenta?$dirVenta->name." Archivo con Error": $dirVenta->name;
+            echo $this->Form->button(
+                $tituloButton .'</br>
+                <label>Ventas: '.$j.'</label>',
+                array(
+                    'class'=>'buttonImpcli4',
+                    'onClick'=>"deletefile('".$dirVenta->name."','".$cliid."','ventas','".$periodo."')",
+                    'id'=>'',
+                ),
+                array()
+            );
+            fclose ( $handler );
+            $dirVenta->close(); // Be sure to close the file when you're done
+            if(!is_resource($handler)){
+                //echo "handler cerrado con exito";
+            }else{
+                //echo "handler cerrado ABIERTO!";
+            }
+        }
         ?>
+
+
+
         </br></br></br></br></br>Alicuotas:</br>
         <?php
+        //ACA VAMOS A BUSCAR LOS TXT
         $filesAlicuotas = $dirAlicuotas->find('.*\.txt');
         //vamos a crear un array de Ventas con los datos que vayamos recavando de cada archivo
         $i=0;
@@ -223,7 +326,74 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 //echo "handler cerrado ABIERTO! 2";
             }
         }
+        //ACA VAMOS A BUSCAR LOS CSV
+        $filesAlicuotas = $dirAlicuotas->find('.*\.csv');
+        //vamos a crear un array de Ventas con los datos que vayamos recavando de cada archivo
+        $i=0;
+        foreach ($filesAlicuotas as $dirAlicuota) {
+            if(is_readable($dirAlicuotas->pwd() . DS . $dirAlicuota)){
+                $mostrarTabla = true;
+            }else{
+                echo "No se puede acceder al archivo:".$dirAlicuota."</br>";
+                break;
+            }
+            $dirAlicuota = new File($dirAlicuotas->pwd() . DS . $dirAlicuota);
+            $dirAlicuota->open();
+            $contents = $dirAlicuota->read();
+            // $file->delete(); // I am deleting this file
+            $handler = $dirAlicuota->handle;
+            $j=0;
+            while (($line = fgetcsv($handler, 1000, ";")) !== false) {
+                if($line[0]=="comprobantetipo"||$line[0]==""||$line[1]==""||$line[2]==""||$line[3]==""||$line[4]==""){
+                    continue;
+                }
+                // process the line read.
+                $lineAlicuota = array();
+                $lineAlicuota['comprobantetipo'] = $line[0];
+                $lineAlicuota['puntodeventa'] = $line[1];
+                $lineAlicuota['comprobantenumero'] = $line[2];
+                $lineAlicuota['importenetogravado'] = floatval(str_replace(',', '.', str_replace('.', '', $line[3])));
+                $lineAlicuota['alicuotaiva'] = $line[4];
+                $lineAlicuota['impuestoliquidado'] = floatval(str_replace(',', '.', str_replace('.', '', $line[5])));
+                $i++;
+                $j++;
+                //ahora que tenemos la alicuota en un array tenemos que buscar la venta a la que pertenece y agregarla
+                $k=0;
+                foreach ($ventasArray as $venta) {
+                    $mismocomprobante = $venta['Venta']['comprobantenumero']==$lineAlicuota['comprobantenumero'];
+                    $mismopuntodeventa = $venta['Venta']['puntodeventa']==$lineAlicuota['puntodeventa'];
+                    $mismotipocomprobante = $venta['Venta']['comprobantetipo']==$lineAlicuota['comprobantetipo'];
+                    if($mismocomprobante&&$mismopuntodeventa&&$mismotipocomprobante){
+                        if(!isset($venta['Alicuota'])){
+                            $venta['Alicuota']=array();
+                        }
+                        array_push($venta['Alicuota'], $lineAlicuota);
+                        $ventasArray[$k]=$venta;
+                        break;
+                    }
+                    $k++;
+                }
+            }
+            echo $this->Form->button(
+                $dirAlicuota->name.'</br>
+            <label>Alicuotas: '.$j.'</label>',
+                array(
+                    'class'=>'buttonImpcli4',
+                    'onClick'=>"deletefile('".$dirAlicuota->name."','".$cliid."','alicuotas','".$periodo."')",
+                    'id'=>'',
+                ),
+                array()
+            );
+            fclose ( $handler );
+            $dirAlicuota->close(); // Be sure to close the file when you're done
+            if(!is_resource($handler)){
+                //echo "handler cerrado con exito 2";
+            }else{
+                //echo "handler cerrado ABIERTO! 2";
+            }
+        }
         ?>
+
     </div>
     <div  class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
         Ultimas ventas cargadas en el sistema
@@ -265,6 +435,7 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
 $PuntoDeVentaNoCargado=array();
 $SubclienteNoCargado=array();
 $VentasConFechasIncorrectas = array();
+
 foreach ($ventasArray as $venta) {
     $agregarPuntoDeVenta=true;
     foreach ($puntosdeventas as $puntosdeventa) {
@@ -793,7 +964,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         'label' => ($i + 9) % 10 == 0 ? 'Exento Ac.Vs' : '',
                                         'value' => 0,
                                     ));
-                                    //$lineVenta['percepcionesnocategorizados']=substr($line, 138,15);
                                     //$lineVenta['importepercepcionespagosacuenta']=substr($line, 168,15);
                                     echo $this->Form->input('Venta.' . $i . '.periodo', array('type' => 'hidden', 'value' => $periodo));
                                     //si hay mas de una alicuota este total se debe recalcular por que sino se va a cargar 2(n) veces uno para cada alicuota

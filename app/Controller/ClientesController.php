@@ -368,6 +368,13 @@ class ClientesController extends AppController {
 		        	'Periodosactivo'=>array(
 		        	 		'conditions'=>$conditionsImpCliHabilitados,
 		        	 	),
+					'Conceptosrestante'=>[
+						'conditions'=>[
+							'Conceptosrestante.conceptostipo_id'=>1,/*solo vamos a traer los saldos a favor para que el
+							 IVA puedan sumar su SLD*/
+							'Conceptosrestante.periodo'=>$pemes.'-'.$peanio
+						]
+					],
 		      		'fields'=>array('Impcli.id','Impcli.cliente_id','Impcli.impuesto_id'),
 //				  	'conditions'=>[
 //						"Impcli.impuesto_id NOT IN
@@ -657,6 +664,7 @@ class ClientesController extends AppController {
 				   			),	
 				   		),	
 				   		'Impcli'=>[
+							'Impuesto',
                             'Cbu'=>[
                                 'Movimientosbancario'=>[
                                     'Cbu',
@@ -1196,7 +1204,7 @@ class ClientesController extends AppController {
 		);		
 		$this->set(compact('gclis'));
 	}
-	public function informefinancierotributario($data=null) {
+	public function informefinancierotributario() {
 		$this->loadModel('Impcli');
 		$this->loadModel('Tareasxclientesxestudios');
 		$this->loadModel('Tareasimpuesto');
@@ -1257,6 +1265,20 @@ class ClientesController extends AppController {
 						            	 'Deposito.periodo' => $pemes."-".$peanio,
 						            ),
 				   			),
+							'Empleado'=>[
+								'Valorrecibo'=>[
+									'Cctxconcepto'=>[
+									],
+									'conditions'=>[
+										'Valorrecibo.periodo'=>$pemes."-".$peanio,
+										'Valorrecibo.cctxconcepto_id IN (
+											select id from cctxconceptos where concepto_id = 46
+										)',/*Solo los valores recibos de cct x coneptos del Concepto Neto*/
+									]
+								],
+				   				'conditions' => [
+						            ],
+				   			],
 				   			'Venta'=>array(
 				   				'conditions' => array(
 						            	 'Venta.periodo' => $pemes."-".$peanio
@@ -1302,7 +1324,7 @@ class ClientesController extends AppController {
                                     		SELECT id 
                                     		FROM impuestos 
                                     		WHERE impuestos.organismo = "banco"
-                                    		AND impuestos.tipo = "informativo"
+                                    		OR impuestos.tipo = "informativo"
                                     		)'
                                 )
 					       	),
@@ -1547,35 +1569,33 @@ class ClientesController extends AppController {
 			$clientes3=$this->Cliente->find('first', array(
 										   'contain'=>array(
 										      	'Grupocliente',
-											      'Organismosxcliente',
-											      'Domicilio'=>array(
-											      	'Localidade'=>array(
+											    'Organismosxcliente',
+											    'Domicilio'=>array(
+											    	'Localidade'=>array(
 											      			'Partido'
 											      		)
 											      	),
-											      'Personasrelacionada',
-												  'Subcliente'=>['limit' => 200,],
-												  'Provedore'=>['limit' => 250,],
-												  'Empleado'=>array(
-                                                      'order'=>'(Empleado.legajo * 1)'
-                                                  ),
-	  										      'Actividadcliente'=>array(
+											    'Personasrelacionada',
+												'Empleado'=>array(
+													'order'=>'(Empleado.legajo * 1)'
+											  	),
+											  	'Actividadcliente'=>array(
 										      		 'Actividade'
-	  										      	),
-	  										      'Puntosdeventa'=>array(
+												),
+	  										    'Puntosdeventa'=>array(
 	  										      	'Domicilio'=>array(
 	  										      		'Localidade'=>array(
 	  										      			'Partido'
 	  										      			)
 	  										      		),
 	  										      	'order'=>array('Puntosdeventa.nombre')
-											      	),
-											      'Impcli'=>array(
-													  'Autonomocategoria',
-													  'Impuesto'=>array(
-											            'fields'=>array('id','nombre','organismo'),								             
-											         ),
-										        	 'Periodosactivo'=>array(
+												),
+											  	'Impcli'=>array(
+											 		'Autonomocategoria',
+													'Impuesto'=>array(
+											           'fields'=>array('id','nombre','organismo'),
+											        ),
+										        	'Periodosactivo'=>array(
 	 														'conditions' => array(
 												                'OR'=>array(
 										                			'Periodosactivo.hasta' => '', 

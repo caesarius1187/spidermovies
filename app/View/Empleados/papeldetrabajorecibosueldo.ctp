@@ -581,7 +581,6 @@ if(count($empleado['Valorrecibo'])==0){
                                     'label'=>false,'type'=>'select','options'=>$impuestos,'class'=>'hideOnPrint'
 
                                 ]); ?>
-                                </br>
                                 <b>Cargo: </b><?php echo $empleado['Empleado']['categoria'] ?>
                                 <b>Jornada: </b><?php echo $empleado['Empleado']['jornada']=='0.5'?"Media":"Completa" ?>
                                 <b>Basico: </b><?php echo number_format($miempleado['basico'], 2, ",", "."); ?>

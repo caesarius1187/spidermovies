@@ -264,7 +264,19 @@ class EmpleadosController extends AppController {
 		$this->render('papeldetrabajosueldos');
 	}
     public function papeldetrabajolibrosueldo($empid=null,$periodo=null,$tipoliquidacion=null){
-        $options = [
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+		$esMayorQueBaja = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'SUBSTRING(Actividadcliente.baja,4,7)*1 < '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Actividadcliente.baja,4,7)*1 <= '.$peanio.'*1',
+					'SUBSTRING(Actividadcliente.baja,1,2) <= '.$pemes.'*1'
+				),
+			)
+		);
+		$options = [
             'contain'=>[
                 'Domicilio'=>[
                     'Localidade'=>[
@@ -273,7 +285,8 @@ class EmpleadosController extends AppController {
                 ],
                 'Cliente'=>[
                     'Actividadcliente'=>[
-                        'Actividade'
+                        'Actividade',
+						'conditions'=>$esMayorQueBaja
                     ],
 					'Impcli'=>[
 						'conditions'=>[
@@ -462,15 +475,11 @@ class EmpleadosController extends AppController {
         $this->layout = 'ajax';
         $this->render('papeldetrabajorecibosueldo');
     }
-/**
- * add method
- *
- * @return void
- */
+
 	public function add() {
+		$respuesta = array('respuesta'=>'');
 		if ($this->request->is('post')) {
 			$this->Empleado->create();
-			$respuesta = array('respuesta'=>'');
             if(isset($this->request->data['Empleado']['fechaingresoedit'])){
                 $this->request->data['Empleado']['fechaingreso']=$this->request->data['Empleado']['fechaingresoedit'];
             }
@@ -486,15 +495,20 @@ class EmpleadosController extends AppController {
 				$this->request->data('Empleado.fechaegreso', date('Y-m-d', strtotime($this->request->data['Empleado']['fechaegreso'])));
 			}
 			if ($this->Empleado->save($this->request->data)) {
-				$respuesta['data'] = $this->request->data;
-				if(!isset($respuesta['data']['Empleado']['id'])||$respuesta['data']['Empleado']['id']==''){
-					$respuesta['data']['Empleado']['id'] = $this->Empleado->getLastInsertID();
+				$respuesta['empleado'] = $this->request->data;
+				if(!isset($respuesta['empleado']['Empleado']['id'])||$respuesta['empleado']['Empleado']['id']==''){
+					$respuesta['empleado']['Empleado']['id'] = $this->Empleado->getLastInsertID();
 				}
 				$respuesta['respuesta'] = 'Se ha guardado el empleado con exito';
 			} else {
 				$respuesta['error'] = '1';
 				$respuesta['respuesta'] = 'NO se ha guardado el empleado con exito. Por favor intente de nuevo mas tarde.';
 			}
+			$this->set('data',$respuesta);
+			$this->autoRender=false;
+			$this->layout = 'ajax';
+			$this->render('serializejson');
+			return;
 		}
 		$this->set('respuesta',$respuesta);
 		$this->autoRender=false;
@@ -503,13 +517,6 @@ class EmpleadosController extends AppController {
 		return;
 	}
 
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
 	public function edit($id = null) {
 		$this->loadModel('Domicilio');
 		$this->loadModel('Conveniocolectivotrabajo');
@@ -542,18 +549,29 @@ class EmpleadosController extends AppController {
 		)
 		);
 
+		//aca vamos a setiar las listas que se necesita para cargar empleados
+		$this->set('codigorevista',$this->Empleado->codigorevista);
+		$this->set('codigoactividad',$this->Empleado->codigoactividad);
+		$this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
+		$this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
+		$this->set('tipoempresa',$this->Empleado->tipoempresa);
+		$this->set('codigozona',$this->Empleado->codigozona);
+		$this->set('cargos',$this->Cargo->find('list',[
+				'contain'=>[
+					'Conveniocolectivotrabajo'
+				],
+				'fields'=>[
+					'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
+				]
+			]
+		)
+		);
+
 		$this->autoRender=false;
 		$this->layout = 'ajax';
 		$this->render('edit');
 	}
 
-/**
- * delete method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
 	public function delete($id = null) {
 		$id = substr($id,0, -5);
 		$this->Empleado->id = $id;
@@ -562,13 +580,24 @@ class EmpleadosController extends AppController {
 		}
 		$this->request->onlyAllow('post', 'delete');
 		$data=array();
-		if ($this->Empleado->delete()) {
-			$data['respuesta'] = "El Empleado ha a sido eliminado.";
-			if($this->Empleado->Valorrecibo->deleteAll(array('Valorrecibo.empleado_id' => $id), false)){
-				$data['respuesta'] .= " Se han eliminado los recibos guardados para este empleado";
-			}
+
+		$options = array(
+			'contain'=>array('Valorrecibo'),
+			'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
+		$miEmpleado = $this->Empleado->find('first', $options);
+
+		if(count($miEmpleado['Valorrecibo'])>0){
+			$data['error'] = "El Empleado tiene liquidaciones ya cargadas por favor eliminelas antes de borrar este empleado";
+			$data['respuesta'] = "El Empleado tiene liquidaciones ya cargadas por favor eliminelas antes de borrar este empleado";
 		}else {
-			$data['respuesta'] = "El Empleado NO ha sido eliminado.Por favor intente de nuevo mas tarde.";
+			if ($this->Empleado->delete()) {
+				$data['respuesta'] = "El Empleado ha a sido eliminado.";
+//				if ($this->Empleado->Valorrecibo->deleteAll(array('Valorrecibo.empleado_id' => $id), false)) {
+//					$data['respuesta'] .= " Se han eliminado los recibos guardados para este empleado";
+//				}
+			} else {
+				$data['respuesta'] = "El Empleado NO ha sido eliminado.Por favor intente de nuevo mas tarde.";
+			}
 		}
 		$this->set(compact('data'));
 		$this->layout = 'ajax';

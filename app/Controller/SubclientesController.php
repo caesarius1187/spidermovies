@@ -22,13 +22,15 @@ class SubclientesController extends AppController {
  */
 	public function index($cliid=null) {
 		$optionsSubcliente=[
-			'contain',
-			'condition'=>[
+			'contain'=>[],
+			'conditions'=>[
 				'Subcliente.cliente_id'=>$cliid
 			]
 		];
-		$subclientes = $this->Subcliente->find('all',$optionsSubcliente) = 0;
-		$this->set('data',$subclientes);
+		$subclientes = $this->Subcliente->find('all',$optionsSubcliente);
+		$data=[];
+		$data['subclientes']=$subclientes;
+		$this->set('data',$data);
 		$this->layout = 'ajax';
 		$this->render('serializejson');
 	}

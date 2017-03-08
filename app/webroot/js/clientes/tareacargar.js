@@ -427,14 +427,12 @@ $(document).ready(function() {
     tabsFuncionalidad();
     cctxconeptosOnChange();
     function cargaryconfigurarTablaVentas(){
-
         var data="";
         var clienteid = $('#cliid').val();
         var periodo = $('#periodo').val();
         $.ajax({
             type: "post",  // Request method: post, get
             url: serverLayoutURL+"/ventas/index/"+clienteid+"/"+periodo,
-
             // URL to request
             data: data,  // post data
             success: function(response) {
@@ -1950,7 +1948,7 @@ $(document).ready(function() {
             var tieneIVAPercepciones = $("#saveVentasForm #VentaTieneIVAPercepciones").val();
             var tieneImpuestoInterno = $("#saveVentasForm #VentaTieneImpuestoInterno").val();
             var tieneAgenteDePercepcionActividadesVarias = $("#saveVentasForm #VentaTieneAgenteDePercepcionActividadesVarias").val();
-            var tieneAgenteDePercepcionIIBB = $("#saveVentasForm #VentaIibbpercep").val();
+            var tieneAgenteDePercepcionIIBB = $("#saveVentasForm #VentaTieneAgenteDePercepcionIIBB").val();
 
             tieneMonotributo ? tieneMonotributo = true : tieneMonotributo = false;
             tieneIVA ? tieneIVA = true : tieneIVA = false;
@@ -3016,6 +3014,7 @@ $(document).ready(function() {
                 $(".btn_empleados").each(function(){
                     $(this).removeClass("btn_empleados_selected");
                 });
+
                 $("#buttonEmpleado"+empid).addClass("btn_empleados_selected");
                 $("#divSueldoForm").html(response);
                 activarCalXOnSueldos();
@@ -3352,6 +3351,8 @@ $(document).ready(function() {
                 $('#Valorrecibo'+posicion+'Valor').attr('data-cell')
             ).setFormula($(this).val());
             tablaSueldoCalx.calx('calculate');
+            $('#Valorrecibo'+posicion+'Formulamodificada').prop('checked', true);
+            $('#Valorrecibo'+posicion+'Nuevaformula').val( $('#Valorrecibo'+posicion+'Formula').val());
         });
         tablaSueldoCalx = $('#ValorreciboPapeldetrabajosueldosForm').calx({
             language : 'id'

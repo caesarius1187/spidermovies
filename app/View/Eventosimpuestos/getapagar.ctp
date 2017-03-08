@@ -203,6 +203,8 @@ $(document).ready(function() {
 				case '1402'/*110399001 Cliente xx*/:
 				case '1414'/*110399001 Cliente xx*/:
 				case '260'/*110399001 Cliente xx*/:
+				case '2544'/*506140001 Autonomo*/:
+				case '265'/*110403102 Ganancias - Anticipos a Computar*/:
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){

@@ -24,15 +24,22 @@
     }
     //Vamos a mostrar los botones solo si los empleados tienen Liquidaciones Activadas
     if($empleado['Empleado']['liquidaprimeraquincena']){
-        $classAMostrar="btn_cargarliq";
-        if($liquidacionesActivas['1']){
-            $classAMostrar="btn_cargarliq_liq";
+        $classAMostrar = "btn_cargarliq";
+        $classAMostrarFieldSet = "fieldset_cargarliq";
+        if ($liquidacionesActivas['1']) {
+            $classAMostrar = "btn_cargarliq_liq";
+            $classAMostrarFieldSet = "fieldset_cargarliq";
         }
-        if($tipoliquidacion==1){
-            $classAMostrar = " btn_cargarliq_selected ".$classAMostrar;
+        if ($tipoliquidacion == 1) {
+            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
+            $classAMostrarFieldSet = "fieldset_cargarliq_selected";
         }
+    ?>
+    <fieldset class="<?php echo $classAMostrarFieldSet ?>" >
+        <legend >Primera Quincena</legend>
+        <?php
         echo $this->Form->button(
-            "Primera Quincena",
+            "Liquidacion",
             array(
                 'class'=>$classAMostrar,
                 'onClick'=>"cargarSueldoEmpleado('".$empleado['Empleado']['cliente_id']."','".$periodo."','".$empleado['Empleado']['id']."',1)",
@@ -40,35 +47,45 @@
             ),
             array()
         );
-        echo $this->Form->button(
-            "Libro de Sueldo PQ",
-            array(
-                'class'=>'btn_sueldo',
-                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',1)",
-                'id'=>'buttonLibroSueldo',
-            ),
-            array()
-        );
-        echo $this->Form->button(
-            "Recibo de Sueldo PQ",
-            array(
-                'class'=>'btn_sueldo',
-                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',1)",
-                'id'=>'buttonReciboSueldo',
-            ),
-            array()
-        );
+//        echo $this->Form->button(
+//            "Libro de Sueldo",
+//            array(
+//                'class'=>'btn_sueldo',
+//                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',1)",
+//                'id'=>'buttonLibroSueldo',
+//            ),
+//            array()
+//        );
+//        echo $this->Form->button(
+//            "Recibo de Sueldo",
+//            array(
+//                'class'=>'btn_sueldo',
+//                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',1)",
+//                'id'=>'buttonReciboSueldo',
+//            ),
+//            array()
+//        );
+        ?>
+    </fieldset>
+        <?php
     }
     if($empleado['Empleado']['liquidasegundaquincena']){
-        $classAMostrar="btn_cargarliq";
-        if($liquidacionesActivas['2']){
-            $classAMostrar="btn_cargarliq_liq";
+        $classAMostrar = "btn_cargarliq";
+        $classAMostrarFieldSet = "fieldset_cargarliq";
+        if ($liquidacionesActivas['2']) {
+            $classAMostrar = "btn_cargarliq_liq";
+            $classAMostrarFieldSet = "fieldset_cargarliq";
         }
-        if($tipoliquidacion==2){
-            $classAMostrar = " btn_cargarliq_selected ".$classAMostrar;
+        if ($tipoliquidacion == 2) {
+            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
+            $classAMostrarFieldSet = "fieldset_cargarliq_selected";
         }
+        ?>
+    <fieldset class="<?php echo $classAMostrarFieldSet ?>" >
+        <legend >Segunda Quincena</legend>
+        <?php
         echo $this->Form->button(
-            "Segunda Quincena",
+            "Liquidacion",
             array(
                 'class'=>$classAMostrar,
                 'onClick'=>"cargarSueldoEmpleado('".$empleado['Empleado']['cliente_id']."','".$periodo."','".$empleado['Empleado']['id']."',2)",
@@ -76,35 +93,45 @@
             ),
             array()
         );
-        echo $this->Form->button(
-            "Libro de Sueldo SQ",
-            array(
-                'class'=>'btn_sueldo',
-                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',2)",
-                'id'=>'buttonLibroSueldo',
-            ),
-            array()
-        );
-        echo $this->Form->button(
-            "Recibo de Sueldo SQ",
-            array(
-                'class'=>'btn_sueldo',
-                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',2)",
-                'id'=>'buttonReciboSueldo',
-            ),
-            array()
-        );
+//        echo $this->Form->button(
+//            "Libro de Sueldo",
+//            array(
+//                'class'=>'btn_sueldo',
+//                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',2)",
+//                'id'=>'buttonLibroSueldo',
+//            ),
+//            array()
+//        );
+//        echo $this->Form->button(
+//            "Recibo de Sueldo",
+//            array(
+//                'class'=>'btn_sueldo',
+//                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',2)",
+//                'id'=>'buttonReciboSueldo',
+//            ),
+//            array()
+//        );
+        ?>
+    </fieldset>
+        <?php
     }
     if($empleado['Empleado']['liquidamensual']) {
         $classAMostrar = "btn_cargarliq";
+        $classAMostrarFieldSet = "fieldset_cargarliq";
         if ($liquidacionesActivas['3']) {
             $classAMostrar = "btn_cargarliq_liq";
+            $classAMostrarFieldSet = "fieldset_cargarliq";
         }
         if ($tipoliquidacion == 3) {
             $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
+            $classAMostrarFieldSet = "fieldset_cargarliq_selected";
         }
+    ?>
+    <fieldset class="<?php echo $classAMostrarFieldSet ?>" >
+        <legend >Mensual</legend>
+        <?php
         echo $this->Form->button(
-            "Mensual",
+            "Liquidacion",
             array(
                 'class' => $classAMostrar,
                 'onClick' => "cargarSueldoEmpleado('" . $empleado['Empleado']['cliente_id'] . "','" . $periodo . "','" . $empleado['Empleado']['id'] . "',3)",
@@ -112,24 +139,27 @@
             ),
             array()
         );
-        echo $this->Form->button(
-            "Libro de Sueldo M",
-            array(
-                'class'=>'btn_sueldo',
-                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',3)",
-                'id'=>'buttonLibroSueldo',
-            ),
-            array()
-        );
-        echo $this->Form->button(
-            "Recibo de Sueldo M",
-            array(
-                'class'=>'btn_sueldo',
-                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',3)",
-                'id'=>'buttonReciboSueldo',
-            ),
-            array()
-        );
+//        echo $this->Form->button(
+//            "Libro de Sueldo",
+//            array(
+//                'class'=>'btn_sueldo',
+//                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',3)",
+//                'id'=>'buttonLibroSueldo',
+//            ),
+//            array()
+//        );
+//        echo $this->Form->button(
+//            "Recibo de Sueldo",
+//            array(
+//                'class'=>'btn_sueldo',
+//                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',3)",
+//                'id'=>'buttonReciboSueldo',
+//            ),
+//            array()
+//        );
+        ?>
+    </fieldset>
+        <?php
     }
     if($empleado['Empleado']['liquidapresupuestoprimera']) {
         $classAMostrar = "btn_cargarliq";
@@ -251,7 +281,7 @@
         <?php if(!is_null($empleado['Conveniocolectivotrabajo']['nombre'])) { ?>
             <tbody>
                 <?php
-                echo "Recibo de sueldo:</br>";
+                echo "Liquidacion de sueldo:</br>";
 
                 $i=0;
                 $miseccionamostrada="sinseccion";
@@ -318,14 +348,19 @@
 
                         <td  style="<?php echo $styleForTd; ?>">
                             <?php
-                            //aca podriamos buscar el valor que ya guardardamos para este concepto
-                            //y mostrar un formulario para modificarlo
+                            //aca buscamos el valor que ya guardardamos para este concepto
+                            //y mostramos un formulario para modificarlo
+                            $valor = 0;
                             $valor = 0;
                             $porcentaje = 0;
                             $valorreciboid = 0;
                             $aplicafuncion = true;
+                            $formulamodificada = false;
+                            $nuevaformula = "";
                             if(count($conceptoobligatorio['Valorrecibo'])>0){
                                 $valor = $conceptoobligatorio['Valorrecibo'][0]['valor'];
+                                $formulamodificada = $conceptoobligatorio['Valorrecibo'][0]['formulamodificada'];
+                                $nuevaformula = $conceptoobligatorio['Valorrecibo'][0]['nuevaformula'];
                                 $valorreciboid = $conceptoobligatorio['Valorrecibo'][0]['id'];
                             }else{
 
@@ -427,10 +462,15 @@
                         </td>
                         <td >
                             <?php
-
                             $funcionaaplicar="";
                             if($conceptoobligatorio['calculado']&&$aplicafuncion){
-                                $funcionaaplicar=$conceptoobligatorio['funcionaaplicar'];
+                                //aca aplico la formula del cctxconcepto pero si se ha modificado para este valorrecibo
+                                //muestro la modificada
+                                if($formulamodificada){
+                                    $funcionaaplicar=$nuevaformula;
+                                }else{
+                                    $funcionaaplicar=$conceptoobligatorio['funcionaaplicar'];
+                                }
                             }else{
                                 $funcionaaplicar = "";
                             }
@@ -446,6 +486,7 @@
                             echo $this->Form->input('Valorrecibo.'.$i.'.tipoliquidacion',array('type'=>'hidden','value'=>$tipoliquidacion));
                             echo $this->Form->input('Valorrecibo.'.$i.'.cctxconcepto_id',array('type'=>'hidden','value'=>$conceptoobligatorio['id']));
                             echo $this->Form->input('Valorrecibo.'.$i.'.empleado_id',array('type'=>'hidden','value'=>$empleado['Empleado']['id']));
+
                             //si es boolean vamos a mostrar un Si con true y un no con False para que elija
                             ?>
                             <?php
@@ -507,6 +548,20 @@
                         <td>
                             <?php
                             if($conceptoobligatorio['calculado']){
+
+                                $optionsFormulaMofidicada=array(
+                                    'type'=>'checkbox',
+                                    'valor'=>$formulamodificada ,
+                                    'value'=>$formulamodificada ,
+                                    'style'=>'display:none'
+                                );
+                                if($formulamodificada){
+                                    $optionsFormulaMofidicada['checked']='checked';
+                                }
+                                echo $this->Form->input('Valorrecibo.'.$i.'.formulamodificada',$optionsFormulaMofidicada);
+
+
+                                echo $this->Form->input('Valorrecibo.'.$i.'.nuevaformula',array('value'=>$nuevaformula,'style'=>'display:none'));
                                 echo $this->Form->input('Valorrecibo.'.$i.'.formula',array('type'=>'text',
                                         'value'=>$funcionaaplicar,
                                         'posicion'=>$i,

@@ -729,72 +729,6 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
        <?php /**************************************************************************/ ?>
        <?php /*****************************Novedades************************************/ ?>
        <?php /**************************************************************************/ ?>
-          <div id="formOldSueldo">
-              <div id="form_sueldo" class="tabNovedades index" style="width:96%;float:left;">
-                  <?php
-                  echo $this->Form->create('Sueldo',array(
-                          'controller'=>'sueldos',
-                          'id'=>'saveSueldosForm',
-                          'action'=>'addajax',
-                          'class'=>'formTareaCarga',
-                      )
-                  );
-                  echo $this->Form->input('cliente_id',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
-                  echo $this->Form->input('periodo',array('value'=>$periodo,'type'=>'hidden'));
-                  echo $this->Form->input('fecha', array(
-                          'class'=>'datepicker',
-                          'type'=>'text',
-                          'label'=>'Fecha',
-                          'default'=>"",
-                          'readonly'=>'readonly',
-                          'required'=>true,
-                          'style' => 'width:80px;'
-                      )
-                  );
-                  echo $this->Form->input('monto', array(
-                          'label'=> 'Monto',
-                      )
-                  );
-                  echo $this->Form->submit('+', array('type'=>'image',
-                      'src' => $this->webroot.'img/add_view.png',
-                      'class'=>'imgedit',
-                      'title'=>'Agregar',
-                      'style'=>'width:25px;height:25px;margin-top:8px;'));
-                  echo $this->Form->end();  ?>
-              </div>
-              <div style="overflow:auto;width:96%; float:left;min-height: 120px; margin-top:10px;" class="tareaCargarIndexTable tabNovedades index">
-              <table class="" style="border:1px solid white" id="tablaSueldos">
-                  <thead>
-                  <tr>
-                      <th>Fecha</th>
-                      <th>Monto</th>
-                      <th>Acciones</th>
-                  </tr>
-                  </thead>
-                  <tbody id="bodyTablaSueldos">
-                  <?php
-                  foreach($cliente["Sueldo"] as $sueldo ){
-                      echo $this->Form->create('Sueldo',array('controller'=>'Sueldo','action'=>'edit'));
-                      $tdClass = "tdViewSueldo".$sueldo["id"];
-                      ?>
-                      <tr id="rowsueldo<?php echo $sueldo["id"]?>">
-                          <td class="<?php echo $tdClass?>"><?php echo date('d-m-Y',strtotime($sueldo["fecha"]))?></td>
-                          <td class="<?php echo $tdClass?>"><?php echo $sueldo["monto"]?></td>
-                          <td class="<?php echo $tdClass?>">
-                              <?php
-                              $paramsSueldo=$sueldo["id"];
-                              echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarSueldo(".$paramsSueldo.")"));
-                              echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarSueldo(".$paramsSueldo.")"));
-                              echo $this->Form->end();  ?>
-                          </td>
-                      </tr>
-                      <?php
-                  }
-                  ?>
-                  </tbody>
-              </table>
-          </div>
-          </div>
           <div id="form_empleados" class="tabNovedades index" style="width:96%;float:left;">
                 <?php
                 $arrayEmpleados=[];
@@ -816,73 +750,88 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 }
                 ?>
           </div>
-            <div id="form_FuncionImprimir" class="tabNovedades index" style="width:96%;float:left;">
+          <div id="form_FuncionImprimir" class="tabNovedades index" style="width:96%;float:left;">
                 <?php
                 echo $this->Form->input('arrayEmpleados',[
                     'type'=>'hidden',
                     'value'=>json_encode($arrayEmpleados)
                 ]);
+                ?>
+              <fieldset style="border: 1px solid #1e88e5; width: 28%; float: left;">
+                  <legend style="color:#1e88e5;font-weight:normal;">Primera Quincena</legend>
+                <?php
                 echo $this->Form->button(
-                    "Libros de sueldos Primera Quincena",
+                    "Libros de sueldos",
                     array(
                         'class'=>'btn_sueldo',
-                        'style'=>'width:inherit',
+                        'style'=>'width:inherit;min-width: 141px;',
                         'onClick'=>"cargarTodosLosLibros(1)",
                         'id'=>'buttonImprimirRecibos',
                     ),
                     array()
                 );
                 echo $this->Form->button(
-                    "Recibos de sueldos Primera Quincena",
+                    "Recibos de sueldos",
                     array(
                         'class'=>'btn_sueldo',
-                        'style'=>'width:inherit',
+                        'style'=>'width:inherit;min-width: 155px;',
                         'onClick'=>"cargarTodosLosRecibos(1)",
                         'id'=>'buttonImprimirRecibos',
                     ),
                     array()
                 );
+                ?>
+              </fieldset>
+              <fieldset style="border: 1px solid #1e88e5;width: 28%; float: left;">
+                  <legend style="color:#1e88e5;font-weight:normal;">Segunda Quincena</legend>
+                  <?php
                 echo $this->Form->button(
-                    "Libros de sueldos Segunda Quincena",
+                    "Libros de sueldos",
                     array(
                         'class'=>'btn_sueldo',
-                        'style'=>'width:inherit',
+                        'style'=>'width:inherit;min-width: 141px;',
                         'onClick'=>"cargarTodosLosLibros(2)",
                         'id'=>'buttonImprimirRecibos',
                     ),
                     array()
                 );
                 echo $this->Form->button(
-                    "Recibos de sueldos Segunda Quincena",
+                    "Recibos de sueldos",
                     array(
                         'class'=>'btn_sueldo',
-                        'style'=>'width:inherit',
+                        'style'=>'width:inherit;min-width: 155px;',
                         'onClick'=>"cargarTodosLosRecibos(2)",
                         'id'=>'buttonImprimirRecibos',
                     ),
                     array()
                 );
+                  ?>
+              </fieldset>
+              <fieldset style="border: 1px solid #1e88e5;width: 28%; float: left;">
+                  <legend style="color:#1e88e5;font-weight:normal;">Mensual</legend>
+                  <?php
                 echo $this->Form->button(
-                    "Libros de sueldos Mensual",
+                    "Libros de sueldos",
                     array(
                         'class'=>'btn_sueldo',
-                        'style'=>'width:inherit',
+                        'style'=>'width:inherit;min-width: 141px;',
                         'onClick'=>"cargarTodosLosLibros(3)",
                         'id'=>'buttonImprimirRecibos',
                     ),
                     array()
                 );
                 echo $this->Form->button(
-                    "Recibos de sueldos Mensual",
+                    "Recibos de sueldos",
                     array(
                         'class'=>'btn_sueldo',
-                        'style'=>'width:inherit',
+                        'style'=>'width:inherit;min-width: 155px;',
                         'onClick'=>"cargarTodosLosRecibos(3)",
                         'id'=>'buttonImprimirRecibos',
                     ),
                     array()
                 );
                 ?>
+              </fieldset>
             </div>
           <div style="overflow:auto;width:96%; min-height: 400px; margin-top: 10px" class="tareaCargarIndexTable tabNovedades index" id="divSueldoForm">
 
@@ -949,7 +898,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 echo $this->Form->input('periodo',array('value'=>$periodo,'type'=>'hidden'));
                 echo $this->Form->input('concepto',array('label'=>'Concepto'));
                 echo $this->Form->input('numerocomprobante', array(
-                        'label'=> 'N° Comprobante',
+                        'label'=> 'N&deg; Comprobante',
                     )
                 );
                 echo $this->Form->input('comprobante_id', array(
@@ -963,7 +912,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     )
                 );
                 echo $this->Form->input('numerofactura', array(
-                        'label'=> 'N° Factura',
+                        'label'=> 'N&deg; Factura',
                     )
                 );
 
@@ -990,7 +939,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                         'style'=> 'width:80px;'
                     )
                 );
-                echo $this->Form->input('numerodespachoaduanero',array('label'=>'N° Despacho Aduanero'));
+                echo $this->Form->input('numerodespachoaduanero',array('label'=>'N&deg; Despacho Aduanero'));
                 echo $this->Form->input('anticipo',array());
                 echo $this->Form->input('cbu',array());
                 echo $this->Form->input('tipocuenta',array(
@@ -1025,14 +974,14 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     <th>Localidad</th><!-2-->
                     <th>Concepto</th><!-3-->
                     <th>Tipo Comprobante</th><!-4-->
-                    <th>N° Comprobante</th><!-5-->
+                    <th>N&deg; Comprobante</th><!-5-->
                     <th>Rectificativa</th><!-6-->
                     <th>Nombre/Razon Social</th><!-7-->
                     <th>Monto</th><!-8-->
                     <th>Monto Retenido</th><!-9-->
                     <th>CUIT</th><!-10-->
                     <th>Fecha</th><!-11-->
-                    <th>N° Desp. Aduanero</th><!-12-->
+                    <th>N&deg; Desp. Aduanero</th><!-12-->
                     <th>Anticipo</th><!-13-->
                     <th>CBU</th><!-14-->
                     <th>Tipo Cuenta</th><!-15-->
@@ -1165,8 +1114,12 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                             $abreviacionCBUTipo = "cc $";
                         break;
                     }
+                    ?>
+                    <fieldset style="border: 1px solid #1e88e5; width: 25%; float: left;margin: 0px 5px;">
+                         <legend style="color:#1e88e5;font-weight:normal;"><?php echo $bancimpcli['Impuesto']['nombre']." ".substr($cbu['numerocuenta'], -5)." ".$abreviacionCBUTipo?></legend>
+                        <?php
                     echo $this->Html->link(
-                        "Imp.Res.Banc. ".$cbu['numerocuenta']." ".$abreviacionCBUTipo,
+                        "Importar Res.Banc",
                         array(
                             'controller' => 'movimientosbancarios',
                             'action' => 'importar',
@@ -1180,7 +1133,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                         )
                     );
                     if(!$tieneMonotributo) {
-                         echo $this->Form->button('Cont.Banc. CBU: '.$cbu['cbu']." ".$abreviacionCBUTipo,
+                         echo $this->Form->button('Contabilizar',
                             array('type' => 'button',
                                 'class' =>"btn_realizar_tarea",
                                 'div' => false,
@@ -1189,6 +1142,9 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                             )
                          );
                     }
+                        ?>
+                    </fieldset>
+                    <?php
                 }
             }
             echo $this->Form->create('Movimientosbancario',array(

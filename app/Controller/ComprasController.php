@@ -107,8 +107,8 @@ class ComprasController extends AppController {
 			$optionsCompra = array(
 					'Compra.cliente_id'=>$this->request->data['Compra']['cliente_id'],
 					'Compra.comprobante_id'=>$this->request->data['Compra']['comprobante_id'],
-					'Compra.puntosdeventa*1'=>$this->request->data['Compra']['puntosdeventa']*1,
-					'Compra.numerocomprobante*1'=>$this->request->data['Compra']['numerocomprobante']*1,
+					'Compra.puntosdeventa*1 = '.$this->request->data['Compra']['puntosdeventa']*1,
+					'Compra.numerocomprobante*1 = '.$this->request->data['Compra']['numerocomprobante']*1,
 					'Compra.alicuota'=>$this->request->data['Compra']['alicuota'],
 					'Compra.provedore_id'=>$this->request->data['Compra']['provedore_id'],
 				);
@@ -142,7 +142,12 @@ class ComprasController extends AppController {
 						'Localidade.id'=>$this->request->data['Compra']['localidade_id']
 					]
 				];
-				$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Compra']['actividadcliente_id']));
+				$optionsActividadCliente = [
+					'contain'=>['Actividade'],
+					'conditions'=>[
+						'Actividadcliente.id'=>$this->request->data['Compra']['actividadcliente_id'],
+					]
+				];
 
                 $this->request->data('Compra.fecha',date('d-m-Y',strtotime($this->request->data['Compra']['fecha'])));
                 $this->request->data['Compra']['fecha'] = date('d-m-Y',strtotime($this->request->data['Compra']['fecha']));

@@ -231,6 +231,18 @@ class EventosimpuestosController extends AppController {
 		);
 		$impCli = $this->Impcli->find('first', $options);
 		//buscamos el cliente y el organismo del impuesto para mostrar el titulo
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+		$esMayorQueBaja = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'SUBSTRING(Actividadcliente.baja,4,7)*1 < '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Actividadcliente.baja,4,7)*1 <= '.$peanio.'*1',
+					'SUBSTRING(Actividadcliente.baja,1,2) <= '.$pemes.'*1'
+				),
+			)
+		);
 		$optionsCli = array(
 			'conditions' => array('Cliente.' . $this->Cliente->primaryKey => $impCli['Impcli']['cliente_id']),
 			'contain' => array(
@@ -246,7 +258,9 @@ class EventosimpuestosController extends AppController {
 					'fields'=>array('Count(*) as misconceptos'),
 					'conditions'=>array('Conceptosrestante.periodo'=>$periodo)
 				),
-				'Actividadcliente',
+				'Actividadcliente'=>[
+					'conditions'=>$esMayorQueBaja
+				],
 				'Organismosxcliente'=>array(
 					'conditions'=>array('Organismosxcliente.tipoorganismo'=>$impCli['Impuesto']['organismo']),
 					)

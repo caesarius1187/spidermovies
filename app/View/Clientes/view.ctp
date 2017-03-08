@@ -3,7 +3,9 @@ echo $this->Html->css('bootstrapmodal');
 echo $this->Html->script('jquery-ui',array('inline'=>false));
 echo $this->Html->script('clientes/view',array('inline'=>false));
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
-
+echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
+echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
+echo $this->Html->script('dataTables.buttons.min.js',array('inline'=>false));
 ?>
 
 <!--Div izquierdo que muestra lista de grupo de clientes con sus clientes-->
@@ -336,28 +338,6 @@ if($mostrarView){?>
                             );?>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <?php
-                            echo $this->Form->input('alicuotaart', array(
-                                    'label'=>'Alicuota ART')
-                            );?>
-                        </td>
-                        <td>
-                            <?php
-                            echo $this->Form->input('fijoart', array(
-                                    'label'=>'Cuota Fija LRT')
-                            );?>
-                        </td>
-                        <td>
-                            <?php
-                            echo $this->Form->input('segurodevida', array(
-                                    'label'=>'Seguro de vida')
-                            );?>
-                        </td>
-                    </tr>
-                    <span style="display:none">
-                    </span>
                     <tr id="rowButtonsDetallesPersonales" style="display:none">
                         <td>
                         </td>
@@ -525,6 +505,7 @@ if($mostrarView){?>
                         <th><?php echo __('Codigo'); ?></th>                          
                         <th><?php echo __('Actividad'); ?></th>                          
                         <th><?php echo __('Descripcion'); ?></th>                          
+                        <th><?php echo __('Baja'); ?></th>
                         <th><?php echo __('Acciones'); ?></th>     
                      </tr>  
                      <tr>
@@ -534,12 +515,17 @@ if($mostrarView){?>
                 <tbody>
               <?php if (!empty($cliente['Actividadcliente'])): ?>      
               <?php foreach ($cliente['Actividadcliente'] as $actividad): ?>     
-                     <tr >    
+                     <tr id="rowActividadcliente<?php echo $actividad['id'] ?>" >    
                         <td><?php echo h($actividad['Actividade']['descripcion']); ?></td>
                          <td><?php echo h($actividad['Actividade']['nombre']); ?></td>
                          <td><?php echo h($actividad['descripcion']); ?></td>
+                         <td><?php echo date('d-m-Y',strtotime($actividad['baja'])); ?></td>
+
                          <td class="">
-                            <?php echo $this->Form->postLink(
+                             <a href="#"  onclick="loadFormActividadcliente(<?php echo $actividad['id'].",".$actividad['cliente_id'];?>)" class="button_view">
+                                 <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                             </a>
+                             <?php echo $this->Form->postLink(
                                          $this->Html->image('ic_delete_black_24dp.png', array(
                                             'alt' => 'Eliminar',
                                         )),
@@ -1035,60 +1021,30 @@ if($mostrarView){?>
                 </a>
             </th>
         </tr>
-        <tr class="subcliente">
-            <td>
-                <table id="relatedClientes" class="tbl_related">
-                    <tr class="subcliente">
-                        <th><?php echo __('CUIT'); ?></th>
-                        <th><?php echo __('DNI'); ?></th>
-                        <th><?php echo __('Nombre'); ?></th>
-                        <th class=""><?php echo __('Acciones'); ?></th>
-                    </tr>
-                    <tr>
-                        <th colspan="7"><hr color="#E4E4E4" width="100%"></th>
-                    </tr>
-                    <?php if (!empty($cliente['Subcliente'])): ?>
-                        <?php foreach ($cliente['Subcliente'] as $subcliente): ?>
-                            <tr class="subcliente" id="rowSubcliente<?php echo $subcliente['id']; ?>">
-                                <td><?php echo $subcliente['cuit']; ?></td>
-                                <td><?php echo $subcliente['dni']; ?></td>
-                                <td><?php echo $subcliente['nombre']; ?></td>
-                                <td >
-                                    <a href="#"  onclick="loadFormSubcliente(<?php echo $subcliente['id']; ?>)" class="button_view">
-                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
-                                    </a>
-                                    <?php echo $this->Form->postLink(
-                                        $this->Html->image('ic_delete_black_24dp.png', array(
-                                            'alt' => 'Eliminar',
-                                        )),
-                                        array(
-                                            'controller' => 'Subclientes',
-                                            'action' => 'delete',
-                                            $subcliente['id'],
-                                        ),
-                                        array(
-                                            'class'=>'deleteSubcliente',
-                                            'escape' => false // Add this to avoid Cake from printing the img HTML code instead of the actual image
-                                        ),
-                                        __('Esta seguro que quiere eliminar este subcliente?')
-                                    ); ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                    </tr>
-                </table>
-            </td>
-        </tr>
+
         <tr class="subcliente">
             <td colspan = "20">
-                <table id="subclientesDatatable"  class="tbl_related">>
+                <?php
+                echo $this->Form->input('tablaSubclienteVacia',array('value'=>1,'type'=>'hidden'));
+                ?>
+                <table id="subclientesDatatable"  class="tbl_related">
+                    <thead>
                     <tr class="subcliente">
                         <th><?php echo __('CUIT'); ?></th>
                         <th><?php echo __('DNI'); ?></th>
                         <th><?php echo __('Nombre'); ?></th>
                         <th class=""><?php echo __('Acciones'); ?></th>
                     </tr>
+                    </thead>
+                    <tfoot>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tfoot>
+                    <tbody>
+
+                    </tbody>
                 </table>
             </td>
         </tr>
@@ -1108,48 +1064,30 @@ if($mostrarView){?>
                 </a>
             </th>
         </tr>
+       
         <tr class="rowheaderprovedores">
             <td class="provedor">
-                <table id="relatedProvedores" class="tbl_related">
+                <?php
+                echo $this->Form->input('tablaProvedoresVacia',array('value'=>1,'type'=>'hidden'));
+                ?>
+                <table id="provedoresDatatable" class="tbl_related">
+                    <thead>
                     <tr class="provedor">
-                        <th><?php echo __('CUIT'); ?></th>
                         <th><?php echo __('DNI'); ?></th>
                         <th><?php echo __('Nombre'); ?></th>
+                        <th><?php echo __('CUIT'); ?></th>
                         <th class=""><?php echo __('Acciones'); ?></th>
                     </tr>
+                    </thead>
+                    <tfoot>
                     <tr class="provedor">
-                        <th colspan="7"><hr color="#E4E4E4" width="100%"></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                     </tr>
-                    <?php if (!empty($cliente['Provedore'])): ?>
-                        <?php foreach ($cliente['Provedore'] as $provedor): ?>
-                            <tr class="provedor" id="rowProvedore<?php echo $provedor['id']; ?>">
-                                <td><?php echo $provedor['cuit']; ?></td>
-                                <td><?php echo $provedor['dni']; ?></td>
-                                <td><?php echo $provedor['nombre']; ?></td>
-                                <td >
-                                    <a href="#"  onclick="loadFormProvedore(<?php echo $provedor['id']; ?>)" class="button_view">
-                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
-                                    </a>
-                                    <?php echo $this->Form->postLink(
-                                        $this->Html->image('ic_delete_black_24dp.png', array(
-                                            'alt' => 'Eliminar',
-                                        )),
-                                        array(
-                                            'controller' => 'Provedores',
-                                            'action' => 'delete',
-                                            $provedor['id'],
-                                        ),
-                                        array(
-                                            'class'=>'deleteProvedore',
-                                            'escape' => false // Add this to avoid Cake from printing the img HTML code instead of the actual image
-                                        ),
-                                        __('Esta seguro que quiere eliminar este provedor?')
-                                    ); ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                    </tr>
+                    </tfoot>
+                    <tbody></tbody>
                 </table>
             </td>
         </tr>
@@ -1172,24 +1110,32 @@ if($mostrarView){?>
         <tr class="rowheaderempleados">
             <td class="empleado">
                 <table id="relatedEmpleados" class="tbl_related">
+                    <thead>
                     <tr class="empleado">
-                        <th><?php echo __('LEGAJO'); ?></th>
-                        <th><?php echo __('CUIT'); ?></th>
+                        <th><?php echo __('N&deg;'); ?></th>
+                        <th><?php echo __('Apellido y Nombre'); ?></th>
                         <th><?php echo __('DNI'); ?></th>
-                        <th><?php echo __('Nombre'); ?></th>
-                        <th><?php echo __('Fecha Ingreso'); ?></th>
+                        <th><?php echo __('CUIL'); ?></th>
+                        <th><?php echo __('F&deg; Ingreso'); ?></th>
                         <th class=""><?php echo __('Acciones'); ?></th>
                     </tr>
-                    <tr class="empleado">
-                        <th colspan="7"><hr color="#E4E4E4" width="100%"></th>
-                    </tr>
+                    </thead>
+                    <tfoot>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tfoot>
+                    <tbody>
                     <?php if (!empty($cliente['Empleado'])): ?>
                         <?php foreach ($cliente['Empleado'] as $empleado): ?>
                             <tr class="empleado" id="rowEmpleado<?php echo $empleado['id']; ?>">
                                 <td><?php echo $empleado['legajo']; ?></td>
-                                <td><?php echo $empleado['cuit']; ?></td>
                                 <td><?php echo $empleado['dni']; ?></td>
                                 <td><?php echo $empleado['nombre']; ?></td>
+                                <td><?php echo $empleado['cuit']; ?></td>
                                 <td><?php echo $empleado['fechaingreso']; ?></td>
                                 <td >
                                     <a href="#"  onclick="loadFormEmpleado(<?php echo $empleado['id']; ?>)" class="button_view">
@@ -1214,7 +1160,7 @@ if($mostrarView){?>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
-                    </tr>
+                    </tbody>
                 </table>
             </td>
         </tr>
@@ -1375,6 +1321,17 @@ if($mostrarView){?>
                         <td colspan="2">
                             <?php echo $this->Form->input('descripcion');?>
                         </td>
+                        <td colspan="2">
+                            <?php
+                            echo $this->Form->input('baja', array(
+                                    'class'=>'datepicker',
+                                    'type'=>'text',
+                                    'label'=>'Baja',
+                                    'required'=>true,
+                                    'readonly'=>'readonly')
+                            );
+                            ?>
+                        </td>
                     </tr>                                                                                                                                        
                     <tr>
                         <td width="350">&nbsp;</td>
@@ -1390,80 +1347,6 @@ if($mostrarView){?>
     <a class="close" href="#close"></a>
 </div>
 <!-- Fin Popin Nueva Actividadd Relacionada--> 
- <!-- Inicio Popin Editar Facturacion -->
-<a href="#x" class="overlay" id="editarFacturacion"></a>
-<div id="divNuevoCbu" class="popup" style="width:45%">
-        <div id="form_persona">
-        <?php echo $this->Form->create('Cliente',array('action'=>'edit')); 
-           echo $this->Form->input('id',array('type'=>'hidden'));?>
-
-         <table style="width:100%">
-            <tr class="">
-                <td><?php echo __('CPA'); ?></th>
-                <td colspan="2"><?php echo $this->Form->input('cpa',array('label'=>false, 'div' => false)); ?></td>
-               
-            </tr>
-            <tr class="">      
-                <td><?php echo __('Emite Factura A'); ?></td>
-                <td valign="middle"><?php echo $this->Form->input('emitefacturaa',array('label'=>'')); ?></td>
-                <td><?php echo __('Vencimiento del CAI  '); ?></td>
-                <td valign="top"><?php 
-                echo $this->Form->input('vtocaia', array(
-                                'class'=>'datepicker', 
-                                'type'=>'text',
-                                'label'=> false,    
-                                'div' => false,
-                                'value'=>date('d-m-Y',strtotime($this->request->data['Cliente']['fchcumpleanosconstitucion'])),
-                                'readonly'=>'readonly')
-                     );
-                ?></td>                            
-            </tr>    
-              <tr class="">      
-                 <td valign="baseline"><?php echo __('Emite Factura B'); ?></td>
-                 <td><?php echo $this->Form->input('emitefacturab',array('label'=>'')); ?></td>
-                 <td valign="baseline"><?php echo __('Vencimiento del CAI '); ?></td>
-                 <td><?php 
-                 echo $this->Form->input('vtocaib', array(
-                                'class'=>'datepicker', 
-                                'type'=>'text',
-                                'label'=>false, 
-                                'div' => false,           
-                                 'value'=>date('d-m-Y',strtotime($this->request->data['Cliente']['vtocaib'])),
-                                'readonly'=>'readonly')
-                     );
-                 ?></td>                                
-            </tr>       
-            <tr class="">      
-                <td><?php echo __('Emite Factura C'); ?></td>
-                <td><?php echo $this->Form->input('emitefacturac',array('label'=>'')); ?></td>
-                <td><?php echo __('Vencimiento del CAI  '); ?></td>
-                <td valign="top"><?php 
-                  $dat1= date('d-m-Y',strtotime($this->request->data['Cliente']['vtocaic']));
-                  echo $this->Form->input('vtocaic', array(
-                                'class'=>'datepicker', 
-                                'type'=>'text',
-                                'label'=>false,   
-                                'div' => false, 
-                                 'value'=>$dat1,
-                                'readonly'=>'readonly')
-                     );
-                ?></td>
-            </tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td> 
-                    <?php echo $this->Form->end(__('Aceptar'), array('style' =>'display:none')); ?>
-                    <a href="#close" class="btn_cancelar" style="margin-top:-28px">Cancelar</a>
-                </td>
-            <tr>
-            </tr>       
-        </table>
-           
-        </div>    
-    <a class="close" href="#close"></a>
-</div>
-<!-- Fin Popin Editar Facturacion -->
 
 <!-- Inicio Popin Modificar Persona-->
 <a href="#x" class="overlay" id="modificar_persona"></a>
@@ -2047,61 +1930,84 @@ if($mostrarView){?>
             //todo: codigosiniestrado(codigo incapacidad), tipoempresa
             echo $this->Form->create('Empleado',array('class'=>'formTareaCarga','controller'=>'Empelados','action'=>'add')); ?>
             <h3><?php echo __('Agregar Empleado'); ?></h3>
-            <?php
-            echo $this->Form->input('id',array('type'=>'hidden'));
-            echo $this->Form->input('cliente_id',array('default'=>$cliente['Cliente']['id'],'type'=>'hidden'));
-            echo $this->Form->input('nombre',array('style'=>'width:150px'));
-            echo $this->Form->input('cuit',array('label'=>'CUIT','maxlength'=>'11'));
-            echo $this->Form->input('dni',array('label'=>'DNI'));
-            echo $this->Form->input('legajo',array('label'=>'Legajo'));
-            echo $this->Form->input('categoria',array('label'=>'Categoria'));
-            echo $this->Form->input('codigoafip',array('label'=>'Codigo Afip','options'=>array('0','1','2','3')));
-            echo "</br>";
-            echo $this->Form->input('fechaingreso', array(
-                    'class'=>'datepicker',
-                    'type'=>'text',
-                    'label'=>'Ingreso',
-                    'required'=>true,
-                    'readonly'=>'readonly')
-            );
-            echo $this->Form->input('fechaalta', array(
-                    'class'=>'datepicker',
-                    'type'=>'text',
-                    'label'=>'Alta',
-                    'required'=>true,
-                    'readonly'=>'readonly')
-            );
-            echo $this->Form->input('fechaegreso', array(
-                    'class'=>'datepicker',
-                    'type'=>'text',
-                    'label'=>'Egreso',
-                    'required'=>true,
-                    'readonly'=>'readonly')
-            );
-            echo $this->Form->input('domicilio_id',array('label'=>'Domicilio'));
-            echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
-            echo $this->Form->input('cargo_id',array('label'=>'Cargo', 'required'=>true,));
-            echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
-            echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial','value'=>0))."</br>";
+            <fieldset style="border: 1px solid #1e88e5;">
+                <legend style="color:#1e88e5;font-weight:normal;">Datos Personales</legend>
+                <?php
+                echo $this->Form->input('id',array('type'=>'hidden'));
+                echo $this->Form->input('cliente_id',array('default'=>$cliente['Cliente']['id'],'type'=>'hidden'));
+                echo $this->Form->input('legajo',array('label'=>'Legajo'));
+                echo $this->Form->input('nombre',array('style'=>'width:150px','label'=>'Apellido y nombre'));
+                echo $this->Form->input('cuit',array('label'=>'CUIL','maxlength'=>'11'));
+                echo $this->Form->input('dni',array('label'=>'DNI'));
 
-            echo $this->Form->input('conyugue',array('label'=>'Conyugue','value'=>0));
-            echo $this->Form->input('hijos',array('label'=>'Hijos','value'=>0));
-            echo $this->Form->input('adherente',array('label'=>'Adherentes','value'=>0));
-            echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad));
-            echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion'));
-            echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion'));
-            echo $this->Form->input('codigozona',array('label'=>'Codigo Zona','options'=>$codigozona));
-            echo $this->Form->input('codigomodalidadcontratacion',array('label'=>'Codigo Modalidad Contratacion','options'=>$codigomodalidadcontratacion));
-            echo $this->Form->input('codigosiniestrado',array('label'=>'Codigo Siniestrado','options'=>$codigosiniestrado));
-            echo $this->Form->input('tipoempresa',array('label'=>'Tipo empresa','options'=>$tipoempresa))."</br>";
+                ?>
+            </fieldset>
+            <fieldset style="border: 1px solid #1e88e5;">
+                <legend style="color:#1e88e5;font-weight:normal;">Laborales</legend>
+                <?php
+                echo $this->Form->input('fechaingreso', array(
+                        'class'=>'datepicker',
+                        'type'=>'text',
+                        'label'=>'Ingreso',
+                        'required'=>true,
+                        'readonly'=>'readonly')
+                );
+                echo $this->Form->input('fechaalta', array(
+                        'class'=>'datepicker',
+                        'type'=>'text',
+                        'label'=>'Alta',
+                        'required'=>true,
+                        'readonly'=>'readonly')
+                );
+                echo $this->Form->input('fechaegreso', array(
+                        'class'=>'datepicker',
+                        'type'=>'text',
+                        'label'=>'Egreso',
+                        'required'=>true,
+                        'readonly'=>'readonly')
+                );
 
-            echo $this->Form->label("Liquidaciones:");
-            echo $this->Form->input('liquidaprimeraquincena',array('label'=>'Primera Quincena'));
-            echo $this->Form->input('liquidasegundaquincena',array('label'=>'Segunda Quincena'));
-            echo $this->Form->input('liquidamensual',array('label'=>'Mensual'));
-            echo $this->Form->input('liquidapresupuestoprimera',array('label'=>'Presupuesto 1'));
-            echo $this->Form->input('liquidapresupuestosegunda',array('label'=>'Presupuesto 2'));
-            echo $this->Form->input('liquidapresupuestomensual',array('label'=>'Presupuesto 3'));
+                echo $this->Form->input('domicilio_id',array('label'=>'Domicilio'));
+                echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
+                echo $this->Form->input('cargo_id',array('label'=>'Cargo', 'required'=>true,));
+                echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
+                echo $this->Form->label("Liquidaciones:");
+                echo $this->Form->input('liquidaprimeraquincena',array('label'=>'Primera Quincena'));
+                echo $this->Form->input('liquidasegundaquincena',array('label'=>'Segunda Quincena'));
+                echo $this->Form->input('liquidamensual',array('label'=>'Mensual'));
+                echo $this->Form->input('liquidapresupuestoprimera',array('label'=>'Presupuesto 1'));
+                echo $this->Form->input('liquidapresupuestosegunda',array('label'=>'Presupuesto 2'));
+                echo $this->Form->input('liquidapresupuestomensual',array('label'=>'Presupuesto 3'));
+                ?>
+            </fieldset>
+            <fieldset style="border: 1px solid #1e88e5;">
+                <legend style="color:#1e88e5;font-weight:normal;">Familiares</legend>
+                <?php
+                echo $this->Form->input('conyugue',array('label'=>'Conyugue','value'=>0));
+                echo $this->Form->input('hijos',array('label'=>'Hijos','value'=>0));
+                ?>
+            </fieldset>
+            <fieldset style="border: 1px solid #1e88e5;">
+                <legend style="color:#1e88e5;font-weight:normal;">Datos AFIP</legend>
+                <?php
+                echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
+                echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial','value'=>0));
+                echo $this->Form->input('codigoafip',array('label'=>'Codigo Afip','options'=>array('0','1','2','3')));
+                echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
+
+                echo $this->Form->input('adherente',array('label'=>'Adherentes','value'=>0));
+                echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad));
+                echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion'));
+                echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion'));
+                echo $this->Form->input('codigozona',array('label'=>'Codigo Zona','options'=>$codigozona));
+                echo $this->Form->input('codigomodalidadcontratacion',array('label'=>'Codigo Modalidad Contratacion','options'=>$codigomodalidadcontratacion));
+                echo $this->Form->input('codigosiniestrado',array('label'=>'Codigo Siniestrado','options'=>$codigosiniestrado));
+                echo $this->Form->input('tipoempresa',array('label'=>'Tipo empresa','options'=>$tipoempresa))."</br>";
+
+
+                ?>
+            </fieldset>
+                <?php
             echo $this->Form->end(__('Aceptar')); ?>
         </div>
         <a class="close" href="#close"></a>

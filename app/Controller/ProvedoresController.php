@@ -20,9 +20,19 @@ class ProvedoresController extends AppController {
  *
  * @return void
  */
-	public function index() {
-		$this->Provedore->recursive = 0;
-		$this->set('provedores', $this->Paginator->paginate());
+	public function index($cliid=null) {
+		$optionsProvedore=[
+			'contain'=>[],
+			'conditions'=>[
+				'Provedore.cliente_id'=>$cliid
+			]
+		];
+		$provedores = $this->Provedore->find('all',$optionsProvedore);
+		$data=[];
+		$data['provedores']=$provedores;
+		$this->set('data',$data);
+		$this->layout = 'ajax';
+		$this->render('serializejson');
 	}
 
 /**

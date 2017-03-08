@@ -1,6 +1,7 @@
 <?php
 echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
 echo $this->Html->css('bootstrapmodal');
+echo $this->Html->css('progressbuttons');
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 echo $this->Html->script('clientes/avance',array('inline'=>false));
 ?>
@@ -124,7 +125,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
       <?php /*****************************Row de tareas*****************************/  ?>
       <?php /**************************************************************************/  ?>
       <tr>
-        <th valign="top" style='width:80px'><label style="width:100px"><?php echo 'Clientes'; ?></label></th>
+<!--        <th valign="top" class="columnCliente"><label style="width:100px">--><?php //echo 'Clientes'; ?><!--</label></th>-->
           <?php foreach ($tareas as $tarea){ 
             $tareaStyle = "style = 'width:80px;";
             if('tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]=="tarea1"){
@@ -147,8 +148,8 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
       foreach ($clientes as $cliente){ 
         echo $this->Form->input('cliid'+$cliente['Cliente']['id'],array('type'=>'hidden','value'=>$cliente['Cliente']['id']));
          ?>
-        <tr style="height:30px">
-          <td style="height:30px;">
+        <tr>
+          <td class="columnClienteHeader" colspan="20">
             <?php 
             /*echo $this->Html->link(
                 $cliente['Grupocliente']['nombre'], 
@@ -164,7 +165,9 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                       $cliente['Cliente']['id']),
                     array('style'=>'float:left')
                   ); ?>
-          </td>
+          </td >
+        </tr>
+        <tr>
           <?php
           $HayImpuestosHabilitados = false;
           //Aqui se pinta la caja que identifica a que impuesto pertenece cada row.
@@ -200,7 +203,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
             if($tarea["Tareasxclientesxestudio"]['tipo']=="impuesto"){
               //tarea tipo impuesto
               if($tarea['Tareascliente']['id']=='5'/*Preparar Papeles de trabajo*/) {?>
-                <td class=""> <!--Tbl 1.2-->
+                <td class="columnClienteBody tdBotonesImpuestos"> <!--Tbl 1.2-->
                   <?php 
                   $hayImpuestoRelacioado=false;
                   foreach ($cliente["Impcli"] as $impcli){
@@ -221,10 +224,18 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                         $montovto += $evento['montovto']; 
                         $montofavor += $evento['monc'];
                       }
+
                       if($evento['tarea13']=='pendiente'){
                           $pagado=false;
                       }
                     }
+                    //Esta faltando sumar SLD si es iva
+                    if($impcli['impuesto_id']==19/*IVA*/){
+                      foreach ($impcli["Conceptosrestante"] as $conceptorestante) {
+                        $montofavor += $conceptorestante['montoretenido'];
+                      }
+                    }
+
                     $tareaFild='tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]; 
                    /*Como no podemos traer los impuestos ordenados por sql vamos a ordenarlos aqui*/
                     if($montovto>0){
@@ -238,7 +249,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
               </td>
             <?php
               }else if($tarea['Tareascliente']['id']=='19'/*Contabilizar*/) { ?>
-                <td class=""> <!--Tbl 1.2-->
+                <td class="columnClienteBody"> <!--Tbl 1.2-->
                     <?php
                     if(!$cliente['Cliente']['cargaFacturaLuz']){/*Es monotributista y no hace contabilidad*/
                         $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
@@ -385,10 +396,10 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaFild, $clien
 
     $params= $eventoID.",'".$tareaFild."','".$periodoSel."','".$cliente['Cliente']['id']."','realizado'"; ?>   
     <td 
-      class="<?php echo $class.' '.$tareaFild;?>" 
+      class="<?php echo $class.' '.$tareaFild;?>  columnClienteBody"
       <?php echo $impuestoclienteStyle; ?> 
-      id="cell<?php echo $cliente['Cliente']['id'].'-'.$tareaFild; ?>">  
-      <?php 
+      id="cell<?php echo $cliente['Cliente']['id'].'-'.$tareaFild; ?>">
+      <?php
       //Si hay impuestos habilitados para este cliente en este periodo
       if(!$HayImpuestosHabilitados){
          $confImg=array('width' => '20', 'height' => '20', 'title' => 'Activar Impuestos','onClick'=>"noHabilitado('Activar Impuestos')");
@@ -472,7 +483,7 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaFild, $clien
               //En esta tarea vamos a cargar las ventas, compras y novedades del cliente en un periodo determinado
               $paramsCargar= $eventoID.",'".$periodoSel."','".$cliente['Cliente']['id']."'";
               $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente' ,'onClick'=>"verFormCargar(".$paramsCargar.")");
-              echo $context->Html->image('add.png',$confImg); 
+              echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
           }
           else  if($tareaFild=="tarea4"){
             if($cliente['Cliente']['cargaBanco']){
@@ -505,16 +516,17 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaFild, $clien
             }
             
             $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente' ,'onClick'=>"verFormInformar(".$paramsSolicitar.")");
-            echo $context->Html->image('add.png',$confImg); 
+            echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
           } else {
             $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"realizarEventoCliente(".$params.")");
-            echo $context->Html->image('add.png',$confImg); 
+            echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
           }
         } else{
           $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"noHabilitado()");
-          echo $context->Html->image('add.png',$confImg); 
+          echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
         } 
       }?>
+      </div>
     </td>
     <?php 
 }
@@ -527,19 +539,29 @@ function mostrarBotonImpuesto($context,$impcli,$montoevento, $periodoSel,$pagado
     $paramsPrepPapeles= "'".$periodoSel."','".$impcli['id']."'";
     $buttonclass="buttonImpcli0";
 
+    $widthProgressBar = 0;
+    //el width del progress bar mostrara el avance de la liquidacion del impuesto
+    // 0% No esta liquidado
+    // 50% Liquidado
+    // 75% Pagado
+
     if(count($impcli["Eventosimpuesto"])>0){
         if($pagado){
-            $buttonclass="buttonImpcli4";
+//            $buttonclass="buttonImpcli4";
+          $widthProgressBar=94;
         }else{
-            $buttonclass="buttonImpcli2";
+//            $buttonclass="buttonImpcli2";
+          $widthProgressBar=50;
         }
     }
-    $labelcolor="white";
-      $montoevento>=0?$labelcolor="white":$labelcolor="red";
+    $labelcolor="green";
+      $montoevento>=0?$labelcolor="#0D9001":$labelcolor="red";
       echo $context->Form->button(
-        $impcli['Impuesto']['abreviacion'].'</br><label style="color: '.$labelcolor.';">$'.number_format($montoevento, 2, ",", ".").'</label>',
+        $impcli['Impuesto']['abreviacion'].': <label style="color: '.$labelcolor.';display: initial">$'.number_format($montoevento, 2, ",", ".").'</label>
+        <span class="progress"><span class="progress-inner" style="width: '.$widthProgressBar.'%; opacity: 1;"></span></span>',
         array(
-          'class'=>$buttonclass,
+          'data-style'=>"top-line",
+          'class'=>$buttonclass." progress-button state-loading",
           'onClick'=>"papelesDeTrabajo(".$paramsPrepPapeles.")",
           'id'=>'buttonImpCli'.$impcli['id'],
           'data-sort'=> $impcli['Impuesto']['orden'],
@@ -578,7 +600,7 @@ function mostrarEventoImpuesto($context, $evento,$montovto, $tareaFild, $periodo
       $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"noHabilitado()");?>
       <td class="<?php echo $tdClass.' '.$tareaFild; ?>" <?php echo $impuestoclienteStyle; ?> id="cellimp<?php echo $cliente['Cliente']['id'].'-'.$tareaFild.'-'.$impcli['id']; ?>" >
         <?php 
-             echo $context->Html->image('add.png',$confImg);
+             echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
         ?>                            
       </td>
     </td>
@@ -600,17 +622,17 @@ function mostrarEventoImpuesto($context, $evento,$montovto, $tareaFild, $periodo
           echo $context->Form->input('montotarea5',array('type'=>'hidden','value'=>$montovto,'id'=>'montoTarea5'+$cliente['Cliente']['id']+'-'+ $impcli["id"])); 
         }else if ($tareaFild=="tarea13") {
           //Tarea13 es "A Pagar" debe mostrar popin para cargar variables del pago realizado del impuesto
-          echo $context->Html->image('add.png',array('width' => '20', 'title' => 'Pagar' , 'height' => '20','onClick'=>"showPagar(".$paramsPrepPapeles.")"));
+          echo $context->Html->image('ic_add_circle_outline_black_18dp.png',array('width' => '20', 'title' => 'Pagar' , 'height' => '20','onClick'=>"showPagar(".$paramsPrepPapeles.")"));
 
         }else{
-          echo $context->Html->image('add.png',array('width' => '20', 'title' => 'Cargar','height' => '20','onClick'=>"realizarEventoImpuesto(".$params.")"));
+          echo $context->Html->image('ic_add_circle_outline_black_18dp.png',array('width' => '20', 'title' => 'Cargar','height' => '20','onClick'=>"realizarEventoImpuesto(".$params.")"));
         }
 
       } else {
         //El evento no esta habilitado
-         echo $context->Html->image('add.png',array('width' => '20', 'height' => '20','onClick'=>"noHabilitado()"));
+         echo $context->Html->image('ic_add_circle_outline_black_18dp.png',array('width' => '20', 'height' => '20','onClick'=>"noHabilitado()"));
       }              
-    ?> 
+    ?>
   </td>
 <?php } ?>
 <!-- Popin Modal para edicion de ventas a utilizar por datatables-->

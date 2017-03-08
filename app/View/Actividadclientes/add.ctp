@@ -4,7 +4,11 @@ if($error!=0||!isset($error)){
 }else{?>
  <tr >    
     <td><?php echo h($actividad['Actividade']['descripcion']); ?></td> 
-    <td><?php echo h($actividad['Actividade']['nombre']); ?></td> 
+    <td><?php echo h($actividad['Actividade']['nombre']); ?></td>
+     $this->request->data('Actividadcliente.baja',);
+
+    <td><?php echo $actividad['Actividadcliente']['descripcion']; ?></td>
+    <td><?php echo date('d-m-Y',strtotime($actividad['Actividadcliente']['baja'])); ?></td>
     <td class="">
        <?php echo $this->Form->postLink(
                                          $this->Html->image('ic_delete_black_24dp.png', array(

@@ -242,10 +242,23 @@ class AsientosController extends AppController {
         $this->loadModel('Cuentascliente');
         $this->loadModel('Asientoestandare');
         $this->loadModel('Venta');
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+        $esMayorQueBaja = array(
+            //HASTA es mayor que el periodo
+            'OR'=>array(
+                'SUBSTRING(Actividadcliente.baja,4,7)*1 < '.$peanio.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Actividadcliente.baja,4,7)*1 <= '.$peanio.'*1',
+                    'SUBSTRING(Actividadcliente.baja,1,2) <= '.$pemes.'*1'
+                ),
+            )
+        );
         $options = array(
             'contain'=>[
                 'Actividadcliente'=>[
                     'Cuentasganancia'=>['Cuentascliente'],
+                    'conditions'=>$esMayorQueBaja
                 ]
             ],
             'conditions' => array(

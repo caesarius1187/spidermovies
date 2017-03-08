@@ -53,5 +53,12 @@ function reloadDatePickers(){
                                 changeYear: true,
                                 constrainInput: false,
                                 dateFormat: 'dd-mm',
-                            }); 
+                            });
+    $( "input.datepicker-month-year" ).datepicker({
+        yearRange: "-100:+50",
+        changeMonth: true,
+        changeYear: true,
+        constrainInput: false,
+        dateFormat: 'mm-yy',
+    });
 }	

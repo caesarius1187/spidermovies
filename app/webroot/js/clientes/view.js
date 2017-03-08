@@ -254,38 +254,22 @@ jQuery(document).ready(function($) {
                     var subclienteID = mirespuesta.subcliente;
                     if(subclienteID!=0){
                         var subclienteID = mirespuesta.subcliente.Subcliente.id;
-                        $("#relatedClientes").find('tbody')
-                            .append($('<tr>')
-                                .attr('class', "subcliente")
-                                .attr('style', "display: table-row;")
-                                .attr('id', "rowSubcliente"+subclienteID)
-                                .append($('<td>')
-                                    .text(mirespuesta.subcliente.Subcliente.cuit)
-                                )
-                                .append($('<td>')
-                                    .text(mirespuesta.subcliente.Subcliente.dni)
-                                )
-                                .append($('<td>')
-                                    .text(mirespuesta.subcliente.Subcliente.nombre)
-                                )
-                                .append($('<td>')
-                                    .append($('<a>')
-                                        .attr('onclick', "loadFormSubcliente("+subclienteID+")")
-                                        .append($('<img>')
-                                            .attr('src', serverLayoutURL+'/img/edit_view.png')
-                                            .text('Image cell')
-                                        )
-                                    )
-                                    .append('<form action="'+serverLayoutURL+'/Subclientes/delete/'+subclienteID+'" name="post_57e41d8188965451050686'+subclienteID+'" id="post_57e41d8188965451050686'+subclienteID+'" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>')
-                                    .append($('<a>')
-                                        .attr('class', "deleteSubcliente")
-                                        .append($('<img>')
-                                            .attr('src', serverLayoutURL+'/img/ic_delete_black_24dp.png')
-                                            .text('Image cell')
-                                        )
-                                    )
-                                )
-                            );
+                        var rowData =
+                        [
+                            mirespuesta.subcliente.Subcliente.nombre,
+                            mirespuesta.subcliente.Subcliente.cuit,
+                            mirespuesta.subcliente.Subcliente.dni,
+                        ];
+                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormSubcliente('+subclienteID+')" alt="">';
+                        tdactions = tdactions + '<form action="'+serverLayoutURL+'/Subclientes/delete/'+subclienteID+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
+                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                        //onclick="eliminarSubcliente('+respuesta.compra_id+')"
+                        rowData.push(tdactions);
+
+                        var rowIndex = $('#subclientesDatatable').dataTable().fnAddData(rowData);
+                        var row = $('#subclientesDatatable').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr( 'id', "rowSubcliente"+mirespuesta.subcliente.Subcliente.id );
+
                         catchEliminarSubcliente();
                     }
                     else{
@@ -365,43 +349,23 @@ jQuery(document).ready(function($) {
                     var respuesta = JSON.parse(data);
                     callAlertPopint(respuesta.respuesta);
                     if(respuesta.provedor.Provedore!=null){
-                        $('#CompraProvedoreId').append($('<option>', {
-                            value: respuesta.provedor.Provedore.id,
-                            text: respuesta.provedor.Provedore.nombre+'-'+
-                            respuesta.provedor.Provedore.dni+'-'+
-                            respuesta.provedor.Provedore.cuit
-                        }));
                         var provedoreID = respuesta.provedor.Provedore.id;
-                        var newtr =$('<tr>')
-                            .attr('id', 'rowProvedore'+provedoreID)
-                            .attr('class', 'provedor')
-                            .append($('<td>')
-                                .text(respuesta.provedor.Provedore.cuit)
-                            )
-                            .append($('<td>')
-                                .text(respuesta.provedor.Provedore.dni)
-                            )
-                            .append($('<td>')
-                                .text(respuesta.provedor.Provedore.nombre)
-                            )
-                            .append($('<td>')
-                                .append($('<a>')
-                                    .attr('onclick', "loadFormProvedore("+provedoreID+")")
-                                    .append($('<img>')
-                                        .attr('src', serverLayoutURL+'/img/edit_view.png')
-                                        .text('Image cell')
-                                    )
-                                )
-                                .append('<form action="'+serverLayoutURL+'/Provedores/delete/'+provedoreID+'" name="post_57e41d8188965451050686'+provedoreID+'" id="post_57e41d8188965451050686'+provedoreID+'" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>')
-                                .append($('<a>')
-                                    .attr('class', "deleteProvedore")
-                                    .append($('<img>')
-                                        .attr('src', serverLayoutURL+'/img/ic_delete_black_24dp.png')
-                                        .text('Image cell')
-                                    )
-                                )
-                            );
-                        $("#relatedProvedores").append(newtr);
+                        var rowData =
+                            [
+                                respuesta.provedor.Provedore.dni,
+                                respuesta.provedor.Provedore.nombre,
+                                respuesta.provedor.Provedore.cuit,
+                            ];
+                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormProvedore('+provedoreID+')" alt="">';
+                        tdactions = tdactions + '<form action="'+serverLayoutURL+'/Provedores/delete/'+provedoreID+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
+                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                        //onclick="eliminarProvedore('+respuesta.compra_id+')"
+                        rowData.push(tdactions);
+
+                        var rowIndex = $('#provedoresDatatable').dataTable().fnAddData(rowData);
+                        var row = $('#provedoresDatatable').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr( 'id', "rowProvedore"+respuesta.provedor.Provedore.id );
+
                         catchEliminarProvedore();
                     }
                 },
@@ -412,6 +376,7 @@ jQuery(document).ready(function($) {
             });
             return false;
         });
+        $("#relatedEmpleados").DataTable();
         $('#EmpleadoAddForm').submit(function(){
             //serialize form data
             var formData = $(this).serialize();
@@ -422,7 +387,30 @@ jQuery(document).ready(function($) {
                 url: formUrl,
                 data: formData,
                 success: function(data,textStatus,xhr){
-                    $("#relatedEmpleados").append(data);
+                    var respuesta = JSON.parse(data);
+                    callAlertPopint(respuesta.respuesta);
+                    if(respuesta.empleado.Empleado!=null){
+                        var empleadoID = respuesta.empleado.Empleado.id;
+                        var rowData =
+                            [
+                                respuesta.empleado.Empleado.legajo,
+                                respuesta.empleado.Empleado.nombre,
+                                respuesta.empleado.Empleado.dni,
+                                respuesta.empleado.Empleado.cuit,
+                                respuesta.empleado.Empleado.fechaingreso,
+                            ];
+                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormEmpleado('+empleadoID+')" alt="">';
+                        tdactions = tdactions + '<form action="'+serverLayoutURL+'/Empleados/delete/'+empleadoID+'" name="post_58b8299bb3aae846453655" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
+                        tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                        //onclick="eliminarProvedore('+respuesta.compra_id+')"
+                        rowData.push(tdactions);
+
+                        var rowIndex = $('#relatedEmpleados').dataTable().fnAddData(rowData);
+                        var row = $('#relatedEmpleados').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr( 'id', "rowEmpleado"+empleadoID);
+
+                        catchEliminarEmpleado();
+                    }
                     location.hash ="#x";
                     $('#EmpleadoAddForm input').val('');
                 },
@@ -456,22 +444,7 @@ jQuery(document).ready(function($) {
         $('.chosen-select').chosen({search_contains:true});
 });
 /*Labels*/
-function loadSubclientes(cliid){
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/subclientes/index/"+cliid,
-        // URL to request
-        data: data,  // post data
-        success: function(response) {
 
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            callAlertPopint(textStatus);
-            callAlertPopint(XMLHttpRequest);
-            callAlertPopint(errorThrown);
-        }
-    });
-}
 function activateLabelsFunctionality(){
 	jQuery(document).ready(function($) {	
 	   	$( "#lblDatosPeronales" ).click(function() {		
@@ -579,8 +552,8 @@ function activateLabelsFunctionality(){
 				$("#imgSubclientes").attr('src',serverLayoutURL+"/img/menos2.png");
 			}else{
 				$('.subcliente').show();
-                if($('#tablaSubclienteVacia').val()){
-                    loadSubclientes();
+                if($('#tablaSubclienteVacia').val()*1){
+                    loadSubclientes($("#ClienteId").val());
                 }
 				$("#imgSubclientes").attr('src',serverLayoutURL+"/img/mas2.png");
 			}
@@ -591,6 +564,9 @@ function activateLabelsFunctionality(){
 				$("#imgProvedores").attr('src',serverLayoutURL+"/img/menos2.png");
 			}else{
 				$('.provedor').show();
+                if($('#tablaProvedoresVacia').val()*1){
+                    loadProvedores($("#ClienteId").val());
+                }
 				$("#imgProvedores").attr('src',serverLayoutURL+"/img/mas2.png");
 			}
 		});
@@ -790,6 +766,53 @@ function loadFormDomicilio(domid,cliid){
 						success: function(data,textStatus,xhr){
 							//callAlertPopint(data);
 							var rowid="rowdomicilio"+domid;
+							$("#"+rowid).html( data);
+							location.hash ="#x";
+						},
+						error: function(xhr,textStatus,error){
+							callAlertPopint(textStatus);
+						}
+					});
+					return false;
+				});
+			},
+			error:function (XMLHttpRequest, textStatus, errorThrown) {
+				callAlertPopint(textStatus);
+				callAlertPopint(XMLHttpRequest);
+				callAlertPopint(errorThrown);
+			}
+		});
+	});
+}
+function loadFormActividadcliente(actcliid,cliid){
+	jQuery(document).ready(function($) {
+		var data ="";
+		$.ajax({
+			type: "get",  // Request method: post, get
+			url: serverLayoutURL+"/actividadclientes/edit/"+actcliid+"/"+cliid,
+			// URL to request
+			data: data,  // post data
+			success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Modificar Actividad del Cliente');
+                    $('#myModal').find('.modal-body').html(response);
+                });
+                $('#myModal').modal('show');
+				reloadDatePickers();
+
+				//Catch the modify Domicilio
+				$('#ActividadclienteEditForm').submit(function(){
+					//serialize form data
+					var formData = $(this).serialize();
+					//get form action
+					var formUrl = $(this).attr('action');
+					$.ajax({
+						type: 'POST',
+						url: formUrl,
+						data: formData,
+						success: function(data,textStatus,xhr){
+							//callAlertPopint(data);
+							var rowid="rowActividadcliente"+actcliid;
 							$("#"+rowid).html( data);
 							location.hash ="#x";
 						},
@@ -1829,6 +1852,86 @@ function loadFormSubcliente(subcliid){
         });
     });
 }
+function loadSubclientes(cliid){
+    jQuery(document).ready(function($) {
+        
+        $.ajax({
+            type: 'GET',
+            url: serverLayoutURL+"/subclientes/index/"+cliid,
+            data: "",
+            success: function(data,textStatus,xhr){
+                var respuesta = JSON.parse(data);
+                if(respuesta.subclientes != null){
+                    $("#subclientesDatatable").DataTable();
+                    respuesta.subclientes.forEach(function(subcliente){
+                        var rowData =
+                            [
+                                subcliente.Subcliente.nombre,
+                                subcliente.Subcliente.cuit,
+                                subcliente.Subcliente.dni,
+                            ];
+                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormSubcliente('+subcliente.Subcliente.id+')" alt="">';
+                        tdactions = tdactions + '<form action="'+serverLayoutURL+'/Subclientes/delete/'+subcliente.Subcliente.id+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
+                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                        //onclick="eliminarSubcliente('+respuesta.compra_id+')"
+                        rowData.push(tdactions);
+
+                        var rowIndex = $('#subclientesDatatable').dataTable().fnAddData(rowData);
+                        var row = $('#subclientesDatatable').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr( 'id', "rowSubcliente"+subcliente.Subcliente.id );
+                    });
+                    $('#tablaSubclienteVacia').val(0);
+                    catchEliminarSubcliente();
+                }
+
+            },
+            error: function(xhr,textStatus,error){
+                callAlertPopint(textStatus);
+            }
+            //aqui no deberiamos recargar la pagina sino simplemente agregar esta info donde debe ser.
+        });
+    });
+}
+function loadProvedores(cliid){
+    jQuery(document).ready(function($) {
+
+        $.ajax({
+            type: 'GET',
+            url: serverLayoutURL+"/provedores/index/"+cliid,
+            data: "",
+            success: function(data,textStatus,xhr){
+                var respuesta = JSON.parse(data);
+                if(respuesta.provedores != null){
+                    $("#provedoresDatatable").DataTable();
+                    respuesta.provedores.forEach(function(provedore){
+                        var rowData =
+                            [
+                                provedore.Provedore.dni,
+                                provedore.Provedore.nombre,
+                                provedore.Provedore.cuit,
+                            ];
+                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormProvedore('+provedore.Provedore.id+')" alt="">';
+                        tdactions = tdactions + '<form action="'+serverLayoutURL+'/Provedores/delete/'+provedore.Provedore.id+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
+                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                        //onclick="eliminarProvedore('+respuesta.compra_id+')"
+                        rowData.push(tdactions);
+
+                        var rowIndex = $('#provedoresDatatable').dataTable().fnAddData(rowData);
+                        var row = $('#provedoresDatatable').dataTable().fnGetNodes(rowIndex);
+                        $(row).attr( 'id', "rowProvedore"+provedore.Provedore.id );
+                    });
+                    $('#tablaProvedoresVacia').val(0);
+                    catchEliminarProvedore();
+                }
+
+            },
+            error: function(xhr,textStatus,error){
+                callAlertPopint(textStatus);
+            }
+        });
+    });
+}
+
 function loadFormProvedore(provedorid){
     jQuery(document).ready(function($) {
         $.ajax({
@@ -1889,7 +1992,34 @@ function loadFormEmpleado(empid){
                         url: formUrl,
                         data: formData,
                         success: function(data,textStatus,xhr){
-                            $("#rowEmpleado"+empid).replaceWith(data);
+                            var respuesta = JSON.parse(data);
+                            callAlertPopint(respuesta.respuesta);
+                            if(respuesta.empleado.Empleado!=null){
+                                var empleadoID = respuesta.empleado.Empleado.id;
+                                var rowData =
+                                    [
+                                        respuesta.empleado.Empleado.legajo,
+                                        respuesta.empleado.Empleado.nombre,
+                                        respuesta.empleado.Empleado.dni,
+                                        respuesta.empleado.Empleado.cuit,
+                                        respuesta.empleado.Empleado.fechaingreso,
+                                    ];
+                                var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormEmpleado('+empleadoID+')" alt="">';
+                                tdactions = tdactions + '<form action="'+serverLayoutURL+'/Empleados/delete/'+empleadoID+'" name="post_58b8299bb3aae846453655" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
+                                tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                                //onclick="eliminarProvedore('+respuesta.compra_id+')"
+                                rowData.push(tdactions);
+
+                                var rowIndex = $('#relatedEmpleados').dataTable().fnAddData(rowData);
+                                var row = $('#relatedEmpleados').dataTable().fnGetNodes(rowIndex);
+                                $(row).attr( 'id', "rowEmpleado"+empleadoID);
+
+                                catchEliminarEmpleado();
+                            }
+                            // var tr = $(this).closest('tr');
+                            var tr = $("#rowEmpleado"+empid);
+                            $('#relatedEmpleados').dataTable().fnDeleteRow(tr);
+//                            $("#rowEmpleado"+empid).replaceWith(data);
                             catchEliminarEmpleado();
                             location.hash ="#x";
                         },
@@ -1925,7 +2055,9 @@ function catchEliminarProvedore(){
                 .success(function(res) {
                     var respuesta = jQuery.parseJSON(res);
                     if(!respuesta.error){
-                        tr.fadeOut(200);
+                        //tr.fadeOut(200);
+                        $('#provedoresDatatable').dataTable().fnDeleteRow(tr);
+
                     }else{
                     }
                     callAlertPopint(respuesta.respuesta);
@@ -1986,7 +2118,8 @@ function catchEliminarSubcliente(){
                 .success(function(res) {
                     var respuesta = jQuery.parseJSON(res);
                     if(!respuesta.error){
-                        tr.fadeOut(200);
+                        // tr.fadeOut(200);
+                        $('#subclientesDatatable').dataTable().fnDeleteRow(tr);
                     }else{
                     }
                     callAlertPopint(respuesta.respuesta);

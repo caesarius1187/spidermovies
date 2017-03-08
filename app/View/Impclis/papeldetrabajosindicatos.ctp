@@ -714,23 +714,25 @@ echo $this->Form->input('impclinombre',array('value'=>$impcliSolicitado['Impuest
                             foreach ($conveniocolectivo['Empleado'] as $empleado) {
                                 $empleadoid = $empleado['id'];
                                 //El primer año se paga el 12% y despues el 8%
-                                echo "<td>";
-                                $periodoALiquidar = new DateTime(date('Y-m-d',strtotime('01'.$periodo)));
+                                $periodoALiquidar = new DateTime(date('Y-m-d',strtotime('01-'.$periodo)));
                                 $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
-                                $diff = $fechaIngreso->diff($periodoALiquidar);
-                                if($diff->y>1){
-                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
-                                }else{
+                                $diff = $periodoALiquidar->diff($fechaIngreso);
+                                $titleUOCRAFdoCeseLaboral = "";
+                                if($diff->y > 1){
+                                    $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
                                     $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
+                                }else{
+                                    $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.12";
+                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
                                 }
-
+                                echo '<td title="'.$titleUOCRAFdoCeseLaboral.'">';
                                 echo number_format($contUocraFdoCeseLaboral, 2, ",", ".");
                                 $totalContribucionFdoCeseLaboral += $contUocraFdoCeseLaboral ;
                                 echo "</td>";
                             }
                         }
                         ?>
-                        <td>
+                        <td >
                             <?php echo number_format($totalContribucionFdoCeseLaboral, 2, ",", "."); ?>
                         </td>
                     </tr>
@@ -744,18 +746,22 @@ echo $this->Form->input('impclinombre',array('value'=>$impcliSolicitado['Impuest
                             foreach ($conveniocolectivo['Empleado'] as $empleado) {
                                 $empleadoid = $empleado['id'];
                                 //en este primer loop vamos a calcular todos los siguientes totales
-                                echo "<td>";
-                                $periodoALiquidar = new DateTime(date('Y-m-d',strtotime('01'.$periodo)));
-                                $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
-                                $diff = $fechaIngreso->diff($periodoALiquidar);
-                                $contUocraFdoCeseLaboral=0;
-                                if($diff->y>1){
-                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
-                                }else{
-                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
-                                }
-                                $contUocraAporteFics = $contUocraFdoCeseLaboral*0.02 ;
 
+                                $contUocraFdoCeseLaboral=0;
+                                $periodoALiquidar = new DateTime(date('Y-m-d',strtotime('01-'.$periodo)));
+                                $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
+                                $diff = $periodoALiquidar->diff($fechaIngreso);
+                                $titleUOCRAAporteFICS = "";
+                                if($diff->y > 1){
+                                    $titleUOCRAAporteFICS .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
+                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
+                                }else{
+                                    $titleUOCRAAporteFICS .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.12";
+                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
+                                }
+
+                                $contUocraAporteFics = $contUocraFdoCeseLaboral*0.02 ;
+                                echo '<td title="'.$titleUOCRAAporteFICS.'">';
                                 echo number_format($contUocraAporteFics, 2, ",", ".");
                                 $totalContribucionUocraAporteFics += $contUocraAporteFics ;
                                 $apagarcontribuciones += $contUocraAporteFics ;
@@ -768,6 +774,35 @@ echo $this->Form->input('impclinombre',array('value'=>$impcliSolicitado['Impuest
                         </td>
                     </tr>
 
+                <?php
+                    break;
+                case '178':/*ACARA*/ ?>
+                    <tr>
+                        <td>
+                            Contribucion Empresarial
+                        </td>
+                        <?php
+                        $totalContribucionEmpresarial =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+
+                                $contribucionEmpresarial = $empleadoDatos[$empleadoid]['cuotasindical1']+
+                                $empleadoDatos[$empleadoid]['cuotasindical2']+
+                                $empleadoDatos[$empleadoid]['cuotasindical3']+
+                                $empleadoDatos[$empleadoid]['cuotasindical4'];
+
+                                echo '<td>';
+                                echo number_format($contribucionEmpresarial, 2, ",", ".");
+                                $totalContribucionEmpresarial += $contribucionEmpresarial ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td >
+                            <?php echo number_format($totalContribucionEmpresarial, 2, ",", "."); ?>
+                        </td>
+                    </tr>
                 <?php
                     break;
             }
@@ -804,9 +839,13 @@ echo $this->Form->input('impclinombre',array('value'=>$impcliSolicitado['Impuest
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2;
                         $impuestoDeterminado += $totalContribucionUocraAporteFics;
                         break;
+                    case '178':/*ACARA*/
+                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
+                        $impuestoDeterminado += $totalContribucionEmpresarial;
+                        break;
 
                     default:
-                        $impuestoDeterminado = $totalCuotaSindical;
+                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;;
                     break;
                     /*
                      * INACAP

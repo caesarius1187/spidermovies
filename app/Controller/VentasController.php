@@ -320,7 +320,7 @@ class VentasController extends AppController {
 						'Venta.cliente_id'=>$this->request->data['Venta']['cliente_id'],
 						'Venta.comprobante_id'=>$this->request->data['Venta']['comprobante_id'],
  						'Venta.puntosdeventa_id'=>$this->request->data['Venta']['puntosdeventa_id'],
- 						'Venta.numerocomprobante*1'=>$this->request->data['Venta']['numerocomprobante']*1,
+ 						'Venta.numerocomprobante*1 = '.$this->request->data['Venta']['numerocomprobante']*1,
  					);
 	 		}else{
 	 			//Es Responsable Inscripto comprobar por numero de comprobante y por alicuota
@@ -328,7 +328,7 @@ class VentasController extends AppController {
 						'Venta.cliente_id'=>$this->request->data['Venta']['cliente_id'],
 						'Venta.comprobante_id'=>$this->request->data['Venta']['comprobante_id'],
  						'Venta.puntosdeventa_id'=>$this->request->data['Venta']['puntosdeventa_id'],
- 						'Venta.numerocomprobante*1'=>$this->request->data['Venta']['numerocomprobante']*1,
+ 						'Venta.numerocomprobante*1 = '.$this->request->data['Venta']['numerocomprobante']*1,
  						'Venta.alicuota'=>$this->request->data['Venta']['alicuota'],
  					);	 			
 	 		}

@@ -159,10 +159,20 @@
                     $comprasActualesClientes[$cliente['id']] += $compra['total'];
                 }
             }
-            foreach ($cliente['Sueldo'] as $sueldo) {
-                $sueldosActuales+=$sueldo['monto'];
-                $sueldoActualesClientes[$cliente['id']] += $sueldo['monto'];
+            foreach ($cliente['Empleado'] as $empleado) {
+                foreach ($empleado['Valorrecibo'] as $valorrecibo) {
+                    //Se supone que los valores de recibo que tenemos aca son unicamente los que
+                    // tienen cctxconceptos que apuntan a un concepto = 46 que es neto
+                    $sueldosActuales+=$valorrecibo['valor'];
+                    $sueldoActualesClientes[$cliente['id']]+=$valorrecibo['valor'];
+                }
             }
+
+            //de aca se sacaban antes los sueldos
+//            foreach ($cliente['Sueldo'] as $sueldo) {
+//                $sueldosActuales+=$sueldo['monto'];
+//                $sueldoActualesClientes[$cliente['id']] += $sueldo['monto'];
+//            }
         }                        
     }
     $ingresosTotal=$ingresosActuales;

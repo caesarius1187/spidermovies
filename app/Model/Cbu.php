@@ -10,7 +10,12 @@ class Cbu extends AppModel {
      *
      * @var array
      */
-    public $displayField = 'cbu';
+	public $displayField = 'codname';
+
+
+	var $virtualFields = array(
+		'codname' => 'CONCAT(Cbu.cbu, " ", Cbu.tipocuenta)'
+	);
     public $belongsTo = [
         'Impcli' => [
             'className' => 'Impcli',
