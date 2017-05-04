@@ -1,4 +1,9 @@
-<h3 id="TituloPdtSueldo">Liquidacion: </h3>
+<?php
+if(count($empleado)==0){
+    return '<div class="divLiquidacionSueldo"></div>';
+}
+?>
+<div class="divLiquidacionSueldo">
     <?php
     /*
      * 1: quincena 1;
@@ -7,282 +12,80 @@
      * 4: presupuesto 1;
      * 5: presupuesto 2;
      * 6: presupueto 3
+     * 7: SAC
      * */
     //Vamos a ver que liquidacion ya tiene hecha el compadre
-    $liquidacionesActivas = [
-        '1' => false,
-        '2' => false,
-        '3' => false,
-        '4' => false,
-        '5' => false,
-        '6' => false,
-    ];
-    foreach ($tieneLiquidacion['Conveniocolectivotrabajo']['Cctxconcepto'] as $cctxconcepto) {
-        foreach ($cctxconcepto['Valorrecibo'] as $valorrecibo) {
-            $liquidacionesActivas[$valorrecibo['tipoliquidacion']] = true;
-        }
-    }
-    //Vamos a mostrar los botones solo si los empleados tienen Liquidaciones Activadas
-    if($empleado['Empleado']['liquidaprimeraquincena']){
-        $classAMostrar = "btn_cargarliq";
-        $classAMostrarFieldSet = "fieldset_cargarliq";
-        if ($liquidacionesActivas['1']) {
-            $classAMostrar = "btn_cargarliq_liq";
-            $classAMostrarFieldSet = "fieldset_cargarliq";
-        }
-        if ($tipoliquidacion == 1) {
-            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
-            $classAMostrarFieldSet = "fieldset_cargarliq_selected";
-        }
-    ?>
-    <fieldset class="<?php echo $classAMostrarFieldSet ?>" >
-        <legend >Primera Quincena</legend>
-        <?php
-        echo $this->Form->button(
-            "Liquidacion",
-            array(
-                'class'=>$classAMostrar,
-                'onClick'=>"cargarSueldoEmpleado('".$empleado['Empleado']['cliente_id']."','".$periodo."','".$empleado['Empleado']['id']."',1)",
-                'id'=>'buttonQuincena1',
-            ),
-            array()
-        );
-//        echo $this->Form->button(
-//            "Libro de Sueldo",
-//            array(
-//                'class'=>'btn_sueldo',
-//                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',1)",
-//                'id'=>'buttonLibroSueldo',
-//            ),
-//            array()
-//        );
-//        echo $this->Form->button(
-//            "Recibo de Sueldo",
-//            array(
-//                'class'=>'btn_sueldo',
-//                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',1)",
-//                'id'=>'buttonReciboSueldo',
-//            ),
-//            array()
-//        );
-        ?>
-    </fieldset>
-        <?php
-    }
-    if($empleado['Empleado']['liquidasegundaquincena']){
-        $classAMostrar = "btn_cargarliq";
-        $classAMostrarFieldSet = "fieldset_cargarliq";
-        if ($liquidacionesActivas['2']) {
-            $classAMostrar = "btn_cargarliq_liq";
-            $classAMostrarFieldSet = "fieldset_cargarliq";
-        }
-        if ($tipoliquidacion == 2) {
-            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
-            $classAMostrarFieldSet = "fieldset_cargarliq_selected";
-        }
-        ?>
-    <fieldset class="<?php echo $classAMostrarFieldSet ?>" >
-        <legend >Segunda Quincena</legend>
-        <?php
-        echo $this->Form->button(
-            "Liquidacion",
-            array(
-                'class'=>$classAMostrar,
-                'onClick'=>"cargarSueldoEmpleado('".$empleado['Empleado']['cliente_id']."','".$periodo."','".$empleado['Empleado']['id']."',2)",
-                'id'=>'buttonQuincena1',
-            ),
-            array()
-        );
-//        echo $this->Form->button(
-//            "Libro de Sueldo",
-//            array(
-//                'class'=>'btn_sueldo',
-//                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',2)",
-//                'id'=>'buttonLibroSueldo',
-//            ),
-//            array()
-//        );
-//        echo $this->Form->button(
-//            "Recibo de Sueldo",
-//            array(
-//                'class'=>'btn_sueldo',
-//                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',2)",
-//                'id'=>'buttonReciboSueldo',
-//            ),
-//            array()
-//        );
-        ?>
-    </fieldset>
-        <?php
-    }
-    if($empleado['Empleado']['liquidamensual']) {
-        $classAMostrar = "btn_cargarliq";
-        $classAMostrarFieldSet = "fieldset_cargarliq";
-        if ($liquidacionesActivas['3']) {
-            $classAMostrar = "btn_cargarliq_liq";
-            $classAMostrarFieldSet = "fieldset_cargarliq";
-        }
-        if ($tipoliquidacion == 3) {
-            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
-            $classAMostrarFieldSet = "fieldset_cargarliq_selected";
-        }
-    ?>
-    <fieldset class="<?php echo $classAMostrarFieldSet ?>" >
-        <legend >Mensual</legend>
-        <?php
-        echo $this->Form->button(
-            "Liquidacion",
-            array(
-                'class' => $classAMostrar,
-                'onClick' => "cargarSueldoEmpleado('" . $empleado['Empleado']['cliente_id'] . "','" . $periodo . "','" . $empleado['Empleado']['id'] . "',3)",
-                'id' => 'buttonQuincena1',
-            ),
-            array()
-        );
-//        echo $this->Form->button(
-//            "Libro de Sueldo",
-//            array(
-//                'class'=>'btn_sueldo',
-//                'onClick'=>"cargarLibroSueldo('".$empleado['Empleado']['id']."','".$periodo."',3)",
-//                'id'=>'buttonLibroSueldo',
-//            ),
-//            array()
-//        );
-//        echo $this->Form->button(
-//            "Recibo de Sueldo",
-//            array(
-//                'class'=>'btn_sueldo',
-//                'onClick'=>"cargarReciboSueldo('".$empleado['Empleado']['id']."','".$periodo."',3)",
-//                'id'=>'buttonReciboSueldo',
-//            ),
-//            array()
-//        );
-        ?>
-    </fieldset>
-        <?php
-    }
-    if($empleado['Empleado']['liquidapresupuestoprimera']) {
-        $classAMostrar = "btn_cargarliq";
-        if ($liquidacionesActivas['4']) {
-            $classAMostrar = "btn_cargarliq_liq";
-        }
-        if ($tipoliquidacion == 4) {
-            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
-        }
-        echo $this->Form->button(
-            "Presupuesto 1",
-            array(
-                'class' => $classAMostrar,
-                'onClick' => "cargarSueldoEmpleado('" . $empleado['Empleado']['cliente_id'] . "','" . $periodo . "','" . $empleado['Empleado']['id'] . "',4)",
-                'id' => 'buttonQuincena1',
-            ),
-            array()
-        );
-    }
-    if($empleado['Empleado']['liquidapresupuestoprimera']) {
-        $classAMostrar = "btn_cargarliq";
-        if ($liquidacionesActivas['5']) {
-            $classAMostrar = "btn_cargarliq_liq";
-        }
-        if ($tipoliquidacion == 5) {
-            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
-        }
-        echo $this->Form->button(
-            "Presupuesto 2",
-            array(
-                'class' => $classAMostrar,
-                'onClick' => "cargarSueldoEmpleado('" . $empleado['Empleado']['cliente_id'] . "','" . $periodo . "','" . $empleado['Empleado']['id'] . "',5)",
-                'id' => 'buttonQuincena1',
-            ),
-            array()
-        );
-    }
-    if($empleado['Empleado']['liquidapresupuestomensual']) {
-        $classAMostrar = "btn_cargarliq";
-        if ($liquidacionesActivas['6']) {
-            $classAMostrar = "btn_cargarliq_liq";
-        }
-        if ($tipoliquidacion == 6) {
-            $classAMostrar = " btn_cargarliq_selected " . $classAMostrar;
-        }
-        echo $this->Form->button(
-            "Presupuesto 3",
-            array(
-                'class' => $classAMostrar,
-                'onClick' => "cargarSueldoEmpleado('" . $empleado['Empleado']['cliente_id'] . "','" . $periodo . "','" . $empleado['Empleado']['id'] . "',6)",
-                'id' => 'buttonQuincena1',
-            ),
-            array()
-        );
-    }
+    echo $this->Form->input('indiceCargaEmpleado'.$empleado['Empleado']['id'],array('type'=>'hidden','value'=>0));
 
      echo $this->Form->create('Valorrecibo',array(
          'class'=>'formTareaCarga',
+         'id'=>'ValorreciboPapeldetrabajosueldosForm'.$empleado['Empleado']['id'],
          'inputDefaults' => array(
                 'label' => false,
             )
         )
      );
     ?>
-    <div id="sueldoContent" style="width: 1340px;">
+    <div id="sueldoContent" style="">
         <table class="tbl_border tbl_sueldo" style="width:100%" cellspacing="0" cellpadding="0" id="pdtsueldo">
             <thead>
                 <tr>
-                    <td colspan="7">
+                    <td colspan="7" >
+                        <span class="spanempleado" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>">
                         <?php
-                        echo "Nombre del empleado: ".$empleado['Empleado']['nombre'];
+                            echo $empleado['Empleado']['nombre'];
                         ?>
+                        </span>
                     </td>
-                    <td style="text-align: right;" rowspan="2">
-                        <div class="fab blue">
-                            <core-icon icon="add" align="center">
-                                <?php echo $this->Form->button('+',
-                                    array('type' => 'button',
-                                        'class' =>"btn_add",
-                                        'onClick' => "location.href='#nuevo_valorrecibopersonalizado'",
-                                    )
-                                );?>
-                            </core-icon>
-                            <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
-                        </div>
-                    </td>
+<!--                    <td style="text-align: right;" rowspan="2">-->
+<!--                        <div class="fab blue">-->
+<!--                            <core-icon icon="add" align="center">-->
+<!--                                --><?php //echo $this->Form->button('+',
+//                                    array('type' => 'button',
+//                                        'class' =>"btn_add",
+//                                        'onClick' => "location.href='#nuevo_valorrecibopersonalizado'",
+//                                    )
+//                                );?>
+<!--                            </core-icon>-->
+<!--                            <paper-ripple class="circle recenteringTouch" fit></paper-ripple>-->
+<!--                        </div>-->
+<!--                    </td>-->
                 </tr>
                 <tr>
                     <td colspan="7">
+                       <span>
                         <?php
-                        echo "Convenio del empleado: ".$empleado['Conveniocolectivotrabajo']['nombre'];
+                        echo "Convenio: ".$empleado['Conveniocolectivotrabajo']['nombre'];
                         ?>
+                       </span>
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td class="tdseccion">
 
                     </td>
-                    <td style="width:250px;">
+                    <td class="tdconcepto" style="width:100px;">
 
                     </td>
-                    <td>
+                    <td width="80px" class="tdvalor">
                         Valor
                     </td>
-                    <td>
+                    <td width="15px" class="tdcodigo">
                         Codigo
                     </td>
-                    <td>
+                    <td width="15px" class="tdalicuota">
                         %
                     </td>
-                    <td>
+                    <td width="15px" class="tdcodigoalicuota">
                         Codigo
                     </td>
-                    <td>
+                    <td class="tdformula">
                         Formula
                     </td>
                 </tr>
             </thead>
         <?php if(!is_null($empleado['Conveniocolectivotrabajo']['nombre'])) { ?>
-            <tbody>
-                <?php
-                echo "Liquidacion de sueldo:</br>";
-
+            <tbody><?php
                 $i=0;
                 $miseccionamostrada="sinseccion";
                 $numSeccion = 0;
@@ -326,8 +129,8 @@
                         $headSeccion = false;
                         if($miseccionamostrada!=$miseccionamostrar){
                             $headSeccion = true;?>
-                            <td rowspan="<?php echo $cantSecciones[$miseccionamostrar];?>" style="font-size: 13px; vertical-align:middle!important;" id="seccion<?php echo $numSeccion;?>" >
-                                <div style="transform: rotate(270deg); float:left;">
+                            <td  class="tdseccion" width="15px" rowspan="<?php echo $cantSecciones[$miseccionamostrar];?>" style="font-size: 13px; vertical-align:middle!important;" id="seccion<?php echo $numSeccion;?>" >
+                                <div style="transform: rotate(270deg); float:left;width: 10px;">
                                     <?php
                                     $miseccionamostrada = $miseccionamostrar;
                                     echo $miseccionamostrar;?>
@@ -337,16 +140,14 @@
                         }
                         $styleForTd = "
                             display: flex ;
-                            width:250px;  
+                            width:200px;  
                             border-bottom: 0px; 
                             border-left: 0px; 
-                            border-right: 0px;";
-                        if($conceptoobligatorio['Concepto']['estotal']){
-
-                        }
+                            border-right: 0px;
+                            white-space: nowrap;";
                         ?>
 
-                        <td  style="<?php echo $styleForTd; ?>">
+                        <td  class="tdconcepto" style="<?php echo $styleForTd; ?>">
                             <?php
                             //aca buscamos el valor que ya guardardamos para este concepto
                             //y mostramos un formulario para modificarlo
@@ -355,6 +156,7 @@
                             $porcentaje = 0;
                             $valorreciboid = 0;
                             $aplicafuncion = true;
+                            $muestraAplicarATodos = false;
                             $formulamodificada = false;
                             $nuevaformula = "";
                             if(count($conceptoobligatorio['Valorrecibo'])>0){
@@ -364,6 +166,9 @@
                                 $valorreciboid = $conceptoobligatorio['Valorrecibo'][0]['id'];
                             }else{
 
+                            }
+                            if($conceptoobligatorio['Concepto']['aplicaatodos']){
+                                $muestraAplicarATodos=true;
                             }
                             switch ($conceptoobligatorio['Concepto']['id']){
                                 case 9:/*Precio de la Hora*/
@@ -386,6 +191,9 @@
                                 case 16:/*Ingreso*/
                                     $valor = $empleado['Empleado']['fechaingreso'];
                                     break;
+                                case 67:/*Egreso*/
+                                    $valor = $empleado['Empleado']['fechaegreso'];
+                                    break;
                                 case 17:/*Periodo*/
                                     $pemes = substr($periodo, 0, 2);
                                     $peanio = substr($periodo, 3);
@@ -399,6 +207,41 @@
                                     //$valor = $empleado['Empleado']['minimoos'];
                                     break;
                                 case 35:/*Obra Social Extraordinario*/
+                                    break;
+                                case 38:/*cuota sindical extra 2*/
+                                    if($empleado['Conveniocolectivotrabajo']['id']==5/*Es Construcción Quincenal?*/){
+                                        //el segurod e vida obligatorio se paga solo si estamos en la segunda quincena
+                                        //o si la fecha de baja esta dentro de la primera quincena
+                                        if($numeroliquidacion != 2){
+                                            //No estamos en la segunda quincena
+
+                                            $aplicafuncion = false;
+                                            //$aplicafuncion = true;
+
+                                            //tengo que preguntar si la fecha de baja es mayor que 01-periodo
+                                            //y menor que 15-periodo
+                                            $inicioperiodo=date('Y-m-d',strtotime('01-'.$pemes.'-'.$peanio));
+                                            $finPrimeraQuincena=date('Y-m-d',strtotime('15-'.$pemes.'-'.$peanio));
+                                            $confecha = $empleado['Empleado']['fechaegreso']!="";
+                                            $mayorqueinicio =  $inicioperiodo<$empleado['Empleado']['fechaegreso'];
+                                            $menorquefin =  $empleado['Empleado']['fechaegreso']<$finPrimeraQuincena;
+                                            if($confecha&&$mayorqueinicio&&$menorquefin)
+                                            {
+                                                $aplicafuncion = true;
+                                            }
+                                        }else{
+                                            //preguntemos si la fecha de despido cae en la primera quincena
+                                            $inicioperiodo=date('Y-m-d',strtotime('01-'.$pemes.'-'.$peanio));
+                                            $finPrimeraQuincena=date('Y-m-d',strtotime('15-'.$pemes.'-'.$peanio));
+                                            $confecha = $empleado['Empleado']['fechaegreso']!="";
+                                            $mayorqueinicio =  $inicioperiodo<$empleado['Empleado']['fechaegreso'];
+                                            $menorquefin =  $empleado['Empleado']['fechaegreso']<$finPrimeraQuincena;
+                                            if($confecha&&$mayorqueinicio&&$menorquefin)
+                                            {
+                                                $aplicafuncion = false;
+                                            }
+                                        }
+                                    }
                                     break;
                                 case 39:/*Afiliado al Sindicato*/
                                     $valor = $empleado['Empleado']['afiliadosindicato'];
@@ -436,6 +279,7 @@
                                     tiene activado el "pago del seguro de vida obligatorio*/
                                     if($empleado['Conveniocolectivotrabajo']['Impuesto']['id']==11/*Es SEC?*/){
                                         if(!$empleado['Conveniocolectivotrabajo']['Impuesto']['Impcli'][0]['segurovidaobligatorio']*1){
+
                                             $aplicafuncion=false;
                                         }else{
                                             //aca tambien tenemos que ver si el IMPCLI(SEC) tiene el dato "primasvo" y asignarlo
@@ -445,6 +289,17 @@
                                             }
                                         }
                                     }
+
+                                    break;
+                                case 152:/*Mejor Remunerativos*/
+                                    /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                    tiene un Acuerdos Remunerativos cargado*/
+                                    $valor = $mayorRemunerativo;
+                                    break;
+                                case 153:/*Mejor NO Remunerativos*/
+                                    /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                    tiene un Acuerdos Remunerativos cargado*/
+                                    $valor = $mayorNORemunerativo;
                                     break;
                                 /*case 36:/*Cuota Sindical aca estabamos guardando la cuota sindical extra en el empleado pero
                                 debe ser la misma para todos dependiendo del convenio
@@ -460,7 +315,17 @@
                             echo $conceptoobligatorio['nombre'];
                             ?>
                         </td>
-                        <td >
+                        <?php
+
+
+                        $classInputValor="";
+                        $inputClass="";
+
+                        if($muestraAplicarATodos){
+                            $classInputValor = "aplicableATodos";
+                            $inputClass = "input".$conceptoobligatorio['Concepto']['codigo'];
+                        }?>
+                        <td width="80px" class="tdvalor">
                             <?php
                             $funcionaaplicar="";
                             if($conceptoobligatorio['calculado']&&$aplicafuncion){
@@ -483,7 +348,7 @@
                             }
                             echo $this->Form->input('Valorrecibo.'.$i.'.id',array('type'=>'hidden','value'=>$valorreciboid));
                             echo $this->Form->input('Valorrecibo.'.$i.'.periodo',array('type'=>'hidden','value'=>$periodo));
-                            echo $this->Form->input('Valorrecibo.'.$i.'.tipoliquidacion',array('type'=>'hidden','value'=>$tipoliquidacion));
+                            echo $this->Form->input('Valorrecibo.'.$i.'.tipoliquidacion',array('type'=>'hidden','value'=>$numeroliquidacion));
                             echo $this->Form->input('Valorrecibo.'.$i.'.cctxconcepto_id',array('type'=>'hidden','value'=>$conceptoobligatorio['id']));
                             echo $this->Form->input('Valorrecibo.'.$i.'.empleado_id',array('type'=>'hidden','value'=>$empleado['Empleado']['id']));
 
@@ -495,7 +360,10 @@
                                     'type'=>'checkbox',
                                     'data-cell'=>$datacell ,
                                     'valor'=>$valor ,
-                                    'data-formula'=>$funcionaaplicar
+                                    'data-formula'=>$funcionaaplicar,
+                                    'class'=>$classInputValor,
+                                    'inputclass' => $inputClass,
+                                    'valdata-codigo' => $conceptoobligatorio['Concepto']['codigo'],
                                 );
                                 if($valor){
                                     $optionsValor['checked']='checked';
@@ -505,23 +373,29 @@
                                 echo $this->Form->input('Valorrecibo.'.$i.'.valor',array(
                                     'value'=>$valor,
                                     'data-cell'=>$datacell ,
+                                    'class'=>$classInputValor,
+                                    'inputclass' => $inputClass,
+                                    'valdata-codigo' => $conceptoobligatorio['Concepto']['codigo'],
                                 ));
                             }else{
                                 echo $this->Form->input('Valorrecibo.'.$i.'.valor',array(
                                     'value'=>$valor,
                                     'data-cell'=>$datacell ,
                                     'data-formula'=>$funcionaaplicar,
-                                    'data-format'=>'00[.]00'
-                                ));
+                                    'data-format'=>'00[.]00',
+                                    'class'=>$classInputValor,
+                                    'inputclass' => $inputClass,
+                                    'valdata-codigo' => $conceptoobligatorio['Concepto']['codigo'],
+                                    ));
                             }
                             ?>
                         </td>
-                        <td>
+                        <td  width="15px" class="tdcodigo">
                             <?php
                             echo $this->Form->label('Valorrecibo.'.$i.'.codigo',$datacell);
                             ?>
                         </td>
-                        <td>
+                        <td  width="15px" class="tdalicuota">
                                 <?php
                                     $porcentajeDataCell = "";
                                     if($conceptoobligatorio['conporcentaje']){
@@ -542,10 +416,10 @@
                                     }
                                 ?>
                         </td>
-                        <td>
+                        <td  width="15px" class="tdcodigoalicuota">
                             <?php echo $porcentajeDataCell; ?>
                         </td>
-                        <td>
+                        <td class="tdformula" width="276px">
                             <?php
                             if($conceptoobligatorio['calculado']){
 
@@ -568,7 +442,8 @@
                                         'headseccion'=>$headSeccion?'1':'0',
                                         'seccion'=>$numSeccion-1,
                                         'class'=>'funcionAAplicar',
-                                        'style'=>'width:600px; padding: 0px'
+                                        'style'=>'width:235px; padding: 0px',
+                                        'data-codigo' => $conceptoobligatorio['Concepto']['codigo'],
                                     )
                                 );
                             }
@@ -595,9 +470,9 @@
                 }
                 ?>
                 <tr>
-                    <td colspan="7" align="right"><div style="float: right;"> <?php echo $this->Form->end('Guardar');?></div></td>
+                    <td colspan="7" align="right"><div style="float: right;"> <?php echo $this->Form->end();?></div></td>
                 </tr>
             </tbody>
         </table>
     </div>
-
+</div>

@@ -66,7 +66,7 @@ class Cuenta extends AppModel {
 //    110405102	Act. Vs. - Percepciones 		43,73
 //    210403101	Actividades Varias a Pagar		534,83
 
-    public $cuentasdeActEconomicas = ['2577','319','313','316','1492','3378'];
+    public $cuentasdeActEconomicas = ['2577','319','313','316','1492','3378','317'];
     //506210001	Ingresos Brutos Capital Federal	0,00	0
     //110404301	I.I.B.B. - Saldo a Favor Capital Federal	0,00	0
     //110404101	I.I.B.B. - Retenciones Capital Federal	0	0,00
@@ -117,10 +117,38 @@ class Cuenta extends AppModel {
     //503030082	Contr. UOM
 
 
-    public $cuentasdeSUSSAportesSindicatos = ['1389',
-        '1390','1391','1392','1393','1394','1395','1396','1397','1398','1399',
-        '1400','1401','1402','1403','1404','1405','1406','1407','1408','1409',
-        '1410','1411','1412','1413','1414','1415'
+    public $cuentasdeSUSSAportesSindicatos = [
+		'1385',
+		'1386',
+		'1387',
+		'1388',
+		'1389',
+        '1390',
+		'1391',
+		'1392',
+		'1393',
+		'1394',
+		'1395',
+		'1396',
+		'1397',
+		'1398',
+		'1399',
+        '1400',
+		'1401',
+		'1402',
+		'1403',
+		'1404',
+		'1405',
+		'1406',
+		'1407',
+		'1408',
+		'1409',
+        '1410',
+		'1411',
+		'1412',
+		'1413',
+		'1414',
+		'1415'
     ];
 
     //210302021	Ap. SEC a Pagar

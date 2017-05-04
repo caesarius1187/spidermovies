@@ -117,8 +117,7 @@ $(document).ready(function() {
 							                      'value'=>$fchrealizadotoShow,
 							                      ));
             ?></td>
-		
-		<?php 
+		<?php
 		//los sindicatos no tienen monto a favor ni el impuesto Autonomo(id=14)
 		if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14){ ?>
 			<td><?php echo $this->Form->input('Eventosimpuesto.'.$i.'.monc',array('value'=>$eventosimpuesto['Eventosimpuesto']['monc'],'label'=>false, 'style' => 'width:70px')); ?></td>
@@ -140,8 +139,8 @@ $(document).ready(function() {
 		<h3><?php echo __('Contabilizar Pago de : '.$impclinombre); ?></h3>
 		<?php
 		$id = 0;
-		$nombre = "Asiento devengamiento Pago de impuesto: ".$impclinombre;
-		$descripcion = "Asiento automatico";
+		$nombre = "Pago de impuesto: ".$impclinombre;
+		$descripcion = "Automatico";
 		$fecha = date('d-m-Y');
 		$miAsiento=array();
 		if(!isset($miAsiento['Movimiento'])){
@@ -180,31 +179,35 @@ $(document).ready(function() {
 			$asiento_id=0;
 			$debe=0;
 			$haber=0;
+			$haberyacargado=0;
+			$debeyacargado=0;
 			$key=0;
-
 
 			/*Aca vamos a reescribir el debe y el haber si es que corresponde para esta cuenta con este cliente*/
 			//Este switch controla todas las cuetnas que hay en "ventas" obligadamente
 			switch ($asientoestandar['Cuenta']['id']){
 				case '1518'/*110399001 Cliente xx*/:
-				case '1868'/*110399001 Cliente xx*/:
+				case '1389'/*110399001 Ap. SEC a Pagar*/:
 				case '1500'/*110399001 Cliente xx*/:
 				case '1468'/*110399001 Cliente xx*/:
 				case '1492'/*110399001 Cliente xx*/:
-				case '1426'/*110399001 Cliente xx*/:
-				case '1427'/*110399001 Cliente xx*/:
+				case '1392'/*210303024 Ap. FAECYS a Pagar*/:
+
 				case '1397'/*110399001 Cliente xx*/:
 				case '1403'/*110399001 Cliente xx*/:
 				case '1406'/*110399001 Cliente xx*/:
 				case '3375'/*110399001 Cliente xx*/:
 				case '1412'/*110399001 Cliente xx*/:
+				case '1443'/*110399001 Cliente xx*/:
+				case '1496'/*110399001 Cliente xx*/:
 				case '1428'/*110399001 Cliente xx*/:
 				case '1401'/*110399001 Cliente xx*/:
 				case '1402'/*110399001 Cliente xx*/:
 				case '1414'/*110399001 Cliente xx*/:
 				case '260'/*110399001 Cliente xx*/:
-				case '2544'/*506140001 Autonomo*/:
+				case '1477'/*210401801 Autonomo A Pagar*/:
 				case '265'/*110403102 Ganancias - Anticipos a Computar*/:
+				case '2798'/*599000002 Casas Particulares A Pagar*/:
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -213,6 +216,17 @@ $(document).ready(function() {
 				$debe = $cuentaAPagar;
 				break;
 				case '1383'/*210302001 Ap. Seguridad Social a Pagar*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+						if($eventosimpuesto['Eventosimpuesto']['item']=='301EmpleadorAportesSegSocial'){
+							$cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+						}
+					}
+					$debe = $cuentaAPagar;
+					break;
+				case '1392'/*210302024 Ap. FAECYS a Pagar*/:
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -315,7 +329,9 @@ $(document).ready(function() {
 						$movid=$movimiento['id'];
 						$asiento_id=$movimiento['asiento_id'];
 						$debe=$movimiento['debe'];
+						$debeyacargado=$movimiento['debe'];
 						$haber=$movimiento['haber'];
+						$haberyacargado=$movimiento['haber'];
 						$asientoyacargado['Movimiento'][$kMov]['cargado']=true;
 					}
 				}
@@ -332,17 +348,25 @@ $(document).ready(function() {
 				'readonly','readonly',
 				'value'=>date('d-m-Y'),
 			));
-			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['default'=>$debe]);
-			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['default'=>$haber]);
+			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+				'yacargado'=>$debeyacargado,
+				'default'=>number_format($debe, 2, ".", "")
+			]);
+			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
+				'yacargado'=>$haberyacargado,
+				'default'=>number_format($haber, 2, ".", "")
+			]);
 			echo "</br>";
 			$i++;
 		}
 		//cuentas comun a todos los pagos
-		foreach ($cuentaspagoimpuestos as $kMov => $cuentaspagoimpuesto) {
+		foreach ($cuentaspagoimpuestos as $cpi => $cuentaspagoimpuesto) {
 			$movid = 0;
 			$asiento_id = 0;
 			$debe = 0;
 			$haber = 0;
+			$haberyacargado=0;
+			$debeyacargado=0;
 			$cuentaclienteid = $cuentaspagoimpuesto['Cuentascliente'][0]['id'];
 			switch ($cuentaspagoimpuesto['Cuenta']['id']){
 				/*Casos comun a todas las ventas*/
@@ -356,18 +380,22 @@ $(document).ready(function() {
 					break;
 			}
 			if(isset($asientoyacargado['Movimiento'])) {
-				if(!isset($asientoyacargado['Movimiento'][$kMov]['cargado'])) {
-					$asientoyacargado['Movimiento'][$kMov]['cargado'] = false;
-				}
+
 				foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento) {
+					if(!isset($asientoyacargado['Movimiento'][$kMov]['cargado'])) {
+						$asientoyacargado['Movimiento'][$kMov]['cargado'] = false;
+					}
 					if($cuentaclienteid==$movimiento['cuentascliente_id']) {
 						$movid = $movimiento['id'];
 						$asiento_id = $movimiento['asiento_id'];
+						$debe = $movimiento['debe'];
+						$haber = $movimiento['haber'];
+						$haberyacargado=$movimiento['debe'];
+						$debeyacargado= $movimiento['haber'];
 						$asientoyacargado['Movimiento'][$kMov]['cargado']=true;
 					}
 				}
 			}
-
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['default' => $cuentaclienteid]);
@@ -376,8 +404,14 @@ $(document).ready(function() {
 				'readonly','readonly',
 				'value'=>date('d-m-Y'),
 			));
-			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['default' => $debe]);
-			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['default' => $haber]);
+			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [
+				'yacargado' => $debeyacargado,
+				'default' => $debe
+			]);
+			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
+				'yacargado' => $haberyacargado,
+				'default' => $haber
+			]);
 			echo "</br>";
 			$i++;
 		}
@@ -388,11 +422,15 @@ $(document).ready(function() {
 				$movid = 0;
 				$debe = 0;
 				$haber = 0;
+				$haberyacargado=0;
+				$debeyacargado=0;
 				if(!$asientoyacargado['Movimiento'][$kMov]['cargado']) {
 					$movid = $movimiento['id'];
 					$asiento_id = $movimiento['asiento_id'];
 					$debe = $movimiento['debe'];
 					$haber = $movimiento['haber'];
+					$debeyacargado=$movimiento['debe'];
+					$haberyacargado=$movimiento['haber'];
 					$asientoyacargado['Movimiento'][$kMov]['cargado']=true;
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id', ['default' => $movid]);
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
@@ -402,8 +440,14 @@ $(document).ready(function() {
 						'readonly','readonly',
 						'value'=>date('d-m-Y'),
 					));
-					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe', ['value' => $debe]);
-					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber', ['value' => $haber]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe', [
+						'yacargado' => $debeyacargado,
+						'value' => number_format($debe, 2, ".", "")
+					]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber', [
+						'yacargado' => $haberyacargado,
+						'value' => number_format($haber, 2, ".", "")
+					]);
 					echo "</br>";
 					$i++;
 				}
@@ -412,7 +456,6 @@ $(document).ready(function() {
 		echo $this->Form->end('Guardar asiento');
 		?>
 	</div>
-
 </div>
 
 

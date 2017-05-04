@@ -2,7 +2,9 @@
  echo $this->Html->script('jquery.table2excel',array('inline'=>false));
  echo $this->Html->script('impclis/papeldetrabajomonotributo',array('inline'=>false));
  echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
- echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));?>
+ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
+ echo $this->Form->input('impcliid',array('value'=>$impcliid,'type'=>'hidden'));
+?>
 <div id="Formhead" class="clientes papeldetrabajoconveniomultilateral index" style="margin-bottom:10px;">
 	<h2>Monotributo:</h2>
 	Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
@@ -23,7 +25,9 @@
         )
     );?>
 	<div id="tabsTareaMonotributo" style="margin-left: 8px;">
-		<div class="tabsTareaImpuesto_active" onClick="showRecategorizacion()" id="tab_Recategorizacion"><h2>Recatecotizacion</h2></div>
+		<div class="tabsTareaImpuesto_active" onClick="showRecategorizacion()" id="tab_Recategorizacion">
+			<h2>Recategorizacion</h2>
+		</div>
 		<div class="tabsTareaImpuesto" onClick="showDDJJ()" id="tab_DDJJ"><h2>DDJJ</h2></div>
 	</div>
 	<div id="divRecategorizacion" class="index">
@@ -81,21 +85,28 @@
 										$sumaen = $actividadcliente['Actividade']['generomonotributo'];
 									}
 								}
+								//si es factura C suma el total, si no suma el neto
+								$campoaSumar = "total";
+								if($venta['Comprobante']['tipo']=='C'){
+									$campoaSumar = "total";
+								}else{
+									$campoaSumar = "neto";
+								}
 								if($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso'){
-									
+
 									if($sumaen=='locacionservicio'){
-										$subtotalVentaP0Locacion += $venta[0]['total'];							
+										$subtotalVentaP0Locacion += $venta[0][$campoaSumar];
 									}else{
-										$subtotalVentaP0Mueble += $venta[0]['total'];					
+										$subtotalVentaP0Mueble += $venta[0][$campoaSumar];
 									}
-									$subtotalVentaP0Total += $venta[0]['total'];
+									$subtotalVentaP0Total += $venta[0][$campoaSumar];
 								}else{
 									if($sumaen=='locacionservicio'){
-										$subtotalVentaP0Locacion -= $venta[0]['total'];
+										$subtotalVentaP0Locacion -= $venta[0][$campoaSumar];
 									}else{
-										$subtotalVentaP0Mueble -= $venta[0]['total'];
+										$subtotalVentaP0Mueble -= $venta[0][$campoaSumar];
 									}
-									$subtotalVentaP0Total -= $venta[0]['total'];
+									$subtotalVentaP0Total -= $venta[0][$campoaSumar];
 								}
 							}
 						}
@@ -117,12 +128,18 @@
 							foreach ($ventas as $venta) {
 								$k=$j+$i;
 								$periodoDeInicioj = $periodoDeInicio.' +'.$k.' months';
-								//echo "PI:".$periodoDeInicio."%%PJ:".$periodoDeInicioj."//".$i."//".$j."$$</br>";					
+								//echo "PI:".$periodoDeInicio."%%PJ:".$periodoDeInicioj."//".$i."//".$j."$$</br>";
+								$campoaSumar = "total";
+								if($venta['Comprobante']['tipo']=='C'){
+									$campoaSumar = "total";
+								}else{
+									$campoaSumar = "neto";
+								}
 								if($venta['Venta']['periodo']==date('m-Y',strtotime($periodoDeInicioj))){
 									if($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso'){
-										$subtotalCuatrimestre += $venta[0]['total'];
+										$subtotalCuatrimestre += $venta[0][$campoaSumar];
 									}else{
-										$subtotalCuatrimestre -= $venta[0]['total'];
+										$subtotalCuatrimestre -= $venta[0][$campoaSumar];
 									}
 								}
 							}

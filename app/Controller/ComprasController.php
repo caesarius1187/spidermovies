@@ -89,11 +89,261 @@ class ComprasController extends AppController {
 		$this->set(compact('clientes', 'subclientes', 'localidades'));
 	}
 
-/**
- * add method
- *
- * @return void
- */
+	public function cargar($id=null,$periodo=null){
+		$this->loadModel('Localidade');
+		$this->loadModel('Partido');
+		$this->loadModel('Cliente');
+		$this->loadModel('Comprobante');
+		$this->loadModel('Conceptostipo');
+		$this->loadModel('Impcli');
+
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+		//A: Es menor que periodo Hasta
+		$esMenorQueHasta = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+		//B: Es mayor que periodo Desde
+		$esMayorQueDesde = array(
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+				),
+			)
+		);
+		//C: Tiene Periodo Hasta 0 NULL
+		$periodoNull = array(
+			'OR'=>array(
+				array('Periodosactivo.hasta'=>null),
+				array('Periodosactivo.hasta'=>""),
+			)
+		);
+		$conditionsImpCliHabilitados = array(
+			//El periodo esta dentro de un desde hasta
+			'AND'=> array(
+				$esMayorQueDesde,
+				'OR'=> array(
+					$esMenorQueHasta,
+					$periodoNull
+				)
+			)
+		);
+		$this->set('periodo',$periodo);
+		$cliente=$this->Cliente->find('first', array(
+				'contain'=>array(
+					'Compra'=>array(
+						'Provedore'=>array(
+							'fields'=>array('id','nombre')
+						),
+						'Actividadcliente'=>array(
+							'Actividade'
+						),
+						'Comprobante'=>array(
+						),
+						'Localidade'=>array(
+							'Partido'=>[],
+							'fields'=>array('id','nombre')
+						),
+						'Tipogasto'=>array(
+							'fields'=>array('id','nombre')
+						),
+						'conditions' => array(
+							'Compra.periodo'=>$periodo
+						),
+					),
+					'Impcli'=>[
+						'Impuesto',
+						'Periodosactivo'=>[
+							'conditions'=>$conditionsImpCliHabilitados
+						]
+					]
+				),
+				'conditions' => array(
+					'id' => $id,
+				),
+			)
+		);
+		/*AFIP*/
+		$tieneMonotributo=False;
+		$tieneIVA=False;
+		$tieneIVAPercepciones=False;
+		$tieneImpuestoInterno=False;
+		/*DGR*/
+		$tieneAgenteDePercepcionIIBB=False;
+		/*DGRM*/
+		$tieneAgenteDePercepcionActividadesVarias=False;
+		foreach ($cliente['Impcli'] as $impcli) {
+			/*AFIP*/
+			if($impcli['impuesto_id']==4/*Monotributo*/){
+				//Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Monotributista Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=True;
+					$tieneIVA=False;
+				}
+			}
+			if($impcli['impuesto_id']==19/*IVA*/){
+				//Tiene IVA asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Responsable Inscripto Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=False;
+					$tieneIVA=True;
+				}
+			}
+			if($impcli['impuesto_id']==184/*IVA Percepciones*/){
+				//Tiene IVA Percepciones asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene IVA Percepciones Activo en este periodo
+					$tieneIVAPercepciones=True;
+				}
+			}
+			if($impcli['impuesto_id']==185/*Impuesto Interno*/){
+				//Tiene Impuesto Interno asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Impuesto Interno Activo en este periodo
+					$tieneImpuestoInterno=True;
+				}
+			}
+			/*DGR*/
+			if($impcli['impuesto_id']==173/*Agente de Percepcion IIBB*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion IIBB Activo en este periodo
+					$tieneAgenteDePercepcionIIBB=True;
+				}
+			}
+			/*DGRM*/
+			if($impcli['impuesto_id']==186/*Agente de Percepcion de Actividades Varias*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion de Actividades Varias Activo en este periodo
+					$tieneAgenteDePercepcionActividadesVarias=True;
+				}
+			}
+		}
+		$cliente['Cliente']['tieneMonotributo'] = $tieneMonotributo;
+		$cliente['Cliente']['tieneIVA'] = $tieneIVA;
+		$cliente['Cliente']['tieneIVAPercepciones'] = $tieneIVAPercepciones;
+		$cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;
+		$cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;
+		$cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;
+		$this->set(compact('cliente'));
+
+
+		$conditionsProvedores = array('Provedore.cliente_id' => $id,);
+		$provedores = $this->Cliente->Provedore->find('list',array(
+			'conditions' =>$conditionsProvedores,
+		));
+		$this->set(compact('provedores'));
+
+		$clienteActividadList=$this->Cliente->Actividadcliente->find('list', array(
+				'contain' => array(
+					'Actividade',
+
+				),
+				'conditions' => array(
+					'Actividadcliente.cliente_id' => $id,
+				),
+				'fields' => array(
+					'Actividadcliente.id','Actividade.nombre','Actividadcliente.descripcion'
+				)
+			)
+		);
+		$this->set('actividades', $clienteActividadList);
+
+		$conditionsLocalidades = array(
+			'contain'=>'Partido',
+			'fields'=>array('Localidade.id','Localidade.nombre','Partido.nombre'),
+			'order'=>array('Partido.nombre','Localidade.nombre')
+		);
+		$localidades = $this->Localidade->find('list',$conditionsLocalidades);
+		$this->set('localidades', $localidades);
+
+		$conceptostipos = $this->Conceptostipo->find('list');
+		$this->set('conceptostipos', $conceptostipos);
+		//aca vamos a listar los impclis que tenga activos el cliente pero con el nombre del impuesto
+		$conditionsImpCliHabilitadosImpuestos = array(
+			//El periodo esta dentro de un desde hasta
+			'AND'=> array(
+				'Periodosactivo.impcli_id = Impcli.id',
+				$esMayorQueDesde,
+				'OR'=> array(
+					$esMenorQueHasta,
+					$periodoNull
+				)
+			)
+
+		);
+
+		$partidos = $this->Partido->find('list');
+		$this->set('partidos', $partidos);
+
+		//si es monotributista solo debe poder hacer facturas tipo C
+		//sino mandar A y B
+		$optionsComprobantes=array();
+		if($tieneMonotributo){
+			$optionsComprobantes=array('conditions'=>array('Comprobante.tipo'=>'C'));
+		}else{
+			$optionsComprobantes=array('conditions'=>array('Comprobante.tipo'=>array('A','B')));
+		}
+		$comprobantes = $this->Comprobante->find('list',$optionsComprobantes);
+		//esto se manda para poder buscar y comparar todos los tipos de comprobantes y usar sus datos
+		$this->set('comprobantes', $comprobantes);
+		$allcomprobantes = $this->Comprobante->find('all',array('contain'=>array()));
+		$this->set('allcomprobantes', $allcomprobantes);
+		//para Compras se deben mandar todos los comprobantes
+		$comprobantesCompra = $this->Comprobante->find('list',array('contain'=>array()));
+		$this->set('comprobantesCompra', $comprobantesCompra);
+
+		$imputaciones=array(
+			'Bs en Gral'=>'Bs en Gral',
+			'Locaciones'=>'Locaciones',
+			'Prest. Servicios'=>'Prest. Servicios',
+			'Bs Uso'=>'Bs Uso',
+			'Otros Conceptos'=>'Otros Conceptos',
+			'Dcto 814'=>'Dcto 814');
+		$this->set('imputaciones', $imputaciones);
+
+		$optionsTipoGastos=array('conditions'=>array());
+		$tipogastos = $this->Compra->Tipogasto->find('list',$optionsTipoGastos);
+		$this->set('tipogastos', $tipogastos);
+
+		$condicionesiva = array("monotributista" => 'Monotributista',"responsableinscripto" => 'Responsable Inscripto','consf/exento/noalcanza'=>"Cons. F/Exento/No Alcanza",);
+		$this->set('condicionesiva', $condicionesiva);
+
+		$alicuotas = array("0" => '0', "2.5" => '2.5', "5" => '5', "10.5" => '10.5', "21" => '21' , "27" => '27');
+		$this->set('alicuotas', $alicuotas);
+
+		$tipocreditos = array('Credito Fiscal'=>'Credito Fiscal','Restitucion credito fiscal'=>'Restitucion credito fiscal');
+		$this->set('tipocreditos', $tipocreditos);
+
+
+		$conditionsCli = array(
+			'Grupocliente',
+		);
+		$lclis = $this->Cliente->find('list',array(
+			'contain' =>$conditionsCli,
+			'conditions' => array(
+				'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id')
+			),
+			'order' => array(
+				'Grupocliente.nombre','Cliente.nombre'
+			),
+		));
+		$this->set(compact('lclis'));
+	}
+
 	public function addajax(){
 	 	//$this->request->onlyAllow('ajax');
 	 	$this->loadModel('Subcliente');
@@ -410,13 +660,7 @@ class ComprasController extends AppController {
 			)
 		);
 	}
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
+
 	public function edit($id = null,
 		$tieneMonotributo = null,
 		$tieneIVAPercepciones = null, 
@@ -614,13 +858,6 @@ class ComprasController extends AppController {
 		$this->layout = 'ajax';
 	}
 
-/**
- * delete method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
 	public function delete($id = null) {
 		$this->Compra->id = $id;
 		if (!$this->Compra->exists()) {

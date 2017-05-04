@@ -90,6 +90,60 @@ class DepositosController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('getdepositos');
 	}	
+	public function cargar($periodo,$cliid) {
+		$this->loadModel('Cliente');
+		$this->loadModel('Grupocliente');
+		$options = array(
+			'conditions' => array(
+				'Deposito.cliente_id' => $cliid,
+				'Deposito.periodo' => $periodo
+				)
+		);
+		$depositos = $this->Deposito->find('all', $options);
+		$this->set('depositos', $depositos);
+
+		$optionsGCLI = array(
+			'conditions' => array(
+				'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+				),
+			'contain'=>array()
+			);
+		$GrupoClientes = $this->Grupocliente->find('list', $optionsGCLI);
+
+		$options = array(
+			'contain'=>array(
+				'Cliente'=>array(
+
+					)
+				),
+			'conditions' => array(
+				'Cliente.grupocliente_id' => $GrupoClientes,
+				),
+			'fields'=> array(
+				'MAX(Deposito.numero) as depomax'
+				),
+			'group' => 'Deposito.numero'
+		);
+		$maxdeposito = $this->Deposito->find('all', $options);
+		$this->set('maxdeposito', $maxdeposito);
+
+		$this->set('periodo', $periodo);
+		$this->set('cliid', $cliid);
+
+		$cliente = $this->Cliente->find('first',array(
+										'conditions' => array(
+								 			'Cliente.id' => $cliid,
+								 			),
+										'fields'=>array('Cliente.grupocliente_id','Cliente.honorario')
+										)
+									);
+		$this->set('gcliid', $cliente['Cliente']['grupocliente_id']);
+		$this->set('honorariocliente', $cliente['Cliente']['honorario']);
+		$this->set('cliid', $cliente['Cliente']['id']);
+
+		$this->layout = 'ajax';
+		$this->render('cargar');
+	}
 /**
  * view method
  *

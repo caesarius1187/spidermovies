@@ -20,14 +20,16 @@
     display: inline-block;
     outline: none;
     border: none;
-    margin: 1px;
+    margin: 6px;
     /* background: #1d9650;
     padding: 0 60px;
      color: #fff;
      text-transform: uppercase;
      letter-spacing: 1px;
      font-size: 1em;*/
-    line-height: 4;
+    line-height: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 /* top-line */
 /* ====================== */

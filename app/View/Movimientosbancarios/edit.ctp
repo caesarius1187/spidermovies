@@ -17,6 +17,7 @@ if(!$mostrarForm) { ?>
       echo $this->Form->input('id',array('type'=>'hidden'));
      
       echo $this->Form->input('cbu_id',array('type'=>'hidden'));
+      echo $this->Form->input('ordencarga', array('label'=>'Orden',));
       echo $this->Form->input('fecha'.$this->data['Movimientosbancario']['id'], array(
               'class'=>'datepicker',
               'type'=>'text',
@@ -39,6 +40,7 @@ if(!$mostrarForm) { ?>
       echo $this->Form->input('debito', []);
       echo $this->Form->input('credito', []);
       echo $this->Form->input('saldo', []);
+      echo $this->Form->input('alicuota');
 
       echo $this->Form->submit('+', array(
                   'type'=>'image',

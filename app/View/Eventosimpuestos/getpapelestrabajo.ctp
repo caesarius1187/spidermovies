@@ -319,6 +319,26 @@
                             'value'=>$conceptosrestante['descripcion'],'type'=>'hidden'));
                     }
                 }
+                if(isset($conceptosrestantesimpcli)){
+                    foreach ($conceptosrestantesimpcli as $conceptosrestante){
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.id',array(
+                            'value'=>$conceptosrestante['id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.cliente_id',array(
+                            'value'=>$conceptosrestante['cliente_id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.impcli_id',array(
+                            'value'=>$conceptosrestante['impcli_id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.conceptostipo_id',array(
+                            'value'=>$conceptosrestante['conceptostipo_id'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.periodo',array(
+                            'value'=>$conceptosrestante['periodo'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.montoretenido',array(
+                            'value'=>$conceptosrestante['montoretenido'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.fecha',array(
+                            'value'=>$conceptosrestante['fecha'],'type'=>'hidden'));
+                        echo $this->Form->input('Eventosimpuesto.0.Conceptosrestante.0.descripcion',array(
+                            'value'=>$conceptosrestante['descripcion'],'type'=>'hidden'));
+                    }
+                }
                 echo "</br>";
             break;
             case 'provincia':
@@ -798,7 +818,8 @@
                 ]
         );
 
-	    echo '<div style="width:100%; float:right;"><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
+	    echo '<div style="width:100%; float:right;">
+<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
         echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a></div>';
         if(isset($itemsACompletar)){
             echo $this->Form->input('Eventosimpuesto.0.cantItems', array('type'=>'hidden','value'=>count($itemsACompletar)));
@@ -887,7 +908,6 @@
             </table>
         <?php } ?>
 	</div>
-
 </div><?php /*Fin Preparar Papeles de Trabajo*/?>
 <div id="divContabilidadImpuestos"  class="tareaContabilidadImpuestos index_pdt" style="display:none;">
 </div>
@@ -895,4 +915,3 @@
 </div>
 <div id="divContabilidadPagar"  class="tareaContabilidadPagar index_pdt" style="display:none;">
 </div>
-<a class="close" href="#close"></a>

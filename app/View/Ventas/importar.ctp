@@ -13,8 +13,8 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
             <h1><?php echo __($labelClifch); ?></h1>
             <label><?php echo $periodo; ?></label>
             <?php  echo $this->Html->link("<- Volver",array(
-                'controller' => 'clientes',
-                'action' => 'tareacargar',
+                'controller' => 'ventas',
+                'action' => 'cargar',
                 $cliid,
                 $periodo,
             ),
@@ -508,7 +508,11 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                     'label' => '',
                                     'type' => 'select',
                                     'options' => $optionSisFact));
-                                echo $this->Form->input('Puntosdeventa.' . $i . '.domicilio_id', array('label' => ''));
+                                echo $this->Form->input('Puntosdeventa.' . $i . '.domicilio_id', array(
+                                    'required' => 'required',
+                                    'label' => ''
+                                    )
+                                );
                                 echo $this->Form->input('Puntosdeventa.' . $i . '.periodo', array('type' => 'hidden', 'value' => $periodo));
                                 ?>
                             </td>

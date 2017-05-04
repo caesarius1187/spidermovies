@@ -8,13 +8,13 @@
 }
 ?>
 <div class="index">
-    <h2><?php echo __('Contabilizar Bancos del cliente: '.$cliente['Cliente']['nombre']." para el periodo: ".$periodo); ?></h2>
+    <h2><?php echo __('Contabilizar Bancos : '.$cliente['Cliente']['nombre'] ); ?></h2>
     <h3><?php echo __('Banco '.$cliente['Impcli'][0]['Impuesto']['nombre'].' CBU: '.$cliente['Impcli'][0]['Cbu'][0]['cbu']); ?></h3>
     <?php
     $id = 0;
-    $nombre = "Devengamiento: ".$cliente['Impcli'][0]['Cbu'][0]['cbu']."-".$cliente['Impcli'][0]['Cbu'][0]['tipocuenta'];
-    $descripcion = "Automatico de Acreditaciones Bancarias";
-    $fecha = date('d-m-Y');
+    $nombre = "Acreditaciones Bancarias: ".$cliente['Impcli'][0]['Cbu'][0]['cbu']."-".$cliente['Impcli'][0]['Cbu'][0]['tipocuenta'];
+    $descripcion = "Automatico";
+    $fecha = date('t-m-Y',strtotime('01-'.$periodo));
     $miAsiento=array();
     $misMovimientos=array();
     if(!isset($miAsiento['Movimiento'])){
@@ -118,6 +118,7 @@
             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',[
                 'label'=>($i!=0)?false:'Cuenta',
                 'readonly'=>'readonly',
+                'title'=>$cuentaclientenombre,
                 'value'=>$cuentaclientenombre,
                 'type'=>'text',
                 'style'=>'width:250px']);
@@ -126,16 +127,19 @@
                 'readonly','readonly',
                 'value'=>date('d-m-Y'),
             ));
-
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
-                'class'=>"inputDebe",
+            $movimientoConValor = "movimientoSinValor";
+            if(($debito*1) != 0 || ($credito*1) != 0){
+                $movimientoConValor = "movimientoConValor";
+            }
+            echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+                'class'=>"inputDebe ".$movimientoConValor,
                 'label'=>($i!=0)?false:'Debe',
                 'value'=>number_format($debito, 2, ".", ""),
             ]);
             $totalDebe+=number_format($debito, 2,'.','');
             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
                     'label'=>($i!=0)?false:'Haber',
-                    'class'=>"inputHaber",
+                    'class'=>"inputHaber ".$movimientoConValor,
                     'value'=>number_format($credito, 2, ".", ""),
                 ])."</br>";
             $totalHaber+=number_format($credito, 2, ".", "");
@@ -148,7 +152,7 @@
     $id = 0;
     $nombre = "Devengamiento: ".$cliente['Impcli'][0]['Cbu'][0]['cbu']."-".$cliente['Impcli'][0]['Cbu'][0]['tipocuenta'];
     $descripcion = "Automatico de Retiros Bancarios";
-    $fecha = date('d-m-Y');
+    $fecha = date('t-m-Y',strtotime('01-'.$periodo));
     $miAsiento=array();
     $misMovimientos=array();
     if(!isset($miAsiento['Movimiento'])){
@@ -239,21 +243,26 @@
                 'readonly'=>'readonly',
                 'value'=>$cuentaclientenombre,
                 'type'=>'text',
-                'style'=>'width:450px']);
+                'title'=>$cuentaclientenombre,
+                'style'=>'width:250px']);
             echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.fecha', array(
                 'type'=>'hidden',
                 'readonly','readonly',
                 'value'=>date('d-m-Y'),
             ));
+            $movimientoConValor = "movimientoSinValor";
+            if(($debito*1) != 0 || ($credito*1) != 0){
+                $movimientoConValor = "movimientoConValor";
+            }
             echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.debe',[
-                'class'=>"inputDebe",
+                'class'=>"inputDebe ".$movimientoConValor,
                 'label'=>($i!=0)?false:'Debe',
                 'value'=>number_format($debito, 2, ".", ""),
             ]);
             $totalDebe+=number_format($debito, 2,'.','');
             echo $this->Form->input('Asiento.1.Movimiento.'.$i.'.haber',[
                     'label'=>($i!=0)?false:'Haber',
-                    'class'=>"inputHaber",
+                    'class'=>"inputHaber ".$movimientoConValor,
                     'value'=>number_format($credito, 2, ".", ""),
                 ])."</br>";
             $totalHaber+=number_format($credito, 2, ".", "");
@@ -262,19 +271,19 @@
         }
     }
     echo $this->Form->end('Guardar asiento');
-    echo $this->Form->label('','Total a debe: $',[
-        'style'=>"display: inline;"
+    echo $this->Form->label('','&nbsp; ',[
+        'style'=>"display: -webkit-inline-box;width:350px;"
     ]);
     echo $this->Form->label('lblTotalDebe',
-        number_format($totalDebe, 2, ".", ""),
+        "$".number_format($totalDebe, 2, ".", ""),
         [
             'id'=>'lblTotalDebe',
             'style'=>"display: inline;"
         ]
     );
-    echo $this->Form->label('',' Total Haber: $',['style'=>"display: inline;"]);
+    echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:70px;"]);
     echo $this->Form->label('lblTotalHaber',
-        number_format($totalHaber, 2, ".", ""),
+        "$".number_format($totalHaber, 2, ".", ""),
         [
             'id'=>'lblTotalHaber',
             'style'=>"display: inline;"

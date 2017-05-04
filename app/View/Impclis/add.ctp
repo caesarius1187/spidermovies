@@ -55,6 +55,5 @@ if(isset($respuesta)){
         </td>
     </tr>';
 } 
-
 echo json_encode($miRespuesta);
 ?>

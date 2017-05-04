@@ -14,12 +14,12 @@ if(isset($error)){ ?>
 }
 ?>
 <div class="index">
-    <h3><?php echo __('Contabilizar Ventas del cliente: '.$cliente['Cliente']['nombre']." para el periodo: ".$periodo); ?></h3>
+    <h3><?php echo __('Contabilizar Ventas: '.$cliente['Cliente']['nombre']); ?></h3>
     <?php
     $id = 0;
-    $nombre = "Asiento devengamiento Venta: ".$periodo;
-    $descripcion = "Asiento automatico";
-    $fecha = date('d-m-Y');
+    $nombre = "Venta: ".$periodo;
+    $descripcion = "Automatico";
+    $fecha = date('t-m-Y',strtotime('01-'.$periodo));
     $miAsiento=array();
     if(!isset($miAsiento['Movimiento'])){
         $miAsiento['Movimiento']=array();
@@ -46,6 +46,8 @@ if(isset($error)){ ?>
     $i=0;
     echo "</br>";
     $cuentaclienteid = 0;
+    $totalDebe=0;
+    $totalHaber=0;
     foreach ($asientoestandares as $asientoestandar) {
         $cuentaclienteid = $asientoestandar['Cuenta']['Cuentascliente'][0]['id'];
         /*lo mismo que hicimos con el asiento vamos a hacer con los movimientos, si existe un movimiento
@@ -89,7 +91,11 @@ if(isset($error)){ ?>
                     }
                     $cuenta110399001+=$ventasgravada[0]['total']*$suma;
                 }
-                $debe = $cuenta110399001;
+                if($cuenta110399001<0){
+                    $haber = $cuenta110399001*-1;
+                }else{
+                    $debe = $cuenta110399001;
+                }
             break;
             case '1469'/*210401403 IVA Percepciones realizadas*/:
                 $cuenta210401403 = 0;
@@ -103,7 +109,11 @@ if(isset($error)){ ?>
                     }
                     $cuenta210401403+=$ventasgravada[0]['ivapercep']*$suma;
                 }
-                $haber = $cuenta210401403;
+                if($cuenta210401403<0){
+                    $debe = $cuenta210401403*-1;
+                }else{
+                    $haber = $cuenta210401403;
+                }
             break;
             case '1467'/*210401401 IVA Debito Fiscal General*/:
                 $cuenta210401401 = 0;
@@ -118,7 +128,11 @@ if(isset($error)){ ?>
                     }
                     $cuenta210401401+=$ventasgravada[0]['iva']*$suma;
                 }
-                $haber = $cuenta210401401;
+                if($cuenta210401401<0){
+                    $debe = $cuenta210401401*-1;
+                }else{
+                    $haber = $cuenta210401401;
+                }
             break;
             case '1493'/*210402102 Ingresos Brutos Percepciones Realizadas*/:
                 $cuenta210402102 = 0;
@@ -133,7 +147,11 @@ if(isset($error)){ ?>
                     }
                     $cuenta210402102+=$ventasgravada[0]['iibbpercep']*$suma;
                 }
-                $haber = $cuenta210402102;
+                if($cuenta210402102<0){
+                    $debe = $cuenta210402102*-1;
+                }else{
+                    $haber = $cuenta210402102;
+                }
             break;
             case '1519'/*210403102 Actividades Varias Percepciones Realizadas*/:
                 $cuenta210403102 = 0;
@@ -148,7 +166,11 @@ if(isset($error)){ ?>
                     }
                     $cuenta210403102+=$ventasgravada[0]['actvspercep']*$suma;
                 }
-                $haber = $cuenta210403102;
+                if($cuenta210403102<0){
+                    $debe = $cuenta210403102*-1;
+                }else{
+                    $haber = $cuenta210403102;
+                }
             break;
             case '1478'/*210401802 Imp Internos Percepciones Realizadas*/:
                 $cuenta210401802 = 0;
@@ -163,7 +185,11 @@ if(isset($error)){ ?>
                     }
                     $cuenta210401802+=$ventasgravada[0]['impinternos']*$suma;
                 }
-                $haber = $cuenta210401802;
+                if($cuenta210401802<0){
+                    $debe = $cuenta210401802*-1;
+                }else{
+                    $haber = $cuenta210401802;
+                }
                 break;
             /*Casos Primera Categoria*/
             case '2901'/*602010001 a)Locacion de Inmueble*/:
@@ -198,7 +224,11 @@ if(isset($error)){ ?>
                     }
                     $cuenta601010001+=$ventasgravada[0]['neto']*$suma;
                 }
-                $haber = $cuenta601010001;
+                if($cuenta601010001<0){
+                    $debe = $cuenta601010001*-1;
+                }else{
+                    $haber = $cuenta601010001;
+                }
                 break;
             case '2911'/*602020001 a)Locacion de Inmueble*/:
             case '2912'/*602020002 b)Contraprestacion recibida por derechos reales*/:
@@ -223,7 +253,7 @@ if(isset($error)){ ?>
                     $suma = 1;
                     $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
                     $cuentadelaactiviadad = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
-                    if($nogravado1ra[$asientoestandar['Cuenta']['id']] != $cuentadelaactiviadad){
+                    if($nogravado1racategoria[$asientoestandar['Cuenta']['id']] != $cuentadelaactiviadad){
                         continue;
                     }
                     if($categoriaDeLaVenta!='primeracateg'){
@@ -238,7 +268,11 @@ if(isset($error)){ ?>
                     $cuenta602020001+=$ventasgravada[0]['nogravados']*$suma;
                     $cuenta602020001+=$ventasgravada[0]['exentos']*$suma;
                 }
-                $haber = $cuenta602020001;
+                if($cuenta602020001<0){
+                    $debe = $cuenta602020001*-1;
+                }else{
+                    $haber = $cuenta602020001;
+                }
                 break;
             /*Casos Segunda Categoria*/
             case '2922'/*603010001 a)Renta de titulo*/:
@@ -275,7 +309,11 @@ if(isset($error)){ ?>
                     }
                     $cuenta2da+=$ventasgravada[0]['neto']*$suma;
                 }
-                $haber = $cuenta2da;
+                if($cuenta2da<0){
+                    $debe = $cuenta2da*-1;
+                }else{
+                    $haber = $cuenta2da;
+                }
                 break;
             case '2934'/*603010001 a)Renta de titulo*/:
             case '2935'/*603010002 b)Locacion de cosa mueble*/:
@@ -318,7 +356,11 @@ if(isset($error)){ ?>
                     $cuenta2danogravada+=$ventasgravada[0]['nogravados']*$suma;
                     $cuenta2danogravada+=$ventasgravada[0]['exentos']*$suma;
                 }
-                $haber = $cuenta2danogravada;
+                if($cuenta2danogravada<0){
+                    $debe = $cuenta2danogravada*-1;
+                }else{
+                    $haber = $cuenta2danogravada;
+                }
                 break;
             /*Casos Tercera Empresas Categoria*/
             case '2888'/*601010001 Venta Neta*/:
@@ -340,7 +382,11 @@ if(isset($error)){ ?>
                     }
                     $cuenta601010001+=$ventasgravada[0]['neto']*$suma;
                 }
-                $haber = $cuenta601010001;
+                if($cuenta601010001<0){
+                    $debe = $cuenta601010001*-1;
+                }else{
+                    $haber = $cuenta601010001;
+                }
                 break;
             case '2889'/*601010002 Venta Bien de uso */:
                 //Si esta cuenta aparece es por que estoy pagando 3ra categoria
@@ -356,7 +402,11 @@ if(isset($error)){ ?>
                         $cuenta601010002+=$ventasgravada[0]['neto']*$suma;
                     }
                 }
-                $haber = $cuenta601010002;
+                if($cuenta601010002<0){
+                    $debe = $cuenta601010002*-1;
+                }else{
+                    $haber = $cuenta601010002;
+                }
                 break;
             case '3368'/*601011001 Venta Exenta */:
                 //Si esta cuenta aparece es por que estoy pagando 3ra categoria
@@ -378,7 +428,11 @@ if(isset($error)){ ?>
                     $cuenta601011001+=$ventasgravada[0]['nogravados']*$suma;
                     $cuenta601011001+=$ventasgravada[0]['exentos']*$suma;
                 }
-                $haber = $cuenta601011001;
+                if($cuenta601011001<0){
+                    $debe = $cuenta601011001*-1;
+                }else{
+                    $haber = $cuenta601011001;
+                }
                 break;
             case '3369'/*601011002 Venta Exenta Bien de uso*/:
                 //Si esta cuenta aparece es por que estoy pagando 3ra categoria
@@ -395,7 +449,11 @@ if(isset($error)){ ?>
                         $cuenta601011002+=$ventasgravada[0]['exentos']*$suma;
                     }
                 }
-                $haber = $cuenta601011002;
+                if($cuenta601011002<0){
+                    $debe = $cuenta601011002*-1;
+                }else{
+                    $haber = $cuenta601011002;
+                }
                 break;
             /*Casos Tercera Otros Categoria*/
             case '2948'/*604011001 Fideicomisos xX*/:
@@ -451,7 +509,11 @@ if(isset($error)){ ?>
                     }
                     $cuentaterceraotros+=$ventasgravada[0]['neto']*$suma;
                 }
-                $haber = $cuentaterceraotros;
+                if($cuentaterceraotros<0){
+                    $debe = $cuentaterceraotros*-1;
+                }else{
+                    $haber = $cuentaterceraotros;
+                }
                 break;
             case '2985'/*604011001 Fideicomisos xX*/:
             case '2986'/*604011002 Fideicomisos xX*/:
@@ -516,7 +578,11 @@ if(isset($error)){ ?>
                     $cuenta3ranogravada+=$ventasgravada[0]['nogravados']*$suma;
                     $cuenta3ranogravada+=$ventasgravada[0]['exentos']*$suma;
                 }
-                $haber = $cuenta3ranogravada;
+                if($cuenta3ranogravada<0){
+                    $debe = $cuenta3ranogravada*-1;
+                }else{
+                    $haber = $cuenta3ranogravada;
+                }
                 break;
             /*Casos Cuarta Categoria*/
             case '3023'/*605011001 Cargos publicos xX*/:
@@ -581,8 +647,13 @@ if(isset($error)){ ?>
                         $suma=-1;
                     }
                     $cuentacuartaotros+=$ventasgravada[0]['neto']*$suma;
+                    $cuentacuartaotros+=$ventasgravada[0]['exentos']*$suma;
                 }
-                $haber = $cuentacuartaotros;
+                if($cuentacuartaotros<0){
+                    $debe = $cuentacuartaotros*-1;
+                }else{
+                    $haber = $cuentacuartaotros;
+                }
                 break;
             case '3071'/*605011001 Cargos publicos xX*/:
             case '3072'/*605011002 Cargos publicos xX*/:
@@ -625,13 +696,46 @@ if(isset($error)){ ?>
             case '3117'/*605018004 Socio administrador de SRL xX*/:
             case '3118'/*605018005 Socio administrador de SRL xX*/:
                 $nogravado4tacategoria = [
-                    '3023'=>'3071','3024'=>'3072','3025'=>'3073','3026'=>'3074','3027'=>'3075','3029'=>'3078',
-                    '3030'=>'3079','3031'=>'3080','3032'=>'3081','3033'=>'3082','3035'=>'3084','3036'=>'3085',
-                    '3037'=>'3086','3038'=>'3087','3039'=>'3088','3041'=>'3090','3042'=>'3091','3043'=>'3092',
-                    '3044'=>'3093','3045'=>'3094','3047'=>'3096','3048'=>'3097','3049'=>'3098','3050'=>'3099',
-                    '3051'=>'3100','3053'=>'3102','3054'=>'3103','3055'=>'3104','3056'=>'3105','3057'=>'3106',
-                    '3059'=>'3108','3060'=>'3109','3061'=>'3110','3062'=>'3111','3063'=>'3112','3065'=>'3114',
-                    '3066'=>'3115','3067'=>'3116','3068'=>'3117','3069'=>'3118'];
+                    '3023'=>'3071',
+                    '3024'=>'3072',
+                    '3025'=>'3073',
+                    '3026'=>'3074',
+                    '3027'=>'3075',
+                    '3029'=>'3078',
+                    '3030'=>'3079',
+                    '3031'=>'3080',
+                    '3032'=>'3081',
+                    '3033'=>'3082',
+                    '3035'=>'3084',
+                    '3036'=>'3085',
+                    '3037'=>'3086',
+                    '3038'=>'3087',
+                    '3039'=>'3088',
+                    '3041'=>'3090',
+                    '3042'=>'3091',
+                    '3043'=>'3092',
+                    '3044'=>'3093',
+                    '3045'=>'3094',
+                    '3047'=>'3096',
+                    '3048'=>'3097',
+                    '3049'=>'3098',
+                    '3050'=>'3099',
+                    '3051'=>'3100',
+                    '3053'=>'3102',
+                    '3054'=>'3103',
+                    '3055'=>'3104',
+                    '3056'=>'3105',
+                    '3057'=>'3106',
+                    '3059'=>'3108',
+                    '3060'=>'3109',
+                    '3061'=>'3110',
+                    '3062'=>'3111',
+                    '3063'=>'3112',
+                    '3065'=>'3114',
+                    '3066'=>'3115',
+                    '3067'=>'3116',
+                    '3068'=>'3117',
+                    '3069'=>'3118'];
                 //este array muestra la relacion entre las cuentas de la primera categoria y las cuentas de la primer categoria
                 //para las ventas no gravadas
 
@@ -641,9 +745,12 @@ if(isset($error)){ ?>
                 //Cargar la venta total
 
                 foreach ($ventasgravadas as $ventasgravada) {
-                    $suma = 1;
                     $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
                     $cuentadelaactiviadad = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
+                    if(isset($nogravado4tacategoria[$asientoestandar['Cuenta']['id']])){
+                        Debugger::dump("Usted ha seleccionado una cuenta para la cuerta categoria que pertenece a los NO GRAVADOS.
+                         Por favor seleccione la correspondiente en el orden de los gravados.");
+                    }
                     if($nogravado4tacategoria[$asientoestandar['Cuenta']['id']] != $cuentadelaactiviadad){
                         continue;
                     }
@@ -653,29 +760,25 @@ if(isset($error)){ ?>
                     if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
                         continue;
                     }
+                    $suma = 1;
                     if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
                         $suma=-1;
                     }
                     $cuenta4tanogravada+=$ventasgravada[0]['nogravados']*$suma;
                     $cuenta4tanogravada+=$ventasgravada[0]['exentos']*$suma;
                 }
-                $haber = $cuenta4tanogravada;
+                if($cuenta4tanogravada<0){
+                    $debe = $cuenta4tanogravada*-1;
+                }else{
+                    $haber = $cuenta4tanogravada;
+                }
                 break;
         }
-        /*ACA Vamos a dividir las consultas segun el tipo de categoria que pague el cliente*/
-//        foreach ($pagacategoria as $categoriaAPagar){
-//            switch ($categoriaAPagar){
-//                case 'primeracateg':
-//
-//                    break;
-//            }
-//        }
 
-        //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
-        //echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.key',['default'=>$key]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',[
+            'label'=>($i!=0)?false:'Cuenta',
             'default'=>$cuentaclienteid,
             'defaultoption'=>$cuentaclienteid,
             'class'=>'chosen-select-cuenta',
@@ -684,10 +787,24 @@ if(isset($error)){ ?>
             'type'=>'hidden',
             'readonly','readonly',
             'value'=>date('d-m-Y'),
+            'label'=>($i!=0)?false:'Fecha',
         ));
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['default'=>$debe]);
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['default'=>$haber]);
+        $movimientoConValor = "movimientoSinValor";
+        if(($debe*1) != 0 || ($haber*1) != 0){
+            $movimientoConValor = "movimientoConValor";
+        }
+        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+            'class'=>"inputDebe ".$movimientoConValor,
+            'label'=>($i!=0)?false:'Debe',
+            'default'=>number_format($debe, 2, ".", ""),]);
+
+        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
+            'class'=>"inputHaber ".$movimientoConValor,
+            'label'=>($i!=0)?false:'Haber',
+            'default'=>number_format($haber, 2, ".", ""),]);
         echo "</br>";
+        $totalDebe +=$debe;
+        $totalHaber +=$haber;
         $i++;
     }
     /*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
@@ -707,20 +824,69 @@ if(isset($error)){ ?>
                 $cuentaclienteid = $movimiento['cuentascliente_id'];
                 echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
                 echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['default' => $cuentaclienteid]);
+                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', [
+                    'label'=>($i!=0)?false:'Cuenta',
+                    'default' => $cuentaclienteid]);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
                     'type'=>'hidden',
+                    'label'=>($i!=0)?false:'Fecha',
                     'readonly','readonly',
                     'value'=>date('d-m-Y'),
                 ));
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['default' => $debe]);
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['default' => $haber]);
+                $movimientoConValor = "movimientoSinValor";
+                if(($debe*1) != 0 || ($haber*1) != 0){
+                    $movimientoConValor = "movimientoConValor";
+                }
+                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [
+                    'label'=>($i!=0)?false:'Debe',
+                    'class'=>"inputDebe ".$movimientoConValor,
+                    'default' => number_format($debe, 2, ".", "")]);
+                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
+                    'label'=>($i!=0)?false:'Haber',
+                    'class'=>"inputHaber ".$movimientoConValor,
+                    'default' => number_format($haber, 2, ".", "")]);
                 echo "</br>";
+                $totalDebe +=$debe;
+                $totalHaber +=$haber;
                 $i++;
             }
         }
     }
     echo $this->Form->end('Guardar asiento');
-
+    echo $this->Form->label('','&nbsp; ',[
+        'style'=>"display: -webkit-inline-box;width:330px;"
+    ]);
+    echo $this->Form->label('lblTotalDebe',
+        "$".number_format($totalDebe, 2, ".", ""),
+        [
+            'id'=>'lblTotalDebe',
+            'style'=>"display: inline;"
+        ]
+    );
+    echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:100px;"]);
+    echo $this->Form->label('lblTotalHaber',
+        "$".number_format($totalHaber, 2, ".", ""),
+        [
+            'id'=>'lblTotalHaber',
+            'style'=>"display: inline;"
+        ]
+    );
+    if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
+        echo $this->Html->image('test-pass-icon.png',array(
+                'id' => 'iconDebeHaber',
+                'alt' => 'open',
+                'class' => 'btn_exit',
+                'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+            )
+        );
+    }else{
+        echo $this->Html->image('test-fail-icon.png',array(
+                'id' => 'iconDebeHaber',
+                'alt' => 'open',
+                'class' => 'btn_exit',
+                'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+            )
+        );
+    }
     ?>
 </div>

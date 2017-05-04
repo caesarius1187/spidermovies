@@ -34,11 +34,17 @@ echo $this->Form->input('impclinombre',array('value'=>$impcli['Impuesto']['nombr
 		<table class="tblInforme tbl_border" cellspacing="0" id="tblSindicatos">
             <?php
             $montoAPagar=0;
+            $montoCategoria=0;
             foreach ($autonomocategorias as $categoria){
                 $trstyle="";
                 if($categoria['Autonomocategoria']['id']==$impcli['Impcli']['autonomocategoria_id']){
                     $trstyle = "background-color: #1e88e5;";
-                    $montoAPagar = $categoria['Autonomocategoria']['importe'];
+                    if(count($categoria['Autonomoimporte'])>0){
+                        $montoAPagar = $categoria['Autonomoimporte'][0]['importe'];
+                    }
+                }
+                if(count($categoria['Autonomoimporte'])>0){
+                    $montoCategoria = $categoria['Autonomoimporte'][0]['importe'];
                 }
                 ?>
                 <tr style="<?php echo $trstyle?>">
@@ -47,7 +53,7 @@ echo $this->Form->input('impclinombre',array('value'=>$impcli['Impuesto']['nombr
                     <td><?php echo $categoria['Autonomocategoria']['tabla']?></td>
                     <td><?php echo $categoria['Autonomocategoria']['categoria']?></td>
                     <td><?php echo $categoria['Autonomocategoria']['codigo']?></td>
-                    <td><?php echo $categoria['Autonomocategoria']['importe']?></td>
+                    <td><?php echo $montoCategoria?></td>
                 </tr>
             <?php
             }

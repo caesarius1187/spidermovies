@@ -1,7 +1,7 @@
 $(document).ready(function() { 
     $("#ligestion").addClass("active"); 
     var $table = $('#tbl_tareas');
-    $table.floatThead();
+    // $table.floatThead();
     var clientesAvanceForm =  $('#clientesAvanceForm');
 
     $( "input.datepicker" ).datepicker({
@@ -111,11 +111,18 @@ $(document).ready(function() {
       }
     });
 });
-  
-  var periodoSel;
+    $(".buttonImpcli0").text(function(index, currentText) {
+        return currentText.substr(0, 25);
+    });
+    $(".buttonImpcli2").text(function(index, currentText) {
+        return currentText.substr(0, 25);
+    });
+    $(".buttonImpcli4").text(function(index, currentText) {
+        return currentText.substr(0, 25);
+    });
+    var periodoSel;
 /* 0 Realizar Evento Cliente */
-  function realizarEventoCliente(eventId,tarea,periodo,clienteid,estadotarea){
-
+    function realizarEventoCliente(eventId,tarea,periodo,clienteid,estadotarea){
      var data ="";
      $.ajax({
            type: "post",  // Request method: post, get
@@ -154,7 +161,7 @@ $(document).ready(function() {
         return false;
   }
 /* 0 Realizar Evento Impuesto*/
-  function realizarEventoImpuesto(eventId,tarea,periodo,clienteid,impcliid,estadotarea){
+    function realizarEventoImpuesto(eventId,tarea,periodo,clienteid,impcliid,estadotarea){
          var data ="";
          $.ajax({
                type: "post",  // Request method: post, get
@@ -191,7 +198,7 @@ $(document).ready(function() {
             return false;
   }
 /* 0 Mostrar PopIn NoHabilitado */
-  function noHabilitado(texto){
+    function noHabilitado(texto){
     if(texto!=null){
       callAlertPopint(texto);
     }else{
@@ -199,7 +206,7 @@ $(document).ready(function() {
     }
   }
 /* 1  ver Tarea Solicitar -- cargar imagenes para los checkboxes de las tareas solicitar*/
-  function cargarOnClickTareaSolicitar(){
+    function cargarOnClickTareaSolicitar(){
     $('.imgcb').on('click', function(){
       var ImgCheckBox = $(this);
       if(!ImgCheckBox.prev().is('.checked')){
@@ -216,7 +223,7 @@ $(document).ready(function() {
     });
   }
 /* 1  ver Enviar Solicitar */
-  function enviarTareaSolicitar(element){
+    function enviarTareaSolicitar(element){
       var myParentForm= element.closest('form');
       //serialize form data 
       var formData = myParentForm.serialize(); 
@@ -242,10 +249,40 @@ $(document).ready(function() {
       return false;
   }
 /* 3  ver Tarea Cargar -- Abrir el formulario para cargar Ventas Compras y Novedades*/
-  function verFormCargar(eventoID,periodoSel,clienteid){
+    function verFormCargar(eventoID,periodoSel,clienteid){
       window.open(
         serverLayoutURL+"/clientes/tareacargar/"+clienteid+"/"+periodoSel,
         serverLayoutURL+"/clientes/tareacargar/"+clienteid+"/"+periodoSel
+      );
+  }
+    function verFormCargarVentas(clienteid,periodoSel){
+      window.open(
+        serverLayoutURL+"/ventas/cargar/"+clienteid+"/"+periodoSel,
+        serverLayoutURL+"/ventas/cargar/"+clienteid+"/"+periodoSel
+      );
+    }
+    function verFormCargarCompras(clienteid,periodoSel){
+      window.open(
+        serverLayoutURL+"/compras/cargar/"+clienteid+"/"+periodoSel,
+        serverLayoutURL+"/compras/cargar/"+clienteid+"/"+periodoSel
+      );
+    }
+    function verFormCargarPagosacuentas(clienteid,periodoSel){
+      window.open(
+        serverLayoutURL+"/conceptosrestantes/cargar/"+clienteid+"/"+periodoSel,
+        serverLayoutURL+"/conceptosrestantes/cargar/"+clienteid+"/"+periodoSel
+      );
+    }
+    function verFormCargarNovedades(clienteid,periodoSel){
+      window.open(
+        serverLayoutURL+"/empleados/cargamasiva/"+clienteid+"/"+periodoSel,
+        serverLayoutURL+"/empleados/cargamasiva/"+clienteid+"/"+periodoSel
+      );
+    }
+    function verFormCargarBancos(clienteid,periodoSel){
+      window.open(
+        serverLayoutURL+"/movimientosbancarios/cargar/"+clienteid+"/"+periodoSel,
+        serverLayoutURL+"/movimientosbancarios/cargar/"+clienteid+"/"+periodoSel
       );
   }
 /* 5  ver Tarea Papeles de Trabajo -- Mostrar el formulario para papeles de trabajo del impcli del periodo*/
@@ -258,7 +295,7 @@ $(document).ready(function() {
             success: function(response) {
                 //alert(response);
                 $('#myModal').on('show.bs.modal', function() {
-                      $('#myModal').find('.modal-title').html('Asiento automatico de banco');
+                      $('#myModal').find('.modal-title').html('Liquidacion');
                       $('#myModal').find('.modal-body').html(response);
                       // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
                 });
@@ -277,49 +314,54 @@ $(document).ready(function() {
                 });
                 $( "#vencimientogeneral" ).trigger( "change" );
                 $('#EventosimpuestoRealizartarea5Form').submit(function(){
-                $('.inputtodisable').prop("disabled", false);
-                //serialize form data
-                var formData = $(this).serialize();
-                //get form action
-                var formUrl = $(this).attr('action');
-                $.ajax({
-                    type: 'POST',
-                    url: formUrl,
-                    data: formData,
-                    success: function(data,textStatus,xhr){
-                      var respuesta = jQuery.parseJSON(data);
-                      var resp = respuesta.respuesta;
-                      var error=respuesta.error;
-                      if(error!=0){
-                        alert(respuesta.validationErrors);
-                        alert(respuesta.invalidFields);
-                          $('#myModal').modal('hide');
+                    $('.inputtodisable').prop("disabled", false);
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(data,textStatus,xhr){
+                          var respuesta = jQuery.parseJSON(data);
+                          var resp = respuesta.respuesta;
+                          var error=respuesta.error;
+                            $('#myModal').modal('hide');
+                          if(error!=0){
+                            alert(respuesta.validationErrors);
+                            alert(respuesta.invalidFields);
+                              $('#myModal').modal('hide');
+                              return false;
+                          }else{
+                            //papelesDeTrabajo(periodo,impcli);
+                          }
+                          $('#EventosimpuestoHaycambios').val(1);
+                          /*var cellid = 'cellimp'+clienteid+'-tarea5-'+impcliid;
+                          $('#'+cellid).removeClass('pendiente');
+                          $('#'+cellid).addClass('realizado');
+                          var cellData = ' <img src="'+serverLayoutURL+'/img/edit.png" width="20" title="Papeles de Trabajo" height="20" onclick="papelesDeTrabajo('+"'"+periodo+"'"+','+impcliid+')" alt=""><label for="'+cant+'">'+cant+'</label> ';
+                          $('#'+cellid).html(cellData);*/
+                            $('#buttonImpCli'+impcli).removeClass('buttonImpcliListo');
+                            if(respuesta.numero*1>=0){
+                                $('#buttonImpCli'+impcli).addClass('buttonImpcliSaldoPositivo ');
+                            }else{
+                                $('#buttonImpCli'+impcli).addClass('buttonImpcliSaldoNegativo ');
+                            }
+                            $('#buttonImpCli'+impcli+' label').html("$"+respuesta.numero);
+                            $('#myModal').modal('hide');
+                         },
+                        error: function(xhr,textStatus,error){
+                          callAlertPopint(textStatus);
                           return false;
-                      }else{
-                        //papelesDeTrabajo(periodo,impcli);
-                      }
-                      $('#EventosimpuestoHaycambios').val(1);
-                      /*var cellid = 'cellimp'+clienteid+'-tarea5-'+impcliid;
-                      $('#'+cellid).removeClass('pendiente');
-                      $('#'+cellid).addClass('realizado');
-                      var cellData = ' <img src="'+serverLayoutURL+'/img/edit.png" width="20" title="Papeles de Trabajo" height="20" onclick="papelesDeTrabajo('+"'"+periodo+"'"+','+impcliid+')" alt=""><label for="'+cant+'">'+cant+'</label> ';
-                      $('#'+cellid).html(cellData);*/
-                        $('#buttonImpCli'+impcli+' label').html("$"+respuesta.numero);
-                        $('#buttonImpCli'+impcli).removeClass('buttonImpcli0');
-                        $('#buttonImpCli'+impcli).addClass('buttonImpcli2');
-                        $('#myModal').modal('hide');
-                     },
-                    error: function(xhr,textStatus,error){
-                      callAlertPopint(textStatus);
+                        }
+                    });
                       return false;
-                    }
                 });
-                  return false;
-            });               
-            },
-            error:function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
-            }
+                },
+                error:function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                }
         });
         return false;
     }
@@ -352,76 +394,75 @@ $(document).ready(function() {
         var win = window.open(serverLayoutURL+'/controles/cuentasdepuradas/'+cliid+'/'+periodo , '_blank');
     }
 /* 5  agregar Papel de Trabajo -- ejecutar la funcion que agrega el papel de trabajo cargado en el formulario*/
-  function agregarPapeldeTrabajo(){
-    
-    if(error==""){
-     var datas =  eventId2+"/"+periodo+"/"+impcliid+"/"+montovto+"/"+fchvto+"/"+monc+"/"+descripcion;
-     var data ="";
-     $.ajax({
-           type: "post",  // Request method: post, get
-           url: serverLayoutURL+"/eventosimpuestos/realizartarea5/"+id+"/"+periodo+"/"+impcliid+"/"+montovto+"/"+fchvto+"/"+monc+"/"+descripcion+"/"+tipopago, // URL to request
-           data: data,  // post data
-           success: function(response) {
-                        var resp = response.split("&&");
-                        var respuesta=resp[1];
-                        var error=resp[0];
-                        /*if(error!=0){
-                          callAlertPopint("Hubo un error por favor intente de nuevo");
-                          return false;
-                        }*/
-                        var cant=resp[3];
+    function agregarPapeldeTrabajo(){
+        if(error==""){
+         var datas =  eventId2+"/"+periodo+"/"+impcliid+"/"+montovto+"/"+fchvto+"/"+monc+"/"+descripcion;
+         var data ="";
+         $.ajax({
+               type: "post",  // Request method: post, get
+               url: serverLayoutURL+"/eventosimpuestos/realizartarea5/"+id+"/"+periodo+"/"+impcliid+"/"+montovto+"/"+fchvto+"/"+monc+"/"+descripcion+"/"+tipopago, // URL to request
+               data: data,  // post data
+               success: function(response) {
+                            var resp = response.split("&&");
+                            var respuesta=resp[1];
+                            var error=resp[0];
+                            /*if(error!=0){
+                              callAlertPopint("Hubo un error por favor intente de nuevo");
+                              return false;
+                            }*/
+                            var cant=resp[3];
 
-                        /*var cellid = 'cellimp'+clienteid+'-tarea5-'+impcliid;
-                        $('#'+cellid).removeClass('pendiente');
-                        $('#'+cellid).addClass('realizado');
-                        var cellData = ' <img src="'+serverLayoutURL+'/img/edit.png" width="20" title="Papeles de Trabajo" height="20" onclick="papelesDeTrabajo('+"'"+periodo+"'"+','+impcliid+')" alt=""><label for="'+cant+'">'+cant+'</label> ';
-                        $('#'+cellid).html(cellData);*/
-                        $('#buttonImpCli'+impcliid+' label').html(cant);
-                        callAlertPopint(respuesta); 
-                        $('#EventosimpuestoHaycambios').val(1);
-                   },
-           error:function (XMLHttpRequest, textStatus, errorThrown) {
-                  alert(textStatus);
-                 
-          }
-      });
-      return false;    
-    }else{
-      callAlertPopint(error);
-      return false;    
-    }
+                            /*var cellid = 'cellimp'+clienteid+'-tarea5-'+impcliid;
+                            $('#'+cellid).removeClass('pendiente');
+                            $('#'+cellid).addClass('realizado');
+                            var cellData = ' <img src="'+serverLayoutURL+'/img/edit.png" width="20" title="Papeles de Trabajo" height="20" onclick="papelesDeTrabajo('+"'"+periodo+"'"+','+impcliid+')" alt=""><label for="'+cant+'">'+cant+'</label> ';
+                            $('#'+cellid).html(cellData);*/
+                            $('#buttonImpCli'+impcliid+' label').html(cant);
+                            callAlertPopint(respuesta);
+                            $('#EventosimpuestoHaycambios').val(1);
+                       },
+               error:function (XMLHttpRequest, textStatus, errorThrown) {
+                      alert(textStatus);
+
+              }
+          });
+          return false;
+        }else{
+          callAlertPopint(error);
+          return false;
+        }
    
       return false;
   }  
 /* 5  Eliminar Evento Impuesto */
-  function eliminarEventoImpuesto(evenimpid){
-    var r = confirm("Esta seguro que desea eliminar este registro?. Es una accion que no podra deshacer.");
-    if (r == true) {
-      $.ajax({
-         type: "post",  // Request method: post, get
-         url: serverLayoutURL+"/eventosimpuestos/delete/"+evenimpid, // URL to request
-         data: "",  // post data
-         success: function(response) {
-             try {
-                  var mirespuesta = jQuery.parseJSON(response);
-                 $('#buttonImpCli'+mirespuesta.impcliid+' label').html('$'+mirespuesta.numeroAMostrar);
-                 callAlertPopint(mirespuesta.respuesta);
-             }catch (Exception){
-                 callAlertPopint("Ocurrio un problema por favor intente mas tarde");
-             }
-         },
-         error:function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
-              
-        }
-      });
-    } else {
-        txt = "No se a eliminado registro";
-    }/*
-    */
-  }
+    function eliminarEventoImpuesto(evenimpid){
+        var r = confirm("Esta seguro que desea eliminar este registro?. Es una accion que no podra deshacer.");
+        if (r == true) {
+          $.ajax({
+             type: "post",  // Request method: post, get
+             url: serverLayoutURL+"/eventosimpuestos/delete/"+evenimpid, // URL to request
+             data: "",  // post data
+             success: function(response) {
+                 try {
+                      var mirespuesta = jQuery.parseJSON(response);
+                     $('#buttonImpCli'+mirespuesta.impcliid+' label').html('$'+mirespuesta.numeroAMostrar);
+                     callAlertPopint(mirespuesta.respuesta);
+                 }catch (Exception){
+                     callAlertPopint("Ocurrio un problema por favor intente mas tarde");
+                 }
+             },
+             error:function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+
+            }
+          });
+        } else {
+            txt = "No se a eliminado registro";
+        }/*
+        */
+      }
 /* 5  Funcionalidad de Tab de Papeles de Trabajo */
-  function showPapelesDeTrabajo(){
+    function showPapelesDeTrabajo(){
       if($("#tab_PapelesDeTrabajo").hasClass("tabsTareaImpuesto_active")){
 
       }else{
@@ -435,8 +476,8 @@ $(document).ready(function() {
           $('.tareapagos').hide();
           $('.tareaContabilidadPagar').hide();
       }
-  }
-  function showPagos(){
+    }
+    function showPagos(){
       if($("#tab_Pagos").hasClass("tabsTareaImpuesto_active")){
       }else{
           $("#tab_PapelesDeTrabajo").switchClass( "tabsTareaImpuesto_active", "tabsTareaImpuesto", 500 );
@@ -510,11 +551,153 @@ $(document).ready(function() {
         }
     }
 /* 10 ver Tarea Informar -- Mostrar Honorario del periodo y Recibos del periodo*/
-  function verFormInformar(eventId,tarea,periodo,cliid,clientenombre,estadotarea,honoid,honomonto,honofecha,descripcion){
+    function submitparent(button){
+        $(button).closest('form').submit();
+    }
+    function verFormInformar(eventId,tarea,periodo,cliid,clientenombre,estadotarea,honoid,honomonto,honofecha,descripcion){
     var data = "";
      $.ajax({
            type: "post",  // Request method: post, get
            url: serverLayoutURL+"/depositos/getdepositos/"+periodo+"/"+cliid, // URL to request
+           data: data,  // post data
+           success: function(response) {
+                  //alert(response);
+                $('#divpopSolicitar').html(response);
+                    $( "input.datepicker" ).datepicker({
+                        yearRange: "-100:+50",
+                        changeMonth: true,
+                        changeYear: true,
+                        constrainInput: false,
+                        dateFormat: 'dd-mm-yy',
+                      });
+                    $('#formAddHonoraio').submit(function(){
+                        location.hash ="#x";
+                        $(this).find(':submit').attr('disabled','disabled');
+                          //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                          type: 'POST',
+                          url: formUrl,
+                          data: formData,
+                          success: function(data,textStatus,xhr){
+                            //callAlertPopint(data);
+                            var mirespuesta =jQuery.parseJSON(data);
+                            if(mirespuesta.hasOwnProperty('respuesta')){
+                              location.hash ="#x";
+                              callAlertPopint(mirespuesta.respuesta);
+                              return false;
+                            }
+                            verFormInformar(eventId,tarea,periodo,cliid,clientenombre,estadotarea,honoid,honomonto,honofecha,descripcion);
+                            return false;
+                          },
+                          error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                            return false;
+                          }
+                        });
+                            return false;
+                      });
+                    $('#formAddDeposito').submit(function(){
+                        $(this).find(':submit').attr('disabled','disabled');
+                          //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                          type: 'POST',
+                          url: formUrl,
+                          data: formData,
+                        success: function(data,textStatus,xhr){
+                            //callAlertPopint(data);
+
+                            var mirespuesta =jQuery.parseJSON(data);
+                            if(mirespuesta.hasOwnProperty('respuesta')){
+                              callAlertPopint(mirespuesta.respuesta);
+                            }
+                            var newtd="";
+                            verFormInformar(eventId,tarea,periodo,cliid,clientenombre,estadotarea,honoid,honomonto,honofecha,descripcion);
+                            return false;
+                          },
+                        error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                            return false;
+                          }
+                        });
+                        return false;
+                      });
+                    location.href="#popInSolicitar";
+                },
+           error:function (XMLHttpRequest, textStatus, errorThrown) {
+                  alert(textStatus);
+           }
+        });
+        return false;
+    }
+    function verFormHonorarios(cliid,periodo){
+    var data = "";
+     $.ajax({
+           type: "post",  // Request method: post, get
+           url: serverLayoutURL+"/honorarios/cargar/"+periodo+"/"+cliid, // URL to request
+           data: data,  // post data
+           success: function(response) {
+                  //alert(response);
+                $('#divpopSolicitar').html(response);
+                    $( "input.datepicker" ).datepicker({
+                        yearRange: "-100:+50",
+                        changeMonth: true,
+                        changeYear: true,
+                        constrainInput: false,
+                        dateFormat: 'dd-mm-yy',
+                      });
+                    $('#formAddHonoraio').submit(function(){
+                        location.hash ="#x";
+                        $(this).find(':submit').attr('disabled','disabled');
+                          //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                          type: 'POST',
+                          url: formUrl,
+                          data: formData,
+                          success: function(data,textStatus,xhr){
+                            //callAlertPopint(data);
+                            var mirespuesta =jQuery.parseJSON(data);
+                            if(mirespuesta.hasOwnProperty('respuesta')){
+                              location.hash ="#x";
+                              callAlertPopint(mirespuesta.respuesta);
+
+                              return false;
+                            }
+                              if($("#buttonCargaHonorarios"+cliid).length>0){
+                                  $('#buttonCargaHonorarios'+cliid).removeClass('buttonImpcli0');
+                                  $('#buttonCargaHonorarios'+cliid).addClass('buttonImpcli4');
+                              }
+                              verFormHonorarios(cliid,periodo);
+                            return false;
+                          },
+                          error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                            return false;
+                          }
+                        });
+                            return false;
+                      });
+                    location.href="#popInSolicitar";
+                },
+           error:function (XMLHttpRequest, textStatus, errorThrown) {
+                  alert(textStatus);
+           }
+        });
+        return false;
+    }
+    function verFormDepositos(cliid,periodo){
+    var data = "";
+     $.ajax({
+           type: "post",  // Request method: post, get
+           url: serverLayoutURL+"/depositos/cargar/"+periodo+"/"+cliid, // URL to request
            data: data,  // post data
            success: function(response) {
                   //alert(response);
@@ -526,73 +709,44 @@ $(document).ready(function() {
                         constrainInput: false,
                         dateFormat: 'dd-mm-yy',
                       });
-                      $('#formAddHonoraio').submit(function(){ 
-                        location.hash ="#x";
-                        $(this).find(':submit').attr('disabled','disabled');
-                          //serialize form data
-                        var formData = $(this).serialize(); 
-                        //get form action 
-                        var formUrl = $(this).attr('action'); 
-                        $.ajax({ 
-                          type: 'POST', 
-                          url: formUrl, 
-                          data: formData, 
-                          success: function(data,textStatus,xhr){ 
-                            //callAlertPopint(data); 
-                            var mirespuesta =jQuery.parseJSON(data);
-                            if(mirespuesta.hasOwnProperty('respuesta')){
-                              location.hash ="#x";                
-                              callAlertPopint(mirespuesta.respuesta);
-                              return false;
-                            }
-                            verFormInformar(eventId,tarea,periodo,cliid,clientenombre,estadotarea,honoid,honomonto,honofecha,descripcion);
-                            return false;
-                          }, 
-                          error: function(xhr,textStatus,error){ 
-                            callAlertPopint(textStatus); 
-                            return false;
-                          } 
-                        }); 
-                            return false;
-                      }); 
                       $('#formAddDeposito').submit(function(){
                         $(this).find(':submit').attr('disabled','disabled');
                           //serialize form data
-                        var formData = $(this).serialize(); 
-                        //get form action 
-                        var formUrl = $(this).attr('action'); 
-                        $.ajax({ 
-                          type: 'POST', 
-                          url: formUrl, 
-                          data: formData, 
-                        success: function(data,textStatus,xhr){ 
-                            //callAlertPopint(data); 
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                          type: 'POST',
+                          url: formUrl,
+                          data: formData,
+                        success: function(data,textStatus,xhr){
+                            //callAlertPopint(data);
 
                             var mirespuesta =jQuery.parseJSON(data);
                             if(mirespuesta.hasOwnProperty('respuesta')){
                               callAlertPopint(mirespuesta.respuesta);
                             }
                             var newtd="";
-                            verFormInformar(eventId,tarea,periodo,cliid,clientenombre,estadotarea,honoid,honomonto,honofecha,descripcion);
+                            verFormDepositos(cliid,periodo);
                             return false;
-                          }, 
-                        error: function(xhr,textStatus,error){ 
-                            callAlertPopint(textStatus); 
+                          },
+                        error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
                             return false;
-                          } 
-                        }); 
+                          }
+                        });
                         return false;
-                      });                    
+                      });
                     location.href="#popInSolicitar";
                },
            error:function (XMLHttpRequest, textStatus, errorThrown) {
-                  alert(textStatus);                
+                  alert(textStatus);
            }
         });
         return false;
   }
 /* 10 Eliminar Deposito */
-  function eliminarDeposito(depoid){
+    function eliminarDeposito(depoid){
     var r = confirm("Esta seguro que desea eliminar este deposito?. Es una accion que no podra deshacer.");
     if (r == true) {
       $.ajax({
@@ -610,8 +764,8 @@ $(document).ready(function() {
     } else {
         txt = "No se a eliminado el deposito";
     }
-  }
-  function checkVencimientoPagado(i){
+    }
+    function checkVencimientoPagado(i){
       var myid='FormPagarEventoImpuesto Eventosimpuesto'+i+'Montovtoreal';
       var montovto = $('#FormPagarEventoImpuesto #Eventosimpuesto'+i+'Montovtoreal').val();
       var montorealizado = $('#FormPagarEventoImpuesto #Eventosimpuesto'+i+'Montorealizado').val();
@@ -623,36 +777,36 @@ $(document).ready(function() {
   }
 /* 11 ver Tarea Pagar -- Mostrar el formulario para pagar papeles de trabajo del impcli del periodo*/
     function catchFormAsiento(idForm){
-        $('#'+idForm).submit(function(){
-            //desactivar los inputs q son para agregar movimientos
-            $("#rowdecarga :input").prop("disabled", true);
-            //serialize form data
-            var formData = $(this).serialize();
-            //get form action
-            var formUrl = $(this).attr('action');
-            $.ajax({
-                type: 'POST',
-                url: formUrl,
-                data: formData,
-                success: function(data,textStatus,xhr){
-                    var respuesta = JSON.parse(data);
-                    // $('#myModal').modal('hide');
-                    // $('#myModalFormAgregarAsiento').modal('hide');
-                    callAlertPopint(respuesta.respuesta);
-                    // reiniciarFormAgregarAsiento()
-                },
-                error: function(xhr,textStatus,error){
-                    // $('#myModal').modal('hide');
-                    // $('#myModalFormAgregarAsiento').modal('hide');
-                    callAlertPopint(respuesta.error);
-                    alert(textStatus);
-                }
-            });
-            $("#rowdecarga :input").prop("disabled", false);
-            return false;
+    $('#'+idForm).submit(function(){
+        //desactivar los inputs q son para agregar movimientos
+        $("#rowdecarga :input").prop("disabled", true);
+        //serialize form data
+        var formData = $(this).serialize();
+        //get form action
+        var formUrl = $(this).attr('action');
+        $.ajax({
+            type: 'POST',
+            url: formUrl,
+            data: formData,
+            success: function(data,textStatus,xhr){
+                var respuesta = JSON.parse(data);
+                // $('#myModal').modal('hide');
+                // $('#myModalFormAgregarAsiento').modal('hide');
+                callAlertPopint(respuesta.respuesta);
+                // reiniciarFormAgregarAsiento()
+            },
+            error: function(xhr,textStatus,error){
+                // $('#myModal').modal('hide');
+                // $('#myModalFormAgregarAsiento').modal('hide');
+                callAlertPopint(respuesta.error);
+                alert(textStatus);
+            }
         });
+        $("#rowdecarga :input").prop("disabled", false);
+        return false;
+    });
     }
-  function loadPagar(periodo,impcli,cliid){
+    function loadPagar(periodo,impcli,cliid){
      var data = "";
          $.ajax({
                type: "post",  // Request method: post, get
@@ -707,4 +861,346 @@ $(document).ready(function() {
 /* 19 Tarea Contabilizar*/
     function abrirsumasysaldos(clienteid,periodo){
         var win = window.open(serverLayoutURL+'/cuentasclientes/informesumaysaldo/'+clienteid+'/'+periodo , '_blank');
+    }
+    function contabilizarventas (clienteid,periodo) {
+        var data="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/asientos/contabilizarventa/"+clienteid+"/"+periodo,
+
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Asiento automatico de venta');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                $('.chosen-select-cuenta').chosen({
+                    search_contains:true,
+                    include_group_label_in_selected:true
+                });
+                $('#AsientoAddForm').submit(function(){
+                    $('#myModal').modal('hide');
+                    /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+                    var asientoyaguardado=false;
+                    if($("#AsientoAddForm #Asiento0Id").val()*1!=0){
+                        asientoyaguardado=true;
+                    }
+                    var r=true;
+                    if(asientoyaguardado){
+                        r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+                            " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+                            " Sumas y saldos y despues en Asientos");
+                    }
+                    if (r == true) {
+                        $('#AsientoAddForm input').each(function(){
+                            $(this).removeAttr('disabled');
+                        });
+                        //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                            type: 'POST',
+                            url: formUrl,
+                            data: formData,
+                            success: function(data,textStatus,xhr){
+                                var respuesta = jQuery.parseJSON(data);
+                                var resp = respuesta.respuesta;
+                                $('#myModal').modal('hide');
+                                callAlertPopint(resp);
+                            },
+                            error: function(xhr,textStatus,error){
+                                $('#myModal').modal('show');
+                                alert(textStatus);
+                                callAlertPopint(textStatus);
+                                return false;
+                            }
+                        });
+                    }else{
+                        callAlertPopint("El asiento no se ha sobreescrito.");
+                    }
+
+                    return false;
+                });
+                $(".inputDebe").each(function () {
+                    $(this).change(addTolblTotalDebeAsieto);
+                });
+                $(".inputHaber").each(function () {
+                    $(this).change(addTolblTotalhaberAsieto);
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
+    }
+    function contabilizarcompras (clienteid,periodo) {
+        var data="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/asientos/contabilizarcompra/"+clienteid+"/"+periodo,
+
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Asiento automatico de compra');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                $('.chosen-select-cuenta').chosen({
+                    search_contains:true,
+                    include_group_label_in_selected:true
+                });
+
+                $('#AsientoAddForm').submit(function(){
+                    $('#myModal').modal('hide');
+                    /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+                    var asientoyaguardado=false;
+                    if($("#AsientoAddForm #Asiento0Id").val()*1!=0){
+                        asientoyaguardado=true;
+                    }
+                    var r=true;
+                    if(asientoyaguardado){
+                        r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+                            " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+                            " Sumas y saldos y despues en Asientos");
+                    }
+                    if (r == true) {
+                        $('#AsientoAddForm input').each(function(){
+                            $(this).removeAttr('disabled');
+                        });
+                        //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                            type: 'POST',
+                            url: formUrl,
+                            data: formData,
+                            success: function(data,textStatus,xhr){
+                                var respuesta = jQuery.parseJSON(data);
+                                var resp = respuesta.respuesta;
+                                $('#myModal').modal('hide');
+                                callAlertPopint(resp);
+                            },
+                            error: function(xhr,textStatus,error){
+                                $('#myModal').modal('show');
+                                alert(textStatus);
+                                callAlertPopint(textStatus);
+                                return false;
+                            }
+                        });
+                    }else{
+                        callAlertPopint("El asiento no se ha sobreescrito.");
+                    }
+                    return false;
+                });
+                $(".inputDebe").each(function () {
+                    $(this).change(addTolblTotalDebeAsieto);
+                });
+                $(".inputHaber").each(function () {
+                    $(this).change(addTolblTotalhaberAsieto);
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
+    }
+    function contabilizarretencionessufridas (clienteid,periodo) {
+        var data="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/asientos/contabilizarretencionessufridas/"+clienteid+"/"+periodo,
+
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Asiento automatico de Retenciones sufridas');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                $('.chosen-select-cuenta').chosen({
+                    search_contains:true,
+                    include_group_label_in_selected:true
+                });
+                $('#AsientoAddForm').submit(function(){
+                    $('#myModal').modal('hide');
+                    /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+                    var asientoyaguardado=false;
+                    if($("#AsientoAddForm #Asiento0Id").val()*1!=0){
+                        asientoyaguardado=true;
+                    }
+                    var r=true;
+                    if(asientoyaguardado){
+                        r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+                            " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+                            " Sumas y saldos y despues en Asientos");
+                    }
+                    if (r == true) {
+                        $('#AsientoAddForm input').each(function(){
+                            $(this).removeAttr('disabled');
+                        });
+                        //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                            type: 'POST',
+                            url: formUrl,
+                            data: formData,
+                            success: function(data,textStatus,xhr){
+                                var respuesta = jQuery.parseJSON(data);
+                                var resp = respuesta.respuesta;
+                                $('#myModal').modal('hide');
+                                callAlertPopint(resp);
+                            },
+                            error: function(xhr,textStatus,error){
+                                $('#myModal').modal('show');
+                                alert(textStatus);
+                                callAlertPopint(textStatus);
+                                return false;
+                            }
+                        });
+                    }else{
+                        callAlertPopint("El asiento no se ha sobreescrito.");
+                    }
+
+                    return false;
+                });
+
+                $(".inputDebe").each(function () {
+                    $(this).change(addTolblTotalDebeAsieto);
+                });
+                $(".inputHaber").each(function () {
+                    $(this).change(addTolblTotalhaberAsieto);
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
+    }
+    function contabilizarBanco(cliid,periodo,bancimpcli,cbuid){
+        var data="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/asientos/contabilizarbanco/"+cliid+"/"+periodo+"/"+bancimpcli+"/"+cbuid,
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Asiento automatico de banco');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                $('.chosen-select-cuenta').chosen({
+                    search_contains:true,
+                    include_group_label_in_selected:true
+                });
+                $('#AsientoAddForm').submit(function(){
+                    /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+                    var asientoyaguardado=false;
+                    if($("#AsientoAddForm #Asiento0Id").val()*1!=0){
+                        asientoyaguardado=true;
+                    }
+                    var r=true;
+                    if(asientoyaguardado){
+                        r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+                            " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+                            " Sumas y saldos y despues en Asientos");
+                    }
+                    if (r == true) {
+                        //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                            type: 'POST',
+                            url: formUrl,
+                            data: formData,
+                            success: function(data,textStatus,xhr){
+                                var respuesta = jQuery.parseJSON(data);
+                                var resp = respuesta.respuesta;
+                                $('#myModal').modal('hide');
+                                callAlertPopint(resp);
+                            },
+                            error: function(xhr,textStatus,error){
+                                callAlertPopint(textStatus);
+                                return false;
+                            }
+                        });
+                    }else{
+                        callAlertPopint("El asiento no se ha sobreescrito.");
+                    }
+
+                    return false;
+                });
+                $(".inputDebe").each(function () {
+                    $(this).change(addTolblTotalDebeAsieto);
+                });
+                $(".inputHaber").each(function () {
+                    $(this).change(addTolblTotalhaberAsieto);
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
+    }
+    function addTolblTotalDebeAsieto(event) {
+        var debesubtotal = 0;
+        $(".inputDebe").each(function () {
+            debesubtotal = debesubtotal*1 + this.value*1;
+            if(this.value*1!=0){
+                $(this).removeClass("movimientoSinValor");
+                $(this).addClass("movimientoConValor");
+            }else{
+                $(this).removeClass("movimientoConValor")
+                $(this).addClass("movimientoSinValor");
+            }
+
+        });
+        $("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+        showIconDebeHaber()
+    }
+    function addTolblTotalhaberAsieto(event) {
+        //        $("#lblTotalAFavor").val(0) ;
+        var habersubtotal = 0;
+        $(".inputHaber").each(function () {
+            habersubtotal = habersubtotal*1 + this.value*1;
+            if(this.value*1!=0){
+                $(this).removeClass("movimientoSinValor");
+                $(this).addClass("movimientoConValor");
+            }else{
+                $(this).removeClass("movimientoConValor")
+                $(this).addClass("movimientoSinValor");
+            }
+        });
+        $("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+        showIconDebeHaber()
+    }
+    function showIconDebeHaber(){
+        if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
+            $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+        }else{
+            $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+        }
     }

@@ -405,6 +405,13 @@ class Empleado extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'Impuesto' => array(
+			'className' => 'Impuesto',
+			'foreignKey' => 'impuesto_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
 		)
 	);
 

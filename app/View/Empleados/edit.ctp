@@ -44,12 +44,20 @@
 		);
 	//Debugger::dump($puntosdeventas);
 		echo $this->Form->input('domicilio_id',array('label'=>'Domicilio','options'=>$domicilios));
+		echo $this->Form->input('impuesto_id',array(
+			'label'=>'Banco',
+			'title'=>'Elija el banco donde se va a pagarle al empleado',
+			'empty'=>'Efectivo',
+			'options'=>$bancos,
+			'default'=>$this->request->data['Empleado']['impuesto_id'],
+		));
 		echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
 		echo $this->Form->input('cargo_id',array('label'=>'Cargo', 'required'=>true,));
 		echo $this->Form->label("Liquidaciones:");
 		echo $this->Form->input('liquidaprimeraquincena',array('label'=>'Primera Quincena'));
 		echo $this->Form->input('liquidasegundaquincena',array('label'=>'Segunda Quincena'));
 		echo $this->Form->input('liquidamensual',array('label'=>'Mensual'));
+		echo $this->Form->input('liquidasac',array('label'=>'SAC'));
 		echo $this->Form->input('liquidapresupuestoprimera',array('label'=>'Presupuesto 1'));
 		echo $this->Form->input('liquidapresupuestosegunda',array('label'=>'Presupuesto 2'));
 		echo $this->Form->input('liquidapresupuestomensual',array('label'=>'Presupuesto 3'));

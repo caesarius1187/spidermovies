@@ -334,7 +334,9 @@ class ClientesController extends AppController {
 			}
 			$this->set('condicionDeSolicitarParaCliente',$condicionDeSolicitarParaCliente);
 			$this->set('conditionsClientesAvance',$conditionsClientesAvance);
+
 			
+
 			$this->Paginator->settings = array(
 			   'contain'=>array(
 			      'Grupocliente'=>array(
@@ -344,7 +346,13 @@ class ClientesController extends AppController {
 			      		'conditions' => array(
 				                'Eventoscliente.periodo =' => $pemes.'-'.$peanio  
 				            ),
-			      		'fields'=>array('id','periodo','cliente_id','tarea1','tarea3','tarea4','tarea14','banco','tarjetadecredito','fcventa','descargawebafip','fccompra','libroivaventas','fcluz','sueldos','librounico'),
+			      		'fields'=>array(
+							'id','periodo','cliente_id',
+							'ventascargadas','comprascargadas','pagosacuentacarados','novedadescargadas',
+							'bancoscargados','honorarioscargador','reciboscargados',
+							'tarea1','tarea3','tarea4','tarea14','banco',
+							'tarjetadecredito','fcventa','descargawebafip','fccompra','libroivaventas',
+							'fcluz','sueldos','librounico'),
 			      	),
 			      'Honorario'=>array(
 			      		'conditions' => array(
@@ -356,6 +364,7 @@ class ClientesController extends AppController {
 			      		'fields'=>array('id','cliente_id','sistemafacturacion','nombre'),
 			      	),
 			      'Impcli'=>array(
+				  	'Cbu'=>[],
 			        'Impuesto'=>array(
 			            'fields'=>array('id','nombre','abreviacion','orden','organismo'),
 			            'conditions'=>array(
@@ -387,7 +396,8 @@ class ClientesController extends AppController {
 			    ),
 			   'conditions' => $conditionsClientesAvance,
 			   'limit' => 25,
-  			   'fields'=>array('Cliente.id','Cliente.nombre','Cliente.grupocliente_id','Cliente.honorario'),
+  			   'fields'=>array('Cliente.id','Cliente.nombre','Cliente.grupocliente_id','Cliente.honorario'
+			   ,'Cliente.fchcorteejerciciofiscal','Cliente.tipopersona'),
 			   'order' => array(
 				            ),
 			);
@@ -472,10 +482,19 @@ class ClientesController extends AppController {
 				$posicion++;
 			}
 			//Aca vamos a ordenar los ImpClis del los clientes en funcion de los vencimientos de los Eventos Impuestos
-			foreach ($clientes3 as $micliente) {
-				foreach ($micliente['Impcli'] as $impcli) {
-					
+			foreach ($clientes3 as $mc => $micliente) {
+				for ($i=0;$i<count($micliente['Impcli'])-1;$i++){
+					for ($j=$i;$j<count($micliente['Impcli']);$j++) {
+						$burbuja = $micliente['Impcli'][$i]['Impuesto']['orden']*1;
+						$aux = $micliente['Impcli'][$j]['Impuesto']['orden']*1;
+						if($burbuja>$aux){
+							$myaux=$micliente['Impcli'][$i];
+							$micliente['Impcli'][$i]=$micliente['Impcli'][$j];
+							$micliente['Impcli'][$j]=$myaux;
+						}
+					}
 				}
+				$clientes3[$mc]=$micliente;
 			}
 
 
@@ -512,7 +531,7 @@ class ClientesController extends AppController {
 			'conditions' =>$conditionsGcli,
 			'order'=>array('Grupocliente.nombre')
 			)
-		);	
+		);
 		$conditionsCli = array(
 							 'Grupocliente',
 							 );
@@ -1335,7 +1354,7 @@ class ClientesController extends AppController {
 				   				),
 					       	'order' => array('Cliente.nombre'),
 					       	'conditions'=>array(
-                                'Cliente.estado' => 'habilitado',
+//                                'Cliente.estado' => 'habilitado',
                                 'OR'=>array(
 				            		array('Cliente.fchfincliente'=>null),
 				            		array('Cliente.fchfincliente'=>""),												            		
@@ -1805,6 +1824,14 @@ class ClientesController extends AppController {
 			$autonomocategorias = $this->Autonomocategoria->find('list');
 			$this->set('autonomocategorias', $autonomocategorias);
 
+
+			$bancosOptions = array(
+				'conditions' => array(
+					'Impuesto.organismo'=> 'banco'
+				),
+			);
+			$bancos=$this->Impuesto->find('list',$bancosOptions);
+			$this->set('bancos', $bancos);
 			$mostrarView=true;
 
 		}else{
@@ -1989,7 +2016,6 @@ class ClientesController extends AppController {
 		$this->loadModel('Organismosxcliente');
 		if ($this->request->is('post')) {
 			$this->Cliente->create();
-
 			//if($this->request->data['Cliente']['fchcorteejerciciofiscal']!="")
 			//$this->request->data('Cliente.fchcorteejerciciofiscal',date('Y-m-d',strtotime($this->request->data['Cliente']['fchcorteejerciciofiscal'])));
 			if($this->request->data['Cliente']['fchcumpleanosconstitucion']!="")

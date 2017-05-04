@@ -11,7 +11,8 @@ class Comprobante extends AppModel {
 
 
 	var $virtualFields = array(
-		'codname' => 'CONCAT(Comprobante.codigo, "-", Comprobante.nombre)'
+		'codname' => 'CONCAT(Comprobante.codigo, "-", Comprobante.nombre)',
+		'codnamedos' => 'CONCAT(Comprobante.abreviacion2, "-", Comprobante.nombre)'
 	);
 
 /**

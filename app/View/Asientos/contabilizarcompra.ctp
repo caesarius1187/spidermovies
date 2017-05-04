@@ -14,12 +14,12 @@ if(isset($error)){ ?>
 }
 ?>
 <div class="index">
-    <h3><?php echo __('Contabilizar Compras del cliente: '.$cliente['Cliente']['nombre']." para el periodo: ".$periodo); ?></h3>
+    <h3><?php echo __('Contabilizar Compras:'.$cliente['Cliente']['nombre'] ); ?></h3>
     <?php
     $id = 0;
-    $nombre = "Asiento devengamiento Compra: ".$periodo;
-    $descripcion = "Asiento automatico";
-    $fecha = date('d-m-Y');
+    $nombre = "Compra";
+    $descripcion = "Automatico";
+    $fecha = date('t-m-Y',strtotime('01-'.$periodo));
     $miAsiento=array();
     if(!isset($miAsiento['Movimiento'])){
         $miAsiento['Movimiento']=array();
@@ -46,6 +46,8 @@ if(isset($error)){ ?>
     $i=0;
     echo "</br>";
     $cuentaclienteid = 0;
+    $totalDebe=0;
+    $totalHaber=0;
     foreach ($asientoestandares as $asientoestandar) {
         $cuentaclienteid = $asientoestandar['Cuenta']['Cuentascliente'][0]['id'];
         /*lo mismo que hicimos con el asiento vamos a hacer con los movimientos, si existe un movimiento
@@ -166,7 +168,7 @@ if(isset($error)){ ?>
                 }
                 $debe = $cuenta110404201;
                 break;
-            case '352'/*110499001 Provedores */:
+            case '1202'/*110499001 Proveedor "XXX" */:
                 $cuenta110499001 = 0;
                 //Cargar la compra ivapercep
                 foreach ($comprasgravadas as $comprasgravada) {
@@ -230,8 +232,6 @@ if(isset($error)){ ?>
             case '2286'/*504010001 Combus, Lubric y FM*/:
             case '2288'/*504020001 Luz, Gas, Tel. y Otros*/:
             case '2290'/*504030001 Alquileres y Expensas*/:
-            case '2288'/*504020001 Luz, Gas, Tel. y Otros*/:
-            case '2290'/*504030001 Alquileres y Expensas*/:
             case '2305'/*504050001 Gastos de Traslados*/:
             case '2307'/*504060001 Seguros*/:
             case '2309'/*504070001 Gtos Cort y Homenaje*/:
@@ -246,9 +246,26 @@ if(isset($error)){ ?>
                 $cuenta504070001=0;
                 //Cargar la compra neto + no gravado + exento
                 $cuentasTipoGastos=[
-                    '2222'=>'1','2286'=>'2','2288'=>'3','2290'=>'4','2305'=>'5','2307'=>'6','2309'=>'8',
-                    '2311'=>'9','2313'=>'10','2315'=>'11','2336'=>'12','2334'=>'13','2345'=>'14'];
-                foreach ($comprasgravadas as $comprasgravada) {
+                    '2222'=>['1'],/*Mercaderia-Insumos*/
+                    '2286'=>['2'],/*Combustibles, Lubric y FM*/
+                    '2288'=>['3','19','20','21'],/*Servicios Publicos*/
+                    /*Luz*/
+                    /*Agua*/
+                    /*Alquiler*/
+                    /*Bien de uso*/
+                    '2290'=>['4'],/*Expensas*/
+                    '2305'=>['5'],/*Traslados*/
+                    '2307'=>['6'],/*Seguros*/
+                    '2309'=>['7'],/*Gastos de Cortesia y Homenaje*/
+                    '2311'=>['8'],/*Mantenimiento, Reparacion*/
+                    '2313'=>['9'],/*Libreria*/
+                    '2315'=>['10'],/*Gastos Varios*/
+                    '2336'=>['11'],/*Publicidad y Propaganda*/
+                    '2334'=>['12'],/*Honorarios*/
+                    '2345'=>['18']/*Otros*/
+                ];
+
+            foreach ($comprasgravadas as $comprasgravada) {
                     $suma = 1;
                     $categoriaDeLaCompra = $comprasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
                     if("compra".$categoriaDeLaCompra!='compraterceracateg'){
@@ -257,13 +274,13 @@ if(isset($error)){ ?>
                     if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
                         continue;
                     }
-                    if($comprasgravada['Compra']['tipogasto_id']!=$cuentasTipoGastos[$asientoestandar['Cuenta']['id']]){
+                    if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
                         continue;
                     }
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
                     }
-                    $cuenta504070001+=$comprasgravada[0]['neto']*1+$comprasgravada[0]['nogravados']*1+$comprasgravada[0]['exentos']*$suma;
+                    $cuenta504070001+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
                 }
                 $debe = $cuenta504070001;
                 break;
@@ -285,7 +302,7 @@ if(isset($error)){ ?>
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
                     }
-                    $cuenta505010000+=$comprasgravada[0]['neto']*1+$comprasgravada[0]['nogravados']*1+$comprasgravada[0]['exentos']*$suma;
+                    $cuenta505010000+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
                 }
                 $debe = $cuenta505010000;
                 break;
@@ -307,36 +324,40 @@ if(isset($error)){ ?>
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
                     }
-                    $cuenta513000001+=$comprasgravada[0]['neto']*1+$comprasgravada[0]['nogravados']*1+$comprasgravada[0]['exentos']*$suma;
+                    $cuenta513000001+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
                 }
                 $debe = $cuenta513000001;
                 break;
         }
-        /*ACA Vamos a dividir las consultas segun el tipo de categoria que pague el cliente*/
-//        foreach ($pagacategoria as $categoriaAPagar){
-//            switch ($categoriaAPagar){
-//                case 'primeracateg':
-//
-//                    break;
-//            }
-//        }
 
-        //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
-        //echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.key',['default'=>$key]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',[
+            'label'=>($i!=0)?false:'Cuenta',
             'default'=>$cuentaclienteid,
             'defaultoption'=>$cuentaclienteid,
             'class'=>'chosen-select-cuenta',
         ]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
             'type'=>'hidden',
+            'label'=>($i!=0)?false:'Fecha',
             'readonly','readonly',
             'value'=>date('d-m-Y'),
         ));
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['default'=>$debe]);
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['default'=>$haber]);
+        $movimientoConValor = "movimientoSinValor";
+        if(($debe*1) != 0 || ($haber*1) != 0){
+            $movimientoConValor = "movimientoConValor";
+        }
+        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+            'label'=>($i!=0)?false:'Debe',
+            'class'=>"inputDebe ".$movimientoConValor,
+            'default'=>number_format($debe, 2, ".", ""),]);
+        $totalDebe+=$debe;
+        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
+            'class'=>"inputHaber ".$movimientoConValor,
+            'label'=>($i!=0)?false:'Haber',
+            'default'=>number_format($haber, 2, ".", ""),]);
+        $totalHaber +=$haber;
         echo "</br>";
         $i++;
     }
@@ -357,20 +378,69 @@ if(isset($error)){ ?>
                 $cuentaclienteid = $movimiento['cuentascliente_id'];
                 echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
                 echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['default' => $cuentaclienteid]);
+                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', [
+                    'label'=>($i!=0)?false:'Cuenta',
+                    'default' => $cuentaclienteid]);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
                     'type'=>'hidden',
+                    'label'=>($i!=0)?false:'Fecha',
                     'readonly','readonly',
                     'value'=>date('d-m-Y'),
                 ));
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['default' => $debe]);
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['default' => $haber]);
+                $movimientoConValor = "movimientoSinValor";
+                if(($debe*1) != 0 || ($haber*1) != 0){
+                    $movimientoConValor = "movimientoConValor";
+                }
+                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [
+                    'class'=>"inputDebe ".$movimientoConValor,
+                    'label'=>($i!=0)?false:'Debe',
+                    'default'=>number_format($debe, 2, ".", ""),]);
+                $totalDebe+=$debe;
+                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
+                    'label'=>($i!=0)?false:'Haber',
+                    'class'=>"inputHaber ".$movimientoConValor,
+                    'default'=>number_format($haber, 2, ".", ""),]);
+                $totalHaber +=$haber;
                 echo "</br>";
                 $i++;
             }
         }
     }
     echo $this->Form->end('Guardar asiento');
-
+    echo $this->Form->label('','&nbsp; ',[
+        'style'=>"display: -webkit-inline-box;width:330px;"
+    ]);
+    echo $this->Form->label('lblTotalDebe',
+        "$".number_format($totalDebe, 2, ".", ""),
+        [
+            'id'=>'lblTotalDebe',
+            'style'=>"display: inline;"
+        ]
+    );
+    echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:70px;"]);
+    echo $this->Form->label('lblTotalHaber',
+        "$".number_format($totalHaber, 2, ".", ""),
+        [
+            'id'=>'lblTotalHaber',
+            'style'=>"display: inline;"
+        ]
+    );
+    if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
+        echo $this->Html->image('test-pass-icon.png',array(
+                'id' => 'iconDebeHaber',
+                'alt' => 'open',
+                'class' => 'btn_exit',
+                'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+            )
+        );
+    }else{
+        echo $this->Html->image('test-fail-icon.png',array(
+                'id' => 'iconDebeHaber',
+                'alt' => 'open',
+                'class' => 'btn_exit',
+                'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+            )
+        );
+    }
     ?>
 </div>

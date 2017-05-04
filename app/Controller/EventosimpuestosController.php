@@ -489,6 +489,8 @@ class EventosimpuestosController extends AppController {
 		$myImpCli = $this->Impcli->find('first', $options);
 		$secrearoncuentas = false;
 		foreach ($myImpCli['Impuesto']['Asientoestandare'] as $asientoestandar) {
+			if(!isset($asientoestandar['Cuenta']['Cuentascliente'])){
+			}
 			if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
 				$this->Cuentascliente->create();
 				$this->Cuentascliente->set('cliente_id',$cliid);

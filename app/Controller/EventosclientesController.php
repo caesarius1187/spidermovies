@@ -112,8 +112,8 @@ class EventosclientesController extends AppController {
 				$this->set('respuesta','La tarea ha sido realizada.');	
 				$this->set('evento_id',$this->Eventoscliente->getLastInsertID());
 			}else{
-				$this->set('error',1);
-				$this->set('respuesta','La tarea NO ha sido realizada.');	
+				$this->set('error',2);
+				$this->set('respuesta','La tarea NO ha sido realizada.');
 			}
 		}
 		$this->layout = 'ajax';

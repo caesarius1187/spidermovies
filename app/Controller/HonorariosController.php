@@ -39,13 +39,49 @@ class HonorariosController extends AppController {
 		$options = array('conditions' => array('Honorario.' . $this->Honorario->primaryKey => $id));
 		$this->set('honorario', $this->Honorario->find('first', $options));
 	}
+	public function cargar($periodo,$cliid) {
+		$this->loadModel('Cliente');
+		$this->loadModel('Grupocliente');
 
-/**
- * add method
- *
- * @return void
- */
+
+		$optionsGCLI = array(
+			'conditions' => array(
+				'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+			),
+			'contain'=>array()
+		);
+		$GrupoClientes = $this->Grupocliente->find('list', $optionsGCLI);
+
+		$optionsHonorario = array(
+			'conditions' => array(
+				'Honorario.cliente_id' => $cliid,
+				'Honorario.periodo' => $periodo
+			)
+		);
+		$honorario = $this->Honorario->find('first', $optionsHonorario);
+		$this->set('honorario', $honorario);
+		$this->request->data = $honorario;
+
+		$this->set('periodo', $periodo);
+		$this->set('cliid', $cliid);
+
+		$cliente = $this->Cliente->find('first',array(
+				'conditions' => array(
+					'Cliente.id' => $cliid,
+				),
+				'fields'=>array('Cliente.grupocliente_id','Cliente.honorario')
+			)
+		);
+		$this->set('gcliid', $cliente['Cliente']['grupocliente_id']);
+		$this->set('honorariocliente', $cliente['Cliente']['honorario']);
+		$this->set('cliid', $cliente['Cliente']['id']);
+
+		$this->layout = 'ajax';
+		$this->render('cargar');
+	}
+
 	public function add() {
+		$this->loadModel('Eventoscliente');
 		$resp ="";
 		$this->autoRender=false; 
 		if ($this->request->is('post')) {
@@ -67,11 +103,9 @@ class HonorariosController extends AppController {
 				$honoCreado= true;
 				$this->set('honoCreado','Error1: El honorario ya esta relacionado.');	
 				$id = $createdHono['Honorario']['id'];
-				$this->set('ruta','honorario ya creado');
 			}else{
 				unset($this->request->data['Honorario']['id']);
-				$this->set('ruta','honorario NO creado');
-				
+
 			}
 			if ($this->Honorario->save($this->request->data)) {
 					if(!$honoCreado){
@@ -84,6 +118,40 @@ class HonorariosController extends AppController {
 						);
 					$createdHono = $this->Honorario->find('first', $options);	
 					$this->set('honorario',$createdHono);
+
+					//Vamos a guardar esto en el evento cliente del periodo correspondiente
+					$eventoId=0;
+					$options = array(
+						'conditions' => array(
+							'Eventoscliente.cliente_id'=> $this->request->data['Honorario']['cliente_id'],
+							'Eventoscliente.periodo'=>$this->request->data['Honorario']['periodo']
+						)
+					);
+					$eventocliente = $this->Eventoscliente->find('all', $options);
+					if(count($eventocliente)!=0){
+						$eventoId=$eventocliente[0]['Eventoscliente']['id'];
+					}
+					if ($eventoId!=0) {
+						$this->Eventoscliente->read(null, $eventoId);
+						$this->Eventoscliente->set('honorarioscargador',1);
+						if ($this->Eventoscliente->save()) {
+						} else {
+							$this->set('error',1);
+						}
+					}else{
+						$this->Eventoscliente->create();
+						$this->Eventoscliente->set('cliente_id',$this->request->data['Honorario']['cliente_id']);
+						$this->Eventoscliente->set('periodo',$this->request->data['Honorario']['periodo']);
+						$this->Eventoscliente->set('honorarioscargador',1);
+						$this->Eventoscliente->set('user_id',$this->Session->read('Auth.User.estudio_id'));
+						if($this->Eventoscliente->save()){
+
+						}else{
+							$this->set('error',1);
+						}
+					}
+
+
 					$this->autoRender=false; 		
 					$this->layout = 'ajax';
 					$this->render('add');		
@@ -120,6 +188,7 @@ class HonorariosController extends AppController {
 		if ($this->Honorario->save($this->request->data)) {
 			$this->set('respuesta','El Honorario ha sido creado.');	
 			$this->set('honorario_id',$this->Honorario->getLastInsertID());
+
 		}
 		else{
 
@@ -127,13 +196,6 @@ class HonorariosController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('addajax');
 	}
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
 	public function edit($id = null) {
 		if (!$this->Honorario->exists($id)) {
 			throw new NotFoundException(__('Invalid honorario'));
@@ -183,13 +245,6 @@ class HonorariosController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('edit');	
 	}
-/**
- * delete method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
 	public function delete($id = null) {
 		$this->Honorario->id = $id;
 		if (!$this->Honorario->exists()) {

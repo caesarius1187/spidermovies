@@ -1,6 +1,7 @@
 <div class="page-container">
-	<img src="../img/logo.png">
-	<form action="/contasynfotech/users/login" id="UserLoginForm" method="post" accept-charset="utf-8">
+	<form action="/contasynfotech/users/login" id="UserLoginForm" method="post" accept-charset="utf-8"
+		  style="background-color: #99c8f2;padding: 40px;">
+		<img src="../img/logo.png" width="300px" height="60px">
 		<div style="display:none;">
 			<input type="hidden" name="_method" value="POST">
 		</div>

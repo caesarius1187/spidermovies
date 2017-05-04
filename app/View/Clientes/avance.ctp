@@ -7,61 +7,11 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
 ?>
 <input class="button" type="button" id="btnShowForm" onClick="showForm()" value="Mostrar" style="display:none" />
 
-<div id="Formhead" class="clientes avanse index" style="width:99%; margin:0px 0px 8px 0px">
+<div id="Formhead" class="clientes avance" style="">
 
   <!--<input class="button" type="button" id="btnHiddeForm" onClick="hideForm()" value="Ocultar" style="float:right;"/>-->
   <?php 
   echo $this->Form->create('clientes',array('action' => 'avance')); ?> 
-  <table class="">
-    <tr>
-      <td style ="width: 283px;">
-        <?php
-        echo $this->Form->input('gclis', array(
-          //'multiple' => 'multiple',
-            'type' => 'select',
-            'class'=>'chosen-select filtroAvance',
-            'label' => 'Clientes',
-            'empty' => 'Filtrar por grupo de cliente'
-        ));
-        echo $this->Form->input('lclis', array(
-          //'multiple' => 'multiple',
-            'type' => 'select',
-            'class'=>'chosen-select filtroAvance',
-            'label' => false,
-            'empty' => 'Filtrar por cliente'
-        )); ?>
-      </td><!--Clientes--><!--Grupo de Clientes-->
-      <td style ="width: 283px;">
-        <?php
-        echo $this->Form->input('filtrodesolicitar', array(
-          //'multiple' => 'multiple',
-          'type' => 'select',
-          'class'=>'chosen-select filtroAvance',
-          'label' => 'Solicitar', 
-          'empty' => 'Filtrar por elementos a solicitar', 
-          'options'=> array(
-            'banco'=>'Bancos',
-            'tarjetadecredito'=>'Tarj. de Credito',
-            'descargawebafip'=>'Descarga Web AFIP',
-            'libroivaventas'=>'Libro IVA Ventas',
-            'fcluz'=>'Fc. de Luz',
-            'sueldos'=>'Novedades Sueldos',
-            'librounico'=>'Libro Unico',
-            )
-        )); ?>
-      </td><!--Solicitar-->
-      <td>
-        <?php
-        echo $this->Form->input('filtrodeimpuestos', array(
-          //'multiple' => 'multiple',
-          'type' => 'select',
-          'class'=>'chosen-select filtroAvance',
-          'label' => 'Impuestos', 
-          'empty' => 'Filtrar por impuestos', 
-          'options'=> $impuestos
-        )); ?>
-      </td><!--Impuestos-->
-      <td>
         <?php
         echo $this->Form->input('periodomes', array(
             'options' => array(
@@ -85,8 +35,6 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
             'default' =>  date("m", strtotime("-1 month"))
         ));
         ?>
-      </td><!--Mes-->
-      <td>
         <?php echo $this->Form->input('periodoanio', array(
                 'options' => array(
                     '2014'=>'2014',
@@ -101,14 +49,50 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                 'placeholder' => 'Por favor seleccione año',
                 'default' =>  date("Y", strtotime("-1 month"))
             )
-        ); ?>
-      </td><!--Año-->
-      <td>
+        );
+        echo $this->Form->input('gclis', array(
+          //'multiple' => 'multiple',
+            'type' => 'select',
+            'class'=>'chosen-select filtroAvance',
+            'label' => false,
+            'empty' => 'Filtrar por grupo de cliente'
+        ));
+          echo $this->Form->input('lclis', array(
+            //'multiple' => 'multiple',
+              'type' => 'select',
+              'class'=>'chosen-select filtroAvance',
+              'label' => false,
+              'empty' => 'Filtrar por cliente'
+          ));
+
+        echo $this->Form->input('filtrodesolicitar', array(
+          //'multiple' => 'multiple',
+          'type' => 'select',
+          'class'=>'chosen-select filtroAvance',
+          'label' => false,
+          'empty' => 'Filtrar por elementos a solicitar', 
+          'options'=> array(
+            'banco'=>'Bancos',
+            'tarjetadecredito'=>'Tarj. de Credito',
+            'descargawebafip'=>'Descarga Web AFIP',
+            'libroivaventas'=>'Libro IVA Ventas',
+            'fcluz'=>'Fc. de Luz',
+            'sueldos'=>'Novedades Sueldos',
+            'librounico'=>'Libro Unico',
+            )
+        ));
+        echo $this->Form->input('filtrodeimpuestos', array(
+          //'multiple' => 'multiple',
+          'type' => 'select',
+          'class'=>'chosen-select filtroAvance',
+          'label' => false,
+          'empty' => 'Filtrar por impuestos', 
+          'options'=> $impuestos
+        )); ?>
+
         <?php echo $this->Form->input('selectby',array('default'=>'none','type'=>'hidden'));// ?>
         <?php echo $this->Form->end(__('Aceptar')); ?>
-      </td>
-    </tr>
-  </table>
+
 </div> <!--End Clietenes_avance-->
   <?php /**************************************************************************/  ?>
   <?php /*****************************Mostrar el informe**************************/  ?>
@@ -120,26 +104,26 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
   $periodoSel=$periodomes."-".$periodoanio;
   echo $this->Form->input('periodoSel',array('type'=>'hidden','value'=>$periodoSel)); ?>
   <table cellpadding="0" cellspacing="0" class="tbl_avance" id="tbl_tareas"> <!--Tbl 1-->
-    <thead>
-      <?php /**************************************************************************/  ?>
-      <?php /*****************************Row de tareas*****************************/  ?>
-      <?php /**************************************************************************/  ?>
-      <tr>
-<!--        <th valign="top" class="columnCliente"><label style="width:100px">--><?php //echo 'Clientes'; ?><!--</label></th>-->
-          <?php foreach ($tareas as $tarea){ 
-            $tareaStyle = "style = 'width:80px;";
-            if('tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]=="tarea1"){
-              $tareaStyle = "style = 'text-align: left; width:130px; ";
-            }
-            $tareaStyle .= "'";?>
-            <th valign="top" class="<?php echo 'tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]; ?>" <?php echo $tareaStyle;?>>
-              <label style="width:70px">
-              <?php echo h($tarea["Tareascliente"]['nombre']); ?>
-              </label>
-            </th> 
-        <?php }; ?>
-      </tr>
-    </thead>
+<!--    <thead>-->
+<!--      --><?php ///**************************************************************************/  ?>
+<!--      --><?php ///*****************************Row de tareas*****************************/  ?>
+<!--      --><?php ///**************************************************************************/  ?>
+<!--      <tr>-->
+<!--       <th valign="top" class="columnCliente"><label style="width:100px">--><?php ////echo 'Clientes'; ?><!--<!--</label></th>-->
+<!--          --><?php //foreach ($tareas as $tarea){
+//            $tareaStyle = "/*style = 'width:80px;*/";
+//            if('tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]=="tarea1"){
+//              $tareaStyle = "style = 'text-align: left; width:130px; ";
+//            }
+//            $tareaStyle .= "'";?>
+<!--            <th valign="top" class="--><?php //echo 'tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]; ?><!--" --><?php //echo $tareaStyle;?><!--
+<!--              <label style="width:70px">-->
+<!--              --><?php //echo h($tarea["Tareascliente"]['nombre']); ?>
+<!--              </label>-->
+<!--            </th> -->
+<!--        --><?php //}; ?>
+<!--      </tr>-->
+<!--    </thead>-->
     <?php /**************************************************************************/ ?>
     <?php /*****************************Recorremos los clientes**********************/ ?>
     <?php /**************************************************************************/ ?>
@@ -149,22 +133,24 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
         echo $this->Form->input('cliid'+$cliente['Cliente']['id'],array('type'=>'hidden','value'=>$cliente['Cliente']['id']));
          ?>
         <tr>
-          <td class="columnClienteHeader" colspan="20">
-            <?php 
-            /*echo $this->Html->link(
-                $cliente['Grupocliente']['nombre'], 
-                array('controller' => 'grupoclientes', 
-                'action' => 'index'),
-                array('style'=>'float:left'));*/ ?>
-              <?php 
-                   echo $this->Html->link(
-                    $cliente['Cliente']['nombre'], 
-                    array(
-                      'controller' => 'clientes', 
-                      'action' => 'view', 
-                      $cliente['Cliente']['id']),
-                    array('style'=>'float:left')
-                  ); ?>
+          <td class="columnClienteHeader" colspan="20" style="">
+              <div class="divClienteHeader">
+                <?php
+                /*echo $this->Html->link(
+                    $cliente['Grupocliente']['nombre'],
+                    array('controller' => 'grupoclientes',
+                    'action' => 'index'),
+                    array('style'=>'float:left'));*/ ?>
+                  <?php
+                       echo $this->Html->link(
+                        $cliente['Cliente']['nombre'],
+                        array(
+                          'controller' => 'clientes',
+                          'action' => 'view',
+                          $cliente['Cliente']['id']),
+                        array()
+                      ); ?>
+              </div>
           </td >
         </tr>
         <tr>
@@ -180,8 +166,9 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
           /****************Recorremos las tareas una ves por cada evento de impuesto**/ 
           /**cliente chekiando que la tarea este habilitada para el usuario logueado**/
           /**********************y que tipo de tarea es*******************************/
-          foreach ($tareas as $tarea){ 
-            $tareaFild='tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]; //nombre de la tarea que estoy recorriendo
+          foreach ($tareas as $tarea){
+              $tareaNombre=$tarea["Tareascliente"]['nombre'];
+              $tareaFild='tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]; //nombre de la tarea que estoy recorriendo
             $Tareahabilitado=false;                                                   //por defecto no esta habilitada la tarea
             if($tarea["Tareasxclientesxestudio"]['user_id']==$this->Session->read('Auth.User.id')){ 
               $Tareahabilitado=true;
@@ -193,18 +180,22 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
               $eventoCreado=false;
 
               foreach ($cliente["Eventoscliente"] as $evento){          
-                mostrarEventoCliente($this, $evento, $periodoSel, $tareaFild, $cliente,$Tareahabilitado,$HayImpuestosHabilitados);
+                mostrarEventoCliente($this, $evento, $periodoSel, $tareaNombre, $tareaFild, $cliente,$Tareahabilitado,$HayImpuestosHabilitados);
                 $eventoCreado=true;           
               }; 
               if(!$eventoCreado){
-                mostrarEventoCliente($this, null, $periodoSel, $tareaFild, $cliente,$Tareahabilitado,$HayImpuestosHabilitados);
+                mostrarEventoCliente($this, null, $periodoSel, $tareaNombre, $tareaFild, $cliente,$Tareahabilitado,$HayImpuestosHabilitados);
               }
             }
             if($tarea["Tareasxclientesxestudio"]['tipo']=="impuesto"){
               //tarea tipo impuesto
               if($tarea['Tareascliente']['id']=='5'/*Preparar Papeles de trabajo*/) {?>
-                <td class="columnClienteBody tdBotonesImpuestos"> <!--Tbl 1.2-->
-                  <?php 
+                <td class="columnClienteBodyMedio tdBotonesImpuestos"> <!--Tbl 1.2-->
+                  <div class="divtareas">
+                      <div class="divTareaNombre">
+                          <?php echo $tareaNombre; ?>
+                      </div>
+                  <?php
                   $hayImpuestoRelacioado=false;
                   foreach ($cliente["Impcli"] as $impcli){
                     //Si es un banco no lo vamos a mostrar
@@ -213,7 +204,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                     }
                     //Recorremos los impuestos de cada cliente
                     $hayImpuestoRelacioado=true;
-                    $eventoNoCreado=true; 
+                    $eventoNoCreado=true;
                     //Recorremos los impuestos de cada cliente Chekiamos si el evento esta creado
                     $montovto = 0;
                     $montofavor = 0;
@@ -221,7 +212,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                     foreach ($impcli["Eventosimpuesto"] as $evento){
                       if($evento['periodo']==$periodoSel){
                         $eventoNoCreado=false;
-                        $montovto += $evento['montovto']; 
+                        $montovto += $evento['montovto'];
                         $montofavor += $evento['monc'];
                       }
 
@@ -236,43 +227,129 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                       }
                     }
 
-                    $tareaFild='tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]; 
+                    $tareaFild='tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"];
                    /*Como no podemos traer los impuestos ordenados por sql vamos a ordenarlos aqui*/
                     if($montovto>0){
                       $montovto = $montovto*-1;
                     }else{
                       $montovto = $montofavor;
                     }
-                    mostrarBotonImpuesto($this, $impcli,$montovto ,$periodoSel,$pagado) ;
-                  } 
+                    mostrarBotonImpuesto($this,$cliente, $impcli,$montovto ,$periodoSel,$pagado,$eventoNoCreado) ;
+                  }
                  ?>
+                    </div>
               </td>
             <?php
-              }else if($tarea['Tareascliente']['id']=='19'/*Contabilizar*/) { ?>
-                <td class="columnClienteBody"> <!--Tbl 1.2-->
+              }else if($tarea['Tareascliente']['id']=='19'/*Contabilizar*/) {
+                  ?>
+                <td class="columnClienteBodyFin tdBotonesContabilizar"> <!--Tbl 1.2-->
+                    <div class="divtareas">
+                        <div class="divTareaNombre">
+                            <?php echo $tareaNombre; ?>
+                        </div>
                     <?php
                     if(!$cliente['Cliente']['cargaFacturaLuz']){/*Es monotributista y no hace contabilidad*/
                         $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
                         echo $this->Form->button(
                             'Sumas y Saldos',
                             array(
-                                'class'=>'buttonImpcli0',
+                                'class'=>"buttonImpcliListo progress-button state-loading",
                                 'onClick'=>"abrirsumasysaldos(".$paramsPrepPapeles.")",
                                 'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
                             ),
                             array());
+                        echo $this->Form->button(
+                            'As. Ventas',
+                            array(
+                                'class'=>"buttonImpcliListo progress-button state-loading",
+                                'onClick'=>"contabilizarventas(".$paramsPrepPapeles.")",
+                                'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
+                            ),
+                            array());
+                        echo $this->Form->button(
+                            'As. Compras',
+                            array(
+                                'onClick'=>"contabilizarcompras(".$paramsPrepPapeles.")",
+                                'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
+                                'data-style'=>"top-line",
+                                'class'=>"buttonImpcliListo progress-button state-loading",
+                            ),
+                            array());
+                        echo $this->Form->button(
+                            'As. Retenciones sufridas',
+                            array(
+                                'onClick'=>"contabilizarretencionessufridas(".$paramsPrepPapeles.")",
+                                'id'=>'buttonRetencionessufridas'.$cliente['Cliente']['id'],
+                                'data-style'=>"top-line",
+                                'class'=>"buttonImpcliListo progress-button state-loading",
+                            ),
+                            array());
+                        foreach ($cliente["Impcli"] as $impcli){
+                            //Si es un banco vamos a buscar sus CBUs
+                            if($impcli['Impuesto']['organismo']!='banco'){
+                              continue;
+                            }
+                            foreach ($impcli["Cbu"] as $cbu){
+                                $abreviacionCBUTipo = "";
+                                switch ($cbu['tipocuenta']) {
+                                  case 'Caja de Ahorro en Euros':
+                                    $abreviacionCBUTipo = "CA €";
+                                    break;
+                                  case 'Caja de Ahorro en Moneda Local':
+                                    $abreviacionCBUTipo = "CA $";
+                                    break;
+                                  case 'Caja de Ahorro en U$S':
+                                    $abreviacionCBUTipo = "CA U$ S";
+                                    break;
+                                  case 'Cuenta Corriente en Euros':
+                                    $abreviacionCBUTipo = "CC €";
+                                    break;
+                                  case 'Cuenta Corriente en Moneda Local':
+                                    $abreviacionCBUTipo = "CC $";
+                                    break;
+                                  case 'Cuenta Corriente en U$S':
+                                    $abreviacionCBUTipo = "CC U$ S";
+                                    break;
+                                  case 'Otras':
+                                    $abreviacionCBUTipo = "Otras";
+                                    break;
+                                  case 'Plazo Fijo en Euros':
+                                    $abreviacionCBUTipo = "PF €";
+                                    break;
+                                  case 'Plazo Fijo en U$S':
+                                    $abreviacionCBUTipo = "PF U$ S";
+                                    break;
+                                  case 'Plazo Fijo en Moneda Local':
+                                    $abreviacionCBUTipo = "PF $";
+                                    break;
+                                  default:
+                                    $abreviacionCBUTipo = "cc $";
+                                    break;
+                                }
+                                echo $this->Form->button(
+                                    "As. ".$impcli['Impuesto']['nombre']." ".substr($cbu['numerocuenta'], -5)." ".$abreviacionCBUTipo,
+                                    array(
+                                        'class'=>'buttonImpcliListo progress-button state-loading',
+                                        'onClick'=>"contabilizarBanco('".$cliente['Cliente']['id']."','".$periodoSel."','".$impcli['id']."','".$cbu['id']."')",
+
+                                        'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
+                                    ),
+                                    array());
+                            }
+                        }
                     }
                     ?>
+                        </div>
                 </td>
                 <?php
               }else{
-                echo "<td></td>";
+                echo "<td><div class='divtareas'></div></td>";
               }
             }
           } ?>
         </tr>
                         
-        <tr><td colspan="50" style="height: 6px;"><hr color="#E4E4E4" width="100%" style="height: 2px;"></td> </tr>
+<!--        <tr><td colspan="50" style="height: 6px;"><hr color="#e8e8e8" width="100%" style="height: 2px;"></td> </tr>-->
         <?php 
       } ?>
     </tbody>
@@ -366,7 +443,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
   <a class="close" href="#close"></a>
 </div>
 <?php 
-function mostrarEventoCliente($context, $evento, $periodoSel, $tareaFild, $cliente,$Tareahabilitado,$HayImpuestosHabilitados){
+function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tareaFild, $cliente,$Tareahabilitado,$HayImpuestosHabilitados){
     //Recorremos el evento de este periodo (supuestamente vendra uno solo por cada impuesto del cliente)
     //Si el evento en esta tarea esta ""PENDIENTE""
 
@@ -395,17 +472,30 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaFild, $clien
     $impuestoclienteStyle .= "'";
 
     $params= $eventoID.",'".$tareaFild."','".$periodoSel."','".$cliente['Cliente']['id']."','realizado'"; ?>   
-    <td 
-      class="<?php echo $class.' '.$tareaFild;?>  columnClienteBody"
-      <?php echo $impuestoclienteStyle; ?> 
-      id="cell<?php echo $cliente['Cliente']['id'].'-'.$tareaFild; ?>">
+
       <?php
       //Si hay impuestos habilitados para este cliente en este periodo
       if(!$HayImpuestosHabilitados){
-         $confImg=array('width' => '20', 'height' => '20', 'title' => 'Activar Impuestos','onClick'=>"noHabilitado('Activar Impuestos')");
+          $classes = $tareaFild." ";
+          if($tareaFild=="tarea3"){
+              $classes .= " columnClienteBody";
+          }else{
+              $classes .= " columnClienteBodyMedio";
+          }
+
+          ?>
+          <td class="<?php echo $classes ?> ">
+              <div class="divtareas">
+                  <div class="divTareaNombre">
+                      <?php echo $tareaNombre; ?>
+                  </div>
+              </div>
+          </td>
+          <?php
       }else{
         if($Tareahabilitado) {
-          if($tareaFild=="tarea1"){ 
+          if($tareaFild=="tarea1"){
+            echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody tdBotonesSolicitar" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
             /**Tarea Solicitar**/
             echo $context->Form->create('Eventoscliente',array(
               'class'=>'formTareaCarga checkbox formTareaSolicitar',
@@ -480,85 +570,352 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaFild, $clien
             <?php }
             echo $context->Form->end();            
           }else  if($tareaFild=="tarea3"){
-              //En esta tarea vamos a cargar las ventas, compras y novedades del cliente en un periodo determinado
-              $paramsCargar= $eventoID.",'".$periodoSel."','".$cliente['Cliente']['id']."'";
-              $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente' ,'onClick'=>"verFormCargar(".$paramsCargar.")");
-              echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
+                echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody tdBotonesCarga" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
+                  echo '<div class="divtareas">';
+                    ?>
+                    <div class="divTareaNombre">
+                        <?php echo $tareaNombre; ?>
+                    </div>
+                    <?php
+                    //En esta tarea vamos a cargar las ventas, compras y novedades del cliente en un periodo determinado
+                  $paramsCargar= $eventoID.",'".$periodoSel."','".$cliente['Cliente']['id']."'";
+                  $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente' ,'onClick'=>"verFormCargar(".$paramsCargar.")");
+                  //echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
+                  $buttonclass = "buttonImpcliListo";
+
+                  if($evento['ventascargadas']){
+                    $buttonclass = "buttonImpcliRealizado";
+                  }
+                  echo $context->Form->button(
+                    "Ventas",
+                    array(
+                        'class'=>$buttonclass.' progress-button state-loading',
+                        'onClick'=>"verFormCargarVentas('".$cliente['Cliente']['id']."','".$periodoSel."')",
+                        'id'=>'buttonCargaVenta'.$cliente['Cliente']['id'],
+                    ),
+                    array());
+                    $buttonclass = "buttonImpcliListo";
+                    if($evento['comprascargadas']){
+                      $buttonclass = "buttonImpcliRealizado";
+                    }
+                    echo $context->Form->button(
+                        "Compras",
+                        array(
+                            'class'=>$buttonclass.' progress-button state-loading',
+                            'onClick'=>"verFormCargarCompras('".$cliente['Cliente']['id']."','".$periodoSel."')",
+                            'id'=>'buttonCargaCompra'.$cliente['Cliente']['id'],
+                        ),
+                        array());
+                    $buttonclass = "buttonImpcliListo";
+                    if($evento['pagosacuentacarados']){
+                      $buttonclass = "buttonImpcliRealizado";
+                    }
+                    echo $context->Form->button(
+                        "Pagos a Cuentas",
+                        array(
+                            'class'=>$buttonclass.' progress-button state-loading',
+                            'onClick'=>"verFormCargarPagosacuentas('".$cliente['Cliente']['id']."','".$periodoSel."')",
+                            'id'=>'buttonPagosacuentas'.$cliente['Cliente']['id'],
+                        ),
+                        array());
+                    $buttonclass = "buttonImpcliListo";
+                    if($evento['novedadescargadas']){
+                      $buttonclass = "buttonImpcliRealizado";
+                    }
+                    echo $context->Form->button(
+                        "Sueldos",
+                        array(
+                            'class'=>$buttonclass.' progress-button state-loading',
+                            'onClick'=>"verFormCargarNovedades('".$cliente['Cliente']['id']."','".$periodoSel."')",
+                            'id'=>'buttonCargaNovedade'.$cliente['Cliente']['id'],
+                        ),
+                        array());
+                    $buttonclass = "buttonImpcliListo";
+                    if($evento['bancoscargados']){
+                      $buttonclass = "buttonImpcliRealizado";
+                    }
+                    echo $context->Form->button(
+                        "Bancos",
+                        array(
+                            'class'=>$buttonclass.' progress-button state-loading',
+                            'onClick'=>"verFormCargarBancos('".$cliente['Cliente']['id']."','".$periodoSel."')",
+                            'id'=>'buttonCargaBancos'.$cliente['Cliente']['id'],
+                        ),
+                        array());
+                    $buttonclass = "buttonImpcliListo";
+                    if($evento['honorarioscargador']){
+                      $buttonclass = "buttonImpcliRealizado";
+                    }
+                    echo $context->Form->button(
+                        "Honorarios",
+                        array(
+                            'class'=>$buttonclass.' progress-button state-loading',
+                            'onClick'=>"verFormHonorarios('".$cliente['Cliente']['id']."','".$periodoSel."')",
+                            'id'=>'buttonCargaHonorarios'.$cliente['Cliente']['id'],
+                        ),
+                        array());
+                    $buttonclass = "buttonImpcliListo";
+                    if($evento['reciboscargados']){
+                      $buttonclass = "buttonImpcliRealizado";
+                    }
+                    echo $context->Form->button(
+                        "Recibos",
+                        array(
+                            'class'=>$buttonclass.' progress-button state-loading',
+                            'onClick'=>"verFormDepositos('".$cliente['Cliente']['id']."','".$periodoSel."')",
+                            'id'=>'buttonCargaRecibos'.$cliente['Cliente']['id'],
+                        ),
+                        array());
+              echo '</div>
+            </td>';
           }
+
           else  if($tareaFild=="tarea4"){
-            if($cliente['Cliente']['cargaBanco']){
-              $buttonclass="buttonImpcli0";
-              $paramsPrepPapeles= "'".$cliente['Cliente']['id']."','".$periodoSel."'";
 
-              echo $context->Form->button(
-                  'Acreditaciones depuradas',
-                  [
-                      'class'=>$buttonclass,
-                      'onClick'=>"verCuentasDepuradas(".$paramsPrepPapeles.")",
-                      'id'=>'buttonCuentaDepurada'.$cliente['Cliente']['id'],
-                  ],
-                  []
-              );
-            }
+            echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody tdBotonesControlar" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
+
           } else if ($tareaFild=="tarea14"){
-            //En esta tarea vamos a crear el Honorario 
-            $honorario = array();
-            $honorarioCreado=false; 
+            echo '<td class="'.$class.' '.$tareaFild.' columnClienteBodyMedio" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
+              echo '<div class="divtareas">';
+              ?>
+              <div class="divTareaNombre">
+                  <?php echo $tareaNombre; ?>
+              </div>
+              <?php
+                //En esta tarea vamos a crear el Honorario
+                $honorario = array();
+                $honorarioCreado=false;
 
-            foreach ($cliente["Honorario"] as $vhonorario){          
-              $honorario = $vhonorario;
-              $honorarioCreado=true; 
-            }; 
-            if($honorarioCreado){
-              $paramsSolicitar= $eventoID.",'".$tareaFild."','".$periodoSel."','".$cliente['Cliente']['id']."','".$cliente['Cliente']['nombre']."','realizado','".$honorario['id']."','".$honorario['monto']."','".$honorario['fecha']."','".$honorario['descripcion']."'";
-            }else{
-              $paramsSolicitar= $eventoID.",'".$tareaFild."','".$periodoSel."','".$cliente['Cliente']['id']."','".$cliente['Cliente']['nombre']."','realizado','0','0','".date("d-m-Y")."',''";
-            }
-            
-            $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente' ,'onClick'=>"verFormInformar(".$paramsSolicitar.")");
-            echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
+                foreach ($cliente["Honorario"] as $vhonorario){
+                  $honorario = $vhonorario;
+                  $honorarioCreado=true;
+                };
+                if($honorarioCreado){
+                  $paramsSolicitar= $eventoID.",'".$tareaFild."','".$periodoSel."','".$cliente['Cliente']['id']."','".$cliente['Cliente']['nombre']."','realizado','".$honorario['id']."','".$honorario['monto']."','".$honorario['fecha']."','".$honorario['descripcion']."'";
+                }else{
+                  $paramsSolicitar= $eventoID.",'".$tareaFild."','".$periodoSel."','".$cliente['Cliente']['id']."','".$cliente['Cliente']['nombre']."','realizado','0','0','".date("d-m-Y")."',''";
+                }
+
+                $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente' ,'onClick'=>"verFormInformar(".$paramsSolicitar.")");
+    //            echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
+
+                $buttonclass = "buttonImpcliListo";
+
+                 echo $context->Form->create('clientes',array('action' => 'informefinancierotributario','target'=>'_blank'));
+
+                    echo $context->Form->input('gclis', array(
+                        'type' => 'hidden',
+                        'value' => $cliente['Cliente']['grupocliente_id']
+                    ));
+
+                    echo $context->Form->input('periodomes', array(
+                        'type' => 'hidden',
+                        'value' => substr($periodoSel, 0, 2)
+                    ));
+
+                    echo $context->Form->input('periodoanio', array(
+                                'type' => 'hidden',
+                                'value' => substr($periodoSel, 3, 6)
+                            )
+                        );
+
+                    $options = array(
+                      'label' => "Inf. Tributario Financ.",
+                      'type' => 'button',
+                      'div' => false,
+                      'class' => $buttonclass.' progress-button state-loading',
+                      'onClick' => 'submitparent(this)',
+
+                    );
+                echo $context->Form->end($options);
+
+                if($evento['novedadescargadas']){
+                  $buttonclass = "buttonImpcli4";
+                }
+                if($cliente['Cliente']['cargaBanco']){
+                  $buttonclass="buttonImpcliListo  progress-button state-loading";
+                  $paramsPrepPapeles= "'".$cliente['Cliente']['id']."','".$periodoSel."'";
+
+                  echo $context->Form->button(
+                      'Acreditaciones depuradas',
+                      [
+                          'class'=>$buttonclass,
+                          'onClick'=>"verCuentasDepuradas(".$paramsPrepPapeles.")",
+                          'id'=>'buttonCuentaDepurada'.$cliente['Cliente']['id'],
+                      ],
+                      []
+                  );
+                }
+              echo "</div>
+            </td>";
+
           } else {
+            echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
             $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"realizarEventoCliente(".$params.")");
             echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
           }
         } else{
-          $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"noHabilitado()");
-          echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
-        } 
+            echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
+            $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"noHabilitado()");
+            echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
+        }
       }?>
       </div>
     </td>
     <?php 
 }
-function mostrarBotonImpuesto($context,$impcli,$montoevento, $periodoSel,$pagado){
+function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodoSel,$pagado,$eventoNoCreado){
   $impuestoActivo = false;
   foreach ($impcli['Periodosactivo'] as $periodoactivo) {
     $impuestoActivo = true;
   }
-  if($impuestoActivo){
-    $paramsPrepPapeles= "'".$periodoSel."','".$impcli['id']."'";
-    $buttonclass="buttonImpcli0";
 
-    $widthProgressBar = 0;
-    //el width del progress bar mostrara el avance de la liquidacion del impuesto
-    // 0% No esta liquidado
-    // 50% Liquidado
-    // 75% Pagado
+    //todo mostrar los impuestos que si tienen vencimientos
+    /*Lista de Impuestos Anuales y su vencimiento
 
-    if(count($impcli["Eventosimpuesto"])>0){
-        if($pagado){
-//            $buttonclass="buttonImpcli4";
-          $widthProgressBar=94;
-        }else{
-//            $buttonclass="buttonImpcli2";
-          $widthProgressBar=50;
+
+
+
+        *Participaciones Societarias
+        -igual que bienes personales(solo pers juridicas)
+        // Anticipos [NO tiene]*/
+   //Este switch case va a ver si hay q mostrar el impuesto evaluando si hay vencimiento
+    $mostrarEnEstePeriodo=true;
+    $diamesCorteEjFiscal = $cliente['Cliente']['fchcorteejerciciofiscal'];
+    $pemes = substr($periodoSel, 0, 2);
+    $peanio = substr($periodoSel, 3);
+    $fecha = $diamesCorteEjFiscal."-".$peanio;
+
+    try{
+
+        $DateTimeFecha=new DateTime($fecha);
+        $DateTimeperiodo=new DateTime('01-'.$pemes.'-'.$peanio);
+        if( $DateTimeFecha> $DateTimeperiodo ){
+            $fecha = $diamesCorteEjFiscal."-".($peanio*1 -1);
+        }
+        //si la fecha es superior al dia 1 del periodo q estamos viendo esta to mal loco hay q volver 1 año a la fecha
+
+        $periodoSelAprobado=false;
+        $periodosAprobado = [];
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +4 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +5 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +6 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +7 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +8 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +9 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +10 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +11 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +12 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +13 month"));
+        $periodosAprobado[] = date("m-Y", strtotime($fecha." +14 month"));
+
+        if (in_array($periodoSel, $periodosAprobado, true )){
+            $periodoSelAprobado=true;
+        }
+        $esPersonaFisica=false;
+        $esPersonaJuridica=false;
+        if($cliente['Cliente']['tipopersona']=='fisica'){
+            $esPersonaFisica=true;
+        }
+        if($cliente['Cliente']['tipopersona']=='juridica'){
+            $esPersonaJuridica=true;
+        }
+        switch ($impcli['impuesto_id']){
+            case '28':
+                /*Ganancia Mínima Presunta
+                -Junio (Si pers Fisica)  o 5to A partir del mes de cierre ( si pers juridica)
+                // Anticipos [ Igual A Ganancias Fisica o Soc segun corresponda ]*/
+                if($esPersonaFisica){
+                    //vence Solo en Junio,pero se muestra un mes antes
+                    if($periodoSel!='05-2017'){
+                        $mostrarEnEstePeriodo=false;
+                    }
+                }
+                if($esPersonaJuridica){
+                    if(!$periodoSelAprobado){
+                        //entonces el periodo que queremos mostrar NO esta en uno de estos "meses aprobados"
+                        // y no debo mostrarlo
+                        $mostrarEnEstePeriodo=false;
+                    }
+                }
+                break;
+            case '16':/*BP - Acciones o Participaciones*
+             BP - Acciones o Participaciones(Este impuesto solo se usa para pers juridicas)
+             -Mayo*/
+                // Anticipos [NO tiene]
+                if($esPersonaJuridica){
+                    //vence Solo en Junio,pero se muestra un mes antes
+                    if($periodoSel!='05-2017'){
+                        $mostrarEnEstePeriodo=false;
+                    }
+                }
+                break;
+            case '5':/*Ganancias Sociedades
+            -5to A partir del mes de cierre
+            // Anticipos [10 Anticipos que empiezan a partir del mes siguiente en el que se paga el imp]*/
+                if(!$periodoSelAprobado){
+                    //entonces el periodo que queremos mostrar NO esta en uno de estos "meses aprobados"
+                    // y no debo mostrarlo
+                    $mostrarEnEstePeriodo=false;
+                }
+                break;
+            case '160':/*Ganancias Personas Físicas*/
+                //vence Solo en Junio,pero se muestra un mes antes
+                if($periodoSel!='05-2017'){
+                    $mostrarEnEstePeriodo=false;
+                }
+                break;
+            case '159':/*Impto. s/Bienes Personales
+                -Abril (si Part Soc)
+                // Anticipos [5 Anticipos Junio - Agosto - Octubre - Diciembre - Febrero]*/
+                $periodosAprobado = [];
+                $periodosAprobado[] = "05-".$peanio;//por junio
+                $periodosAprobado[] = "07-".$peanio;//por agosto
+                $periodosAprobado[] = "09-".$peanio;//por Octubre
+                $periodosAprobado[] = "11-".$peanio;//por diciembre
+                $periodosAprobado[] = "01-".$peanio;//por febrero
+                if (in_array($periodoSel, $periodosAprobado, true )){
+                    $mostrarEnEstePeriodo=true;
+                }
+                break;
+            case '172':/*Participaciones Societarias*/
+                break;
         }
     }
-    $labelcolor="green";
-      $montoevento>=0?$labelcolor="#0D9001":$labelcolor="red";
+
+    catch(Exception $e){
+
+       //no se pudo procesar la fecha
+
+    }
+
+
+
+
+  if($impuestoActivo&&$mostrarEnEstePeriodo){
+        $paramsPrepPapeles= "'".$periodoSel."','".$impcli['id']."'";
+        $buttonclass="buttonImpcliListo";
+
+        if(!$eventoNoCreado/*Evento creado*/){
+            if($montoevento>=0)$buttonclass="buttonImpcliSaldoPositivo";
+            if($montoevento<0)$buttonclass="buttonImpcliSaldoNegativo";
+        }
+
+        if(count($impcli["Eventosimpuesto"])>0){
+            if($pagado){
+                $buttonclass="buttonImpcliRealizado";
+    //          $widthProgressBar=94;
+            }else{
+    //            $buttonclass="buttonImpcli2";
+    //          $widthProgressBar=50;
+            }
+        }
+
       echo $context->Form->button(
-        $impcli['Impuesto']['abreviacion'].': <label style="color: '.$labelcolor.';display: initial">$'.number_format($montoevento, 2, ",", ".").'</label>
-        <span class="progress"><span class="progress-inner" style="width: '.$widthProgressBar.'%; opacity: 1;"></span></span>',
+          $impcli['Impuesto']['abreviacion'].': 
+          <label style="color: inherit;display: initial">
+            $'.number_format($montoevento, 2, ",", ".").'
+          </label>',
         array(
           'data-style'=>"top-line",
           'class'=>$buttonclass." progress-button state-loading",
@@ -640,7 +997,9 @@ function mostrarEventoImpuesto($context, $evento,$montovto, $tareaFild, $periodo
   <div class="modal-dialog" style="width:90%;">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<!--            <span aria-hidden="true">&times;</span>-->
+        </button>
         <h4 class="modal-title">Modal title</h4>
       </div>
       <div class="modal-body">
@@ -648,7 +1007,7 @@ function mostrarEventoImpuesto($context, $evento,$montovto, $tareaFild, $periodo
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-        <!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+        <!--     <button type="button" class="btn btn-primary">Save changes</button>-->
       </div>
     </div>
     <!-- /.modal-content -->

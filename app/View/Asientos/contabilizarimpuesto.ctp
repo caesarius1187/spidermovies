@@ -10,8 +10,8 @@
     <h3><?php echo __('Contabilizar Liquidacion de impuesto: '.$impcli['Impuesto']['nombre']); ?></h3>
     <?php
     $id = 0;
-    $nombre = "Asiento devengamiento Iva: ".$periodo;
-    $descripcion = "Asiento automatico";
+    $nombre = "Devengamiento: ".$periodo;
+    $descripcion = "Automatico";
     $fecha = date('d-m-Y');
     $miAsiento=array();
     if(!isset($miAsiento['Movimiento'])){
@@ -69,8 +69,12 @@
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['default'=>$cuentaclienteid,'disabled'=>'disabled']);
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['default'=>$debe,'disabled'=>'disabled']);
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['default'=>$haber,'disabled'=>'disabled']);
+        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+            'default'=>number_format($debe, 2, ".", ""),
+            'disabled'=>'disabled']);
+        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
+            'default'=>number_format($haber, 2, ".", ""),
+            'disabled'=>'disabled']);
         echo "</br>";
         $i++;
     }
@@ -91,8 +95,12 @@
             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['default'=>$cuentaclienteid,'disabled'=>'disabled']);
-            echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['default'=>$debe,'disabled '=>'disabled']);
-            echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['default'=>$haber,'disabled'=>'disabled']);
+            echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+                'default'=>number_format($debe, 2, ".", ""),
+                'disabled '=>'disabled']);
+            echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
+                'default'=>number_format($haber, 2, ".", ""),
+                'disabled'=>'disabled']);
             echo "</br>";
             $i++;
         }

@@ -519,8 +519,13 @@ if($mostrarView){?>
                         <td><?php echo h($actividad['Actividade']['descripcion']); ?></td>
                          <td><?php echo h($actividad['Actividade']['nombre']); ?></td>
                          <td><?php echo h($actividad['descripcion']); ?></td>
-                         <td><?php echo date('d-m-Y',strtotime($actividad['baja'])); ?></td>
+                         <td><?php
+                             if($actividad['baja']==""||$actividad['baja']=="0000-00-00"){
 
+                             }else{
+                                 echo $actividad['baja'];
+                             } ?>
+                         </td>
                          <td class="">
                              <a href="#"  onclick="loadFormActividadcliente(<?php echo $actividad['id'].",".$actividad['cliente_id'];?>)" class="button_view">
                                  <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
@@ -1043,7 +1048,6 @@ if($mostrarView){?>
                         <td></td>
                     </tfoot>
                     <tbody>
-
                     </tbody>
                 </table>
             </td>
@@ -1055,7 +1059,7 @@ if($mostrarView){?>
             <th colspan="7" class="tbl_view_th1">
                 <h2 class="h2header" id="lblProvedores">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgProvedores','class'=>'imgOpenClose'));?>
-                    <?php echo __('Provedores'); ?>
+                    <?php echo __('Proveedores'); ?>
                 </h2>
             </th>
             <th class="tbl_view_th2">
@@ -1906,6 +1910,7 @@ if($mostrarView){?>
                 </tr>
                 <tr>
                     <td colspan="2"><?php echo $this->Form->input('domicilio_id', array(
+                            'required' => 'required',
                             'label' => 'Domicilio',
                             'div' => false,
                             'type'=>'select')); ?></td>
@@ -1968,6 +1973,12 @@ if($mostrarView){?>
                 );
 
                 echo $this->Form->input('domicilio_id',array('label'=>'Domicilio'));
+                echo $this->Form->input('impuesto_id',array(
+                    'label'=>'Banco',
+                    'title'=>'Elija el banco donde se va a pagarle al empleado',
+                    'empty'=>'Efectivo',
+                    'options'=>$bancos
+                ));
                 echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
                 echo $this->Form->input('cargo_id',array('label'=>'Cargo', 'required'=>true,));
                 echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
@@ -1975,6 +1986,7 @@ if($mostrarView){?>
                 echo $this->Form->input('liquidaprimeraquincena',array('label'=>'Primera Quincena'));
                 echo $this->Form->input('liquidasegundaquincena',array('label'=>'Segunda Quincena'));
                 echo $this->Form->input('liquidamensual',array('label'=>'Mensual'));
+                echo $this->Form->input('liquidasac',array('label'=>'SAC'));
                 echo $this->Form->input('liquidapresupuestoprimera',array('label'=>'Presupuesto 1'));
                 echo $this->Form->input('liquidapresupuestosegunda',array('label'=>'Presupuesto 2'));
                 echo $this->Form->input('liquidapresupuestomensual',array('label'=>'Presupuesto 3'));
@@ -2013,8 +2025,9 @@ if($mostrarView){?>
         <a class="close" href="#close"></a>
     </div>
     <a href="#x" class="overlay" id="modificar_empleado"></a>
-        <div class="popup" id="form_modificar_empleado"></div>
-        <a class="close" href="#close"></a>
+        <div class="popup" id="form_modificar_empleado">
+            <a class="close" href="#close"></a>
+        </div>
     </div>
 
 <!-- Fin Popin Nuevo Punto de venta -->
@@ -2025,7 +2038,9 @@ if($mostrarView){?>
     <div class="modal-dialog" style="width:90%;">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<!--                    <span aria-hidden="true">&times;</span>-->
+                </button>
                 <h4 class="modal-title">Modal title</h4>
             </div>
             <div class="modal-body">

@@ -31,7 +31,7 @@ class CuentasController extends AppController {
 		$options = array(
 			'contain'=>array(),
 			//'conditions' => array('Cuenta.tipo' => 'rubro'),
-			'fields'=> array('Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.ajuste,cuentascliente.cuenta_id,cuentascliente.nombre'),
+			'fields'=> array('Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.ajuste,cuentascliente.id,cuentascliente.cuenta_id,cuentascliente.nombre'),
 			'joins'=>array(
 				array('table'=>'cuentasclientes', 
 	                  'alias' => 'cuentascliente',
@@ -48,14 +48,14 @@ class CuentasController extends AppController {
 		$this->set('clienteId',$ClienteId);
 	}
 
-	public function activar($ClienteId,$CuentaId,$Activo)
+	public function activar($ClienteId,$CuentaId,$Activo,$CuentaclienteId=null)
 	{
 		$this->loadModel('Cuentascliente');
 		$this->loadModel('Cuenta');
 		if ($Activo == "1")
 		{
-			//Activar			
-
+			//si ya existe 
+			//Activar
 			$optionsCuenta = [
 				'contain'=>[],
 				'conditions' => ['Cuenta.id' => $CuentaId], 
@@ -67,7 +67,8 @@ class CuentasController extends AppController {
 			$this->Cuentascliente->set('cliente_id',$ClienteId);
 			$this->Cuentascliente->set('cuenta_id',$CuentaId);
 			$this->Cuentascliente->set('nombre',$CuentaDesc['Cuenta']['nombre']);
-			if ($this->Cuentascliente->save()) 
+			$this->Cuentascliente->set('activada',1);
+			if ($this->Cuentascliente->save())
 			{ 				
 				$data['respuesta']='Cuenta activada correctamente.';
 			}
@@ -82,18 +83,43 @@ class CuentasController extends AppController {
 			Esto deberia disparar un alerta cuando hay Asientos relacionados a esta cuenta por que podriamos
 			eliminarlos y desactivarlos horriblemente*/
 			//Desactivar
-			if ($this->Cuentascliente->deleteAll(array(
-														'Cuentascliente.cliente_id' => $ClienteId,
-														'Cuentascliente.cuenta_id' => $CuentaId
-											   			),false
-										 		)	
+
+
+
+			$optionsCuentascliente = [
+				'contain'=>['Movimiento'],
+				'conditions' => ['Cuentascliente.id' => $CuentaclienteId],
+				'fields'=> ['Cuentascliente.nombre']
+			];
+			$CuentaClienteDesc = $this->Cuentascliente->find('first', $optionsCuentascliente);
+
+			if(count($CuentaClienteDesc)==0){
+				if ($this->Cuentascliente->deleteAll(array(
+						'Cuentascliente.cliente_id' => $ClienteId,
+						'Cuentascliente.cuenta_id' => $CuentaId
+					),false
+					)
 				)
-				$data['respuesta']='Cuenta desactivada correctamente.';
-			else
-				$data['respuesta']='Error al desactivar cuenta.';				
+					$data['respuesta']='Cuenta desactivada correctamente.';
+				else
+					$data['respuesta']='Error al desactivar cuenta.';
+			}else{
+				if(count($CuentaClienteDesc['Movimiento'])>0){
+					$data['respuesta']='Error al desactivar cuenta. Esta cuenta tiene Movimientos Cargados y no se puede borrar hasta que se eliminen';
+				}else{
+					$deleted= true;
+				$this->Cuentascliente->deleteAll([
+					'Cuentascliente.id' => $CuentaclienteId,
+				],false
+				);
+					if ($deleted)
+						$data['respuesta']='Cuenta desactivada correctamente.';
+					else
+						$data['respuesta']='Error al desactivar cuenta.';
+				}
+			}
+
 		}
-
-
 		$this->set('data',$data);
 		$this->layout = 'ajax';
 		$this->render('serializejson');		

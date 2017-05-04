@@ -5,7 +5,7 @@
             <th style="width: 275px;">Comprobante</th><!--2-->
             <th style="width: 95px;">CUIT</th><!--3-->
             <th style="width: 95px;">Nombre</th><!--4-->
-            <th style="width: 95px;">Condicion IVA</th><!--5-->
+            <th style="width: 95px;">Cond.IVA</th><!--5-->
             <th style="width: 144px;">Actividad</th><!--6-->
             <th style="width: 144px;">Localidad</th><!--7-->
             <?php
@@ -13,9 +13,9 @@
                 echo
                 '<th style="width: 89px;">Debito</th><!--8-->
                 <th style="width:64px">Alicuota</th> <!--9-->
-               <th style="width: 89px;" class="sum">Neto</th><!--10-->
-               <th style="width: 89px;" class="sum">IVA</th>   <!--11-->
-               ';
+                <th style="width: 89px;" class="sum">Neto</th><!--10-->
+                <th style="width: 89px;" class="sum">IVA</th>   <!--11-->
+                ';
             }
             if($cliente['Cliente']['tieneIVAPercepciones']){
                 echo
@@ -60,16 +60,16 @@
             <td class="<?php echo $tdClass ?>"><?php
                 switch ($venta['Venta']["condicioniva"]) {
                     case 'monotributista':
-                        echo 'Monotribut.';
+                        echo 'Monot.';
                         break;
                     case 'responsableinscripto':
-                        echo 'Resp. Insci.';
+                        echo 'Res.Ins.';
                         break;
                     case 'consf/exento/noalcanza':
-                        echo 'Con. Fin/Exe/No Alca.';
+                        echo 'Con.F/Ex/NoAl.';
                         break;
                     default:
-                        echo 'Monotribut.';
+                        echo 'Monot.';
                         break;
                 }
                 ?>
@@ -95,36 +95,36 @@
                 $venta['Venta']["total"] = $venta['Venta']["total"]*-1;
             }
             if(!$cliente['Cliente']['tieneMonotributo']){?>
-                <td class="<?php echo $tdClass?>"><?php echo $venta['Venta']["tipodebito"]?></td><!--8-->
-                <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["alicuota"], 2, ",", ".")?>%</td><!--9-->
-                <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["neto"], 2, ",", ".")?></td><!--10-->
-                <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["iva"], 2, ",", ".")?></td><!--11-->
+                <td class="<?php echo $tdClass?>"><?php echo substr($venta['Venta']["tipodebito"],0,10)?></td><!--8-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["alicuota"], 2, ",", ".")?>%</td><!--9-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["neto"], 2, ",", ".")?></td><!--10-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["iva"], 2, ",", ".")?></td><!--11-->
                 <?php
                 //Hay que agregar Condicion frente al IVA ??
             }
             if($cliente['Cliente']['tieneIVAPercepciones']){?>
-                <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["ivapercep"], 2, ",", ".")?></td><!--12-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["ivapercep"], 2, ",", ".")?></td><!--12-->
                 <?php
             }
             if($cliente['Cliente']['tieneAgenteDePercepcionIIBB']){?>
-                <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["iibbpercep"], 2, ",", ".")?></td><!--13-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["iibbpercep"], 2, ",", ".")?></td><!--13-->
                 <?php
             }
             if($cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias']){?>
-                <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["actvspercep"], 2, ",", ".")?></td><!--14-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["actvspercep"], 2, ",", ".")?></td><!--14-->
                 <?php
             }
             if($cliente['Cliente']['tieneImpuestoInterno']){?>
-                <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["impinternos"], 2, ",", ".")?></td><!--15-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["impinternos"], 2, ",", ".")?></td><!--15-->
                 <?php
             }
             if(!$cliente['Cliente']['tieneMonotributo']){?>
-                <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["nogravados"], 2, ",", ".")?></td><!--16-->
-                <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["excentos"], 2, ",", ".")?></td><!--17-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["nogravados"], 2, ",", ".")?></td><!--16-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["excentos"], 2, ",", ".")?></td><!--17-->
             <?php } ?>
-            <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["exentosactividadeseconomicas"], 2, ",", ".")?></td><!--18-->
-            <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["exentosactividadesvarias"], 2, ",", ".")?></td><!--19-->
-            <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["total"], 2, ",", ".")?></td><!--20-->
+            <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["exentosactividadeseconomicas"], 2, ",", ".")?></td><!--18-->
+            <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["exentosactividadesvarias"], 2, ",", ".")?></td><!--19-->
+            <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["total"], 2, ",", ".")?></td><!--20-->
             <td class="<?php echo $tdClass?>">
                 <?php
                 $paramsVenta = $venta['Venta']["id"];

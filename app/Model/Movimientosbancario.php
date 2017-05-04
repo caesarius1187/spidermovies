@@ -25,13 +25,6 @@ class Movimientosbancario extends AppModel {
  */
 	
 	public $belongsTo = array(
-		'Impcli' => array(
-			'className' => 'Impcli',
-			'foreignKey' => 'impcli_id',
-			'conditions' => '',
-			'fields' => '',
-			'order' => ''
-		),
 		'Cbu' => array(
 			'className' => 'Cbu',
 			'foreignKey' => 'cbu_id',

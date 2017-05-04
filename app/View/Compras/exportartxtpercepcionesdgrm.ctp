@@ -23,8 +23,8 @@
     <div class="index" id="headerCliente">
         <div style="width:8%; float: left;">
             <?php  echo $this->Html->link("<- Volver",array(
-                'controller' => 'clientes',
-                'action' => 'tareacargar',
+                'controller' => 'compras',
+                'action' => 'cargar',
                 $cliid,
                 $periodo,
             ),

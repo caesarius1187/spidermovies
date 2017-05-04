@@ -7,51 +7,30 @@ echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
 $timePeriodo = strtotime("01-".$periodo ." +1 months");
 $periodoNext = date("m-Y",$timePeriodo);
 echo $this->Form->input('periodonext',array('value'=>$periodoNext,'type'=>'hidden'));
-echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));?>
+echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
+echo $this->Form->input('impcliid',array('value'=>$impcliid,'type'=>'hidden'));
+echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));?>
 <div id="index" class="index" style="margin-bottom:10px;">
-
-<div id="Formhead" class="clientes papeldetrabajoconveniomultilateral index" style="margin-bottom:10px;">
-    <table class="tbl_conveniomultilateral tblInforme">
-        <tr>
-            <td>
-            	Contribuyente:
-            </td>
-            <td>
-            	<?php echo $impcli['Cliente']['nombre'];
-                echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));
-                echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));
-				echo $this->Form->input('impcliid',array('value'=>$impcli['Impcli']['id'],'type'=>'hidden'));
-				?>
-            </td>
-        </tr>
-        <tr>
-            <td>
-            	Periodo:
-            </td>
-            <td>
-            	<?php echo $periodo;
-				echo $this->Form->input('periodo',array('value'=>$periodo,'type'=>'hidden'));
-				?>
-            </td>
-            <td rowspan="1">
-                <?php echo $this->Form->button('Imprimir',
-                    array('type' => 'button',
-                        'class' =>"btn_imprimir",
-                        'onClick' => "imprimir()"
-                    )
-                );?>
-            </td>
-            <td rowspan="1">
-                <?php echo $this->Form->button('Excel',
-                    array('type' => 'button',
-                        'id'=>"clickExcel",
-                        'class' =>"btn_imprimir",
-                    )
-                );?>
-            </td>
-        </tr>
-    </table>
-</div> <!--End Clietenes_avance-->
+	<div id="Formhead" class="clientes papeldetrabajosindicato index" style="margin-bottom:10px;">
+		<h2><?php echo $impcli['Impuesto']['nombre']?> </h2>
+		Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
+		CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
+		Periodo: <?php echo $periodo; ?>
+		<?php echo $this->Form->button('Imprimir',
+			array('type' => 'button',
+				'class' =>"btn_imprimir",
+				'onClick' => "imprimir()"
+			)
+		);?>
+		<?php  echo $this->Form->button('Excel',
+			array('type' => 'button',
+				'id'=>"clickExcel",
+				'class' =>"btn_imprimir",
+			)
+		);?>
+	</div>
+<div id="divLiquidarConvenioMultilateral">
+</div>
 <?php if (count($provinciasVentasDiff)!=0||count($provinciasComprasDiff)!=0){ ?>
 <div class="index">
 	Las provincias dadas de alta, actualmente, son: </br><?php 
@@ -586,9 +565,11 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 					<?php
                     echo number_format($percepionBancariaSubtotal, 2, ",", ".");
                     $totalGeneralPercepcionesBancarias += $percepionBancariaSubtotal;
-                    if($impcli['Impcli']['impuesto_id']==21){
-                        echo $this->Form->input('totalpercepciones', array('type'=>'hidden','value'=>$percepionBancariaSubtotal+$percepionSubtotal));
-                    }
+
+					if($impcli['Impcli']['impuesto_id']==21) {
+						echo $this->Form->input('totalpercepciones', array('type' => 'hidden', 'value' => $totalGeneralPercepciones));
+						echo $this->Form->input('totalpercepcionesbancarias', array('type' => 'hidden', 'value' => $totalGeneralPercepcionesBancarias));
+					}
 					?>
 				</td>
 				<td><!-- Otros -->
@@ -787,12 +768,15 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                         ?>
 					</td>
 					<td>
-						<?php echo number_format($totalGeneralPercepciones, 2, ",", ".");?>
+						<?php
+						echo number_format($totalGeneralPercepciones, 2, ",", ".");
+						echo $this->Form->input('totalpercepciones', array('type'=>'hidden','value'=>$totalGeneralPercepciones));
+						?>
 					</td>
 					<td>
 						<?php echo number_format($totalGeneralPercepcionesBancarias, 2, ",", ".");
-                        echo $this->Form->input('totalpercepciones', array('type'=>'hidden','value'=>$totalGeneralPercepcionesBancarias+$totalGeneralPercepciones));
-                        ?>
+						echo $this->Form->input('totalpercepcionesbancarias', array('type'=>'hidden','value'=>$totalGeneralPercepcionesBancarias));
+						?>
 					</td>
 					<td>
 						<?php
@@ -915,8 +899,7 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 	//echo json_encode($liquidacionProvincia);
 	?>	
 	</div>
-	<div id="divLiquidarConvenioMultilateral">
-	</div>
+
     <?php
     if($tieneMonotributo=='true'){ ?>
         <div id="divContenedorContabilidad" style="margin-top:10px">  </div>
@@ -950,8 +933,8 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     'div' => false,
                     'style'=> 'height:9px;display:inline'
                 ));
-                echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento Act. Economicas" ,'style'=>'width:250px']);
-                echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Asiento Automatico periodo: ".$periodo,'style'=>'width:250px']);
+                echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Devengamiento Act. Economicas" ,'style'=>'width:250px']);
+                echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Automatico",'style'=>'width:250px']);
                 echo $this->Form->input('Asiento.0.cliente_id',['value'=>$impcli['Cliente']['id'],'type'=>'hidden']);
                 echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcli['Impcli']['id'],'type'=>'hidden']);
                 echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo,'type'=>'hidden']);
@@ -980,12 +963,57 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
                     echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarCM['cuenta_id'],'id'=>'cuenta'.$asientoestandarCM['cuenta_id']]);
                     echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarCM['Cuenta']['numero'],'style'=>'width:82px']);
                     echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['label'=>($i!=0)?false:'Debe','readonly'=>'readonly','value'=>0,]);
-                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['label'=>($i!=0)?false:'Haber','readonly'=>'readonly','value'=>0,])."</br>";
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+						'label'=>($i!=0)?false:'Debe',
+						'value'=>0,
+						'class'=>"inputDebe "
+					]);
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
+							'label'=>($i!=0)?false:'Haber',
+							'value'=>0,
+							'class'=>"inputHaber "
+						])."</br>";
                     $i++;
                 }
                 echo $this->Form->submit('Contabilizar',['style'=>'display:none']);
                 echo $this->Form->end();
+				$totalDebe=0;
+				$totalHaber=0;
+				echo $this->Form->label('','&nbsp; ',[
+					'style'=>"display: -webkit-inline-box;width:355px;"
+				]);
+				echo $this->Form->label('lblTotalDebe',
+					"$".number_format($totalDebe, 2, ".", ""),
+					[
+						'id'=>'lblTotalDebe',
+						'style'=>"display: inline;"
+					]
+				);
+				echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:100px;"]);
+				echo $this->Form->label('lblTotalHaber',
+					"$".number_format($totalHaber, 2, ".", ""),
+					[
+						'id'=>'lblTotalHaber',
+						'style'=>"display: inline;"
+					]
+				);
+				if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
+					echo $this->Html->image('test-pass-icon.png',array(
+							'id' => 'iconDebeHaber',
+							'alt' => 'open',
+							'class' => 'btn_exit',
+							'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+						)
+					);
+				}else{
+					echo $this->Html->image('test-fail-icon.png',array(
+							'id' => 'iconDebeHaber',
+							'alt' => 'open',
+							'class' => 'btn_exit',
+							'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+						)
+					);
+				}
                 ?>
             </div>
         </div>

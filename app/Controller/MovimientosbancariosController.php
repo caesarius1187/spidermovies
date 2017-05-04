@@ -13,6 +13,7 @@ class MovimientosbancariosController extends AppController {
  *
  * @var array
  */
+	public $alicuotas = array("0" => '0',"2.5" => '2.5',"5" => '5',"10.5" => '10.5',"21" => '21',"27" => '27',);
 	public $components = array('Paginator');
 
 /**
@@ -26,7 +27,10 @@ class MovimientosbancariosController extends AppController {
 		$this->set('movimientos',$movimientos);				
 	}
 	public function edit($id ,$cliid = null) {
+
 		$this->loadModel('Cuentascliente');
+
+		$this->set('alicuotas', $this->alicuotas);
 		if (!$this->Movimientosbancario->exists($id)) {
 			throw new NotFoundException(__('Movimiento bancario No existe'));
 			return;
@@ -102,6 +106,193 @@ class MovimientosbancariosController extends AppController {
 		$this->set('cuentasclientes', $cuentasclientes);
 		$this->layout = 'ajax';
 	}
+	public function cargar($id=null,$periodo=null){
+		// PRIMERO CHEKIAR QUE EL CLIENTE QUE MUESTRA LAS VENTAS SEA PARTE DEL ESTUDIO ACTIVO
+
+		$this->loadModel('Cliente');
+		$this->loadModel('Cbu');
+		$this->loadModel('Cuentascliente');
+		$this->loadModel('Cuenta');
+
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+		//A: Es menor que periodo Hasta
+		$esMenorQueHasta = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+		//B: Es mayor que periodo Desde
+		$esMayorQueDesde = array(
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+				),
+			)
+		);
+		//C: Tiene Periodo Hasta 0 NULL
+		$periodoNull = array(
+			'OR'=>array(
+				array('Periodosactivo.hasta'=>null),
+				array('Periodosactivo.hasta'=>""),
+			)
+		);
+		$conditionsImpCliHabilitados = array(
+			//El periodo esta dentro de un desde hasta
+			'AND'=> array(
+				$esMayorQueDesde,
+				'OR'=> array(
+					$esMenorQueHasta,
+					$periodoNull
+				)
+			)
+		);
+		$this->set('periodo',$periodo);
+		$cliente=$this->Cliente->find('first', array(
+				'contain'=>array(
+					'Impcli'=>[
+						'Impuesto',
+						'Cbu'=>[
+							'Movimientosbancario'=>[
+								'Cbu',
+								'Cuentascliente',
+								'conditions'=>[
+									'Movimientosbancario.periodo'=>$periodo,
+								]
+							],
+						],
+						'Periodosactivo'=>[
+							'conditions'=>$conditionsImpCliHabilitados
+						]
+					]
+				),
+				'conditions' => array(
+					'id' => $id,
+				),
+			)
+		);
+		/*AFIP*/
+		$tieneMonotributo=False;
+		$tieneIVA=False;
+		$tieneIVAPercepciones=False;
+		$tieneImpuestoInterno=False;
+		/*DGR*/
+		$tieneAgenteDePercepcionIIBB=False;
+		/*DGRM*/
+		$tieneAgenteDePercepcionActividadesVarias=False;
+		foreach ($cliente['Impcli'] as $impcli) {
+			/*AFIP*/
+			if($impcli['impuesto_id']==4/*Monotributo*/){
+				//Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Monotributista Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=True;
+					$tieneIVA=False;
+				}
+			}
+			if($impcli['impuesto_id']==19/*IVA*/){
+				//Tiene IVA asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Responsable Inscripto Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=False;
+					$tieneIVA=True;
+				}
+			}
+			if($impcli['impuesto_id']==184/*IVA Percepciones*/){
+				//Tiene IVA Percepciones asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene IVA Percepciones Activo en este periodo
+					$tieneIVAPercepciones=True;
+				}
+			}
+			if($impcli['impuesto_id']==185/*Impuesto Interno*/){
+				//Tiene Impuesto Interno asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Impuesto Interno Activo en este periodo
+					$tieneImpuestoInterno=True;
+				}
+			}
+			/*DGR*/
+			if($impcli['impuesto_id']==173/*Agente de Percepcion IIBB*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion IIBB Activo en este periodo
+					$tieneAgenteDePercepcionIIBB=True;
+				}
+			}
+			/*DGRM*/
+			if($impcli['impuesto_id']==186/*Agente de Percepcion de Actividades Varias*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion de Actividades Varias Activo en este periodo
+					$tieneAgenteDePercepcionActividadesVarias=True;
+				}
+			}
+		}
+		$cliente['Cliente']['tieneMonotributo'] = $tieneMonotributo;
+		$cliente['Cliente']['tieneIVA'] = $tieneIVA;
+		$cliente['Cliente']['tieneIVAPercepciones'] = $tieneIVAPercepciones;
+		$cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;
+		$cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;
+		$cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;
+		$this->set(compact('cliente'));
+
+		/*Aca vamos a listar las cuentas clientes que se relacionan a los movimientos bancarios
+        se supone que ya estan relacionadas al cliente cuando se les dio de alta alguna cuenta bancaria*/
+		$cuentasDeMovimientoBancario = $this->Cuenta->cuentasDeMovimientoBancario;
+		/*Tenemos que tener en cuenta las cuentas de movimientos grales y las cuentas de acreditaciones
+        y extracciones relacionadas a los CBU*/
+		$optioncuentascliente = [
+			'conditions'=>[
+				'Cuentascliente.cuenta_id'=> $cuentasDeMovimientoBancario,
+				'Cuentascliente.cliente_id'=> $id,
+			]
+		];
+		$cuentasclientes = $this->Cuentascliente->find('list',$optioncuentascliente);
+		$this->set('cuentasclientes', $cuentasclientes);
+
+
+		$conditionsCli = array(
+			'Grupocliente',
+		);
+
+		$lclis = $this->Cliente->find('list',array(
+			'contain' =>$conditionsCli,
+			'conditions' => array(
+				'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id')
+			),
+			'order' => array(
+				'Grupocliente.nombre','Cliente.nombre'
+			),
+		));
+		$this->set(compact('lclis'));
+		$clienteCbuOptions = array(
+			'contain'=>array(
+			),
+			'joins'=>array(
+				array('table'=>'impclis',
+					'alias' => 'Impcli',
+					'type'=>'inner',
+					'conditions'=> array(
+						'Impcli.id = Cbu.impcli_id',
+						'Impcli.cliente_id'=> $id
+					)
+				),
+			)
+		);
+		$cbus = $this->Cbu->find('list',$clienteCbuOptions);
+		$this->set(compact('cbus'));
+		$this->set('alicuotas', $this->alicuotas);
+	}
 
 	public function addajax(){
 		//$this->request->onlyAllow('ajax');
@@ -136,6 +327,9 @@ class MovimientosbancariosController extends AppController {
 		$this->loadModel('Cuentascliente');
 		$this->loadModel('Cliente');
 		$this->loadModel('Cuenta');
+		$this->loadModel('Cbu');
+
+		$this->set('alicuotas', $this->alicuotas);
 
         $folderMovimientosbancarios = WWW_ROOT.'files'.DS.'movimientosbancarios'.DS.$cliid.DS.$cbuid.DS.$periodo.DS.'resumen';
 		if ($this->request->is('post')) {
@@ -171,7 +365,18 @@ class MovimientosbancariosController extends AppController {
                 ),
             )
         );
-		$this->set(compact('cliente','cliid','impcliid','cbuid','cliid','periodo','folderMovimientosbancarios'));
+		$cbu=$this->Cbu->find('first', array(
+                'contain'=>array(
+					'Impcli'=>[
+						'Impuesto'
+					]
+                ),
+                'conditions' => array(
+                    'Cbu.id' => $cbuid,
+                ),
+            )
+        );
+		$this->set(compact('cliente','cliid','impcliid','cbu','cbuid','cliid','periodo','folderMovimientosbancarios'));
 
         $optionsmovimientosbancariosperiodo=array(
 			'contain'=>array(
@@ -185,6 +390,7 @@ class MovimientosbancariosController extends AppController {
 		);
         $movimientosbancariosperiodo = $this->Movimientosbancario->find('all',$optionsmovimientosbancariosperiodo);
 		$this->set('movimientosbancariosperiodo',$movimientosbancariosperiodo);
+		$this->set('alicuotas', $this->alicuotas);
 	}
 	public function cargarmovimientosbancarios (){
 		$data=array();

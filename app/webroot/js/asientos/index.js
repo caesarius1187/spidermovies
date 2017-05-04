@@ -14,6 +14,7 @@ $(document).ready(function() {
         $('#Asiento0MovimientoKkkCuentasclienteId_chosen').css('width','300px');
         return false;
     });
+    $("#tblAsientos").DataTable();
     $("#cargarMovimiento").click(function(){
         cargarMovimiento();
         return false;
@@ -57,13 +58,38 @@ function editarMovimientos(asientoID){
         url: serverLayoutURL+"/movimientos/index/"+asientoID,
         // URL to request
         data: data,  // post data
-        success: function(response) {
-            $('#myModal').on('show.bs.modal', function() {
-                $('#myModal').find('.modal-title').html('Editar Asiento');
-                $('#myModal').find('.modal-body').html(response);
-                // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
-            });
-            $('#myModal').modal('show');
+        success: function(mirespuesta) {
+            if($('#isajaxrequest').val()==0){
+                //si existe este div Cargo everything aca
+                $('#myModalAsientos').on('show.bs.modal', function() {
+                    $('#myModalAsientos').find('.modal-title').html('Editar Asiento');
+                    $('#myModalAsientos').find('.modal-body').html(mirespuesta);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                    //Aca vamos a personalizar el close y la X para cerrar por que puede que tengamos 2 modal uno encima del otro
+                    $('#myModalAsientos').find('.close').click(function(e){
+                        // $(this).preventDefault();
+                        setTimeout(
+                            function()
+                            {
+                                $('#myModal').modal('show');
+                            }, 100);
+                    });
+                    $('#myModalAsientos').find('.btn-default').click(function(e){
+                        // $(this).preventDefault();
+                        setTimeout(
+                            function()
+                            {
+                                $('#myModal').modal('show');
+                            }, 100);
+                    });
+
+                });
+                $('#myModalAsientos').modal('show');
+            }else{
+                //Si no existe voy a buscar el div "divEditarAsiento" que deberia estar en asientos/index
+                $('#divEditarAsiento').html(mirespuesta);
+            }
+
             $('.chosen-select').chosen({search_contains:true});
             $("#FormEditaMovimientoCuentascliente_chosen").css('width','300px');
             $('#FormAgregaMovimiento').submit(function(){
@@ -81,12 +107,21 @@ function editarMovimientos(asientoID){
                     data: formData,
                     success: function(data,textStatus,xhr){
                         var respuesta = JSON.parse(data);
-                        $('#myModal').modal('hide');
+                        if($('#isajaxrequest').val()==0){
+                            $('#myModalAsientos').modal('hide');
+                        }else{
+                            $('#divEditarAsiento').html("");
+                        }
+                        $('#myModalAsientos').modal('hide');
                         callAlertPopint(respuesta.respuesta);
-                        editarMovimientos(asientoID);
+                        //editarMovimientos(asientoID);
                     },
                     error: function(xhr,textStatus,error){
-                        $('#myModal').modal('hide');
+                        if($('#isajaxrequest').val()==0){
+                            $('#myModalAsientos').modal('hide');
+                        }else{
+                            $('#myModal').modal('hide');
+                        }
                         callAlertPopint(respuesta.error);
                         alert(textStatus);
                     }
@@ -119,13 +154,14 @@ function catchFormAsiento(idForm){
             data: formData,
             success: function(data,textStatus,xhr){
                 var respuesta = JSON.parse(data);
-                $('#myModal').modal('hide');
-                $('#myModalFormAgregarAsiento').modal('hide');
-                callAlertPopint(respuesta.respuesta);
-                reiniciarFormAgregarAsiento()
+                 $('#myModalAsientos').modal('hide');
+                 $('#myModalFormAgregarAsiento').modal('hide');
+                 callAlertPopint(respuesta.respuesta);
+                // reiniciarFormAgregarAsiento()
+                location.reload();
             },
             error: function(xhr,textStatus,error){
-                $('#myModal').modal('hide');
+                $('#myModalAsientos').modal('hide');
                 $('#myModalFormAgregarAsiento').modal('hide');
                 callAlertPopint(respuesta.error);
                 alert(textStatus);
@@ -176,6 +212,12 @@ function cargarMovimiento(){
             .append(
                 $("<td>").append(
                     $("<input>")
+                        .val(0)
+                        .attr('id','Asiento0Movimiento'+movimientonumero+'Id')
+                        .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][id]')
+                        .attr('type','hidden')
+                ).append(
+                    $("<input>")
                         .val(cuentaclienteid)
                         .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteId')
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][cuentascliente_id]')
@@ -191,11 +233,14 @@ function cargarMovimiento(){
                         .val(debe)
                         .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteDebe')
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][debe]')
+                        .addClass("inputDebe movimientoConValor")
+
                 ).append(
                     $("<input>")
                         .val(haber)
                         .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteHaber')
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][haber]')
+                        .addClass("inputHaber movimientoConValor")
                 ).append(
                     $("<input>")
                         .val(fecha)
@@ -218,10 +263,12 @@ function cargarMovimiento(){
 function cargarMovimientoEdit(){
     var cuentaclienteid = $("#FormEditaMovimientoCuentascliente").val();
     var cuentanombre = $("#FormEditaMovimientoCuentascliente option:selected").text();
+    var cuentanumero = $("#FormEditaMovimientoCuentascliente option:selected").closest('optgroup').prop('label');
     var debe = $("#MovimientoDebe").val();
     var haber = $("#MovimientoHaber").val();
-    var fecha = $("#MovimientoFecha").val();
     var movimientonumero =$("#topmovimiento").val()*1+1;
+    var fecha = $("#MovimientoFecha").val();
+
     $("#tablaModificarAsiento").append(
         $('<tr>')
             .attr('id','movimientoeditnumero'+movimientonumero)
@@ -230,11 +277,26 @@ function cargarMovimientoEdit(){
                 $("<td>")
                     .append(
                         $("<input>")
-                            .val(cuentaclienteid)
-                            .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteId')
-                            .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][cuentascliente_id]')
+                            .val(cuentanumero)
+                            .css('width','300px')
+                            .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteNumero')
+                            .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][numero]')
+                    )
+            ).append(
+                $("<td>")
+                    .append(
+                        $("<input>")
+                            .val(0)
+                            .attr('id','Asiento0Movimiento'+movimientonumero+'Id')
+                            .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][id]')
                             .attr('type','hidden')
                     ).append(
+                    $("<input>")
+                        .val(cuentaclienteid)
+                        .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteId')
+                        .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][cuentascliente_id]')
+                        .attr('type','hidden')
+                ).append(
                     $("<input>")
                         .val(cuentanombre)
                         .css('width','300px')
@@ -242,16 +304,18 @@ function cargarMovimientoEdit(){
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][nombre]')
                 )
             ).append(
-            $("<td>").append(
-                $("<input>")
-                    .val(debe)
-                    .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteDebe')
-                    .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][debe]')
+                $("<td>").append(
+                    $("<input>")
+                        .val(debe)
+                        .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteDebe')
+                        .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][debe]')
+                        .addClass("inputDebe movimientoConValor")
             ).append(
                 $("<input>")
                     .val(haber)
                     .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteHaber')
                     .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][haber]')
+                    .addClass("inputHaber movimientoConValor")
             ).append(
                 $("<input>")
                     .val(fecha)
@@ -267,7 +331,17 @@ function cargarMovimientoEdit(){
             )
         )
     )
+    $(".inputDebe").each(function () {
+        $(this).change(addTolblTotalDebeAsieto);
+    });
+    $(".inputHaber").each(function () {
+        $(this).change(addTolblTotalhaberAsieto);
+    });
     $("#topmovimiento").val(movimientonumero*1);
     $("#FormEditaMovimientoCuentascliente option:selected").remove();
     $("#FormEditaMovimientoCuentascliente").trigger("chosen:updated");
+    $(".inputHaber").each(function () {
+        $(this).trigger("change");
+        return;
+    });
 }

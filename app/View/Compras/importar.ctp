@@ -19,8 +19,8 @@ echo $this->Html->script('compras/importar',array('inline'=>false));?>
         <h1><?php echo __($labelClifch); ?></h1>
         <label><?php echo $periodo; ?></label>
         <?php  echo $this->Html->link("<- Volver",array(
-                'controller' => 'clientes',
-                'action' => 'tareacargar',
+                'controller' => 'compras',
+                'action' => 'cargar',
                 $cliid,
                 $periodo,
             ),

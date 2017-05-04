@@ -23,8 +23,8 @@
     <div class="index" id="headerCliente">
         <div style="width:8%; float: left;">
             <?php  echo $this->Html->link("<- Volver",array(
-                'controller' => 'clientes',
-                'action' => 'tareacargar',
+                'controller' => 'ventas',
+                'action' => 'cargar',
                 $cliid,
                 $periodo,
             ),
@@ -102,7 +102,7 @@
     //            $lineVenta['identificacionnumero'] = '20000000001';
     //        }
     //        $lineVenta['importetotaloperacion']=substr($line, 108,13).'.'.substr($line, 121, 2);
-            $lineVenta .= str_pad(number_format($venta['Venta']['total'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+            $lineVenta .= str_pad(number_format($venta[0]['totalfactura'], 2, "", ""), 15, "0", STR_PAD_LEFT);
     //        $lineVenta['importeconceptosprecionetogravado']=substr($line, 123,13).'.'.substr($line, 136, 2);
             $lineVenta .= str_pad(number_format($venta['Venta']['nogravados'], 2, "", ""), 15, "0", STR_PAD_LEFT);
     //        $lineVenta['percepcionesnocategorizados']=substr($line, 138,13).'.'.substr($line, 151, 2);

@@ -35,25 +35,31 @@ $asiento = $asientos[0];
 		'type'=>'hidden',
 		]
 	);
+	echo $this->Form->input('Asiento.0.numero',
+		['value'=>$asiento['Asiento']['numero'],
+			'style'=>"width:100px"]);
+	echo $this->Form->input('Asiento.0.fecha',
+		['value'=>$asiento['Asiento']['fecha'],
+			'style'=>"width:120px"]);
+	echo $this->Form->input('Asiento.0.periodo',
+		['value'=>$asiento['Asiento']['periodo'],
+			'style'=>"width:120px"]);
 	echo $this->Form->input('Asiento.0.nombre',
 		['value'=>$asiento['Asiento']['nombre'],
 			'style'=>"width:300px"]);
 	echo $this->Form->input('Asiento.0.descripcion',
 		['value'=>$asiento['Asiento']['descripcion'],
 			'style'=>"width:300px"]);
-	echo $this->Form->input('Asiento.0.fecha',
-		['value'=>$asiento['Asiento']['fecha'],
-			'style'=>"width:120px"]);
 	echo "</br>";
 	?>
 
-	<table id="tablaModificarAsiento" class="tbl_border"><?php
+	<table id="tablaModificarAsiento" class="tbl_border" style="border-spacing: 0px;"><?php
 		$totalDebe=0;
 		$totalHaber=0;
-	foreach ($asiento['Movimiento'] as $m => $movimiento){
+		foreach ($asiento['Movimiento'] as $m => $movimiento){
 		?>
 		<tr id="movimientoeditnumero<?php echo $m ?>" >
-			<td style="width: 300px"><?php
+			<td style="width: 100px"><?php
 				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.id',
 					['value'=>$movimiento['id']]);
 				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.cuentascliente_id',
@@ -72,31 +78,46 @@ $asiento = $asientos[0];
 						'value'=>$movimiento['Cuentascliente']['cuenta_id'],
 						'type'=>'hidden',
 					]);
+				echo $this->Form->label('numeroCuenta',
+					$movimiento['Cuentascliente']['Cuenta']['numero'],
+					[
+						'style'=>"display:initial",
+					]
+				);
+				?>
 
-		echo $this->Form->label('nombreCuenta',
-				$movimiento['Cuentascliente']['nombre'],
-				[
-					'style'=>"display:initial",
-				]
-			);
+				</td>
+				<td style="width: 200px"><?php
+
+
+				echo " ".$this->Form->label('nombreCuenta',
+					$movimiento['Cuentascliente']['nombre'],
+					[
+						'style'=>"display:initial",
+					]
+				);
 				?>
 			</td>
 			<td><?php
-		echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.debe',
-			[
-				'value'=> number_format($movimiento['debe'], 2, ".", ""),
-				'style'=>"width:auto",
-				'class'=>"inputDebe",
-				'label'=>false]);
-		$totalDebe+=number_format($movimiento['debe'], 2,'.','');
-		echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.haber',
-			['value'=>number_format($movimiento['haber'], 2, ".", ""),
-				'class'=>"inputHaber",
-				'style'=>"width:auto",
-				'label'=>false]);
-		$totalHaber+=number_format($movimiento['haber'], 2, ".", "");
-		echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20'
-		,'onClick'=>"deleteRowMovimientoEdit(".$m.")"));
+				$movimientoConValor = "movimientoSinValor";
+				if(($movimiento['debe']*1) != 0 || ($movimiento['haber']*1) != 0){
+					$movimientoConValor = "movimientoConValor";
+				}
+				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.debe',
+					[
+						'value'=> number_format($movimiento['debe'], 2, ".", ""),
+						'style'=>"width:auto",
+						'class'=>"inputDebe ".$movimientoConValor,
+						'label'=>false]);
+				$totalDebe+=number_format($movimiento['debe'], 2,'.','');
+				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.haber',
+					['value'=>number_format($movimiento['haber'], 2, ".", ""),
+						'class'=>"inputHaber ". $movimientoConValor,
+						'style'=>"width:auto",
+						'label'=>false]);
+				$totalHaber+=number_format($movimiento['haber'], 2, ".", "");
+				echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20'
+				,'onClick'=>"deleteRowMovimientoEdit(".$m.")"));
 
 				?>
 			</td>
@@ -106,10 +127,10 @@ $asiento = $asientos[0];
 	?>
 		
 		<tr>
-			<td>Totales</td>
+			<td colspan="2">Totales</td>
 			<td><?php
-				echo $this->Form->label('','Total a debe: $',[
-					'style'=>"display: inline;"
+				echo $this->Form->label('','&nbsp; $',[
+					'style'=>"display: -webkit-inline-box;"
 				]);
 				echo $this->Form->label('lblTotalDebe',
 				number_format($totalDebe, 2, ".", ""),
@@ -118,12 +139,14 @@ $asiento = $asientos[0];
 						'style'=>"display: inline;"
 					]
 				);
-				echo $this->Form->label('',' Total Haber: $',['style'=>"display: inline;"]);
+				echo $this->Form->label('','&nbsp; $',[
+					'style'=>"display: -webkit-inline-box;width: 128px;"
+				]);
 				echo $this->Form->label('lblTotalHaber',
 					number_format($totalHaber, 2, ".", ""),
 					[
 						'id'=>'lblTotalHaber',
-						'style'=>"display: inline;"
+						'style'=>"display: -webkit-inline-box;"
 					]
 				);
 				if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
@@ -148,9 +171,8 @@ $asiento = $asientos[0];
 		</tr>
 	</table>
 	<?php
-	echo $this->Form->end('Modificar')
-	?>
-	<?php
-	echo $this->Form->input('topmovimiento',['value'=>$m,'type'=>'hidden']);
+	echo $this->Form->end('Modificar');
+	if(isset($m))
+		echo $this->Form->input('topmovimiento',['value'=>$m,'type'=>'hidden']);
 	?>
 </div>

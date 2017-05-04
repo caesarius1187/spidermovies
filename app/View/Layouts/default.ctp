@@ -67,63 +67,62 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 			$("#loading").css('visibility','visible')
 		});
 		$(document).ajaxComplete(function () {
-			$("#loading").css('visibility','hidden')
+			checkPendingRequest();
 		});
 		$( document ).ajaxError(function( event, request, settings ) {
 			callAlertPopint("La sesion ha finalizado. Por favor inicie sesion en otra pestaña y continue.");
 		});
 		$('#ui-datepicker-div').hide();
+		function checkPendingRequest() {
+			if ($.active > 0) {
+				window.setTimeout(checkPendingRequest, 1000);
+				//Mostrar peticiones pendientes ejemplo: $("#control").val("Peticiones pendientes" + $.active);
+			}
+			else {
+				$("#loading").css('visibility','hidden')
+			}
+		};
 	});
+
 	</SCRIPT>
 </head>
 <body>
 	<div id="container">
 		<div id="header">
-			<!--<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
-			<?php if ($this->Session->read('Auth.User.username')) { ?>
-			
-			<p align="right">
-			<?php echo 'Bienvenido '.$this->Session->read('Auth.User.username').'!'; ?>
-			<?php echo $this->Html->link("Salir",array(
-														'controller' => 'users', 
-														'action' => 'logout', 
-														)
-										); 	?>
-			<?php echo $this->Html->image('exit.png',array(
-							'alt' => 'open',
-							'class' => 'btn_exit',
-							'onClick' => "window.location.href='".Router::url(array(
-                                                                                    'controller'=>'users', 
-                                                                                    'action'=>'logout')
-                                                                                    )."'"
-                                                )
-
-			);?>
-
-			
-			</p>
-			<?php } ?>-->
-			
-			<div id='cssmenu'>
-				<ul>
+			<div id='cssmenu' style="text-align: center">
+				<div style="float:left;">
+					<?php echo $this->Html->image('logoBig.png', array('style' => 'width: 266px;')) ?>
+				</div>
+				<ul style="float:left;" >
 					<!--<li><a>
 						<span>
 							<?php echo $this->Html->image('SIGESEC.png', array('width' => '120')) ?>
 						</span>
 						</a>
 					</li>	-->			  
-				   	<li class='has-sub ' id='liparametros'><a href='#'><span>Parametros</span></a>
+				   	<li class='has-sub ' id='liparametros'><a href='#'><span>Configuracion</span></a>
 				      <ul>
 					    <li class='has-sub'>
 							<?php
-								echo $this->Html->link("Usuarios",
+								echo $this->Html->link("Mi cuenta",
 																array(
-																	'controller' => 'users', 
-																	'action' => 'index', 
+																	'controller' => 'estudios',
+																	'action' => 'view',
+																	$this->Session->read('Auth.User.estudio_id')
 																	)
 													); 	
 							?>	
-					    </li>				       
+					    </li>
+					  	<li class='has-sub'>
+							<?php
+								echo $this->Html->link("Usuarios",
+																array(
+																	'controller' => 'users',
+																	'action' => 'index',
+																	)
+													);
+							?>
+					    </li>
 						<li class='has-sub'>
 				         	<?php
 								echo $this->Html->link("Tareas",
@@ -136,11 +135,11 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 				        </li>
 				      </ul>
 				   	</li>			   
-				   	<li class=' has-sub' id='liclientes'><a href='#'><span>Clientes</span></a>
+				   	<li class=' has-sub' id='liclientes'><a href='#'><span>Contribuyentes</span></a>
 				      <ul>
 				        <li class='has-sub'>
 			         		<?php
-								echo $this->Html->link("Clientes",
+								echo $this->Html->link("Contribuyentes",
 																array(
 																	'controller' => 'clientes', 
 																	'action' => 'index', 
@@ -164,7 +163,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 						<?php
 								echo $this->Html->link("Informes",
 																array(
-																	'controller' => 'clientes', 
+																	'controller' => 'clientes',
 																	'action' => 'index', 
 																	)
 													); 	
@@ -200,16 +199,6 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 													); 	
 								?>
 							</li>
-							<li class='has-sub'>
-								<?php
-								echo $this->Html->link("Plan de cuentas",
-									array(
-										'controller' => 'cuentasclientes',
-										'action' => 'plancuentas',
-									)
-								);
-								?>
-							</li>
 						</ul>
 					</li>
 					<li class=' has-sub' id='ligestion'><a href='#'><span>Gestion</span></a>
@@ -236,46 +225,24 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 							</li>	       						
 				      	</ul>
 				   	</li>
-				   	
-				   	<li style="width:34%;"> <!--li vacio-->
-				   		<span>
-				   			&nbsp;
-				   		</span>
-				   	</li>
-				   	<li style="padding: 4px 0"> <!--li logo-->
-				   		
-				   		<span>
-				   		<p style="margin-top:3px">
-				   			<?php echo $this->Html->image('sigesec.png', array('width' => '120')) ?>
-				   			<?php if ($this->Session->read('Auth.User.username')) { ?>
-				   		</p>
-			
-						<p align="right" style="margin-botton:3px">
+
+				</ul>
+				<div style="float:right;">
+					<?php if ($this->Session->read('Auth.User.username')) { ?>
 						<?php echo 'Bienvenido '.$this->Session->read('Auth.User.username').'!'; ?>
-						<!--<?php echo $this->Html->link("Salir",array(
-																	'controller' => 'users', 
-																	'action' => 'logout', 
-																	)
-													); 	?>-->
 						<?php echo $this->Html->image('exit.png',array(
-										'alt' => 'open',
-										'class' => 'btn_exit',
-										'onClick' => "window.location.href='".Router::url(array(
-			                                                                                    'controller'=>'users', 
-			                                                                                    'action'=>'logout')
-			                                                                                    )."'"
-			                                                )
+								'alt' => 'open',
+								'class' => 'btn_exit',
+								'onClick' => "window.location.href='".Router::url(array(
+											'controller'=>'users',
+											'action'=>'logout')
+									)."'"
+							)
 
 						);?>
-
-						
-						</p>
-						<?php } ?>
-						</span>
-						
-				   	</li>				 
-				</ul>
+					<?php } ?>
 				</div>
+			</div>
 		</div>
 		<div id="content">
 			
@@ -283,14 +250,15 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 
 			<?php echo $this->fetch('content'); ?>
 		</div>
-		<!--<div id="footer">
-			<?php echo $this->Html->link(
-					$this->Html->image('cake.power.gif', array('alt' => $cakeDescription, 'border' => '0')),
-					'http://www.cakephp.org/',
-					array('target' => '_blank', 'escape' => false)
-				);
-			?>
-		</div>-->
+
+		<div id="footer">
+<!--			<div style="/*position:fixed;*/ top:92%; right:0; z-index:9999;">-->
+<!--				<a href="http://www.cakephp.org/">-->
+<!--					<img src="http://www.cakephp.org/img/flags/Baked-with-CakePHP.png" width="100px;">-->
+<!--				</a>-->
+<!--			</div>-->
+		</div>
+
 	</div>
 	<a href="#x" class="overlay" id="PopupLoading"></a>
 		<div class="popupNews" id="loading">

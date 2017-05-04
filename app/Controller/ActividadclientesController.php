@@ -51,7 +51,9 @@ class ActividadclientesController extends AppController {
 		$error = 0;
 		if ($this->request->is('post')) {
 			$this->Actividadcliente->create();
-			$this->request->data('Actividadcliente.baja',date('Y-m-d',strtotime($this->request->data['Actividadcliente']['baja'])));
+			if($this->request->data['Actividadcliente']['baja']!=""){
+				$this->request->data('Actividadcliente.baja',date('Y-m-d',strtotime($this->request->data['Actividadcliente']['baja'])));
+			}
 			if ($this->Actividadcliente->save($this->request->data)) {
 				$respuesta='The actividadcliente has been saved.';
 				$opcActividades = array('conditions' => array('Actividadcliente.id' =>  $this->Actividadcliente->getLastInsertID() ));

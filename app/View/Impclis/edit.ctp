@@ -123,7 +123,7 @@ if(!$showTheForm){?>
                     <?php
                     echo $this->Form->input('categoriamonotributo',
                         [
-                            'label' => 'Categori&oacute;a Monotributo',
+                            'label' => 'Categor&iacute;a Monotributo',
                             'type'=>'select','options'=>$categoriasmonotributos
                         ]);?>
                 </td>

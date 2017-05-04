@@ -13,25 +13,257 @@ class EmpleadosController extends AppController {
  *
  * @var array
  */
-	public $components = array('Paginator');
-
-/**
- * index method
- *
- * @return void
- */
+	public $components = array('Paginator','RequestHandler');
 	public function index() {
 		$this->Empleado->recursive = 0;
 		$this->set('empleados', $this->Paginator->paginate());
 	}
+	public function cargar($id=null,$periodo=null){
+		$this->loadModel('Cliente');
+		$this->loadModel('Impcli');
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+		//A: Es menor que periodo Hasta
+		$esMenorQueHasta = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+		//B: Es mayor que periodo Desde
+		$esMayorQueDesde = array(
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+				),
+			)
+		);
+		//C: Tiene Periodo Hasta 0 NULL
+		$periodoNull = array(
+			'OR'=>array(
+				array('Periodosactivo.hasta'=>null),
+				array('Periodosactivo.hasta'=>""),
+			)
+		);
+		$conditionsImpCliHabilitados = array(
+			//El periodo esta dentro de un desde hasta
+			'AND'=> array(
+				$esMayorQueDesde,
+				'OR'=> array(
+					$esMenorQueHasta,
+					$periodoNull
+				)
+			)
+		);
+		$this->set('periodo',$periodo);
+		$cliente=$this->Cliente->find('first', array(
+				'contain'=>array(
+					'Sueldo'=>array(
+						'conditions' => array(
+							'Sueldo.periodo'=>$periodo
+						),
+					),
+					'Empleado'=>array(
+						'Valorrecibo'=>array(
+							'conditions'=>array(
+								'Valorrecibo.periodo'=>$periodo,
+							),
+							'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
+						),
+						'conditions'=>array(
+							'OR'=>[
+								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+								'Empleado.fechaegreso is null' ,
+							],
+							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+						),
+						'order'=>[
+							'Empleado.legajo*1'
+						],
+					),
+					'Impcli'=>[
+						'Impuesto',
+						'Periodosactivo'=>[
+							'conditions'=>$conditionsImpCliHabilitados
+						]
+					]
+				),
+				'conditions' => array(
+					'id' => $id,
+				),
+			)
+		);
+		/*AFIP*/
+		$tieneMonotributo=False;
+		$tieneIVA=False;
+		$tieneIVAPercepciones=False;
+		$tieneImpuestoInterno=False;
+		/*DGR*/
+		$tieneAgenteDePercepcionIIBB=False;
+		/*DGRM*/
+		$tieneAgenteDePercepcionActividadesVarias=False;
+		foreach ($cliente['Impcli'] as $impcli) {
+			/*AFIP*/
+			if($impcli['impuesto_id']==4/*Monotributo*/){
+				//Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Monotributista Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=True;
+					$tieneIVA=False;
+				}
+			}
+			if($impcli['impuesto_id']==19/*IVA*/){
+				//Tiene IVA asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Responsable Inscripto Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=False;
+					$tieneIVA=True;
+				}
+			}
+			if($impcli['impuesto_id']==184/*IVA Percepciones*/){
+				//Tiene IVA Percepciones asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene IVA Percepciones Activo en este periodo
+					$tieneIVAPercepciones=True;
+				}
+			}
+			if($impcli['impuesto_id']==185/*Impuesto Interno*/){
+				//Tiene Impuesto Interno asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Impuesto Interno Activo en este periodo
+					$tieneImpuestoInterno=True;
+				}
+			}
+			/*DGR*/
+			if($impcli['impuesto_id']==173/*Agente de Percepcion IIBB*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion IIBB Activo en este periodo
+					$tieneAgenteDePercepcionIIBB=True;
+				}
+			}
+			/*DGRM*/
+			if($impcli['impuesto_id']==186/*Agente de Percepcion de Actividades Varias*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion de Actividades Varias Activo en este periodo
+					$tieneAgenteDePercepcionActividadesVarias=True;
+				}
+			}
+		}
+		$cliente['Cliente']['tieneMonotributo'] = $tieneMonotributo;
+		$cliente['Cliente']['tieneIVA'] = $tieneIVA;
+		$cliente['Cliente']['tieneIVAPercepciones'] = $tieneIVAPercepciones;
+		$cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;
+		$cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;
+		$cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;
+		$this->set(compact('cliente'));
 
-/**
- * view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
+		//aca vamos a listar los impclis que tenga activos el cliente pero con el nombre del impuesto
+		$conditionsImpCliHabilitadosImpuestos = array(
+			//El periodo esta dentro de un desde hasta
+			'AND'=> array(
+				'Periodosactivo.impcli_id = Impcli.id',
+				$esMayorQueDesde,
+				'OR'=> array(
+					$esMenorQueHasta,
+					$periodoNull
+				)
+			)
+
+		);
+		$clienteImpuestosOptions = array(
+			'conditions' => array(
+				'Impcli.cliente_id'=> $id
+			),
+			'fields'=>array('Impcli.id','Impuesto.nombre'),
+			'joins'=>array(
+				array('table'=>'impuestos',
+					'alias' => 'Impuesto',
+					'type'=>'inner',
+					'conditions'=> array(
+						'Impcli.impuesto_id = Impuesto.id',
+						'AND'=>array(
+							'Impuesto.organismo <> "sindicato"',
+							'Impuesto.organismo <> "banco"'
+						)
+					)
+				),
+				array('table'=>'periodosactivos',
+					'alias' => 'Periodosactivo',
+					'type'=>'inner',
+					'conditions'=> array(
+						$conditionsImpCliHabilitadosImpuestos
+					)
+				),
+			),
+
+		);
+		$impclis=$this->Impcli->find('list',$clienteImpuestosOptions);
+		$this->set('impclis', $impclis);
+
+		$conditionsCli = array(
+			'Grupocliente',
+		);
+		$lclis = $this->Cliente->find('list',array(
+			'contain' =>$conditionsCli,
+			'conditions' => array(
+				'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id')
+			),
+			'order' => array(
+				'Grupocliente.nombre','Cliente.nombre'
+			),
+		));
+		$this->set(compact('lclis'));
+	}
+	public function cargamasiva($id=null,$periodo=null,$convenio=null,$tipoliquidacion=null){
+		$this->loadModel('Cliente');
+		$this->loadModel('Impcli');
+		//A: Es menor que periodo Hasta
+		$this->set('periodo',$periodo);
+		$this->set('tipoliquidacion',$tipoliquidacion);
+		$this->set('convenio',$convenio);
+
+		//vamos a mandar los convenios
+
+
+		$cliente=$this->Cliente->find('first', array(
+				'contain'=>array(
+					'Empleado'=>array(
+						'Conveniocolectivotrabajo',
+						'Valorrecibo'=>array(
+							'conditions'=>array(
+								'Valorrecibo.periodo'=>$periodo,
+							),
+							'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
+						),
+						'conditions'=>array(
+							'OR'=>[
+								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+								'Empleado.fechaegreso is null' ,
+							],
+							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+						),
+						'order'=>[
+							'Empleado.legajo*1'
+						],
+					),
+				),
+				'conditions' => array(
+					'id' => $id,
+				),
+			)
+		);
+		$this->set(compact('cliente'));
+	}
 	public function view($id = null) {
 		if (!$this->Empleado->exists($id)) {
 			throw new NotFoundException(__('Invalid empleado'));
@@ -44,6 +276,7 @@ class EmpleadosController extends AppController {
 		$this->loadModel('Empleado');
 		$this->loadModel('Concepto');
 		$this->loadModel('Cctxconcepto');
+		$this->loadModel('Valorrecibo');
 		if (isset($this->request->data['Cctxconcepto'])) {
 			$this->loadModel('Cctxconcepto');
 			$this->Cctxconcepto->create();
@@ -93,53 +326,42 @@ class EmpleadosController extends AppController {
 				$this->Session->setFlash(__('Error al guardar el recibo de sueldo por favor intente de nuevo mas tarde.'));
 			}
 		}
-
 		$this->set(compact('periodo'));
-
-        $optionsLiquidaciones = array(
-            'contain'=>array(
-                'Conveniocolectivotrabajo'=>array(
-                    'Cctxconcepto'=>array(
-                        'Valorrecibo'=>array(
-                            'conditions'=>array(
-                                'Valorrecibo.empleado_id'=>$empleadoamostrar,
-                            ),
-                            'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
-                        ),
-                        'conditions'=>array(
-                            'OR'=>array(
-                                'AND'=>array(
-                                    'Cctxconcepto.cliente_id' => $cliid,
-                                    'Cctxconcepto.campopersonalizado' => 1,
-                                ),
-                                'Cctxconcepto.campopersonalizado' => 0,
-                            ),
-                        ),
-                        'fields'=>array('id'),
-                        'limit' => 1
-                    ),
-                    'fields'=>array('id'),
-                ),
-            ),
-            'fields'=>array('id','liquidaprimeraquincena','liquidasegundaquincena','liquidamensual','liquidapresupuestoprimera','liquidapresupuestosegunda','liquidapresupuestomensual'),
-            'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)
-        );
-        $tieneLiquidacion = $this->Empleado->find('first', $optionsLiquidaciones);
-
 		if(!isset($tipoliquidacion)||$tipoliquidacion==null||$tipoliquidacion==""||$tipoliquidacion=="undefined"){
-            if($tieneLiquidacion['Empleado']['liquidaprimeraquincena']==1){
-                $tipoliquidacion=1;
-            }elseif ($tieneLiquidacion['Empleado']['liquidasegundaquincena']) {
-                $tipoliquidacion = 2;
-            }elseif ($tieneLiquidacion['Empleado']['liquidamensual']) {
-                $tipoliquidacion = 3;
-            }elseif ($tieneLiquidacion['Empleado']['liquidapresupuestoprimera']) {
-                $tipoliquidacion = 4;
-            }elseif ($tieneLiquidacion['Empleado']['liquidapresupuestosegunda']) {
-                $tipoliquidacion = 5;
-            }elseif ($tieneLiquidacion['Empleado']['liquidapresupuestomensual']) {
-                $tipoliquidacion = 6;
-            }
+			$this->Session->setFlash(__('Error 1, No se recibio Tipo de Liquidacion.'));
+			return $this->redirect(array('action' => 'cargamasiva',$empleadoamostrar,$periodo,));
+		}
+		$conditionLiquidacion = [];
+		$numeroliquidacion = 1;
+		switch ($tipoliquidacion){
+			case 'liquidaprimeraquincena':
+				$conditionLiquidacion['Empleado.liquidaprimeraquincena']='1';
+				$numeroliquidacion = 1;
+				break;
+			case 'liquidasegundaquincena':
+				$conditionLiquidacion['Empleado.liquidasegundaquincena']='1';
+				$numeroliquidacion = 2;
+				break;
+			case 'liquidamensual':
+				$conditionLiquidacion['Empleado.liquidamensual']='1';
+				$numeroliquidacion = 3;
+				break;
+			case 'liquidapresupuestoprimera':
+				$conditionLiquidacion['Empleado.liquidapresupuestoprimera']='1';
+				$numeroliquidacion = 4;
+				break;
+			case 'liquidapresupuestosegunda':
+				$conditionLiquidacion['Empleado.liquidapresupuestosegunda']='1';
+				$numeroliquidacion = 5;
+				break;
+			case 'liquidapresupuestomensual':
+				$conditionLiquidacion['Empleado.liquidapresupuestomensual']='1';
+				$numeroliquidacion = 6;
+				break;
+            case 'liquidasac':
+				$conditionLiquidacion['Empleado.liquidasac']='1';
+				$numeroliquidacion = 7;
+				break;
 		}
 		$optionsempleados = array(
 			'contain'=>array(
@@ -150,7 +372,7 @@ class EmpleadosController extends AppController {
 						'Valorrecibo'=>array(
 							'conditions'=>array(
 								'Valorrecibo.empleado_id'=>$empleadoamostrar,
-								'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
+								'Valorrecibo.tipoliquidacion'=>$numeroliquidacion,
 								'Valorrecibo.periodo'=>$periodo,
 							)
 						),
@@ -174,93 +396,160 @@ class EmpleadosController extends AppController {
 					],
 				),
 			),
-			'conditions' => array('Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar)
+			'conditions' => array(
+				'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
+			)
 		);
+		$optionsempleados['conditions']=[
+			'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
+			$conditionLiquidacion,
+		];
 		$empleado = $this->Empleado->find('first', $optionsempleados);
 		/*
          * Primero vamos a ordenar los cctxconcepto en base a la seccion a la que pertenece
          * */
-		for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
-			for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
-				if(!isset($empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto'])){
-					$seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['seccionpersonalizada'];
-					$seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['seccionpersonalizada'];
-				}else {
-                    if(!isset($empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'])){
-                        Debugger::dump($empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']);
+        $this->set('empleadobeforeorden',$empleado);
+        if(isset($empleado['Conveniocolectivotrabajo'])){
+            //pregunto si esta definido por que puede pasar que no se hayan encontrado empleados que liquiden con esta
+            // configuracion
+            for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
+                for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
+                    if(!isset($empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto'])){
+                        $seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['seccionpersonalizada'];
+                        $seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['seccionpersonalizada'];
+                    }else {
+                        if(!isset($empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'])){
+                            Debugger::dump($empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']);
+                        }
+                        $seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
+                        $seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
                     }
-					$seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
-					$seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
-				}
-				$burbuja=0;
-				$aux=0;
-				switch ($seccionburbuja){
-					case 'Datos del Empleado':
-						$burbuja=1;
-						break;
-					case 'REMUNERATIVOS':
-						$burbuja=2;
-						break;
-					case 'NO REMUNERATIVOS':
-						$burbuja=3;
-						break;
-					case 'APORTES':
-						$burbuja=4;
-						break;
-					case 'TOTALES':
-						$burbuja=5;
-						break;
-					case 'OBRA SOCIAL':
-						$burbuja=6;
-						break;
-				}
-				switch ($seccionaux){
-					case 'Datos del Empleado':
-						$aux=1;
-						break;
-					case 'REMUNERATIVOS':
-						$aux=2;
-						break;
-					case 'NO REMUNERATIVOS':
-						$aux=3;
-						break;
-					case 'APORTES':
-						$aux=4;
-						break;
-					case 'TOTALES':
-						$aux=5;
-						break;
-					case 'OBRA SOCIAL':
-						$aux=6;
-						break;
-				}
-				if($burbuja>$aux){
-					$myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
-					$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
-					$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
-				}
-			}
-		}
-		for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
-			for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
-				$ordenburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['orden'];
-                $ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
-                $ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
+                    $burbuja=0;
+                    $aux=0;
+                    switch ($seccionburbuja){
+                        case 'Datos del Empleado':
+                            $burbuja=1;
+                            break;
+                        case 'REMUNERATIVOS':
+                            $burbuja=2;
+                            break;
+                        case 'NO REMUNERATIVOS':
+                            $burbuja=3;
+                            break;
+                        case 'APORTES':
+                            $burbuja=4;
+                            break;
+                        case 'TOTALES':
+                            $burbuja=5;
+                            break;
+                        case 'OBRA SOCIAL':
+                            $burbuja=6;
+                            break;
+                    }
+                    switch ($seccionaux){
+                        case 'Datos del Empleado':
+                            $aux=1;
+                            break;
+                        case 'REMUNERATIVOS':
+                            $aux=2;
+                            break;
+                        case 'NO REMUNERATIVOS':
+                            $aux=3;
+                            break;
+                        case 'APORTES':
+                            $aux=4;
+                            break;
+                        case 'TOTALES':
+                            $aux=5;
+                            break;
+                        case 'OBRA SOCIAL':
+                            $aux=6;
+                            break;
+                    }
+                    if($burbuja>$aux){
+                        $myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
+                        $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
+                        $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
+                    }
+                }
+//			for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
+//				for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
+//					$ordenburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['orden'];
+//					$ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
+//					$ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
+//
+//					$seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
+//					$seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
+//
+//					if($ordenburbuja>$ordenaux&&$seccionburbuja==$seccionaux){
+//						$myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
+//						$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
+//						$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
+//					}
+//				}
+//			}
+            }
+        }
+        //Resulta que para calcular el SAC tenemos que buscar de los ultimos 6 meses un par de datos
+        //como Total Remunerativos y Total SD Excepto Indemnizatorios, tengo que buscar el maximo de ellos
+        //y devolverlo en el empleado
+        $mayorRemunerativo = 0;
+        $mayorNORemunerativo = 0;
+        for ($m=1;$m<4;$m++){
 
-                $seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
-                $seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
+            $timePeriodo = strtotime("01-".$periodo ." -".$m." months");
+            $periodoPrevio[] = date("m-Y",$timePeriodo);
 
-				if($ordenburbuja>$ordenaux&&$seccionburbuja==$seccionaux){
-					$myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
-					$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
-					$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
-				}
-			}
-		}
+        }
+        $optionsValorecibo = array(
+            'joins'=>[
+                [
+                    'table'=>'conceptos',
+                    'alias' => 'Concepto',
+                    'type'=>'inner',
+                    'conditions'=> [
+                        'Cctxconcepto.concepto_id = Concepto.id',
+                        'Concepto.id'=>['27','103'],
+                    ]
+                ],
+            ],
+            'conditions' => array(
+                'Valorrecibo.periodo' => $periodoPrevio,
+                'Valorrecibo.empleado_id' => $empleadoamostrar,
+            ),
+        );
+        $valorRecibos = $this->Valorrecibo->find('all', $optionsValorecibo);
+        foreach ($valorRecibos as $valorrecibo) {
+//                if(!isset($valorrecibo['Concepto'])){
+//                    continue;
+//                }
+            $this->set($valorrecibo);
+            if($valorrecibo['Cctxconcepto']['concepto_id']=='27'){
+                //Total Remunerativos
+                if($mayorRemunerativo<$valorrecibo['Valorrecibo']['valor']*1){
+                    $mayorRemunerativo=$valorrecibo['Valorrecibo']['valor']*1;
+                }
+            }
+            if($valorrecibo['Cctxconcepto']['concepto_id']=='103'){
+                //Total No Remunerativos
+                //solo evaluar si los valores sond e periodos de solo 3 meses atras
+                $datetime1 = date_create('01-'.$periodo);
+                $datetime2 = date_create('01-'.$valorrecibo['Valorrecibo']['periodo']);
+                $interval = $datetime2->diff($datetime1);
+                if($interval->format('%m months')*1<=3){
+                    if($mayorNORemunerativo<$valorrecibo['Valorrecibo']['valor']*1){
+                        $mayorNORemunerativo=$valorrecibo['Valorrecibo']['valor']*1;
+                    }
+                }
 
-		$this->set(compact('empleado','tipoliquidacion','tieneLiquidacion'));
+
+            }
+        }
+		$this->set(compact('empleado','mayorRemunerativo','mayorNORemunerativo','tipoliquidacion','numeroliquidacion','tieneLiquidacion'));
 		$this->autoRender=false;
-		$this->layout = 'ajax';
+        if($this->RequestHandler->isAjax()){
+            $this->layout = 'ajax';
+        }
 		$this->render('papeldetrabajosueldos');
 	}
     public function papeldetrabajolibrosueldo($empid=null,$periodo=null,$tipoliquidacion=null){
@@ -278,7 +567,8 @@ class EmpleadosController extends AppController {
 		);
 		$options = [
             'contain'=>[
-                'Domicilio'=>[
+				'Cargo',
+				'Domicilio'=>[
                     'Localidade'=>[
                         'Partido'
                     ]
@@ -320,16 +610,22 @@ class EmpleadosController extends AppController {
 		$this->loadModel('Vencimiento');
 		$this->loadModel('Impcli');
 		$this->loadModel('Impuesto');
+
 		$timePeriodo = strtotime("01-".$periodo ." -1 months");
 		$periodoPrevio = date("m-Y",$timePeriodo);
 		$fchvto = date('d-m-Y',$timePeriodo);
 		$fchvtoOrigen="diaDeHoy";
+		$pemesActual = substr($periodo, 0, 2);
+		$peanioActual = substr($periodo, 3);
+
 		$pemes = substr($periodoPrevio, 0, 2);
 		$peanio = substr($periodoPrevio, 3);
-		
+
+        $this->set(compact('pemes','peanio'));
         $options = array(
             'contain'=>array(
-                'Domicilio'=>array(
+				'Cargo',
+				'Domicilio'=>array(
                     'Localidade'=>array(
                         'Partido'
                     )
@@ -370,26 +666,23 @@ class EmpleadosController extends AppController {
 		// para este contribuyente y para que seleccione el banco en el que lo hizo
 
 		$cliusuarioafip = $empleado["Cliente"]["cuitcontribullente"];
-
-		switch ($pemes) {
-			case '12':
-
-			default:
-				$optionsVencimientoImpuesto = array(
-					'conditions'=>array(
-						$peanio.'*1 = Vencimiento.ano*1',
-						'Vencimiento.desde <= SUBSTRING("'.$cliusuarioafip.'",-1)',
-						'Vencimiento.hasta >= SUBSTRING("'.$cliusuarioafip.'",-1)',
-						'Vencimiento.impuesto_id'=>$empleado['Cliente']['Impcli'][0]["Impuesto"]["id"],
-					),
-				);
-				$vencimiento = $this->Vencimiento->find('first',$optionsVencimientoImpuesto);
-				if(isset($vencimiento['Vencimiento']['p'.$pemes])&&$vencimiento['Vencimiento']['p'.$pemes]!=0){
-					$strfchvto = strtotime($vencimiento['Vencimiento']['ano'].'-'.$pemes.'-'.$vencimiento['Vencimiento']['p'.$pemes]);
-					$fchvto = date('d-m-Y',$strfchvto);
-					$fchvtoOrigen="VencimientoRecomendado";
-				}
-				break;
+		$id = 0;
+		if(count($empleado['Cliente']['Impcli'])>0){
+			$id = $empleado['Cliente']['Impcli'][0]["Impuesto"]["id"];
+		}
+		$optionsVencimientoImpuesto = array(
+			'conditions'=>array(
+                $peanioActual.'*1 = Vencimiento.ano*1',
+				'Vencimiento.desde <= SUBSTRING("'.$cliusuarioafip.'",-1)',
+				'Vencimiento.hasta >= SUBSTRING("'.$cliusuarioafip.'",-1)',
+				'Vencimiento.impuesto_id'=>$id,
+			),
+		);
+		$vencimiento = $this->Vencimiento->find('first',$optionsVencimientoImpuesto);
+		if(isset($vencimiento['Vencimiento']['p'.$pemesActual])&&$vencimiento['Vencimiento']['p'.$pemesActual]!=0){
+			$strfchvto = strtotime($vencimiento['Vencimiento']['ano'].'-'.$pemesActual.'-'.$vencimiento['Vencimiento']['p'.$pemesActual]);
+			$fchvto = date('d-m-Y',$strfchvto);
+			$fchvtoOrigen="VencimientoRecomendado";
 		}
 		$this->set(compact('fchvto','fchvtoOrigen'));
 
@@ -475,7 +768,6 @@ class EmpleadosController extends AppController {
         $this->layout = 'ajax';
         $this->render('papeldetrabajorecibosueldo');
     }
-
 	public function add() {
 		$respuesta = array('respuesta'=>'');
 		if ($this->request->is('post')) {
@@ -516,11 +808,11 @@ class EmpleadosController extends AppController {
 		$this->render('add');
 		return;
 	}
-
 	public function edit($id = null) {
 		$this->loadModel('Domicilio');
 		$this->loadModel('Conveniocolectivotrabajo');
 		$this->loadModel('Cargo');
+		$this->loadModel('Impuesto');
 		if (!$this->Empleado->exists($id)) {
 			throw new NotFoundException(__('Invalid empleado'));
 		}
@@ -566,12 +858,18 @@ class EmpleadosController extends AppController {
 			]
 		)
 		);
+		$bancosOptions = array(
+			'conditions' => array(
+				'Impuesto.organismo'=> 'banco'
+			),
+		);
+		$bancos=$this->Impuesto->find('list',$bancosOptions);
+		$this->set('bancos', $bancos);
 
 		$this->autoRender=false;
 		$this->layout = 'ajax';
 		$this->render('edit');
 	}
-
 	public function delete($id = null) {
 		$id = substr($id,0, -5);
 		$this->Empleado->id = $id;
@@ -602,4 +900,5 @@ class EmpleadosController extends AppController {
 		$this->set(compact('data'));
 		$this->layout = 'ajax';
 		$this->render('serializejson');
-	}}
+	}
+}

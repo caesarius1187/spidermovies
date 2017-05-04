@@ -28,7 +28,8 @@ class PapelesdetrabajosController extends AppController {
         $this->loadModel('Conceptosrestante');
         $this->loadModel('Compra');
         $this->loadModel('Cuenta');
-		//$this->Archivo->recursive = 0;
+		$this->loadModel('Cuentascliente');
+//$this->Archivo->recursive = 0;
 		//$this->set('archivos', $this->Paginator->paginate());
 		$añoPeriodo="SUBSTRING( '".$periodo."',4,7)";
 		$mesPeriodo="SUBSTRING( '".$periodo."',1,2)";
@@ -167,7 +168,26 @@ class PapelesdetrabajosController extends AppController {
 		  );
 		$compras = $this->Compra->find('all', $opcionesCompra);
 
-		$this->set('actividades', $actividades); 
+		//aca vamos a buscar los movimientos bancarios que pertenezcan a la cuenta
+		//286   110403401   IVA - Credito Fiscal General
+		$optionsCuentascliente=[
+			'contain'=>[
+				'Movimientosbancario'=>[
+					'conditions'=>[
+						'Movimientosbancario.periodo'=>$periodo
+					]
+				]
+			],
+			'conditions'=>[
+				'Cuentascliente.cuenta_id = 286',
+				'Cuentascliente.cliente_id'=>$ClienteId,
+			]
+		];
+		$cuentascliente=$this->Cuentascliente->find('all', $optionsCuentascliente);
+
+
+		$this->set('cuentascliente', $cuentascliente);
+		$this->set('actividades', $actividades);
 		$this->set('ventas', $ventas);
 		$this->set('compras', $compras); 
 		//$CondicionVenta = array('conditions' => array('Venta.cliente_id' => $ClienteId));
@@ -180,6 +200,16 @@ class PapelesdetrabajosController extends AppController {
 		$this->loadModel('Autonomocategoria');
 		$this->loadModel('Impcli');
 		$optionCategorias = [
+			'contain'=>[
+				'Autonomoimporte'=>[
+					'conditions'=>[
+						"Autonomoimporte.desde < '".date('Y-m-d',strtotime('02-'.$periodo))."'"
+					],
+                    'order'=>[
+                        "Autonomoimporte.desde desc"
+                    ]
+				]
+			],
 			'order'=>[
 				'rubro',
 				'tipo',

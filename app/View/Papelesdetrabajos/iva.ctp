@@ -294,7 +294,7 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
         if($('#cuenta290').length > 0){
             var orden = $('#cuenta290').attr('orden');
             var saldoLD = $("#saldoLD").val();
-            $('#Asiento0Movimiento'+orden+'Debe').val(saldoLD);
+//            $('#Asiento0Movimiento'+orden+'Debe').val(saldoLD);
             var saldoLDperiodoant = $("#spnSaldoAFavorLibreDispPeriodoAnteriorNetousos").html().replace(".", "").replace(",", ".");
             var difSLD = parseFloat(saldoLD)-parseFloat(saldoLDperiodoant);
             if(difSLD>=0){
@@ -1550,64 +1550,36 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         </table>
 
         <?php
-            $TotalBsGral = 0;
-            $TotalBsGralNeto = 0;
-            $TotalLocaciones = 0;
-            $TotalLocacionesNeto = 0;
-            $TotalPresServ = 0;
-            $TotalPresServNeto = 0;
-            $TotalBsUso = 0;
-            $TotalBsUsoNeto = 0;
-            $TotalOtrosConceptos = 0;
-            $TotalOtrosConceptosNeto = 0;
+
+            $TotalRestCredFiscal=[];
             $TotalDcto814 = 0;
-
-
-        $TotalPercepcionesIVA = 0;
+            $TotalPercepcionesIVA = 0;
             foreach ($compras as $compra) {
-                //Debugger::dump($compra);
-                if ($compra['Actividadcliente']['id'] == $ActividadCliente_id) {
-                    if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' ) {
-                        if ($compra['Compra']['alicuota'] == '0' || $compra['Compra']['alicuota'] == '')
-                        {
-
-                        }else{
-                            if ($compra['Compra']['imputacion'] == 'Bs en Gral') {
-                                $TotalBsGral += $compra[0]['iva'];
-                                $TotalBsGralNeto += $compra[0]['neto'];
-                            }
-                            if ($compra['Compra']['imputacion'] == 'Locaciones') {
-                                $TotalLocaciones += $compra[0]['iva'];
-                                $TotalLocacionesNeto += $compra[0]['neto'];
-                            }
-                            if ($compra['Compra']['imputacion'] == 'Prest. Servicios') {
-                                $TotalPresServ += $compra[0]['iva'];
-                                $TotalPresServNeto += $compra[0]['neto'];
-                            }
-                            if ($compra['Compra']['imputacion'] == 'Bs Uso') {
-                                $TotalBsUso += $compra[0]['iva'];
-                                $TotalBsUsoNeto += $compra[0]['neto'];
-                            }
-                            if ($compra['Compra']['imputacion'] == 'Otros Conceptos') {
-                                $TotalOtrosConceptos += $compra[0]['iva'];
-                                $TotalOtrosConceptosNeto += $compra[0]['neto'];
-                            }
-                        }
-
-                        /*
-                         * No vamos a agrgar el Dcto 814 como una compra por que afectara otros impuestos, aahora se agrega como un pago a cuenta
-                         * if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' && $compra['Compra']['imputacion'] == 'Dcto 814')
-                        {
-                            //Aca se debe sumar solo si el Dcto814 es del Tipo Restitucion Credito Fiscal
-                            $TotalDcto814 = $TotalDcto814 + $compra['Compra']['neto'];
-                        }*/
-                    }
-                }
                 //aca vamos a calcular las perceptiones tambien, acumulando una sola vez para todas las actividades
                 if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' ) {
                     $TotalPercepcionesIVA -= $compra[0]['ivapercep'];
                 }else{
                     $TotalPercepcionesIVA += $compra[0]['ivapercep'];
+                }
+
+                //Debugger::dump($compra);
+                if ($compra['Actividadcliente']['id'] == $ActividadCliente_id) {
+                    if ($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal' ) {
+                        $imputacion = $compra['Compra']['imputacion'];
+                        $alicuota = $compra['Compra']['alicuota'];
+                        if(!isset($TotalRestCredFiscal[$imputacion])){
+                            $TotalRestCredFiscal[$imputacion]=[];
+                            $TotalRestCredFiscal[$imputacion]['iva']=[];
+                            $TotalRestCredFiscal[$imputacion]['neto']=[];
+                            $TotalRestCredFiscal[$imputacion]['iva']=inicializarAlicuotas($TotalRestCredFiscal[$imputacion]['iva']);
+                            $TotalRestCredFiscal[$imputacion]['neto']=inicializarAlicuotas($TotalRestCredFiscal[$imputacion]['neto']);
+                        }
+                        if ($compra['Compra']['alicuota'] == '')
+                        { continue; }
+                        $TotalRestCredFiscal[$imputacion]['iva'][$alicuota] += $compra[0]['iva'];
+                        $TotalRestCredFiscal[$imputacion]['neto'][$alicuota] += $compra[0]['neto'];
+                        $TotalDebitoFiscal_SumaTotal += $compra[0]['iva'];
+                    }
                 }
             };
             echo $this->Form->input('totalpercepciones',
@@ -1617,137 +1589,41 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 ]
             );
             // ACA la restitucion de credito de compra SUMA AL DEBITO tal vez esto deberia restar del credito en realidad
-            $TotalDebitoFiscal_SumaTotal = $TotalDebitoFiscal_SumaTotal + $TotalBsGral + $TotalLocaciones + $TotalPresServ + $TotalBsUso + $TotalOtrosConceptos + $TotalDcto814;
-        if($TotalBsGral>0){
-        ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_BsGral' style="">
-            <table   >
+
+        foreach ($TotalRestCredFiscal as $tr => $tiporestitucion) {?>
+            <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal' style="">
+                <table   >
                 <tr>
                     <td colspan="5" style='background-color:#87cfeb'>
-                        > > OPERACION: Bs en Gral
+                        > > <?php echo $tr ?>
                     </td>
                 </tr>
                 <tr style='background-color:#f0f0f0'>
+                    <td>Alicuota</td>
                     <td>Monto Neto Grabado</td>
                     <td>IVA</td>
                     <td></td>
                     <td></td>
-                    <td></td>
                 </tr>
-                <tr>
-                    <td><?php echo number_format($TotalBsGralNeto, 2, ",", ".") ?></td>
-                    <td><?php echo number_format($TotalBsGral, 2, ",", ".") ?></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
-        <?php }
-        if($TotalLocaciones>0){
+                <?php
+                foreach ($tiporestitucion['neto'] as $n => $netos) {
+                    if($netos*1==0){ continue; }?>
+                    <tr>
+                        <td><?php echo $n ?>%</td>
+                        <td><?php echo number_format($tiporestitucion['neto'][$n], 2, ",", ".") ?></td>
+                        <td><?php echo number_format($tiporestitucion['iva'][$n], 2, ",", ".") ?></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                <?php
+                }
+                ?>
+                </table>
+            </div>
+            <?php
+        }
         ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_Locaciones' style="">
-            <table   >
-                <tr>
-                    <td colspan="6" style='background-color:#87cfeb'>
-                        > > OPERACION: Locaciones
-                    </td>
-                </tr>
-                <tr style='background-color:#f0f0f0'>
-                    <td>Monto Neto Grabado</td>
-                    <td>IVA</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><?php echo number_format($TotalLocacionesNeto, 2, ",", ".") ?></td>
-                    <td><?php echo number_format($TotalLocaciones, 2, ",", ".") ?></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
-        <?php }
-        if($TotalPresServ>0){
-        ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_PresServ' style="">
-            <table   >
-                <tr>
-                    <td colspan="5" style='background-color:#87cfeb'>
-                        > > OPERACION: Prest. Servicios
-                    </td>
-                </tr>
-                <tr style='background-color:#f0f0f0'>
-                    <td>Monto Neto Grabado</td>
-                    <td>IVA</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><?php echo number_format($TotalPresServNeto , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalPresServ , 2, ",", ".")?></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
-        <?php }
-        if($TotalBsUso>0){
-        ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_BsUso' style="">
-            <table   >
-                <tr>
-                    <td colspan="5" style='background-color:#87cfeb'>
-                        > > OPERACION: Bs. Uso
-                    </td>
-                </tr>
-                <tr style='background-color:#f0f0f0'>
-                    <td>Monto Neto Grabado</td>
-                    <td>IVA</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><?php echo number_format($TotalBsUsoNeto , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso , 2, ",", ".")?></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
-        <?php }
-        if($TotalOtrosConceptos>0){
-        ?>
-        <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_OtrosConc' style="">
-            <table   >
-                <tr>
-                    <td colspan="5" style='background-color:#87cfeb'>
-                        > > OPERACION: Otros Conceptos
-                    </td>
-                </tr>
-                <tr style='background-color:#f0f0f0'>
-                    <td>Monto Neto Grabado</td>
-                    <td>IVA</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td><?php echo number_format($TotalOtrosConceptosNeto , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos , 2, ",", ".")?></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
-        <?php }
+        <?php
         if($TotalDcto814>0){
         ?>
         <div id='divTablaOperaciones_<?php echo $ActividadCliente_id; ?>_RestCredFiscal_Dcto814' style="">
@@ -2235,6 +2111,53 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         }
                     }
                 }
+        }
+        //en 'Otros Conceptos' tengo q acumular los DEBE de los movimientos bancarios
+        //que serian los movimientos que apuntan a la cuentacliente de la cuenta
+        //286   110403401   IVA - Credito Fiscal General
+        if(count($cuentascliente[0])>0){
+            foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
+                $TotalOtrosConceptos['mostrar'] = true;
+                if($movimientosbancario['alicuota']=='0'){
+//                $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']*1.0;
+//                $TotalOtrosConceptos['Neto']['0'] += $movimientosbancario['debito']*1.0;
+                }elseif ($movimientosbancario['alicuota']=='2.5'){
+                    $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.025;
+                    $TotalOtrosConceptos['Neto']['2.5'] += $movimientosbancario['debito']/0.025;
+                }elseif ($movimientosbancario['alicuota']=='5'){
+                    $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.05;
+                    $TotalOtrosConceptos['Neto']['50'] += $movimientosbancario['debito']/0.05;
+                }elseif ($movimientosbancario['alicuota']=='10.5'){
+                    $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.105;
+                    $TotalOtrosConceptos['Neto']['10.5'] += $movimientosbancario['debito']/0.105;
+                }elseif ($movimientosbancario['alicuota']=='21'){
+                    $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.21;
+                    $TotalOtrosConceptos['Neto']['21'] += $movimientosbancario['debito']/0.21;
+                }elseif ($movimientosbancario['alicuota']=='27'){
+                    $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.27;
+                    $TotalOtrosConceptos['Neto']['27'] += $movimientosbancario['debito']/0.27;
+                }
+
+                if($movimientosbancario['alicuota']=='0'){
+//                $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito']*0;
+//                $TotalOtrosConceptos['Directo']['0'] += $movimientosbancario['debito'];
+                }elseif ($movimientosbancario['alicuota']=='2.5'){
+                    $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
+                    $TotalOtrosConceptos['Directo']['2.5'] += $movimientosbancario['debito'];
+                }elseif ($movimientosbancario['alicuota']=='5'){
+                    $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
+                    $TotalOtrosConceptos['Directo']['50'] += $movimientosbancario['debito'];
+                }elseif ($movimientosbancario['alicuota']=='10.5'){
+                    $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
+                    $TotalOtrosConceptos['Directo']['10.5'] += $movimientosbancario['debito'];
+                }elseif ($movimientosbancario['alicuota']=='21'){
+                    $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
+                    $TotalOtrosConceptos['Directo']['21'] += $movimientosbancario['debito'];
+                }elseif ($movimientosbancario['alicuota']=='27'){
+                    $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
+                    $TotalOtrosConceptos['Directo']['27'] += $movimientosbancario['debito'];
+                }
+            }
         }
             $TotalDcto814_Directo=0;
             foreach ($cliente['Impcli'][0]['Conceptosrestante'] as $key => $conceptosrestante) {
@@ -3239,6 +3162,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $TotalSaldoTecnicoAFavorRespPeriodo=0;
             $TotalSaldoTecnicoAPagarPeriodo=0;
             $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior=0;
+            $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnteriorNetousos=0;
             $TotalSaldoLibreDisponibilidadAFavorRespPeriodo=0;
             $TotalPagosACuenta = 0;
             $AjusteAnualAFavorResponsable = 0;
@@ -3262,6 +3186,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $sldID=0;
             foreach ($saldosLibreDisponibilidad as $sldpa) {
                 $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior += $sldpa['Conceptosrestante']['monto'];
+                $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnteriorNetousos += $sldpa['Conceptosrestante']['montoretenido'];
                 $sldID = $sldpa['Conceptosrestante']['id'];
                 foreach ($sldpa['Usosaldo'] as $usosaldoDeIVAPeriodoAnterior){
                     if($usosaldoDeIVAPeriodoAnterior['eventosimpuesto_id']==$eventosImpuestoId){
@@ -3425,6 +3350,16 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 			</tr>
             <tr>
                 <td>Saldo a favor de libre disponibilidad del periodo anterior neto de usos</td>
+                <td style="width:180px">
+                    <span id="">
+                        <?php
+                        echo number_format($TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnteriorNetousos, 2, ",", ".");
+                        ?>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td>Saldo a favor de libre disponibilidad del periodo anterior despues de usos</td>
                 <td style="width:180px">
                     <span id="spnSaldoAFavorLibreDispPeriodoAnteriorNetousos">
                         <?php
@@ -3637,3 +3572,14 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         </div>
     </div>
 </div>
+<?php
+    function inicializarAlicuotas($miarray){
+        $miarray['0']=0;
+        $miarray['2,5']=0;
+        $miarray['5']=0;
+        $miarray['10.5']=0;
+        $miarray['21']=0;
+        $miarray['27']=0;
+        return $miarray;
+    }
+?>

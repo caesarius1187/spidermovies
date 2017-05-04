@@ -86,6 +86,19 @@ class Impuesto extends AppModel {
 			'exclusive' => '',
 			'finderQuery' => '',
 			'counterQuery' => ''
+		),
+		'Impuestocuentaactivable' => array(
+			'className' => 'Impuestocuentaactivable',
+			'foreignKey' => 'impuesto_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
 		)
 	);
 

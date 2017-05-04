@@ -29,11 +29,37 @@ class AsientosController extends AppController {
             'conditions' => array(
                 'Cliente.id'=> $ClienteId
             ),
-            'recursive' => -1,
+            'contain' => [],
         );
         $cliente = $this->Cliente->find('first', $clienteOpc);
         $this->set('cliente',$cliente);
         $this->set('periodo',$periodo);
+
+        $fechadeconsulta = date('Y/m/d',strtotime("01-".$pemes."-".$peanio));
+
+        if(!isset($cliente['Cliente']['fchcorteejerciciofiscal'])||is_null($cliente['Cliente']['fchcorteejerciciofiscal'])||$cliente['Cliente']['fchcorteejerciciofiscal']==""){
+            $this->Session->setFlash(__('No se ha configurado fecha decorte de ejercicio fiscal para este
+			 ccontribuyente .'));
+            $fechadecorteAñoActual = date('Y/m/d',strtotime("01-01-".$peanio));
+
+        }else{
+            $fechadecorteAñoActual = date('Y/m/d',strtotime($cliente['Cliente']['fchcorteejerciciofiscal']."-".$peanio));
+        }
+        $fechaInicioConsulta = "";
+        $fechaFinConsulta = "";
+        if($fechadeconsulta<$fechadecorteAñoActual){
+            $fechaInicioConsulta =  date('Y/m/d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+//			$fechaFinConsulta =  $fechadecorteAñoActual;
+        }else {
+            $fechaInicioConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 days"));;
+//			$fechaFinConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 Years"));
+        }
+        //la fecha fin consulta es esta por quesolo vamos a ver hasta el ultimo dia del periodo que estamos
+        // consultando
+        $fechaFinConsulta =  date('Y/m/t',strtotime($fechadeconsulta));
+        $this->set('fechaInicioConsulta',$fechaInicioConsulta);
+        $this->set('fechaFinConsulta',$fechaFinConsulta);
+
         $AsientosOpt = [
             'contain' => [
                 'Movimiento'=>[
@@ -43,7 +69,11 @@ class AsientosController extends AppController {
             ],
             'conditions'=>[
                 'Asiento.cliente_id'=>$ClienteId,
-                'SUBSTRING(Asiento.periodo,4,7)*1 = '.$peanio.'*1',
+                "Asiento.fecha >= '".date('Y-m-d', strtotime($fechaInicioConsulta))."'",
+                "Asiento.fecha <= '".date('Y-m-d', strtotime($fechaFinConsulta))."'",
+            ],
+            'order'=>[
+                "Asiento.fecha"
             ]
         ];
 
@@ -66,6 +96,17 @@ class AsientosController extends AppController {
             }
             $AsientosOpt['conditions']['Asiento.id'] =  $asientosqueimpactan;
             $this->layout = 'ajax';
+
+            $optionsCuentacliente = [
+                'contain'=>[
+                    'Cuenta'
+                ],
+                'conditions'=>[
+                    'Cuentascliente.id'=>$cuentacliente,
+                ]
+            ];
+            $cuentasclienteseleccionada = $this->Cuentascliente->find('first',$optionsCuentacliente);
+            $this->set('cuentasclienteseleccionada',$cuentasclienteseleccionada);
         }
         $asientos = $this->Asiento->find('all', $AsientosOpt);
 
@@ -93,6 +134,11 @@ class AsientosController extends AppController {
         ];
         $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
         $this->set('cuentasclientes',$cuentasclientes);
+        if($this->request->is('ajax')){
+            $this->set('isajaxrequest',1);
+        }else{
+            $this->set('isajaxrequest',0);
+        }
     }
     public function add() {
         $this->loadModel('Movimiento');
@@ -102,8 +148,11 @@ class AsientosController extends AppController {
             $this->Asiento->create();
             $respuesta = array('respuesta'=>'');
             foreach ($this->request->data['Asiento'] as $a => $asientoAGuardar){
+                //si el numero es 0 vamos a buscar el numero mas alto para editarlo
+
+
                 $this->request->data('Asiento.'.$a.'.fecha',date('Y-m-d',strtotime($this->request->data['Asiento'][$a]['fecha'])));
-                $respuesta['data']=$this->request->data;
+
                 if ($this->Asiento->save($this->request->data['Asiento'][$a])) {
                     $respuesta['respuesta'] .= "El Asiento se guardo correctamente.</br>";
                     $asientoid=0;
@@ -113,6 +162,31 @@ class AsientosController extends AppController {
                         $asientoid = $this->request->data['Asiento'][$a]['id'];
                     }
                     foreach ($this->request->data['Asiento'][$a]['Movimiento'] as $k => $movimiento){
+                        //si el movimiento tiene haber 0 y debe 0 no se deberia guardar a menos que sea un asiento
+                        //que ya existia previamente por lo que se esta modificando a 0 sus valores
+                        $debe = $movimiento['debe']*1;
+                        $haber = $movimiento['haber']*1;
+                        $tienevalor=false;
+                        $movimientoyaguardado=false;
+                        $respuesta['id']="notiene";
+                        $respuesta['tienevalor']="no tiene";
+                        $respuesta['movimientoyaguardado']="no tiene";
+                        if($debe!=0||$haber!=0){
+                            $tienevalor=true;
+                            $respuesta['debe']=$debe;
+                            $respuesta['haber']=$haber;
+                            $respuesta['tienevalor']="si tiene";
+                        }
+                        if($movimiento['id']*1 != 0){
+                            //entonces el asiento ya estaba guardado y se puede estar modificando
+                            $movimientoyaguardado=true;
+                            $respuesta['id']=$movimiento['id'];
+                            $respuesta['movimientoyaguardado']="ya guardado";
+                        }
+                        if(!$tienevalor&&!$movimientoyaguardado){
+                            //no tiene valor y no estaba guardado entonces no hago nada
+                            continue;
+                        }
                         $movimiento['fecha']= date('Y-m-d',strtotime($movimiento['fecha']));
                         $movimiento['asiento_id'] = $asientoid;
                         //aca vamos a controlar que el asiento apunte a una cuenta cliente
@@ -147,6 +221,12 @@ class AsientosController extends AppController {
                         }
 
                         if ($this->Movimiento->save($movimiento)) {
+                            if($this->request->data['Asiento'][$a]['Movimiento'][$k]['id']==0){
+                                $movimientoid = $this->Movimiento->getLastInsertID();
+                            }else{
+                                $movimientoid = $this->request->data['Asiento'][$a]['Movimiento'][$k]['id'];
+                            }
+                            $this->request->data['Asiento'][$a]['Movimiento'][$k]['id']=$movimientoid;
                             $respuesta['respuesta'].= "El Movimiento se guardo correctamente.</br>";
                         } else {
                             $respuesta['respuesta'].="El Movimiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
@@ -158,6 +238,7 @@ class AsientosController extends AppController {
             }
 
         }
+        $respuesta['data']=$this->request->data;
         $this->set('data',$respuesta);
         $this->autoRender=false;
         $this->layout = 'ajax';
@@ -247,6 +328,7 @@ class AsientosController extends AppController {
         $esMayorQueBaja = array(
             //HASTA es mayor que el periodo
             'OR'=>array(
+                'Actividadcliente.baja'=>null,
                 'SUBSTRING(Actividadcliente.baja,4,7)*1 < '.$peanio.'*1',
                 'AND'=>array(
                     'SUBSTRING(Actividadcliente.baja,4,7)*1 <= '.$peanio.'*1',
@@ -653,5 +735,105 @@ class AsientosController extends AppController {
         }
         return;
     }
+    public function contabilizarretencionessufridas($cliid = null, $periodo = null){
+        $this->loadModel('Cliente');
+        $this->loadModel('Cuentascliente');
+        $this->loadModel('Asiento');
+        $options = [
+            'contain'=>[
+                'Impcli'=>[
+                    'Asiento'=>[
+                        'Movimiento'=>[
+                            'Cuentascliente'
+                        ],
+                        'conditions'=>[
+                            'Asiento.tipoasiento'=> 'retencionessufridas',
+                            'Asiento.periodo'=>$periodo,
+                        ]
+                    ],
+                    'Impuesto'=>[
+                        'Asientoestandare'=>[
+                            'Cuenta',
+                            'conditions'=>[
+                                'Asientoestandare.tipoasiento'=>'retencionessufridas'
+                            ]
+                        ]
+                    ],
+                    'Conceptosrestante'=>[
+                        'conditions'=>[
+                            'Conceptosrestante.conceptostipo_id'=>2,
+                            'Conceptosrestante.periodo'=>$periodo
+                        ]
+                    ],
+                    'conditions'=>[
 
+                    ]
+                ]
+            ],
+            'conditions' => [
+                'Cliente.' . $this->Cliente->primaryKey => $cliid,
+            ],
+        ];
+        $cliente = $this->Cliente->find('first', $options);
+
+        $cuentaclienteOptions = [
+            'conditions' => [
+                'Cuentascliente.cliente_id'=> $cliid
+            ],
+            'fields' => [
+                'Cuentascliente.id',
+                'Cuentascliente.nombre',
+                'Cuenta.numero',
+            ],
+            'order'=>['Cuenta.numero'],
+            'joins'=>[
+                [
+                    'table'=>'cuentas',
+                    'alias' => 'Cuenta',
+                    'type'=>'inner',
+                    'conditions'=> [
+                        'Cuentascliente.cuenta_id = Cuenta.id',
+                    ]
+                ],
+            ],
+        ];
+        $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
+
+        $cuentaxcuentaclienteOptions = [
+            'conditions' => [
+                'Cuentascliente.cliente_id'=> $cliid
+            ],
+            'fields' => [
+                'Cuenta.id',
+                'Cuentascliente.id',
+            ],
+            'order'=>['Cuenta.numero'],
+            'joins'=>[
+                [
+                    'table'=>'cuentas',
+                    'alias' => 'Cuenta',
+                    'type'=>'inner',
+                    'conditions'=> [
+                        'Cuentascliente.cuenta_id = Cuenta.id',
+                    ]
+                ],
+            ],
+        ];
+        $cuentaxcuentacliente=$this->Cuentascliente->find('list',$cuentaxcuentaclienteOptions);
+
+        $options = [
+            'contain'=>[
+                'Movimiento'=>[
+                    'Cuentascliente'
+                ],
+            ],
+            'conditions' => [
+                'Asiento.tipoasiento'=> 'retencionessufridas',
+                'Asiento.periodo'=>$periodo,
+            ],
+        ];
+        $asientosyacargados = $this->Asiento->find('all', $options);
+        $this->set(compact('cliid','cliente','periodo','cuentasclientes','asientosyacargados','cuentaxcuentacliente'));
+        $this->layout = 'ajax';
+    }
 }

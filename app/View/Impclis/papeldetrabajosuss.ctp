@@ -3,7 +3,9 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));
 echo $this->Html->script('impclis/papeldetrabajosuss',array('inline'=>false));
 echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
 echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
-echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));?>
+echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));
+echo $this->Form->input('impcliid',array('value'=>$impcliid,'type'=>'hidden'));
+echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));?>
 <div class="eventosclientes index">
 	<div id="Formhead" class="clientes papeldetrabajosuss index" style="margin-bottom:10px;">
 		<h2>SUSS:</h2>
@@ -42,6 +44,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 		rows por que -->
         <?php
         $empleadoDatos = array();
+        $sindicatos['sindicato']=[];
         foreach ($impcli['Cliente']['Empleado'] as $empleado) {
             $miempleado = array();
             if(!isset($miempleado['horasDias'])) {
@@ -114,6 +117,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 //calculo auxiliar para sheetAPagar
                 $miempleado['TotalRemCD'] = 0;
                 $miempleado['codigoafip'] = 0;
+                $miempleado['totalAPagar'] = 0;
             }
             $osdelpersdedireccion = $miempleado['osdelpersdedireccion'];//todo inicializar en false cuando tengamos de donde sacar el dato
             $coberturaart = $miempleado['coberturaart'];//todo inicializar en false cuando tengamos de donde sacar el dato
@@ -250,7 +254,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 }
                 //Adicionales
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('18'/*Antiguedad*/,'77'/*Presentismo*/,'91'/*Otros*/,), true )){
+                    ['18'/*Antiguedad*/,'77'/*Presentismo*/,'82'/*Adicional Complemento SS*/,'127'/*Total Acuerdo Remunerativo*/], true )){
                     $adicionales += $valorrecibo['valor'];
                 }
                 //Embargos
@@ -271,7 +275,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 }
                 //SAC
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('94'/*Total SAC Remunerativo*/), true )
+                    array('92'/*S.A.C. Remunerativo 1*/,'93'/*S.A.C. Remunerativo 2*/,'94'/*Total SAC Remunerativo*/), true )
                 ){
                     $SAC += $valorrecibo['valor'];
                 }
@@ -373,8 +377,21 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 ){
                     $rem4aportenegativo -= $valorrecibo['valor'];
                 }
-                //Remuneracion 9
-                $rem9 = $remtotal;
+
+                //Remuneracion 9 [La remuneracion 9 tiene que pagar por los no rem pero no por los no rem indenizatorios]
+                if (
+                    in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    array('27'/*Total Remunerativos C/D*/,'109'/*Total Remunerativos C/D*/), true )
+                ){
+                    $rem9 += $valorrecibo['valor'];
+                }
+                if (
+                in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    array('105'/*Vacaciones No Gozadas*/), true )
+                ){
+                    $rem9 -= $valorrecibo['valor'];
+                }
+
                 //contribucionrenatea Primera parte
                 if ($valorrecibo['Cctxconcepto']['Conveniocolectivotrabajo']['trabajorural']){
                     $trabajadorAgrario = true;
@@ -465,6 +482,9 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
             if($empleado['codigoafip']=='2'){
                 $ContribSSjubilacionsipa+=$rem2*0.1017*0.75;
             }
+            if($empleado['codigoafip']=='3'){
+                $ContribSSjubilacionsipa+=$rem2*0.1017*0.25;
+            }
             //Jubilacion INSSJP
             if($empleado['codigoafip']=='0'){
                 $INSSJP+=$rem2*0.01500;
@@ -474,6 +494,9 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
             }
             if($empleado['codigoafip']=='2'){
                 $INSSJP+=$rem2*0.01500*0.75;
+            }
+            if($empleado['codigoafip']=='3'){
+                $INSSJP+=$rem2*0.01500*0.25;
             }
             //Contrib Tarea Dif
             $ContribSScontribtareadif = $rem1*($seguridadsocialcontribtareadif/100);
@@ -488,6 +511,9 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 }
                 if($empleado['codigoafip']=='2'){
                     $FNE+=$rem1*0.0089*0.75;
+                }
+                if($empleado['codigoafip']=='3'){
+                    $FNE+=$rem1*0.0089*0.25;
                 }
             }else{}
             //Contrib Seg Soc ANSSAL
@@ -506,6 +532,9 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
             }
             if($empleado['codigoafip']=='2'){
                 $asignacionfamiliar+=$rem1*0.04440*0.75;
+            }
+            if($empleado['codigoafip']=='3'){
+                $asignacionfamiliar+=$rem1*0.04440*0.25;
             }
             //Total Contribuciones
             $totalContribucionesSS =
@@ -756,7 +785,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                         echo "<td>";
                         $empleadoid = $empleado['id'];
-                        echo $empleadoDatos[$empleadoid]['adicionales']."</td>";
+                        echo number_format($empleadoDatos[$empleadoid]['adicionales'], 2, ",", ".")."</td>";
                     }
                     ?>
                 </tr><!--10-->
@@ -766,7 +795,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                         echo "<td>";
                         $empleadoid = $empleado['id'];
-                        echo $empleadoDatos[$empleadoid]['horasextras']."</td>";
+                        echo number_format($empleadoDatos[$empleadoid]['horasextras'], 2, ",", ".")."</td>";
                     }
                     ?>
                 </tr>
@@ -809,7 +838,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                         echo number_format($empleadoDatos[$empleadoid]['premios'], 2, ",", ".")."</td>";
                     }
                     ?>
-                    <td rowspan="3">
+                    <td rowspan="2">
                         Totales
                     </td>
                 </tr>
@@ -827,11 +856,15 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 <tr style="border-spacing: 5em 10em">
                     <td>Conceptos no Remunerativos</td>
                     <?php
+                    $totalConceptosNoRemunerativos=0;
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                         echo "<td>";
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['conceptosnorem'], 2, ",", ".")."</td>";
+                        $totalConceptosNoRemunerativos+=$empleadoDatos[$empleadoid]['conceptosnorem'];
                     }
+                    echo "<td>";
+                    echo number_format($totalConceptosNoRemunerativos, 2, ",", ".")."</td>";
                     ?>
                 </tr>
                 <tr>
@@ -931,7 +964,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                     }
                     ?>
                     <td><?php
-                        echo $remtotal;
+                        echo number_format($remtotal, 2, ",", ".");
                         echo $this->Form->input(
                             'RemuneracionTotal',
                             array(
@@ -1201,6 +1234,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                         echo "<td>";
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['totalContribucionesSS'], 2, ",", ".")."</td>";
+                        $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['totalContribucionesSS'];
                     }
                     ?>
                     <td>
@@ -1230,6 +1264,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['contribucionrenatea'], 2, ",", ".")."</td>";
                         $totalembargos += $empleadoDatos[$empleadoid]['embargos'];
+                        $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['contribucionrenatea'];
                     }
                     ?>
                     <td><?php echo number_format($contribucionrenatea, 2, ",", ".");
@@ -1259,6 +1294,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                         echo "<td>";
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['aporterenatea'], 2, ",", ".")."</td>";
+                        $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['aporterenatea'];
                     }
                     ?>
                     <td><?php echo number_format($aporterenatea, 2, ",", ".");
@@ -1327,6 +1363,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                         echo "<td>";
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteSStotal'], 2, ",", ".")."</td>";
+                        $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['AporteSStotal'];
                     }
                     ?>
                     <td><?php echo number_format($AporteSStotal, 2, ",", ".");
@@ -1389,6 +1426,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                         echo "<td>";
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ContribucionesOStotal'], 2, ",", ".")."</td>";
+                        $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['ContribucionesOStotal'];
                     }
                     ?>
                     <td><?php echo number_format($ContribucionesOStotal, 2, ",", ".");
@@ -1457,6 +1495,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                         echo "<td>";
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteOStotal'], 2, ",", ".")."</td>";
+                        $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['AporteOStotal'];
                     }
                     ?>
                     <td><?php echo number_format($AporteOStotal, 2, ",", ".");
@@ -1481,6 +1520,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                         echo "<td>";
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ARTart'], 2, ",", ".")."</td>";
+                        $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['ARTart'];
                     }
                     ?>
                     <td><?php echo number_format($ARTart, 2, ",", ".");
@@ -1505,6 +1545,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                         echo "<td>";
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio'], 2, ",", ".")."</td>";
+                        $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio'];
                     }
                     ?>
                     <td><?php
@@ -1518,12 +1559,31 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                             )
                         ); ?></td>
                 </tr>
+                <tr style="<?php echo  $styleForTotalTd; ?>">
+                    <td style=" vertical-align:middle!important;">
+                        <div >
+                            Totales
+                        </div>
+                    </td>
+                    <td>A Pagar</td>
+                    <?php
+                    $totalSUSSAPAGAR=0;
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo "<td>";
+                        $empleadoid = $empleado['id'];
+                        echo number_format( $empleadoDatos[$empleadoid]['totalAPagar'], 2, ",", ".")."</td>";
+                        $totalSUSSAPAGAR+= $empleadoDatos[$empleadoid]['totalAPagar'];
+                    }
+                    ?>
+                    <td><?php
+                        echo number_format($totalSUSSAPAGAR, 2, ",", ".");
+                       ?></td>
+                </tr>
             </tbody>
 	</table>
 	</div>
 	<div id="divLiquidarSUSS">
 	</div>
-    
     <?php
     if($tieneMonotributo=='true'){ ?>
         <div id="divContenedorContabilidad" style="margin-top:10px">  </div>
@@ -1573,8 +1633,8 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 'div' => false,
                 'style'=> 'height:9px;display:inline'
             ));
-            echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Asiento Devengamiento SUSS" ,'style'=>'width:250px']);
-            echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Asiento Automatico periodo: ".$periodo,'style'=>'width:250px']);
+            echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Devengamiento SUSS" ,'style'=>'width:250px']);
+            echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Automatico",'style'=>'width:250px']);
             echo $this->Form->input('Asiento.0.cliente_id',['value'=>$impcli['Cliente']['id'],'type'=>'hidden']);
             echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcli['Impcli']['id'],'type'=>'hidden']);
             echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo,'type'=>'hidden']);
@@ -1612,8 +1672,16 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarasuss['cuenta_id'],'id'=>'cuenta'.$asientoestandarasuss['cuenta_id']]);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarasuss['Cuenta']['numero'],'style'=>'width:82px']);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Cuenta','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',['label'=>($i!=0)?false:'Debe','readonly'=>'readonly','value'=>0,]);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',['label'=>($i!=0)?false:'Haber','readonly'=>'readonly','value'=>0,]) . "</br>";
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+                    'label'=>($i!=0)?false:'Debe',
+                    'value'=>0,
+                    'class'=>"inputDebe "
+                ]);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
+                        'label'=>($i!=0)?false:'Haber',
+                        'value'=>0,
+                        'class'=>"inputHaber "
+                    ]) . "</br>";
                 $i++;
             }
             
@@ -1644,18 +1712,19 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 }
                 if($mostrar) {
                     /*Aca vamos a recorrer los sindicatos que hemos buscado para preguntar
-                                                si calculamos el valor de el que va a mostrarse*/
+                                                                  si calculamos el valor de el que va a mostrarse*/
                     $valor = 0;
                     foreach ($sindicatos['sindicato'] as $nomSindicato => $sindicato) {
-                        $nombre = "Aporte-".$nomSindicato."-";
-                        if($nombre==$cuentaclientenombre){
+                        $nombre = "Ap. ".$nomSindicato . " a Pagar";
+                        if(trim($nombre)==trim($cuentaclientenombre)){
                             $valor = $sindicato;
+                        }else{
                         }
                     }
                     if(isset($sindicatosextra['sindicatoextra'])) {
                         foreach ($sindicatosextra['sindicatoextra'] as $nomSindicato => $sindicato) {
-                            $nombre = "Aporte-" . $nomSindicato . "-";
-                            if ($nombre == $cuentaclientenombre) {
+                            $nombre = "Ap. " . $nomSindicato . " a Pagar";
+                            if (trim($nombre) == trim($cuentaclientenombre)) {
                                 $valor = $sindicato;
                             }
                         }
@@ -1681,136 +1750,181 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuenta_id', ['readonly' => 'readonly', 'type' => 'hidden', 'orden' => $i, 'value' => $cuentaaportesindicato, 'id' => 'cuenta' . $cuentaaportesindicato]);
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['label'=>($i!=0)?false:'Numero','readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
                     echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['label'=>($i!=0)?false:'Cuenta','readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['label'=>($i!=0)?false:'Debe','readonly' => 'readonly', 'value' => 0,]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['label'=>($i!=0)?false:'Haber','readonly' => 'readonly', 'value' => $valor,]). "</br>";
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [
+                        'label'=>($i!=0)?false:'Debe',
+                        'value' => 0,
+                        'class'=>"inputDebe "
+                    ]);
+                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
+                            'label'=>($i!=0)?false:'Haber',
+                            'value' => $valor,
+                            'class'=>"inputHaber "
+                        ]). "</br>";
                     $i++;
                 }
             }
-            foreach ($contribucionesSindicatos as $cuentacontribucionindicato) {
-                if(!isset($movId[$cuentacontribucionindicato])){
-                    $movId[$cuentacontribucionindicato]=0;
-                }
-                $cuentaclienteid=0;
-                $cuentaclientenombre="dar de alta cuenta de sindicato faltante";//$asientoestandarasuss['Cuenta']['nombre'];
-                $cuentaclientenumero="dar de alta cuenta de sindicato faltante";//$asientoestandarasuss['Cuenta']['nombre'];
-                $mostrar=false;
-                foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaSUSS){
-                    if($cuentaclientaSUSS['cuenta_id']==$cuentacontribucionindicato){
-                        $cuentaclienteid=$cuentaclientaSUSS['id'];
-                        $cuentaclientenombre=$cuentaclientaSUSS['nombre'];
-                        $cuentaclientenumero=$cuentaclientaSUSS['Cuenta']['numero'];
-                        $mostrar=true;
-                        break;
-                    }
-                }
-                if($mostrar) {
-                    $debe =0;
-                    $haber =0;
-                    foreach ($contibuciones as $nomContribucion => $monto) {
-                        $nombre1 = "Contribucion-".$nomContribucion."-";
-                        //$nombre2 = "Contribucion-".$nomContribucion."-A Pagar";
-                        $nombre3 = "Cont.Seg. De Vida Oblig. Mercantil-".$nomContribucion."-Creo que esto no va";
-                        //$nombre4 = "Cont.Seg. De Vida Oblig. Mercantil-".$nomContribucion."-A Pagar";
-                        if($nombre1==$cuentaclientenombre||$nombre3==$cuentaclientenombre){
-                            $debe = $monto;
-                        }
-//                      elseif ($nombre2==$cuentaclientenombre||$nombre4==$cuentaclientenombre){
-//                            $haber = $monto;
-//                        }else{
-////                            echo $cuentaclientenombre."=".$nombre1."</br>";
+//            foreach ($contribucionesSindicatos as $cuentacontribucionindicato) {
+//                if(!isset($movId[$cuentacontribucionindicato])){
+//                    $movId[$cuentacontribucionindicato]=0;
+//                }
+//                $cuentaclienteid=0;
+//                $cuentaclientenombre="dar de alta cuenta de sindicato faltante";//$asientoestandarasuss['Cuenta']['nombre'];
+//                $cuentaclientenumero="dar de alta cuenta de sindicato faltante";//$asientoestandarasuss['Cuenta']['nombre'];
+//                $mostrar=false;
+//                foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaSUSS){
+//                    if($cuentaclientaSUSS['cuenta_id']==$cuentacontribucionindicato){
+//                        $cuentaclienteid=$cuentaclientaSUSS['id'];
+//                        $cuentaclientenombre=$cuentaclientaSUSS['nombre'];
+//                        $cuentaclientenumero=$cuentaclientaSUSS['Cuenta']['numero'];
+//                        $mostrar=true;
+//                        break;
+//                    }
+//                }
+//                if($mostrar) {
+//                    $debe =0;
+//                    $haber =0;
+//                    foreach ($contibuciones as $nomContribucion => $monto) {
+//                        $nombre1 = "Contribucion-".$nomContribucion."-";
+//                        //$nombre2 = "Contribucion-".$nomContribucion."-A Pagar";
+//                        $nombre3 = "Cont.Seg. De Vida Oblig. Mercantil-".$nomContribucion."-Creo que esto no va";
+//                        //$nombre4 = "Cont.Seg. De Vida Oblig. Mercantil-".$nomContribucion."-A Pagar";
+//                        if($nombre1==$cuentaclientenombre||$nombre3==$cuentaclientenombre){
+//                            $debe = $monto;
 //                        }
-                    }
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['value' => $movId[$cuentacontribucionindicato],]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.fecha', array(
-                        'readonly' => 'readonly',
-                        'class' => 'datepicker',
-                        'type' => 'hidden',
-                        'label' => array(
-                            'text' => "Vencimiento:",
-                            "style" => "display:inline",
-                        ),
-                        'readonly', 'readonly',
-                        'value' => date('d-m-Y'),
-                        'div' => false,
-                        'style' => 'height:9px;display:inline'
-                    ));
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['readonly' => 'readonly', 'type' => 'hidden', 'value' => $cuentaclienteid]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuenta_id', ['readonly' => 'readonly', 'type' => 'hidden', 'orden' => $i, 'value' => $cuentacontribucionindicato, 'id' => 'cuenta' . $cuentacontribucionindicato]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['label'=>($i!=0)?false:'Numero','readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['label'=>($i!=0)?false:'Nombre','readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']) ;
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['label'=>($i!=0)?false:'Debe','readonly' => 'readonly', 'value' => $debe,]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['label'=>($i!=0)?false:'Haber','readonly' => 'readonly', 'value' => $haber,]). "</br>";
-                    $i++;
-                }
-            }
-            foreach ($contribucionesSindicatosPasivo as $cuentacontribucionindicatopasivo) {
-                if(!isset($movId[$cuentacontribucionindicatopasivo])){
-                    $movId[$cuentacontribucionindicatopasivo]=0;
-                }
-                $cuentaclienteid=0;
-                $cuentaclientenombre="dar de alta cuenta de sindicato faltante";//$asientoestandarasuss['Cuenta']['nombre'];
-                $cuentaclientenumero="dar de alta cuenta de sindicato faltante";//$asientoestandarasuss['Cuenta']['nombre'];
-                $mostrar=false;
-                foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaSUSS){
-                    if($cuentaclientaSUSS['cuenta_id']==$cuentacontribucionindicatopasivo){
-                        $cuentaclienteid=$cuentaclientaSUSS['id'];
-                        $cuentaclientenombre=$cuentaclientaSUSS['nombre'];
-                        $cuentaclientenumero=$cuentaclientaSUSS['Cuenta']['numero'];
-                        $mostrar=true;
-                        break;
-                    }
-                }
-                if($mostrar) {
-                    /*Aca vamos a recorrer los sindicatos que hemos buscado para preguntar
-                                                si calculamos el valor de el que va a mostrarse*/
-                    $valor = 0;
-                    foreach ($sindicatos['sindicato'] as $nomSindicato => $sindicato) {
-                        $nombre = "Contribucion-".$nomSindicato."-";
-                        if($nombre==$cuentaclientenombre){
-                            $valor = $sindicato;
-                        }
-                    }
-                    if(isset($sindicatosextra['sindicatoextra'])) {
-                        foreach ($sindicatosextra['sindicatoextra'] as $nomSindicato => $sindicato) {
-                            $nombre = "Contribucion-" . $nomSindicato . "-";
-                            if ($nombre == $cuentaclientenombre) {
-                                $valor = $sindicato;
-                            }
-                            //En estas cuentas el Contribucion-Seguro de vida obligatorio comercio- paga 2/3 de este monto (que es 1/3) por
-                            //eso lo vamos a multiplicar por 2
-                            if ($nombre == "Contribucion-Seguro de vida obligatorio comercio-") {
-                                $valor = $valor * 2;
-                            }
-                        }
-                    }
-                    /*Estos son aportes y se sacan del recibo de sueldo por lo que aca deberia preguntar
-                    si hay un calculo para empleados que tengan el nombre del sindicato en la cuenta y ahi mustro ese valor
-                    por que la cuenta se da de alta con ese valro*/
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['value' => $movId[$cuentaaportesindicato],]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.fecha', array(
-                        'readonly' => 'readonly',
-                        'class' => 'datepicker',
-                        'type' => 'hidden',
-                        'label' => array(
-                            'text' => "Vencimiento:",
-                            "style" => "display:inline",
-                        ),
-                        'readonly', 'readonly',
-                        'value' => date('d-m-Y'),
-                        'div' => false,
-                        'style' => 'height:9px;display:inline'
-                    ));
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['readonly' => 'readonly', 'type' => 'hidden', 'value' => $cuentaclienteid]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuenta_id', ['readonly' => 'readonly', 'type' => 'hidden', 'orden' => $i, 'value' => $cuentaaportesindicato, 'id' => 'cuenta' . $cuentaaportesindicato]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['label'=>($i!=0)?false:'Numero','readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['label'=>($i!=0)?false:'Cuenta','readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['label'=>($i!=0)?false:'Debe','readonly' => 'readonly', 'value' => 0,]);
-                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['label'=>($i!=0)?false:'Haber','readonly' => 'readonly', 'value' => $valor,]). "</br>";
-                    $i++;
-                }
-            }
-            echo $this->Form->submit('Contabilizar',['style'=>'display:none']);
+////                      elseif ($nombre2==$cuentaclientenombre||$nombre4==$cuentaclientenombre){
+////                            $haber = $monto;
+////                        }else{
+//////                            echo $cuentaclientenombre."=".$nombre1."</br>";
+////                        }
+//                    }
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['value' => $movId[$cuentacontribucionindicato],]);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.fecha', array(
+//                        'readonly' => 'readonly',
+//                        'class' => 'datepicker',
+//                        'type' => 'hidden',
+//                        'label' => array(
+//                            'text' => "Vencimiento:",
+//                            "style" => "display:inline",
+//                        ),
+//                        'readonly', 'readonly',
+//                        'value' => date('d-m-Y'),
+//                        'div' => false,
+//                        'style' => 'height:9px;display:inline'
+//                    ));
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['readonly' => 'readonly', 'type' => 'hidden', 'value' => $cuentaclienteid]);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuenta_id', ['readonly' => 'readonly', 'type' => 'hidden', 'orden' => $i, 'value' => $cuentacontribucionindicato, 'id' => 'cuenta' . $cuentacontribucionindicato]);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['label'=>($i!=0)?false:'Numero','readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['label'=>($i!=0)?false:'Nombre','readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']) ;
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['label'=>($i!=0)?false:'Debe','readonly' => 'readonly', 'value' => $debe,]);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['label'=>($i!=0)?false:'Haber','readonly' => 'readonly', 'value' => $haber,]). "</br>";
+//                    $i++;
+//                }
+//            }
+//            foreach ($contribucionesSindicatosPasivo as $cuentacontribucionindicatopasivo) {
+//                if(!isset($movId[$cuentacontribucionindicatopasivo])){
+//                    $movId[$cuentacontribucionindicatopasivo]=0;
+//                }
+//                $cuentaclienteid=0;
+//                $cuentaclientenombre="dar de alta cuenta de sindicato faltante";//$asientoestandarasuss['Cuenta']['nombre'];
+//                $cuentaclientenumero="dar de alta cuenta de sindicato faltante";//$asientoestandarasuss['Cuenta']['nombre'];
+//                $mostrar=false;
+//                foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaSUSS){
+//                    if($cuentaclientaSUSS['cuenta_id']==$cuentacontribucionindicatopasivo){
+//                        $cuentaclienteid=$cuentaclientaSUSS['id'];
+//                        $cuentaclientenombre=$cuentaclientaSUSS['nombre'];
+//                        $cuentaclientenumero=$cuentaclientaSUSS['Cuenta']['numero'];
+//                        $mostrar=true;
+//                        break;
+//                    }
+//                }
+//                if($mostrar) {
+//                    /*Aca vamos a recorrer los sindicatos que hemos buscado para preguntar
+//                                                si calculamos el valor de el que va a mostrarse*/
+//                    $valor = 0;
+//                    foreach ($sindicatos['sindicato'] as $nomSindicato => $sindicato) {
+//                        $nombre = "Contribucion-".$nomSindicato."-";
+//                        if($nombre==$cuentaclientenombre){
+//                            $valor = $sindicato;
+//                        }
+//                    }
+//                    if(isset($sindicatosextra['sindicatoextra'])) {
+//                        foreach ($sindicatosextra['sindicatoextra'] as $nomSindicato => $sindicato) {
+//                            $nombre = "Contribucion-" . $nomSindicato . "-";
+//                            if ($nombre == $cuentaclientenombre) {
+//                                $valor = $sindicato;
+//                            }
+//                            //En estas cuentas el Contribucion-Seguro de vida obligatorio comercio- paga 2/3 de este monto (que es 1/3) por
+//                            //eso lo vamos a multiplicar por 2
+//                            if ($nombre == "Contribucion-Seguro de vida obligatorio comercio-") {
+//                                $valor = $valor * 2;
+//                            }
+//                        }
+//                    }
+//                    /*Estos son aportes y se sacan del recibo de sueldo por lo que aca deberia preguntar
+//                    si hay un calculo para empleados que tengan el nombre del sindicato en la cuenta y ahi mustro ese valor
+//                    por que la cuenta se da de alta con ese valro*/
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['value' => $movId[$cuentaaportesindicato],]);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.fecha', array(
+//                        'readonly' => 'readonly',
+//                        'class' => 'datepicker',
+//                        'type' => 'hidden',
+//                        'label' => array(
+//                            'text' => "Vencimiento:",
+//                            "style" => "display:inline",
+//                        ),
+//                        'readonly', 'readonly',
+//                        'value' => date('d-m-Y'),
+//                        'div' => false,
+//                        'style' => 'height:9px;display:inline'
+//                    ));
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['readonly' => 'readonly', 'type' => 'hidden', 'value' => $cuentaclienteid]);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuenta_id', ['readonly' => 'readonly', 'type' => 'hidden', 'orden' => $i, 'value' => $cuentaaportesindicato, 'id' => 'cuenta' . $cuentaaportesindicato]);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.numero', ['label'=>($i!=0)?false:'Numero','readonly' => 'readonly', 'value' => $cuentaclientenumero, 'style' => 'width:82px']);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.nombre', ['label'=>($i!=0)?false:'Cuenta','readonly' => 'readonly', 'value' => $cuentaclientenombre, 'type' => 'text', 'style' => 'width:250px']);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', ['label'=>($i!=0)?false:'Debe','readonly' => 'readonly', 'value' => 0,]);
+//                    echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', ['label'=>($i!=0)?false:'Haber','readonly' => 'readonly', 'value' => $valor,]). "</br>";
+//                    $i++;
+//                }
+//            }
+            echo $this->Form->submit('Contabilizar');
             echo $this->Form->end();
+            $totalDebe=0;
+            $totalHaber=0;
+            echo $this->Form->label('','&nbsp; ',[
+                'style'=>"display: -webkit-inline-box;width:355px;"
+            ]);
+            echo $this->Form->label('lblTotalDebe',
+                "$".number_format($totalDebe, 2, ".", ""),
+                [
+                    'id'=>'lblTotalDebe',
+                    'style'=>"display: inline;"
+                ]
+            );
+            echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:100px;"]);
+            echo $this->Form->label('lblTotalHaber',
+                "$".number_format($totalHaber, 2, ".", ""),
+                [
+                    'id'=>'lblTotalHaber',
+                    'style'=>"display: inline;"
+                ]
+            );
+            if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
+                echo $this->Html->image('test-pass-icon.png',array(
+                        'id' => 'iconDebeHaber',
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                        'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+                    )
+                );
+            }else{
+                echo $this->Html->image('test-fail-icon.png',array(
+                        'id' => 'iconDebeHaber',
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                        'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+                    )
+                );
+            }
             ?>
         </div>
     </div>

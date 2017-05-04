@@ -26,7 +26,6 @@ class MovimientosController extends AppController {
         $this->loadModel('Cuentascliente');        
         $this->loadModel('Asiento');
 
-
         $CuentasClientesopt = [
             'contain' => [
                 'Cliente'=>[

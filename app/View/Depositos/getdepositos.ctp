@@ -40,7 +40,7 @@
     <fieldset>
     	<legend><?php echo __('Honorario del periodo: '.$periodo); ?></legend>
     </fieldset>
-    <?php
+    <?php 
       echo $this->Form->input('id',array('type'=>'hidden'));
       echo $this->Form->input('evento_id',array('type'=>'hidden',));
       echo $this->Form->input('cliente_id',array('type'=>'hidden','value'=>$cliid,));

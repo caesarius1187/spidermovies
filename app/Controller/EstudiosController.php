@@ -36,8 +36,11 @@ class EstudiosController extends AppController {
 		if (!$this->Estudio->exists($id)) {
 			throw new NotFoundException(__('Invalid estudio'));
 		}
+
 		$options = array('conditions' => array('Estudio.' . $this->Estudio->primaryKey => $id));
 		$this->set('estudio', $this->Estudio->find('first', $options));
+		$this->request->data = $this->Estudio->find('first', $options);
+
 	}
 
 /**
@@ -69,11 +72,13 @@ class EstudiosController extends AppController {
 			throw new NotFoundException(__('Invalid estudio'));
 		}
 		if ($this->request->is('post')) {
+			$inicioactividades =$this->request->data['Estudio']['inicioactividades'];
+			$this->request->data('Estudio.inicioactividades',date('Y-m-d',strtotime($inicioactividades)));
 			if ($this->Estudio->save($this->request->data)) {
-				$this->Session->setFlash(__('The estudio has been saved.'));
-				return $this->redirect(array('action' => 'index'));
+				$this->Session->setFlash(__('Los datos del estudio se han guardado.'));
+				return $this->redirect(array('action' => 'view',$id));
 			} else {
-				$this->Session->setFlash(__('The estudio could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('No se pudieron guardar los datos del estudio por favor intente de nuevo mas tarde'));
 			}
 		} else {
 			$options = array('conditions' => array('Estudio.' . $this->Estudio->primaryKey => $id));

@@ -298,11 +298,6 @@ class VentasController extends AppController {
 //		}
 
 	}
-		/**
- * add method
- *
- * @return void
- */
 	public function addajax(){
 	 	//$this->request->onlyAllow('ajax');
 	 	$this->loadModel('Subcliente');
@@ -390,14 +385,6 @@ class VentasController extends AppController {
 			
 			}
 		}
-	
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
 	public function edit($id ,$tieneMonotributo = null,$tieneIVAPercepciones = null,$tieneImpuestoInterno = null,$tieneIVA = null,$tieneAgenteDePercepcionIIBB = null,$tieneAgenteDePercepcionActividadesVarias = null) {
 		$this->loadModel('Subcliente');
 		$this->loadModel('Localidade');
@@ -587,14 +574,217 @@ class VentasController extends AppController {
 		$this->set('actividades', $clienteActividadList);
 		$this->layout = 'ajax';
 	}
+	//Esta funcion es la que se abre desde el informe de avance
+	public function cargar($id=null,$periodo=null){
+		// PRIMERO CHEKIAR QUE EL CLIENTE QUE MUESTRA LAS VENTAS SEA PARTE DEL ESTUDIO ACTIVO
+		$this->loadModel('Localidade');
+		$this->loadModel('Partido');
+		$this->loadModel('Cliente');
+		$this->loadModel('Comprobante');
+		$this->loadModel('Impcli');
 
-/**
- * delete method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+		//A: Es menor que periodo Hasta
+		$esMenorQueHasta = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+		//B: Es mayor que periodo Desde
+		$esMayorQueDesde = array(
+			'OR'=>array(
+				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+				),
+			)
+		);
+		//C: Tiene Periodo Hasta 0 NULL
+		$periodoNull = array(
+			'OR'=>array(
+				array('Periodosactivo.hasta'=>null),
+				array('Periodosactivo.hasta'=>""),
+			)
+		);
+		$conditionsImpCliHabilitados = array(
+			//El periodo esta dentro de un desde hasta
+			'AND'=> array(
+				$esMayorQueDesde,
+				'OR'=> array(
+					$esMenorQueHasta,
+					$periodoNull
+				)
+			)
+		);
+		$this->set('periodo',$periodo);
+		$cliente=$this->Cliente->find('first', array(
+				'contain'=>array(
+					'Impcli'=>[
+						'Impuesto',
+						'Periodosactivo'=>[
+							'conditions'=>$conditionsImpCliHabilitados
+						]
+					]
+				),
+				'conditions' => array(
+					'id' => $id,
+				),
+			)
+		);
+		/*AFIP*/
+		$tieneMonotributo=False;
+		$tieneIVA=False;
+		$tieneIVAPercepciones=False;
+		$tieneImpuestoInterno=False;
+		/*DGR*/
+		$tieneAgenteDePercepcionIIBB=False;
+		/*DGRM*/
+		$tieneAgenteDePercepcionActividadesVarias=False;
+		foreach ($cliente['Impcli'] as $impcli) {
+			/*AFIP*/
+			if($impcli['impuesto_id']==4/*Monotributo*/){
+				//Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Monotributista Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=True;
+					$tieneIVA=False;
+				}
+			}
+			if($impcli['impuesto_id']==19/*IVA*/){
+				//Tiene IVA asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que es un Responsable Inscripto Activo en este periodo
+					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+					$tieneMonotributo=False;
+					$tieneIVA=True;
+				}
+			}
+			if($impcli['impuesto_id']==184/*IVA Percepciones*/){
+				//Tiene IVA Percepciones asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene IVA Percepciones Activo en este periodo
+					$tieneIVAPercepciones=True;
+				}
+			}
+			if($impcli['impuesto_id']==185/*Impuesto Interno*/){
+				//Tiene Impuesto Interno asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Impuesto Interno Activo en este periodo
+					$tieneImpuestoInterno=True;
+				}
+			}
+			/*DGR*/
+			if($impcli['impuesto_id']==173/*Agente de Percepcion IIBB*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion IIBB Activo en este periodo
+					$tieneAgenteDePercepcionIIBB=True;
+				}
+			}
+			/*DGRM*/
+			if($impcli['impuesto_id']==186/*Agente de Percepcion de Actividades Varias*/){
+				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+				if(Count($impcli['Periodosactivo'])!=0){
+					//Aca estamos Seguros que tiene Agente de Percepcion de Actividades Varias Activo en este periodo
+					$tieneAgenteDePercepcionActividadesVarias=True;
+				}
+			}
+		}
+		$cliente['Cliente']['tieneMonotributo'] = $tieneMonotributo;
+		$cliente['Cliente']['tieneIVA'] = $tieneIVA;
+		$cliente['Cliente']['tieneIVAPercepciones'] = $tieneIVAPercepciones;
+		$cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;
+		$cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;
+		$cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;
+		$this->set(compact('cliente'));
+
+		$optionspuntosdeventa = array(
+			'conditions' =>array('Puntosdeventa.cliente_id' => $id,),
+			'order'=>array()
+		);
+		$puntosdeventas = $this->Cliente->Puntosdeventa->find('list',$optionspuntosdeventa );
+		$this->set(compact('puntosdeventas'));
+
+		$conditionsSubClientes = array(
+			'Subcliente.cliente_id' => $id,);
+		$subclientes = $this->Cliente->Subcliente->find('list',array(
+				'conditions' =>$conditionsSubClientes,
+			)
+		);
+		$this->set(compact('subclientes'));
+
+		$clienteActividadList=$this->Cliente->Actividadcliente->find('list', array(
+				'contain' => array(
+					'Actividade',
+
+				),
+				'conditions' => array(
+					'Actividadcliente.cliente_id' => $id,
+				),
+				'fields' => array(
+					'Actividadcliente.id','Actividade.nombre','Actividadcliente.descripcion'
+				)
+			)
+		);
+		$this->set('actividades', $clienteActividadList);
+
+		$conditionsLocalidades = array(
+			'contain'=>'Partido',
+			'fields'=>array('Localidade.id','Localidade.nombre','Partido.nombre'),
+			'order'=>array('Partido.nombre','Localidade.nombre')
+		);
+		$localidades = $this->Localidade->find('list',$conditionsLocalidades);
+		$this->set('localidades', $localidades);
+
+
+		$partidos = $this->Partido->find('list');
+		$this->set('partidos', $partidos);
+
+		//si es monotributista solo debe poder hacer facturas tipo C
+		//sino mandar A y B
+		$optionsComprobantes=array();
+		if($tieneMonotributo){
+			$optionsComprobantes=array('conditions'=>array('Comprobante.tipo'=>'C'));
+		}else{
+			$optionsComprobantes=array('conditions'=>array('Comprobante.tipo'=>array('A','B')));
+		}
+		$comprobantes = $this->Comprobante->find('list',$optionsComprobantes);
+		//esto se manda para poder buscar y comparar todos los tipos de comprobantes y usar sus datos
+		$this->set('comprobantes', $comprobantes);
+		$allcomprobantes = $this->Comprobante->find('all',array('contain'=>array()));
+		$this->set('allcomprobantes', $allcomprobantes);
+
+		$condicionesiva = array("monotributista" => 'Monotributista',"responsableinscripto" => 'Responsable Inscripto','consf/exento/noalcanza'=>"Cons. F/Exento/No Alcanza",);
+		$this->set('condicionesiva', $condicionesiva);
+
+		$alicuotas = array("0" => '0', "2.5" => '2.5', "5" => '5', "10.5" => '10.5', "21" => '21' , "27" => '27');
+		$this->set('alicuotas', $alicuotas);
+
+		$tipodebitos = array('Debito Fiscal'=>'Debito Fiscal','Bien de uso'=>'Bien de uso','Restitucion debito fiscal'=>'Restitucion debito fiscal');
+		$this->set('tipodebitos', $tipodebitos);
+
+		$conditionsCli = array(
+			'Grupocliente',
+		);
+		$lclis = $this->Cliente->find('list',array(
+			'contain' =>$conditionsCli,
+			'conditions' => array(
+				'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id')
+			),
+			'order' => array(
+				'Grupocliente.nombre','Cliente.nombre'
+			),
+		));
+		$this->set(compact('lclis'));
+	}
 	public function delete($id = null) {
 		$this->Venta->id = $id;
 		if (!$this->Venta->exists()) {
@@ -682,6 +872,71 @@ class VentasController extends AppController {
 				)
 			);
 		}
+
+	}
+	public function exportartxt($cliid=null,$periodo=null){
+		$this->loadModel('Cliente');
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+
+		$cliente=$this->Cliente->find('first', [
+				'contain'=>[
+				],
+				'conditions' => [
+					'id' => $cliid,
+				],
+			]
+		);
+
+		$conditionsVentas = [
+			'fields'=>[
+				'Venta.*','Count(*) as cantalicuotas','SUM(Venta.total) as totalfactura'
+			],
+			'group'=>[
+				'Venta.puntosdeventa_id',
+				'Venta.numerocomprobante',
+				'Venta.comprobante_id'
+			],
+			'contain'=>[
+				'Puntosdeventa'=>[
+					'fields'=>['id','nombre']
+				],
+				'Subcliente'=>[
+					'fields'=>['id','nombre','cuit']
+				],
+				'Comprobante'=>[
+					'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre','codigo']
+				],
+			],
+			'conditions' => [
+				'Venta.periodo'=>$periodo,
+				'Venta.cliente_id'=>$cliid
+			],
+		];
+		$conditionsAlicuotas = [
+			'Puntosdeventa'=>[
+				'fields'=>['id','nombre']
+			],
+			'Subcliente'=>[
+				'fields'=>['id','nombre','cuit']
+			],
+			'Localidade'=>[
+				'Partido',
+				'fields'=>['id','nombre']
+			],
+			'Comprobante'=>[
+				'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre','codigo']
+			],
+			'conditions' => [
+				'Venta.periodo'=>$periodo,
+				'Venta.cliente_id'=>$cliid
+			],
+		];
+		$ventas=$this->Venta->find('all', $conditionsVentas);
+		$alicuotas=$this->Venta->find('all', $conditionsAlicuotas);
+		$alicuotascodigoreverse = $this->alicuotascodigoreverse;
+
+		$this->set(compact('ventas','alicuotas','cliente','cliid','periodo','alicuotascodigoreverse'));
 
 	}
 	public function importar($cliid=null,$periodo=null){
@@ -972,71 +1227,6 @@ class VentasController extends AppController {
 				$this->request->data['Venta'][0]['cliente_id'],
 				$this->request->data['Venta'][0]['periodo']));*/
 	}
-	public function exportartxt($cliid=null,$periodo=null){
-		$this->loadModel('Cliente');
-		$pemes = substr($periodo, 0, 2);
-		$peanio = substr($periodo, 3);
-
-		$cliente=$this->Cliente->find('first', [
-                'contain'=>[
-				],
-				'conditions' => [
-					'id' => $cliid,
-                 ],
-			]
-        );
-
-        $conditionsVentas = [
-                'fields'=>[
-                    'Venta.*','Count(*) as cantalicuotas','SUM(Venta.total) as totalfactura'
-                ],
-                'group'=>[
-					'Venta.puntosdeventa_id',
-					'Venta.numerocomprobante',
-					'Venta.comprobante_id'
-				],
-                'contain'=>[
-                    'Puntosdeventa'=>[
-                        'fields'=>['id','nombre']
-                    ],
-                    'Subcliente'=>[
-                        'fields'=>['id','nombre','cuit']
-                    ],
-                    'Comprobante'=>[
-                        'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre','codigo']
-                    ],
-                ],
-                'conditions' => [
-                    'Venta.periodo'=>$periodo,
-                    'Venta.cliente_id'=>$cliid
-                ],
-        ];
-        $conditionsAlicuotas = [
-                'Puntosdeventa'=>[
-                    'fields'=>['id','nombre']
-                ],
-                'Subcliente'=>[
-                    'fields'=>['id','nombre','cuit']
-                ],
-                'Localidade'=>[
-                    'Partido',
-                    'fields'=>['id','nombre']
-                ],
-                'Comprobante'=>[
-                    'fields'=>['id','tipodebitoasociado','tipocreditoasociado','nombre','codigo']
-                ],
-                'conditions' => [
-                    'Venta.periodo'=>$periodo,
-                    'Venta.cliente_id'=>$cliid
-                ],
-        ];
-        $ventas=$this->Venta->find('all', $conditionsVentas);
-        $alicuotas=$this->Venta->find('all', $conditionsAlicuotas);
-		$alicuotascodigoreverse = $this->alicuotascodigoreverse;
-
-		$this->set(compact('ventas','alicuotas','cliente','cliid','periodo','alicuotascodigoreverse'));
-
-    }
 	public function deletefile($name=null,$cliid=null,$folder=null,$periodo=null){
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');
@@ -1052,12 +1242,83 @@ class VentasController extends AppController {
 			$this->Session->setFlash(__('No se puede acceder al archivo'.$file));
 		}
 		return $this->redirect(
-							array(
-								'controller'=>'ventas',
-								'action' => 'importar',
-								$cliid,
-								$periodo
-							)
+			array(
+				'controller'=>'ventas',
+				'action' => 'importar',
+				$cliid,
+				$periodo
+			)
 		);
+	}
+	public function resumen(){
+		$this->loadModel('Cliente');
+		$mostrarInforme=false;
+		if ($this->request->is('post')) {
+			$pemesdesde=$this->request->data['ventas']['periodomesdesde'];
+			$peaniodesde=$this->request->data['ventas']['periodoaniodesde'];
+			$this->set('periodomesdesde', $pemesdesde);
+			$this->set('periodoaniodesde', $peaniodesde);
+			$pemeshasta=$this->request->data['ventas']['periodomeshasta'];
+			$peaniohasta=$this->request->data['ventas']['periodoaniohasta'];
+			$this->set('periodomeshasta', $pemeshasta);
+			$this->set('periodoaniohasta', $peaniohasta);
+
+			//A: Es menor que periodo Hasta
+			$esMayorQueDesde = array(
+				//HASTA es mayor que el periodo
+				'OR'=>array(
+					'SUBSTRING(Venta.periodo,4,7)*1 > '.$peaniodesde.'*1',
+					'AND'=>array(
+						'SUBSTRING(Venta.periodo,4,7)*1 >= '.$peaniodesde.'*1',
+						'SUBSTRING(Venta.periodo,1,2) >= '.$pemesdesde.'*1'
+					),
+				)
+			);
+			//B: Es mayor que periodo Desde
+			$esMenorQueHasta= array(
+				'OR'=>array(
+					'SUBSTRING(Venta.periodo,4,7)*1 < '.$peaniohasta.'*1',
+					'AND'=>array(
+						'SUBSTRING(Venta.periodo,4,7)*1 <= '.$peaniohasta.'*1',
+						'SUBSTRING(Venta.periodo,1,2) <= '.$pemeshasta.'*1'
+					),
+				)
+			);
+
+			$ventas = $this->Venta->find('all',array(
+				'fields' => array('SUM(Venta.total) AS total','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Venta.actividadcliente_id'),
+				'contain'=>array(
+					'Comprobante',
+					'Actividadcliente',
+				),
+				'conditions'=>array(
+					'Venta.cliente_id'=> $this->request->data['ventas']['cliente_id'],
+					$esMayorQueDesde,
+					$esMenorQueHasta
+				),
+				'group'=>array(
+					'Venta.periodo','Venta.comprobante_id','Venta.actividadcliente_id'
+				)
+			));
+			$this->set(compact('ventas'));
+			$mostrarInforme=true;
+
+		}
+		$conditionsCli = array(
+			'Grupocliente',
+		);
+		$clientes = $this->Cliente->find('list',array(
+				'contain' =>$conditionsCli,
+				'conditions' => array(
+					'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+					'Cliente.estado' => 'habilitado' ,
+					'Grupocliente.estado' => 'habilitado' ,
+				),
+				'order'=>array('Grupocliente.nombre','Cliente.nombre'),
+				'fields'=>array('Cliente.id','Cliente.nombre','Grupocliente.nombre')
+			)
+		);
+		$this->set(compact('clientes'));
+		$this->set('mostrarInforme',$mostrarInforme);
 	}
 }

@@ -31,7 +31,7 @@
 							<p>S.U.S.S.</p>
 							<p>SISTEMA NICO DE LA</p> 
 							<P>SEGURIDAD SOCIAL</p>
-						</lable>
+						</label>
 					</td>
 
 				</tr>
@@ -48,7 +48,7 @@
 							<P>CIA DE PAGO SIENDO EL</p> 
 							<p>TIQUE EL UNICO ELE-</p>
 							<p>MENTO VALIDO</p>
-						</lable>
+						</label>
 					</td>
 				</tr>
 			</table>		

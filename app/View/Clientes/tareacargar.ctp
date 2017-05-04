@@ -657,32 +657,34 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                   }
                 ?>
                 <tr id="rowcompra<?php echo $compra["id"]?>">
-                  <td class="<?php echo $tdClass?>"><?php echo date('d-m-Y',strtotime($compra["fecha"]))?></td><!--1-->
+                  <td class="<?php echo $tdClass?>">
+                      <span style='display: none;'> <?php echo $compra["fecha"]?></span>
+                      <?php echo date('d-m-Y',strtotime($compra["fecha"]))?></td><!--1-->
                     <?php
                     $titleComprobanteCompra = $compra["Comprobante"]['nombre']."-".$compra['puntosdeventa']."-".$compra["numerocomprobante"];
                     $labelComprobanteCompra = $compra["Comprobante"]['abreviacion']."-".$compra['puntosdeventa']."-".$compra["numerocomprobante"]; ?>
-                  <td class="<?php echo $tdClass?>" title="<?php echo $titleComprobanteCompra ?>"><?php echo $labelComprobanteCompra?></td><!--2-->
-                  <td class="<?php echo $tdClass?>"><?php if(isset($compra["Provedore"]["nombre"])) echo $compra["Provedore"]["nombre"]?></td><!--3-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["condicioniva"]?></td><!--4-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["Actividadcliente"]['Actividade']['nombre']?></td><!--5-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["Localidade"]['Partido']["nombre"].'-'.$compra["Localidade"]["nombre"]?></td><!--6-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["tipocredito"]?></td><!--7-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["Tipogasto"]["nombre"]?></td><!--8-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["tipoiva"]?></td><!--9-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["imputacion"]?></td><!--10-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["alicuota"], 2, ",", ".")?>%</td><!--11-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["neto"], 2, ",", ".")?></td><!--12-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["iva"], 2, ",", ".")?></td><!--13-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["ivapercep"], 2, ",", ".")?></td><!--14-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["iibbpercep"], 2, ",", ".")?></td><!--15-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["actvspercep"], 2, ",", ".")?></td><!--16-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impinternos"], 2, ",", ".")?></td><!--17-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impcombustible"], 2, ",", ".")?></td><!--18-->
-                    <td class="<?php echo $tdClass?>"><?php echo number_format($compra["nogravados"], 2, ",", ".")?></td><!--19-->
-                    <td class="<?php echo $tdClass?>"><?php echo number_format($compra["exentos"], 2, ",", ".")?></td><!--20-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["total"], 2, ",", ".")?></td><!--22-->
-                    <td class="<?php echo $tdClass?>"><?php echo number_format($compra["kw"], 2, ",", ".")?></td><!--21-->
-                    <td class="<?php echo $tdClass?>">
+                      <td class="<?php echo $tdClass?>" title="<?php echo $titleComprobanteCompra ?>"><?php echo $labelComprobanteCompra?></td><!--2-->
+                      <td class="<?php echo $tdClass?>"><?php if(isset($compra["Provedore"]["nombre"])) echo $compra["Provedore"]["nombre"]?></td><!--3-->
+                      <td class="<?php echo $tdClass?>"><?php echo $compra["condicioniva"]?></td><!--4-->
+                      <td class="<?php echo $tdClass?>"><?php echo $compra["Actividadcliente"]['Actividade']['nombre']?></td><!--5-->
+                      <td class="<?php echo $tdClass?>"><?php echo $compra["Localidade"]['Partido']["nombre"].'-'.$compra["Localidade"]["nombre"]?></td><!--6-->
+                      <td class="<?php echo $tdClass?>"><?php echo $compra["tipocredito"]?></td><!--7-->
+                      <td class="<?php echo $tdClass?>"><?php echo $compra["Tipogasto"]["nombre"]?></td><!--8-->
+                      <td class="<?php echo $tdClass?>"><?php echo $compra["tipoiva"]?></td><!--9-->
+                      <td class="<?php echo $tdClass?>"><?php echo $compra["imputacion"]?></td><!--10-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["alicuota"], 2, ",", ".")?>%</td><!--11-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["neto"], 2, ",", ".")?></td><!--12-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["iva"], 2, ",", ".")?></td><!--13-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["ivapercep"], 2, ",", ".")?></td><!--14-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["iibbpercep"], 2, ",", ".")?></td><!--15-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["actvspercep"], 2, ",", ".")?></td><!--16-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["impinternos"], 2, ",", ".")?></td><!--17-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["impcombustible"], 2, ",", ".")?></td><!--18-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["nogravados"], 2, ",", ".")?></td><!--19-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["exentos"], 2, ",", ".")?></td><!--20-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["total"], 2, ",", ".")?></td><!--22-->
+                      <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($compra["kw"], 2, ",", ".")?></td><!--21-->
+                      <td class="<?php echo $tdClass?>">
                     <?php
                     $paramsCompra=$compra["id"];
                     echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarCompra(".$paramsCompra.")"));
@@ -1377,7 +1379,9 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
     <div class="modal-dialog" style="width:90%;">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<!--                    <span aria-hidden="true">&times;</span>-->
+                </button>
                 <h4 class="modal-title">Modal title</h4>
             </div>
             <div class="modal-body">

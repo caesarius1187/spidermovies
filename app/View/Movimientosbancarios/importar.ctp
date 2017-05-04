@@ -10,8 +10,8 @@ echo $this->Html->script('movimientosbancarios/importar',array('inline'=>false))
         <h1><?php echo __($labelClifch); ?></h1>
         <label><?php echo $periodo; ?></label>
         <?php  echo $this->Html->link("<- Volver",array(
-                'controller' => 'clientes',
-                'action' => 'tareacargar',
+                'controller' => 'movimientosbancarios',
+                'action' => 'cargar',
                 $cliid,
                 $periodo,
             ),
@@ -19,7 +19,47 @@ echo $this->Html->script('movimientosbancarios/importar',array('inline'=>false))
                 'class'=>"btn_aceptar",
                 'style'=>'position: absolute;bottom: 0px;'
             )
-        ); 	?>
+        ); 	
+        $abreviacionCBUTipo = "";
+        switch ($cbu['Cbu']['tipocuenta']) {
+            case 'Caja de Ahorro en Euros':
+                $abreviacionCBUTipo = "CA €";
+            break;
+            case 'Caja de Ahorro en Moneda Local':
+                $abreviacionCBUTipo = "CA $";
+            break;
+            case 'Caja de Ahorro en U$S':
+                $abreviacionCBUTipo = "CA U$ S";
+            break;
+            case 'Cuenta Corriente en Euros':
+                $abreviacionCBUTipo = "CC €";
+            break;
+            case 'Cuenta Corriente en Moneda Local':
+                $abreviacionCBUTipo = "CC $";
+            break;
+            case 'Cuenta Corriente en U$S':
+                $abreviacionCBUTipo = "CC U$ S";
+            break;
+            case 'Otras':
+                $abreviacionCBUTipo = "Otras";
+            break;
+            case 'Plazo Fijo en Euros':
+                $abreviacionCBUTipo = "PF €";
+            break;
+            case 'Plazo Fijo en U$S':
+             $abreviacionCBUTipo = "PF U$ S";
+            break;
+            case 'Plazo Fijo en Moneda Local':
+                $abreviacionCBUTipo = "PF $";
+            break;
+            default:
+                $abreviacionCBUTipo = "cc $";
+            break;
+        }
+        ?>
+            <legend style="color:#1e88e5;font-weight:normal;">
+                <?php echo $cbu['Impcli']['Impuesto']['nombre']." ".substr($cbu['Cbu']['numerocuenta'], -5)." ".
+                    $abreviacionCBUTipo?></legend>
     </div>
 </div>
 <div class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
@@ -420,6 +460,12 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
                          'required' => false,
                          'message'=>'Por favor seleccione una cuenta contable para imputar este movimiento bancario',
                          'inputclass' => 'MovimientobancarioAddCuentasCliente',
+                     ));
+                     echo $this->Form->input('Movimientosbancario.' . $i . '.alicuota', array(
+                         'style' => "width: 150px; text-align: right;",
+                         'title'=>'Solo se debe completar este campo si se selecciono la cuenta IVA-Credito Fiscal',
+                         'label' => ($i + 9) % 10 == 0 ? 'Alicuota' : '     ',
+                         "align"=>"right"
                      ));
                      $i++;
                      ?>

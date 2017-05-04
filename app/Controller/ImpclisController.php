@@ -88,116 +88,31 @@ class ImpclisController extends AppController {
 								                'Periodosactivo.hasta' => null, 
 								            ),
 						        	 	), 
-							'Impuesto'
+							'Impuesto'=>[
+                                'Impuestocuentaactivable'
+                            ]
 						),
 						'conditions' => array(
 							'Impcli.' . $this->Impcli->primaryKey => $id
 							)
 						);
 					$createdImp = $this->Impcli->find('first', $options);
-
-                    //Ahora aparte de crear el impuesto tenemos que relacionar las cuentas contables
-                    //relacionadas a cada Impuesto, vamos a preguntar que impuesto es y aca vamos a decir que cuentas hay q
-                    //dar de alta
-					$cuentasImpuestoAActivar = [];
-                    $cuentasUnica1 = [];
-                    $cuentasUnica2 = [];
-                    $prenombres1 =[];
-                    $postnombres1 =[];
-                    $prenombres2 =[];
-                    $postnombres2 =[];
-                    switch ($this->request->data['Impcli']['impuesto_id']){
-                        case '19':/*IVA */
-                            $cuentasImpuestoAActivar = $this->Cuenta->cuentasdeIVA;
-                            break;
-						case '6':/*Act. Varias*/
-							$cuentasImpuestoAActivar = $this->Cuenta->cuentasdeActVarias;
-							break;
-						case '10':/*SUSS*/
-							$cuentasImpuestoAActivar = $this->Cuenta->cuentasdeSUSS;
-							break;
-						case '21':/*Act. Economicas*/
-							$cuentasImpuestoAActivar = $this->Cuenta->cuentasdeActEconomicas;
-							break;
-                        /**Sindicatps**/
-                        case'24':/*INACAP*//*Aca solo los que tienen contribuciones*/
-                            //las contribuciones tienen una cuenta para el debe y otra para el haber
-                            $cuentasUnica1 = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;/*Contribuciones*/
-                            $prenombres1[0] = "Contribucion";
-                            $postnombres1[0] = "";
-//                            $prenombres1[1] = "Contribucion";
-//                            $postnombres1[1] = "A Pagar";
-
-                            break;
-                        case'11':/*SEC*//*Aca solo los que tienen seg vida obl y apórte*/
-                            $cuentasUnica1 = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;/*Contribuciones*/
-                            $prenombres1[0] = "Cont.Seg. De Vida Oblig. Mercantil";
-                            $postnombres1[0] = "";
-//                          $prenombres1[1] = "Cont.Seg. De Vida Oblig. Mercantil";
-//                          $postnombres1[1] = "A Pagar";
-
-							$cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Aportes*/
-							$prenombres2[0] = "Aporte";
-							$postnombres2[0] = "";
-                            break;
-                        case'155':/*UOM*/
-                        case'25':/*UTHGRA*/
-                        case'41':/*UOCRA*//*Aca los que tienen contribucion y aporte*/
-                            $cuentasUnica1 = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;/*Contribuciones*/
-                            $prenombres1[0] = "Contribucion";
-                            $postnombres1[0] = "";
-                            $prenombres1[1] = "Contribucion";
-                            $postnombres1[1] = "A Pagar";
-
-                            $prenombres2[0] = "Aporte";
-                            $postnombres2[0] = "";
-                            $cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Aportes*/
-                            break;
-                        case'178':/*ACARA*/
-                        case'179':/*AOMA*/
-                        case'23':/*FAECYS*/
-                        case'153':/*IERIC*/
-                        case'180':/*Renatea*/
-                        case'177':/*SMATA*/
-                        case'176':/*Turismo*/
-                        case'26':/*UATRE*/
-                        case'42':/*UTA*//*Aca solo los que tienen aportes*/
-                        $prenombres2[0] = "Aporte";
-                        $postnombres2[0] = "";
-                        $cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Aportes*/
-                        //$cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Contribuciones*/
-                        break;
-						case '190':/*Segur de vida obligatorio SEC*/
-							$prenombres2[0] = "Aporte";
-							$postnombres2[0] = "";
-							$cuentasUnica2 = $this->Cuenta->cuentasdeSUSSAportesSindicatos;/*Aportes*/
-
-							$cuentasUnica1 = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;/*Contribuciones*/
-							$prenombres1[0] = "Contribucion";
-							$postnombres1[0] = "";
-							break;
-						/*Fin Sindicatos*/
-                        default:
-                            //Si es sindicato vamos a crear una cuenta ed aporte y conyt
-                            break;
-                    }
-					$CuentaClienteNuevaId = 0;
-                    foreach ($cuentasImpuestoAActivar as $cuentaactivable){
+                    foreach ($createdImp['Impuesto']['Impuestocuentaactivable'] as $cuentaactivable){
                         $conditionsCuentascliente = array(
                             'Cuentascliente.cliente_id' => $this->request->data['Impcli']['cliente_id'],
-                            'Cuentascliente.cuenta_id' => $cuentaactivable
+                            'Cuentascliente.cuenta_id' => $cuentaactivable['cuenta_id']
                         );
                         if (!$this->Cuentascliente->hasAny($conditionsCuentascliente)){
                             /*Ahora si estamos seguro de que esta cuenta no esta activada y podemos activarla
                             para este cliente y relacionarla al CBU*/
                             $conditionsCuentas=[
-                                'conditions'=>['Cuenta.id'=>$cuentaactivable]
+                                'conditions'=>['Cuenta.id'=>$cuentaactivable['cuenta_id']]
                             ];
                             $cuentaACargar = $this->Cuenta->find('first', $conditionsCuentas);
                             $nombreCuentaClie = $cuentaACargar['Cuenta']['nombre'];
                             $this->Cuentascliente->create();
                             $this->Cuentascliente->set('cliente_id',$this->request->data['Impcli']['cliente_id']);
-                            $this->Cuentascliente->set('cuenta_id',$cuentaactivable);
+                            $this->Cuentascliente->set('cuenta_id',$cuentaactivable['cuenta_id']);
                             $this->Cuentascliente->set('nombre',$nombreCuentaClie);
                             if ($this->Cuentascliente->save())
                             {
@@ -205,81 +120,12 @@ class ImpclisController extends AppController {
                             }
                             else
                             {
+                                Debugger::dump('Error: Al guardar cuenta de impuesto. Por favor intente nuevamente.');
                                 $this->set('respuesta','Error: Al guardar cuenta de impuesto. Por favor intente nuevamente.');
-                            }
-                            $CuentaClienteNuevaId = $this->Cuentascliente->getLastInsertId();
-                            $this->request->data['Cbu']['cuentascliente_id'] = $CuentaClienteNuevaId;
-                        }
-                    }
-                    $numnombre = 0;
-                    foreach ($cuentasUnica1 as $cuentaactivableunica1){
-                        /*vamos a activar una cuenta por cada prenombre/postnombre disponible*/
-                        $conditionsCuentascliente = array(
-                            'Cuentascliente.cliente_id' => $this->request->data['Impcli']['cliente_id'],
-                            'Cuentascliente.cuenta_id' => $cuentaactivableunica1
-                        );
-                        if (!$this->Cuentascliente->hasAny($conditionsCuentascliente)){
-                            /*Ahora si estamos seguro de que esta cuenta no esta activada y podemos activarla
-                            para este cliente y relacionarla al Impuesto*/
-//                            $conditionsCuentas=[
-//                                'conditions'=>['Cuenta.id'=>$cuentaactivableunica1]
-//                            ];
-//                            $cuentaACargar = $this->Cuenta->find('first', $conditionsCuentas);
-                            $nombreCuentaClie = $prenombres1[$numnombre]."-".
-                                $createdImp['Impuesto']['nombre']."-".$postnombres1[$numnombre];
-                            $this->Cuentascliente->create();
-                            $this->Cuentascliente->set('cliente_id',$this->request->data['Impcli']['cliente_id']);
-                            $this->Cuentascliente->set('cuenta_id',$cuentaactivableunica1);
-                            $this->Cuentascliente->set('nombre',$nombreCuentaClie);
-                            if ($this->Cuentascliente->save())
-                            {
-                                //$respuesta ='Cuenta de banco activada correctamente.';
-                            }
-                            else
-                            {
-                                $this->set('respuesta','Error: Al guardar cuenta de impuesto. Por favor intente nuevamente.');
-                            }
-                            $numnombre++;
-                            if($numnombre>=count($prenombres1)){
-                                break;//este break me garantiza que se cree solo 1 de estas cuentas relacionadas al impuesto
-                                //Ahora cuando haya prenombres voy a preguntar si ya use todos ya hihago el break;
                             }
                         }
                     }
-                    $numnombre=0;
-                    foreach ($cuentasUnica2 as $cuentaactivableunica2){
-                        $conditionsCuentascliente = array(
-                            'Cuentascliente.cliente_id' => $this->request->data['Impcli']['cliente_id'],
-                            'Cuentascliente.cuenta_id' => $cuentaactivableunica2
-                        );
-                        if (!$this->Cuentascliente->hasAny($conditionsCuentascliente)){
-                            /*Ahora si estamos seguro de que esta cuenta no esta activada y podemos activarla
-                            para este cliente y relacionarla al CBU*/
-//                            $conditionsCuentas=[
-//                                'conditions'=>['Cuenta.id'=>$cuentaactivableunica2]
-//                            ];
-                            $nombreCuentaClie = $prenombres2[$numnombre]."-".
-                                $createdImp['Impuesto']['nombre']."-".$postnombres2[$numnombre];
-                            $this->Cuentascliente->create();
-                            $this->Cuentascliente->set('cliente_id',$this->request->data['Impcli']['cliente_id']);
-                            $this->Cuentascliente->set('cuenta_id',$cuentaactivableunica2);
-                            $this->Cuentascliente->set('nombre',$nombreCuentaClie);
-                            if ($this->Cuentascliente->save())
-                            {
-                                //$respuesta ='Cuenta de banco activada correctamente.';
-                            }
-                            else
-                            {
-                                $this->set('respuesta','Error: Al guardar cuenta de impuesto. Por favor intente nuevamente.');
-                            }
-                            $numnombre++;
-                            if($numnombre>=count($prenombres2)){
-                                break;//este break me garantiza que se cree solo 1 de estas cuentas relacionadas al impuesto
-                                //Ahora cuando haya prenombres voy a preguntar si ya use todos ya hihago el break;
-                            }
 
-                        }
-                    }
 				}else{
 					$this->set('respuesta','Error: NO se relaciono impuesto para cliente. Intente de nuevo.');	
 					$this->autoRender=false; 
@@ -1059,7 +905,7 @@ class ImpclisController extends AppController {
 	    		)
 		);
 		$ventas = $this->Venta->find('all',array(
-									'fields' => array('SUM(Venta.total) AS total','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Venta.actividadcliente_id'),
+									'fields' => array('SUM(Venta.neto) AS neto','SUM(Venta.total) AS total','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Comprobante.tipo','Venta.actividadcliente_id'),
 									'contain'=>array(
 										'Comprobante',
 										'Actividadcliente',	
@@ -1350,6 +1196,9 @@ class ImpclisController extends AppController {
         $this->set(compact('ventastop','comprastop','puntosdeventas','comprobantes','domicilios','compraskw'));
         $this->layout = 'ajax';
     }
+	public function f102()
+	{
+	}
 	public function papeldetrabajosuss($impcliid=null,$periodo=null){
 
 		$this->Components->unload('DebugKit.Toolbar');
@@ -1412,9 +1261,7 @@ class ImpclisController extends AppController {
 						'Valorrecibo'=>array(
 							'Cctxconcepto'=>array(
 								'Concepto',
-								'Conveniocolectivotrabajo'=>array(
-
-								)
+								'Conveniocolectivotrabajo'=>[]
 							),
 							'conditions'=>array(
 								'Valorrecibo.periodo'=>$periodo,
@@ -1533,17 +1380,15 @@ class ImpclisController extends AppController {
         $this->set(compact('cliente','tieneMonotributo','tieneIVA'));
 	}
 	public function papeldetrabajosindicatos($impcliid=null,$periodo=null){
-		$this->Components->unload('DebugKit.Toolbar');
+//		$this->Components->unload('DebugKit.Toolbar');
 
 		$this->loadModel('Conceptosrestante');
 		$this->loadModel('Cuenta');
 		$contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
 		$this->set(compact('contribucionesSindicatos'));
 		$optionsCuentasContribucionesSindicatos = [
-			'contain'=>[
-
-			],
-			'conditions' => [
+            'contain' => [],
+            'conditions' => [
 				'Cuenta.' . $this->Cuenta->primaryKey => $contribucionesSindicatos
 			]
 		];
@@ -1553,22 +1398,31 @@ class ImpclisController extends AppController {
 		//Aca vamos a controlar que el sindicato que estamos por liquidar
 		//sea un sindicato con Convenios y no uno que apunte a otro sindicato.
 		//Y si es un sindicato que apunta a otro sindicato buscar el "otro sindicato" para liquidar el primero.
-		//Por ejemplo el sindicato SEC tiene CCT(convenio colectivo de trabajo) Comercio, pero los empleados que estan en el convenio de comercio
-		//pagan FAESYS tambien, pero cuando liquidamos FAESYS no tenemos convenios asociados, por eso Faesys apuntara a SEC para su liquidacion
-		$optionsImpCliSolic = array(
-			'contain' => array(
-				'Impuesto',
-				'Cliente',
-				'Asiento'=>[
-					'Movimiento'=>[
-						'Cuentascliente'
-					],
-					'conditions'=>[
-						'periodo'=>$periodo,
-						'tipoasiento'=>'impuestos'
-					]
-				],
-			),
+		//Por ejemplo el sindicato SEC tiene CCT(convenio colectivo de trabajo) Comercio, pero los empleados que
+        // estan en el convenio de comercio pagan FAESYS tambien, pero cuando liquidamos FAESYS no tenemos convenios
+        // asociados, por eso Faesys apuntara a SEC para su liquidacion
+
+        $optionsImpCliSolic = array(
+			'contain' => [
+                'Asiento'=>[
+                    'Movimiento'=>[
+                        'Cuentascliente'
+                    ],
+                    'conditions'=>[
+                        'Asiento.periodo'=>$periodo,
+                        'Asiento.impcli_id'=>$impcliid,
+                        'Asiento.tipoasiento'=>'impuestos',
+                    ]
+                ],
+                'Impuesto'=>[
+                    'Asientoestandare'=>[
+                        'Cuenta',
+                        'conditions'=>[
+                            'Asientoestandare.tipoasiento'=>'impuestos'
+                        ]
+                    ],
+                ],'Cliente'
+            ],
 			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
 		);
 		//Impuesto Solicitado (por ef FAESYS)
@@ -1578,7 +1432,12 @@ class ImpclisController extends AppController {
         if($impcliSolicitado['Impuesto']['delegado']){
 			//aca vamos a tener que buscar un Impcli con el cliente_id del solicitado y el Impuesto_id del ALiquidar
 			$optionsImpCliDeleg = array(
-				'contain' => array('Impuesto'),
+				'contain' => [
+                    'Cliente',
+                    'Impuesto'=>[
+
+                    ],
+                ],
 				'conditions' => array(
                     'Impcli.cliente_id'=> $impcliSolicitado['Impcli']['cliente_id'],
 					'Impcli.impuesto_id'=> $impcliSolicitado['Impuesto']['delegadoid'])
@@ -1594,11 +1453,12 @@ class ImpclisController extends AppController {
 					'Cuentascliente'=>[
 						'Cuenta',
 						'conditions'=>[
-							'Cuentascliente.cuenta_id' => $contribucionesSindicatos,
+//							'Cuentascliente.cuenta_id' => $contribucionesSindicatos,
 						]
 					],
 				],
 				'Impuesto'=>[
+
 					'Conveniocolectivotrabajo'=>[
 						'Empleado'=>[
 							'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
@@ -1662,7 +1522,26 @@ class ImpclisController extends AppController {
         $this->loadModel('Conceptosrestante');
         $options = array(
 			'contain'=>array(
+				'Asiento'=>[
+					'Movimiento'=>[
+						'Cuentascliente'
+					],
+					'conditions'=>[
+						'Asiento.periodo'=>$periodo,
+						'Asiento.impcli_id'=>$impcliid,
+						'Asiento.tipoasiento'=>'impuestos',
+					]
+				],
+				'Impuesto'=>[
+					'Asientoestandare'=>[
+						'Cuenta',
+						'conditions'=>[
+							'Asientoestandare.tipoasiento'=>'impuestos'
+						]
+					],
+				],
 				'Cliente'=>array(
+					'Cuentascliente',
 					'Empleado'=>array(
 						'Domicilio'=>array(
 							'Localidade'=>array(

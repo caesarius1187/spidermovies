@@ -276,35 +276,108 @@ function cargarAsiento(){
 		var totalpercepciones = $("#totalpercepciones").val();
 		$('#Asiento0Movimiento'+orden+'Haber').val(totalpercepciones);
 	}
+	// 110404298	I.I.B.B. - Percepciones Bancarias
+	if($('#cuenta317').length > 0){
+		var orden = $('#cuenta317').attr('orden');
+		var totalpercepcionesbancarias = $("#totalpercepcionesbancarias").val();
+		$('#Asiento0Movimiento'+orden+'Haber').val(totalpercepcionesbancarias);
+	}
 	// 210402101	Ingresos Brutos a Pagar
 	if($('#cuenta1492').length > 0){
 		var orden = $('#cuenta1492').attr('orden');
 		var totalgeneralapagar = $("#totalgeneralapagar").val();
 		$('#Asiento0Movimiento'+orden+'Haber').val(totalgeneralapagar);
 	}
-
+	$(".inputDebe").each(function () {
+		$(this).change(addTolblTotalDebeAsieto);
+	});
+	$(".inputHaber").each(function () {
+		$(this).change(addTolblTotalhaberAsieto);
+	});
+	$(".inputHaber").each(function(){
+		$(this).trigger('change');
+		return;
+	});
+	$(".inputDebe").each(function(){
+		$(this).trigger('change');
+		return;
+	});
 }
 function catchAsientoIVA(){
 	$('#AsientoAddForm').submit(function(){
-		//serialize form data
-		var formData = $(this).serialize();
-		//get form action
-		var formUrl = $(this).attr('action');
-		$.ajax({
-			type: 'POST',
-			url: formUrl,
-			data: formData,
-			success: function(data,textStatus,xhr){
-				var respuesta = jQuery.parseJSON(data);
-				var resp = respuesta.respuesta;
-				callAlertPopint(resp);
-			},
-			error: function(xhr,textStatus,error){
-				callAlertPopint(textStatus);
-				return false;
-			}
-		});
+		/*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+		var asientoyaguardado=false;
+		if($("#AsientoAddForm #Asiento0Id").val()*1!=0){
+			asientoyaguardado=true;
+		}
+		var r=true;
+		if(asientoyaguardado){
+			r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+				" en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+				" Sumas y saldos y despues en Asientos");
+		}
+		if (r == true) {
+			//serialize form data
+			var formData = $(this).serialize();
+			//get form action
+			var formUrl = $(this).attr('action');
+			$.ajax({
+				type: 'POST',
+				url: formUrl,
+				data: formData,
+				success: function(data,textStatus,xhr){
+					var respuesta = jQuery.parseJSON(data);
+					var resp = respuesta.respuesta;
+					callAlertPopint(resp);
+				},
+				error: function(xhr,textStatus,error){
+					callAlertPopint(textStatus);
+					return false;
+				}
+			});
+		}else{
+			callAlertPopint("El asiento no se ha sobreescrito.");
+		}
+
 		return false;
 	});
+}
+function addTolblTotalDebeAsieto(event) {
+	var debesubtotal = 0;
+	$(".inputDebe").each(function () {
+		debesubtotal = debesubtotal*1 + this.value*1;
+		if(this.value*1!=0){
+			$(this).removeClass("movimientoSinValor");
+			$(this).addClass("movimientoConValor");
+		}else{
+			$(this).removeClass("movimientoConValor")
+			$(this).addClass("movimientoSinValor");
+		}
 
+	});
+	$("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+	showIconDebeHaber()
+}
+function addTolblTotalhaberAsieto(event) {
+	//        $("#lblTotalAFavor").val(0) ;
+	var habersubtotal = 0;
+	$(".inputHaber").each(function () {
+		habersubtotal = habersubtotal*1 + this.value*1;
+		if(this.value*1!=0){
+			$(this).removeClass("movimientoSinValor");
+			$(this).addClass("movimientoConValor");
+		}else{
+			$(this).removeClass("movimientoConValor")
+			$(this).addClass("movimientoSinValor");
+		}
+	});
+	$("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+	showIconDebeHaber()
+}
+function showIconDebeHaber(){
+	if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
+		$("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+	}else{
+		$("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+	}
 }

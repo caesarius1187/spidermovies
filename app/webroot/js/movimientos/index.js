@@ -64,5 +64,4 @@ function showIconDebeHaber(){
     }else{
         $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
     }
-
 }

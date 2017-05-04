@@ -660,80 +660,12 @@ p.error em {
     margin-bottom: 6px;
 }
 
+
 .buttonImpCli0 a:hover{
 	color: #FFFFFF;
 }
 
 .buttonImpcli0 {
-	background: white;
-	background: -moz-linear-gradient(left, white 0%, #ffffff 25%,#ffffff 25%,#ffffff 26%,#ffffff 50%, #ffffff 50%,#ffffff 51%, #ffffff 75%,#ffffff 75%,#ffffff 76%, #ffffff 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(left,  #ffffff 0%,#ffffff 25%,#ffffff 25%,#ffffff 26%,#ffffff 50%,#ffffff 50%,#ffffff 51%,#ffffff 75%,#ffffff 75%,#ffffff 76%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(left bottom,  #ffffff 0%,#ffffff 25%,#ffffff 25%,#ffffff 26%,#ffffff 50%,#ffffff 50%,#ffffff 51%,#ffffff 75%,#ffffff 75%,#ffffff 76%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea521', endColorstr='#0010f2',GradientType=0 ); /* IE6-9 */
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0px;
-	font-family: Arial;
-	color: #000000;
-	font-size: 12px;
-	padding: 10px 20px 10px 20px;
-	text-decoration: none;
-	float: left;
-	width: 192px;
-}
-
-.buttonImpcli1 {
-	background: #6EB8F4;
-	background: -moz-linear-gradient(left,  #6EB8F4 0%, #6EB8F4 25%,#6EB8F4 25%,#ffffff 26%,#ffffff 50%, #ffffff 50%,#ffffff 51%, #ffffff 75%,#ffffff 75%,#ffffff 76%, #ffffff 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(left,  #6EB8F4 0%,#6EB8F4 25%,#6EB8F4 25%,#ffffff 26%,#ffffff 50%,#ffffff 50%,#ffffff 51%,#ffffff 75%,#ffffff 75%,#ffffff 76%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(left bottom,  #6EB8F4 0%,#6EB8F4 25%,#6EB8F4 25%,#ffffff 26%,#ffffff 50%,#ffffff 50%,#ffffff 51%,#ffffff 75%,#ffffff 75%,#ffffff 76%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea521', endColorstr='#0010f2',GradientType=0 ); /* IE6-9 */
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0px;
-	font-family: Arial;
-	color: #000000;
-	font-size: 12px;
-	padding: 10px 20px 10px 20px;
-	text-decoration: none;
-	float: left;
-	width: 192px;
-}
-.buttonImpcli2 {
-	background: #6EB8F4;
-	background: -moz-linear-gradient(left,  #6EB8F4 0%, #6EB8F4 25%,#6EB8F4 25%,#6EB8F4 26%,#6EB8F4 50%, #6EB8F4 50%,#ffffff 51%, #ffffff 75%,#ffffff 75%,#ffffff 76%, #ffffff 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(left,  #6EB8F4 0%,#6EB8F4 25%,#6EB8F4 25%,#6EB8F4 26%,#6EB8F4 50%,#6EB8F4 50%,#ffffff 51%,#ffffff 75%,#ffffff 75%,#ffffff 76%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(left bottom,  #6EB8F4 0%,#6EB8F4 25%,#6EB8F4 25%,#6EB8F4 26%,#6EB8F4 50%,#6EB8F4 50%,#ffffff 51%,#ffffff 75%,#ffffff 75%,#ffffff 76%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea521', endColorstr='#0010f2',GradientType=0 ); /* IE6-9 */
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0px;
-	font-family: Arial;
-	color: #000000;
-	font-size: 12px;
-	padding: 10px 20px 10px 20px;
-	text-decoration: none;
-	float: left;
-	width: 192px;
-}
-.buttonImpcli3 {
-	background: #6EB8F4;
-	background: -moz-linear-gradient(left,  #6EB8F4 0%, #6EB8F4 25%,#6EB8F4 25%,#6EB8F4 26%,#6EB8F4 50%, #6EB8F4 50%,#6EB8F4 51%, #6EB8F4 75%,#6EB8F4 75%,#ffffff 76%, #ffffff 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(left,  #6EB8F4 0%,#6EB8F4 25%,#6EB8F4 25%,#6EB8F4 26%,#6EB8F4 50%,#6EB8F4 50%,#6EB8F4 51%,#6EB8F4 75%,#6EB8F4 75%,#ffffff 76%,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(left bottom,  #6EB8F4 0%,#6EB8F4 25%,#6EB8F4 25%,#6EB8F4 26%,#6EB8F4 50%,#6EB8F4 50%,#6EB8F4 51%,#6EB8F4 75%,#6EB8F4 75%,#ffffff 76%,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea521', endColorstr='#0010f2',GradientType=0 ); /* IE6-9 */
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0px;
-	font-family: Arial;
-	color: #000000;
-	font-size: 12px;
-	padding: 10px 20px 10px 20px;
-	text-decoration: none;
-	float: left;
-	width: 192px;
-}
-.buttonImpcli4 {
 	background: #6EB8F4;
 	background: -moz-linear-gradient(left,  #6EB8F4 0%, #6EB8F4 25%,#6EB8F4 25%,#6EB8F4 26%,#6EB8F4 50%, #6EB8F4 50%,#6EB8F4 51%, #6EB8F4 75%,#6EB8F4 75%,#6EB8F4 76%, #6EB8F4 100%); /* FF3.6-15 */
 	background: -webkit-linear-gradient(left,  #6EB8F4 0%,#6EB8F4 25%,#6EB8F4 25%,#6EB8F4 26%,#6EB8F4 50%,#6EB8F4 50%,#6EB8F4 51%,#6EB8F4 75%,#6EB8F4 75%,#6EB8F4 76%,#6EB8F4 100%); /* Chrome10-25,Safari5.1-6 */
@@ -743,21 +675,150 @@ p.error em {
 	-moz-border-radius: 0;
 	border-radius: 0px;
 	font-family: Arial;
-	color: #000000;
-	font-size: 12px;
+	color: #ffffff;
+	font-size: 10px;
 	padding: 10px 20px 10px 20px;
 	text-decoration: none;
 	float: left;
-	width: 192px;
+	width: 170px;
+}
+
+.buttonImpcli1 {
+	background: #6EB8F4;
+	background: -moz-linear-gradient(left,  #00CC00 0%, #00CC00 25%,#00CC00 25%,#6EB8F4 26%,#6EB8F4 50%, #6EB8F4 50%,#6EB8F4 51%, #6EB8F4 75%,#6EB8F4 75%,#6EB8F4 76%, #6EB8F4 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(left,  #00CC00 0%,#00CC00 25%,#00CC00 25%,#6EB8F4 26%,#6EB8F4 50%,#6EB8F4 50%,#6EB8F4 51%,#6EB8F4 75%,#6EB8F4 75%,#6EB8F4 76%,#6EB8F4 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(left bottom,  #00CC00 0%,#00CC00 25%,#00CC00 25%,#6EB8F4 26%,#6EB8F4 50%,#6EB8F4 50%,#6EB8F4 51%,#6EB8F4 75%,#6EB8F4 75%,#6EB8F4 76%,#6EB8F4 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea521', endColorstr='#0010f2',GradientType=0 ); /* IE6-9 */
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0px;
+	font-family: Arial;
+	color: #ffffff;
+	font-size: 10px;
+	padding: 10px 20px 10px 20px;
+	text-decoration: none;
+	float: left;
+	width: 170px;
+}
+.buttonImpcli2 {
+	background: #6EB8F4;
+	background: -moz-linear-gradient(left,  #00CC00 0%, #00CC00 25%,#00CC00 25%,#00CC00 26%,#00CC00 50%, #00CC00 50%,#6EB8F4 51%, #6EB8F4 75%,#6EB8F4 75%,#6EB8F4 76%, #6EB8F4 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(left,  #00CC00 0%,#00CC00 25%,#00CC00 25%,#00CC00 26%,#00CC00 50%,#00CC00 50%,#6EB8F4 51%,#6EB8F4 75%,#6EB8F4 75%,#6EB8F4 76%,#6EB8F4 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(left bottom,  #00CC00 0%,#00CC00 25%,#00CC00 25%,#00CC00 26%,#00CC00 50%,#00CC00 50%,#6EB8F4 51%,#6EB8F4 75%,#6EB8F4 75%,#6EB8F4 76%,#6EB8F4 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea521', endColorstr='#0010f2',GradientType=0 ); /* IE6-9 */
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0px;
+	font-family: Arial;
+	color: #ffffff;
+	font-size: 10px;
+	padding: 10px 20px 10px 20px;
+	text-decoration: none;
+	float: left;
+	width: 170px;
+}
+.buttonImpcli3 {
+	background: #6EB8F4;
+	background: -moz-linear-gradient(left,  #00CC00 0%, #00CC00 25%,#00CC00 25%,#00CC00 26%,#00CC00 50%, #00CC00 50%,#00CC00 51%, #00CC00 75%,#00CC00 75%,#6EB8F4 76%, #6EB8F4 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(left,  #00CC00 0%,#00CC00 25%,#00CC00 25%,#00CC00 26%,#00CC00 50%,#00CC00 50%,#00CC00 51%,#00CC00 75%,#00CC00 75%,#6EB8F4 76%,#6EB8F4 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(left bottom,  #00CC00 0%,#00CC00 25%,#00CC00 25%,#00CC00 26%,#00CC00 50%,#00CC00 50%,#00CC00 51%,#00CC00 75%,#00CC00 75%,#6EB8F4 76%,#6EB8F4 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea521', endColorstr='#0010f2',GradientType=0 ); /* IE6-9 */
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0px;
+	font-family: Arial;
+	color: #ffffff;
+	font-size: 10px;
+	padding: 10px 20px 10px 20px;
+	text-decoration: none;
+	float: left;
+	width: 170px;
+}
+.buttonImpcli4 {
+	background: #6EB8F4;
+	background: -moz-linear-gradient(left,  #00CC00 0%, #00CC00 25%,#00CC00 25%,#00CC00 26%,#00CC00 50%, #00CC00 50%,#00CC00 51%, #00CC00 75%,#00CC00 75%,#00CC00 76%, #00CC00 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(left,  #00CC00 0%,#00CC00 25%,#00CC00 25%,#00CC00 26%,#00CC00 50%,#00CC00 50%,#00CC00 51%,#00CC00 75%,#00CC00 75%,#00CC00 76%,#00CC00 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(left bottom,  #00CC00 0%,#00CC00 25%,#00CC00 25%,#00CC00 26%,#00CC00 50%,#00CC00 50%,#00CC00 51%,#00CC00 75%,#00CC00 75%,#00CC00 76%,#00CC00 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea521', endColorstr='#0010f2',GradientType=0 ); /* IE6-9 */
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	border-radius: 0px;
+	font-family: Arial;
+	color: #ffffff;
+	font-size: 10px;
+	padding: 10px 20px 10px 20px;
+	text-decoration: none;
+	float: left;
+	width: 170px;
 }
 .buttonImpcli1 .buttonImpcli2 .buttonImpcli3 .buttonImpcli4:hover {
 	font-size: 16px;
+}
+.buttonImpcliListo{
+    background: #e8e8e8;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0px;
+    font-family: Arial;
+    color: #000000;
+    font-size: 13px;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+    float: left;
+	width: 130px;
+}
+.buttonImpcliRealizado{
+    background:#b9e2c4 ;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0px;
+    font-family: Arial;
+    color: #000000;
+    font-size: 13px;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+    float: left;
+    width: 130px;
+}
+.buttonImpcliSaldoNegativo{
+    background:#BBDEFB ;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0px;
+    font-family: Arial;
+    color:#f2483b ;
+    font-size: 13px;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+    float: left;
+	width: 130px;
+}
+.buttonImpcliSaldoPositivo{
+    background:#BBDEFB ;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    border-radius: 0px;
+    font-family: Arial;
+    color: #07954c;
+    font-size: 13px;
+    padding: 10px 20px 10px 20px;
+    text-decoration: none;
+    float: left;
+	width: 130px;
 }
 .buttonImpcliSelected{
 	color: #000000;
 }
 .buttonEmpleadoSueldo{
 	height: 60px;
+}
+.divsueldomasivo{
+	float: left;
+	max-width: 885px;
+	overflow-x: inherit;
+}
+.tdformula{
+	width: 275px;
 }
 /*Columnas de tareas*/
 .tarea4{
@@ -1496,6 +1557,8 @@ transition: all 0.4s ease-in-out;
 	color: #333;
 	border:1px solid #FFF;
 	border-bottom-color: #333;
+    background-color: #e8e8e8;
+    padding-top: 15px;
 }
 
 .tbl_avance th {
@@ -1506,35 +1569,116 @@ transition: all 0.4s ease-in-out;
 }
 
 .tbl_avance tr td {
-	padding: 0px;
+	/*padding: 0px;*/
 	margin: 0px;
 	height: 45px;
 	text-align: center;
-	vertical-align: middle;
+	/*vertical-align: middle;*/
 }
 .columnClienteHeader {
 	width: 80px;
 	text-align: center;
-	background-color: #03A9F4;
+    background-color:#e8e8e8 ;
+    border-bottom: 0px ;
 	color: black;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 50px;
+    padding-right: 50px;
 	/*border-top: 1px solid #1e88e5;*/
 	/*border-left: 1px solid #1e88e5;*/
 	/*border-right: 1px solid #1e88e5;*/
 }
-.columnClienteHeader a{
+
+.divClienteHeader {
+	width: 100%;
+	background-color: #BBDEFB;
 	color: black;
+    text-align: left;
+    padding: 10px;
+    border-left: 1px solid #2a62bc;
+    border-right: 1px solid #2a62bc;
+    border-top: 1px solid #2a62bc;
+    border-bottom: 0px solid #2a62bc;
+}
+.divtareas{
+	width: 101%;
+	height: 100%;
+    min-height: 250px;
+	text-align: center;
+	background-color: white;
+}
+.columnClienteHeader a{
+	color: #1e88e5;
+    font-size: 25px;
 }
 .columnClienteBody {
 	width: 80px;
 	text-align: center;
-	background-color: #B3E5FC;
+	background-color: #e8e8e8;
 	color: black;
-	/*border-bottom: 1px solid #1e88e5;*/
-	/*border-left: 1px solid #1e88e5;*/
-	/*border-right: 1px solid #1e88e5;*/
-	padding: 5px
+	/*border-left: 1px solid #e4e4e4;*/
+	/*border-right: 1px solid #e4e4e4;*/
+    border-bottom: 0px solid #e4e4e4;
+    padding-top: 0px;
+    padding-bottom: 15px;
+    padding-left: 50px;
+    padding-right: 0px;
 }
-
+.columnClienteBodyMedio {
+    width: 80px;
+    text-align: center;
+    background-color: #e8e8e8;
+    color: black;
+    /*border-left: 1px solid #e4e4e4;*/
+    /*border-right: 1px solid #e4e4e4;*/
+    border-bottom: 0px solid #e4e4e4;
+    padding-top: 0px;
+    padding-bottom: 15px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.columnClienteBodyFin {
+    width: 80px;
+    text-align: center;
+    background-color: #e8e8e8;
+    color: black;
+    /*border-left: 1px solid #e4e4e4;*/
+    /*border-right: 1px solid #e4e4e4;*/
+    border-bottom: 0px solid #e4e4e4;
+    padding-top: 0px;
+    padding-bottom: 15px;
+    padding-right: 50px;
+    padding-left: 0px;
+}
+.divtareas{
+    border-left: 1px solid #2a62bc;
+    border-right: 1px solid #2a62bc;
+    border-bottom: 1px solid #2a62bc;
+}
+.divTareaNombre{
+    border-bottom: 1px solid #2a62bc;
+    padding: 10px;
+    margin: 0px 10px;
+}
+.tdBotonesSolicitar{
+	width: 155px;
+}
+.tdBotonesCarga{
+	width: 400px;
+}
+.tdBotonesControlar{
+	width: 160px;
+}
+.tdBotonesImpuestos{
+	width: auto;
+}
+.tdBotonesInformar{
+	width: 350px;
+}
+.tdBotonesContabilizar{
+	width: 350px;
+}
 .tbl_avance img {
 	cursor: pointer;
 }
@@ -1709,6 +1853,9 @@ transition: all 0.4s ease-in-out;
 	color:#000;
 	/*border: 1px solid #000;*/
 }
+.numericTD{
+	text-align: right;
+}
 .tbl_view table tr:nth-child(even) {
 	/*background: #f9f9f9;*/
 }
@@ -1797,20 +1944,40 @@ transition: all 0.4s ease-in-out;
 	padding:0;
 }
 /*Estado taras Avance*/
+.avance form{
+	background-color: #c3dff7;
+    padding: 30px;
+}
+.avance .submit{
+    margin-top: 0px;
+}
+.avance .submit input[type=submit]{
+    background-color: #4BAF4F;
+    color: white;
+    border: 0px;
+}
+.avance label{
+    display: inline;
+    font-size: 20px;
+}
+.avance .input{
+     display: inline;
+    margin-left: 10px;
+}
 .pendiente{
 	/*background-color: #6EB8F4;*/
 	text-align: center;
-	vertical-align: middle;
+	/*vertical-align: middle;*/
 }
 .realizado{
 	/*background-color: #64C89D;*/
 	text-align: center;
-	vertical-align: middle;
+	/*vertical-align: middle;*/
 }
 .nocreado{
 	background-color:gray;
 	text-align: center;
-	vertical-align: middle;
+	/*vertical-align: middle;*/
 }
 .cliente{
 	width: 60px;
@@ -1917,6 +2084,7 @@ transition: all 0.4s ease-in-out;
 .trConceptoRecibo td{
 	height: 4px;
 }
+
 .tdWithBorder{
 	border: 1px solid rgb(180, 176, 176);
 }
@@ -2140,7 +2308,7 @@ transition: all 0.4s ease-in-out;
 }
 
 .tooltip input {
-    width: 190px;
+    /*width: 190px;*/
 }
 
 .tooltip:hover .tooltiptext {
@@ -2516,12 +2684,18 @@ transition: all 0.4s ease-in-out;
 	font-size: 13px;
 }
 .tbl_sueldo td input{
-	height: 20px;
+	/*height: 20px;*/
 	font-size: 13px;
 }
 .tbl_sueldo td label{
 	height: 20px;
 	font-size: 13px;
+}
+.tbl_sueldo td span {
+	display:inline-block;
+	text-overflow:ellipsis;
+	overflow:hidden;
+	width:100%;
 }
 .btn_exit{
 	cursor: pointer;
@@ -2570,10 +2744,18 @@ transition: all 0.4s ease-in-out;
 }
 /*Movimientos Bancarios*/
 .inputDebe{
-	background-color: #77D124;
+	/*background-color: #77D124;*/
+	text-align: right;
 }
 .inputHaber{
+	/*background-color: #77D124;*/
+	text-align: right;
+}
+.movimientoConValor{
 	background-color: #77D124;
+}
+.movimientoSinValor{
+	background-color: #e4e4e4;
 }
 .inputSaldo{
 	background-color: #E4E444;
@@ -2649,4 +2831,23 @@ div.index_pdt{
 	background-color:#fff;
 	height:1px;
 	width:100%;
+}
+.f102{
+
+}
+.f102 div{
+	float: left;
+	text-align: center;
+ }
+.f102 .row{
+	width: 100%;
+}
+.f102 input{
+	display: block;
+}
+.roundcorner{
+	border:1px solid #000;
+	border-radius: 10px;
+	margin: 2px;
+	padding: 2px;
 }

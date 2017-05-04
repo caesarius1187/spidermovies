@@ -74,7 +74,7 @@
 				<th>Cel</th>
 				<!--<th>Mail</th>-->
 				<th>Usuario</th>
-				<!--<th>Contraseña</th>-->
+				<!--<th>Contraseï¿½a</th>-->
 				<th>Tipo</th>
 				<th>Estado</th>
 				<th class="actions" style="text-align:center"><?php echo __('Acciones'); ?></th>
@@ -108,7 +108,15 @@
 			<td><?php echo h($user['User']['tipo']); ?>&nbsp;</td>
 			<td><?php echo h($user['User']['estado']); ?>&nbsp;</td>
 			<td class="actions">
-				<?php echo $this->Form->button('Editar', array('onClick' => 'editarUsuario('.$user["User"]["id"].')' )); ?>
+				<?php echo 
+					$this->Html->image(
+						'edit_view.png',
+						array(
+							'alt' => 'edit',
+							'class'=>'imgedit',
+							'onClick' => 'editarUsuario('.$user["User"]["id"].')'
+						)
+					); ?>
 			</td>
 		</tr>
 		<?php endforeach; ?>

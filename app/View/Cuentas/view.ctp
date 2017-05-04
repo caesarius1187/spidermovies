@@ -24,7 +24,7 @@
 	                    //$(this).slideUp();
 	                    $(this).hide();
 	                }
-	            });            
+	            });
         	//}
         });
 	});
@@ -35,9 +35,10 @@
 		var sChecked = (oObj.checked) ? "1" : "0";
 		var sClienteId = $("#hdnClienteId").val();
 		var sCuentaId = (oObj.id).split("_")[1];
+		var sCuentaclienteId = (oObj.id).split("_")[2];
 		$.ajax({
 				type: "post",  // Request method: post, get
-				url: serverLayoutURL+"/cuentas/activar/"+sClienteId+"/"+sCuentaId+"/"+sChecked, // URL to request
+				url: serverLayoutURL+"/cuentas/activar/"+sClienteId+"/"+sCuentaId+"/"+sChecked+"/"+sCuentaclienteId, // URL to request
 				data: "",  // post data
 				success: function(response) {
 					var midata = jQuery.parseJSON(response);
@@ -93,15 +94,15 @@
 		<?php foreach ($cuentas as $cuenta)
 		{ 
 			$CuentaId = $cuenta['Cuenta']['id'];
+			$CuentaClienteId = $cuenta['cuentascliente']['id']
 		?>
 		<tr id="trCuenta_<?php echo $CuentaId ?>">
 			<td style="width:10%">
-
-				<?php 
-				if ($CuentaId == $cuenta['cuentascliente']['cuenta_id']) 
-					echo '<input id="chkCuenta_'.$CuentaId.'" checked="checked" onclick="FnActivarCuenta(this)" type="checkbox" value="'.$CuentaId.'"/>';
+				<?php
+				if ($CuentaId == $cuenta['cuentascliente']['cuenta_id'])
+					echo '<input id="chkCuenta_'.$CuentaId.'_'.$CuentaClienteId.'" checked="checked" onclick="FnActivarCuenta(this)" type="checkbox" value="'.$CuentaId.'" />';
 				else
-					echo '<input id="chkCuenta_'.$CuentaId.'" type="checkbox" onclick="FnActivarCuenta(this)" value="'.$CuentaId.'"/>';
+					echo '<input id="chkCuenta_'.$CuentaId.'_'.$CuentaClienteId.'" type="checkbox" onclick="FnActivarCuenta(this)" value="'.$CuentaId.'" />';
 				?>		
 				
 			</td>
@@ -114,7 +115,7 @@
 				</label>
 			</td>			
 		</tr>		
-		<?php 
+		<?php
 		} ?>
 	</table>
 </div>
