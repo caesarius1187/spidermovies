@@ -784,31 +784,34 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
     $diamesCorteEjFiscal = $cliente['Cliente']['fchcorteejerciciofiscal'];
     $pemes = substr($periodoSel, 0, 2);
     $peanio = substr($periodoSel, 3);
-    $fecha = $diamesCorteEjFiscal."-".$peanio;
+    $peDiaCorte = substr($diamesCorteEjFiscal, 0, 2);
+    $peMesCorte = substr($diamesCorteEjFiscal, 3);
+    $fecha = $peanio."-".$peMesCorte."-28";
 
     try{
 
         $DateTimeFecha=new DateTime($fecha);
-        $DateTimeperiodo=new DateTime('01-'.$pemes.'-'.$peanio);
+        
+        $DateTimeperiodo=new DateTime($peanio.'-'.$pemes.'-01');
         if( $DateTimeFecha> $DateTimeperiodo ){
-            $fecha = $diamesCorteEjFiscal."-".($peanio*1 -1);
+            $fecha = ($peanio*1 -1)."-".$peMesCorte."-28";
         }
+        
         //si la fecha es superior al dia 1 del periodo q estamos viendo esta to mal loco hay q volver 1 año a la fecha
 
         $periodoSelAprobado=false;
         $periodosAprobado = [];
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +4 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +5 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +6 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +7 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +8 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +9 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +10 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +11 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +12 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +13 month"));
-        $periodosAprobado[] = date("m-Y", strtotime($fecha." +14 month"));
-
+        $periodosAprobado[4] = date("m-Y", strtotime($fecha." +4 month"));
+        $periodosAprobado[5] = date("m-Y", strtotime($fecha." +5 month"));
+        $periodosAprobado[6] = date("m-Y", strtotime($fecha." +6 month"));
+        $periodosAprobado[7] = date("m-Y", strtotime($fecha." +7 month"));
+        $periodosAprobado[8] = date("m-Y", strtotime($fecha." +8 month"));
+        $periodosAprobado[9] = date("m-Y", strtotime($fecha." +9 month"));
+        $periodosAprobado[10] = date("m-Y", strtotime($fecha." +10 month"));
+        $periodosAprobado[11] = date("m-Y", strtotime($fecha." +11 month"));
+        $periodosAprobado[12] = date("m-Y", strtotime($fecha." +12 month"));
+        $periodosAprobado[13] = date("m-Y", strtotime($fecha." +13 month"));
+        $periodosAprobado[14] = date("m-Y", strtotime($fecha." +14 month"));
         if (in_array($periodoSel, $periodosAprobado, true )){
             $periodoSelAprobado=true;
         }
@@ -897,10 +900,11 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
         $buttonclass="buttonImpcliListo";
 
         if(!$eventoNoCreado/*Evento creado*/){
-            if($montoevento>=0)$buttonclass="buttonImpcliSaldoPositivo";
+//            if($montoevento>=0)$buttonclass="buttonImpcliSaldoPositivo";
+            if($montoevento>=0)$buttonclass="buttonImpcliRealizado";
             if($montoevento<0)$buttonclass="buttonImpcliSaldoNegativo";
         }
-
+        $showlabel=true;
         if(count($impcli["Eventosimpuesto"])>0){
             if($pagado){
                 $buttonclass="buttonImpcliRealizado";
@@ -909,13 +913,21 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
     //            $buttonclass="buttonImpcli2";
     //          $widthProgressBar=50;
             }
+        }else{
+            $showlabel=false;
         }
-
-      echo $context->Form->button(
-          $impcli['Impuesto']['abreviacion'].': 
+      if($showlabel) {
+          $textoAMostrar = $impcli['Impuesto']['abreviacion'] . ': 
           <label style="color: inherit;display: initial">
-            $'.number_format($montoevento, 2, ",", ".").'
-          </label>',
+            $' . number_format($montoevento, 2, ",", "."). '
+          </label>';
+      }else{
+          $textoAMostrar = $impcli['Impuesto']['abreviacion'] . ' 
+          <label style="color: inherit;display: initial">
+          </label>';
+      }
+      echo $context->Form->button(
+          $textoAMostrar,
         array(
           'data-style'=>"top-line",
           'class'=>$buttonclass." progress-button state-loading",

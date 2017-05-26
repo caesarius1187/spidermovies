@@ -104,12 +104,26 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                         )
                     );
                     echo $this->Html->link(
-                        "Importar TXT Retenciones IIBB",
+                        "Exportar TXT Recaudaciones Bancarias IIBB",
                         array(
                             'controller' => 'conceptosrestantes',
-                            'action' => 'importarretencionesbancariasconveniomultilateral',
+                            'action' => 'exportartxtrecaudacionesbancarias',
                             $cliente["Cliente"]['id'],
                             $periodo,
+                            $iibbId
+                        ),
+                        array('class' => 'buttonImpcli',
+                            'style'=> 'margin-right: 8px;width: initial;',
+                        )
+                    );
+                    echo $this->Html->link(
+                        "Importar TXT RecaudacionesBancarias IIBB",
+                        array(
+                            'controller' => 'conceptosrestantes',
+                            'action' => 'importartxtrecaudacionesbancarias',
+                            $cliente["Cliente"]['id'],
+                            $periodo,
+                            $iibbId
                         ),
                         array('class' => 'buttonImpcli',
                             'style'=> 'margin-right: 8px;width: initial;',
@@ -192,7 +206,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     )
                 );
                 echo $this->Form->input('numerodespachoaduanero',array('label'=>'N&deg; Despacho Aduanero'));
-                echo $this->Form->input('anticipo',array());
+                echo $this->Form->input('anticipo',['title'=>'aaaa/mm']);
                 echo $this->Form->input('cbu',array());
                 echo $this->Form->input('tipocuenta',array(
                         'options'=>array('Caja de Ahorro'=>'Caja de Ahorro','Cuenta Corriente'=>'Cuenta Corriente','Otro'=>'Otro'),

@@ -878,55 +878,110 @@ class ComprasController extends AppController {
 		$this->render('serializejson');
 
 	}
-	public function exportartxt($cliid,$periodo){
+	public function consultaporlote($cliid,$periodo){
+		App::uses('Folder', 'Utility');
+		App::uses('File', 'Utility');
 		$this->loadModel('Cliente');
 
-        $optionsComptras=[
-            'fields'=>['*','count(*) as cantalicuotas'
+		$optionsComptras=[
+			'fields'=>['*','count(*) as cantalicuotas'
 				,'sum(total) as total','sum(nogravados) as nogravados','sum(exentos) as exentos'
 				,'sum(ivapercep) as ivapercep','sum(iibbpercep) as iibbpercep','sum(actvspercep) as actvspercep'
-				,'sum(impinternos) as impinternos'],
-            'contain'=>[
-                'Comprobante',
-                'Provedore'
-            ],
-            'conditions'=>[
-                'Compra.cliente_id'=>$cliid,
-                'Compra.periodo'=>$periodo
-            ],
-            'group'=>[
-                'Compra.comprobante_id',
-                'Compra.puntosdeventa',
-                //'Compra.alicuota',
-                'Compra.numerocomprobante',
-                'Compra.provedore_id',
-            ]
-        ];
+				,'sum(impinternos) as impinternos','sum(impcombustible) as impcombustible'],
+			'contain'=>[
+				'Comprobante',
+				'Provedore'
+			],
+			'conditions'=>[
+				'Compra.cliente_id'=>$cliid,
+				'Compra.periodo'=>$periodo,
+				'OR'=>[
+					'Compra.autorizacion != ""',
+					'Compra.autorizacion != (NULL)'
+				]
+			],
+			'group'=>[
+				'Compra.comprobante_id',
+				'Compra.puntosdeventa',
+				//'Compra.alicuota',
+				'Compra.numerocomprobante',
+				'Compra.provedore_id',
+			]
+		];
 
-        $compras = $this->Compra->find('all',$optionsComptras);
-        $optionsAlicuotas=[
-            'contain'=>[
-                'Comprobante',
-                'Provedore'
-            ],
-            'conditions'=>[
-                'Compra.cliente_id'=>$cliid,
-                'Compra.periodo'=>$periodo
-            ],
-
-        ];
-
-        $alicuotas = $this->Compra->find('all',$optionsAlicuotas);
-
+		$compras = $this->Compra->find('all',$optionsComptras);
 		$optionCliente=[
 			'contain'=>[],
 			'conditions'=>['Cliente.id'=>$cliid]
 		];
 		$cliente = $this->Cliente->find('first',$optionCliente);
 
-        $alicuotascodigoreverse = $this->alicuotascodigoreverse;
+		$alicuotascodigoreverse = $this->alicuotascodigoreverse;
 		$this->set(compact('compras','alicuotas','cliente','cliid','periodo','alicuotascodigoreverse'));
+
+		//aca vamos a setiar las cosas para el upload del archivo de respuesta de la consulta
+		$folderCompras = WWW_ROOT.'files'.DS.'compras'.DS.$cliid.DS.$periodo.DS.'consultaporlote';
+		if ($this->request->is('post')) {
+			$folderCompras = WWW_ROOT.'files'.DS.'compras'.DS.$this->request->data['Compra']['cliid'].DS.$this->request->data['Compra']['periodo'].DS.'consultaporlote';
+			$fileNameCompra = null;
+			$tmpNameCompra= $this->request->data['Compra']['archivocompra']['tmp_name'];
+			if (!empty($tmpNameCompra)&& is_uploaded_file($tmpNameCompra)) {
+				// Strip path information
+				$fileNameCompra = $this->request->data['Compra']['archivocompra']['name'];
+				move_uploaded_file($tmpNameCompra, $folderCompras.DS.$fileNameCompra);
+			}
+		}
+		$this->set(compact('folderCompras','folderAlicuotas'));
 	}
+	public function exportartxt($cliid,$periodo){
+	$this->loadModel('Cliente');
+
+	$optionsComptras=[
+		'fields'=>['*','count(*) as cantalicuotas'
+			,'sum(total) as total','sum(nogravados) as nogravados','sum(exentos) as exentos'
+			,'sum(ivapercep) as ivapercep','sum(iibbpercep) as iibbpercep','sum(actvspercep) as actvspercep'
+			,'sum(impinternos) as impinternos','sum(impcombustible) as impcombustible'],
+		'contain'=>[
+			'Comprobante',
+			'Provedore'
+		],
+		'conditions'=>[
+			'Compra.cliente_id'=>$cliid,
+			'Compra.periodo'=>$periodo
+		],
+		'group'=>[
+			'Compra.comprobante_id',
+			'Compra.puntosdeventa',
+			//'Compra.alicuota',
+			'Compra.numerocomprobante',
+			'Compra.provedore_id',
+		]
+	];
+
+	$compras = $this->Compra->find('all',$optionsComptras);
+	$optionsAlicuotas=[
+		'contain'=>[
+			'Comprobante',
+			'Provedore'
+		],
+		'conditions'=>[
+			'Compra.cliente_id'=>$cliid,
+			'Compra.periodo'=>$periodo
+		],
+
+	];
+
+	$alicuotas = $this->Compra->find('all',$optionsAlicuotas);
+
+	$optionCliente=[
+		'contain'=>[],
+		'conditions'=>['Cliente.id'=>$cliid]
+	];
+	$cliente = $this->Cliente->find('first',$optionCliente);
+
+	$alicuotascodigoreverse = $this->alicuotascodigoreverse;
+	$this->set(compact('compras','alicuotas','cliente','cliid','periodo','alicuotascodigoreverse'));
+}
 	public function exportartxtpercepcionesiibb($cliid,$periodo){
 		$this->loadModel('Cliente');
 		$optionsComptras=[

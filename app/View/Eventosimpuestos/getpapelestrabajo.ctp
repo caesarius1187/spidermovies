@@ -113,6 +113,16 @@
                     'escape' => false
                 ));
                 break;
+            case 37/*Casas Particulares*/:
+                $mostrarAlertaVentasComprasConceptos = false;
+                echo $this->Form->button('Papel de Trabajo', array(
+                    'id' => 'buttonPDT',
+                    'type' => 'button',
+                    'class'=>'btn_papeltrabajo',
+                    'onClick' => 'verPapelDeTrabajoCasasParticulares('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')',
+                    'escape' => false
+                ));
+                break;
 
             default:
                 if($impuesto['organismo']=='sindicato'){
@@ -592,6 +602,31 @@
                                     ]
                                 );
                             }
+                            //ahora vamos a crear los campos para registrar los Conceptos restantes que estan relacionados a este impcli y a este periodo
+                            if(isset($conceptosrestantesimpcli)){
+                                foreach ($conceptosrestantesimpcli as $conceptosrestante){
+                                    if($conceptosrestante['localidade_id']==$impcliprovincia['localidade_id']){
+                                        echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.id',array(
+                                            'value'=>$conceptosrestante['id'],'type'=>''));
+                                        echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.loalidade_id',array(
+                                            'value'=>$conceptosrestante['partido_id'],'type'=>''));
+                                        echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.cliente_id',array(
+                                            'value'=>$conceptosrestante['cliente_id'],'type'=>''));
+                                        echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.impcli_id',array(
+                                            'value'=>$conceptosrestante['impcli_id'],'type'=>''));
+                                        echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.conceptostipo_id',array(
+                                            'value'=>$conceptosrestante['conceptostipo_id'],'type'=>''));
+                                        echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.periodo',array(
+                                            'value'=>$conceptosrestante['periodo'],'type'=>''));
+                                        echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.montoretenido',array(
+                                            'value'=>$conceptosrestante['montoretenido'],'type'=>''));
+                                        echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.fecha',array(
+                                            'value'=>$conceptosrestante['fecha'],'type'=>''));
+                                        echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.descripcion',array(
+                                            'value'=>$conceptosrestante['descripcion'],'type'=>''));
+                                    }
+                                }
+                            }
                             $eventoPos++;
                             echo "</br>";
                         }
@@ -792,6 +827,10 @@
             break;
         }
         foreach ($eventosimpuestos as $key => $eventosimpuesto) {//vamos a buscar el evento para ver si ya esta creada este item
+            if(!isset($eventosimpuesto['Eventosimpuesto']['mostrado'])){
+                $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=0;
+                $eventosimpuesto['Eventosimpuesto']['mostrado']=0;
+            }
             if(!$eventosimpuesto['Eventosimpuesto']['mostrado']){
                 $faltanEventosAMostrar = true;
                 break;
@@ -859,6 +898,10 @@
                 </tr>
 
                 <?php foreach ($eventosimpuestos as $key => $eventosimpuesto):
+                    if(!isset($eventosimpuesto['Eventosimpuesto']['mostrado'])){
+                        $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=0;
+                        $eventosimpuesto['Eventosimpuesto']['mostrado']=0;
+                    }
                     if(!$eventosimpuesto['Eventosimpuesto']['mostrado']){
                     ?>
                     <tr>

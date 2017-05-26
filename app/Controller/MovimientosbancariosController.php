@@ -47,10 +47,14 @@ class MovimientosbancariosController extends AppController {
 				];
 				$options = [
 					'contain'=>[
+						'Cbu'=>[
+							'Impcli'=>[
+								'Impuesto'
+							]
+						],
 						'Cuentascliente'=>[
 							'Cuenta'
 						],
-						'Cbu'
 					],
 					'conditions' => [
 						'Movimientosbancario.' . $this->Movimientosbancario->primaryKey => $id
@@ -74,6 +78,7 @@ class MovimientosbancariosController extends AppController {
 		$this->set('mostrarForm',$mostrarForm);
 		$options = [
 			'contain'=>[
+
 			],
 			'conditions' => [
 				'Movimientosbancario.' . $this->Movimientosbancario->primaryKey => $id
@@ -305,7 +310,22 @@ class MovimientosbancariosController extends AppController {
 			if ($this->Movimientosbancario->save($this->request->data)) {
 				$data ["respuesta"] = "El Movimiento Bancario ha sido creado con exito.";
                 $movimietnoId = $this->Movimientosbancario->getLastInsertId();
-                $data['movimiento'] = $this->request->data;
+				$options = [
+					'contain'=>[
+						'Cbu'=>[
+							'Impcli'=>[
+								'Impuesto'
+							]
+						],
+						'Cuentascliente'=>[
+							'Cuenta'
+						],
+					],
+					'conditions' => [
+						'Movimientosbancario.' . $this->Movimientosbancario->primaryKey => $movimietnoId
+					]
+				];
+				$data['movimientosbancario'] = $this->Movimientosbancario->find('first', $options);
                 $data['movimientoid'] = $movimietnoId;
 			}
 			else{
@@ -313,8 +333,6 @@ class MovimientosbancariosController extends AppController {
 					"respuesta" => "El Movimiento Bancario NO ha sido creado con exito.Intentar de nuevo mas tarde",
 				);
 			}
-
-
 		}
         $this->layout = 'ajax';
         $this->set('data', $data);

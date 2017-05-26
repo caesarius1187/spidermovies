@@ -407,6 +407,7 @@ class ConceptosrestantesController extends AppController {
         $this->loadModel('Localidade');
 		$this->loadModel('Cliente');
 		$this->loadModel('Impcli');
+		$this->loadModel('Cbu');
 		$this->loadModel('Comprobante');
 		$this->loadModel('Conceptostipo');
 		$this->loadModel('Categoriamonotributo');
@@ -580,6 +581,22 @@ class ConceptosrestantesController extends AppController {
 		$this->set('mostrarForm',$mostrarForm);	
 
 		$this->set('conid',$id);
+        $clienteCbuOptions = array(
+            'conditions'=>array(
+            ),
+            'joins'=>array(
+                array('table'=>'impclis',
+                    'alias' => 'Impcli',
+                    'type'=>'inner',
+                    'conditions'=> array(
+                        'Impcli.id = Cbu.impcli_id',
+                        'Impcli.cliente_id'=> $this->request->data['Conceptosrestante']['cliente_id']
+                    )
+                ),
+            )
+        );
+        $cbus = $this->Cbu->find('list',$clienteCbuOptions);
+        $this->set(compact('cbus'));
 		$this->layout = 'ajax';
 	}
 
@@ -622,39 +639,231 @@ class ConceptosrestantesController extends AppController {
 		$conceptosrestantes= $this->Conceptosrestante->find('all',$optionsConceptosrestantes);
 		$optionCliente=[
 			'contain'=>[],
-			'condition'=>['Cliente.id'=>$cliid]
+			'conditions'=>['Cliente.id'=>$cliid]
 		];
 		$cliente = $this->Cliente->find('first',$optionCliente);
 		$this->set(compact('conceptosrestantes','cliente','cliid','periodo'));
 	}
-	public function importarretencionesbancariasconveniomultilateral($cliid=null,$periodo=null){
+//	public function importarretencionesbancariasconveniomultilateral($cliid=null,$periodo=null){
+//		set_time_limit (360);
+//		App::uses('Folder', 'Utility');
+//		App::uses('File', 'Utility');
+//		$this->loadModel('Partido');
+//		$this->loadModel('Comprobante');
+//		$this->loadModel('Cliente');
+//
+//		$folderConceptosrestantes = WWW_ROOT.'files'.DS.'pagosacuentas'.DS.$cliid.DS.$periodo.DS.'retencionesbancarias';
+//		if ($this->request->is('post')) {
+//			$folderConceptosrestantes = WWW_ROOT.'files'.DS.'pagosacuentas'.DS.$this->request->data['Conceptosrestante']['cliid'].DS.$this->request->data['Conceptosrestante']['periodo'].DS.'retencionesbancarias';
+//			$fileNameConceptosrestante = null;
+//			$tmpNameConceptosrestante= $this->request->data['Conceptosrestante']['archivoretenciones']['tmp_name'];
+//			if (!empty($tmpNameConceptosrestante)&& is_uploaded_file($tmpNameConceptosrestante)) {
+//				// Strip path information
+//				$fileNameConceptosrestante = $this->request->data['Conceptosrestante']['archivoretenciones']['name'];
+//				move_uploaded_file($tmpNameConceptosrestante, $folderConceptosrestantes.DS.$fileNameConceptosrestante);
+//				//chmod($folderVentas.DS.$fileNameVenta, 0777);
+//			}
+//		}
+//
+//		//Partidos
+//		$partidos = $this->Partido->find('list');
+//		//Comprobantes
+//		$comprobantes = $this->Comprobante->find('list',['fields'=>['id','codnamedos']]);
+//		$this->set(compact('comprobantes', 'partidos'));
+//
+//		$this->set(compact('cliid','periodo','folderConceptosrestantes'));
+//
+//		//Aca vamos a informar el estado de los impeustos que necesitamos (por ahora solo necesitamos Monotributo) para importar las ventas
+//		$pemes = substr($periodo, 0, 2);
+//		$peanio = substr($periodo, 3);
+//		//A: Es menor que periodo Hasta
+//		$esMenorQueHasta = array(
+//			//HASTA es mayor que el periodo
+//			'OR'=>array(
+//				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+//				'AND'=>array(
+//					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+//					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+//				),
+//			)
+//		);
+//		//B: Es mayor que periodo Desde
+//		$esMayorQueDesde = array(
+//			'OR'=>array(
+//				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+//				'AND'=>array(
+//					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+//					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+//				),
+//			)
+//		);
+//		//C: Tiene Periodo Hasta 0 NULL
+//		$periodoNull = array(
+//			'OR'=>array(
+//				array('Periodosactivo.hasta'=>null),
+//				array('Periodosactivo.hasta'=>""),
+//			)
+//		);
+//		$conditionsImpCliHabilitados = array(
+//			//El periodo esta dentro de un desde hasta
+//			'AND'=> array(
+//				$esMayorQueDesde,
+//				'OR'=> array(
+//					$esMenorQueHasta,
+//					$periodoNull
+//				)
+//			)
+//		);
+//		$cliente=$this->Cliente->find('first', array(
+//				'contain'=>array(
+//					'Impcli'=>array(
+//						'Periodosactivo'=>array(
+//							'conditions'=>$conditionsImpCliHabilitados
+//						)
+//					)
+//				),
+//				'conditions' => array(
+//					'id' => $cliid,
+//				),
+//			)
+//		);
+//		/*AFIP*/
+//		$tieneMonotributo=False;
+//		$tieneIVA=False;
+//		$tieneIVAPercepciones=False;
+//		$tieneImpuestoInterno=False;
+//		/*DGR*/
+//		$tieneAgenteDePercepcionIIBB=False;
+//		/*DGRM*/
+//		$tieneAgenteDePercepcionActividadesVarias=False;
+//		foreach ($cliente['Impcli'] as $impcli) {
+//			/*AFIP*/
+//			if($impcli['impuesto_id']==4/*Monotributo*/){
+//				//Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+//				if(Count($impcli['Periodosactivo'])!=0){
+//					//Aca estamos Seguros que es un Monotributista Activo en este periodo
+//					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+//					$tieneMonotributo=True;
+//					$tieneIVA=False;
+//				}
+//			}
+//			if($impcli['impuesto_id']==19/*IVA*/){
+//				//Tiene IVA asignado pero hay que ver si tiene periodos activos
+//				if(Count($impcli['Periodosactivo'])!=0){
+//					//Aca estamos Seguros que es un Responsable Inscripto Activo en este periodo
+//					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+//					$tieneMonotributo=False;
+//					$tieneIVA=True;
+//				}
+//			}
+//			if($impcli['impuesto_id']==184/*IVA Percepciones*/){
+//				//Tiene IVA Percepciones asignado pero hay que ver si tiene periodos activos
+//				if(Count($impcli['Periodosactivo'])!=0){
+//					//Aca estamos Seguros que tiene IVA Percepciones Activo en este periodo
+//					$tieneIVAPercepciones=True;
+//				}
+//			}
+//			if($impcli['impuesto_id']==185/*Impuesto Interno*/){
+//				//Tiene Impuesto Interno asignado pero hay que ver si tiene periodos activos
+//				if(Count($impcli['Periodosactivo'])!=0){
+//					//Aca estamos Seguros que tiene Impuesto Interno Activo en este periodo
+//					$tieneImpuestoInterno=True;
+//				}
+//			}
+//			/*DGR*/
+//			if($impcli['impuesto_id']==173/*Agente de Percepcion IIBB*/){
+//				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+//				if(Count($impcli['Periodosactivo'])!=0){
+//					//Aca estamos Seguros que tiene Agente de Percepcion IIBB Activo en este periodo
+//					$tieneAgenteDePercepcionIIBB=True;
+//				}
+//			}
+//			/*DGRM*/
+//			if($impcli['impuesto_id']==186/*Agente de Percepcion de Actividades Varias*/){
+//				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+//				if(Count($impcli['Periodosactivo'])!=0){
+//					//Aca estamos Seguros que tiene Agente de Percepcion de Actividades Varias Activo en este periodo
+//					$tieneAgenteDePercepcionActividadesVarias=True;
+//				}
+//			}
+//		}
+//		$cliente['Cliente']['tieneMonotributo'] = $tieneMonotributo;
+//		$cliente['Cliente']['tieneIVA'] = $tieneIVA;
+//		$cliente['Cliente']['tieneIVAPercepciones'] = $tieneIVAPercepciones;
+//		$cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;
+//		$cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;
+//		$cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;
+//
+//		$this->set('cliente',$cliente);
+//
+//		$optionsconceptosrestantesperiodo=array(
+//			'contain'=>array(
+//			),
+//			'fields'=>array(
+//			),
+//			'conditions'=>array(
+//				'Conceptosrestante.conceptostipo_id'=>2,
+//				'Conceptosrestante.periodo'=>$periodo,
+//				'Conceptosrestante.cliente_id'=>$cliid
+//			)
+//		);
+//		$conceptosrestantesperiodo = $this->Conceptosrestante->find('all',$optionsconceptosrestantesperiodo);
+//		$this->set('conceptosrestantesperiodo',$conceptosrestantesperiodo);
+//	}
+	public function exportartxtrecaudacionesbancarias($cliid,$periodo,$impcli){
+		$this->loadModel('Cliente');
+		$optionsConceptosrestantes=[
+			'contain'=>[
+				'Partido',
+				'Comprobante',
+				'Cbu',
+			],
+			'conditions'=>[
+				'Conceptosrestante.cliente_id'=>$cliid,
+				'Conceptosrestante.periodo'=>$periodo,
+				'Conceptosrestante.impcli_id'=>$impcli,
+				'Conceptosrestante.conceptostipo_id'=>3
+			],
+
+		];
+
+		$conceptosrestantes= $this->Conceptosrestante->find('all',$optionsConceptosrestantes);
+		$optionCliente=[
+			'contain'=>[],
+			'conditions'=>['Cliente.id'=>$cliid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
+		$this->set(compact('conceptosrestantes','cliente','cliid','periodo'));
+	}
+	public function importartxtrecaudacionesbancarias($cliid=null,$periodo=null,$impcliid=null){
 		set_time_limit (360);
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');
 		$this->loadModel('Partido');
 		$this->loadModel('Comprobante');
 		$this->loadModel('Cliente');
+		$this->loadModel('Cbu');
 
-		$folderConceptosrestantes = WWW_ROOT.'files'.DS.'retenciones'.DS.$cliid.DS.$periodo.DS.'retenciones';
+		$folderConceptosrestantes = WWW_ROOT.'files'.DS.'pagosacuentas'.DS.$cliid.DS.$periodo.DS.'retencionesbancarias';
 		if ($this->request->is('post')) {
-			$folderConceptosrestantes = WWW_ROOT.'files'.DS.'ventas'.DS.$this->request->data['Conceptosrestante']['cliid'].DS.$this->request->data['Conceptosrestante']['periodo'].DS.'retenciones';
+			$folderConceptosrestantes = WWW_ROOT.'files'.DS.'pagosacuentas'.DS.$this->request->data['Conceptosrestante']['cliid'].DS.$this->request->data['Conceptosrestante']['periodo'].DS.'retencionesbancarias';
 			$fileNameConceptosrestante = null;
-			$tmpNameConceptosrestante= $this->request->data['Conceptosrestante']['archivoretenciones']['tmp_name'];
+			$tmpNameConceptosrestante= $this->request->data['Conceptosrestante']['archivoretencionesbancarias']['tmp_name'];
 			if (!empty($tmpNameConceptosrestante)&& is_uploaded_file($tmpNameConceptosrestante)) {
 				// Strip path information
-				$fileNameConceptosrestante = $this->request->data['Conceptosrestante']['archivoretenciones']['name'];
+				$fileNameConceptosrestante = $this->request->data['Conceptosrestante']['archivoretencionesbancarias']['name'];
 				move_uploaded_file($tmpNameConceptosrestante, $folderConceptosrestantes.DS.$fileNameConceptosrestante);
 				//chmod($folderVentas.DS.$fileNameVenta, 0777);
 			}
 		}
-	
+
 		//Partidos
 		$partidos = $this->Partido->find('list');
 		//Comprobantes
 		$comprobantes = $this->Comprobante->find('list',['fields'=>['id','codnamedos']]);
 		$this->set(compact('comprobantes', 'partidos'));
 
-		$this->set(compact('cliid','periodo','folderConceptosrestantes'));
+		$this->set(compact('cliid','periodo','impcliid','folderConceptosrestantes'));
 
 		//Aca vamos a informar el estado de los impeustos que necesitamos (por ahora solo necesitamos Monotributo) para importar las ventas
 		$pemes = substr($periodo, 0, 2);
@@ -780,36 +989,46 @@ class ConceptosrestantesController extends AppController {
 		$this->set('cliente',$cliente);
 
 		$optionsconceptosrestantesperiodo=array(
-			'contain'=>array(
-			),
-			'fields'=>array(
-			),
-			'conditions'=>array(
+			'contain'=>[
+                'Partido'
+            ],
+			'fields'=>[],
+			'conditions'=>[
 				'Conceptosrestante.conceptostipo_id'=>2,
 				'Conceptosrestante.periodo'=>$periodo,
 				'Conceptosrestante.cliente_id'=>$cliid
-			)
+			]
 		);
 		$conceptosrestantesperiodo = $this->Conceptosrestante->find('all',$optionsconceptosrestantesperiodo);
 		$this->set('conceptosrestantesperiodo',$conceptosrestantesperiodo);
+
+        $clienteCbuOptions = array(
+            'conditions'=>array(
+            ),
+            'joins'=>array(
+                array('table'=>'impclis',
+                    'alias' => 'Impcli',
+                    'type'=>'inner',
+                    'conditions'=> array(
+                        'Impcli.id = Cbu.impcli_id',
+                        'Impcli.cliente_id'=> $cliid,
+                    )
+                ),
+            )
+        );
+        $cbus = $this->Cbu->find('list',$clienteCbuOptions);
+        $this->set(compact('cbus'));
 	}
-	public function cargarventas(){
+
+	public function cargarconceptosrestantes (){
 		$data=array();
 		if ($this->request->is('post')) {
-			$params = array();
-			$myParser = new ParserUnlimited();
-			$myParser->my_parse_str($this->request->data['Venta'][0]['jsonencript'],$params);
-			foreach ($params['data']['Venta'] as $k => $miventa){
-				$mifecha = $miventa['fecha'];
-				$params['data']['Venta'][$k]['fecha'] = date('Y-m-d',strtotime($mifecha));
-			}
-			$this->Venta->create();
-			if ($this->Venta->saveAll($params['data']['Venta'])) {
+			if ($this->Conceptosrestante->saveAll($this->request->data['Conceptosrestante'])) {
 				//$data['params'] = $params;
 				//if (1==1) {
-				$data['respuesta'] = 'Las Ventas han sido guardadas.';
+				$data['respuesta'] = 'Las recaudaciones bancarias han sido guardadas.';
 			} else {
-				$data['respuesta'] = 'Error al guardar ventas, por favor intende de nuevo mas tarde.';
+				$data['respuesta'] = 'Las recaudaciones bancarias NO han sido guardadas.';
 			}
 		}else{
 			$data['respuesta'] = 'acceso denegado';
@@ -827,9 +1046,10 @@ class ConceptosrestantesController extends AppController {
 	public function deletefile($name=null,$cliid=null,$folder=null,$periodo=null){
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');
-		$file = WWW_ROOT.'files'.DS.'ventas'.DS.$cliid.DS.$periodo.DS.$folder.DS.$name;
+		$file = WWW_ROOT.'files'.DS.'pagosacuentas'.DS.$cliid.DS.$periodo.DS.$folder.DS.$name;
 		chmod($file, 0777);
 		if( is_file( $file ) AND is_readable( $file ) ){
+
 			if(unlink($file)){
 				$this->Session->setFlash(__('El Archivo ha sido eliminado.File:'.$file.fileperms ($file)));
 			}else{
@@ -838,13 +1058,13 @@ class ConceptosrestantesController extends AppController {
 		}else{
 			$this->Session->setFlash(__('No se puede acceder al archivo'.$file));
 		}
-		return $this->redirect(
-			array(
-				'controller'=>'ventas',
-				'action' => 'importar',
-				$cliid,
-				$periodo
-			)
-		);
+//		return $this->redirect(
+//			array(
+//				'controller'=>'conceptosrestantes',
+//				'action' => 'importartxtrecaudacionesbancarias',
+//				$cliid,
+//				$periodo
+//			)
+//		);
 	}
 }

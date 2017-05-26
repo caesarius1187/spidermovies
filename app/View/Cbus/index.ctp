@@ -20,6 +20,7 @@
 				'Plazo Fijo en U$S'=>'Plazo Fijo en U$S'
 			]
 		]);
+		echo $this->Form->input('noasociadoaactividad',['label'=>'No Asociado a Actividad']);
         echo $this->Form->end('Agregar');
     ?>
 	<table cellpadding="0" cellspacing="0">

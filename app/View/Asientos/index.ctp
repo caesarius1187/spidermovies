@@ -79,7 +79,7 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 		{
 			$debe=0;
 			$haber=0;
-			$colorTR="white";
+			$colorTR="";
 			foreach ($asiento['Movimiento'] as $movimiento) {
 				if(isset($cuentasclienteseleccionada)){
 					if($cuentasclienteseleccionada['Cuentascliente']['id']==$movimiento['cuentascliente_id']){

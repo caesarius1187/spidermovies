@@ -177,13 +177,13 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
             //Blanco saldo esperado
             //Naranja saldo fuera de contexto
             $charinicial = substr($cuentascliente['Cuenta']['numero'], 0, 1);
-            $colorTR = "white";
+            $colorTR = "";
             switch ($charinicial){
                 case "1":
                 case "3":
                 case "5":
                     if($saldoCalculado>=0){
-                        $colorTR= "white";
+                        $colorTR= "";
                     }else{
                         $colorTR= "#ffae00";
                     }
@@ -191,7 +191,7 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
                 case "2":
                 case "6":
                     if($saldoCalculado<=0){
-                        $colorTR= "white";
+                        $colorTR= "";
                     }else{
                         $colorTR= "#ffae00";
                     }

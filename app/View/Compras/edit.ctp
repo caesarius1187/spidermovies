@@ -30,7 +30,8 @@ if(!$mostrarForm) { ?>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["exentos"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"><?php echo number_format($this->data['Compra']["kw"], 2, ",", ".")."KW"?></td>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["total"], 2, ",", ".")?></td>
-      <td class="<?php echo $tdClass?>"> 
+      <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["total"], 2, ",", ".")?></td>
+      <td class="<?php echo $tdClass?>">
         <?php 
         $paramsCompra=$this->data['Compra']["id"];
         echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarCompra(".$paramsCompra.")"));
@@ -158,6 +159,16 @@ if(!$mostrarForm) { ?>
       echo $this->Form->input('kw',array(
             'label'=>'KW'
           ));
+      $tipoautorizaciones=[
+          'CAE'=>'CAE',
+          'CAI'=>'CAI',
+          'CAEA'=>'CAEA'
+      ];
+      echo $this->Form->input('tipoautorizacion',array(
+          'options' => $tipoautorizaciones,
+          'style'=>'width:60px'));
+      echo $this->Form->input('autorizacion',array(
+          'style'=>'width:100px'));
       echo $this->Form->input('asiento',array('type'=>'hidden'));
       echo $this->Form->input('periodo',array('type'=>'hidden'));
       /*AFIP*/

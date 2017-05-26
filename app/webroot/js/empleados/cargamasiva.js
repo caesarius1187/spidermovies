@@ -2,6 +2,8 @@
  * Created by caesarius on 04/04/2017.
  */
 var numeroliquidacion = [];
+var ajaxAbierto = false;
+var empleado1=0;
 $(document).ready(function() {
     numeroliquidacion["liquidaprimeraquincena"] = 1;
     numeroliquidacion["liquidasegundaquincena"] = 2;
@@ -10,10 +12,29 @@ $(document).ready(function() {
     numeroliquidacion["liquidapresupuestosegunda"] = 5;
     numeroliquidacion["liquidapresupuestomensual"] = 6;
     numeroliquidacion["liquidasac"] = 7;
+    jQuery(document).ready(function($) {
+        $(document).ajaxStart(function () {
+            ajaxAbierto = true;
+        });
+        $(document).ajaxComplete(function () {
+            checkPendingRequest();
+        });
+        $('#ui-datepicker-div').hide();
+        function checkPendingRequest() {
+            if ($.active > 0) {
+                window.setTimeout(checkPendingRequest, 1000);
+                //Mostrar peticiones pendientes ejemplo: $("#control").val("Peticiones pendientes" + $.active);
+            }
+            else {
+                ajaxAbierto = false;
+            }
+        };
+    });
 });
 function cargarTodosLosSueldos(convenio){
     var liquidacion = $("#tipoliquidacion").val();
     $("#divSueldoForm").html("");
+    empleado1=0;
     var empleados = JSON.parse($("#arrayEmpleados").val());
 
     var  deferredCollection = [];
@@ -23,6 +44,9 @@ function cargarTodosLosSueldos(convenio){
                 var cliid = $('#cliid').val();
                 var periodo = $('#periodo').val();
                 deferredCollection.push(cargarSueldoEmpleado(cliid,periodo,valor,liquidacion,indice));
+                if(empleado1==0){
+                    empleado1=valor;
+                }
             });
         }
     });
@@ -96,6 +120,7 @@ function showHideColumnsEmpleado(empid){
 }
 function cargarunsueldoempleado(clienteid,periodo,empid,liquidacion,indice){
     $("#divSueldoForm").html("");
+    empleado1=empid;
     cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice);
 }
 function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice){
@@ -190,13 +215,21 @@ function ocultarFunciones(){
     var  deferredCollection = [];
     jQuery.each(empleados, function(name, value) {
         value.forEach(function (valor, indice, array) {
-            deferredCollection.push(ocultarFuncinesDeUnFormulario(valor));
+            if(indice==0)
+                deferredCollection.push(ocultarFuncinesDeUnFormulario(valor));
         });
     });
 
 }
+
 function ocultarFuncinesDeUnFormulario(empid){
-    $(".funcionAAplicar").each(function() {
+    if(ajaxAbierto){
+       return false;
+    }
+    console.log("inicio de Ocultar: "+empid);
+    var empidFuncion = 0;
+    $("#ValorreciboPapeldetrabajosueldosForm"+empid+" .funcionAAplicar").each(function() {
+        empidFuncion++;
         var posicion = $(this).attr('posicion');
         var seccion = $(this).attr('seccion');
         var headsection = $(this).attr('headseccion');
@@ -204,9 +237,17 @@ function ocultarFuncinesDeUnFormulario(empid){
 
         //aca tengo que preguntar si todos los valoresrecibos tienen valor 0 sino no oculto
         var todosvacios = true;
-        $('input[valdata-codigo="'+dataCodigo+'"]').each(function() {
-            if($('#Valorrecibo'+posicion+'Valor').val()!=0){
+        $('.'+dataCodigo).each(function() {
+            $mysheet = $(this).closest('form').calx("getSheet");
+            if(dataCodigo=="R33"){
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+"= "+$mysheet.getCellValue("R33"));
+            }
+            if(dataCodigo=="R10"){
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+"= "+$mysheet.getCellValue("R10"));
+            }
+            if(($mysheet.getCellValue(dataCodigo)*1)!=0){
                 todosvacios = false;
+                console.log(empid+"-Este es distinto de 0 != "+$mysheet.getCellValue(dataCodigo));
                 return false;
             }
         });
@@ -221,9 +262,14 @@ function ocultarFuncinesDeUnFormulario(empid){
                     if(rowVisible==true) {
                         rowspan = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan');
                         rowspan = rowspan - 1;
-                        $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan',rowspan);
+                        // $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan',rowspan);
+                        $('.seccion'+seccion).each(function(){
+                            $(this).attr('rowspan',rowspan);
+                        });
                     }
-                    $(this).closest('tr').hide();
+                    $('input[valdata-codigo="'+dataCodigo+'"]').each(function() {
+                        $(this).closest('tr').hide();
+                    });
                 });
             }
         }else{
@@ -235,14 +281,20 @@ function ocultarFuncinesDeUnFormulario(empid){
                 if(rowVisible==false ) {
                     rowspan = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion' + seccion).attr('rowspan')*1;
                     rowspan = rowspan + 1;
-                    $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan',rowspan);
+                    // $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan',rowspan);
+                    $('.seccion'+seccion).each(function(){
+                        $(this).attr('rowspan',rowspan);
+                    });
                 }
                 //tengo que mostrar el row
-                $(this).closest('tr').show();
+                $('input[valdata-codigo="'+dataCodigo+'"]').each(function() {
+                    $(this).closest('tr').show();
+                });
             });
         }
     });
 }
+
 function activarCalXOnSueldos(empid){
 
     $('#ValorreciboPapeldetrabajosueldosForm'+empid+' .funcionAAplicar').on('change', function() {
@@ -255,8 +307,15 @@ function activarCalXOnSueldos(empid){
         $('#Valorrecibo'+posicion+'Formulamodificada').prop('checked', true);
         $('#Valorrecibo'+posicion+'Nuevaformula').val( $('#Valorrecibo'+posicion+'Formula').val());
     });
+
     tablaSueldoCalx[empid] = $('#ValorreciboPapeldetrabajosueldosForm'+empid).calx({
-        language : 'id'
+        language : 'id',
+        'autoCalculate'         : true,
+        onAfterRender : function(){
+            ocultarFuncinesDeUnFormulario(empid);
+        } ,
+        onBeforeRender : function(){
+        }
     });
     tablaSueldoCalx[empid].submit(function(){
         //serialize form data
@@ -333,17 +392,18 @@ function activarCalXOnSueldos(empid){
         });
         return false;
     });
-    // ocultarFunciones();
+
 
     $('#ValorreciboPapeldetrabajosueldosForm'+empid+' input').change(function(){
-        $('#ValorreciboPapeldetrabajosueldosForm'+empid).calx({ });
-        // ocultarFunciones();
+       // $('#ValorreciboPapeldetrabajosueldosForm'+empid).calx({ });
+       //      ocultarFuncinesDeUnFormulario(empleado1);
     });
 }
 
 function cargarTodosLosRecibos(){
 
     $("#divSueldoForm").html("");
+    empleado1=0;
     var empleados = JSON.parse($("#arrayEmpleados").val());
     var liquidacion = numeroliquidacion[$("#tipoliquidacion").val()];
     var periodo = $('#periodo').val();
@@ -401,6 +461,7 @@ function cargarUnReciboSueldo(empid,periodo,liquidacion){
 
 function cargarTodosLosLibros(){
     $("#divSueldoForm").html("");
+    empleado1=0;
     var empleados = JSON.parse($("#arrayEmpleados").val());
     var liquidacion = numeroliquidacion[$("#tipoliquidacion").val()];
     var periodo = $('#periodo').val();

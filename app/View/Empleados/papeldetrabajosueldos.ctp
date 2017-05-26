@@ -129,7 +129,7 @@ if(count($empleado)==0){
                         $headSeccion = false;
                         if($miseccionamostrada!=$miseccionamostrar){
                             $headSeccion = true;?>
-                            <td  class="tdseccion" width="15px" rowspan="<?php echo $cantSecciones[$miseccionamostrar];?>" style="font-size: 13px; vertical-align:middle!important;" id="seccion<?php echo $numSeccion;?>" >
+                            <td  class="tdseccion seccion<?php echo $numSeccion;?>" width="15px" rowspan="<?php echo $cantSecciones[$miseccionamostrar];?>" style="font-size: 13px; vertical-align:middle!important;" id="seccion<?php echo $numSeccion;?>" >
                                 <div style="transform: rotate(270deg); float:left;width: 10px;">
                                     <?php
                                     $miseccionamostrada = $miseccionamostrar;
@@ -318,11 +318,11 @@ if(count($empleado)==0){
                         <?php
 
 
-                        $classInputValor="";
+                        $classInputValor="".$conceptoobligatorio['Concepto']['codigo'];
                         $inputClass="";
 
                         if($muestraAplicarATodos){
-                            $classInputValor = "aplicableATodos";
+                            $classInputValor .= " aplicableATodos";
                             $inputClass = "input".$conceptoobligatorio['Concepto']['codigo'];
                         }?>
                         <td width="80px" class="tdvalor">

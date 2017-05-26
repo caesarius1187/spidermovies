@@ -186,7 +186,13 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
 
             while (($line = fgetcsv($handler, 1000, ";")) !== false) {
 //                $line = utf8_decode($line);
-                if($line[0]=="fecha"||$line[0]==""||$line[1]==""||$line[2]==""||$line[3]==""||$line[4]==""){
+                $date = date_parse($line[0]);
+                if ($date["error_count"] == 0 && checkdate($date["month"], $date["day"], $date["year"]))
+                    $parceLine = true;
+                else
+                    $parceLine = false;
+
+                if((!$parceLine)||$line[1]==""||$line[2]==""||$line[3]==""||$line[4]==""){
                     continue;
                 }
                 $ventasArray[$i] = array();
@@ -224,9 +230,9 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 $lineVenta['importeingresosbrutos']= floatval(str_replace(',', '.', str_replace('.', '', $line[13])));
                 $lineVenta['importeimpuestosmunicipales']= floatval(str_replace(',', '.', str_replace('.', '', $line[14])));
                 $lineVenta['importeimpuestosinternos']= floatval(str_replace(',', '.', str_replace('.', '', $line[15])));
-                $lineVenta['codigomoneda']=$line[16];
-                $lineVenta['cambiotipo']=$line[17];
-                $lineVenta['cantidadalicuotas']=$line[18];
+                $lineVenta['codigomoneda']=$line[16];//no se carga
+                $lineVenta['cambiotipo']=$line[17];//no se carga
+                $lineVenta['cantidadalicuotas']=$line[18];//no se carga
                 $lineVenta['operacioncodigo']=$line[19];
                 $lineVenta['otrostributos']=$line[20];
                 $lineVenta['fechavencimientopago']=$line[21];
@@ -360,9 +366,9 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 //ahora que tenemos la alicuota en un array tenemos que buscar la venta a la que pertenece y agregarla
                 $k=0;
                 foreach ($ventasArray as $venta) {
-                    $mismocomprobante = $venta['Venta']['comprobantenumero']==$lineAlicuota['comprobantenumero'];
-                    $mismopuntodeventa = $venta['Venta']['puntodeventa']==$lineAlicuota['puntodeventa'];
-                    $mismotipocomprobante = $venta['Venta']['comprobantetipo']==$lineAlicuota['comprobantetipo'];
+                    $mismocomprobante = $venta['Venta']['comprobantenumero']*1==$lineAlicuota['comprobantenumero']*1;
+                    $mismopuntodeventa = $venta['Venta']['puntodeventa']*1==$lineAlicuota['puntodeventa']*1;
+                    $mismotipocomprobante = $venta['Venta']['comprobantetipo']*1==$lineAlicuota['comprobantetipo']*1;
                     if($mismocomprobante&&$mismopuntodeventa&&$mismotipocomprobante){
                         if(!isset($venta['Alicuota'])){
                             $venta['Alicuota']=array();
@@ -760,7 +766,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                             $igualNumeroComprobante = true;
                         }
                         if ($igualTipoComprobante&&$igualPuntoDV&&$igualAlicuota&&$igualNumeroComprobante){
-                            $misVentasYaCargadas =
+                            $misVentasYaCargadas +=
                                 $venta['Venta']['comprobantetipo']."-".
                                 $venta['Venta']['puntodeventa']."-".
                                 $numeroComprobante." // ";

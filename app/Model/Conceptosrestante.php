@@ -61,6 +61,13 @@ class Conceptosrestante extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'Cbu' => array(
+			'className' => 'Cbu',
+			'foreignKey' => 'cbu',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
 		)
 	);
 	public $hasMany = array(

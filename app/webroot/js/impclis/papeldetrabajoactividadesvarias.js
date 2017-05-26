@@ -66,13 +66,72 @@ function papelesDeTrabajo(periodo,impcli){
 		
 		var cantLocalidade = $('#Eventosimpuesto0CantProvincias').val();		
 		for (var i = 0 ; i < cantLocalidade; i++) {
-			if($('#Eventosimpuesto'+i+'Id').val()==0){//El Evento Impuesto no a sido creado previamente entonces vamos
+            var localidad = $('#Eventosimpuesto'+i+'LocalidadeId').val();
+            var apagar = $('#apagar'+localidad).val();
+            var afavor = $('#afavor'+localidad).val();
+            if($('#Eventosimpuesto'+i+'Id').val()==0){//El Evento Impuesto no a sido creado previamente entonces vamos
 				// a guardar el monto que calculamos
-				var localidad = $('#Eventosimpuesto'+i+'LocalidadeId').val();
-				var apagar = $('#apagar'+localidad).val();
-				var afavor = $('#afavor'+localidad).val();
+
 				$('#Eventosimpuesto'+i+'Montovto').val(apagar);
 				$('#Eventosimpuesto'+i+'Monc').val(afavor);
+			}
+			//aca vamos a agregar por JS los campos de saldo a favor por cada una de las provincias que tengas saldo a favor
+			if(afavor*1<0){
+				afavor=afavor*-1;
+			}
+			if($('#Eventosimpuesto'+i+'Conceptosrestante'+i+'Id').length<=0){
+				if(afavor*1>0){
+					$('<input>').attr({
+						type: 'hidden',
+						id: 'Eventosimpuesto'+i+'Conceptosrestante'+i+'LocalidadeId',
+						value: localidad,
+						name: 'data[Eventosimpuesto]['+i+'][Conceptosrestante]['+i+'][localidade_id]'
+					}).appendTo('#EventosimpuestoRealizartarea5Form');
+					$('<input>').attr({
+						type: 'hidden',
+						id: 'Eventosimpuesto'+i+'Conceptosrestante'+i+'ClienteId',
+						value: $('#cliid').val(),
+						name: 'data[Eventosimpuesto]['+i+'][Conceptosrestante]['+i+'][cliente_id]'
+					}).appendTo('#EventosimpuestoRealizartarea5Form');
+					$('<input>').attr({
+						type: 'hidden',
+						id: 'Eventosimpuesto'+i+'Conceptosrestante'+i+'ImpcliId',
+						value: $('#impcliid').val(),
+						name: 'data[Eventosimpuesto]['+i+'][Conceptosrestante]['+i+'][impcli_id]'
+					}).appendTo('#EventosimpuestoRealizartarea5Form');
+					$('<input>').attr({
+						type: 'hidden',
+						id: 'Eventosimpuesto'+i+'Conceptosrestante'+i+'ConceptostipoId',
+						value: 1,
+						name: 'data[Eventosimpuesto]['+i+'][Conceptosrestante]['+i+'][conceptostipo_id]'
+					}).appendTo('#EventosimpuestoRealizartarea5Form');
+					$('<input>').attr({
+						type: 'hidden',
+						id: 'Eventosimpuesto'+i+'Conceptosrestante'+i+'Periodo',
+						value: $('#periodonext').val(),
+						name: 'data[Eventosimpuesto]['+i+'][Conceptosrestante]['+i+'][periodo]'
+					}).appendTo('#EventosimpuestoRealizartarea5Form');
+					$('<input>').attr({
+						type: 'hidden',
+						id: 'Eventosimpuesto'+i+'Conceptosrestante'+i+'Montoretenido',
+						value: afavor,
+						name: 'data[Eventosimpuesto]['+i+'][Conceptosrestante]['+i+'][montoretenido]'
+					}).appendTo('#EventosimpuestoRealizartarea5Form');
+					$('<input>').attr({
+						type: 'hidden',
+						id: 'Eventosimpuesto'+i+'Conceptosrestante'+i+'Fecha',
+						value: $.datepicker.formatDate('yy/mm/dd', new Date()),
+						name: 'data[Eventosimpuesto]['+i+'][Conceptosrestante]['+i+'][fecha]'
+					}).appendTo('#EventosimpuestoRealizartarea5Form');
+					$('<input>').attr({
+						type: 'hidden',
+						id: 'Eventosimpuesto'+i+'Conceptosrestante'+i+'Descripcion',
+						value: $('#afavor'+localidad).val()+"-"+$('#periodo').val(),
+						name: 'data[Eventosimpuesto]['+i+'][Conceptosrestante]['+i+'][descripcion]'
+					}).appendTo('#EventosimpuestoRealizartarea5Form');
+				}
+			}else{
+				$('#Eventosimpuesto'+i+'Conceptosrestante'+i+'Montoretenido').val(afavor);
 			}
 		};
 	     $(document).ready(function() {

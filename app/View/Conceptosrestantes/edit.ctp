@@ -73,8 +73,16 @@ if(!$mostrarForm) { ?>
 			echo $this->Form->input('numerodespachoaduanero');
 			echo $this->Form->input('anticipo');
 			echo $this->Form->input('cbu');
-			echo $this->Form->input('tipocuenta');
-			echo $this->Form->input('tipomoneda');
+			echo $this->Form->input('tipocuenta',array(
+					'options'=>array('Caja de Ahorro'=>'Caja de Ahorro','Cuenta Corriente'=>'Cuenta Corriente','Otro'=>'Otro'),
+					'empty'=>'Seleccionar Tipo de cuenta',
+				)
+			);
+			echo $this->Form->input('tipomoneda',array(
+					'options'=>array('Moneda Ext.'=>'Moneda Ext.','Peso Arg.'=>'Peso Arg.','Otro'=>'Otro'),
+					'empty'=>'Seleccionar Moneda',
+				)
+			);
 			echo $this->Form->input('agente');
 			echo $this->Form->input('enterecaudador');
 			echo $this->Form->input('regimen');

@@ -139,16 +139,16 @@ class PapelesdetrabajosController extends AppController {
 									'Venta.periodo' => $periodo,
 									),
 								'contain' => array(
-													'Actividadcliente' => array(																				
-																				'Actividade'
-																				)
-												  )
+									'Actividadcliente' => array(
+																'Actividade'
+																)
+								  )
 							  );
 		$ventas = $this->Venta->find('all', $opcionesVenta);
 
 		$opcionesCompra = array(
 			'fields'=>[
-				'Compra.actividadcliente_id','Compra.tipocredito','Compra.imputacion','Compra.tipoiva',
+				'Compra.actividadcliente_id','Compra.tipocredito','Compra.imputacion','Compra.condicioniva','Compra.tipoiva',
                 'Compra.alicuota','SUM(neto)as neto','SUM(iva)as iva','SUM(ivapercep)as ivapercep' ],
 			'conditions'=>array(
 				'Compra.cliente_id' => $ClienteId,
@@ -164,6 +164,7 @@ class PapelesdetrabajosController extends AppController {
               ),
 			'group'=>[
 				'Compra.actividadcliente_id','Compra.tipocredito','Compra.imputacion','Compra.tipoiva','Compra.alicuota'
+				,'Compra.condicioniva'
 			]
 		  );
 		$compras = $this->Compra->find('all', $opcionesCompra);

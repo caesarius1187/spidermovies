@@ -11,9 +11,6 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript">
-		
-	</script>
 	<?php echo $this->Html->charset(); ?>
 	<title>
 		<?php echo $cakeDescription ?>:
@@ -26,7 +23,6 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 			    '/img/sigesec.png',
 			    array('type' => 'icon')
 			);
-		
 		echo $this->Html->script('jquery');
 		echo $this->Html->script('jquery.dataTables');
 		echo $this->Html->script('floatHead/dist/jquery.floatThead');
@@ -55,7 +51,6 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 			    }
 			}, 3000); 
 		}	
-	
 	jQuery(document).ready(function($) {
 		$(document).load(function () {
 			$("#loading").css('visibility','visible')
@@ -83,7 +78,6 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 			}
 		};
 	});
-
 	</SCRIPT>
 </head>
 <body>

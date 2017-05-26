@@ -1,3 +1,4 @@
+var $Filtro0Concepto = $("#Filtro0Concepto");
 $(document).ready(function() {
     window.addEventListener("beforeunload", function (e) {
         var confirmationMessage = "Esta seguro?";
@@ -56,15 +57,24 @@ $(document).ready(function() {
         });
         return false;
     });
+    // Obtencion del elemento seleccionado
+    // var valorSeleccionado = $combo.val();
+    // Aplicacion del orden alfabetico
+    $Filtro0Concepto.html(
+        $("#Filtro0Concepto option", $(this)).sort(function(a, b) {
+            return a.text == b.text ? 0 : a.text
+        }));
     comportamientoDeFiltros();
     aplicarFiltros();
     $("#loading").css('visibility','hidden');
+
+
 });
 //vamos a inicalizar los Filtros
 function comportamientoDeFiltros(){
     callAlertPopint("Cargando filtros");
 
-    $('#Filtro0Concepto').change(function() {
+    $("#Filtro0Concepto").change(function() {
         aplicarFiltros();
     });
     $('#Filtro0Debito').change(function() {

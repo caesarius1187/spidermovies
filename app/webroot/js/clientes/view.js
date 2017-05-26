@@ -11,12 +11,11 @@ jQuery(document).ready(function($) {
 
             $(settings.groupSelector).change(function(){
                 var $this = $(this);
-                var optgroup_label = $(this).find('option:selected').text();
-                var $optgroup =  $select.data('fg-original-groups').filter('optgroup[label=' + optgroup_label + ']').clone();
+                var $optgroup_label = $(this).find('option:selected').text();
+                var $optgroup =  $select.data('fg-original-groups').filter('optgroup[label="' + $optgroup_label + '"]').clone();
                 $select.children('optgroup').remove();
                 $select.append($optgroup);
             }).change();
-
         });
     };
 	/*Index*/

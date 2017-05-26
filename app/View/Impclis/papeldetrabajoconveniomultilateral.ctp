@@ -193,7 +193,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                    </span>
                 </td>
 				<td colspan="6">Conceptos que restan</td>
-				<td colspan="6">A Favor</td>				
+				<td colspan="1">Conceptos que suman</td>
+				<td colspan="6">A Favor</td>
 			</tr>
 			<tr id="2">
 				<td rowspan="2">Codigo</td>
@@ -228,6 +229,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 				<td rowspan="2">Otros</td>
 				<td rowspan="2" title="A favor del contribuyente del periodo anterior">A favor</td>
 				<td rowspan="2">Total</td>
+				<td rowspan="2">Adicionales</td>
 				<td rowspan="2">Fisco</td>
 				<td rowspan="2">Contrib.</td>
 			</tr>
@@ -260,6 +262,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 			$totalGeneralPercepcionesBancarias = 0;
 			$totalGeneralOtros = 0;
 			$totalGeneralTotalRetenciones = 0;
+			$totalGeneralTotalAdicionales = 0;
 			$totalGeneralAPagar = 0;
 			$totalGeneralAFavor = 0;
 			$totalGeneralAFavorDelContribuyente = 0;
@@ -353,7 +356,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 						<?php
 					}
 				}
-				$liquidacionProvincia[$impcliprovincia['id']."-TotalVentaxActividadProrrateada"]=$liquidacionActividadProrrateada;
+				$liquidacionProvincia[$impcliprovincia['id']."-TotalVentaxActividadProrrateada"]=
+					$liquidacionActividadProrrateada;
 				if($impcli['Impcli']['impuesto_id']==174/*Convenio Multilareral*/) {
 					?>
 					<td><!-- Total Prorrateo por Provincia  por aplicacion de articulo-->
@@ -514,12 +518,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 						$totalBaseImponibleProrrateada += $value;
 					}
 					$liquidacionProvincia[$impcliprovincia['id'].'TotalBaseImponibleProrrateada'] = $subTotalBaseImponibleProrrateada;
-					echo number_format($totalBaseImponibleProrrateada, 2, ",", "."); ; 
-					$totalGeneralBaseImponibleProrrateada += $totalBaseImponibleProrrateada ;
-                    /*Si es Actividades Economicas este es el valor que va a contener el valor de la cuenta 506210001*/
-                    if($impcli['Impcli']['impuesto_id']==21){
-                        echo $this->Form->input('impuestoDeterminadoTotal', array('type'=>'hidden','value'=>$totalGeneralBaseImponibleProrrateada));
-                    }
+					echo number_format($totalBaseImponibleProrrateada, 2, ",", "."); ;
+                    $totalGeneralBaseImponibleProrrateada += $totalBaseImponibleProrrateada ;
 
                     ?>
 				</td>
@@ -593,6 +593,29 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 						echo number_format($subTotalRetenciones, 2, ",", ".");
 						$totalGeneralTotalRetenciones += $subTotalRetenciones;
 					?>
+				</td>
+				<td><!-- Adicionales -->
+					<?php
+					$adicional = 0;
+					if($impcliprovincia['Partido']['id']==7){//Cordoba
+						$adicional = $totalBaseImponibleProrrateada*0.05;
+					}
+					if($impcliprovincia['Partido']['id']==9){//Chaco
+						$adicional = $totalBaseImponibleProrrateada*0.1;
+					}
+                    if($impcliprovincia['Partido']['id']==19){//San Juan
+						$adicional = $totalBaseImponibleProrrateada*0.2;
+					}
+					$totalBaseImponibleProrrateada = $totalBaseImponibleProrrateada + $adicional;
+					echo number_format($adicional, 2, ",", ".");
+					$totalGeneralTotalAdicionales += $adicional;
+
+                    /*Si es Actividades Economicas este es el valor que va a contener el valor de la cuenta 506210001*/
+                    if($impcli['Impcli']['impuesto_id']==21){
+                        echo $this->Form->input('impuestoDeterminadoTotal', array('type'=>'hidden','value'=>$totalGeneralBaseImponibleProrrateada));
+                    }
+
+                    ?>
 				</td>
 				<td><!-- A Pagar -->
 					<?php 
@@ -759,7 +782,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 					<td>
 						<?php echo number_format($totalGeneralBaseImponibleProrrateada, 2, ",", ".");
                         //Si es Convenio Este es el campo que me va a mostrar el valor de la cuenta 506210001
-                        echo $this->Form->input('impuestoDeterminadoTotal', array('type'=>'hidden','value'=>$totalGeneralBaseImponibleProrrateada));
+                        echo $this->Form->input('impuestoDeterminadoTotal', array('type'=>'hidden','value'=>$totalGeneralBaseImponibleProrrateada+$totalGeneralTotalAdicionales));
                         ?>
 					</td>
 					<td>
@@ -791,6 +814,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 					</td>
 					<td>
 						<?php echo number_format($totalGeneralTotalRetenciones, 2, ",", ".");?>
+					</td>
+					<td>
+						<?php echo number_format($totalGeneralTotalAdicionales, 2, ",", ".");?>
 					</td>
 					<td>
 						<?php echo number_format($totalGeneralAPagar, 2, ",", ".");

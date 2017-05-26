@@ -83,7 +83,10 @@
 //        $linecompra['importetotaloperacion']=substr($line, 104,13).'.'.substr($line, 117, 2);
         $lineaCompra .= str_pad(number_format($compra[0]['total'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importeconceptosprecionetogravado']=substr($line, 119,13).'.'.substr($line, 132, 2);
-        $lineaCompra .= str_pad(number_format($compra[0]['nogravados'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+        //vamos a sumas a los no grabados los impuestos combustibles por que ese dato no lo exportamos por que
+        //SIAP no los incorpora
+        $noGravados = $compra[0]['nogravados']*1+$compra[0]['impcombustible']*1;
+        $lineaCompra .= str_pad(number_format($noGravados, 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importeoperacionesexentas']=substr($line, 134,13).'.'.substr($line, 147, 2);
         $lineaCompra .= str_pad(number_format($compra[0]['exentos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 //        $linecompra['importepercepcionespagosacuentaiva']=substr($line, 149,13).'.'.substr($line, 162, 2);

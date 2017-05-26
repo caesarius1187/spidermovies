@@ -29,7 +29,7 @@ class CuentasgananciasController extends AppController {
 		$respuesta['respuesta']="";
 
 		$cuentas4taCategRelacionGravadoNoGravado = [
-			//'Gravado'Apunta a 'Nogravado'
+			//'Gravado' Apunta a 'Nogravado'
 			'3023'=>'3072',
 			'3024'=>'3073',
 			'3025'=>'3074',
@@ -198,12 +198,13 @@ class CuentasgananciasController extends AppController {
 		$cuentascategoriasegunda =	$this->Asientoestandare->find('list',$optionsAsientosestandares);
 		$optionsAsientosestandares['conditions']['tipoasiento'] = 'terceracateg';
 
-		//Aca no tendria que traer to-do el asiento estandar por que solo la cuenta de "venta neta" es la que
+		//Aca no tendria que traer todo el asiento estandar por que solo la cuenta de "venta neta" es la que
 		//se deberia poder  seleccionar
 		$cuentascategoriatercera =	$this->Asientoestandare->find('list',$optionsAsientosestandares);
 		$optionsAsientosestandares['conditions']['tipoasiento'] = 'terceracateg45';
 
 		$cuentascategoriaterceraotros =	$this->Asientoestandare->find('list',$optionsAsientosestandares);
+		
 		$optionsAsientosestandares['conditions']['tipoasiento'] = 'cuartacateg';
 		$cuentascategoriacuarta =	$this->Asientoestandare->find('list',$optionsAsientosestandares);
 

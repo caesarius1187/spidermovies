@@ -108,8 +108,8 @@ if(isset($error)){ ?>
                 }
                 $debe = $cuenta110403403;
                 break;
-            case '299'/*110403803 Impuestos Internos Percepciones*/:
-                $cuenta110403803 = 0;
+            case '2330'/*504990001 Impuestos Internos*/:
+                $cuenta504990001 = 0;
                 //Cargar la compra impinternos
                 foreach ($comprasgravadas as $comprasgravada) {
                     if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
@@ -119,9 +119,9 @@ if(isset($error)){ ?>
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
                     }
-                    $cuenta110403803+=$comprasgravada[0]['impinternos']*$suma;
+                    $cuenta504990001+=$comprasgravada[0]['impinternos']*$suma;
                 }
-                $debe = $cuenta110403803;
+                $debe = $cuenta504990001;
                 break;
             case '300'/*110403804 Imp Combustible*/:
                 $cuenta110403804 = 0;

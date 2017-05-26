@@ -38,9 +38,7 @@ class ControlesController extends AppController {
 				'contain' => [
 					'Impcli'=>[
 						'Impuesto'=>[
-							'conditions'=>[
-								'Impuesto.tipo'=>'bancos'
-							]
+							
 						],
 						'Cbu'=>[
 							'Movimientosbancario'=>[

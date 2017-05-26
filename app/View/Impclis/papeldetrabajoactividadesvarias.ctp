@@ -1,7 +1,11 @@
 <?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
 echo $this->Html->script('jquery.table2excel',array('inline'=>false));
 echo $this->Html->script('impclis/papeldetrabajoactividadesvarias',array('inline'=>false));
+$timePeriodo = strtotime("01-".$periodo ." +1 months");
+$periodoNext = date("m-Y",$timePeriodo);
+echo $this->Form->input('periodonext',array('value'=>$periodoNext,'type'=>'hidden'));
 echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
+echo $this->Form->input('periodo',array('value'=>$periodo,'type'=>'hidden'));
 echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
 echo $this->Form->input('impcliid',array('value'=>$impcliid,'type'=>'hidden'));
 echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));

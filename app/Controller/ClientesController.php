@@ -1391,39 +1391,39 @@ class ClientesController extends AppController {
 							            		),
 						            ),
 				   			),
-				   			'Venta'=>array(
-				   				'conditions' => array(						            	 
-						            	 'OR'=>array(
-							            		'SUBSTRING(Venta.periodo,4,7)*1 < '.$peanio.'*1',
-							            		'AND'=>array(
-							            			'SUBSTRING(Venta.periodo,4,7)*1 <= '.$peanio.'*1',
-							            			'SUBSTRING(Venta.periodo,1,2) < '.$pemes.'*1'
-							            			),
-							            		),
-						            ),
-				   			),
-				   			'Compra'=>array(
-				   				'conditions' => array(						            	 
-						            	 'OR'=>array(
-							            		'SUBSTRING(Compra.periodo,4,7)*1 < '.$peanio.'*1',
-							            		'AND'=>array(
-							            			'SUBSTRING(Compra.periodo,4,7)*1 <= '.$peanio.'*1',
-							            			'SUBSTRING(Compra.periodo,1,2) < '.$pemes.'*1'
-							            			),
-							            		),
-						            ),
-				   			),
-				   			'Sueldo'=>array(
-				   				'conditions' => array(						            	 
-						            	 'OR'=>array(
-							            		'SUBSTRING(Sueldo.periodo,4,7)*1 < '.$peanio.'*1',
-							            		'AND'=>array(
-							            			'SUBSTRING(Sueldo.periodo,4,7)*1 <= '.$peanio.'*1',
-							            			'SUBSTRING(Sueldo.periodo,1,2) < '.$pemes.'*1'
-							            			),
-							            		),
-						            ),
-				   			),
+//				   			'Venta'=>array(
+//				   				'conditions' => array(
+//						            	 'OR'=>array(
+//							            		'SUBSTRING(Venta.periodo,4,7)*1 < '.$peanio.'*1',
+//							            		'AND'=>array(
+//							            			'SUBSTRING(Venta.periodo,4,7)*1 <= '.$peanio.'*1',
+//							            			'SUBSTRING(Venta.periodo,1,2) < '.$pemes.'*1'
+//							            			),
+//							            		),
+//						            ),
+//				   			),
+//				   			'Compra'=>array(
+//				   				'conditions' => array(
+//						            	 'OR'=>array(
+//							            		'SUBSTRING(Compra.periodo,4,7)*1 < '.$peanio.'*1',
+//							            		'AND'=>array(
+//							            			'SUBSTRING(Compra.periodo,4,7)*1 <= '.$peanio.'*1',
+//							            			'SUBSTRING(Compra.periodo,1,2) < '.$pemes.'*1'
+//							            			),
+//							            		),
+//						            ),
+//				   			),
+//				   			'Sueldo'=>array(
+//				   				'conditions' => array(
+//						            	 'OR'=>array(
+//							            		'SUBSTRING(Sueldo.periodo,4,7)*1 < '.$peanio.'*1',
+//							            		'AND'=>array(
+//							            			'SUBSTRING(Sueldo.periodo,4,7)*1 <= '.$peanio.'*1',
+//							            			'SUBSTRING(Sueldo.periodo,1,2) < '.$pemes.'*1'
+//							            			),
+//							            		),
+//						            ),
+//				   			),
 					   		'Honorario'=>array(
 					   				'conditions' => array(
 					   						'OR'=>array(
@@ -1818,7 +1818,8 @@ class ClientesController extends AppController {
 				);
 			$grupoclientes = $this->Cliente->Grupocliente->find('list',array('conditions' =>$conditionsGcli));
 
-			$categoriasmonotributos = array('A'=>'A','B'=>'B','C'=>'C','D'=>'D','E'=>'E','F'=>'F','G'=>'G','H'=>'H','I'=>'I','J'=>'J','K'=>'K','L'=>'L');
+			$categoriasmonotributos = ['A'=>'A','B'=>'B','C'=>'C','D'=>'D','E'=>'E','F'=>'F','G'=>'G','H'=>'H','I'=>'I',
+				'J'=>'J','K'=>'K','L'=>'L'];
 			$this->set(compact('grupoclientes','categoriasmonotributos'));
 
 			$autonomocategorias = $this->Autonomocategoria->find('list');

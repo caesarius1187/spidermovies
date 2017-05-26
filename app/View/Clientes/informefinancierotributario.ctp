@@ -208,17 +208,17 @@
             foreach ($clienteh['Honorario'] as $honorarioh) {
                 $honorariosHistoricos+=$honorarioh['monto'];
             }               
-             //Calculo de Ingresos(Ventas)
-            foreach ($clienteh['Venta'] as $ventah) {
-                $ingresosHistoricos+=$ventah['total'];
-            }
-            //Calculo de Egresos(Compras + Sueldos)
-            foreach ($clienteh['Compra'] as $comprah) {
-                $comprasHistoricos+=$comprah['total'];
-            }
-            foreach ($clienteh['Sueldo'] as $sueldoh) {
-                $sueldosHistoricos+=$sueldoh['monto'];
-            } 
+//             //Calculo de Ingresos(Ventas)
+//            foreach ($clienteh['Venta'] as $ventah) {
+//                $ingresosHistoricos+=$ventah['total'];
+//            }
+//            //Calculo de Egresos(Compras + Sueldos)
+//            foreach ($clienteh['Compra'] as $comprah) {
+//                $comprasHistoricos+=$comprah['total'];
+//            }
+//            foreach ($clienteh['Sueldo'] as $sueldoh) {
+//                $sueldosHistoricos+=$sueldoh['monto'];
+//            }
         }        
     }
     $totalAnterior=$recibosHistoricos*1-$deudasHistoricos*1-$honorariosHistoricos*1;
@@ -473,7 +473,7 @@
 <!--            </table> -->
 <!--        </td>-->
 <!--    </tr>-->
-    ?>
+<!--    ?>-->
     <tr>
         <td align="center" colspan="6">
             <hr width="450px" color="#000000" style='width:100%' />

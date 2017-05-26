@@ -6,114 +6,62 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="375b17fe-14ab-4ca0-9f8e-7450c16dc4ba" name="Default" comment="varios cambios de interfaz en los papeles de trabajo, y merge con los datos que estaban en el DropBox que salian como diferentes pero por un tema de fechas nada mas">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/Model/Impuestocuentaactivable.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Asientos/contabilizarretencionessufridas.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Compras/cargar.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Conceptosrestantes/cargar.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Conceptosrestantes/importarretencionesbancariasconveniomultilateral.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Depositos/cargar.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Empleados/cargamasiva.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Empleados/cargar.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Honorarios/cargar.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Impclis/f102.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Movimientosbancarios/cargar.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Ventas/cargar.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Ventas/resumen.ctp" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/Chart.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/cargar.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/compras/cargar.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/conceptosrestantes/cargar.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/empleados/cargamasiva.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/empleados/cargar.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/f102.js" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/ventas/cargar.js" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/dataSources.ids" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/dataSources.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/img/logo.png" afterPath="$PROJECT_DIR$/app/webroot/img/logo.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Compras/consultaporlote.ctp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Conceptosrestantes/exportartxtrecaudacionesbancarias.ctp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Conceptosrestantes/importartxtrecaudacionesbancarias.ctp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Empleados/formulario102.ctp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajocasasparticulares.ctp" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/conceptosrestantes/importartxtrecaudacionesbancarias.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajocasasparticulares.js" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/View/Impclis/f102.ctp" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/f102.js" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ActividadclientesController.php" afterPath="$PROJECT_DIR$/app/Controller/ActividadclientesController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/AsientosController.php" afterPath="$PROJECT_DIR$/app/Controller/AsientosController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/CbusController.php" afterPath="$PROJECT_DIR$/app/Controller/CbusController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ClientesController.php" afterPath="$PROJECT_DIR$/app/Controller/ClientesController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ComprasController.php" afterPath="$PROJECT_DIR$/app/Controller/ComprasController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ConceptosrestantesController.php" afterPath="$PROJECT_DIR$/app/Controller/ConceptosrestantesController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/CuentasController.php" afterPath="$PROJECT_DIR$/app/Controller/CuentasController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/CuentasclientesController.php" afterPath="$PROJECT_DIR$/app/Controller/CuentasclientesController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/DepositosController.php" afterPath="$PROJECT_DIR$/app/Controller/DepositosController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ControlesController.php" afterPath="$PROJECT_DIR$/app/Controller/ControlesController.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/CuentasgananciasController.php" afterPath="$PROJECT_DIR$/app/Controller/CuentasgananciasController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/EmpleadosController.php" afterPath="$PROJECT_DIR$/app/Controller/EmpleadosController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/EstudiosController.php" afterPath="$PROJECT_DIR$/app/Controller/EstudiosController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/EventosclientesController.php" afterPath="$PROJECT_DIR$/app/Controller/EventosclientesController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/EventosimpuestosController.php" afterPath="$PROJECT_DIR$/app/Controller/EventosimpuestosController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/HonorariosController.php" afterPath="$PROJECT_DIR$/app/Controller/HonorariosController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/ImpclisController.php" afterPath="$PROJECT_DIR$/app/Controller/ImpclisController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/MovimientosController.php" afterPath="$PROJECT_DIR$/app/Controller/MovimientosController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/MovimientosbancariosController.php" afterPath="$PROJECT_DIR$/app/Controller/MovimientosbancariosController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/PapelesdetrabajosController.php" afterPath="$PROJECT_DIR$/app/Controller/PapelesdetrabajosController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Controller/VentasController.php" afterPath="$PROJECT_DIR$/app/Controller/VentasController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Asiento.php" afterPath="$PROJECT_DIR$/app/Model/Asiento.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Comprobante.php" afterPath="$PROJECT_DIR$/app/Model/Comprobante.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Conceptosrestante.php" afterPath="$PROJECT_DIR$/app/Model/Conceptosrestante.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Cuenta.php" afterPath="$PROJECT_DIR$/app/Model/Cuenta.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Empleado.php" afterPath="$PROJECT_DIR$/app/Model/Empleado.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Impuesto.php" afterPath="$PROJECT_DIR$/app/Model/Impuesto.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Model/Movimientosbancario.php" afterPath="$PROJECT_DIR$/app/Model/Movimientosbancario.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Actividadclientes/add.ctp" afterPath="$PROJECT_DIR$/app/View/Actividadclientes/add.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Actividadclientes/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Actividadclientes/edit.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Asientos/contabilizarbanco.ctp" afterPath="$PROJECT_DIR$/app/View/Asientos/contabilizarbanco.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Asientos/contabilizarcompra.ctp" afterPath="$PROJECT_DIR$/app/View/Asientos/contabilizarcompra.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Asientos/contabilizarimpuesto.ctp" afterPath="$PROJECT_DIR$/app/View/Asientos/contabilizarimpuesto.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Asientos/contabilizarventa.ctp" afterPath="$PROJECT_DIR$/app/View/Asientos/contabilizarventa.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Asientos/index.ctp" afterPath="$PROJECT_DIR$/app/View/Asientos/index.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Cbus/add.ctp" afterPath="$PROJECT_DIR$/app/View/Cbus/add.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Cbus/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Cbus/edit.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Cbus/index.ctp" afterPath="$PROJECT_DIR$/app/View/Cbus/index.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Clientes/avance.ctp" afterPath="$PROJECT_DIR$/app/View/Clientes/avance.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp" afterPath="$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Clientes/view.ctp" afterPath="$PROJECT_DIR$/app/View/Clientes/view.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Clientes/informefinancierotributario.ctp" afterPath="$PROJECT_DIR$/app/View/Clientes/informefinancierotributario.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Compras/cargar.ctp" afterPath="$PROJECT_DIR$/app/View/Compras/cargar.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Compras/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Compras/edit.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Compras/exportartxt.ctp" afterPath="$PROJECT_DIR$/app/View/Compras/exportartxt.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Compras/exportartxtpercepcionesdgrm.ctp" afterPath="$PROJECT_DIR$/app/View/Compras/exportartxtpercepcionesdgrm.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Compras/exportartxtpercepcionesiibb.ctp" afterPath="$PROJECT_DIR$/app/View/Compras/exportartxtpercepcionesiibb.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Compras/exportartxtpercepcionessifere.ctp" afterPath="$PROJECT_DIR$/app/View/Compras/exportartxtpercepcionessifere.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Compras/importar.ctp" afterPath="$PROJECT_DIR$/app/View/Compras/importar.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Conceptosrestantes/exportartxtretencionessifere.ctp" afterPath="$PROJECT_DIR$/app/View/Conceptosrestantes/exportartxtretencionessifere.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Cuentas/view.ctp" afterPath="$PROJECT_DIR$/app/View/Cuentas/view.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Conceptosrestantes/cargar.ctp" afterPath="$PROJECT_DIR$/app/View/Conceptosrestantes/cargar.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Conceptosrestantes/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Conceptosrestantes/edit.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Controles/cuentasdepuradas.ctp" afterPath="$PROJECT_DIR$/app/View/Controles/cuentasdepuradas.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Cuentasclientes/informesumaysaldo.ctp" afterPath="$PROJECT_DIR$/app/View/Cuentasclientes/informesumaysaldo.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Depositos/getdepositos.ctp" afterPath="$PROJECT_DIR$/app/View/Depositos/getdepositos.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Empleados/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Empleados/edit.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Empleados/cargamasiva.ctp" afterPath="$PROJECT_DIR$/app/View/Empleados/cargamasiva.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp" afterPath="$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp" afterPath="$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp" afterPath="$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Estudios/view.ctp" afterPath="$PROJECT_DIR$/app/View/Estudios/view.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Eventosimpuestos/getapagar.ctp" afterPath="$PROJECT_DIR$/app/View/Eventosimpuestos/getapagar.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp" afterPath="$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/add.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/add.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/edit.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/f801e.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/f801e.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoconveniomultilateral.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoconveniomultilateral.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajocooperadoraasistencial.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajocooperadoraasistencial.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosindicatos.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosindicatos.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosuss.ctp" afterPath="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosuss.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Layouts/default.ctp" afterPath="$PROJECT_DIR$/app/View/Layouts/default.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Movimientos/index.ctp" afterPath="$PROJECT_DIR$/app/View/Movimientos/index.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Movimientosbancarios/edit.ctp" afterPath="$PROJECT_DIR$/app/View/Movimientosbancarios/edit.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Movimientosbancarios/importar.ctp" afterPath="$PROJECT_DIR$/app/View/Movimientosbancarios/importar.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Papelesdetrabajos/autonomo.ctp" afterPath="$PROJECT_DIR$/app/View/Papelesdetrabajos/autonomo.ctp" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Movimientosbancarios/cargar.ctp" afterPath="$PROJECT_DIR$/app/View/Movimientosbancarios/cargar.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp" afterPath="$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Users/index.ctp" afterPath="$PROJECT_DIR$/app/View/Users/index.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Users/login.ctp" afterPath="$PROJECT_DIR$/app/View/Users/login.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Ventas/exportartxt.ctp" afterPath="$PROJECT_DIR$/app/View/Ventas/exportartxt.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Ventas/importar.ctp" afterPath="$PROJECT_DIR$/app/View/Ventas/importar.ctp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/View/Ventas/index.ctp" afterPath="$PROJECT_DIR$/app/View/Ventas/index.ctp" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/css/cake.generic.css" afterPath="$PROJECT_DIR$/app/webroot/css/cake.generic.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/css/progressbuttons.css" afterPath="$PROJECT_DIR$/app/webroot/css/progressbuttons.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/asientos/index.js" afterPath="$PROJECT_DIR$/app/webroot/js/asientos/index.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/cargar.js" afterPath="$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/cargar.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/importar.js" afterPath="$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/importar.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/clientes/avance.js" afterPath="$PROJECT_DIR$/app/webroot/js/clientes/avance.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/cuentasclientes/informesumaysaldo.js" afterPath="$PROJECT_DIR$/app/webroot/js/cuentasclientes/informesumaysaldo.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/clientes/view.js" afterPath="$PROJECT_DIR$/app/webroot/js/clientes/view.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/conceptosrestantes/cargar.js" afterPath="$PROJECT_DIR$/app/webroot/js/conceptosrestantes/cargar.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/empleados/cargamasiva.js" afterPath="$PROJECT_DIR$/app/webroot/js/empleados/cargamasiva.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoconveniomultilateral.js" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoconveniomultilateral.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajocooperadoraasistencial.js" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajocooperadoraasistencial.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajosindicatos.js" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajosindicatos.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajosuss.js" afterPath="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajosuss.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/webroot/js/movimientos/index.js" afterPath="$PROJECT_DIR$/app/webroot/js/movimientos/index.js" />
     </list>
     <ignored path="sigesec25.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -146,12 +94,118 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="papeldetrabajoactividadesvarias.ctp" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp">
+      <file leaf-file-name="ImpclisController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Controller/ImpclisController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="32">
-              <caret line="404" column="60" selection-start-line="404" selection-start-column="45" selection-end-line="404" selection-end-column="60" />
+            <state relative-caret-position="396">
+              <caret line="1199" column="51" selection-start-line="1199" selection-start-column="20" selection-end-line="1199" selection-end-column="51" />
+              <folding>
+                <element signature="n#view#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="e#824#864#0#PHP" expanded="false" />
+                <element signature="n#add#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#addbancosindicato#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="e#8094#8185#0#PHP" expanded="false" />
+                <element signature="n#edit#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#editajax#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="e#10450#10543#0#PHP" expanded="false" />
+                <element signature="n#delete#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajoconveniomultilateral#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajoactividadesvarias#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajomonotributo#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajoddjj#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajosindicatos#0;n#ImpclisController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajocooperadoraasistencial#0;n#ImpclisController#0;n#!!top" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="papeldetrabajocasasparticulares.ctp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajocasasparticulares.ctp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="22">
+              <caret line="1" column="71" selection-start-line="1" selection-start-column="71" selection-end-line="1" selection-end-column="71" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="papeldetrabajocasasparticulares.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajocasasparticulares.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="607">
+              <caret line="135" column="16" selection-start-line="135" selection-start-column="16" selection-end-line="135" selection-end-column="16" />
+              <folding>
+                <element signature="n#!!block;n#openWin#0" expanded="false" />
+                <element signature="n#!!block;n#openWinForm102#0" expanded="false" />
+                <element signature="n#!!block;n#openWinLibrosSueldos#0" expanded="false" />
+                <element signature="n#!!block;n#reloadInputDates#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="avance.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/avance.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="394">
+              <caret line="394" column="5" selection-start-line="394" selection-start-column="5" selection-end-line="394" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="getpapelestrabajo.ctp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="208">
+              <caret line="121" column="121" selection-start-line="121" selection-start-column="121" selection-end-line="121" selection-end-column="121" />
+              <folding>
+                <marker date="1495802762592" expanded="true" signature="56046:56070" placeholder="..." />
+                <marker date="1495802762592" expanded="true" signature="56071:56158" placeholder="..." />
+                <marker date="1495802762592" expanded="false" signature="56130:56145" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="EmpleadosController.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/Controller/EmpleadosController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2442">
+              <caret line="821" column="43" selection-start-line="821" selection-start-column="36" selection-end-line="821" selection-end-column="43" />
+              <folding>
+                <element signature="n#cargar#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+                <element signature="n#view#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajosueldos#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+                <element signature="e#8549#10081#0#PHP" expanded="false" />
+                <element signature="e#10084#10411#0#PHP" expanded="false" />
+                <element signature="e#10448#10727#0#PHP" expanded="false" />
+                <element signature="e#11872#12573#1#PHP" expanded="false" />
+                <element signature="e#13266#17392#0#PHP" expanded="false" />
+                <element signature="n#papeldetrabajolibrosueldo#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+                <element signature="n#papeldetrabajorecibosueldo#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+                <element signature="e#22469#23424#0#PHP" expanded="false" />
+                <element signature="e#23978#24238#0#PHP" expanded="false" />
+                <element signature="e#24750#25024#0#PHP" expanded="false" />
+                <element signature="e#25081#25320#0#PHP" expanded="false" />
+                <element signature="e#25373#25484#0#PHP" expanded="false" />
+                <element signature="n#add#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+                <element signature="n#edit#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+                <element signature="n#delete#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="formulario102.ctp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/View/Empleados/formulario102.ctp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="14784">
+              <caret line="672" column="55" selection-start-line="672" selection-start-column="55" selection-end-line="672" selection-end-column="55" />
+              <folding>
+                <element signature="n#num2letras#0;n#!!top" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -159,8 +213,31 @@
       <file leaf-file-name="papeldetrabajoactividadesvarias.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="979">
-              <caret line="260" column="51" selection-start-line="260" selection-start-column="51" selection-end-line="260" selection-end-column="51" />
+            <state relative-caret-position="1540">
+              <caret line="213" column="40" selection-start-line="213" selection-start-column="40" selection-end-line="213" selection-end-column="40" />
+              <folding>
+                <element signature="e#593#844#0" expanded="false" />
+                <element signature="n#!!block;n#papelesDeTrabajo#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="papeldetrabajoactividadesvarias.ctp" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="14410">
+              <caret line="655" column="14" selection-start-line="526" selection-start-column="4" selection-end-line="655" selection-end-column="14" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="cargamasiva.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/webroot/js/empleados/cargamasiva.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="12980">
+              <caret line="590" column="7" selection-start-line="588" selection-start-column="3" selection-end-line="590" selection-end-column="7" />
               <folding />
             </state>
           </provider>
@@ -182,57 +259,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/webroot/js/clientes/tareacargar.js" />
-        <option value="$PROJECT_DIR$/app/View/Asientos/contabilizarretencionessufridas.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/edit.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Actividadclientes/add.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Movimientos/index.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Asientos/contabilizarcompra.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Asientos/contabilizarimpuesto.ctp" />
-        <option value="$PROJECT_DIR$/app/webroot/js/conceptosrestantes/cargar.js" />
-        <option value="$PROJECT_DIR$/app/View/Compras/exportartxt.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Users/login.ctp" />
-        <option value="$PROJECT_DIR$/app/Controller/AppController.php" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp" />
-        <option value="$PROJECT_DIR$/app/webroot/js/ventas/cargar.js" />
-        <option value="$PROJECT_DIR$/app/webroot/js/clientes/avance.js" />
-        <option value="$PROJECT_DIR$/app/Controller/ComprasController.php" />
-        <option value="$PROJECT_DIR$/app/webroot/css/progressbuttons.css" />
-        <option value="$PROJECT_DIR$/app/View/Eventosimpuestos/getapagar.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Asientos/contabilizarventa.ctp" />
-        <option value="$PROJECT_DIR$/app/Controller/EmpleadosController.php" />
-        <option value="$PROJECT_DIR$/app/Model/Asiento.php" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp" />
-        <option value="$PROJECT_DIR$/app/Controller/ClientesController.php" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/f801e.ctp" />
-        <option value="$PROJECT_DIR$/app/Controller/ImpclisController.php" />
-        <option value="$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Asientos/index.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Clientes/view.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Compras/cargar.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Conceptosrestantes/cargar.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Cuentasclientes/informesumaysaldo.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/cargamasiva.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Empleados/cargar.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Estudios/view.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Movimientosbancarios/cargar.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Ventas/cargar.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/edit.ctp" />
-        <option value="$PROJECT_DIR$/app/webroot/css/cake.generic.css" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajocooperadoraasistencial.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoconveniomultilateral.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosindicatos.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajosuss.ctp" />
         <option value="$PROJECT_DIR$/app/View/Layouts/default.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Clientes/avance.ctp" />
-        <option value="$PROJECT_DIR$/app/View/Impclis/f102.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Clientes/informefinancierotributario.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/PapelesdetrabajosController.php" />
+        <option value="$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajoconveniomultilateral.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Ventas/importar.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp" />
         <option value="$PROJECT_DIR$/app/View/Ventas/exportartxt.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Compras/exportartxt.ctp" />
         <option value="$PROJECT_DIR$/app/webroot/js/empleados/cargamasiva.js" />
-        <option value="$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js" />
+        <option value="$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/importar.js" />
+        <option value="$PROJECT_DIR$/app/Model/Conceptosrestante.php" />
+        <option value="$PROJECT_DIR$/app/View/Conceptosrestantes/edit.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Conceptosrestantes/exportartxtrecaudacionesbancarias.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/ClientesController.php" />
+        <option value="$PROJECT_DIR$/app/Controller/CuentasgananciasController.php" />
+        <option value="$PROJECT_DIR$/app/webroot/js/conceptosrestantes/importartxtrecaudacionesbancarias.js" />
+        <option value="$PROJECT_DIR$/app/View/Conceptosrestantes/cargar.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/ConceptosrestantesController.php" />
+        <option value="$PROJECT_DIR$/app/View/Conceptosrestantes/importartxtrecaudacionesbancarias.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Compras/edit.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/ComprasController.php" />
+        <option value="$PROJECT_DIR$/app/View/Compras/cargar.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Asientos/index.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Cuentasclientes/informesumaysaldo.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Compras/consultaporlote.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Controles/cuentasdepuradas.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/ControlesController.php" />
+        <option value="$PROJECT_DIR$/app/View/Movimientosbancarios/cargar.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/MovimientosbancariosController.php" />
+        <option value="$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/cargar.js" />
+        <option value="$PROJECT_DIR$/app/webroot/js/clientes/view.js" />
+        <option value="$PROJECT_DIR$/app/View/Empleados/cargamasiva.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Clientes/view.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Cbus/add.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Cbus/edit.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Cbus/index.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/CbusController.php" />
+        <option value="$PROJECT_DIR$/app/Model/Cuenta.php" />
+        <option value="$PROJECT_DIR$/app/View/Asientos/contabilizarcompra.ctp" />
+        <option value="$PROJECT_DIR$/app/Controller/EmpleadosController.php" />
+        <option value="$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Impclis/f102.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Empleados/formulario102.ctp" />
+        <option value="$PROJECT_DIR$/app/webroot/js/impclis/f102.js" />
+        <option value="$PROJECT_DIR$/app/Controller/ImpclisController.php" />
+        <option value="$PROJECT_DIR$/app/View/Impclis/papeldetrabajocasasparticulares.ctp" />
+        <option value="$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp" />
+        <option value="$PROJECT_DIR$/app/webroot/js/clientes/avance.js" />
       </list>
     </option>
   </component>
@@ -296,8 +373,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -418,6 +493,32 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="Movimientosbancarios" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="webroot" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="impclis" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
@@ -470,7 +571,7 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="clientes" />
+              <option name="myItemId" value="conceptosrestantes" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -492,7 +593,29 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
+              <option name="myItemId" value="js" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="clientes" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="View" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -514,7 +637,7 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Ventas" />
+              <option name="myItemId" value="Movimientosbancarios" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -533,6 +656,10 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="View" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Movimientos" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
@@ -572,23 +699,219 @@
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="View" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Eventosimpuestos" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="View" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Empleados" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="View" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Cuentasclientes" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="View" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Controles" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="View" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Compras" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="View" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Clientes" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="View" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Cbus" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="View" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Asientos" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Model" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="contasynfotech" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="Controller" />
               <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="208" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="206" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="223" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="221" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="224" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="222" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder2" value="2" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="1017" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="1007" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder3" value="3" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="209" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder0" value="0" />
@@ -603,15 +926,15 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../bin/php/php5.6.19/php.exe" />
     <property name="com.intellij.database.dataSource.DataSourceTemplate" value="MySQL" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
-    <property name="SearchEverywhereHistoryKey" value="get&#9;FILE&#9;file://C:/wamp64/www/contasynfotech/app/View/Eventosimpuestos/getapagar.ctp" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/wamp/www/contasynfotech/app/Controller/EmpleadosController.php&#10;get&#9;FILE&#9;file://C:/wamp64/www/contasynfotech/app/View/Eventosimpuestos/getapagar.ctp" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\wamp\www\contasynfotech\app\View\Empleados" />
+      <recent name="C:\wamp\www\contasynfotech\app\View\Compras" />
+      <recent name="C:\wamp\www\contasynfotech\app\webroot\js\conceptosrestantes" />
+      <recent name="C:\wamp\www\contasynfotech\app\View\Conceptosrestantes" />
       <recent name="C:\wamp\www\contasynfotech\app\webroot\js\impclis" />
-      <recent name="C:\wamp\www\contasynfotech\app\View\Impclis" />
-      <recent name="C:\wamp64\www\contasynfotech\app\Controller" />
-      <recent name="C:\wamp64\www\contasynfotech\app\webroot\js\papelesdetrabajos" />
-      <recent name="C:\wamp64\www\contasynfotech\app\View\Papelesdetrabajos" />
     </key>
   </component>
   <component name="RunManager" selected="JavaScript Debug.papeldetrabajoddjj.ctp">
@@ -739,7 +1062,17 @@
       <workItem from="1493384198617" duration="779000" />
       <workItem from="1493730942444" duration="21057000" />
       <workItem from="1493815581849" duration="11388000" />
-      <workItem from="1493900147839" duration="10565000" />
+      <workItem from="1493900147839" duration="17599000" />
+      <workItem from="1493997436033" duration="22052000" />
+      <workItem from="1494332803496" duration="14092000" />
+      <workItem from="1494419466194" duration="16746000" />
+      <workItem from="1494526169254" duration="5884000" />
+      <workItem from="1494592701757" duration="18396000" />
+      <workItem from="1494851616646" duration="43142000" />
+      <workItem from="1495113048471" duration="17704000" />
+      <workItem from="1495455705390" duration="29992000" />
+      <workItem from="1495630711344" duration="22963000" />
+      <workItem from="1495802183866" duration="638000" />
     </task>
     <task id="LOCAL-00001" summary="varios cambios de interfaz en los papeles de trabajo, y merge con los datos que estaban en el DropBox que salian como diferentes pero por un tema de fechas nada mas">
       <created>1475861631660</created>
@@ -752,7 +1085,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1841896000" />
+    <option name="totallyTimeSpent" value="2040539000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -765,15 +1098,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1717" y="186" width="1726" height="928" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2382904" sideWeight="0.63350123" order="0" side_tool="true" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14227167" sideWeight="0.63727957" order="0" side_tool="true" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32990867" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295711" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1323185" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33501258" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.76826197" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25761124" sideWeight="0.36649874" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22166246" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.76826197" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25761124" sideWeight="0.3627204" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295711" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32990316" sideWeight="0.49097064" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -831,7 +1164,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app/webroot/js/clientes/view.js</url>
-          <line>42</line>
+          <line>41</line>
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/app/webroot/js/clientes/avance.js</url>
@@ -858,6 +1191,15 @@
           <line>384</line>
           <option name="timeStamp" value="152" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js</url>
+          <line>328</line>
+          <option name="timeStamp" value="165" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/app/webroot/js/conceptosrestantes/importartxtrecaudacionesbancarias.js</url>
+          <option name="timeStamp" value="170" />
+        </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoddjj.ctp</url>
           <line>134</line>
@@ -875,7 +1217,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/app/View/Papelesdetrabajos/iva.ctp</url>
-          <line>2054</line>
+          <line>1981</line>
           <option name="timeStamp" value="95" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
@@ -893,62 +1235,145 @@
           <line>62</line>
           <option name="timeStamp" value="142" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/app/Controller/EmpleadosController.php</url>
-          <line>614</line>
-          <option name="timeStamp" value="155" />
-        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="165" />
+      <option name="time" value="177" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/Controller/DomiciliosController.php">
+    <entry file="file://$PROJECT_DIR$/app/Model/Conceptosrestante.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4264">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="462">
+          <caret line="66" column="32" selection-start-line="66" selection-start-column="32" selection-end-line="66" selection-end-column="32" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/EncuadrealicuotasController.php">
+    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/edit.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="242">
+          <caret line="74" column="43" selection-start-line="74" selection-start-column="43" selection-end-line="74" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/exportartxtretencionessifere.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="484">
+          <caret line="37" column="61" selection-start-line="37" selection-start-column="32" selection-end-line="37" selection-end-column="61" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Model/Cbu.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp">
+    <entry file="file://$PROJECT_DIR$/app/Controller/ClientesController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="350" column="139" selection-start-line="350" selection-start-column="121" selection-end-line="350" selection-end-column="139" />
+        <state relative-caret-position="1493">
+          <caret line="1869" column="31" selection-start-line="1869" selection-start-column="20" selection-end-line="1869" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/ventas/cargar.js">
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/conceptosrestantes/importartxtrecaudacionesbancarias.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
-          <caret line="614" column="31" selection-start-line="614" selection-start-column="23" selection-end-line="614" selection-end-column="31" />
+        <state relative-caret-position="308">
+          <caret line="14" column="55" selection-start-line="14" selection-start-column="55" selection-end-line="14" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/exportartxtrecaudacionesbancarias.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="89" column="128" selection-start-line="89" selection-start-column="128" selection-end-line="89" selection-end-column="128" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/CuentasgananciasController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="534">
+          <caret line="206" column="8" selection-start-line="206" selection-start-column="8" selection-end-line="206" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/cargar.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="112" column="35" selection-start-line="112" selection-start-column="35" selection-end-line="112" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/ConceptosrestantesController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="622">
+          <caret line="1014" column="0" selection-start-line="1014" selection-start-column="0" selection-end-line="1014" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/importartxtrecaudacionesbancarias.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="256" column="73" selection-start-line="256" selection-start-column="73" selection-end-line="256" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Compras/cargar.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44">
+          <caret line="155" column="34" selection-start-line="155" selection-start-column="34" selection-end-line="155" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Compras/edit.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="356">
+          <caret line="165" column="8" selection-start-line="161" selection-start-column="6" selection-end-line="165" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Cuentasclientes/informesumaysaldo.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="193" column="35" selection-start-line="193" selection-start-column="35" selection-end-line="193" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Asientos/index.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="98">
+          <caret line="81" column="22" selection-start-line="81" selection-start-column="22" selection-end-line="81" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Movimientos/index.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-40">
+          <caret line="34" column="25" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/Controller/ComprasController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6754">
-          <caret line="344" column="0" selection-start-line="344" selection-start-column="0" selection-end-line="344" selection-end-column="0" />
+        <state relative-caret-position="546">
+          <caret line="899" column="40" selection-start-line="899" selection-start-column="40" selection-end-line="899" selection-end-column="40" />
           <folding>
-            <element signature="e#341#517#0#PHP" expanded="false" />
-            <element signature="e#556#712#0#PHP" expanded="false" />
             <element signature="n#index#0;n#ComprasController#0;n#!!top" expanded="false" />
+            <element signature="e#1495#1586#0#PHP" expanded="false" />
             <element signature="n#view#0;n#ComprasController#0;n#!!top" expanded="false" />
+            <element signature="e#1875#1915#0#PHP" expanded="false" />
             <element signature="n#add#0;n#ComprasController#0;n#!!top" expanded="false" />
+            <element signature="n#cargar#0;n#ComprasController#0;n#!!top" expanded="false" />
             <element signature="n#addajax#0;n#ComprasController#0;n#!!top" expanded="false" />
             <element signature="n#agregarparaimportar#0;n#ComprasController#0;n#!!top" expanded="false" />
-            <element signature="n#importar#0;n#ComprasController#0;n#!!top" expanded="false" />
+            <element signature="e#17437#18518#0#PHP" expanded="false" />
             <element signature="n#cargarcompras#0;n#ComprasController#0;n#!!top" expanded="false" />
+            <element signature="e#21126#21993#0#PHP" expanded="false" />
             <element signature="n#deletefile#0;n#ComprasController#0;n#!!top" expanded="false" />
             <element signature="n#edit#0;n#ComprasController#0;n#!!top" expanded="false" />
             <element signature="n#delete#0;n#ComprasController#0;n#!!top" expanded="false" />
@@ -960,445 +1385,313 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getapagar.ctp">
+    <entry file="file://$PROJECT_DIR$/app/View/Compras/importar.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="189" column="46" selection-start-line="189" selection-start-column="46" selection-end-line="189" selection-end-column="46" />
+        <state relative-caret-position="498">
+          <caret line="725" column="60" selection-start-line="725" selection-start-column="60" selection-end-line="725" selection-end-column="60" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/css/progressbuttons.css">
+    <entry file="file://$PROJECT_DIR$/app/View/Compras/consultaporlote.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="27" column="25" selection-start-line="27" selection-start-column="25" selection-end-line="27" selection-end-column="25" />
+        <state relative-caret-position="409">
+          <caret line="63" column="34" selection-start-line="63" selection-start-column="34" selection-end-line="63" selection-end-column="34" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/avance.js">
+    <entry file="file://$PROJECT_DIR$/app/Controller/ControlesController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3300">
-          <caret line="479" column="13" selection-start-line="479" selection-start-column="13" selection-end-line="479" selection-end-column="13" />
-          <folding>
-            <element signature="e#460#1105#0" expanded="false" />
-            <element signature="e#1156#1200#0" expanded="false" />
-            <element signature="e#1252#1296#0" expanded="false" />
-            <element signature="e#1345#2032#0" expanded="false" />
-            <element signature="e#2092#2782#0" expanded="false" />
-            <element signature="e#2842#3532#0" expanded="false" />
-            <element signature="e#3632#3888#0" expanded="false" />
-            <element signature="e#4007#4477#0" expanded="false" />
-            <element signature="n#!!block;n#cargarOnClickTareaSolicitar#0" expanded="false" />
-            <element signature="n#!!block;n#enviarTareaSolicitar#0" expanded="false" />
-            <element signature="n#!!block;n#verFormCargar#0" expanded="false" />
-            <element signature="n#!!block;n#verFormCargarVentas#0" expanded="false" />
-            <element signature="n#!!block;n#verFormCargarCompras#0" expanded="false" />
-            <element signature="n#!!block;n#verFormCargarPagosacuentas#0" expanded="false" />
-            <element signature="n#!!block;n#verFormCargarNovedades#0" expanded="false" />
-            <element signature="n#!!block;n#verFormCargarBancos#0" expanded="false" />
-            <element signature="n#!!block;n#papelesDeTrabajo#0" expanded="false" />
-            <element signature="n#!!block;n#verPapelDeTrabajoConvenioMultilateral#0" expanded="false" />
-            <element signature="n#!!block;n#verPapelDeTrabajoMonotributo#0" expanded="false" />
-            <element signature="n#!!block;n#verPapelDeTrabajoActividadesVarias#0" expanded="false" />
-            <element signature="n#!!block;n#verPapelDeTrabajoSUSS#0" expanded="false" />
-            <element signature="n#!!block;n#verPapelDeTrabajoCooperadoraAsistencial#0" expanded="false" />
-            <element signature="n#!!block;n#verPapelDeTrabajoAutonomo#0" expanded="false" />
-            <element signature="n#!!block;n#verPapelDeTrabajoSindicato#0" expanded="false" />
-            <element signature="n#!!block;n#verPapelDeTrabajoIVA#0" expanded="false" />
-            <element signature="n#!!block;n#verCuentasDepuradas#0" expanded="false" />
-            <element signature="n#!!block;n#agregarPapeldeTrabajo#0" expanded="false" />
-            <element signature="e#18440#20264#0" expanded="false" />
-            <element signature="n#!!block;n#eliminarEventoImpuesto#0" expanded="false" />
-            <element signature="e#20585#21404#0" expanded="false" />
-            <element signature="n#!!block;n#showPapelesDeTrabajo#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="880">
+          <caret line="40" column="28" selection-start-line="40" selection-start-column="28" selection-end-line="40" selection-end-column="28" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Asientos/contabilizarventa.ctp">
+    <entry file="file://$PROJECT_DIR$/app/View/Controles/cuentasdepuradas.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-654">
-          <caret line="86" column="21" selection-start-line="86" selection-start-column="21" selection-end-line="86" selection-end-column="21" />
+        <state relative-caret-position="1452">
+          <caret line="100" column="114" selection-start-line="64" selection-start-column="11" selection-end-line="100" selection-end-column="114" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/AsientosController.php">
+    <entry file="file://$PROJECT_DIR$/app/View/Movimientosbancarios/edit.ctp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp">
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/Movimientosbancarios/cargar.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="1048" column="37" selection-start-line="1048" selection-start-column="37" selection-end-line="1048" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Asiento.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
-          <caret line="33" column="6" selection-start-line="33" selection-start-column="6" selection-end-line="33" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4202">
-          <caret line="618" column="69" selection-start-line="618" selection-start-column="69" selection-end-line="618" selection-end-column="69" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Model/Cuenta.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="63" column="48" selection-start-line="63" selection-start-column="48" selection-end-line="63" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/EmpleadosController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
-          <caret line="16" column="20" selection-start-line="16" selection-start-column="20" selection-end-line="16" selection-end-column="20" />
+        <state relative-caret-position="9746">
+          <caret line="477" column="51" selection-start-line="477" selection-start-column="51" selection-end-line="477" selection-end-column="51" />
           <folding>
-            <element signature="n#cargar#0;n#EmpleadosController#0;n#!!top" expanded="false" />
-            <element signature="n#cargamasiva#0;n#EmpleadosController#0;n#!!top" expanded="false" />
-            <element signature="n#view#0;n#EmpleadosController#0;n#!!top" expanded="false" />
-            <element signature="e#8551#10083#0#PHP" expanded="false" />
-            <element signature="e#10086#10413#0#PHP" expanded="false" />
-            <element signature="e#10450#10729#0#PHP" expanded="false" />
-            <element signature="e#11874#12575#1#PHP" expanded="false" />
-            <element signature="e#13268#17394#0#PHP" expanded="false" />
-            <element signature="n#add#0;n#EmpleadosController#0;n#!!top" expanded="false" />
-            <element signature="n#edit#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+            <element signature="e#8420#10239#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/ClientesController.php">
+    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajosueldos.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2629">
-          <caret line="34" column="20" selection-start-line="34" selection-start-column="20" selection-end-line="34" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/f801e.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1408">
-          <caret line="64" column="21" selection-start-line="64" selection-start-column="21" selection-end-line="64" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Asientos/index.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="222" column="29" selection-start-line="222" selection-start-column="29" selection-end-line="222" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Compras/cargar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="77">
-          <caret line="482" column="20" selection-start-line="482" selection-start-column="20" selection-end-line="482" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Ventas/cargar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
-          <caret line="420" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="420" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Movimientosbancarios/cargar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="271" column="25" selection-start-line="271" selection-start-column="25" selection-end-line="271" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Estudios/view.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="82" column="25" selection-start-line="82" selection-start-column="25" selection-end-line="82" selection-end-column="25" />
+        <state relative-caret-position="3674">
+          <caret line="180" column="39" selection-start-line="180" selection-start-column="37" selection-end-line="180" selection-end-column="39" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/View/Empleados/cargar.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="286" column="25" selection-start-line="286" selection-start-column="25" selection-end-line="286" selection-end-column="25" />
+        <state relative-caret-position="6534">
+          <caret line="297" column="32" selection-start-line="297" selection-start-column="32" selection-end-line="297" selection-end-column="32" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/View/Empleados/cargamasiva.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="205" column="25" selection-start-line="205" selection-start-column="25" selection-end-line="205" selection-end-column="25" />
+        <state relative-caret-position="22">
+          <caret line="22" column="94" selection-start-line="22" selection-start-column="94" selection-end-line="22" selection-end-column="94" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Cuentasclientes/informesumaysaldo.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="400" column="25" selection-start-line="400" selection-start-column="25" selection-end-line="400" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Conceptosrestantes/cargar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="400" column="20" selection-start-line="400" selection-start-column="20" selection-end-line="400" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Clientes/view.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="2042" column="25" selection-start-line="2042" selection-start-column="25" selection-end-line="2042" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Clientes/tareacargar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="1383" column="25" selection-start-line="1383" selection-start-column="25" selection-end-line="1383" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/edit.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2750">
-          <caret line="125" column="49" selection-start-line="125" selection-start-column="49" selection-end-line="125" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/f102.js">
+    <entry file="file://$PROJECT_DIR$/app/View/Cbus/addajax.ctp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/css/cake.generic.css">
+    <entry file="file://$PROJECT_DIR$/app/View/Cbus/add.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="2845" column="19" selection-start-line="2845" selection-start-column="19" selection-end-line="2845" selection-end-column="19" />
-          <folding />
+        <state relative-caret-position="132">
+          <caret line="6" column="53" selection-start-line="6" selection-start-column="53" selection-end-line="6" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/view.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="241">
+          <caret line="1587" column="9" selection-start-line="1587" selection-start-column="9" selection-end-line="1587" selection-end-column="9" />
+          <folding>
+            <marker date="1495209172653" expanded="true" signature="10397:10410" placeholder="..." />
+            <marker date="1495209172653" expanded="true" signature="15202:15215" placeholder="..." />
+            <marker date="1495209172653" expanded="true" signature="17615:17628" placeholder="..." />
+            <marker date="1495209172653" expanded="true" signature="71016:71029" placeholder="..." />
+            <marker date="1495209172653" expanded="true" signature="73225:73238" placeholder="..." />
+            <marker date="1495209172653" expanded="true" signature="78008:78021" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Cbus/edit.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="24" column="87" selection-start-line="24" selection-start-column="50" selection-end-line="24" selection-end-column="87" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Cbus/index.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="22" column="91" selection-start-line="22" selection-start-column="91" selection-end-line="22" selection-end-column="91" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajorecibosueldo.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="318">
+          <caret line="984" column="28" selection-start-line="984" selection-start-column="28" selection-end-line="984" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Movimientosbancarios/cargar.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="409">
+          <caret line="174" column="54" selection-start-line="174" selection-start-column="37" selection-end-line="174" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/CbusController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-393">
+          <caret line="82" column="17" selection-start-line="82" selection-start-column="17" selection-end-line="82" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/MovimientosbancariosController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="260" column="73" selection-start-line="260" selection-start-column="45" selection-end-line="260" selection-end-column="73" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajosuss.ctp">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="337" column="0" selection-start-line="337" selection-start-column="0" selection-end-line="337" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Model/Cuenta.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="39" column="25" selection-start-line="39" selection-start-column="25" selection-end-line="39" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Clientes/view.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="356">
+          <caret line="951" column="39" selection-start-line="951" selection-start-column="39" selection-end-line="951" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Asientos/contabilizarcompra.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="516">
+          <caret line="123" column="40" selection-start-line="123" selection-start-column="40" selection-end-line="123" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Empleados/papeldetrabajolibrosueldo.ctp">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="154">
-          <caret line="7" column="91" selection-start-line="7" selection-start-column="91" selection-end-line="7" selection-end-column="93" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajosindicatos.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="8" column="91" selection-start-line="8" selection-start-column="91" selection-end-line="8" selection-end-column="91" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajomonotributo.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="11" column="40" selection-start-line="11" selection-start-column="35" selection-end-line="11" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoddjj.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1492393091580" expanded="true" signature="3820:4072" placeholder="..." />
-            <marker date="1492393091580" expanded="true" signature="5229:5479" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajocooperadoraasistencial.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3894">
-          <caret line="177" column="21" selection-start-line="177" selection-start-column="21" selection-end-line="177" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoconveniomultilateral.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="11" column="91" selection-start-line="11" selection-start-column="91" selection-end-line="11" selection-end-column="91" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoconveniomultilateral.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="109" column="43" selection-start-line="109" selection-start-column="35" selection-end-line="109" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-144">
-          <caret line="443" column="153" selection-start-line="443" selection-start-column="45" selection-end-line="443" selection-end-column="153" />
-          <folding>
-            <element signature="e#29337#31538#0#PHP" expanded="false" />
-            <element signature="e#33687#42309#0#PHP" expanded="false" />
-            <element signature="e#42322#51545#0#PHP" expanded="false" />
-            <element signature="e#47348#51526#0#PHP" expanded="false" />
-            <marker date="1493760363142" expanded="true" signature="52558:52582" placeholder="..." />
-            <marker date="1493760363142" expanded="true" signature="52583:52670" placeholder="..." />
-            <marker date="1493760363142" expanded="true" signature="52642:52657" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajocooperadoraasistencial.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1254">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/ImpclisController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="533">
-          <caret line="418" column="46" selection-start-line="418" selection-start-column="41" selection-end-line="418" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Layouts/default.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="264" column="99" selection-start-line="264" selection-start-column="29" selection-end-line="264" selection-end-column="99" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Clientes/avance.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1544">
-          <caret line="882" column="9" selection-start-line="882" selection-start-column="9" selection-end-line="882" selection-end-column="9" />
-          <folding>
-            <element signature="n#mostrarEventoCliente#0;n#!!top" expanded="false" />
-            <element signature="e#22669#37674#0#PHP" expanded="false" />
-            <element signature="e#29003#29113#0#PHP" expanded="false" />
-            <element signature="e#29137#29534#0#PHP" expanded="false" />
-            <element signature="e#33521#37674#0#PHP" expanded="false" />
-            <element signature="e#36576#37214#0#PHP" expanded="false" />
-            <element signature="n#mostrarEventoImpuesto#0;n#!!top" expanded="false" />
-            <marker date="1493907711418" expanded="true" signature="2530:2562" placeholder="..." />
-            <marker date="1493907711418" expanded="true" signature="3154:3186" placeholder="..." />
-            <marker date="1493907711418" expanded="true" signature="3455:3493" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Impclis/f102.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="11" column="18" selection-start-line="11" selection-start-column="18" selection-end-line="11" selection-end-column="18" />
-          <folding>
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#3;n#div#1;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#3;n#div#1;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#2;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#2;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#div#2;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#div#2;n#div#2;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#3;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#4;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#5;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#6;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#7;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#8;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#9;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#10;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#11;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#12;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#13;n#div#0;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#1;n#div#3;n#div#1;n#div#13;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <marker date="1493908900793" expanded="false" signature="9276:9896" placeholder="..." />
-            <marker date="1493908900793" expanded="false" signature="9937:10385" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Controller/VentasController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="897" column="37" selection-start-line="897" selection-start-column="23" selection-end-line="897" selection-end-column="37" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Ventas/importar.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/View/Ventas/exportartxt.ctp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="426">
-          <caret line="166" column="38" selection-start-line="166" selection-start-column="0" selection-end-line="167" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/empleados/cargar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="551">
-          <caret line="463" column="0" selection-start-line="463" selection-start-column="0" selection-end-line="489" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!block;n#realizarEventoCliente#0" expanded="false" />
-          </folding>
+          <caret line="7" column="1" selection-start-line="7" selection-start-column="1" selection-end-line="12" selection-end-column="2" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/webroot/js/empleados/cargamasiva.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="577" column="0" selection-start-line="577" selection-start-column="0" selection-end-line="577" selection-end-column="0" />
-          <folding>
-            <element signature="n#!!block;n#cargarUnReciboSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#cargarTodosLosLibros#0" expanded="false" />
-            <element signature="n#!!block;n#cargarUnLibroSueldo#0" expanded="false" />
-            <element signature="n#!!block;n#openWin#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="979">
-          <caret line="260" column="51" selection-start-line="260" selection-start-column="51" selection-end-line="260" selection-end-column="51" />
+        <state relative-caret-position="12980">
+          <caret line="590" column="7" selection-start-line="588" selection-start-column="3" selection-end-line="590" selection-end-column="7" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajoactividadesvarias.ctp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32">
-          <caret line="404" column="60" selection-start-line="404" selection-start-column="45" selection-end-line="404" selection-end-column="60" />
+        <state relative-caret-position="14410">
+          <caret line="655" column="14" selection-start-line="526" selection-start-column="4" selection-end-line="655" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/EmpleadosController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2442">
+          <caret line="821" column="43" selection-start-line="821" selection-start-column="36" selection-end-line="821" selection-end-column="43" />
+          <folding>
+            <element signature="n#cargar#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+            <element signature="n#view#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajosueldos#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+            <element signature="e#8549#10081#0#PHP" expanded="false" />
+            <element signature="e#10084#10411#0#PHP" expanded="false" />
+            <element signature="e#10448#10727#0#PHP" expanded="false" />
+            <element signature="e#11872#12573#1#PHP" expanded="false" />
+            <element signature="e#13266#17392#0#PHP" expanded="false" />
+            <element signature="n#papeldetrabajolibrosueldo#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajorecibosueldo#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+            <element signature="e#22469#23424#0#PHP" expanded="false" />
+            <element signature="e#23978#24238#0#PHP" expanded="false" />
+            <element signature="e#24750#25024#0#PHP" expanded="false" />
+            <element signature="e#25081#25320#0#PHP" expanded="false" />
+            <element signature="e#25373#25484#0#PHP" expanded="false" />
+            <element signature="n#add#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+            <element signature="n#edit#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+            <element signature="n#delete#0;n#EmpleadosController#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Empleados/formulario102.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14784">
+          <caret line="672" column="55" selection-start-line="672" selection-start-column="55" selection-end-line="672" selection-end-column="55" />
+          <folding>
+            <element signature="n#num2letras#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajoactividadesvarias.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1540">
+          <caret line="213" column="40" selection-start-line="213" selection-start-column="40" selection-end-line="213" selection-end-column="40" />
+          <folding>
+            <element signature="e#593#844#0" expanded="false" />
+            <element signature="n#!!block;n#papelesDeTrabajo#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Impclis/papeldetrabajocasasparticulares.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="22">
+          <caret line="1" column="71" selection-start-line="1" selection-start-column="71" selection-end-line="1" selection-end-column="71" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/tmp/logs/error.log">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="721" column="40" selection-start-line="721" selection-start-column="40" selection-end-line="721" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/impclis/papeldetrabajocasasparticulares.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="607">
+          <caret line="135" column="16" selection-start-line="135" selection-start-column="16" selection-end-line="135" selection-end-column="16" />
+          <folding>
+            <element signature="n#!!block;n#openWin#0" expanded="false" />
+            <element signature="n#!!block;n#openWinForm102#0" expanded="false" />
+            <element signature="n#!!block;n#openWinLibrosSueldos#0" expanded="false" />
+            <element signature="n#!!block;n#reloadInputDates#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Controller/ImpclisController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="1199" column="51" selection-start-line="1199" selection-start-column="20" selection-end-line="1199" selection-end-column="51" />
+          <folding>
+            <element signature="n#view#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="e#824#864#0#PHP" expanded="false" />
+            <element signature="n#add#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#addbancosindicato#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="e#8094#8185#0#PHP" expanded="false" />
+            <element signature="n#edit#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#editajax#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="e#10450#10543#0#PHP" expanded="false" />
+            <element signature="n#delete#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajoconveniomultilateral#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajoactividadesvarias#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajomonotributo#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajoddjj#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajosindicatos#0;n#ImpclisController#0;n#!!top" expanded="false" />
+            <element signature="n#papeldetrabajocooperadoraasistencial#0;n#ImpclisController#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/View/Eventosimpuestos/getpapelestrabajo.ctp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="121" column="121" selection-start-line="121" selection-start-column="121" selection-end-line="121" selection-end-column="121" />
+          <folding>
+            <marker date="1495802762592" expanded="true" signature="56046:56070" placeholder="..." />
+            <marker date="1495802762592" expanded="true" signature="56071:56158" placeholder="..." />
+            <marker date="1495802762592" expanded="false" signature="56130:56145" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/webroot/js/clientes/avance.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="394">
+          <caret line="394" column="5" selection-start-line="394" selection-start-column="5" selection-end-line="394" selection-end-column="5" />
           <folding />
         </state>
       </provider>

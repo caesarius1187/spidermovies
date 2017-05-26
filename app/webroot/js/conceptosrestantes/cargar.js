@@ -85,12 +85,12 @@ $(document).ready(function() {
                   case '174':/*Convenio Multilateral*/
                       $('#ConceptosrestanteLocalidadeId').closest('div').hide();
                       $('#ConceptosrestantePartidoId').closest('div').show();
-                      showcolumnConceptoRestante(tblTablaConceptosrestantes,2,true);//Localidad
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,1,true);//Partido
                       break;
                   default:
                       $('#ConceptosrestanteLocalidadeId').closest('div').show();
                       $('#ConceptosrestantePartidoId').closest('div').hide();
-                      showcolumnConceptoRestante(tblTablaConceptosrestantes,1,true);//Localidad
+                      showcolumnConceptoRestante(tblTablaConceptosrestantes,2,true);//Localidad
                       break;
             }
             $('#ConceptosrestanteConceptostipoId').closest('div').show();

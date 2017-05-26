@@ -233,8 +233,6 @@ class EmpleadosController extends AppController {
 		$this->set('convenio',$convenio);
 
 		//vamos a mandar los convenios
-
-
 		$cliente=$this->Cliente->find('first', array(
 				'contain'=>array(
 					'Empleado'=>array(
@@ -576,7 +574,12 @@ class EmpleadosController extends AppController {
                 'Cliente'=>[
                     'Actividadcliente'=>[
                         'Actividade',
-						'conditions'=>$esMayorQueBaja
+						'conditions'=>[
+							'OR'=>[
+								"Actividadcliente.baja IS NULL OR Actividadcliente.baja = ''",
+								$esMayorQueBaja
+							]
+						]
                     ],
 					'Impcli'=>[
 						'conditions'=>[
@@ -767,6 +770,59 @@ class EmpleadosController extends AppController {
         $this->autoRender=false;
         $this->layout = 'ajax';
         $this->render('papeldetrabajorecibosueldo');
+    }
+    public function formulario102($empid=null,$periodo=null,$tipoliquidacion=null){
+		$this->loadModel('Vencimiento');
+		$this->loadModel('Impcli');
+		$this->loadModel('Impuesto');
+		$this->loadModel('Empleado');
+		$this->loadModel('Cliente');
+
+		$timePeriodo = strtotime("01-".$periodo ." -1 months");
+		$periodoPrevio = date("m-Y",$timePeriodo);
+
+		$pemes = substr($periodoPrevio, 0, 2);
+		$peanio = substr($periodoPrevio, 3);
+
+        $this->set(compact('pemes','peanio'));
+        $options = array(
+            'contain'=>array(
+				'Cargo',
+				'Domicilio'=>array(
+                    'Localidade'=>array(
+                        'Partido'
+                    )
+                ),
+                'Valorrecibo'=>array(
+                    'Cctxconcepto'=>array(
+                        'Concepto',
+                        'Conveniocolectivotrabajo'=>array(
+                        )
+                    ),
+                    'conditions'=>array(
+                        'Valorrecibo.periodo'=>$periodo,
+						'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
+					)
+                ),
+            ),
+            'conditions' => array('Empleado.id' => $empid)
+        );
+        $empleado = $this->Empleado->find('first', $options);
+        $this->set('empleado',$empleado);
+        $this->set('cliid',$empleado['Empleado']['cliente_id']);
+        $cliente=$this->Cliente->find('first', array(
+                'contain'=>array(
+                    'Domicilio'
+                ),
+                'conditions' => array(
+                    'id' => $empleado['Empleado']['cliente_id'],
+                ),
+            )
+        );
+        $this->set(compact('empid','periodo','cliente'));
+        $this->autoRender=false;
+        $this->layout = 'ajax';
+        $this->render('formulario102');
     }
 	public function add() {
 		$respuesta = array('respuesta'=>'');

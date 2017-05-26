@@ -152,6 +152,18 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                   'style'=> 'margin-right: 8px;width: initial;',
               )
           );
+          echo $this->Html->link(
+              "Consulta por lote",
+              array(
+                  'controller' => 'compras',
+                  'action' => 'consultaporlote',
+                  $cliente["Cliente"]['id'],
+                  $periodo
+              ),
+              array('class' => 'buttonImpcli',
+                  'style'=> 'margin-right: 8px;width: initial;',
+              )
+          );
 
           echo $this->Form->create('Compra',array(
                 'id'=>'saveComprasForm',
@@ -296,6 +308,16 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               echo $this->Form->input('total',array(
                     'label'=>'Total'
                   ));
+              $tipoautorizaciones=[
+                  'CAE'=>'CAE',
+                  'CAI'=>'CAI',
+                  'CAEA'=>'CAEA'
+              ];
+              echo $this->Form->input('tipoautorizacion',array(
+                  'options' => $tipoautorizaciones,
+                  'style'=>'width:60px'));
+              echo $this->Form->input('autorizacion',array(
+                  'style'=>'width:100px'));
               echo $this->Form->input('asiento',array('type'=>'hidden'));
               echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               echo $this->Form->submit('+', array('type'=>'image',

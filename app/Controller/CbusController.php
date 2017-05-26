@@ -30,7 +30,7 @@ class CbusController extends AppController {
             /*Antes de guardar el CBU vamos a analizar una lista de cuentas
             que se pueden activar como cuentascliente para que esta cuenta del banco
             tenga su propia cuenta cliente*/
-            $cuentasDeBancoActivables = $this->Cuenta->cuentasDeBancoActivables;
+
             $optionsImpcli = [
                 'contain'=>[
                     'Impuesto'
@@ -41,6 +41,50 @@ class CbusController extends AppController {
             ];
             $impcli = $this->Impcli->find('first',$optionsImpcli);
             $CuentaClienteNuevaId = 0;
+            if($this->request->data['Cbu']['noasociadoaactividad']=='0'){
+                $cuentasDeBancoActivables = $this->Cuenta->cuentasDeBancoActivables;
+
+
+                $cuentasComisionGastosInteresesOtros = $this->Cuenta->cuentasComisionGastosInteresesOtros;
+                $cantCreadas=0;
+                foreach ($cuentasComisionGastosInteresesOtros as $cuentasDeComisionInteresGasto){
+                    $conditionsCuentasDeComisionInteresGasto = array(
+                        'Cuentascliente.cliente_id' => $impcli['Impcli']['cliente_id'],
+                        'Cuentascliente.cuenta_id' => $cuentasDeComisionInteresGasto
+                    );
+                    if (!$this->Cuentascliente->hasAny($conditionsCuentasDeComisionInteresGasto)){
+                        $conditionsCuentas=[
+                            'conditions'=>['Cuenta.id'=>$cuentasDeComisionInteresGasto]
+                        ];
+                        $cuentaACargar = $this->Cuenta->find('first', $conditionsCuentas);
+                        $nombreCuentaCom = "Banco ".$impcli['Impuesto']['nombre']
+                            ." - Cuenta ".$this->request->data['Cbu']['numerocuenta']." ".$this->request->data['Cbu']['tipocuenta']
+                            ."-".$cuentaACargar['Cuenta']['nombre'];
+
+                        $this->Cuentascliente->create();
+                        $this->Cuentascliente->set('cliente_id',$impcli['Impcli']['cliente_id']);
+                        $this->Cuentascliente->set('cuenta_id',$cuentasDeComisionInteresGasto);
+                        $this->Cuentascliente->set('nombre',$nombreCuentaCom);
+                        if ($this->Cuentascliente->save())
+                        {
+                            $respuesta['respuesta'].='Cuenta de movimiento activada correctamente.'."</br>";
+                        }
+                        else
+                        {
+                            $respuesta['respuesta'].='Error al guardar cuenta de movimiento. Por favor intente nuevamente.'."</br>";
+                        }
+                        //Aca se tienen q relacionar solamente 5 por banco y en el orden en las que trae el array
+                        if($cantCreadas<4){
+                            $cantCreadas++;
+                        }else{
+                            break;
+                        }
+                    }
+                }
+            }
+            else{
+                $cuentasDeBancoActivables = $this->Cuenta->cuentasDeBancoNoRelacionadosAActividadActivables;
+            }
             foreach ($cuentasDeBancoActivables as $cuentaactivable){
                 $conditionsCuentascliente = array(
                     'Cuentascliente.cliente_id' => $impcli['Impcli']['cliente_id'],
@@ -95,43 +139,6 @@ class CbusController extends AppController {
                         $respuesta['respuesta'].='Error al guardar cuenta de movimiento. Por favor intente nuevamente.'."</br>";
                     }
                     //NO TIENE BREAKE POR QUE SE TIENEN QUE RELACIONAR TODAS ESTAS CUENTAS
-                }
-            }
-            $cuentasComisionGastosInteresesOtros = $this->Cuenta->cuentasComisionGastosInteresesOtros;
-            $cantCreadas=0;
-            foreach ($cuentasComisionGastosInteresesOtros as $cuentasDeComisionInteresGasto){
-
-                $conditionsCuentasDeComisionInteresGasto = array(
-                    'Cuentascliente.cliente_id' => $impcli['Impcli']['cliente_id'],
-                    'Cuentascliente.cuenta_id' => $cuentasDeComisionInteresGasto
-                );
-                if (!$this->Cuentascliente->hasAny($conditionsCuentasDeComisionInteresGasto)){
-                    $conditionsCuentas=[
-                        'conditions'=>['Cuenta.id'=>$cuentasDeComisionInteresGasto]
-                    ];
-                    $cuentaACargar = $this->Cuenta->find('first', $conditionsCuentas);
-                    $nombreCuentaCom = "Banco ".$impcli['Impuesto']['nombre']
-                        ." - Cuenta ".$this->request->data['Cbu']['numerocuenta']." ".$this->request->data['Cbu']['tipocuenta']
-                        ."-".$cuentaACargar['Cuenta']['nombre'];
-
-                    $this->Cuentascliente->create();
-                    $this->Cuentascliente->set('cliente_id',$impcli['Impcli']['cliente_id']);
-                    $this->Cuentascliente->set('cuenta_id',$cuentasDeComisionInteresGasto);
-                    $this->Cuentascliente->set('nombre',$nombreCuentaCom);
-                    if ($this->Cuentascliente->save())
-                    {
-                        $respuesta['respuesta'].='Cuenta de movimiento activada correctamente.'."</br>";
-                    }
-                    else
-                    {
-                        $respuesta['respuesta'].='Error al guardar cuenta de movimiento. Por favor intente nuevamente.'."</br>";
-                    }
-                    //Aca se tienen q relacionar solamente 5 por banco y en el orden en las que trae el array
-                    if($cantCreadas<4){
-                        $cantCreadas++;
-                    }else{
-                        break;
-                    }
                 }
             }
 

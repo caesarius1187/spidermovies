@@ -4,6 +4,7 @@
 		<legend><?php echo __('Add Cbus'); ?></legend>
 	<?php
 		echo $this->Form->input('bancosysindicato_id');
+		echo $this->Form->input('noasociadoaactividad');
 		echo $this->Form->input('tipo');
 		echo $this->Form->input('numero');
 		echo $this->Form->input('cbu');

@@ -42,6 +42,7 @@ if(count($empleado['Valorrecibo'])==0){
                         $miempleado['antiguedad'] = 0;
                         $miempleado['acuerdoremunerativonobasico'] = 0;
                         $miempleado['presentismo'] = 0;
+                        $miempleado['ajusteretroactivo'] = 0;
                         $miempleado['sac'] = 0;
                         $miempleado['sacIndemnizatorio'] = 0;
                         $miempleado['fondoceselaboral'] = 0;
@@ -129,6 +130,7 @@ if(count($empleado['Valorrecibo'])==0){
                     $antiguedad = 0;
                     $acuerdoremunerativonobasico = 0;
                     $presentismo = 0;
+                    $ajusteretroactivo = 0;
                     $sac = 0;
                     $sacIndemnizatorio = 0;
                     $fondoceselaboral = 0;
@@ -321,6 +323,11 @@ if(count($empleado['Valorrecibo'])==0){
                         if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                             array('77'/*Presentismo*/), true )){
                             $presentismo += $valorrecibo['valor'];
+                        }
+                        //Ajuste Retroactivo
+                        if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                            array('159'/*ajuste retroactivo*/), true )){
+                            $ajusteretroactivo += $valorrecibo['valor'];
                         }
 
                         //S.A.C. Remunerativo 1
@@ -560,6 +567,7 @@ if(count($empleado['Valorrecibo'])==0){
                     $miempleado['antiguedad']=$antiguedad;
                     $miempleado['acuerdoremunerativonobasico']=$acuerdoremunerativonobasico;
                     $miempleado['presentismo']=$presentismo;
+                    $miempleado['ajusteretroactivo']=$ajusteretroactivo;
                     $miempleado['feriadosnoremunerativo'] = $feriadosnoremunerativo;
                     $miempleado['horas50remunerativa'] = $horas50remunerativa;
                     $miempleado['horas100remunerativa'] = $horas100remunerativa;
@@ -962,6 +970,26 @@ if(count($empleado['Valorrecibo'])==0){
                             </td>
                             <td class="tdWithLeftRightBorder tdWithNumber">
                                 <?php echo number_format($miempleado['presentismo'], 2, ",", "."); ?>
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                            </td>
+                        </tr>
+                        <?php }
+                        if($miempleado['ajusteretroactivo']*1>0){ ?>
+                        <tr class="trConceptoRecibo">
+                            <td class="tdWithLeftRightBorder">
+                                92
+                            </td>
+                            <td class="tdWithLeftRightBorder">
+                                Ajuste retroactivo
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                                1
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                                <?php echo number_format($miempleado['ajusteretroactivo'], 2, ",", "."); ?>
                             </td>
                             <td class="tdWithLeftRightBorder tdWithNumber">
                             </td>

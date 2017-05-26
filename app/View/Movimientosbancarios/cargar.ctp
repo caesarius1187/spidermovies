@@ -211,7 +211,48 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                             $tdClass = "tdViewMovimientosBancario".$movimientobancario["id"];
                             ?>
                             <tr id="rowmovimientosbancarios<?php echo $movimientobancario["id"]?>" class="movimientosbancario<?php echo $movimientobancario["id"];?>">
-                                <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["Cbu"]['cbu']."-".$movimientobancario["Cbu"]['tipocuenta']?></td>
+                                <td class="<?php echo $tdClass?>">
+                                    <?php
+                                    $abreviacionCBUTipo = "";
+                                    switch ($cbu['tipocuenta']) {
+                                        case 'Caja de Ahorro en Euros':
+                                            $abreviacionCBUTipo = "CA €";
+                                            break;
+                                        case 'Caja de Ahorro en Moneda Local':
+                                            $abreviacionCBUTipo = "CA $";
+                                            break;
+                                        case 'Caja de Ahorro en U$S':
+                                            $abreviacionCBUTipo = "CA U$ S";
+                                            break;
+                                        case 'Cuenta Corriente en Euros':
+                                            $abreviacionCBUTipo = "CC €";
+                                            break;
+                                        case 'Cuenta Corriente en Moneda Local':
+                                            $abreviacionCBUTipo = "CC $";
+                                            break;
+                                        case 'Cuenta Corriente en U$S':
+                                            $abreviacionCBUTipo = "CC U$ S";
+                                            break;
+                                        case 'Otras':
+                                            $abreviacionCBUTipo = "Otras";
+                                            break;
+                                        case 'Plazo Fijo en Euros':
+                                            $abreviacionCBUTipo = "PF €";
+                                            break;
+                                        case 'Plazo Fijo en U$S':
+                                            $abreviacionCBUTipo = "PF U$ S";
+                                            break;
+                                        case 'Plazo Fijo en Moneda Local':
+                                            $abreviacionCBUTipo = "PF $";
+                                            break;
+                                        default:
+                                            $abreviacionCBUTipo = "cc $";
+                                            break;
+                                    }
+                                    $cbuname = $impcli['Impuesto']['nombre']." ".substr($cbu['numerocuenta'], -5)." ".$abreviacionCBUTipo;
+                                    echo $cbuname
+                                    ?>
+                                </td>
                                 <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["ordencarga"]?></td>
                                 <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["fecha"]?></td>
                                 <td class="<?php echo $tdClass?>"><?php echo $movimientobancario["concepto"]?></td>

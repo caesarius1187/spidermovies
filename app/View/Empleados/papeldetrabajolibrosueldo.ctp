@@ -53,6 +53,7 @@
             $miempleado['antiguedad'] = 0;
             $miempleado['acuerdoremunerativonobasico'] = 0;
             $miempleado['presentismo'] = 0;
+            $miempleado['ajusteretroactivo'] = 0;
             $miempleado['sac'] = 0;
             $miempleado['fondoceselaboral'] = 0;
             $miempleado['sacIndemnizatorio'] = 0;
@@ -121,6 +122,7 @@
         $antiguedad = 0;
         $acuerdoremunerativonobasico = 0;
         $presentismo = 0;
+        $ajusteretroactivo = 0;
         $sac = 0;
         $sacIndemnizatorio = 0;
         $fondoceselaboral = 0;
@@ -289,6 +291,11 @@
             if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                 array('77'/*Presentismo*/), true )){
                 $presentismo += $valorrecibo['valor'];
+            }
+            //Ajuste Retroactivo
+            if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                array('159'/*ajuste retroactivo*/), true )){
+                $ajusteretroactivo += $valorrecibo['valor'];
             }
 
             //S.A.C. Remunerativo 1
@@ -521,6 +528,7 @@
         $miempleado['antiguedad']=$antiguedad;
         $miempleado['acuerdoremunerativonobasico']=$acuerdoremunerativonobasico;
         $miempleado['presentismo']=$presentismo;
+        $miempleado['ajusteretroactivo']=$ajusteretroactivo;
         $miempleado['sac'] = $sac;
         $miempleado['sacIndemnizatorio'] = $sacIndemnizatorio;
         $miempleado['fondoceselaboral'] = $fondoceselaboral;
@@ -831,7 +839,6 @@
             <td></td>
         </tr>
     <?php }
-
     if($miempleado['presentismo']*1>0){ ?>
         <tr>
             <td>91</td>
@@ -840,6 +847,19 @@
             </td>
             <td class="tdWithNumber">
                 <?php echo number_format($miempleado['presentismo'], 2, ",", "."); ?>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    <?php }
+    if($miempleado['ajusteretroactivo']*1>0){ ?>
+        <tr>
+            <td>92</td>
+            <td>
+                Ajuste retroactivo
+            </td>
+            <td class="tdWithNumber">
+                <?php echo number_format($miempleado['ajusteretroactivo'], 2, ",", "."); ?>
             </td>
             <td></td>
             <td></td>

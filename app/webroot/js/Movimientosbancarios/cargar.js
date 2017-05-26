@@ -211,21 +211,60 @@ $(document).ready(function() {
                 success: function(data,textStatus,xhr){
                     var respuesta = JSON.parse(data);
                     callAlertPopint(respuesta.respuesta);
-                    var conceptoCargado = respuesta.movimiento.Movimientosbancario
-                    if(conceptoCargado!=null){
+                    var movimientobancario = respuesta.movimientosbancario.Movimientosbancario;
+                    if(movimientobancario!=null){
                         //Agregar la fila nueva a la tabla
                         var  tdClass = "tdViewMovimientosBancario"+respuesta.movimientoid;
+                        var abreviacionCBUTipo = "";
+                        switch (respuesta.movimientosbancario.Cbu.tipocuenta) {
+                            case 'Caja de Ahorro en Euros':
+                                abreviacionCBUTipo = "CA €";
+                                break;
+                            case 'Caja de Ahorro en Moneda Local':
+                                abreviacionCBUTipo = "CA $";
+                                break;
+                            case 'Caja de Ahorro en U$S':
+                                abreviacionCBUTipo = "CA U$ S";
+                                break;
+                            case 'Cuenta Corriente en Euros':
+                                abreviacionCBUTipo = "CC €";
+                                break;
+                            case 'Cuenta Corriente en Moneda Local':
+                                abreviacionCBUTipo = "CC $";
+                                break;
+                            case 'Cuenta Corriente en U$S':
+                                abreviacionCBUTipo = "CC U$ S";
+                                break;
+                            case 'Otras':
+                                abreviacionCBUTipo = "Otras";
+                                break;
+                            case 'Plazo Fijo en Euros':
+                                abreviacionCBUTipo = "PF €";
+                                break;
+                            case 'Plazo Fijo en U$S':
+                                abreviacionCBUTipo = "PF U$ S";
+                                break;
+                            case 'Plazo Fijo en Moneda Local':
+                                abreviacionCBUTipo = "PF $";
+                                break;
+                            default:
+                                abreviacionCBUTipo = "cc $";
+                                break;
+                        }
+                        var cbunumero = respuesta.movimientosbancario.Cbu.numerocuenta;
+                        var cbuname = respuesta.movimientosbancario.Cbu.Impcli.Impuesto.nombre+" "+cbunumero.substr(-5)+" "+abreviacionCBUTipo;
                         var rowData =
                             [
-                                conceptoCargado.cbu_id,
-                                conceptoCargado.ordencarga,
-                                conceptoCargado.fecha,
-                                conceptoCargado.concepto,
-                                conceptoCargado.debito,
-                                conceptoCargado.credito,
-                                conceptoCargado.saldo,
-                                conceptoCargado.cuentascliente_id,
-                                conceptoCargado.codigoafip
+                                cbuname,
+                                movimientobancario.ordencarga,
+                                movimientobancario.fecha,
+                                movimientobancario.concepto,
+                                movimientobancario.debito,
+                                movimientobancario.credito,
+                                movimientobancario.saldo,
+                                movimientobancario.cuentascliente_id,
+                                movimientobancario.codigoafip,
+                                movimientobancario.alicuota
                             ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarMovimientosbancario('+respuesta.movimientoid +')" alt="">';
                         tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarMovimientosbancario('+respuesta.movimientoid +')" alt="">';
@@ -378,12 +417,50 @@ $(document).ready(function() {
                             var respuesta = JSON.parse(response2);
                             callAlertPopint(respuesta.respuesta);
                             var movimientobancario = respuesta.movimientosbancario.Movimientosbancario
+                            var abreviacionCBUTipo = "";
+                            switch (respuesta.movimientosbancario.Cbu.tipocuenta) {
+                                case 'Caja de Ahorro en Euros':
+                                    abreviacionCBUTipo = "CA €";
+                                    break;
+                                case 'Caja de Ahorro en Moneda Local':
+                                    abreviacionCBUTipo = "CA $";
+                                    break;
+                                case 'Caja de Ahorro en U$S':
+                                    abreviacionCBUTipo = "CA U$ S";
+                                    break;
+                                case 'Cuenta Corriente en Euros':
+                                    abreviacionCBUTipo = "CC €";
+                                    break;
+                                case 'Cuenta Corriente en Moneda Local':
+                                    abreviacionCBUTipo = "CC $";
+                                    break;
+                                case 'Cuenta Corriente en U$S':
+                                    abreviacionCBUTipo = "CC U$ S";
+                                    break;
+                                case 'Otras':
+                                    abreviacionCBUTipo = "Otras";
+                                    break;
+                                case 'Plazo Fijo en Euros':
+                                    abreviacionCBUTipo = "PF €";
+                                    break;
+                                case 'Plazo Fijo en U$S':
+                                    abreviacionCBUTipo = "PF U$ S";
+                                    break;
+                                case 'Plazo Fijo en Moneda Local':
+                                    abreviacionCBUTipo = "PF $";
+                                    break;
+                                default:
+                                    abreviacionCBUTipo = "cc $";
+                                    break;
+                            }
+                            var cbunumero = respuesta.movimientosbancario.Cbu.numerocuenta;
+                            var cbuname = respuesta.movimientosbancario.Cbu.Impcli.Impuesto.nombre+" "+cbunumero.substr(-5)+" "+abreviacionCBUTipo;
                             if(movimientobancario!=null){
                                 //Agregar la fila nueva a la tabla
                                 var  tdClass = "tdViewMovimientosbancario"+movbid;
                                 var rowData =
                                     [
-                                        respuesta.movimientosbancario.Cbu.cbu,
+                                        cbuname,
                                         movimientobancario.ordencarga,
                                         movimientobancario.fecha,
                                         movimientobancario.concepto,
@@ -391,7 +468,8 @@ $(document).ready(function() {
                                         movimientobancario.credito,
                                         movimientobancario.saldo,
                                         respuesta.movimientosbancario.Cuentascliente.Cuenta.nombre,
-                                        movimientobancario.codigoafip
+                                        movimientobancario.codigoafip,
+                                        movimientobancario.alicuota
                                     ];
                                 var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarMovimientosbancario('+movbid+')" alt="">';
                                 tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarMovimientosbancario('+movbid+')" alt="">';

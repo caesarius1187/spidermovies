@@ -4,12 +4,20 @@
  echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
  echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
  echo $this->Form->input('impcliid',array('value'=>$impcliid,'type'=>'hidden'));
+function validateDate($date, $format = 'Y-m-d H:i:s')
+{
+	$d = DateTime::createFromFormat($format, $date);
+	return $d && $d->format($format) == $date;
+}
 ?>
 <div id="Formhead" class="clientes papeldetrabajoconveniomultilateral index" style="margin-bottom:10px;">
 	<h2>Monotributo:</h2>
 	Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
-	<?php echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));?>
-	<?php echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));?>
+	<?php echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));
+	echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));
+    $pemes = substr($periodo, 0, 2);
+    $peanio = substr($periodo, 3);?>
+
     CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
 	Periodo: <?php echo $periodo; ?> </br>
     <?php echo $this->Form->button('Imprimir',
@@ -60,6 +68,10 @@
 			/*La mayor de estas dos variables decidirá si se aplica monotributo de Locacion o de Venta de cosa mueble*/
 			$TotalCuatrimestreIngresoBrutolocacion=0;
 			$TotalCuatrimestreIngresoBrutoMueble=0;
+			//Vamos a usar las dos de arriba para categorizar el monotributo pero las dos de abajo para elegir si aplica
+			// monotributo Locavion o Venta
+			$TotalCuatrimestreIngresoBrutolocacionActividadActiva=0;
+			$TotalCuatrimestreIngresoBrutoMuebleActividadActiva=0;
 			$generoMonotributoAplicado= 'locacion-servicio';/*por defecto locacion servicio (arbitrario)*/
 	
 			$subtotalCompraSuperficie=0;
@@ -80,9 +92,15 @@
 						foreach ($ventas as $venta) {
 							if($venta['Venta']['periodo']==date('m-Y',strtotime($periodoDeInicioi))){
 								$sumaen = '';
+								$MesBajaActividad = "";
+								$AnioBajaActividad = "";
 								foreach ($actividadclientes as $actividadcliente) {
 									if($actividadcliente['Actividadcliente']['id']==$venta['Venta']['actividadcliente_id']){
 										$sumaen = $actividadcliente['Actividade']['generomonotributo'];
+										if(validateDate($actividadcliente['Actividadcliente']['baja'])){
+											$MesBajaActividad = data('m',strtotime($actividadcliente['Actividadcliente']['baja']));
+											$AnioBajaActividad = data('Y',strtotime($actividadcliente['Actividadcliente']['baja']));
+										}
 									}
 								}
 								//si es factura C suma el total, si no suma el neto
@@ -100,6 +118,25 @@
 										$subtotalVentaP0Mueble += $venta[0][$campoaSumar];
 									}
 									$subtotalVentaP0Total += $venta[0][$campoaSumar];
+									if($AnioBajaActividad!=""){
+										if(($peanio*1<$AnioBajaActividad*1)||
+											(($peanio*1==$AnioBajaActividad*1)&&($pemes*1<=$MesBajaActividad*1))
+											)
+                                        {
+                                            if($sumaen=='locacionservicio'){
+                                                $TotalCuatrimestreIngresoBrutolocacionActividadActiva += $venta[0][$campoaSumar];
+                                            }else{
+                                                $TotalCuatrimestreIngresoBrutoMuebleActividadActiva += $venta[0][$campoaSumar];
+                                            }
+										}
+									}else{
+                                        if($sumaen=='locacionservicio'){
+                                            $TotalCuatrimestreIngresoBrutolocacionActividadActiva += $venta[0][$campoaSumar];
+                                        }else{
+                                            $TotalCuatrimestreIngresoBrutoMuebleActividadActiva += $venta[0][$campoaSumar];
+                                        }
+                                    }
+
 								}else{
 									if($sumaen=='locacionservicio'){
 										$subtotalVentaP0Locacion -= $venta[0][$campoaSumar];
@@ -107,15 +144,33 @@
 										$subtotalVentaP0Mueble -= $venta[0][$campoaSumar];
 									}
 									$subtotalVentaP0Total -= $venta[0][$campoaSumar];
+                                    if($AnioBajaActividad!=""){
+                                        if(($peanio*1<$AnioBajaActividad*1)||
+                                            (($peanio*1==$AnioBajaActividad*1)&&($pemes*1<=$MesBajaActividad*1))
+                                        )
+                                        {
+                                            if($sumaen=='locacionservicio'){
+                                                $TotalCuatrimestreIngresoBrutolocacionActividadActiva -= $venta[0][$campoaSumar];
+                                            }else{
+                                                $TotalCuatrimestreIngresoBrutoMuebleActividadActiva -= $venta[0][$campoaSumar];
+                                            }
+                                        }
+                                    }else{
+                                        if($sumaen=='locacionservicio'){
+                                            $TotalCuatrimestreIngresoBrutolocacionActividadActiva -= $venta[0][$campoaSumar];
+                                        }else{
+                                            $TotalCuatrimestreIngresoBrutoMuebleActividadActiva -= $venta[0][$campoaSumar];
+                                        }
+                                    }
 								}
 							}
 						}
 						?>
-					<td>
+					<td >
 						<?php echo $subtotalVentaP0Locacion;
 						$TotalCuatrimestreIngresoBrutolocacion+=$subtotalVentaP0Locacion; ?>
 					</td>
-					<td>
+					<td >
 						<?php echo $subtotalVentaP0Mueble; 
 						$TotalCuatrimestreIngresoBrutoMueble+=$subtotalVentaP0Mueble;?>
 					</td>
@@ -195,12 +250,12 @@
                     <td>
                         Totales
                     </td>
-                    <td>
+                    <td title="Computable para Tipo Monotributo Locacion = <?php echo $TotalCuatrimestreIngresoBrutolocacionActividadActiva?>">
                         <?php echo $TotalCuatrimestreIngresoBrutolocacion; ?>
                     </td>
-                    <td>
+                    <td title="Computable para Tipo Monotributo Venta = <?php echo $TotalCuatrimestreIngresoBrutoMuebleActividadActiva?>">
                         <?php echo $TotalCuatrimestreIngresoBrutoMueble;
-                        if($TotalCuatrimestreIngresoBrutoMueble>$TotalCuatrimestreIngresoBrutolocacion){
+                        if($TotalCuatrimestreIngresoBrutoMuebleActividadActiva>$TotalCuatrimestreIngresoBrutolocacionActividadActiva){
                             $generoMonotributoAplicado = 'ventamueble';
                         }else{
                             $generoMonotributoAplicado = 'locacion-servicio';

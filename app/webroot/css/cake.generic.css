@@ -2832,22 +2832,3 @@ div.index_pdt{
 	height:1px;
 	width:100%;
 }
-.f102{
-
-}
-.f102 div{
-	float: left;
-	text-align: center;
- }
-.f102 .row{
-	width: 100%;
-}
-.f102 input{
-	display: block;
-}
-.roundcorner{
-	border:1px solid #000;
-	border-radius: 10px;
-	margin: 2px;
-	padding: 2px;
-}

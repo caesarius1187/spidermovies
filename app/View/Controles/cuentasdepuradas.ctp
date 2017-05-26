@@ -62,13 +62,51 @@
     $misCBUs = [];
     foreach ($cliente['Impcli'] as $impcli){
         foreach ($impcli['Cbu'] as $cbu){
-            $cbuname = $cbu['cbu']." ".$cbu['tipocuenta'];
+            $abreviacionCBUTipo = "";
+            switch ($cbu['tipocuenta']) {
+                case 'Caja de Ahorro en Euros':
+                    $abreviacionCBUTipo = "CA €";
+                    break;
+                case 'Caja de Ahorro en Moneda Local':
+                    $abreviacionCBUTipo = "CA $";
+                    break;
+                case 'Caja de Ahorro en U$S':
+                    $abreviacionCBUTipo = "CA U$ S";
+                    break;
+                case 'Cuenta Corriente en Euros':
+                    $abreviacionCBUTipo = "CC €";
+                    break;
+                case 'Cuenta Corriente en Moneda Local':
+                    $abreviacionCBUTipo = "CC $";
+                    break;
+                case 'Cuenta Corriente en U$S':
+                    $abreviacionCBUTipo = "CC U$ S";
+                    break;
+                case 'Otras':
+                    $abreviacionCBUTipo = "Otras";
+                    break;
+                case 'Plazo Fijo en Euros':
+                    $abreviacionCBUTipo = "PF €";
+                    break;
+                case 'Plazo Fijo en U$S':
+                    $abreviacionCBUTipo = "PF U$ S";
+                    break;
+                case 'Plazo Fijo en Moneda Local':
+                    $abreviacionCBUTipo = "PF $";
+                    break;
+                default:
+                    $abreviacionCBUTipo = "cc $";
+                    break;
+            }
+            $cbuname = $impcli['Impuesto']['nombre']." ".substr($cbu['numerocuenta'], -5)." ".$abreviacionCBUTipo;
             $misCBUs[] = $cbuname;
             foreach ($periodosAnio as $periodoainicializar){
-                $misperiodos[$periodoainicializar][$cbuname]['movimientosbancarios']=[];
-                $misperiodos[$periodoainicializar][$cbuname]['movimientosbancarios']['credito']=0;
-                $misperiodos[$periodoainicializar][$cbuname]['movimientosbancarios']['creditodepurado']=0;
-                $misperiodos[$periodoainicializar][$cbuname]['movimientosbancarios']['debito']=0;
+                if(!isset( $misperiodos[$periodoainicializar][$cbuname])){
+                    $misperiodos[$periodoainicializar][$cbuname]['movimientosbancarios']=[];
+                    $misperiodos[$periodoainicializar][$cbuname]['movimientosbancarios']['credito']=0;
+                    $misperiodos[$periodoainicializar][$cbuname]['movimientosbancarios']['creditodepurado']=0;
+                    $misperiodos[$periodoainicializar][$cbuname]['movimientosbancarios']['debito']=0;
+                }
             }
             foreach ($cbu['Movimientosbancario'] as $movimientosbancario){
                 $movimientoperiodo = $movimientosbancario['periodo'];

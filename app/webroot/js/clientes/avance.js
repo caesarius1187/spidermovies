@@ -390,6 +390,9 @@ $(document).ready(function() {
     function verPapelDeTrabajoIVA(periodo,impcliid){
         var win = window.open(serverLayoutURL+'/papelesdetrabajos/iva/'+impcliid+'/'+periodo , '_blank');
     }
+    function verPapelDeTrabajoCasasParticulares(periodo,cliid){
+        var win = window.open(serverLayoutURL+'/impclis/papeldetrabajocasasparticulares/'+cliid+'/'+periodo , '_blank');
+    }
     function verCuentasDepuradas(cliid,periodo){
         var win = window.open(serverLayoutURL+'/controles/cuentasdepuradas/'+cliid+'/'+periodo , '_blank');
     }

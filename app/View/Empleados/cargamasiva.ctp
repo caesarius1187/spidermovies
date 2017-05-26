@@ -37,27 +37,27 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
 <script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
 <!--<div class="" style="float:none; width: 100%; margin: 0px 4px">  -->
-  <div class="index" style="padding: 0px 1%; margin-bottom: 10px;" id="headerCliente">
-      <div style="width:30%; float: left;padding-top:10px">
-        Cliente: <?php echo $cliente["Cliente"]['nombre'];
-          echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);?>
-      </div>
-      <div style="width:25%; float: left;padding-top:10px">
-        Periodo: <?php echo $periodo;
-          echo $this->Form->input('periododefault',['type'=>'hidden','value'=>$periodo])?>
-      </div>
-      <div style="float:right; width:45%">
-      <?php echo $this->Form->button('Finalizar', 
-              array('type' => 'button',
-                'class' =>"btn_realizar_tarea",
-                'div' => false,
-                'style' => array('style' => 'float:right'),
-                'onClick' => "realizarEventoCliente('".$periodo."',".$cliente["Cliente"]['id'].",'realizado')"
-                )
-      );?> 
-      </div>
-  </div>  
-  <div id="headerCarga" style="width:100%">
+<div class="index" style="padding: 0px 1%; margin-bottom: 10px;" id="headerCliente">
+  <div style="width:30%; float: left;padding-top:10px">
+    Cliente: <?php echo $cliente["Cliente"]['nombre'];
+      echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);?>
+  </div>
+  <div style="width:25%; float: left;padding-top:10px">
+    Periodo: <?php echo $periodo;
+      echo $this->Form->input('periododefault',['type'=>'hidden','value'=>$periodo])?>
+  </div>
+  <div style="float:right; width:45%">
+  <?php echo $this->Form->button('Finalizar',
+          array('type' => 'button',
+            'class' =>"btn_realizar_tarea",
+            'div' => false,
+            'style' => array('style' => 'float:right'),
+            'onClick' => "realizarEventoCliente('".$periodo."',".$cliente["Cliente"]['id'].",'realizado')"
+            )
+  );?>
+  </div>
+</div>
+<div id="headerCarga" style="width:100%">
     
   <!--</div>-->
     <?php /**************************************************************************/ ?>
