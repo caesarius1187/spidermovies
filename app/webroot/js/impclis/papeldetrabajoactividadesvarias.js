@@ -221,7 +221,13 @@ function cargarAsiento(){
 			$('#Asiento0Movimiento'+orden+'Haber').val(diferencia*-1);
 		}
     }
-    // 110405101	Act. Vs. - Retenciones
+    // 110405101	Act. Vs. - Pagos a Cuenta
+    if($('#cuenta3385').length > 0){
+        var orden = $('#cuenta3385').attr('orden');
+        var totalpagosacuenta = $("#totalpagosacuenta").val();
+        $('#Asiento0Movimiento'+orden+'Haber').val(totalpagosacuenta);
+    }
+	// 110405101	Act. Vs. - Retenciones
     if($('#cuenta332').length > 0){
         var orden = $('#cuenta332').attr('orden');
         var totalretenciones = $("#totalretenciones").val();

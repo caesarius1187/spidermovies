@@ -467,7 +467,6 @@ class ClientesController extends AppController {
 						array_splice($micliente['Impcli'], $impclipos, 1);
 					}	
 				}
-			
 				$micliente['Cliente']['cargaFacturaCompras']=$cargaFacturaCompras;
 				$micliente['Cliente']['cargaFacturaVentas']=$cargaFacturaVentas;
 				$micliente['Cliente']['cargaLibroIVAVentas']=$cargaLibroIVAVentas;
@@ -496,8 +495,6 @@ class ClientesController extends AppController {
 				}
 				$clientes3[$mc]=$micliente;
 			}
-
-
             $this->set('clientes', $clientes3);
 			$this->Tareasxclientesxestudio->recursive = 0;
 			$tareascliente = $this->Tareasxclientesxestudio->find('all',[
@@ -522,11 +519,11 @@ class ClientesController extends AppController {
 				'fields'=>array('Impuesto.id','Impuesto.nombre','Impuesto.organismo')
 				)
 			);	
-			$this->set('impuestos',$impuestos);
+		$this->set('impuestos',$impuestos);
 		$conditionsGcli = array(
 			'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
             'Grupocliente.estado' => 'habilitado' , 
-			);
+		);
 		$gclis = $this->Grupocliente->find('list',array(
 			'conditions' =>$conditionsGcli,
 			'order'=>array('Grupocliente.nombre')

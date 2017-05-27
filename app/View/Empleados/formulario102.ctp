@@ -37,7 +37,7 @@ echo $this->Form->button('Imprimir',
 
 ?>
 
-<div id="contenedor" class="index f102">
+<div id="contenedor" class="index f102" style="width: 94%">
 	<table id="volantepago<?php echo $empleado['Empleado']['id']; ?>" cellspacing="0">
 		<tr class="row">
             <td colspan="20" style="padding: 0px">
@@ -46,7 +46,7 @@ echo $this->Form->button('Imprimir',
                         <td  style="padding: 0px" width="30%">
                             <div class="roundcorner">
                                 <div style="width: 100%;border-bottom: 1px solid black"><?php
-                                    echo $this->Html->image('afip2.jpg',array('style'=>'width: 57%;margin-top: 5%;'));
+                                    echo $this->Html->image('afip2.jpg',array('style'=>'width: 82%;margin-top: 5%;'));
                                     ?></div>
                                 <div style="width: 100%;font-size: 20px">F.102/RT</div>
                             </div>
@@ -59,7 +59,7 @@ echo $this->Form->button('Imprimir',
                                         APORTES Y CONTRIBUCIONES</b>
                                 </div>
                                 <div style="width: 100%">
-                                    <div style="width: 100%;font-size: 10px;">
+                                    <div style="width: 100%;font-size: 16px;">
                                         CUIL TRABAJADOR: <?php
                                         $identificacionnumero = $empleado['Empleado']['cuit'];
                                         $cuit="";
@@ -78,18 +78,18 @@ echo $this->Form->button('Imprimir',
                                     <table cellspacing="0">
                                         <tr>
                                             <td style="padding: 0px">
-                                                <div style=";vertical-align: middle;font-size: 10px;">PERIODO:</div>
+                                                <div style=";vertical-align: middle;font-size: 14px;">PERIODO:</div>
                                             </td>
                                             <td style="padding: 0px">
-                                                <div style="">
+                                                <div style="font-size: 14px">
                                                     <table  cellspacing="0" class="tbl_border" style="font-size: 8px;width:100px;">
                                                         <tr>
-                                                            <td>MES</td>
-                                                            <td>AÑO</td>
+                                                            <td style="font-size: 14px">MES</td>
+                                                            <td style="font-size: 14px">AÑO</td>
                                                         </tr>
                                                         <tr>
-                                                            <td><?php echo $pemes;?></td>
-                                                            <td><?php echo $peanio;?></td>
+                                                            <td style="font-size: 14px"><?php echo $pemes;?></td>
+                                                            <td style="font-size: 14px"><?php echo $peanio;?></td>
                                                         </tr>
                                                     </table>
                                                 </div>
@@ -133,18 +133,18 @@ echo $this->Form->button('Imprimir',
                                 </tr>
                                 <tr style="width: 100%;border-bottom: 1px solid black">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid black">
-                                        <input type="radio" name="rubroI" class="checkboxrubroI trabajadoractivo menosde12" value="176.00">- Menos de 12
+                                        <input style="margin:0px;" type="radio" name="rubroI" class="checkboxrubroI trabajadoractivo menosde12" value="176.00">- Menos de 12
                                     </td>
                                     <td style="padding: 0px;width: 30%;">(*)</td>
                                 </tr>
                                 <tr style="width: 100%;border-bottom: 1px solid black">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid black">
-                                        <input type="radio" name="rubroI" class="checkboxrubroI trabajadoractivo desde12a16" value="252.00" >- Desde 12 a menos 16</td>
+                                        <input style="margin:0px;" type="radio" name="rubroI" class="checkboxrubroI trabajadoractivo desde12a16" value="252.00" >- Desde 12 a menos 16</td>
                                     <td style="padding: 0px;width: 30%;">(**)</td>
                                 </tr>
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid black">
-                                        <input type="radio" name="rubroI" class="checkboxrubroI trabajadoractivo 16omas" value="684.00" >- 16 o mas</td>
+                                        <input style="margin:0px;" type="radio" name="rubroI" class="checkboxrubroI trabajadoractivo 16omas" value="684.00" >- 16 o mas</td>
                                     <td style="padding: 0px;width: 30%;">(***)</td>
                                 </tr>
                             </table>
@@ -168,17 +168,17 @@ echo $this->Form->button('Imprimir',
                                 </tr>
                                 <tr style="width: 100%;border-bottom: 1px solid black">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid black">
-                                        <input type="radio" name="rubroI" class="checkboxrubroI trabajadorjubilado menosde12" value="142.00">- Menos de 12</td>
+                                        <input style="margin:0px;" type="radio" name="rubroI" class="checkboxrubroI trabajadorjubilado menosde12" value="142.00">- Menos de 12</td>
                                     <td style="padding: 0px;width: 30%;">$142.00</td>
                                 </tr>
                                 <tr style="width: 100%;border-bottom: 1px solid black">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid black">
-                                        <input type="radio" name="rubroI" class="checkboxrubroI trabajadorjubilado desde12a16" value="189.00" >- Desde 12 a menos 16</td>
+                                        <input style="margin:0px;" type="radio" name="rubroI" class="checkboxrubroI trabajadorjubilado desde12a16" value="189.00" >- Desde 12 a menos 16</td>
                                     <td style="padding: 0px;width: 30%;">$189.00</td>
                                 </tr>
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid black">
-                                        <input type="radio" name="rubroI" class="checkboxrubroI trabajadorjubilado 16omas" value="265.00">- 16 o mas</td>
+                                        <input style="margin:0px;" type="radio" name="rubroI" class="checkboxrubroI trabajadorjubilado 16omas" value="265.00">- 16 o mas</td>
                                     <td style="padding: 0px;width: 30%;">$265.00</td>
                                 </tr>
                             </table>
@@ -202,17 +202,17 @@ echo $this->Form->button('Imprimir',
                                 </tr>
                                 <tr style="width: 100%;border-bottom: 1px solid black">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid black">
-                                        <input type="radio" name="rubroI" class="checkboxrubroI trabajadormenores 16omas" value="164.00">- Menos de 12</td>
+                                        <input style="margin:0px;" type="radio" name="rubroI" class="checkboxrubroI trabajadormenores 16omas" value="164.00">- Menos de 12</td>
                                     <td style="padding: 0px;width: 30%;">(I)</td>
                                 </tr>
                                 <tr style="width: 100%;border-bottom: 1px solid black">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid black">
-                                        <input type="radio" name="rubroI" class="checkboxrubroI trabajadormenores desde12a16" value="228.00">- Desde 12 a menos 16</td>
+                                        <input style="margin:0px;" type="radio" name="rubroI" class="checkboxrubroI trabajadormenores desde12a16" value="228.00">- Desde 12 a menos 16</td>
                                     <td style="padding: 0px;width: 30%;">(II)</td>
                                 </tr>
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid black">
-                                        <input type="radio" name="rubroI" class="checkboxrubroI trabajadormenores 16omas" value="649.00">- 16 o mas</td>
+                                        <input style="margin:0px;" type="radio" name="rubroI" class="checkboxrubroI trabajadormenores 16omas" value="649.00">- 16 o mas</td>
                                     <td style="padding: 0px;width: 30%;">(III)</td>
                                 </tr>
                             </table>
@@ -249,10 +249,15 @@ echo $this->Form->button('Imprimir',
                 </div>
             </td>
             <td  style="padding: 0px;">
-                <div style="font-size: 16px;" class="roundcorner" >
-                    <div style="width: 30%;text-align: left">$</div>
-                    <div style="width: 70%;text-align: right"><b><p id="obligacionmensual">684.00</p></b></div>
-                </div>
+                <table style="font-size: 16px;" class="roundcorner" >
+                    <tr >
+                        <td style="padding: 0px;width: 30%;text-align: left">
+                            $
+                        </td>
+                        <td style="padding: 0px;width: 70%;text-align: right"><b><p id="obligacionmensual">684.00</p></b>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
         <tr class="row">
@@ -272,40 +277,40 @@ echo $this->Form->button('Imprimir',
                             <td style=" padding: 0px;font-size: 8px;border-right: 1px solid black;">CONDICIÓN</br>
                                 <p style="font-size: 6px;">(marcar con "X" la condición)</p></td>
                             <td style=" padding: 0px;font-size: 8px"">
-                                <input type="radio" >ACTIVO
+                                <input type="radio" style="margin:0px;">ACTIVO
                             </td>
                             <td style=" padding: 0px;font-size: 8px"">
-                                <input type="radio" >JUBILADO
+                                <input type="radio" style="margin:0px;" >JUBILADO
                             </td>
                             <td style=" padding: 0px;font-size: 8px;">
-                                <input type="radio" >MENOR
+                                <input type="radio" style="margin:0px;" >MENOR
                             </td>
                         </tr>
                     </table>
                 </div>
                 <table cellspacing="0" style="width: 100%" class="roundcorner">
                     <tr style="width: 100%;">
-                        <td style=" padding: 0px;font-size: 8px;border:1px solid black;height:33px;">HORAS TRABAJADAS SEMANALMENTE</br>(marcarcon "X" la condición)</td>
-                        <td style=" padding: 0px;font-size: 8px;border:1px solid black;height:33px;">Importe </td>
+                        <td style=" padding: 0px;font-size: 8px;border:1px solid black;">HORAS TRABAJADAS SEMANALMENTE</br>(marcarcon "X" la condición)</td>
+                        <td style=" padding: 0px;font-size: 8px;border:1px solid black;">Importe </td>
                     </tr>
                     <tr style="width: 100%;">
-                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;height:30px;text-align: left">
-                            <input type="radio" style="margin-top: 2px">- Menos de 12</td>
-                        <td style=" padding: 0px;border:1px solid black;height:30px;"> </td>
+                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;text-align: left">
+                            <input type="radio" style="margin:0px;" >- Menos de 12</td>
+                        <td style=" padding: 0px;border:1px solid black;"> </td>
                     </tr>
                     <tr style="width: 100%;">
-                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;height:30px;;text-align: left">
-                            <input type="radio" style="margin-top: 2px">- Desde 12 a menos de 16</td>
-                        <td style=" padding: 0px;border:1px solid black;height:30px;"> </td>
+                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;;text-align: left">
+                            <input type="radio" style="margin:0px;" >- Desde 12 a menos de 16</td>
+                        <td style=" padding: 0px;border:1px solid black;"> </td>
                     </tr>
                     <tr style="width: 100%;">
-                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;height:30px;;text-align: left">
-                            <input type="radio" style="margin-top: 2px">- 16 o más</td>
-                        <td style=" padding: 0px;border:1px solid black;height:30px;"> </td>
+                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;;text-align: left">
+                            <input type="radio" style="margin:0px;" >- 16 o más</td>
+                        <td style=" padding: 0px;border:1px solid black;"> </td>
                     </tr>
                 </table>
             </td>
-            <td>
+            <td style=" padding: 0px;">
                 <div style="width: 100%" class="roundcorner">
                     <table cellspacing="0">
                         <tr>
@@ -313,36 +318,36 @@ echo $this->Form->button('Imprimir',
                             <td style=" padding: 0px;font-size: 8px;border-right: 1px solid black;">CONDICIÓN</br>
                                 <p style="font-size: 6px;">(marcar con "X" la condición)</p></td>
                             <td style=" padding: 0px;font-size: 8px;">
-                                <input type="radio" >ACTIVO
+                                <input type="radio" style="margin:0px;" >ACTIVO
                             </td>
                             <td style=" padding: 0px;font-size: 8px;">
-                                <input type="radio" >JUBILADO
+                                <input type="radio" style="margin:0px;" >JUBILADO
                             </td>
                             <td style=" padding: 0px;font-size: 8px;">
-                                <input type="radio" >MENOR
+                                <input type="radio" style="margin:0px;" >MENOR
                             </td>
                         </tr>
                     </table>
                 </div>
                 <table cellspacing="0" style="width: 100%" class="roundcorner">
                     <tr style="width: 100%;">
-                        <td style=" padding: 0px;font-size: 8px;border:1px solid black;height:33px;">HORAS TRABAJADAS SEMANALMENTE</br>(marcarcon "X" la condición)</td>
-                        <td style=" padding: 0px;font-size: 8px;border:1px solid black;height:33px;">Importe </td>
+                        <td style=" padding: 0px;font-size: 8px;border:1px solid black;">HORAS TRABAJADAS SEMANALMENTE</br>(marcarcon "X" la condición)</td>
+                        <td style=" padding: 0px;font-size: 8px;border:1px solid black;">Importe </td>
                     </tr>
                     <tr style="width: 100%;">
-                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;height:30px;text-align: left">
-                            <input type="checkbox" style="margin-top: 2px">- Menos de 12</td>
-                        <td style=" padding: 0px;border:1px solid black;height:30px;"> </td>
+                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;text-align: left">
+                            <input type="radio" style="margin:0px;" >- Menos de 12</td>
+                        <td style=" padding: 0px;border:1px solid black;"> </td>
                     </tr>
                     <tr style="width: 100%;">
-                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;height:30px; text-align: left">
-                            <input type="checkbox" style="margin-top: 2px">- Desde 12 a menos de 16</td>
-                        <td style=" padding: 0px;border:1px solid black;height:30px;"> </td>
+                        <td style=" padding: 0px;font-size: 7px;border:1px solid black; text-align: left">
+                            <input type="radio" style="margin:0px;" >- Desde 12 a menos de 16</td>
+                        <td style=" padding: 0px;border:1px solid black;"> </td>
                     </tr>
                     <tr style="width: 100%;">
-                        <td style=" padding: 0px;font-size: 7px;border:1px solid black;height:30px; text-align: left">
-                            <input type="checkbox" style="margin-top: 2px">- 16 o más</td>
-                        <td style=" padding: 0px;border:1px solid black;height:30px;"> </td>
+                        <td style=" padding: 0px;font-size: 7px;border:1px solid black; text-align: left">
+                            <input type="radio" style="margin:0px;" >- 16 o más</td>
+                        <td style=" padding: 0px;border:1px solid black;"> </td>
                     </tr>
                 </table>
             </td>
@@ -369,17 +374,17 @@ echo $this->Form->button('Imprimir',
             </td>
         </tr>
         <tr class="row">
-            <td colspan="20">
+            <td style=" padding: 0px;" colspan="20">
             <hr style="border-top: dotted 2px;width: 100%" />
             </td>
         </tr>
         <tr class="row">
-            <td colspan="20">
+            <td style=" padding: 0px;" colspan="20" >
             <b>RECIBO DE PAGO </b>(Imprimir por duplicado y entregar una copia al trabajador)
             </td>
         </tr>
         <tr style="">
-            <td  class="row roundcorner"  colspan="20">
+            <td  class="row roundcorner"  colspan="20" style=" padding: 0px;" >
                 <table cellspacing="0">
                     <tr>
                         <td style="font-size: 8px">
@@ -395,7 +400,7 @@ echo $this->Form->button('Imprimir',
                                     ?></div>
                             </div>
                         </td>
-                        <td style="font-size: 8px">
+                        <td style="font-size: 16px">
                             <div style="width: 100%" class="row">
                                 CUIT/CUIL:
                                 <?php
@@ -408,7 +413,7 @@ echo $this->Form->button('Imprimir',
             </td>
         </tr>
         <tr  style="text-align: left">
-            <td class="row roundcorner" colspan="20">
+            <td class="row roundcorner" colspan="20" style=" padding: 0px;" >
                 <table cellspacing="0">
                     <tr>
                         <td style="font-size: 8px">
@@ -424,9 +429,9 @@ echo $this->Form->button('Imprimir',
                                     ?></div>
                             </div>
                         </td>
-                        <td style="font-size: 8px">
-                            <div style="width: 49%">
-                                <div style="width: 100%" class="row">
+                        <td style="font-size: 16px">
+                            <div style="">
+                                <div style="width: 100%" class="row" >
                                     CUIT/CUIL: <?php
                                     echo $cuit;
                                     ?>
@@ -434,7 +439,7 @@ echo $this->Form->button('Imprimir',
                                 <div style="width: 100%" class="row">
                                     <div></div>
                                     <div>
-                                        <table cellspacing="0" class="tbl_border">
+                                        <table cellspacing="0" class="tbl_border" style="width: 30%">
                                             <tr>
                                                 <td style="font-size: 8px" rowspan="2"><b>Fecha de Ingreso:</b></td>
                                                 <td style="font-size: 8px">DIA</td>
@@ -509,7 +514,7 @@ echo $this->Form->button('Imprimir',
                                 <tr>
                                     <td style="padding:1px;font-size: 8px">
                                         <?php
-                                        echo date('m',strtotime('01-'.$pemes.'-'.$peanio));
+                                        echo date('t',strtotime('01-'.$pemes.'-'.$peanio));
                                         ?>
                                     </td>
                                     <td style="padding:1px;font-size: 8px">
@@ -700,8 +705,8 @@ echo $this->Form->button('Imprimir',
                 </table>
                 <table cellspacing="0">
                     <tr>
-                        <td class="roundcorner" style="width:49%;height: 80px;"> Firma del Empleador:</td>
-                        <td class="roundcorner" style="width:49%;height: 80px;">Firma del Trabajador:</td>
+                        <td class="roundcorner" style="width:49%;height: 70px;padding: 0px"> Firma del Empleador:</td>
+                        <td class="roundcorner" style="width:49%;height: 70px;padding: 0px">Firma del Trabajador:</td>
                     </tr>
                 </table>
             </td>

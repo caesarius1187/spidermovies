@@ -104,26 +104,6 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
   $periodoSel=$periodomes."-".$periodoanio;
   echo $this->Form->input('periodoSel',array('type'=>'hidden','value'=>$periodoSel)); ?>
   <table cellpadding="0" cellspacing="0" class="tbl_avance" id="tbl_tareas"> <!--Tbl 1-->
-<!--    <thead>-->
-<!--      --><?php ///**************************************************************************/  ?>
-<!--      --><?php ///*****************************Row de tareas*****************************/  ?>
-<!--      --><?php ///**************************************************************************/  ?>
-<!--      <tr>-->
-<!--       <th valign="top" class="columnCliente"><label style="width:100px">--><?php ////echo 'Clientes'; ?><!--<!--</label></th>-->
-<!--          --><?php //foreach ($tareas as $tarea){
-//            $tareaStyle = "/*style = 'width:80px;*/";
-//            if('tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]=="tarea1"){
-//              $tareaStyle = "style = 'text-align: left; width:130px; ";
-//            }
-//            $tareaStyle .= "'";?>
-<!--            <th valign="top" class="--><?php //echo 'tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]; ?><!--" --><?php //echo $tareaStyle;?><!--
-<!--              <label style="width:70px">-->
-<!--              --><?php //echo h($tarea["Tareascliente"]['nombre']); ?>
-<!--              </label>-->
-<!--            </th> -->
-<!--        --><?php //}; ?>
-<!--      </tr>-->
-<!--    </thead>-->
     <?php /**************************************************************************/ ?>
     <?php /*****************************Recorremos los clientes**********************/ ?>
     <?php /**************************************************************************/ ?>
@@ -135,12 +115,6 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
         <tr>
           <td class="columnClienteHeader" colspan="20" style="">
               <div class="divClienteHeader">
-                <?php
-                /*echo $this->Html->link(
-                    $cliente['Grupocliente']['nombre'],
-                    array('controller' => 'grupoclientes',
-                    'action' => 'index'),
-                    array('style'=>'float:left'));*/ ?>
                   <?php
                        echo $this->Html->link(
                         $cliente['Cliente']['nombre'],
@@ -178,8 +152,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
               /*******************************tarea tipo cliente*************************/
               /**************************************************************************/
               $eventoCreado=false;
-
-              foreach ($cliente["Eventoscliente"] as $evento){          
+              foreach ($cliente["Eventoscliente"] as $evento){
                 mostrarEventoCliente($this, $evento, $periodoSel, $tareaNombre, $tareaFild, $cliente,$Tareahabilitado,$HayImpuestosHabilitados);
                 $eventoCreado=true;           
               }; 

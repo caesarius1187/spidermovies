@@ -168,7 +168,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 			 	}
 				?>	
 				<td colspan="2">Impuesto</td>
-				<td colspan="4">Conceptos que restan</td>
+				<td colspan="5">Conceptos que restan</td>
 				<td colspan="2">A Favor</td>
 			</tr>
 			<tr id="2">
@@ -198,6 +198,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<td>Mínimo</td>
 				<td title="Impuesto o Mínimo el Mayor">Impuesto</td>
 				<td>Retención</td>
+				<td>PagoCuenta</td>
 				<td title="Act Vs Percep">Percep.</td>
 				<td title="Saldo a Favor Período Ant">A Favor</td>
 				<td>Total</td>
@@ -339,10 +340,12 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				</td>
 				<?php 
 				$totalRetenciones=0;
+				$totalPagosACuenta=0;
 				$totalPercepciones=0;
 				$totalSaldoAFavor=0;
 				$afavorSubtotal=0;
 				$retencionSubtotal=0;
+				$pagoacuentaSubtotal=0;
 				$percepionSubtotal=0;
 				$percepionBancariaSubtotal=0;
 				$otrosSubtotal=0;
@@ -377,11 +380,15 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 							if($impcliprovincia['Localidade']['id']==$conceptosrestante['localidade_id'])
 								$otrosSubtotal+=$conceptosrestante['montoretenido'];
 							break;
+						case '10'/*Pagos a Cuenta*/:
+							if($impcliprovincia['Localidade']['id']==$conceptosrestante['localidade_id'])
+								$pagoacuentaSubtotal+=$conceptosrestante['montoretenido'];
+							break;
 						default:
 							break;
 					}
 				}
-				$totalConceptos = $retencionSubtotal + $percepionSubtotal + $percepionBancariaSubtotal + $afavorSubtotal;
+				$totalConceptos = $retencionSubtotal+$pagoacuentaSubtotal + $percepionSubtotal + $percepionBancariaSubtotal + $afavorSubtotal;
 				if(!isset($totalesProvincia[$provinciaid]['TotalRetencion'])){
 					$totalesProvincia[$provinciaid]['TotalRetencion']=0;
 				}
@@ -397,13 +404,18 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				if(!isset($totalesProvincia[$provinciaid]['TotalRetenciones'])){
 					$totalesProvincia[$provinciaid]['TotalRetenciones']=0;
 				}
+				if(!isset($totalesProvincia[$provinciaid]['TotalPagosACuenta'])){
+					$totalesProvincia[$provinciaid]['TotalPagosACuenta']=0;
+				}
 				$totalesProvincia[$provinciaid]['TotalRetencion']+=$retencionSubtotal;
+				$totalesProvincia[$provinciaid]['TotalPagosACuenta']+=$pagoacuentaSubtotal;
 				$totalesProvincia[$provinciaid]['TotalPercepionBancariaS']+=$percepionBancariaSubtotal;
 				$totalesProvincia[$provinciaid]['TotalAFavorSaldo']+=$afavorSubtotal;
 				$totalesProvincia[$provinciaid]['TotalConceptos']+=$totalConceptos;
 				$totalesProvincia[$provinciaid]['TotalRetenciones']+=$percepionSubtotal;
 				?>
 				<td><?php echo number_format($retencionSubtotal, 2, ",", "."); ?></td>
+				<td><?php echo number_format($pagoacuentaSubtotal, 2, ",", "."); ?></td>
 				<td><?php echo number_format($percepionSubtotal, 2, ",", "."); ?></td>
 <!--				<td>--><?php //echo number_format($percepionBancariaSubtotal, 2, ",", "."); ?><!--</td>-->
 				<td><?php echo number_format($afavorSubtotal, 2, ",", "."); ?></td>
@@ -494,6 +506,11 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<td><?php
                     echo number_format($totalesProvincia[$provinciaid]['TotalRetencion'], 2, ",", ".");
                     echo $this->Form->input('totalretenciones', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalRetencion']));
+                    ?>
+                </td>
+				<td><?php
+                    echo number_format($totalesProvincia[$provinciaid]['TotalPagosACuenta'], 2, ",", ".");
+                    echo $this->Form->input('totalpagosacuenta', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalPagosACuenta']));
                     ?>
                 </td>
 				<td><?php

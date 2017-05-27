@@ -1226,6 +1226,7 @@ class ImpclisController extends AppController {
 								'Empleado.fechaegreso is null' ,
 							],
 							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+							'Empleado.conveniocolectivotrabajo_id'=>'10'//Servicio Domestico,
 						],
 						'order'=>[
 							'Empleado.legajo*1'

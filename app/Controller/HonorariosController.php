@@ -53,6 +53,7 @@ class HonorariosController extends AppController {
 		$GrupoClientes = $this->Grupocliente->find('list', $optionsGCLI);
 
 		$optionsHonorario = array(
+			'contain'=>[],
 			'conditions' => array(
 				'Honorario.cliente_id' => $cliid,
 				'Honorario.periodo' => $periodo
@@ -66,6 +67,7 @@ class HonorariosController extends AppController {
 		$this->set('cliid', $cliid);
 
 		$cliente = $this->Cliente->find('first',array(
+				'contain'=>[],
 				'conditions' => array(
 					'Cliente.id' => $cliid,
 				),
@@ -74,7 +76,7 @@ class HonorariosController extends AppController {
 		);
 		$this->set('gcliid', $cliente['Cliente']['grupocliente_id']);
 		$this->set('honorariocliente', $cliente['Cliente']['honorario']);
-		$this->set('cliid', $cliente['Cliente']['id']);
+		$this->set('cliid', $cliid);
 
 		$this->layout = 'ajax';
 		$this->render('cargar');

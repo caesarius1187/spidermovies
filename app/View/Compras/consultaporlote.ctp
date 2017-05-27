@@ -53,7 +53,7 @@
     <div class="index" style="overflow-x: auto;" id="divFacturas" ><?php
         foreach($compras as $c => $compra ) {
         $lineaCompra = "";
-        $lineaCompra .= str_pad($compra["Compra"]['tipoautorizacion'], 4, " ", STR_PAD_LEFT);
+        $lineaCompra .= str_pad($compra["Compra"]['tipoautorizacion'], 4, " ", STR_PAD_RIGHT);
         $lineaCompra .= str_pad($compra["Provedore"]['cuit'], 11, "0", STR_PAD_LEFT);
         $lineaCompra .= str_pad($compra["Compra"]['autorizacion'], 14, "0", STR_PAD_LEFT);//CAE/CAEA/CAI
         $lineaCompra .= date('Y', strtotime($compra['Compra']['fecha'])) . date('m', strtotime($compra['Compra']['fecha'])) . date('d', strtotime($compra['Compra']['fecha']));
@@ -62,7 +62,7 @@
         $lineaCompra .= str_pad($compra['Compra']['numerocomprobante']*1, 8, "0", STR_PAD_LEFT);
         $lineaCompra .= str_pad(number_format($compra[0]['total'], 2, "", ""), 15, "0", STR_PAD_LEFT);
         $lineaCompra .= str_pad(80, 2, "0", STR_PAD_LEFT);
-        $lineaCompra .= str_pad($cliente["Cliente"]['cuitcontribullente'], 11, "0", STR_PAD_LEFT);
+        $lineaCompra .= str_pad($cliente["Cliente"]['dni'], 8, "0", STR_PAD_LEFT);
 
         echo $lineaCompra."</br>";
     }

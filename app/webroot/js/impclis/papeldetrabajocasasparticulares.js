@@ -89,7 +89,7 @@ function papelesDeTrabajo(periodo,impcli){
                             alert(respuesta.validationErrors);
                             alert(respuesta.invalidFields);
                         }else{
-                            // $('#AsientoAddForm').submit();
+                            $('#AsientoAddForm').submit();
                             $('#divLiquidarCasasParticulares').hide();
                         }
                     },
@@ -197,7 +197,7 @@ function openWinForm102()
         $(this).hide();
     });
     var myWindow=window.open('','','width=1010,height=1000px');
-    myWindow.document.write('<html><head><title>Libro de sueldo</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
+    myWindow.document.write('<html><head><title>Formulario 102</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
     myWindow.document.write($("#divSueldoForm").html());
     myWindow.document.close();
     myWindow.focus();
