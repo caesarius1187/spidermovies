@@ -1585,7 +1585,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 	<div id="divLiquidarSUSS">
 	</div>
     <?php
-    if($tieneMonotributo=='true'){ ?>
+    if(!$impuestosactivos['contabiliza']){ ?>
         <div id="divContenedorContabilidad" style="margin-top:10px">  </div>
         <?php
     }else{ ?>
@@ -1606,9 +1606,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 
             $Asientoid=0;
             $movId=[];
-            if(isset($impcli['Impcli']['Asiento'])) {
-                if (count($impcli['Impcli']['Asiento']) > 0) {
-                    foreach ($impcli['Impcli']['Asiento'] as $asiento){
+            if(isset($impcli['Asiento'])) {
+                if (count($impcli['Asiento']) > 0) {
+                    foreach ($impcli['Asiento'] as $asiento){
                         if($asiento['tipoasiento']=='impuestos'){
                             $Asientoid = $asiento['id'];
                             foreach ($asiento['Movimiento'] as $mimovimiento) {

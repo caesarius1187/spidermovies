@@ -927,7 +927,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 	</div>
 
     <?php
-    if($tieneMonotributo=='true'){ ?>
+	if(!$impuestosactivos['contabiliza']){ ?>
         <div id="divContenedorContabilidad" style="margin-top:10px">  </div>
     <?php
     }else{ ?>

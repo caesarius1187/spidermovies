@@ -116,7 +116,7 @@
             </div>
         </div>
         <?php
-        if($tieneMonotributo=='true'){ ?>
+        if(!$impuestosactivos['contabiliza']){ ?>
         <div id="divContenedorContabilidad" style="margin-top:10px">  </div>
         <?php
         }else{ ?>

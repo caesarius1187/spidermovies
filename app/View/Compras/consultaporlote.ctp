@@ -62,7 +62,7 @@
         $lineaCompra .= str_pad($compra['Compra']['numerocomprobante']*1, 8, "0", STR_PAD_LEFT);
         $lineaCompra .= str_pad(number_format($compra[0]['total'], 2, "", ""), 15, "0", STR_PAD_LEFT);
         $lineaCompra .= str_pad(80, 2, "0", STR_PAD_LEFT);
-        $lineaCompra .= str_pad($cliente["Cliente"]['dni'], 8, "0", STR_PAD_LEFT);
+        $lineaCompra .= str_pad($cliente["Cliente"]['cuitcontribullente'], 8, "0", STR_PAD_LEFT);
 
         echo $lineaCompra."</br>";
     }

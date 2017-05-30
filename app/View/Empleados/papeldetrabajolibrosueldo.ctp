@@ -21,6 +21,10 @@
         if(!isset($miempleado['horasDias'])) {
             $miempleado['basico'] = 0;
             $miempleado['sueldo'] = 0;
+            $miempleado['diasaccidenteartcantidad'] = 0;
+            $miempleado['diasaccidenteempledorcantidad'] = 0;
+            $miempleado['diasaccidenteart'] = 0;
+            $miempleado['diasaccidenteempledor'] = 0;
             $miempleado['inasistencia'] = 0;
             $miempleado['inasistenciapagas'] = 0;
             $miempleado['inasistenciapagascantidad'] = 0;
@@ -92,6 +96,10 @@
         $basico=0;
         $adicionales=0;
         $sueldo=0;
+        $diasaccidenteart=0;
+        $diasaccidenteempleador=0;
+        $diasaccidenteartcantidad=0;
+        $diasaccidenteempleadorcantidad=0;
         $inasistencia=0;
         $suspensiones=0;
         $vacacionesremunerativas=0;
@@ -168,6 +176,22 @@
             //Sueldo
             if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='6'/*sueldo basico*/){
                 $sueldo += $valorrecibo['valor'];
+            }
+            //Dias de Accidente Empleador Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='62'/*Dias de Accidente Empleador*/){
+                $diasaccidenteempleadorcantidad += $valorrecibo['valor'];
+            }
+            //Dias de Accidente ART Cantidad
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='63'/*Dias de Accidente Empleador*/){
+                $diasaccidenteartcantidad += $valorrecibo['valor'];
+            }
+            //Dias de Accidente ART
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='73'/*Dias de Accidente ART*/){
+                $diasaccidenteart += $valorrecibo['valor'];
+            }
+            //Dias de Accidente Empleador
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='122'/*Dias de Accidente ART*/){
+                $diasaccidenteempleador += $valorrecibo['valor'];
             }
             //Horas Decoracion
             if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='144'/*Horas Decoracion*/){
@@ -495,6 +519,10 @@
         }
 
         $miempleado['sueldo']=$sueldo;
+        $miempleado['diasaccidenteart']=$diasaccidenteart;
+        $miempleado['diasaccidenteartcantidad']=$diasaccidenteartcantidad;
+        $miempleado['diasaccidenteempleador']=$diasaccidenteempleador;
+        $miempleado['diasaccidenteempleadorcantidad']=$diasaccidenteempleadorcantidad;
         $miempleado['inasistencia']=$inasistencia;
         $miempleado['inasistenciapagas']=$inasistenciapagas;
         $miempleado['inasistenciapagascantidad']=$inasistenciapagascantidad;
@@ -808,6 +836,32 @@
                 </td>
                 <td class="tdWithNumber">
                     <?php echo number_format($miempleado['feriadosnotrabajadospagos'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
+        if($miempleado['diasaccidenteempleador']*1>0){ ?>
+            <tr>
+                <td>31</td>
+                <td>
+                    Dias de Accidente Empleador
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['diasaccidenteempleador'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
+        if($miempleado['diasaccidenteart']*1>0){ ?>
+            <tr>
+                <td>32</td>
+                <td>
+                    Dias de Accidente ART
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['diasaccidenteart'], 2, ",", "."); ?>
                 </td>
                 <td></td>
                 <td></td>

@@ -89,13 +89,18 @@ class ComprasController extends AppController {
 		$this->set(compact('clientes', 'subclientes', 'localidades'));
 	}
 
-	public function cargar($id=null,$periodo=null){
+	/**
+	 * @param null $id
+	 * @param null $periodo
+     */
+	public function cargar($id=null, $periodo=null){
 		$this->loadModel('Localidade');
 		$this->loadModel('Partido');
 		$this->loadModel('Cliente');
 		$this->loadModel('Comprobante');
 		$this->loadModel('Conceptostipo');
 		$this->loadModel('Impcli');
+		$this->loadModel('Cuentascliente');
 
 		$pemes = substr($periodo, 0, 2);
 		$peanio = substr($periodo, 3);
@@ -341,7 +346,33 @@ class ComprasController extends AppController {
 				'Grupocliente.nombre','Cliente.nombre'
 			),
 		));
-		$this->set(compact('lclis'));
+
+		//aca vamos a buscar los movimientos bancarios que pertenezcan a la cuenta
+		//286   110403401   IVA - Credito Fiscal General
+		$optionsCuentascliente=[
+			'contain'=>[
+				'Movimientosbancario'=>[
+                    'Cbu'=>[
+                        'Impcli'=>[
+                            'Impuesto'
+                        ]
+                    ],
+                    'Cuentascliente'=>[
+
+                    ],
+					'conditions'=>[
+						'Movimientosbancario.periodo'=>$periodo
+					]
+				]
+			],
+			'conditions'=>[
+				'Cuentascliente.cuenta_id = 286',
+				'Cuentascliente.cliente_id'=>$id,
+			]
+		];
+		$cuentascliente=$this->Cuentascliente->find('all', $optionsCuentascliente);
+        $this->set(compact('lclis','cuentascliente'));
+
 	}
 
 	public function addajax(){

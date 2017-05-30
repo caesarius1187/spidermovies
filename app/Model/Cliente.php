@@ -290,5 +290,83 @@ class Cliente extends AppModel {
 			'counterQuery' => ''
 		)
 	);
+    public function impuestosActivados($cliid,$periodo){
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+        //A: Es menor que periodo Hasta
+        $esMenorQueHasta = array(
+            //HASTA es mayor que el periodo
+            'OR'=>array(
+                'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+                    'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+                ),
+            )
+        );
+        //B: Es mayor que periodo Desde
+        $esMayorQueDesde = array(
+            'OR'=>array(
+                'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+                    'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+                ),
+            )
+        );
+        //C: Tiene Periodo Hasta 0 NULL
+        $periodoNull = array(
+            'OR'=>array(
+                array('Periodosactivo.hasta'=>null),
+                array('Periodosactivo.hasta'=>""),
+            )
+        );
+        $conditionsImpCliHabilitados = array(
+            //El periodo esta dentro de un desde hasta
+            'AND'=> array(
+                $esMayorQueDesde,
+                'OR'=> array(
+                    $esMenorQueHasta,
+                    $periodoNull
+                )
+            )
+        );
+        $cliente= $this->find('first', array(
+                'contain'=>array(
+                    'Empleado'=>[],
+                    'Impcli'=>[
+                        'Impuesto',
+                        'Periodosactivo'=>[
+                            'conditions'=>$conditionsImpCliHabilitados
+                        ]
+                    ]
+                ),
+                'conditions' => array(
+                    'id' => $cliid,
+                ),
+            )
+        );
+        $impuestosactivos = [];
+        $impuestosactivos['tienebanco'] = false;
+        $impuestosactivos['contabiliza'] = false;
+        $impuestosactivos['tieneEmpleados'] = false;
+        foreach ($cliente['Impcli'] as $impcli) {
+            if(Count($impcli['Periodosactivo'])!=0){
+                if( $impcli['Impuesto']['organismo']=='banco'){
+                    $impuestosactivos['tienebanco']=true;
+                }
+                $impuestosactivos[$impcli['impuesto_id']]=true;
+                if( in_array($impcli['Impuesto']['id'], ['19','5','28','160'])){
+                    $impuestosactivos['contabiliza']=true;
+                }
+            }else{
+                $impuestosactivos[$impcli['impuesto_id']]=false;
+            }
 
+        }
+        if (Count($cliente['Empleado'])!=0) {
+            $impuestosactivos['tieneEmpleados'] = true;
+        }
+        return $impuestosactivos;
+    }
 }

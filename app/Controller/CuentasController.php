@@ -20,29 +20,22 @@ class CuentasController extends AppController {
  */
 	public function view($ClienteId) 
 	{				
-		/*$options = array(
-					'conditions' => array(
-						'Cuentascliente.cliente_id'=> $ClienteId						
-						)
-					);					
-		$cuentasclientes = $this->Cuentascliente->find('all', $options);
-		*/
-
 		$options = array(
-			'contain'=>array(),
-			//'conditions' => array('Cuenta.tipo' => 'rubro'),
-			'fields'=> array('Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.ajuste,cuentascliente.id,cuentascliente.cuenta_id,cuentascliente.nombre'),
+			'contain'=>[],
+			'fields'=> [
+                'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.ajuste,Cuenta.level,
+                Cuentascliente.id,Cuentascliente.cuenta_id,Cuentascliente.nombre'],
 			'joins'=>array(
 				array('table'=>'cuentasclientes', 
 	                  'alias' => 'cuentascliente',
 	                  'type'=>'left',
-	                  'conditions'=> array(
-	                 		'cuentascliente.cuenta_id = Cuenta.id AND cuentascliente.cliente_id = '.$ClienteId
-	           		   )
+	                  'conditions'=> [
+	                 		'cuentascliente.cuenta_id = Cuenta.id',
+						    'cuentascliente.cliente_id'=>$ClienteId
+	           		   ]
                  	),
 				)
 		);
-
 		$cuentas = $this->Cuenta->find('all', $options);
 		$this->set('cuentas',$cuentas);				
 		$this->set('clienteId',$ClienteId);

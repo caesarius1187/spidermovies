@@ -221,7 +221,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                             <?php echo $tareaNombre; ?>
                         </div>
                     <?php
-                    if(!$cliente['Cliente']['cargaFacturaLuz']){/*Es monotributista y no hace contabilidad*/
+                    if($cliente['impuestosactivos']['contabiliza']){
                         $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
                         echo $this->Form->button(
                             'Sumas y Saldos',
@@ -419,7 +419,6 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
 function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tareaFild, $cliente,$Tareahabilitado,$HayImpuestosHabilitados){
     //Recorremos el evento de este periodo (supuestamente vendra uno solo por cada impuesto del cliente)
     //Si el evento en esta tarea esta ""PENDIENTE""
-
     $eventoID = 0;
     $params="";
     if($evento!=null){
@@ -595,26 +594,31 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
                     if($evento['novedadescargadas']){
                       $buttonclass = "buttonImpcliRealizado";
                     }
-                    echo $context->Form->button(
-                        "Sueldos",
-                        array(
-                            'class'=>$buttonclass.' progress-button state-loading',
-                            'onClick'=>"verFormCargarNovedades('".$cliente['Cliente']['id']."','".$periodoSel."')",
-                            'id'=>'buttonCargaNovedade'.$cliente['Cliente']['id'],
-                        ),
-                        array());
-                    $buttonclass = "buttonImpcliListo";
-                    if($evento['bancoscargados']){
-                      $buttonclass = "buttonImpcliRealizado";
+                    if($cliente['impuestosactivos']['tieneEmpleados']) {
+                        echo $context->Form->button(
+                            "Sueldos",
+                            array(
+                                'class' => $buttonclass . ' progress-button state-loading',
+                                'onClick' => "verFormCargarNovedades('" . $cliente['Cliente']['id'] . "','" . $periodoSel . "')",
+                                'id' => 'buttonCargaNovedade' . $cliente['Cliente']['id'],
+                            ),
+                            array());
                     }
-                    echo $context->Form->button(
-                        "Bancos",
-                        array(
-                            'class'=>$buttonclass.' progress-button state-loading',
-                            'onClick'=>"verFormCargarBancos('".$cliente['Cliente']['id']."','".$periodoSel."')",
-                            'id'=>'buttonCargaBancos'.$cliente['Cliente']['id'],
-                        ),
-                        array());
+                     if($cliente['impuestosactivos']['tienebanco']) {
+
+                         $buttonclass = "buttonImpcliListo";
+                         if ($evento['bancoscargados']) {
+                             $buttonclass = "buttonImpcliRealizado";
+                         }
+                         echo $context->Form->button(
+                             "Bancos",
+                             array(
+                                 'class' => $buttonclass . ' progress-button state-loading',
+                                 'onClick' => "verFormCargarBancos('" . $cliente['Cliente']['id'] . "','" . $periodoSel . "')",
+                                 'id' => 'buttonCargaBancos' . $cliente['Cliente']['id'],
+                             ),
+                             array());
+                     }
                     $buttonclass = "buttonImpcliListo";
                     if($evento['honorarioscargador']){
                       $buttonclass = "buttonImpcliRealizado";
@@ -705,7 +709,7 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
                 if($evento['novedadescargadas']){
                   $buttonclass = "buttonImpcli4";
                 }
-                if($cliente['Cliente']['cargaBanco']){
+              if($cliente['impuestosactivos']['tienebanco']){
                   $buttonclass="buttonImpcliListo  progress-button state-loading";
                   $paramsPrepPapeles= "'".$cliente['Cliente']['id']."','".$periodoSel."'";
 

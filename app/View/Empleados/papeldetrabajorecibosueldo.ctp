@@ -24,6 +24,10 @@ if(count($empleado['Valorrecibo'])==0){
                     if(!isset($miempleado['horasDias'])) {
                         $miempleado['basico'] = 0;
                         $miempleado['sueldo'] = 0;
+                        $miempleado['diasaccidenteartcantidad'] = 0;
+                        $miempleado['diasaccidenteempledorcantidad'] = 0;
+                        $miempleado['diasaccidenteart'] = 0;
+                        $miempleado['diasaccidenteempledor'] = 0;
                         $miempleado['inasistencias'] = 0;
                         $miempleado['inasistenciascantidad'] = 0;
                         $miempleado['inasistenciapagas'] = 0;
@@ -97,6 +101,10 @@ if(count($empleado['Valorrecibo'])==0){
                     $basico=0;
                     $adicionales=0;
                     $sueldo=0;
+                    $diasaccidenteart=0;
+                    $diasaccidenteempleador=0;
+                    $diasaccidenteartcantidad=0;
+                    $diasaccidenteempleadorcantidad=0;
                     $inasistencias=0;
                     $inasistenciascantidad=0;
                     $inasistenciapagas=0;
@@ -249,6 +257,22 @@ if(count($empleado['Valorrecibo'])==0){
                         //Sueldo
                         if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='6'/*Total basicos*/){
                             $sueldo += $valorrecibo['valor'];
+                        }
+                        //Dias de Accidente Empleador Cantidad
+                        if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='62'/*Dias de Accidente Empleador*/){
+                            $diasaccidenteempleadorcantidad += $valorrecibo['valor'];
+                        }
+                        //Dias de Accidente ART Cantidad
+                        if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='63'/*Dias de Accidente Empleador*/){
+                            $diasaccidenteartcantidad += $valorrecibo['valor'];
+                        }
+                        //Dias de Accidente ART
+                        if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='73'/*Dias de Accidente ART*/){
+                            $diasaccidenteart += $valorrecibo['valor'];
+                        }
+                        //Dias de Accidente Empleador
+                        if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='122'/*Dias de Accidente ART*/){
+                            $diasaccidenteempleador += $valorrecibo['valor'];
                         }
                         //Horas Decoracion
                         if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='144'/*Horas Decoracion*/){
@@ -537,6 +561,10 @@ if(count($empleado['Valorrecibo'])==0){
                     }
 
                     $miempleado['sueldo']=$sueldo;
+                    $miempleado['diasaccidenteart']=$diasaccidenteart;
+                    $miempleado['diasaccidenteartcantidad']=$diasaccidenteartcantidad;
+                    $miempleado['diasaccidenteempleador']=$diasaccidenteempleador;
+                    $miempleado['diasaccidenteempleadorcantidad']=$diasaccidenteempleadorcantidad;
                     $miempleado['inasistencias']=$inasistencias;
                     $miempleado['inasistenciascantidad']=$inasistenciascantidad;
                     $miempleado['inasistenciapagas']=$inasistenciapagas;
@@ -909,6 +937,48 @@ if(count($empleado['Valorrecibo'])==0){
                                 </td>
                                 <td class="tdWithLeftRightBorder tdWithNumber">
                                     <?php echo number_format($miempleado['feriadosnotrabajadospagos'], 2, ",", "."); ?>
+
+                                </td>
+                                <td class="tdWithLeftRightBorder tdWithNumber">
+                                </td>
+                                <td class="tdWithLeftRightBorder tdWithNumber">
+                                </td>
+                            </tr>
+                        <?php }
+                        if($miempleado['diasaccidenteempleador']*1>0){ ?>
+                            <tr class="trConceptoRecibo">
+                                <td class="tdWithLeftRightBorder">
+                                    31
+                                </td>
+                                <td class="tdWithLeftRightBorder">
+                                    Dias de Accidente Empleador
+                                </td>
+                                <td class="tdWithLeftRightBorder tdWithNumber">
+                                    <?php echo $miempleado['diasaccidenteempleadorcantidad']; ?>
+                                </td>
+                                <td class="tdWithLeftRightBorder tdWithNumber">
+                                    <?php echo number_format($miempleado['diasaccidenteempleador'], 2, ",", "."); ?>
+
+                                </td>
+                                <td class="tdWithLeftRightBorder tdWithNumber">
+                                </td>
+                                <td class="tdWithLeftRightBorder tdWithNumber">
+                                </td>
+                            </tr>
+                        <?php }
+                        if($miempleado['diasaccidenteart']*1>0){ ?>
+                            <tr class="trConceptoRecibo">
+                                <td class="tdWithLeftRightBorder">
+                                    32
+                                </td>
+                                <td class="tdWithLeftRightBorder">
+                                    Dias de Accidente ART
+                                </td>
+                                <td class="tdWithLeftRightBorder tdWithNumber">
+                                    <?php echo $miempleado['diasaccidenteartcantidad']; ?>
+                                </td>
+                                <td class="tdWithLeftRightBorder tdWithNumber">
+                                    <?php echo number_format($miempleado['diasaccidenteart'], 2, ",", "."); ?>
 
                                 </td>
                                 <td class="tdWithLeftRightBorder tdWithNumber">

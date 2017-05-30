@@ -419,6 +419,65 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 </tr>
                 <?php
               }
+              //ahora vamos a recorrer los movimientos bancarios IVA Credito Fiscal y los vamos a mostrar como una compra
+              $movimientonumero=1;
+              if(count($cuentascliente[0])>0){
+                  foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
+                      ?>
+                      <td class="<?php echo $tdClass?>">
+                          <span style='display: none;'> <?php echo $movimientosbancario["fecha"]?></span>
+                          <?php echo date('d-m-Y',strtotime($movimientosbancario["fecha"]))?></td><!--1-->
+                      <?php
+                      $titleComprobanteCompra = "OTROS COMPROBANTES A QUE CUMPLEN CON LA R G  1415-00001-".$movimientonumero;
+                      $labelComprobanteCompra = "OTROS-00001-".$movimientonumero; ?>
+                      <td class="<?php echo $tdClass?>" title="<?php echo $titleComprobanteCompra ?>"><?php echo $labelComprobanteCompra?></td><!--2-->
+                      <td class="<?php echo $tdClass?>"><?php echo $movimientosbancario["Cbu"]["Impcli"]['Impuesto']['nombre']?></td><!--3-->
+                      <td class="<?php echo $tdClass?>">Responsable Inscripto</td><!--4-->
+                      <td class="<?php echo $tdClass?>"><?php echo array_values(array_values($actividades)[0])[0]; ?></td><!--5-->
+                      <td class="<?php echo $tdClass?>"> </td><!--6-->
+                      <td class="<?php echo $tdClass?>">Credito Fiscal</td><!--7-->
+                      <td class="<?php echo $tdClass?>"> </td><!--10-->
+                      <td class="<?php echo $tdClass?>"> </td><!--9-->
+                      <td class="<?php echo $tdClass?>"> </td><!--8-->
+                      <td class="<?php echo $tdClass?>"><?php echo number_format($compra["alicuota"], 2, ",", ".")?>%</td><!--11-->
+                          <?php
+                        $neto = 0;
+                        if($movimientosbancario['alicuota']=='0'){
+
+                        }elseif ($movimientosbancario['alicuota']=='2.5'){
+                            $neto =  $movimientosbancario['debito']/0.025;
+                        }elseif ($movimientosbancario['alicuota']=='5'){
+                            $neto =  $movimientosbancario['debito']/0.05;
+                        }elseif ($movimientosbancario['alicuota']=='10.5'){
+                            $neto =  $movimientosbancario['debito']/0.105;
+                        }elseif ($movimientosbancario['alicuota']=='21'){
+                            $neto =  $movimientosbancario['debito']/0.21;
+                        }elseif ($movimientosbancario['alicuota']=='27'){
+                            $neto =  $movimientosbancario['debito']/0.27;?>
+                        <?php }?>
+                      <td class="<?php echo $tdClass?>"><?php echo number_format( $neto, 2, ",", ".")?></td><!--12-->
+                      <td class="<?php echo $tdClass?>"><?php echo number_format($movimientosbancario['debito'], 2, ",", ".")?></td><!--13-->
+                      <td class="<?php echo $tdClass?>">0,00</td><!--14-->
+                      <td class="<?php echo $tdClass?>">0,00</td><!--15-->
+                      <td class="<?php echo $tdClass?>">0,00</td><!--16-->
+                      <td class="<?php echo $tdClass?>">0,00</td><!--17-->
+                      <td class="<?php echo $tdClass?>">0,00</td><!--18-->
+                      <td class="<?php echo $tdClass?>">0,00</td><!--19-->
+                      <td class="<?php echo $tdClass?>">0,00</td><!--20-->
+                      <td class="<?php echo $tdClass?>"><?php echo number_format($neto*1+$movimientosbancario['debito']*1, 2, ",", ".")?></td><!--22-->
+                      <td class="<?php echo $tdClass?>">0,00</td><!--21-->
+                      <td><?php
+                          $mensajeAlerta= "Esta compra se importo desde Movimientos bancarios ";
+                          echo $this->HTML->image('ii.png',array('style'=>'width:15px;height:15px','title'=>$mensajeAlertaFecha));
+                          ?>
+                          ?></td>
+                      <td>  <span style='display: none;'> <?php echo $movimientosbancario["created"]?></span>
+                          <?php echo date('d-m-Y',strtotime($movimientosbancario["created"]))?></td>
+                      </tr>
+                      <?php
+                      $movimientonumero++;
+                  }
+              }
               ?>
             </tbody>
             <tfoot>

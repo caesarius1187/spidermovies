@@ -38,6 +38,137 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 		</div>
 		<div class="tabsTareaImpuesto" onClick="showDDJJ()" id="tab_DDJJ"><h2>DDJJ</h2></div>
 	</div>
+	<?php
+	if(!$impuestosactivos['contabiliza']){ ?>
+	<div id="divContenedorContabilidad" style="margin-top:10px">  </div>
+	<?php
+	}else{ ?>
+		<div id="divContenedorContabilidad" style="margin-top:10px">
+			<div class="index">
+				<?php
+				$Asientoid=0;
+				$movId=[];
+				if(isset($impcli['Asiento'])){
+					if(count($impcli['Asiento'])>0) {
+						$Asientoid = $impcli['Asiento'][0]['id'];
+						foreach ($impcli['Asiento'][0]['Movimiento'] as $mimovimiento) {
+							$movId[$mimovimiento['Cuentascliente']['cuenta_id']] = $mimovimiento['id'];
+						}
+					}
+				}
+				//ahora vamos a reccorer las cuentas relacionadas al IVA y las vamos a cargar en un formulario de Asiento nuevo
+				echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','controller'=>'asientos','action'=>'add']);
+				echo $this->Form->input('Asiento.0.id',['value'=>$Asientoid]);
+				$d = new DateTime( '01-'.$periodo );
+
+				echo $this->Form->input('Asiento.0.fecha',array(
+					'class'=>'datepicker',
+					'type'=>'text',
+					'label'=>array(
+						'text'=>"Fecha:",
+					),
+					'readonly','readonly',
+					'value'=>$d->format( 't-m-Y' ),
+					'div' => false,
+					'style'=> 'height:9px;display:inline'
+				));
+				echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Devengamiento Monotributo" ,'style'=>'width:250px']);
+				echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Automatico",'style'=>'width:250px']);
+				echo $this->Form->input('Asiento.0.cliente_id',['value'=>$impcli['Cliente']['id'],'type'=>'hidden']);
+				echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcli['Impcli']['id'],'type'=>'hidden']);
+				echo $this->Form->input('Asiento.0.periodo',['value'=>$periodo,'type'=>'hidden']);
+				echo $this->Form->input('Asiento.0.tipoasiento',['value'=>'impuestos','type'=>'hidden'])."</br>";
+				$i=0;
+				$totalDebe=0;
+				$totalHaber=0;
+				foreach ($impcli['Impuesto']['Asientoestandare'] as $asientoestandaractvs) {
+					if(!isset($movId[$asientoestandaractvs['cuenta_id']])){
+						$movId[$asientoestandaractvs['cuenta_id']]=0;
+					}
+					$cuentaclienteid=0;
+					$cuentaclientenombre=$asientoestandaractvs['Cuenta']['nombre'];
+					foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaIVA){
+						if($cuentaclientaIVA['cuenta_id']==$asientoestandaractvs['cuenta_id']){
+							$cuentaclienteid=$cuentaclientaIVA['id'];
+							$cuentaclientenombre=$cuentaclientaIVA['nombre'];
+							break;
+						}
+					}
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['value'=>$movId[$asientoestandaractvs['cuenta_id']],]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
+						'readonly'=>'readonly',
+						'class'=>'datepicker',
+						'type'=>'hidden',
+						'label'=>array(
+							'text'=>"Vencimiento:",
+							"style"=>"display:inline",
+						),
+						'readonly','readonly',
+						'value'=>date('d-m-Y'),
+						'div' => false,
+						'style'=> 'height:9px;display:inline'
+					));
+
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandaractvs['cuenta_id'],'id'=>'cuenta'.$asientoestandaractvs['cuenta_id']]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandaractvs['Cuenta']['numero'],'style'=>'width:82px']);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
+						'label'=>($i!=0)?false:'Debe',
+						'value'=>0,
+						'class'=>"inputDebe "
+					]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
+							'label'=>($i!=0)?false:'Haber',
+							'value'=>0,
+							'class'=>"inputHaber "
+						])."</br>";
+					$i++;
+				}
+
+				echo $this->Form->submit('Contabilizar',['style'=>'display:none']);
+				echo $this->Form->end();
+				$totalDebe=0;
+				$totalHaber=0;
+				echo $this->Form->label('','&nbsp; ',[
+					'style'=>"display: -webkit-inline-box;width:355px;"
+				]);
+				echo $this->Form->label('lblTotalDebe',
+					"$".number_format($totalDebe, 2, ".", ""),
+					[
+						'id'=>'lblTotalDebe',
+						'style'=>"display: inline;"
+					]
+				);
+				echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:100px;"]);
+				echo $this->Form->label('lblTotalHaber',
+					"$".number_format($totalHaber, 2, ".", ""),
+					[
+						'id'=>'lblTotalHaber',
+						'style'=>"display: inline;"
+					]
+				);
+				if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
+					echo $this->Html->image('test-pass-icon.png',array(
+							'id' => 'iconDebeHaber',
+							'alt' => 'open',
+							'class' => 'btn_exit',
+							'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+						)
+					);
+				}else{
+					echo $this->Html->image('test-fail-icon.png',array(
+							'id' => 'iconDebeHaber',
+							'alt' => 'open',
+							'class' => 'btn_exit',
+							'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+						)
+					);
+				}
+				?>
+			</div>
+		</div>
+	<?php } ?>
 	<div id="divRecategorizacion" class="index">
         <table class="tbl_tareas" style="border-collapse: collapse; width:50%;">
 			<thead>

@@ -50,341 +50,331 @@ class ClientesController extends AppController {
 		$conditionsClientesAvance = array();
 		$condicionDeSolicitarParaCliente = array();	
 		if (isset($this->request->data['clientes']['periodomes'])) {
-			$pemes=$this->request->data['clientes']['periodomes'];
-			$peanio=$this->request->data['clientes']['periodoanio'];
-			$filtrodesolicitar=$this->request->data['clientes']['filtrodesolicitar'];
-			$selectby=$this->request->data['clientes']['selectby'];			
-			$this->set('periodomes', $pemes);
-			$this->set('periodoanio', $peanio);
-			//A: Es menor que periodo Hasta
-			$esMenorQueHasta = array(
-				//HASTA es mayor que el periodo
-            	'OR'=>array(
-            		'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
-            		'AND'=>array(
-            			'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
-            			'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
-            			),												            		
-            		)
-            	);
-			//B: Es mayor que periodo Desde
-			$esMayorQueDesde = array(
-				'OR'=>array(
-		    		'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
-		    		'AND'=>array(
-		    			'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
-		    			'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
-		    			),												            		
-		    		)
-			);
-			$periodoNull = array(
-				'OR'=>array(
-            		array('Periodosactivo.hasta'=>null),
-            		array('Periodosactivo.hasta'=>""),												            		
-            		)
-			);
-			//C: Tiene Periodo Hasta 0 NULL
-			$conditionsImpCliHabilitados = array(
-				//El periodo esta dentro de un desde hasta		
-				'AND'=> array(
-						$esMayorQueDesde,
-						'OR'=> array(
-							$esMenorQueHasta,
-							$periodoNull
-							)
-					)
-			);
-			$aplicafiltro=false;
-			if($selectby=='clientes'){
-				$conditionsClientesAvance =  array(
-									                'Cliente.id' => $this->request->data['clientes']['lclis'],  
-									                'Cliente.estado' => 'habilitado',  
-									                'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),				
-									                'Grupocliente.estado' => 'habilitado',  
-									            );
-			}else if($selectby=='grupos'){
-				$conditionsClientesAvance = array(
-									                'Cliente.grupocliente_id' => $this->request->data['clientes']['gclis'],  
-									                'Cliente.estado' => 'habilitado',  
-									                'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),				
-									                'Grupocliente.estado' => 'habilitado',  
-									            );
-			}else if($selectby=='impuestos'){
-				$conditionsClientesAvance = array(									                
-									                'Cliente.estado' => 'habilitado',  
-									                'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),				
-									                'Grupocliente.estado' => 'habilitado',  
-									            );
-				$conditionsImpCliHabilitadosImpuestos = array(
-					//El periodo esta dentro de un desde hasta		
-					'AND'=> array(
-						'Periodosactivo.impcli_id = Impcli.id',
-						$esMayorQueDesde,
-						'OR'=> array(
-							$esMenorQueHasta,
-							$periodoNull
-							)
-					)
-					
-				);
-				$clienteImpuestosOptions = array(
-					'contain'=>array(
-						
-						),
-					'conditions' => array(
-							'Impcli.impuesto_id'=> $this->request->data['clientes']['filtrodeimpuestos']
-						), 
-					'fields'=>array('Impcli.cliente_id'),
-					'joins'=>array(
-						array('table'=>'periodosactivos', 
-			                 'alias' => 'Periodosactivo',
-			                 'type'=>'inner',
-			                 'conditions'=> array(
-			                 	$conditionsImpCliHabilitadosImpuestos
-			           			)
-		                 	),
-						)
-					);
-				$condicionDeSolicitarParaCliente=$this->Impcli->find('list',$clienteImpuestosOptions);
-				$aplicafiltro=true;
-			}else if($selectby=='solicitar'){
-				//Aca vamos a compretar el array $condicionDeSolicitarParaCliente que especifica los clientes que cumplen con las condiciones 
-				//necesarias para superar el filtro seleccionado
-				$conditionsClientesAvance = array(									                
-									                'Cliente.estado' => 'habilitado',  
-									                'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),				
-									                'Grupocliente.estado' => 'habilitado',  
-									            );
-				switch ($filtrodesolicitar) {
-					case 'banco':
-						$conditionsImpCliHabilitadosBanco = array(
-									//El periodo esta dentro de un desde hasta		
-									'AND'=> array(
-											'Periodosactivo.impcli_id = Impcli.id',
-											$esMayorQueDesde,
-											'OR'=> array(
-												$esMenorQueHasta,
-												$periodoNull
-												)
-										)
-									
-								);
-						$clienteBancoOptions = array(
-							'contain'=>array(
-								'Impuesto'=>array(
-									)
-								),
-							'conditions' => array(
-									'Impuesto.organismo'=>'banco'
-								), 
-							'fields'=>array('Impcli.cliente_id'),
-							'joins'=>array(
-								array('table'=>'periodosactivos', 
-					                 'alias' => 'Periodosactivo',
-					                 'type'=>'inner',
-					                 'conditions'=> array(
-					                 	$conditionsImpCliHabilitadosBanco
-					           			)
-				                 	),
-								)
-							);
-						$condicionDeSolicitarParaCliente=$this->Impcli->find('list',$clienteBancoOptions);
-						break;
-					case 'tarjetadecredito':
-						$clienteFacturaEnLinea = array(											
-							'fields'=>array('Impcli.cliente_id'),
-							'joins'=>array(
-								array('table'=>'puntosdeventas', 
-					                 'alias' => 'Puntosdeventa',
-					                 'type'=>'inner',
-					                 'conditions'=> array(
-					                 		'Puntosdeventa.cliente_id = Impcli.cliente_id',
-					                 		'Puntosdeventa.sistemafacturacion = "Factura en Linea"'
-					           			)
-				                 	),
-								)
-							);
-						$clientesConFacturaEnLinea=$this->Impcli->find('list',$clienteFacturaEnLinea);
-						$this->set('clientesConFacturaEnLinea',array_unique(array_values($clientesConFacturaEnLinea)));
-						$clienteTarjetaCreditoOptions=array(
-							'conditions'=>array(
-									"NOT" => array(
-									        "Cliente.id" => array_unique(array_values($clientesConFacturaEnLinea))
-								    )
-								)
-							);
-						$condicionDeSolicitarParaCliente=array_keys($this->Cliente->find('list',$clienteTarjetaCreditoOptions));
-						break;
-					case 'descargawebafip':
-						$clienteDescargaWebAfip = array(											
-							'fields'=>array('Impcli.cliente_id'),
-							'joins'=>array(
-								array('table'=>'puntosdeventas', 
-					                 'alias' => 'Puntosdeventa',
-					                 'type'=>'inner',
-					                 'conditions'=> array(
-					                 		'Puntosdeventa.cliente_id = Impcli.cliente_id',
-					                 		'Puntosdeventa.sistemafacturacion = "Factura en Linea"'
-					           			)
-				                 	),
-								)
-							);
-						$condicionDeSolicitarParaCliente=array_keys($this->Impcli->find('list',$clienteDescargaWebAfip));
-						break;
-					case 'libroivaventas':
-						$clienteDescargaWebAfip = array(											
-							'fields'=>array('Impcli.cliente_id'),
-							'joins'=>array(
-								array('table'=>'puntosdeventas', 
-					                 'alias' => 'Puntosdeventa',
-					                 'type'=>'inner',
-					                 'conditions'=> array(
-					                 		'Puntosdeventa.cliente_id = Impcli.cliente_id',
-					                 		'OR' => array(
-					                 				'Puntosdeventa.sistemafacturacion = "Controlador Fiscal"',
-					                 				'Puntosdeventa.sistemafacturacion = "RECE"',
-				                 				 )
-					           			)
-				                 	),
-								)
-							);
-						$condicionDeSolicitarParaCliente=array_values($this->Impcli->find('list',$clienteDescargaWebAfip));
-						break;
-					case 'fcluz':
-						$conditionsImpCliHabilitadosFacturaLuz = array(
-									//El periodo esta dentro de un desde hasta		
-									'AND'=> array(
-											'Periodosactivo.impcli_id = Impcli.id',
-											$esMayorQueDesde,
-											'OR'=> array(
-												$esMenorQueHasta,
-												$periodoNull
-												)
-										)
-									
-								);
-						$clienteFacturaLuzOptions = array(
-							'contain'=>array(
-								
-								),
-							'conditions' => array(
-									'Impcli.impuesto_id'=> 4/*Monotributo*/
-								), 
-							'fields'=>array('Impcli.cliente_id'),
-							'joins'=>array(
-								array('table'=>'periodosactivos', 
-					                 'alias' => 'Periodosactivo',
-					                 'type'=>'inner',
-					                 'conditions'=> array(
-					                 	$conditionsImpCliHabilitadosFacturaLuz
-					           			)
-				                 	),
-								)
-							);
-						$condicionDeSolicitarParaCliente=$this->Impcli->find('list',$clienteFacturaLuzOptions);
-						break;
-					case 'sueldos':
-					case 'librounico':
-						$conditionsImpCliHabilitadosLibroUnicoSUSS = array(
-									//El periodo esta dentro de un desde hasta		
-									'AND'=> array(
-											'Periodosactivo.impcli_id = Impcli.id',
-											$esMayorQueDesde,
-											'OR'=> array(
-												$esMenorQueHasta,
-												$periodoNull
-												)
-										)
-									
-								);
-						$clienteLibroUnicoSUSSOptions = array(
-							'contain'=>array(
-								
-								),
-							'conditions' => array(
-									'Impcli.impuesto_id'=> 10/*SUSS*/
-								), 
-							'fields'=>array('Impcli.cliente_id'),
-							'joins'=>array(
-								array('table'=>'periodosactivos', 
-					                 'alias' => 'Periodosactivo',
-					                 'type'=>'inner',
-					                 'conditions'=> array(
-					                 	$conditionsImpCliHabilitadosLibroUnicoSUSS
-					           			)
-				                 	),
-								)
-							);
-						$condicionDeSolicitarParaCliente=$this->Impcli->find('list',$clienteLibroUnicoSUSSOptions);
-						break;
-					default:
-						# code...
-					break;
-				}
-				$aplicafiltro=true;
-			}else{
-				$conditionsClientesAvance = array(
-									                'Cliente.estado' => 'habilitado',  
-									                'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),				
-									                'Grupocliente.estado' => 'habilitado',  
-									            );
-			}
-			if($aplicafiltro){
-				$conditionsClientesAvance['Cliente.id'] = $condicionDeSolicitarParaCliente;				
-			}
-			$this->set('condicionDeSolicitarParaCliente',$condicionDeSolicitarParaCliente);
-			$this->set('conditionsClientesAvance',$conditionsClientesAvance);
+            $pemes = $this->request->data['clientes']['periodomes'];
+            $peanio = $this->request->data['clientes']['periodoanio'];
+            $filtrodesolicitar = $this->request->data['clientes']['filtrodesolicitar'];
+            $selectby = $this->request->data['clientes']['selectby'];
+            $this->set('periodomes', $pemes);
+            $this->set('periodoanio', $peanio);
+            //A: Es menor que periodo Hasta
+            $esMenorQueHasta = array(
+                //HASTA es mayor que el periodo
+                'OR' => array(
+                    'SUBSTRING(Periodosactivo.hasta,4,7)*1 > ' . $peanio . '*1',
+                    'AND' => array(
+                        'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= ' . $peanio . '*1',
+                        'SUBSTRING(Periodosactivo.hasta,1,2) >= ' . $pemes . '*1'
+                    ),
+                )
+            );
+            //B: Es mayor que periodo Desde
+            $esMayorQueDesde = array(
+                'OR' => array(
+                    'SUBSTRING(Periodosactivo.desde,4,7)*1 < ' . $peanio . '*1',
+                    'AND' => array(
+                        'SUBSTRING(Periodosactivo.desde,4,7)*1 <= ' . $peanio . '*1',
+                        'SUBSTRING(Periodosactivo.desde,1,2) <= ' . $pemes . '*1'
+                    ),
+                )
+            );
+            $periodoNull = array(
+                'OR' => array(
+                    array('Periodosactivo.hasta' => null),
+                    array('Periodosactivo.hasta' => ""),
+                )
+            );
+            //C: Tiene Periodo Hasta 0 NULL
+            $conditionsImpCliHabilitados = array(
+                //El periodo esta dentro de un desde hasta
+                'AND' => array(
+                    $esMayorQueDesde,
+                    'OR' => array(
+                        $esMenorQueHasta,
+                        $periodoNull
+                    )
+                )
+            );
+            $aplicafiltro = false;
+            if ($selectby == 'clientes') {
+                $conditionsClientesAvance = array(
+                    'Cliente.id' => $this->request->data['clientes']['lclis'],
+                    'Cliente.estado' => 'habilitado',
+                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                    'Grupocliente.estado' => 'habilitado',
+                );
+            } else if ($selectby == 'grupos') {
+                $conditionsClientesAvance = array(
+                    'Cliente.grupocliente_id' => $this->request->data['clientes']['gclis'],
+                    'Cliente.estado' => 'habilitado',
+                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                    'Grupocliente.estado' => 'habilitado',
+                );
+            } else if ($selectby == 'impuestos') {
+                $conditionsClientesAvance = array(
+                    'Cliente.estado' => 'habilitado',
+                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                    'Grupocliente.estado' => 'habilitado',
+                );
+                $conditionsImpCliHabilitadosImpuestos = array(
+                    //El periodo esta dentro de un desde hasta
+                    'AND' => array(
+                        'Periodosactivo.impcli_id = Impcli.id',
+                        $esMayorQueDesde,
+                        'OR' => array(
+                            $esMenorQueHasta,
+                            $periodoNull
+                        )
+                    )
 
-			
+                );
+                $clienteImpuestosOptions = array(
+                    'contain' => array(),
+                    'conditions' => array(
+                        'Impcli.impuesto_id' => $this->request->data['clientes']['filtrodeimpuestos']
+                    ),
+                    'fields' => array('Impcli.cliente_id'),
+                    'joins' => array(
+                        array('table' => 'periodosactivos',
+                            'alias' => 'Periodosactivo',
+                            'type' => 'inner',
+                            'conditions' => array(
+                                $conditionsImpCliHabilitadosImpuestos
+                            )
+                        ),
+                    )
+                );
+                $condicionDeSolicitarParaCliente = $this->Impcli->find('list', $clienteImpuestosOptions);
+                $aplicafiltro = true;
+            } else if ($selectby == 'solicitar') {
+                //Aca vamos a compretar el array $condicionDeSolicitarParaCliente que especifica los clientes que cumplen con las condiciones
+                //necesarias para superar el filtro seleccionado
+                $conditionsClientesAvance = array(
+                    'Cliente.estado' => 'habilitado',
+                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                    'Grupocliente.estado' => 'habilitado',
+                );
+                switch ($filtrodesolicitar) {
+                    case 'banco':
+                        $conditionsImpCliHabilitadosBanco = array(
+                            //El periodo esta dentro de un desde hasta
+                            'AND' => array(
+                                'Periodosactivo.impcli_id = Impcli.id',
+                                $esMayorQueDesde,
+                                'OR' => array(
+                                    $esMenorQueHasta,
+                                    $periodoNull
+                                )
+                            )
 
-			$this->Paginator->settings = array(
-			   'contain'=>array(
-			      'Grupocliente'=>array(
-			      		'fields'=>array('id','nombre'),
-			      	),
-			      'Eventoscliente'=>array(
-			      		'conditions' => array(
-				                'Eventoscliente.periodo =' => $pemes.'-'.$peanio  
-				            ),
-			      		'fields'=>array(
-							'id','periodo','cliente_id',
-							'ventascargadas','comprascargadas','pagosacuentacarados','novedadescargadas',
-							'bancoscargados','honorarioscargador','reciboscargados',
-							'tarea1','tarea3','tarea4','tarea14','banco',
-							'tarjetadecredito','fcventa','descargawebafip','fccompra','libroivaventas',
-							'fcluz','sueldos','librounico'),
-			      	),
-			      'Honorario'=>array(
-			      		'conditions' => array(
-				                'Honorario.periodo =' => $pemes.'-'.$peanio  
-				            ),
-			      		'fields'=>array('id','cliente_id','monto','fecha','periodo','estado','descripcion'),
-			      	),
-			      'Puntosdeventa'=>array(
-			      		'fields'=>array('id','cliente_id','sistemafacturacion','nombre'),
-			      	),
-			      'Impcli'=>array(
-				  	'Cbu'=>[],
-			        'Impuesto'=>array(
-			            'fields'=>array('id','nombre','abreviacion','orden','organismo'),
-			            'conditions'=>array(
-			             	),
-			         ),
-		        	'Eventosimpuesto'=>array(
-			      		'fields'=>array('id','item','partido_id','localidade_id','periodo','montovto','monc','impcli_id','tarea5','tarea13'),
-			      		'conditions'=>array('Eventosimpuesto.periodo' => $pemes.'-'.$peanio  )
-			      	), 
-		        	'Periodosactivo'=>array(
-		        	 		'conditions'=>$conditionsImpCliHabilitados,
-		        	 	),
-					'Conceptosrestante'=>[
-						'conditions'=>[
-							'Conceptosrestante.conceptostipo_id'=>1,/*solo vamos a traer los saldos a favor para que el
+                        );
+                        $clienteBancoOptions = array(
+                            'contain' => array(
+                                'Impuesto' => array()
+                            ),
+                            'conditions' => array(
+                                'Impuesto.organismo' => 'banco'
+                            ),
+                            'fields' => array('Impcli.cliente_id'),
+                            'joins' => array(
+                                array('table' => 'periodosactivos',
+                                    'alias' => 'Periodosactivo',
+                                    'type' => 'inner',
+                                    'conditions' => array(
+                                        $conditionsImpCliHabilitadosBanco
+                                    )
+                                ),
+                            )
+                        );
+                        $condicionDeSolicitarParaCliente = $this->Impcli->find('list', $clienteBancoOptions);
+                        break;
+                    case 'tarjetadecredito':
+                        $clienteFacturaEnLinea = array(
+                            'fields' => array('Impcli.cliente_id'),
+                            'joins' => array(
+                                array('table' => 'puntosdeventas',
+                                    'alias' => 'Puntosdeventa',
+                                    'type' => 'inner',
+                                    'conditions' => array(
+                                        'Puntosdeventa.cliente_id = Impcli.cliente_id',
+                                        'Puntosdeventa.sistemafacturacion = "Factura en Linea"'
+                                    )
+                                ),
+                            )
+                        );
+                        $clientesConFacturaEnLinea = $this->Impcli->find('list', $clienteFacturaEnLinea);
+                        $this->set('clientesConFacturaEnLinea', array_unique(array_values($clientesConFacturaEnLinea)));
+                        $clienteTarjetaCreditoOptions = array(
+                            'conditions' => array(
+                                "NOT" => array(
+                                    "Cliente.id" => array_unique(array_values($clientesConFacturaEnLinea))
+                                )
+                            )
+                        );
+                        $condicionDeSolicitarParaCliente = array_keys($this->Cliente->find('list', $clienteTarjetaCreditoOptions));
+                        break;
+                    case 'descargawebafip':
+                        $clienteDescargaWebAfip = array(
+                            'fields' => array('Impcli.cliente_id'),
+                            'joins' => array(
+                                array('table' => 'puntosdeventas',
+                                    'alias' => 'Puntosdeventa',
+                                    'type' => 'inner',
+                                    'conditions' => array(
+                                        'Puntosdeventa.cliente_id = Impcli.cliente_id',
+                                        'Puntosdeventa.sistemafacturacion = "Factura en Linea"'
+                                    )
+                                ),
+                            )
+                        );
+                        $condicionDeSolicitarParaCliente = array_keys($this->Impcli->find('list', $clienteDescargaWebAfip));
+                        break;
+                    case 'libroivaventas':
+                        $clienteDescargaWebAfip = array(
+                            'fields' => array('Impcli.cliente_id'),
+                            'joins' => array(
+                                array('table' => 'puntosdeventas',
+                                    'alias' => 'Puntosdeventa',
+                                    'type' => 'inner',
+                                    'conditions' => array(
+                                        'Puntosdeventa.cliente_id = Impcli.cliente_id',
+                                        'OR' => array(
+                                            'Puntosdeventa.sistemafacturacion = "Controlador Fiscal"',
+                                            'Puntosdeventa.sistemafacturacion = "RECE"',
+                                        )
+                                    )
+                                ),
+                            )
+                        );
+                        $condicionDeSolicitarParaCliente = array_values($this->Impcli->find('list', $clienteDescargaWebAfip));
+                        break;
+                    case 'fcluz':
+                        $conditionsImpCliHabilitadosFacturaLuz = array(
+                            //El periodo esta dentro de un desde hasta
+                            'AND' => array(
+                                'Periodosactivo.impcli_id = Impcli.id',
+                                $esMayorQueDesde,
+                                'OR' => array(
+                                    $esMenorQueHasta,
+                                    $periodoNull
+                                )
+                            )
+
+                        );
+                        $clienteFacturaLuzOptions = array(
+                            'contain' => array(),
+                            'conditions' => array(
+                                'Impcli.impuesto_id' => 4/*Monotributo*/
+                            ),
+                            'fields' => array('Impcli.cliente_id'),
+                            'joins' => array(
+                                array('table' => 'periodosactivos',
+                                    'alias' => 'Periodosactivo',
+                                    'type' => 'inner',
+                                    'conditions' => array(
+                                        $conditionsImpCliHabilitadosFacturaLuz
+                                    )
+                                ),
+                            )
+                        );
+                        $condicionDeSolicitarParaCliente = $this->Impcli->find('list', $clienteFacturaLuzOptions);
+                        break;
+                    case 'sueldos':
+                    case 'librounico':
+                        $conditionsImpCliHabilitadosLibroUnicoSUSS = array(
+                            //El periodo esta dentro de un desde hasta
+                            'AND' => array(
+                                'Periodosactivo.impcli_id = Impcli.id',
+                                $esMayorQueDesde,
+                                'OR' => array(
+                                    $esMenorQueHasta,
+                                    $periodoNull
+                                )
+                            )
+
+                        );
+                        $clienteLibroUnicoSUSSOptions = array(
+                            'contain' => array(),
+                            'conditions' => array(
+                                'Impcli.impuesto_id' => 10/*SUSS*/
+                            ),
+                            'fields' => array('Impcli.cliente_id'),
+                            'joins' => array(
+                                array('table' => 'periodosactivos',
+                                    'alias' => 'Periodosactivo',
+                                    'type' => 'inner',
+                                    'conditions' => array(
+                                        $conditionsImpCliHabilitadosLibroUnicoSUSS
+                                    )
+                                ),
+                            )
+                        );
+                        $condicionDeSolicitarParaCliente = $this->Impcli->find('list', $clienteLibroUnicoSUSSOptions);
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+                $aplicafiltro = true;
+            } else {
+                $conditionsClientesAvance = array(
+                    'Cliente.estado' => 'habilitado',
+                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                    'Grupocliente.estado' => 'habilitado',
+                );
+            }
+            if ($aplicafiltro) {
+                $conditionsClientesAvance['Cliente.id'] = $condicionDeSolicitarParaCliente;
+            }
+            $this->set('condicionDeSolicitarParaCliente', $condicionDeSolicitarParaCliente);
+            $this->set('conditionsClientesAvance', $conditionsClientesAvance);
+
+            $this->Paginator->settings = array(
+                'contain' => array(
+                    'Grupocliente' => array(
+                        'fields' => array('id', 'nombre'),
+                    ),
+                    'Eventoscliente' => array(
+                        'conditions' => array(
+                            'Eventoscliente.periodo =' => $pemes . '-' . $peanio
+                        ),
+                        'fields' => array(
+                            'id', 'periodo', 'cliente_id',
+                            'ventascargadas', 'comprascargadas', 'pagosacuentacarados', 'novedadescargadas',
+                            'bancoscargados', 'honorarioscargador', 'reciboscargados',
+                            'tarea1', 'tarea3', 'tarea4', 'tarea14', 'banco',
+                            'tarjetadecredito', 'fcventa', 'descargawebafip', 'fccompra', 'libroivaventas',
+                            'fcluz', 'sueldos', 'librounico'),
+                    ),
+                    'Honorario' => array(
+                        'conditions' => array(
+                            'Honorario.periodo =' => $pemes . '-' . $peanio
+                        ),
+                        'fields' => array('id', 'cliente_id', 'monto', 'fecha', 'periodo', 'estado', 'descripcion'),
+                    ),
+                    'Puntosdeventa' => array(
+                        'fields' => array('id', 'cliente_id', 'sistemafacturacion', 'nombre'),
+                    ),
+                    'Impcli' => array(
+                        'Cbu' => [],
+                        'Impuesto' => array(
+                            'fields' => array('id', 'nombre', 'abreviacion', 'orden', 'organismo'),
+                            'conditions' => array(),
+                        ),
+                        'Eventosimpuesto' => array(
+                            'fields' => array('id', 'item', 'partido_id', 'localidade_id', 'periodo', 'montovto', 'monc', 'impcli_id', 'tarea5', 'tarea13'),
+                            'conditions' => array('Eventosimpuesto.periodo' => $pemes . '-' . $peanio)
+                        ),
+                        'Periodosactivo' => array(
+                            'conditions' => $conditionsImpCliHabilitados,
+                        ),
+                        'Conceptosrestante' => [
+                            'conditions' => [
+                                'Conceptosrestante.conceptostipo_id' => 1,/*solo vamos a traer los saldos a favor para que el
 							 IVA puedan sumar su SLD*/
-							'Conceptosrestante.periodo'=>$pemes.'-'.$peanio
-						]
-					],
-		      		'fields'=>array('Impcli.id','Impcli.cliente_id','Impcli.impuesto_id'),
+                                'Conceptosrestante.periodo' => $pemes . '-' . $peanio
+                            ]
+                        ],
+                        'fields' => array('Impcli.id', 'Impcli.cliente_id', 'Impcli.impuesto_id'),
 //				  	'conditions'=>[
 //						"Impcli.impuesto_id NOT IN
 //						(
@@ -392,94 +382,102 @@ class ClientesController extends AppController {
 //							impuestos as Impuesto
 //							where Impuesto.organismo == 'banco')",
 //					]
-					)									       
-			    ),
-			   'conditions' => $conditionsClientesAvance,
-			   'limit' => 25,
-  			   'fields'=>array('Cliente.id','Cliente.nombre','Cliente.grupocliente_id','Cliente.honorario'
-			   ,'Cliente.fchcorteejerciciofiscal','Cliente.tipopersona'),
-			   'order' => array(
-				            ),
-			);
-			$clientes3 = $this->Paginator->paginate('Cliente');
-			$posicion = 0;
-			foreach ($clientes3 as $micliente) {
-				/*Vamos a hacer los controles para saber que elementos mostrar dentro de la tarea "Solicitar"
-					Comprobantes de Compras 
-					Libros IVA Ventas
-					Comprobantes de Ventas
-					Descargar Ventas Web AFIP
-					Resumenes Bancarios
-					Tarjetas de Credito 
-					Factura de Luz
-					Novedades
-					Libros Unicos.
-				Hay que mejorar estas consultas por que no estan distinguiendo entre diferentes domicilios
-				*/
-				/*variables*/
-					$cargaFacturaCompras=1;//Siempre se cargan facturas de compras
-					$cargaFacturaVentas=1;//Siempre se cargan facturas de ventas
-					$cargaLibroIVAVentas=0;
-					//Se carga libro IVA ventas cuando un punto de venta que sea "Controlador Fiscal", "RECE para aplicativo y web services" 
-					$cargaVentasWeb=0;
-					//Se carga libro IVA ventas cuando un punto de venta que sea "Factura en Linea"
-					$cargaTarjetasCredito=0;
-					//si tiene puntos de venta en linea no se piden tarjetas de credito
-					$cargaFacturaLuz=0;
-					//se cargan facturas de luz si se tiene activado Monotributo
-					$cargaNovedades=0;
-					//se cargan novedades si se tiene activado SUSS
-					$cargaLibroUnico=0;
-					//se cargan Libro Unico si se tiene activado SUSS
-					$cargaBanco=0;
-					//se cargan bancos si hay algun impuesto del tipo banco activo
-				if(count($micliente['Puntosdeventa'])!=0){
-					$cargaTarjetasCredito=1;
-				}
-				foreach ($micliente['Puntosdeventa'] as $puntosdeventa) {
-					switch ($puntosdeventa['sistemafacturacion']) {
-						case 'Controlador Fiscal':
-						case 'RECE':
-							$cargaLibroIVAVentas=1;
-							break;
-						case 'Factura en Linea':
-							$cargaVentasWeb=1;
-							$cargaTarjetasCredito=0;
-							break;
-					}
-				}
-				$impclipos=0;
-				foreach ($micliente['Impcli'] as $impcli) {
-					if(count($impcli['Periodosactivo'])!=0){
-						if($impcli['Impuesto']['organismo']=='banco'){
-							$cargaBanco=1;
-						}
-						if($impcli['Impuesto']['id']==4/*Monotributo*/){
-							$cargaFacturaLuz=1;
-						}
-						if($impcli['Impuesto']['id']==10/*SUSS*/){
-							$cargaBanco=1;
-							$cargaNovedades=1;
-							$cargaLibroUnico=1;
-						}
-						$impclipos++;
-					}else{
-						array_splice($micliente['Impcli'], $impclipos, 1);
-					}	
-				}
-				$micliente['Cliente']['cargaFacturaCompras']=$cargaFacturaCompras;
-				$micliente['Cliente']['cargaFacturaVentas']=$cargaFacturaVentas;
-				$micliente['Cliente']['cargaLibroIVAVentas']=$cargaLibroIVAVentas;
-				$micliente['Cliente']['cargaVentasWeb']=$cargaVentasWeb;
-				$micliente['Cliente']['cargaTarjetasCredito']=$cargaTarjetasCredito;
-				$micliente['Cliente']['cargaFacturaLuz']=$cargaFacturaLuz;
-				$micliente['Cliente']['cargaNovedades']=$cargaNovedades;
-				$micliente['Cliente']['cargaLibroUnico']=$cargaLibroUnico;
-				$micliente['Cliente']['cargaBanco']=$cargaBanco;
-				
-				$clientes3[$posicion]=$micliente;
-				$posicion++;
-			}
+                    )
+                ),
+                'conditions' => $conditionsClientesAvance,
+                'limit' => 25,
+                'fields' => array('Cliente.id', 'Cliente.nombre', 'Cliente.grupocliente_id', 'Cliente.honorario'
+                , 'Cliente.fchcorteejerciciofiscal', 'Cliente.tipopersona'),
+                'order' => array(),
+            );
+            $posicion = 0;
+            $clientes3 = $this->Paginator->paginate('Cliente');
+            foreach ($clientes3 as $micliente) {
+                $impuestosActivos= [];
+                $impuestosActivos= $this->Cliente->impuestosActivados($micliente['Cliente']['id'],$pemes . '-' . $peanio);
+                $micliente['impuestosactivos']=$impuestosActivos;
+
+                $clientes3[$posicion]=$micliente;
+                $posicion++;
+            }
+//			foreach ($clientes3 as $micliente) {
+//				/*Vamos a hacer los controles para saber que elementos mostrar dentro de la tarea "Solicitar"
+//					Comprobantes de Compras
+//					Libros IVA Ventas
+//					Comprobantes de Ventas
+//					Descargar Ventas Web AFIP
+//					Resumenes Bancarios
+//					Tarjetas de Credito
+//					Factura de Luz
+//					Novedades
+//					Libros Unicos.
+//				Hay que mejorar estas consultas por que no estan distinguiendo entre diferentes domicilios
+//				*/
+//				/*variables*/
+//					$cargaFacturaCompras=1;//Siempre se cargan facturas de compras
+//					$cargaFacturaVentas=1;//Siempre se cargan facturas de ventas
+//					$cargaLibroIVAVentas=0;
+//					//Se carga libro IVA ventas cuando un punto de venta que sea "Controlador Fiscal", "RECE para aplicativo y web services"
+//					$cargaVentasWeb=0;
+//					//Se carga libro IVA ventas cuando un punto de venta que sea "Factura en Linea"
+//					$cargaTarjetasCredito=0;
+//					//si tiene puntos de venta en linea no se piden tarjetas de credito
+//					$cargaFacturaLuz=0;
+//					//se cargan facturas de luz si se tiene activado Monotributo
+//					$cargaNovedades=0;
+//					//se cargan novedades si se tiene activado SUSS
+//					$cargaLibroUnico=0;
+//					//se cargan Libro Unico si se tiene activado SUSS
+//					$cargaBanco=0;
+//					//se cargan bancos si hay algun impuesto del tipo banco activo
+//				if(count($micliente['Puntosdeventa'])!=0){
+//					$cargaTarjetasCredito=1;
+//				}
+//				foreach ($micliente['Puntosdeventa'] as $puntosdeventa) {
+//					switch ($puntosdeventa['sistemafacturacion']) {
+//						case 'Controlador Fiscal':
+//						case 'RECE':
+//							$cargaLibroIVAVentas=1;
+//							break;
+//						case 'Factura en Linea':
+//							$cargaVentasWeb=1;
+//							$cargaTarjetasCredito=0;
+//							break;
+//					}
+//				}
+//				$impclipos=0;
+//				foreach ($micliente['Impcli'] as $impcli) {
+//					if(count($impcli['Periodosactivo'])!=0){
+//						if($impcli['Impuesto']['organismo']=='banco'){
+//							$cargaBanco=1;
+//						}
+//						if($impcli['Impuesto']['id']==4/*Monotributo*/){
+//							$cargaFacturaLuz=1;
+//						}
+//						if($impcli['Impuesto']['id']==10/*SUSS*/){
+//							$cargaBanco=1;
+//							$cargaNovedades=1;
+//							$cargaLibroUnico=1;
+//						}
+//						$impclipos++;
+//					}else{
+//						array_splice($micliente['Impcli'], $impclipos, 1);
+//					}
+//				}
+//				$micliente['Cliente']['cargaFacturaCompras']=$cargaFacturaCompras;
+//				$micliente['Cliente']['cargaFacturaVentas']=$cargaFacturaVentas;
+//				$micliente['Cliente']['cargaLibroIVAVentas']=$cargaLibroIVAVentas;
+//				$micliente['Cliente']['cargaVentasWeb']=$cargaVentasWeb;
+//				$micliente['Cliente']['cargaTarjetasCredito']=$cargaTarjetasCredito;
+//				$micliente['Cliente']['cargaFacturaLuz']=$cargaFacturaLuz;
+//				$micliente['Cliente']['cargaNovedades']=$cargaNovedades;
+//				$micliente['Cliente']['cargaLibroUnico']=$cargaLibroUnico;
+//				$micliente['Cliente']['cargaBanco']=$cargaBanco;
+//
+//				$clientes3[$posicion]=$micliente;
+//				$posicion++;
+//			}
+
 			//Aca vamos a ordenar los ImpClis del los clientes en funcion de los vencimientos de los Eventos Impuestos
 			foreach ($clientes3 as $mc => $micliente) {
 				for ($i=0;$i<count($micliente['Impcli'])-1;$i++){
@@ -496,6 +494,7 @@ class ClientesController extends AppController {
 				$clientes3[$mc]=$micliente;
 			}
             $this->set('clientes', $clientes3);
+
 			$this->Tareasxclientesxestudio->recursive = 0;
 			$tareascliente = $this->Tareasxclientesxestudio->find('all',[
 						'contain'=>['Tareascliente'],
