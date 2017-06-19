@@ -101,7 +101,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Anexos</label>
     </div>
 </div>
-<div class="index">
+<div class="index" id="divContenedorBSyS" >
     <?php
     echo "<h2>Balance de Sumas y Saldos</h2>";
     echo "<h3>del periodo  01-01-".$fechaInicioConsulta." hasta 01-01-".$fechaFinConsulta."</h3>";
@@ -251,15 +251,14 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
         </tfoot>
     </table>
 </div>
-
-<div class="index">
+<div class="index" id="divContenedorNotas">
     <?php
     echo "<h2>Notas del Estado de Resultado</h2>";
     ?>
-    <table id="tblnotas"  class="tbl_border" cellspacing="0">
+    <table id="tblnotas"  class="tbl_border" cellspacing="0" style="width:600px;">
         <thead>
         <tr class="trnoclickeable">
-            <td colspan="20">
+            <td colspan="20" >
                 Notas a los Estados Contables al 31/12/2016 comparativo con el Ejercicio Anterior
             </td>
         </tr>
@@ -735,14 +734,14 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
         </tfoot>
     </table>
 </div>
-<div class="index">
+<div class="index" id="divContenedorAnexos">
     <?php
     echo "<h2>Anexos</h2>";
     ?>
-    <table id="tblAnexoI"  class="tbl_border" cellspacing="0">
+    <table id="tblAnexoI"  class="tbl_border" cellspacing="0" style="width:600px;">
         <thead>
         <tr>
-            <th colspan="20">
+            <th colspan="20" style="background-color: #91a7ff">
                 Anexo I: Costo de los Bienes Vendidos, Servicios Prestados y de Producción al
                 31/12/2016  comparativo con el Ejercicio Anterior
             </th>
@@ -762,7 +761,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             </td>
         </tr>
         <tr>
-            <td colspan="20">
+            <td colspan="20" style="background-color: #91a7ff">
                 Existencia Inicial
             </td>
 
@@ -883,7 +882,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td></td>
             <td></td>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Total Existencia Inicial
             </th>
@@ -899,7 +898,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             ?>
         </tr>
         <tr>
-            <th colspan="20">
+            <th colspan="20" style="background-color: #91a7ff">
                 Compras
             </th>
         </tr>
@@ -908,17 +907,31 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                 Mercaderías
             </td>
             <?php
+            //vamos a calcular las existencias finales y despues las mostramos mas abajo
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                $totalPeriodo = isset($arrayCuentasxPeriodos['110500013'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110500013'][$periodoMesAMostrar]:0;
+                if(!isset($totalPeriodoExistenciaFinal[$mesAMostrar])){
+                    $totalPeriodoExistenciaFinal[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodoExistenciaFinal[$mesAMostrar]+=$totalPeriodo;
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            $totalPeriodoCompras = [];
             $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
             while($mesAMostrar<=$fechaFinConsulta) {
                 $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
                 $totalPeriodo = isset($arrayCuentasxPeriodos['110506011'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar]:0;
+                $totalPeriodo += $totalPeriodoExistenciaFinal[$mesAMostrar];
+                $totalPeriodo -= $totalPeriodoExistenciaInicial[$mesAMostrar];
+                if(!isset($totalPeriodoCompras[$mesAMostrar])){
+                    $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodoCompras[$mesAMostrar] += $totalPeriodo;
                 echo '<td  class="numericTD">' .
                     number_format($totalPeriodo, 2, ",", ".")
                     . "</td>";
-                if(!isset($totalPeriodoExistenciaInicial[$mesAMostrar])){
-                    $totalPeriodoExistenciaInicial[$mesAMostrar] = 0;//existen estos valores
-                }
-                $totalPeriodoExistenciaInicial[$mesAMostrar]+=$totalPeriodo;
                 $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
             }
             ?>
@@ -928,22 +941,61 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td>
                 Productos Terminados
             </td>
-            <td></td>
-            <td></td>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                $totalPeriodo = isset($arrayCuentasxPeriodos['110502012'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502012'][$periodoMesAMostrar]:0;
+                echo '<td  class="numericTD">' .
+                    number_format($totalPeriodo, 2, ",", ".")
+                    . "</td>";
+                if(!isset($totalPeriodoCompras[$mesAMostrar])){
+                    $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodoCompras[$mesAMostrar]+=$totalPeriodo;
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
                 Producción en Proceso
             </td>
-            <td></td>
-            <td></td>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                $totalPeriodo = isset($arrayCuentasxPeriodos['110504012'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110504012'][$periodoMesAMostrar]:0;
+                echo '<td  class="numericTD">' .
+                    number_format($totalPeriodo, 2, ",", ".")
+                    . "</td>";
+                if(!isset($totalPeriodoCompras[$mesAMostrar])){
+                    $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodoCompras[$mesAMostrar]+=$totalPeriodo;
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
                 Materias Primas e Insumos incorporados a la producción
             </td>
-            <td></td>
-            <td></td>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                $totalPeriodo = isset($arrayCuentasxPeriodos['110506012'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110506012'][$periodoMesAMostrar]:0;
+                echo '<td  class="numericTD">' .
+                    number_format($totalPeriodo, 2, ",", ".")
+                    . "</td>";
+                if(!isset($totalPeriodoCompras[$mesAMostrar])){
+                    $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodoCompras[$mesAMostrar]+=$totalPeriodo;
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
@@ -966,15 +1018,23 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td></td>
             <td></td>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Total de Compras
             </th>
-            <th></th>
-            <th></th>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                echo '<th  class="numericTD">' .
+                    number_format($totalPeriodoCompras[$mesAMostrar], 2, ",", ".")
+                    . "</th>";
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
-            <th colspan="20">
+            <th colspan="20" style="background-color: #91a7ff">
                 Devoluciones de Compras
             </th>
         </tr>
@@ -982,29 +1042,82 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td>
                 Mercaderías
             </td>
-            <td></td>
-            <td></td>
+            <?php
+            $totalPeriodoDevoluciones = [];
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                $totalPeriodo = isset($arrayCuentasxPeriodos['110500014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110500014'][$periodoMesAMostrar]:0;
+                if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
+                    $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
+                echo '<td  class="numericTD">' .
+                    number_format($totalPeriodo, 2, ",", ".")
+                    . "</td>";
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
                 Productos Terminados
             </td>
-            <td></td>
-            <td></td>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                $totalPeriodo = isset($arrayCuentasxPeriodos['110502014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502014'][$periodoMesAMostrar]:0;
+                if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
+                    $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
+                echo '<td  class="numericTD">' .
+                    number_format($totalPeriodo, 2, ",", ".")
+                    . "</td>";
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
                 Producción en Proceso
             </td>
-            <td></td>
-            <td></td>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                $totalPeriodo = isset($arrayCuentasxPeriodos['110504014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110504014'][$periodoMesAMostrar]:0;
+                if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
+                    $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
+                echo '<td  class="numericTD">' .
+                    number_format($totalPeriodo, 2, ",", ".")
+                    . "</td>";
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
                 Materias Primas e Insumos incorporados a la producción
             </td>
-            <td></td>
-            <td></td>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                $totalPeriodo = isset($arrayCuentasxPeriodos['110506014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110506014'][$periodoMesAMostrar]:0;
+                if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
+                    $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
+                echo '<td  class="numericTD">' .
+                    number_format($totalPeriodo, 2, ",", ".")
+                    . "</td>";
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
@@ -1027,12 +1140,20 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td></td>
             <td></td>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Total de Devoluciones de Compras
             </th>
-            <th></th>
-            <th></th>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                echo '<th  class="numericTD">' .
+                    number_format($totalPeriodoDevoluciones[$mesAMostrar], 2, ",", ".")
+                    . "</th>";
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <th>
@@ -1063,14 +1184,24 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <th></th>
         </tr>
         <tr>
-            <th colspan="20">
+            <th colspan="20" style="background-color: #91a7ff">
                 Existencia Final
             </th>
         </tr>
         <tr>
-            <th colspan="20">
+            <td >
                 Mercaderías
-            </th>
+            </td>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                echo '<td  class="numericTD">' .
+                    number_format($totalPeriodoExistenciaFinal[$mesAMostrar], 2, ",", ".")
+                    . "</td>";
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
@@ -1114,7 +1245,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td></td>
             <td></td>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Total Existencia Final
             </th>
@@ -1122,7 +1253,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <th></th>
         </tr>
         <tr>
-            <th colspan="20">
+            <th colspan="20" style="background-color: #91a7ff">
                 Prestación de Servicios
             </th>
         </tr>
@@ -1147,7 +1278,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td></td>
             <td></td>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Total Existencia Final
             </th>
@@ -1164,11 +1295,11 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
         </tbody>
     </table>
 </div>
-<div class="index">
+<div class="index" id="divContenedorEstadosResultados">
     <?php
     echo "<h2>Estados de resultados</h2>";
     ?>
-    <table id="tblestadoderesultado"  class="tbl_border" cellspacing="0">
+    <table id="tblestadoderesultado"  class="tbl_border" cellspacing="0" style="width:1050px;">
         <thead>
         <tr class="trnoclickeable">
             <td colspan="20">Estado de Resultados por el Ejercicio Anual Finalizado el 31/12/2016 comparativo con el

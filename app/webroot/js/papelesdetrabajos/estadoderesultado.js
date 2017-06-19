@@ -69,7 +69,49 @@ $(document).ready(function() {
     //     }
     // });
     var tblsys = $('#tblsys').dataTable().api();
+    CambiarTab("sumasysaldos");
 });
+function CambiarTab(sTab)	{
+    $("#tabSumasYSaldos").attr("class", "cliente_view_tab");
+    $("#tabEstadoDeResultados").attr("class", "cliente_view_tab");
+    $("#tabNotas").attr("class", "cliente_view_tab");
+    $("#tabAnexos").attr("class", "cliente_view_tab");
+
+    if(sTab == "sumasysaldos")
+    {
+        $("#tabSumasYSaldos").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").show();
+        $("#divContenedorNotas").hide();
+        $("#divContenedorAnexos").hide();
+        $("#divContenedorEstadosResultados").hide();
+    }
+    if(sTab == "estadoderesultado")
+    {
+        $("#tabEstadoDeResultados").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divContenedorNotas").hide();
+        $("#divContenedorAnexos").hide();
+        $("#divContenedorEstadosResultados").show();
+    }
+    if (sTab == "notas")
+    {
+
+        $("#tabNotas").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divContenedorNotas").show();
+        $("#divContenedorAnexos").hide();
+        $("#divContenedorEstadosResultados").hide();
+    }
+    if (sTab == "anexos")
+    {
+
+        $("#tabAnexos").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divContenedorNotas").hide();
+        $("#divContenedorAnexos").show();
+        $("#divContenedorEstadosResultados").hide();
+    }
+}
 function imprimir(){
     window.print();
 }
