@@ -71,9 +71,9 @@
 						);
 						echo $this->Form->input('ejercicio',array('value'=>'Resto','type'=>'hidden'));
 					}
-					if($impuestoid==6/*Actividades Varias*/){
-						echo $this->Form->input('Impcliprovincia.minimo');
-					}
+//					if($impuestoid==6/*Actividades Varias*/){
+//						echo $this->Form->input('Impcliprovincia.minimo');
+//					}
 					echo $this->Form->input('jsonactividadcliente',array('type'=>'hidden','value'=>json_encode($actividadclientes)))."</br>";
 
 		foreach ($actividadclientes as $key => $actividadcliente) {
@@ -119,7 +119,7 @@
 			));
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota_id',array('type' => 'select','label'=>'Sugerida'));
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota',array('value'=>$encuadreAlicuotaAlicuota));
-			if($impuestoid==21/*Actividades Economicas*/){
+			if($impuestoid==21/*Actividades Economicas*/||$impuestoid==6/*Actividades Varias*/){
                 $title = "Para actividades no conexas: cargar un minimo para cada actividad.</br>
                           Para actividades conexas: solo cargar el minimo cuyo importe sea mayor, el resto en 0";
 				echo $this->Form->input('Encuadrealicuota.'.$key.'.minimo',array(
@@ -164,7 +164,7 @@ if($mostrarLista&&!isset($error)){ ?>
 				<?php } ?>
  				<td>Año</td>
 				<td>Coeficiente</td>
-				<td>Minimo</td>
+<!--				<td>Minimo</td>-->
  				<td>Sede</td>
  				<td>Ejercicio</td>
  				<?php
@@ -185,7 +185,7 @@ if($mostrarLista&&!isset($error)){ ?>
 						<?php } ?>
          				<td><?php echo $impcliprovincia['Impcliprovincia']['ano'];?></td>
 						<td><?php echo $impcliprovincia['Impcliprovincia']['coeficiente'];?></td>
-						<td><?php echo $impcliprovincia['Impcliprovincia']['minimo'];?></td>
+<!--						<td>--><?php //echo $impcliprovincia['Impcliprovincia']['minimo'];?><!--</td>-->
          				<td><?php echo $impcliprovincia['Impcliprovincia']['sede']? 'SI':'NO';?></td>
          				<td><?php echo $impcliprovincia['Impcliprovincia']['ejercicio'];?></td>
          				<?php

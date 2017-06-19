@@ -587,7 +587,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                 ?>
             </table>
             <?php
-            echo $this->Form->submit('Agregar Nuevos', array('style' => 'width: 200px;float: none;'));
+            echo $this->Form->submit('Agregar Nuevos', array('style' => 'width: 200px;'));
             echo $this->Form->end();
         }
         ?>
@@ -630,81 +630,82 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
         ?>
         <table id="filtros" >
             <tr>
-                <td style="width:20px"></td>
-                <td style="width:75px"></td>
+                <td style="width:106px;padding: 4px 0px;">
+                    Filtros
+                </td>
                 <td style="width:50px">
                     <?php
                     echo $this->Form->input('Filtro.0.comprobante_id', array(
-                            'empty' => 'filtrar',
+                            'empty' => 'Cmprobante',
                             'style'=>"width: 50px;",
                         )
                     );?>
                 </td>
-                <td style="width:65px">
+                <td style="width:65px;padding: 4px 0px;">
                     <?php
                     echo $this->Form->input('Filtro.0.puntosdeventa_id', array(
-                            'empty' => 'filtrar',
+                            'empty' => 'Punto de V.',
                             'style'=>"width: 65px;",
                         )
                     );?>
                 </td>
-                <td style="width:50px"></td>
-                <td style="width:176px">
+                <td style="width:55px"></td>
+                <td style="width:176px;padding: 4px 0px;">
                     <?php
                     echo $this->Form->input('Filtro.0.subcliente_id', array(
-                            'empty' => 'filtrar',
+                            'empty' => 'Cliente',
                             'style'=>"width: 176px;",
                         )
                     );?>
                 </td>
-                <td style="width:80px">
+                <td style="width:80px;padding: 4px 0px;">
                     <?php
                     echo $this->Form->input('Filtro.0.condicioniva', array(
-                            'empty' => 'filtrar',
+                            'empty' => 'Condicion',
                             'style'=>"width: 80px;",
                             'options'=>$condicionesiva,
                         )
                     );?>
                 </td>
-                <td style="width:80px">
+                <td style="width:80px;padding: 4px 0px;">
                     <?php
                     echo $this->Form->input('Filtro.0.actividadcliente_id', array(
-                            'empty' => 'filtrar',
+                            'empty' => 'Actividad',
                             'style'=>"width: 80px;",
                             'options'=>$actividades,
                         )
                     );?>
                 </td>
                 <td style="width:150px"></td>
-                <td style="width:83px">
+                <td style="width:83px;padding: 4px 0px;">
                     <?php
                     echo $this->Form->input('Filtro.0.tipodebito', array(
-                            'empty' => 'filtrar',
+                            'empty' => 'Debito',
                             'style'=>"width: 83px;",
                             'options'=>$tipodebitos,
                         )
                     );?>
                 </td>
-                <td style="width:55px">
+                <td style="width:55px;padding: 4px 0px;">
                     <?php
                     echo $this->Form->input('Filtro.0.alicuota', array(
-                            'empty' => 'filtrar',
+                            'empty' => 'Alicuota',
                             'style'=>"width: 55px;",
                             'options'=>$alicuotas,
                         )
                     );?>
                 </td>
-                <td style="width:100px"></td>
-                <td style="width:100px"></td>
-                <td style="width:70px"></td>
-                <td style="width:70px"></td>
-                <td style="width:70px"></td>
-                <td style="width:70px"></td>
-                <td style="width:70px"></td>
-                <td style="width:70px"></td>
-                <td style="width:70px"></td>
-                <td style="width:70px"></td>
-                <td style="width:70px"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
             </tr>
         </table>
         <?php
@@ -730,8 +731,10 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             }
             return 0;
         }
+        $ventaNumero = 1;
         ?>
         Ventas ya cargadas :
+
         <table style="width: 100%;padding: 0px;margin: 0px;" id="tablaFormVentas" >
             <?php
             $i=1;
@@ -778,10 +781,18 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                         }
                     }
                     if(!$ventaCargadaPreviamente) {
+                        $class = "par";
+                        if ($ventaNumero%2==0){
+                            $class = "par";
+                        }else{
+                            $class = "impar";
+
+                        }
+                        $ventaNumero++;
                         ?>
                         <tr>
                             <td style="width: 100%;padding: 0px;margin: 0px; ">
-                                <div style="margin-top: 1px;background-color: white;" class="ventaFormVertical">
+                                <div style="margin-top: 1px;" class="ventaFormVertical <?php echo $class;?>" >
                                     <?php
                                     echo $this->Form->input('Venta.' . $i . '.i', array(
                                             'label' => ($i + 9) % 10 == 0 ? 'N°' : '',

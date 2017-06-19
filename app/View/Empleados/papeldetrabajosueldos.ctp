@@ -301,6 +301,16 @@ if(count($empleado)==0){
                                     tiene un Acuerdos Remunerativos cargado*/
                                     $valor = $mayorNORemunerativo;
                                     break;
+                                case 161:/*Basico Categoria Minima*/
+                                    /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                    tiene un Acuerdos Remunerativos cargado*/
+                                    $valor = $basicoMinimoCargo;
+                                    break;
+                                case 162:/*Almuerzo o Refrigerio*/
+                                    /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                    tiene un Acuerdos Remunerativos cargado*/
+                                    $valor = 1;
+                                    break;
                                 /*case 36:/*Cuota Sindical aca estabamos guardando la cuota sindical extra en el empleado pero
                                 debe ser la misma para todos dependiendo del convenio
                                     $conceptoobligatorio['nombre'] = $empleado['Empleado']['cuotasindical'];

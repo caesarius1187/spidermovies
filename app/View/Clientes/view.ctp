@@ -1,11 +1,11 @@
 <?php
 echo $this->Html->css('bootstrapmodal');
 echo $this->Html->script('jquery-ui',array('inline'=>false));
-echo $this->Html->script('clientes/view',array('inline'=>false));
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
 echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
 echo $this->Html->script('dataTables.buttons.min.js',array('inline'=>false));
+echo $this->Html->script('clientes/view',array('inline'=>false));
 ?>
 
 <!--Div izquierdo que muestra lista de grupo de clientes con sus clientes-->
@@ -1106,7 +1106,7 @@ if($mostrarView){?>
                 </h2>
             </th>
             <th class="tbl_view_th2">
-                <a href="#nuevo_empleado" class="button_view">
+                <a class="button_view" onclick="loadFormAddEmpleado();">
                     <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
                 </a>
             </th>
@@ -1137,10 +1137,10 @@ if($mostrarView){?>
                         <?php foreach ($cliente['Empleado'] as $empleado): ?>
                             <tr class="empleado" id="rowEmpleado<?php echo $empleado['id']; ?>">
                                 <td><?php echo $empleado['legajo']; ?></td>
-                                <td><?php echo $empleado['dni']; ?></td>
                                 <td><?php echo $empleado['nombre']; ?></td>
+                                <td><?php echo $empleado['dni']; ?></td>
                                 <td><?php echo $empleado['cuit']; ?></td>
-                                <td><?php echo $empleado['fechaingreso']; ?></td>
+                                <td><?php echo date('d-m-Y',strtotime($empleado['fechaingreso'])) ?></td>
                                 <td >
                                     <a href="#"  onclick="loadFormEmpleado(<?php echo $empleado['id']; ?>)" class="button_view">
                                         <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
@@ -1944,7 +1944,12 @@ if($mostrarView){?>
                 echo $this->Form->input('nombre',array('style'=>'width:150px','label'=>'Apellido y nombre'));
                 echo $this->Form->input('cuit',array('label'=>'CUIL','maxlength'=>'11'));
                 echo $this->Form->input('dni',array('label'=>'DNI'));
-
+                echo $this->Form->input('localidade_id',array(
+                    'label'=>'Localidad',
+                    'type'=>'select',
+                    'options'=>$localidades,
+                    'style'=>'width:250px'));
+                echo $this->Form->input('domicilio',array('label'=>'Domicilio','type'=>'text','style'=>'width:250px'));
                 ?>
             </fieldset>
             <fieldset style="border: 1px solid #1e88e5;">

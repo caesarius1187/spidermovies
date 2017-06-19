@@ -537,29 +537,44 @@ $(document).ready(function() {
         }
     }
     function calcularFooterTotales(mitabla){
+            // var mismovimientos =mitabla.rows( '.movimientobancario' ,{order:'applied'}).indexes();
             mitabla.columns( '.sum' ).every( function () {
                 try {
                     var micolumndata = this.data();
                     var columnLength = this.data().length;
+                    var index = 1;
                     if(columnLength > 0){
                         var sum = this
                             .data()
                             .reduce( function (a,b) {
                                 if (a != null && b != null) {
-
                                     if (typeof a === 'string') {
-                                        a = a.replace('.', "");
-                                        a = a.replace(',', ".");
+                                        if(a.charAt(0)=="<"){
+                                            //es un p y no se debe sumar
+                                            a = 0
+                                        }else{
+                                            a = a.replace('.', "");
+                                            a = a.replace(',', ".");
+                                        }
+
                                     }
                                     a = Number(a);
+
                                     if (typeof b === 'string') {
-                                        b = b.replace('.', "");
-                                        b = b.replace(',', ".");
+                                        if(b.charAt(0)=="<"){
+                                            //es un p y no se debe sumar
+                                            b = 0
+                                        }else {
+                                            b = b.replace('.', "");
+                                            b = b.replace(',', ".");
+                                        }
                                     }
                                     b = Number(b);
                                     var resultado = a + b;
+                                    index++;
                                     return resultado;
                                 } else {
+                                    index++;
                                     return 0;
                                 }
                             } );
@@ -567,8 +582,11 @@ $(document).ready(function() {
                             sum = sum.replace('.', "");
                             sum = sum.replace(',', ".");
                             $( this.footer() ).html((sum*1).toFixed(2));
+                            $(mitabla.table().footer()).find(" tr:last td").html((sum*1).toFixed(2));
                         }else{
                             $( this.footer() ).html(sum.toFixed(2));
+                            $(mitabla.table().footer()).find(" tr:last td").html((sum).toFixed(2));
+
                         }
                     }
                 }

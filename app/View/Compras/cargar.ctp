@@ -421,70 +421,85 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               }
               //ahora vamos a recorrer los movimientos bancarios IVA Credito Fiscal y los vamos a mostrar como una compra
               $movimientonumero=1;
-              if(count($cuentascliente[0])>0){
-                  foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
-                      ?>
-                      <td class="<?php echo $tdClass?>">
-                          <span style='display: none;'> <?php echo $movimientosbancario["fecha"]?></span>
-                          <?php echo date('d-m-Y',strtotime($movimientosbancario["fecha"]))?></td><!--1-->
-                      <?php
-                      $titleComprobanteCompra = "OTROS COMPROBANTES A QUE CUMPLEN CON LA R G  1415-00001-".$movimientonumero;
-                      $labelComprobanteCompra = "OTROS-00001-".$movimientonumero; ?>
-                      <td class="<?php echo $tdClass?>" title="<?php echo $titleComprobanteCompra ?>"><?php echo $labelComprobanteCompra?></td><!--2-->
-                      <td class="<?php echo $tdClass?>"><?php echo $movimientosbancario["Cbu"]["Impcli"]['Impuesto']['nombre']?></td><!--3-->
-                      <td class="<?php echo $tdClass?>">Responsable Inscripto</td><!--4-->
-                      <td class="<?php echo $tdClass?>"><?php echo array_values(array_values($actividades)[0])[0]; ?></td><!--5-->
-                      <td class="<?php echo $tdClass?>"> </td><!--6-->
-                      <td class="<?php echo $tdClass?>">Credito Fiscal</td><!--7-->
-                      <td class="<?php echo $tdClass?>"> </td><!--10-->
-                      <td class="<?php echo $tdClass?>"> </td><!--9-->
-                      <td class="<?php echo $tdClass?>"> </td><!--8-->
-                      <td class="<?php echo $tdClass?>"><?php echo number_format($compra["alicuota"], 2, ",", ".")?>%</td><!--11-->
-                          <?php
-                        $neto = 0;
-                        if($movimientosbancario['alicuota']=='0'){
-
-                        }elseif ($movimientosbancario['alicuota']=='2.5'){
-                            $neto =  $movimientosbancario['debito']/0.025;
-                        }elseif ($movimientosbancario['alicuota']=='5'){
-                            $neto =  $movimientosbancario['debito']/0.05;
-                        }elseif ($movimientosbancario['alicuota']=='10.5'){
-                            $neto =  $movimientosbancario['debito']/0.105;
-                        }elseif ($movimientosbancario['alicuota']=='21'){
-                            $neto =  $movimientosbancario['debito']/0.21;
-                        }elseif ($movimientosbancario['alicuota']=='27'){
-                            $neto =  $movimientosbancario['debito']/0.27;?>
-                        <?php }?>
-                      <td class="<?php echo $tdClass?>"><?php echo number_format( $neto, 2, ",", ".")?></td><!--12-->
-                      <td class="<?php echo $tdClass?>"><?php echo number_format($movimientosbancario['debito'], 2, ",", ".")?></td><!--13-->
-                      <td class="<?php echo $tdClass?>">0,00</td><!--14-->
-                      <td class="<?php echo $tdClass?>">0,00</td><!--15-->
-                      <td class="<?php echo $tdClass?>">0,00</td><!--16-->
-                      <td class="<?php echo $tdClass?>">0,00</td><!--17-->
-                      <td class="<?php echo $tdClass?>">0,00</td><!--18-->
-                      <td class="<?php echo $tdClass?>">0,00</td><!--19-->
-                      <td class="<?php echo $tdClass?>">0,00</td><!--20-->
-                      <td class="<?php echo $tdClass?>"><?php echo number_format($neto*1+$movimientosbancario['debito']*1, 2, ",", ".")?></td><!--22-->
-                      <td class="<?php echo $tdClass?>">0,00</td><!--21-->
-                      <td><?php
-                          $mensajeAlerta= "Esta compra se importo desde Movimientos bancarios ";
-                          echo $this->HTML->image('ii.png',array('style'=>'width:15px;height:15px','title'=>$mensajeAlertaFecha));
+              $movNeto=0;
+              $movIVA=0;
+              $movTotal=0;
+              if(isset($cuentascliente[0])) {
+                  if (count($cuentascliente[0]) > 0) {
+                      foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
+                          $tdClass = "tdViewMovBanc" . $movimientosbancario["id"];
                           ?>
-                          ?></td>
-                      <td>  <span style='display: none;'> <?php echo $movimientosbancario["created"]?></span>
-                          <?php echo date('d-m-Y',strtotime($movimientosbancario["created"]))?></td>
-                      </tr>
-                      <?php
-                      $movimientonumero++;
+                          <tr id="rowcompra<?php echo $movimientosbancario["id"]?>" class="movimientobancario">
+                              <td class="<?php echo $tdClass ?>">
+                                  <span style='display: none;'> <?php echo $movimientosbancario["fecha"] ?></span>
+                                  <?php echo date('d-m-Y', strtotime($movimientosbancario["fecha"])) ?></td><!--1-->
+                              <?php
+                              $titleComprobanteCompra = "OTROS COMPROBANTES A QUE CUMPLEN CON LA R G  1415-00001-" . $movimientonumero;
+                              $labelComprobanteCompra = "OTROS-00001-" . $movimientonumero; ?>
+                              <td class="<?php echo $tdClass ?>"
+                                  title="<?php echo $titleComprobanteCompra ?>"><?php echo $labelComprobanteCompra ?></td><!--2-->
+                              <td class="<?php echo $tdClass ?>"><?php echo $movimientosbancario["Cbu"]["Impcli"]['Impuesto']['nombre'] ?></td><!--3-->
+                              <td class="<?php echo $tdClass ?>">Responsable Inscripto</td><!--4-->
+                              <td class="<?php echo $tdClass ?>"><?php echo array_values(array_values($actividades)[0])[0]; ?></td><!--5-->
+                              <td class="<?php echo $tdClass ?>"></td><!--6-->
+                              <td class="<?php echo $tdClass ?>">Credito Fiscal</td><!--7-->
+                              <td class="<?php echo $tdClass ?>"></td><!--10-->
+                              <td class="<?php echo $tdClass ?>"></td><!--9-->
+                              <td class="<?php echo $tdClass ?>"></td><!--8-->
+                              <td class="<?php echo $tdClass ?>"><?php echo number_format($movimientosbancario["alicuota"], 2, ",", ".") ?>
+                                  %
+                              </td><!--11-->
+                              <?php
+                              $neto = 0;
+                              if ($movimientosbancario['alicuota'] == '0') {
+
+                              } elseif ($movimientosbancario['alicuota'] == '2.5') {
+                                  $neto = $movimientosbancario['debito'] / 0.025;
+                              } elseif ($movimientosbancario['alicuota'] == '5') {
+                                  $neto = $movimientosbancario['debito'] / 0.05;
+                              } elseif ($movimientosbancario['alicuota'] == '10.5') {
+                                  $neto = $movimientosbancario['debito'] / 0.105;
+                              } elseif ($movimientosbancario['alicuota'] == '21') {
+                                  $neto = $movimientosbancario['debito'] / 0.21;
+                              } elseif ($movimientosbancario['alicuota'] == '27') {
+                                  $neto = $movimientosbancario['debito'] / 0.27; ?>
+                              <?php } ?>
+                              <td class="<?php echo $tdClass ?>"><p id="nosuma"><?php echo number_format($neto, 2, ",", ".") ?></p></td><!--12-->
+                              <td class="<?php echo $tdClass ?>"><p id="nosuma"><?php echo number_format($movimientosbancario['debito'], 2, ",", ".") ?></p></td><!--13-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--14-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--15-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--16-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--17-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--18-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--19-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--20-->
+                              <td class="<?php echo $tdClass ?>">
+                                  <p id="nosuma">
+                                      <?php echo number_format($neto * 1 + $movimientosbancario['debito'] * 1, 2, ",", ".") ?>
+                                  </p>
+                              </td><!--22-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--21-->
+                              <td><?php
+                                  $mensajeAlerta = "Esta compra se importo desde Movimientos bancarios ";
+                                  $movNeto+=$neto;
+                                  $movIVA+=$movimientosbancario['debito'];
+                                  $movTotal+=$neto * 1 + $movimientosbancario['debito'];
+                                  echo $this->HTML->image('ii.png', array('style' => 'width:15px;height:15px', 'title' => $mensajeAlerta));
+                                  ?>
+                              </td>
+                              <td><span style='display: none;'> <?php echo $movimientosbancario["created"] ?></span>
+                                  <?php echo date('d-m-Y', strtotime($movimientosbancario["created"])) ?></td>
+                          </tr>
+                          <?php
+                          $movimientonumero++;
+                      }
                   }
               }
               ?>
             </tbody>
             <tfoot>
               <tr>
-                  <th >Totales</th><!--1-->
-                  <th ></th><!--2-->
-                  <th ></th><!--3-->
+                  <th colspan = 3>Total Compras</th><!--1-->
                   <th ></th><!--4-->
                   <th ></th><!--5-->
                   <th ></th><!--6-->
@@ -503,6 +518,31 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                   <th ></th><!--19-->
                   <th ></th><!--20-->
                   <th ></th><!--21-->
+                  <th></th><!--22-->
+                  <th></th><!--23 Acciones-->
+                  <th></th><!--24 Creado-->
+                </tr>
+                <tr>
+                  <th colspan = 3>Total Mov. Banc.</th><!--1-->
+                  <th ></th><!--4-->
+                  <th ></th><!--5-->
+                  <th ></th><!--6-->
+                  <th ></th><!--7-->
+                  <th ></th><!--8-->
+                  <th ></th><!--9-->
+                  <th ></th><!--10-->
+                  <th ></th><!--11-->
+                  <th >   <?php echo number_format($movNeto * 1, 2, ",", ".") ?></th><!--12-->
+                  <th >   <?php echo number_format($movIVA * 1, 2, ",", ".") ?></th><!--13-->
+                  <th ></th><!--14-->
+                  <th ></th><!--15-->
+                  <th ></th><!--16-->
+                  <th ></th><!--17-->
+                  <th ></th><!--18-->
+                  <th ></th><!--19-->
+                  <th ></th><!--20-->
+                  <th >   <?php echo number_format($movTotal * 1, 2, ",", ".") ?></th><!--13-->
+
                   <th></th><!--22-->
                   <th></th><!--23 Acciones-->
                   <th></th><!--24 Creado-->

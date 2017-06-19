@@ -193,7 +193,9 @@ $(document).ready(function() {
                             var respuesta = JSON.parse(data);
                             if(respuesta.venta.Venta!=null){
                                 //Incrementar en 1 el numero de comprobante
-                                $( "#VentaNumerocomprobante" ).val($( "#VentaNumerocomprobante" ).val()*1 + 1);
+                                $( "#VentaNumerocomprobante" ).val(
+                                    pad ($( "#VentaNumerocomprobante" ).val()*1 + 1, 8)
+                                 );
                                 //Agregar la fila nueva a la tabla
                                 var  tdClass = "tdViewVenta"+respuesta.venta_id;
                                 var positivo = 1;

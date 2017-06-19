@@ -1,47 +1,88 @@
+<?php
+echo $this->Html->script('mark.min.js',array('inline'=>false));
+?>
+<style>
+	mark{
+		background: yellow;
+		color: black;
+	}
+    mark.current {
+        background: orange;
+    }
+</style>
 <script type="text/javascript">
 	$(document).ready(function() {
+		// jQuery object to save <mark> elements
+		var results,
+		// the class that will be appended to the current
+		// focused element
+		currentClass = "current",
+		// top offset for the jump (the search bar)
+//		offsetTop = 50,
+		// the current index of the focused element
+		currentIndex = 0;
+
+		var nextBtn=$("#nextButton");
+		var prevBtn=$("#prevButton");
+
 	    var iTamPantalla = $(window).height();
 	    var iTamTabla = iTamPantalla - 170;
 	    iTamTabla = (iTamTabla < 100) ? 100 : iTamTabla;
 	    $("#divPlanCuentasStandard").attr("style", "max-height:" + iTamTabla + "px; width:96%; overflow:auto");
-		$("#tblPlanDeCuentas tr").click(function(){
-			var levelClickeado = $(this).attr("levelCuenta")*1;
-			$("#tblPlanDeCuentas tr").each(function(){
-				var level = $(this).attr("levelCuenta")*1;
-				if(level>levelClickeado){
-					if( $(this).is(":visible")){
-						$(this).hide();
-					}else{
-						$(this).show();
-					}
-				}
-			});
+		var context = document.querySelector("#divPlanCuentasStandard");
+		var instance = new Mark(context);
+		$('#txtBuscarCuenta').change(function () {
+//			instance.mark(searchVal);
+            var searchVal = $(this).val();
+            instance.unmark({
+                done: function () {
+                    instance.mark(searchVal, {
+                        separateWordSearch: true,
+                        done: function () {
+                            results = $("#divPlanCuentasStandard").find("mark");
+                            currentIndex = 0;
+                            jumpTo();
+                        }
+                    });
+                }
+            });
 		});
-//		$("#tblPlanDeCuentas").DataTable();
-//	    $('#txtBuscarCuenta').keyup(function () {
-//            var valThis = this.value.toLowerCase();
-//            //var lenght  = this.value.length;
-//            //if (valThis.length > 2)
-//            //{
-//	            $('tr[id^="trCuenta_"]').each(function () {
-//	                var oLabelObj = $(this).find('label');
-//	                var text  = oLabelObj.html();
-//	                var textL = text.toLowerCase();
-//	                if (textL.indexOf(valThis) >= 0)
-//	                {
-//	                    //$(this).slideDown();
-//	                    $(this).show();
-//	                }
-//	                else
-//	                {
-//	                    //$(this).slideUp();
-//	                    $(this).hide();
-//	                }
-//	            });
-//        	//}
-//        });
-	});
+		/**
+		 * Jumps to the element matching the currentIndex
+		 */
+		function jumpTo() {
+			if (results.length) {
+				var position,
+					$current = results.eq(currentIndex);
+				results.removeClass(currentClass);
+				if ($current.length) {
+					$current.addClass(currentClass);
+					position = $current.offset().top - $("#divPlanCuentasStandard").offset().top + $("#divPlanCuentasStandard").scrollTop();
 
+                    $("#divPlanCuentasStandard").animate({
+                        scrollTop: position
+                    }, 800, 'swing');
+
+//					window.scrollTo(0, position);
+				}
+			}
+		}
+		/**
+		 * Next and previous search jump to
+		 */
+		nextBtn.add(prevBtn).on("click", function() {
+			if (results.length) {
+				currentIndex += $(this).is(prevBtn) ? -1 : 1;
+				if (currentIndex < 0) {
+					currentIndex = results.length - 1;
+				}
+				if (currentIndex > results.length - 1) {
+					currentIndex = 0;
+				}
+				jumpTo();
+			}
+		});
+	});
 	function FnActivarCuenta(oObj)
 	{
 		//alert(oObj.checked)	;
@@ -75,7 +116,7 @@
 			echo $this->Html->link(
 	                                'Volver', 
 	                                array(
-	                                    'controller' => 'cuentasclientes', 
+	                                    'controller' => 'Cuentasclientes',
 	                                    'action' => 'plancuentas', $clienteId
 	                                ),
 	                                array(
@@ -87,7 +128,9 @@
 	    <input type="hidden" id="hdnClienteId" value="<?php echo $clienteId; ?>"/>
 	</div>
 	<div style="width:60%;float:right">
-		<input placeholder="Buscar Nro. Cuenta" id="txtBuscarCuenta" type="text" style="float:right; width:80%; margin:5px" />
+		<input placeholder="Buscar Nro. Cuenta" id="txtBuscarCuenta" type="text" style="float:right; width:80%; margin:5px"/>
+		<button data-search="next" style="float:right;" id="nextButton">&darr;</button>
+		<button data-search="prev"style="float:right;" id="prevButton">&uarr;</button>
 	</div>
 </div>
 <div id="divPlanCuentasStandard" class="index">
@@ -96,7 +139,7 @@
 			<tr>
 				<td style="text-align:left">Numero</td>
 				<td style="text-align:left"> </td>
-				<td style="background-color:#a236b1;color:white;text-align:left"> </td>
+				<td style="text-align:left"> </td>
 				<td style="text-align:left"> </td>
 				<td style="text-align:left"> </td>
 				<td style="text-align:left"> </td>
@@ -139,40 +182,38 @@
 				}
 
 				$CuentaId = $cuenta['Cuenta']['id'];
-				$CuentaClienteId = $cuenta['cuentascliente']['id']
+				$CuentaClienteId = isset($cuenta['Cuentascliente']['id'])?$cuenta['Cuentascliente']['id']:0;
 			?>
 			<tr id="trCuenta_<?php echo $CuentaId ?>" style="<?php echo $trStyle?>" levelCuenta="<?php echo $cuenta['Cuenta']['level']?>">
 
 				<td style="">
-					<label><?php echo $cuenta['Cuenta']['level']==1?$cuenta['Cuenta']['numero']:""; ?></label>
+					<?php echo $cuenta['Cuenta']['level']==1?$cuenta['Cuenta']['numero']:""; ?>
 				</td>
 				<td style="">
-					<label><?php echo $cuenta['Cuenta']['level']==2?$cuenta['Cuenta']['numero']:""; ?></label>
+					<?php echo $cuenta['Cuenta']['level']==2?$cuenta['Cuenta']['numero']:""; ?>
 				</td>
 				<td style="">
-					<label><?php echo $cuenta['Cuenta']['level']==3?$cuenta['Cuenta']['numero']:""; ?></label>
+					<?php echo $cuenta['Cuenta']['level']==3?$cuenta['Cuenta']['numero']:""; ?>
 				</td>
 				<td style="">
-					<label><?php echo $cuenta['Cuenta']['level']==4?$cuenta['Cuenta']['numero']:""; ?></label>
+					<?php echo $cuenta['Cuenta']['level']==4?$cuenta['Cuenta']['numero']:""; ?>
 				</td>
 				<td style="">
-					<label><?php echo $cuenta['Cuenta']['level']==5?$cuenta['Cuenta']['numero']:""; ?></label>
+					<?php echo $cuenta['Cuenta']['level']==5?$cuenta['Cuenta']['numero']:""; ?>
 				</td>
 				<td style="">
-					<label><?php echo $cuenta['Cuenta']['level']==6?$cuenta['Cuenta']['numero']:""; ?></label>
+					<?php echo $cuenta['Cuenta']['level']==6?$cuenta['Cuenta']['numero']:""; ?>
 				</td>
 				<td style="">
-					<label><?php echo $cuenta['Cuenta']['level']==7?$cuenta['Cuenta']['numero']:""; ?></label>
+					<?php echo $cuenta['Cuenta']['level']==7?$cuenta['Cuenta']['numero']:""; ?>
 				</td>
 				<td style="width:60%">
-					<label id="lblNombreCuenta_<?php echo $CuentaId ?>">
-						<?php echo h($cuenta['cuentascliente']['nombre']==""?$cuenta['Cuenta']['nombre']:$cuenta['cuentascliente']['nombre']); ?>
-					</label>
+                    <?php echo h($cuenta['Cuentascliente']['nombre']==""?$cuenta['Cuenta']['nombre']:$cuenta['Cuentascliente']['nombre']); ?>
 				</td>
 				<td style="width:10%">
 					<?php
 					if($cuenta['Cuenta']['tipo']=='cuenta'){
-						if ($CuentaId == $cuenta['cuentascliente']['cuenta_id'])
+						if ($CuentaClienteId!=0)
 							echo '<input id="chkCuenta_'.$CuentaId.'_'.$CuentaClienteId.'" checked="checked" onclick="FnActivarCuenta(this)" type="checkbox" value="'.$CuentaId.'" />';
 						else
 							echo '<input id="chkCuenta_'.$CuentaId.'_'.$CuentaClienteId.'" type="checkbox" onclick="FnActivarCuenta(this)" value="'.$CuentaId.'" />';
@@ -181,7 +222,9 @@
 				</td>
 			</tr>
 			<?php
-//				die("me mori");
+				if($cuenta['Cuenta']['level']==3){
+//					die("me mori");
+				}
 			} ?>
 		</tbody>
 		<tfoot>

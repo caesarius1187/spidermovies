@@ -928,6 +928,7 @@ class ComprasController extends AppController {
 				'Compra.periodo'=>$periodo,
 				'OR'=>[
 					'Compra.autorizacion != ""',
+					'(Compra.autorizacion * 1)!= 0',
 					'Compra.autorizacion != (NULL)'
 				]
 			],
@@ -965,54 +966,81 @@ class ComprasController extends AppController {
 		$this->set(compact('folderCompras','folderAlicuotas'));
 	}
 	public function exportartxt($cliid,$periodo){
-	$this->loadModel('Cliente');
+		$this->loadModel('Cliente');
+		$this->loadModel('Cuentascliente');
 
-	$optionsComptras=[
-		'fields'=>['*','count(*) as cantalicuotas'
-			,'sum(total) as total','sum(nogravados) as nogravados','sum(exentos) as exentos'
-			,'sum(ivapercep) as ivapercep','sum(iibbpercep) as iibbpercep','sum(actvspercep) as actvspercep'
-			,'sum(impinternos) as impinternos','sum(impcombustible) as impcombustible'],
-		'contain'=>[
-			'Comprobante',
-			'Provedore'
-		],
-		'conditions'=>[
-			'Compra.cliente_id'=>$cliid,
-			'Compra.periodo'=>$periodo
-		],
-		'group'=>[
-			'Compra.comprobante_id',
-			'Compra.puntosdeventa',
-			//'Compra.alicuota',
-			'Compra.numerocomprobante',
-			'Compra.provedore_id',
-		]
-	];
+		$optionsComptras=[
+			'fields'=>['*','count(*) as cantalicuotas'
+				,'sum(total) as total','sum(nogravados) as nogravados','sum(exentos) as exentos'
+				,'sum(ivapercep) as ivapercep','sum(iibbpercep) as iibbpercep','sum(actvspercep) as actvspercep'
+				,'sum(impinternos) as impinternos','sum(impcombustible) as impcombustible'],
+			'contain'=>[
+				'Comprobante',
+				'Provedore'
+			],
+			'conditions'=>[
+				'Compra.cliente_id'=>$cliid,
+				'Compra.periodo'=>$periodo
+			],
+			'group'=>[
+				'Compra.comprobante_id',
+				'Compra.puntosdeventa',
+				//'Compra.alicuota',
+				'Compra.numerocomprobante',
+				'Compra.provedore_id',
+			]
+		];
 
-	$compras = $this->Compra->find('all',$optionsComptras);
-	$optionsAlicuotas=[
-		'contain'=>[
-			'Comprobante',
-			'Provedore'
-		],
-		'conditions'=>[
-			'Compra.cliente_id'=>$cliid,
-			'Compra.periodo'=>$periodo
-		],
+		$compras = $this->Compra->find('all',$optionsComptras);
+		$optionsAlicuotas=[
+			'contain'=>[
+				'Comprobante',
+				'Provedore'
+			],
+			'conditions'=>[
+				'Compra.cliente_id'=>$cliid,
+				'Compra.periodo'=>$periodo
+			],
 
-	];
+		];
 
-	$alicuotas = $this->Compra->find('all',$optionsAlicuotas);
+		$alicuotas = $this->Compra->find('all',$optionsAlicuotas);
 
-	$optionCliente=[
-		'contain'=>[],
-		'conditions'=>['Cliente.id'=>$cliid]
-	];
-	$cliente = $this->Cliente->find('first',$optionCliente);
+		$optionCliente=[
+			'contain'=>[],
+			'conditions'=>['Cliente.id'=>$cliid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
 
-	$alicuotascodigoreverse = $this->alicuotascodigoreverse;
-	$this->set(compact('compras','alicuotas','cliente','cliid','periodo','alicuotascodigoreverse'));
-}
+		$alicuotascodigoreverse = $this->alicuotascodigoreverse;
+		$this->set(compact('compras','alicuotas','cliente','cliid','periodo','alicuotascodigoreverse'));
+		//aca vamos a buscar los movimientos bancarios que pertenezcan a la cuenta
+		//286   110403401   IVA - Credito Fiscal General
+		$optionsCuentascliente=[
+			'contain'=>[
+				'Movimientosbancario'=>[
+					'Cbu'=>[
+						'Impcli'=>[
+							'Impuesto'
+						]
+					],
+					'Cuentascliente'=>[
+
+					],
+					'conditions'=>[
+						'Movimientosbancario.periodo'=>$periodo
+					]
+				]
+			],
+			'conditions'=>[
+				'Cuentascliente.cuenta_id = 286',
+				'Cuentascliente.cliente_id'=>$cliid,
+			]
+		];
+		$cuentascliente=$this->Cuentascliente->find('all', $optionsCuentascliente);
+		$this->set(compact('cuentascliente'));
+
+	}
 	public function exportartxtpercepcionesiibb($cliid,$periodo){
 		$this->loadModel('Cliente');
 		$optionsComptras=[

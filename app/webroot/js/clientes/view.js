@@ -1,3 +1,5 @@
+var form_empleadoHTML = "";
+
 jQuery(document).ready(function($) {
     $.noConflict();  //Not to conflict with other scripts
     $.fn.filterGroups = function( options ) {
@@ -261,7 +263,7 @@ jQuery(document).ready(function($) {
                         ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormSubcliente('+subclienteID+')" alt="">';
                         tdactions = tdactions + '<form action="'+serverLayoutURL+'/Subclientes/delete/'+subclienteID+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
                         //onclick="eliminarSubcliente('+respuesta.compra_id+')"
                         rowData.push(tdactions);
 
@@ -334,6 +336,9 @@ jQuery(document).ready(function($) {
             });
             return false;
         });
+        $('#PuntosdeventaNombre').change(function(){
+            $('#PuntosdeventaNombre').val(pad($('#PuntosdeventaNombre').val(),5)) ;
+        });
         $('#ProvedoreAddForm').submit(function(){
             //serialize form data
             var formData = $(this).serialize();
@@ -357,7 +362,7 @@ jQuery(document).ready(function($) {
                             ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormProvedore('+provedoreID+')" alt="">';
                         tdactions = tdactions + '<form action="'+serverLayoutURL+'/Provedores/delete/'+provedoreID+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
                         //onclick="eliminarProvedore('+respuesta.compra_id+')"
                         rowData.push(tdactions);
 
@@ -376,53 +381,6 @@ jQuery(document).ready(function($) {
             return false;
         });
         $("#relatedEmpleados").DataTable();
-        $('#EmpleadoAddForm').submit(function(){
-            //serialize form data
-            var formData = $(this).serialize();
-            //get form action
-            var formUrl = $(this).attr('action');
-            $.ajax({
-                type: 'POST',
-                url: formUrl,
-                data: formData,
-                success: function(data,textStatus,xhr){
-                    var respuesta = JSON.parse(data);
-                    callAlertPopint(respuesta.respuesta);
-                    if(respuesta.empleado.Empleado!=null){
-                        var empleadoID = respuesta.empleado.Empleado.id;
-                        var rowData =
-                            [
-                                respuesta.empleado.Empleado.legajo,
-                                respuesta.empleado.Empleado.nombre,
-                                respuesta.empleado.Empleado.dni,
-                                respuesta.empleado.Empleado.cuit,
-                                respuesta.empleado.Empleado.fechaingreso,
-                            ];
-                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormEmpleado('+empleadoID+')" alt="">';
-                        tdactions = tdactions + '<form action="'+serverLayoutURL+'/Empleados/delete/'+empleadoID+'" name="post_58b8299bb3aae846453655" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                        tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
-                        //onclick="eliminarProvedore('+respuesta.compra_id+')"
-                        rowData.push(tdactions);
-
-                        var rowIndex = $('#relatedEmpleados').dataTable().fnAddData(rowData);
-                        var row = $('#relatedEmpleados').dataTable().fnGetNodes(rowIndex);
-                        $(row).attr( 'id', "rowEmpleado"+empleadoID);
-
-                        catchEliminarEmpleado();
-                    }
-                    location.hash ="#x";
-                    $('#EmpleadoAddForm input').val('');
-                },
-                error: function(xhr,textStatus,error){
-                    callAlertPopint(textStatus);
-                }
-            });
-            return false;
-        });
-        // $("#EmpleadoConveniocolectivotrabajoId").change(function () {
-        //     $('#EmpleadoCargoId').filterGroups({groupSelector: '#EmpleadoConveniocolectivotrabajoId', });
-        // });
-        $('#EmpleadoCargoId').filterGroups({groupSelector: '#EmpleadoConveniocolectivotrabajoId', });
 
         catchEliminarProvedore();
         catchEliminarEmpleado();
@@ -441,7 +399,13 @@ jQuery(document).ready(function($) {
         $("#divCliente_Info").css("height",sClienteInfoHeight + "px");
         reloadDatePickers();
         $('.chosen-select').chosen({search_contains:true});
+
+        "vamos a guardar este html en una variable por que tenemos que cargarlo en Modal"
+        form_empleadoHTML = $("#form_empleado").html();
+        $("#form_empleado").html("");
+
 });
+
 /*Labels*/
 
 function activateLabelsFunctionality(){
@@ -1865,13 +1829,13 @@ function loadSubclientes(cliid){
                     respuesta.subclientes.forEach(function(subcliente){
                         var rowData =
                             [
-                                subcliente.Subcliente.nombre,
                                 subcliente.Subcliente.cuit,
                                 subcliente.Subcliente.dni,
+                                subcliente.Subcliente.nombre,
                             ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormSubcliente('+subcliente.Subcliente.id+')" alt="">';
                         tdactions = tdactions + '<form action="'+serverLayoutURL+'/Subclientes/delete/'+subcliente.Subcliente.id+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
                         //onclick="eliminarSubcliente('+respuesta.compra_id+')"
                         rowData.push(tdactions);
 
@@ -1911,7 +1875,7 @@ function loadProvedores(cliid){
                             ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormProvedore('+provedore.Provedore.id+')" alt="">';
                         tdactions = tdactions + '<form action="'+serverLayoutURL+'/Provedores/delete/'+provedore.Provedore.id+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
+                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
                         //onclick="eliminarProvedore('+respuesta.compra_id+')"
                         rowData.push(tdactions);
 
@@ -1968,6 +1932,73 @@ function loadFormProvedore(provedorid){
         });
     });
 }
+function loadFormAddEmpleado(){
+    jQuery(document).ready(function($) {
+
+
+
+        $('#myModal').on('show.bs.modal', function () {
+            $('#myModal').find('.modal-title').html('Agregar Empleado');
+            $('#myModal').find('.modal-body').html(form_empleadoHTML);
+            $('#EmpleadoAddForm').submit(function(){
+                //serialize form data
+                var formData = $(this).serialize();
+                //get form action
+                var formUrl = $(this).attr('action');
+                $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(data,textStatus,xhr){
+                        $('#myModal').modal('hide');
+                        var respuesta = JSON.parse(data);
+                        callAlertPopint(respuesta.respuesta);
+                        if(respuesta.empleado.Empleado!=null){
+                            var empleadoID = respuesta.empleado.Empleado.id;
+                            var rowData =
+                                [
+                                    respuesta.empleado.Empleado.legajo,
+                                    respuesta.empleado.Empleado.nombre,
+                                    respuesta.empleado.Empleado.dni,
+                                    respuesta.empleado.Empleado.cuit,
+                                    respuesta.empleado.Empleado.fechaingreso,
+                                ];
+                            var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormEmpleado('+empleadoID+')" alt="">';
+                            tdactions = tdactions + '<form action="'+serverLayoutURL+'/Empleados/delete/'+empleadoID+'" name="post_58b8299bb3aae846453655" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
+                            tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                            //onclick="eliminarProvedore('+respuesta.compra_id+')"
+                            rowData.push(tdactions);
+
+                            var rowIndex = $('#relatedEmpleados').dataTable().fnAddData(rowData);
+                            var row = $('#relatedEmpleados').dataTable().fnGetNodes(rowIndex);
+                            $(row).attr( 'id', "rowEmpleado"+empleadoID);
+
+                            catchEliminarEmpleado();
+                        }
+                        location.hash ="#x";
+                        $('#EmpleadoAddForm input').val('');
+
+                    },
+                    error: function(xhr,textStatus,error){
+                        $('#myModal').modal('hide');
+                        callAlertPopint(textStatus);
+                    }
+                });
+                return false;
+            });
+            $('.chosen-select').chosen({search_contains:true});
+            reloadDatePickers();
+            $('#EmpleadoAddForm #EmpleadoCargoId').filterGroups({groupSelector: '#EmpleadoAddForm #EmpleadoConveniocolectivotrabajoId', });
+        });
+        $('#myModal').modal('show');
+
+        // Since confModal is essentially a nested modal it's enforceFocus method
+        // must be no-op'd or the following error results
+        // "Uncaught RangeError: Maximum call stack size exceeded"
+        // But then when the nested modal is hidden we reset modal.enforceFocus
+
+    });
+}
 function loadFormEmpleado(empid){
     jQuery(document).ready(function($) {
         $.ajax({
@@ -1975,59 +2006,64 @@ function loadFormEmpleado(empid){
             url: serverLayoutURL+"/empleados/edit/"+empid,
             data: "",
             success: function(data,textStatus,xhr){
-                $("#form_modificar_empleado").html(data);
-                //$("#form_modificar_domicilio").width("600px");
-                $('.chosen-select').chosen({search_contains:true});
-                location.href='#modificar_empleado';
-                reloadDatePickers();
-                $('#EmpleadoEditForm #EmpleadoCargoId').filterGroups({groupSelector: '#EmpleadoEditForm #EmpleadoConveniocolectivotrabajoId', });
-                $('#EmpleadoEditForm').submit(function(){
-                    //serialize form data
-                    var formData = $(this).serialize();
-                    //get form action
-                    var formUrl = $(this).attr('action');
-                    $.ajax({
-                        type: 'POST',
-                        url: formUrl,
-                        data: formData,
-                        success: function(data,textStatus,xhr){
-                            var respuesta = JSON.parse(data);
-                            callAlertPopint(respuesta.respuesta);
-                            if(respuesta.empleado.Empleado!=null){
-                                var empleadoID = respuesta.empleado.Empleado.id;
-                                var rowData =
-                                    [
-                                        respuesta.empleado.Empleado.legajo,
-                                        respuesta.empleado.Empleado.nombre,
-                                        respuesta.empleado.Empleado.dni,
-                                        respuesta.empleado.Empleado.cuit,
-                                        respuesta.empleado.Empleado.fechaingreso,
-                                    ];
-                                var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormEmpleado('+empleadoID+')" alt="">';
-                                tdactions = tdactions + '<form action="'+serverLayoutURL+'/Empleados/delete/'+empleadoID+'" name="post_58b8299bb3aae846453655" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                                tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20"  alt="Eliminar"></a>';
-                                //onclick="eliminarProvedore('+respuesta.compra_id+')"
-                                rowData.push(tdactions);
+                $('#myModal').on('show.bs.modal', function () {
+                        $('#myModal').find('.modal-title').html('Agregar Empleado');
+                        $('#myModal').find('.modal-body').html(data);
+                    $('.chosen-select').chosen({search_contains:true});
+                    reloadDatePickers();
+                    $('#EmpleadoEditForm #EmpleadoCargoId').filterGroups({groupSelector: '#EmpleadoEditForm #EmpleadoConveniocolectivotrabajoId', });
+                    $('#EmpleadoEditForm').submit(function(){
+                        //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                            type: 'POST',
+                            url: formUrl,
+                            data: formData,
+                            success: function(data,textStatus,xhr){
+                                $('#myModal').modal('hide');
+                                var respuesta = JSON.parse(data);
+                                callAlertPopint(respuesta.respuesta);
+                                if(respuesta.empleado.Empleado!=null){
+                                    var empleadoID = respuesta.empleado.Empleado.id;
+                                    var rowData =
+                                        [
+                                            respuesta.empleado.Empleado.legajo,
+                                            respuesta.empleado.Empleado.nombre,
+                                            respuesta.empleado.Empleado.dni,
+                                            respuesta.empleado.Empleado.cuit,
+                                            respuesta.empleado.Empleado.fechaingreso,
+                                        ];
+                                    var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormEmpleado('+empleadoID+')" alt="">';
+                                    tdactions = tdactions + '<form action="'+serverLayoutURL+'/Empleados/delete/'+empleadoID+'" name="post_58b8299bb3aae846453655" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
+                                    tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                                    //onclick="eliminarProvedore('+respuesta.compra_id+')"
+                                    rowData.push(tdactions);
 
-                                var rowIndex = $('#relatedEmpleados').dataTable().fnAddData(rowData);
-                                var row = $('#relatedEmpleados').dataTable().fnGetNodes(rowIndex);
-                                $(row).attr( 'id', "rowEmpleado"+empleadoID);
+                                    var rowIndex = $('#relatedEmpleados').dataTable().fnAddData(rowData);
+                                    var row = $('#relatedEmpleados').dataTable().fnGetNodes(rowIndex);
+                                    $(row).attr( 'id', "rowEmpleado"+empleadoID);
 
-                                catchEliminarEmpleado();
-                            }
-                            // var tr = $(this).closest('tr');
-                            var tr = $("#rowEmpleado"+empid);
-                            $('#relatedEmpleados').dataTable().fnDeleteRow(tr);
+                                    catchEliminarEmpleado();
+                                }
+                                // var tr = $(this).closest('tr');
+                                var tr = $("#rowEmpleado"+empid);
+                                $('#relatedEmpleados').dataTable().fnDeleteRow(tr);
 //                            $("#rowEmpleado"+empid).replaceWith(data);
-                            catchEliminarEmpleado();
-                            location.hash ="#x";
-                        },
-                        error: function(xhr,textStatus,error){
-                            callAlertPopint(textStatus);
-                        }
+                                catchEliminarEmpleado();
+                                location.hash ="#x";
+                            },
+                            error: function(xhr,textStatus,error){
+                                $('#myModal').modal('hide');
+                                callAlertPopint(textStatus);
+                            }
+                        });
+                        return false;
                     });
-                    return false;
                 });
+                $('#myModal').modal('show');
+
             },
             error: function(xhr,textStatus,error){
                 callAlertPopint(textStatus);
@@ -2181,5 +2217,8 @@ function reloadDatePickers(){
 						        });	
  	});		
 }
-
+function pad (str, max) {
+    str = str.toString();
+    return str.length < max ? pad("0" + str, max) : str;
+}
 

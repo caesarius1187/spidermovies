@@ -149,8 +149,27 @@ class AsientosController extends AppController {
             $respuesta = array('respuesta'=>'');
             foreach ($this->request->data['Asiento'] as $a => $asientoAGuardar){
                 //si el numero es 0 vamos a buscar el numero mas alto para editarlo
-
-
+                if($this->request->data['Asiento'][$a]['id']==0){
+                    $maxnumeroasiento = $this->Asiento->find('all',[
+                            'conditions' => [
+                                'Asiento.cliente_id' => $this->request->data['Asiento'][$a]['cliente_id'],
+                            ],
+                            'fields' => array('MAX(Asiento.numero) AS maxnumero'),
+                            'group by' => 'Asiento.cliente_id',
+                        ]
+                    );
+                    $maxnumero= $maxnumeroasiento[0][0]['maxnumero']*1+1;
+                    $this->request->data['Asiento'][$a]['numero']=$maxnumero;
+                }else{
+                    $asiento = $this->Asiento->find('first',[
+                            'contain' => [],
+                            'conditions' => [
+                                'Asiento.id' => $this->request->data['Asiento'][$a]['id'],
+                            ],
+                        ]
+                    );
+                    $this->request->data['Asiento'][$a]['numero']=$asiento['Asiento']['numero'];
+                }
                 $this->request->data('Asiento.'.$a.'.fecha',date('Y-m-d',strtotime($this->request->data['Asiento'][$a]['fecha'])));
 
                 if ($this->Asiento->save($this->request->data['Asiento'][$a])) {
@@ -836,4 +855,42 @@ class AsientosController extends AppController {
         $this->set(compact('cliid','cliente','periodo','cuentasclientes','asientosyacargados','cuentaxcuentacliente'));
         $this->layout = 'ajax';
     }
+//    public function numerarasientos(){
+//
+//        ini_set('max_execution_time', 600);
+//        $optionsAsientos = array(
+//            'contain'=>[],
+//            'conditions' => array(
+//            ),
+//            'order'=>[
+//                'Asiento.cliente_id',
+//                'Asiento.id'
+//            ]
+//        );
+//        $asientos = $this->Asiento->find('all', $optionsAsientos);
+//        $numeroAsiento = 1;
+//        $clienteActual = $asientos[0]['Asiento']['cliente_id'];
+//        $respuesta = [];
+//        foreach ($asientos as $asiento) {
+//            $clientenuevo = $asiento['Asiento']['cliente_id'];
+//            if($clienteActual!=$clientenuevo){
+//                $numeroAsiento=1;
+//                $clienteActual = $clientenuevo;
+//            }
+//            $this->Asiento->read(null, $asiento['Asiento']['id']);
+//            $this->Asiento->set('numero',$numeroAsiento);
+//            if(!isset($respuesta[$asiento['Asiento']['cliente_id']]))
+//                $respuesta[$asiento['Asiento']['cliente_id']]=[];
+//            if($this->Asiento->save()){
+//                $respuesta[$asiento['Asiento']['cliente_id']][]=$asiento['Asiento']['id']."_".$numeroAsiento;
+//            }else{
+//                $respuesta[$asiento['Asiento']['cliente_id']][]=$asiento['Asiento']['id']."_".$numeroAsiento."ERROR";
+//            }
+//            $numeroAsiento ++;
+//        }
+//        $this->set('data',$respuesta);
+//        $this->autoRender=false;
+//        $this->layout = 'ajax';
+//        $this->render('serializejson');
+//    }
 }

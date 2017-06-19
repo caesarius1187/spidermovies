@@ -121,7 +121,7 @@ class ImpcliprovinciasController extends AppController {
 				);
 				$impcliConvenio = $this->Impcli->find('first', $optionsConvenio);
 				if(!isset($impcliConvenio['Impcliprovincia'])||count($impcliConvenio['Impcliprovincia'])==0){
-					//NO hay Convenio Multilateral, preguntemos si hay Actividades Varias
+					//NO hay Convenio Multilateral, preguntemos si hay Actividades Economicas
 					$optionsConvenio = array(
 						'contain'=>array(
 							'Impcliprovincia'
@@ -173,22 +173,40 @@ class ImpcliprovinciasController extends AppController {
 				}
 				$conditionAlicuota=array(" (`Alicuota`.`partido_id` is null OR `Alicuota`.`partido_id` = '')");
 			}else{
-				$options = array(
-					'conditions' => array('Impcliprovincia.impcli_id' => $impcliid),
-					'contain' => array(
-						'Encuadrealicuota'=>array(
-							'Actividadcliente'=>array(
-								'Actividade',
-								'conditions'=>array('Actividadcliente.cliente_id' => $impcli['Impcli']['cliente_id']),
-								)
-							),
-						'Partido',
-						)
-					);
-				$this->request->data = $this->Impcliprovincia->find('first', $options);	
+//				$options = array(
+//					'conditions' => array('Impcliprovincia.impcli_id' => $impcliid),
+//					'contain' => array(
+//						'Encuadrealicuota'=>array(
+//							'Actividadcliente'=>array(
+//								'Actividade',
+//								'conditions'=>[
+//									'Actividadcliente.cliente_id' => $impcli['Impcli']['cliente_id']
+//								],
+//								)
+//							),
+//						'Partido',
+//						)
+//					);
+//				$this->request->data = $this->Impcliprovincia->find('first', $options);
 				$partidos = $this->Impcliprovincia->Partido->find('list');
 				$this->set(compact('partidos'));
 				$conditionAlicuota=array(" (`Alicuota`.`localidade_id` is null OR `Alicuota`.`localidade_id` = '')");
+
+                $mostrarLista=true;
+                $options = array(
+                    'conditions' => array('Impcliprovincia.impcli_id' => $impcliid),
+                    'contain' => array(
+                        'Encuadrealicuota'=>array(
+                            'Actividadcliente'=>array(
+                                'Actividade',
+                                'conditions'=>array('Actividadcliente.cliente_id' => $impcli['Impcli']['cliente_id']),
+                            )
+                        ),
+                        'Partido',
+                    )
+                );
+                $this->set('impcliprovincias', $this->Impcliprovincia->find('all', $options));
+                $partidos = $this->Impcliprovincia->Partido->find('list');
 			}
 			//Aca vamos a llevas las actividades de los clientes con las alicuotas que tienen relacionadas
 			//podriamos filtrar esto para traer solo las de Localidad o Partido segun corresponda al impuesto seleccionado
@@ -357,34 +375,35 @@ class ImpcliprovinciasController extends AppController {
 						'conditions'=>array('Localidade.partido_id'=>$provinciasActivadas),
 						'fields'=>array('Localidade.id','Localidade.nombre','Partido.nombre'),
 						'order'=>array('Partido.nombre','Localidade.nombre')
-					); 
+					);
 					$localidades = $this->Localidade->find('list',$conditionsLocalidades);
 					$this->set(compact('localidades'));
 					$this->set(compact('provinciasActivadas'));
 				}
 				$conditionAlicuota=array(" (`Alicuota`.`partido_id` is null OR `Alicuota`.`partido_id` = '')");
 			}else{
-				$options = array(
-					'conditions' => array(
-						'Impcliprovincia.impcli_id' => $impcliid,
-						'Impcliprovincia.id' => $id
-					),
-					'contain' => array(
-						'Encuadrealicuota'=>array(
-							'Actividadcliente'=>array(
-								'Actividade',
-								'conditions'=>array('Actividadcliente.cliente_id' => $impcli['Impcli']['cliente_id']),
-							)
-						),
-						'Partido',
-					)
-				);
-				$impcliprovincia=$this->Impcliprovincia->find('all', $options);
-				$this->set('impcliprovincia',$impcliprovincia );
-				$this->request->data=$impcliprovincia;
-				$partidos = $this->Impcliprovincia->Partido->find('list');
-				$this->set(compact('partidos'));
-				$conditionAlicuota=array(" (`Alicuota`.`localidade_id` is null OR `Alicuota`.`localidade_id` = '')");
+                $mostrarLista=true;
+                $options = array(
+                    'conditions' => array(
+                        'Impcliprovincia.impcli_id' => $impcliid,
+                        'Impcliprovincia.id' => $id
+                    ),
+                    'contain' => array(
+                        'Encuadrealicuota'=>array(
+                            'Actividadcliente'=>array(
+                                'Actividade',
+                                'conditions'=>array('Actividadcliente.cliente_id' => $impcli['Impcli']['cliente_id']),
+                            )
+                        ),
+                        'Partido',
+                    )
+                );
+                $impcliprovincia = $this->Impcliprovincia->find('first', $options);
+                $this->set('impcliprovincia',$impcliprovincia );
+                $this->request->data=$impcliprovincia;
+                $partidos = $this->Impcliprovincia->Partido->find('list');
+                $this->set(compact('partidos'));
+                $conditionAlicuota=array(" (`Alicuota`.`localidade_id` is null OR `Alicuota`.`localidade_id` = '')");
 			}
 //			//Aca vamos a llevas las actividades de los clientes con las alicuotas que tienen relacionadas
 //			//podriamos filtrar esto para traer solo las de Localidad o Partido segun corresponda al impuesto seleccionado

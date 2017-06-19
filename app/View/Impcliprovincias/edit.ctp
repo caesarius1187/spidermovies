@@ -71,9 +71,9 @@
 						);
 						echo $this->Form->input('ejercicio',array('value'=>'Resto','type'=>'hidden'));
 					}
-					if($impuestoid==6/*Actividades Varias*/){
-						echo $this->Form->input('Impcliprovincia.minimo');
-					}
+//					if($impuestoid==6/*Actividades Varias*/){
+//						echo $this->Form->input('Impcliprovincia.minimo');
+//					}
 					echo $this->Form->input('jsonactividadcliente',array('type'=>'hidden','value'=>json_encode($actividadclientes)))."</br>";
 
 					foreach ($actividadclientes as $key => $actividadcliente) {
@@ -118,7 +118,7 @@
 							),
 						));
 						echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota',array('value'=>$encuadreAlicuotaAlicuota));
-						if($impuestoid==21/*Actividades Economicas*/){
+						if($impuestoid==21/*Actividades Economicas*/||$impuestoid==6/*Actividades Varias*/){
 							$title = "Para actividades no conexas: cargar un minimo para cada actividad.</br>
                           Para actividades conexas: solo cargar el minimo cuyo importe sea mayor, el resto en 0";
 							echo $this->Form->input('Encuadrealicuota.'.$key.'.minimo',array(

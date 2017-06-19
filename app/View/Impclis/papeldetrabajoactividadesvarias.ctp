@@ -105,6 +105,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 			$totalesProvincia[$provinciaid]['TotalArticulo2']=array();
 			$totalesProvincia[$provinciaid]['porcentajes']=array();
 			$totalesProvincia[$provinciaid]['TotalBaseDeterminada']=array();
+			$totalesProvincia[$provinciaid]['TotalMinimo']=array();
 			$totalesProvincia[$provinciaid]['TotalImpuesto']=array();
 			$totalesProvincia[$provinciaid]['TotalAPagar']=0;
 			$totalesProvincia[$provinciaid]['TotalAFavor']=0;
@@ -148,7 +149,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				foreach ($actividadclientes as $actividadcliente) { 
 					$arrayBasesProrrateadas[$miProvincia][$actividadcliente['Actividadcliente']['id']]=0;
 					?>
-				<td colspan="7" class="thActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+				<td colspan="8" class="thActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
 					<span style="color:deepskyblue" onclick="showhideactividad('<?php echo $actividadcliente['Actividade']['id']; ?>');"  >
 						<label class="lbl_trunc"><?php echo $actividadcliente['Actividade']['nombre']."-".$actividadcliente['Actividadcliente']['descripcion']; ?></label>
 					</span>
@@ -167,7 +168,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 					}
 			 	}
 				?>	
-				<td colspan="2">Impuesto</td>
+				<td colspan="1">Impuesto</td>
 				<td colspan="5">Conceptos que restan</td>
 				<td colspan="2">A Favor</td>
 			</tr>
@@ -192,10 +193,11 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="Diferencia Administración">Dif. Admin.</td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="Base Determinada">Base</td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="Alicuota por Municipio">Alicuota</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="Minimo Impuesto para actividad">Minimo</td>
 				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>" title="Impuesto Determinado">Impuesto</td>
 				<?php }
 				?>	
-				<td>Mínimo</td>
+<!--				<td>Mínimo</td>-->
 				<td title="Impuesto o Mínimo el Mayor">Impuesto</td>
 				<td>Retención</td>
 				<td>PagoCuenta</td>
@@ -284,7 +286,8 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				foreach ($actividadcliente['Encuadrealicuota'] as $encuadrealicuota) { 
 					if($myimpcliprovincia['id']==$encuadrealicuota['impcliprovincia_id']){
 						$alicuotaAMostrar = $encuadrealicuota['alicuota'];
-					}
+                        $minimoAMostrar = $encuadrealicuota['minimo'];
+                    }
 				} 
 				$impuestodeterminado= 0;
 				if(!isset($totalesProvincia[$provinciaid]['TotalOtrosArticulos'][$actividadcliente['Actividadcliente']['id']])){
@@ -309,34 +312,54 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 						$totalesProvincia[$provinciaid]['TotalBaseDeterminada'][$actividadcliente['Actividadcliente']['id']]=0;
 					}
 					if(!isset($totalesProvincia[$provinciaid]['TotalImpuesto'][$actividadcliente['Actividadcliente']['id']])){
+						$totalesProvincia[$provinciaid]['TotalMinimo'][$actividadcliente['Actividadcliente']['id']]=0;
 						$totalesProvincia[$provinciaid]['TotalImpuesto'][$actividadcliente['Actividadcliente']['id']]=0;
 					}
 					if(!isset($totalesProvincia[$provinciaid]['TotalElMayor'])){
 						$totalesProvincia[$provinciaid]['TotalElMayor']=0;
 					}
 					$totalesProvincia[$provinciaid]['TotalBaseDeterminada'][$actividadcliente['Actividadcliente']['id']]+=$totalBaseDeterminada;
-					$totalesProvincia[$provinciaid]['TotalImpuesto'][$actividadcliente['Actividadcliente']['id']]+=$impuestodeterminado;
 
-					$totalPagoImpuestoLocalidad += $impuestodeterminado;
+
 					?>
 					</span>
 				</td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($alicuotaAMostrar, 2, ",", "."); ?></td>
-				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>"><span style="color:red"><?php echo number_format($impuestodeterminado, 2, ",", "."); ?></span></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+                    <?php echo number_format($alicuotaAMostrar, 2, ",", "."); ?>
+                </td>
+                <td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+                    <?php echo number_format($minimoAMostrar, 2, ",", ".");
+                    $totalesProvincia[$provinciaid]['TotalMinimo'][$actividadcliente['Actividadcliente']['id']]+=$minimoAMostrar;
+
+                    ?>
+                </td>
+                <td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>">
+                    <span style="color:red">
+                        <?php
+                        if($minimoAMostrar>$impuestodeterminado){
+                            $impuestodeterminado=$minimoAMostrar;
+                        }
+                        echo number_format($impuestodeterminado, 2, ",", ".");
+                        $totalesProvincia[$provinciaid]['TotalImpuesto'][$actividadcliente['Actividadcliente']['id']]+=$impuestodeterminado;
+                        $totalesProvincia[$provinciaid]['TotalElMayor']+=$impuestodeterminado;
+                        ?>
+                    </span>
+                </td>
 				<?php 
 				} ?>
-				<td><?php 
-					$minimoAMostrar += $myimpcliprovincia['minimo'];
-                    echo number_format($minimoAMostrar, 2, ",", ".");
-				?></td>
-				<td><span style="color:red">
+<!--				<td>--><?php //
+//					$minimoAMostrar += $myimpcliprovincia['minimo'];
+//                    echo number_format($minimoAMostrar, 2, ",", ".");
+//				?><!--</td>-->
+				<td>
+                    <span style="color:red">
 						<?php
-                        if($minimoAMostrar>$totalPagoImpuestoLocalidad){
-                            $totalPagoImpuestoLocalidad = $minimoAMostrar;
-                        }
-						$totalesProvincia[$provinciaid]['TotalElMayor']+=$totalPagoImpuestoLocalidad;
-
-						echo number_format($totalPagoImpuestoLocalidad, 2, ",", "."); ?></span>
+//                        if($minimoAMostrar>$totalPagoImpuestoLocalidad){
+//                            $totalPagoImpuestoLocalidad = $minimoAMostrar;
+//                        }
+                        $totalPagoImpuestoLocalidad = $totalesProvincia[$provinciaid]['TotalElMayor'];
+                        echo number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", "."); ?>
+                    </span>
 				</td>
 				<?php 
 				$totalRetenciones=0;
@@ -487,16 +510,33 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 					$Articulo2poractividad = $Articulo2porprovincia[$actividadclienteActividadclienteid];
 					$BaseDeterminadaporactividad = $BaseDeterminadaporprovincia[$actividadclienteActividadclienteid];
 					$Impuestoporactividad = $Impuestoporprovincia[$actividadclienteActividadclienteid]; ?>    
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($ventasporactividad, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($porcentajesporactividad, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($OtrosArticulosporactividad, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($Articulo2poractividad, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">0</td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($BaseDeterminadaporactividad, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">&nbsp;</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+					<?php echo number_format($ventasporactividad, 2, ",", "."); ?>
+				</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+					<?php echo number_format($porcentajesporactividad, 2, ",", "."); ?>
+				</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+					<?php echo number_format($OtrosArticulosporactividad, 2, ",", "."); ?>
+				</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+					<?php echo number_format($Articulo2poractividad, 2, ",", "."); ?>
+				</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+					0
+				</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+					<?php echo number_format($BaseDeterminadaporactividad, 2, ",", "."); ?>
+				</td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
+					&nbsp;
+				</td>
+				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>">
+                    <?php echo number_format($totalesProvincia[$provinciaid]['TotalMinimo'][$actividadcliente['Actividadcliente']['id']], 2, ",", "."); ?>
+                </td>
 				<td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($Impuestoporactividad, 2, ",", "."); ?></td>
 				<?php } ?>
-				<td><?php echo number_format(0, 2, ",", "."); ?></td>
+<!--				<td>--><?php //echo number_format(0, 2, ",", "."); ?><!--</td>-->
 				<td>
 					<?php
 					echo number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", ".");

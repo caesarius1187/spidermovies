@@ -190,6 +190,7 @@ $(document).ready(function() {
 				case '1389'/*110399001 Ap. SEC a Pagar*/:
 				case '1500'/*110399001 Cliente xx*/:
 				case '1468'/*110399001 Cliente xx*/:
+				case '1481'/*110399001 Cliente xx*/:
 				case '1492'/*110399001 Cliente xx*/:
 				case '1392'/*210303024 Ap. FAECYS a Pagar*/:
 

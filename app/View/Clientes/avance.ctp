@@ -65,22 +65,22 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
               'empty' => 'Filtrar por cliente'
           ));
 
-        echo $this->Form->input('filtrodesolicitar', array(
-          //'multiple' => 'multiple',
-          'type' => 'select',
-          'class'=>'chosen-select filtroAvance',
-          'label' => false,
-          'empty' => 'Filtrar por elementos a solicitar', 
-          'options'=> array(
-            'banco'=>'Bancos',
-            'tarjetadecredito'=>'Tarj. de Credito',
-            'descargawebafip'=>'Descarga Web AFIP',
-            'libroivaventas'=>'Libro IVA Ventas',
-            'fcluz'=>'Fc. de Luz',
-            'sueldos'=>'Novedades Sueldos',
-            'librounico'=>'Libro Unico',
-            )
-        ));
+//        echo $this->Form->input('filtrodesolicitar', array(
+//          //'multiple' => 'multiple',
+//          'type' => 'select',
+//          'class'=>'chosen-select filtroAvance',
+//          'label' => false,
+//          'empty' => 'Filtrar por elementos a solicitar',
+//          'options'=> array(
+//            'banco'=>'Bancos',
+//            'tarjetadecredito'=>'Tarj. de Credito',
+//            'descargawebafip'=>'Descarga Web AFIP',
+//            'libroivaventas'=>'Libro IVA Ventas',
+//            'fcluz'=>'Fc. de Luz',
+//            'sueldos'=>'Novedades Sueldos',
+//            'librounico'=>'Libro Unico',
+//            )
+//        ));
         echo $this->Form->input('filtrodeimpuestos', array(
           //'multiple' => 'multiple',
           'type' => 'select',

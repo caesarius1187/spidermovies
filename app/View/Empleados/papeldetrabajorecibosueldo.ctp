@@ -34,6 +34,7 @@ if(count($empleado['Valorrecibo'])==0){
                         $miempleado['inasistenciapagascantidad'] = 0;
                         $miempleado['suspenciones'] = 0;
                         $miempleado['suspencionescantidad'] = 0;
+                        $miempleado['adicionalalimentacion'] = 0;
                         $miempleado['vacacionesremunerativas'] = 0;
                         $miempleado['vacacionescantidad'] = 0;
                         $miempleado['vacacionesnogozadas'] = 0;
@@ -112,6 +113,7 @@ if(count($empleado['Valorrecibo'])==0){
                     $suspenciones=0;
                     $suspencionescantidad=0;
                     $vacacionesremunerativas=0;
+                    $adicionalalimentacion=0;
                     $vacacionescantidad=0;
                     $vacacionesnogozadascantidad=0;
                     $vacacionesnogozadas=0;
@@ -308,6 +310,9 @@ if(count($empleado['Valorrecibo'])==0){
                         }
                         if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='20'/*Vacaciones Remunerativas*/){
                             $vacacionesremunerativas += $valorrecibo['valor'];
+                        }
+                        if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='163'/*Adicional por Alimentacion*/){
+                            $adicionalalimentacion += $valorrecibo['valor'];
                         }
                         //Inasistencias
                         if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='68'/*Inasistencias*/){
@@ -580,6 +585,7 @@ if(count($empleado['Valorrecibo'])==0){
                     $miempleado['feriadosnotrabajadoscantidad']=$feriadosnotrabajadoscantidad;
                     $miempleado['feriadosnotrabajadospagos']=$feriadosnotrabajadospagos;
                     $miempleado['vacacionesremunerativas']=$vacacionesremunerativas;
+                    $miempleado['adicionalalimentacion']=$adicionalalimentacion;
                     $miempleado['basico']=$basico;
 
                     $miempleado['horasDecoracion'] = $horasDecoracion;
@@ -645,16 +651,15 @@ if(count($empleado['Valorrecibo'])==0){
                         <tr>
                             <td colspan="20" class="tdWithBorder" style="border-top: 0px;border-left: 0px;border-right: 0px;">
                                 <b>Recibo de remuneraciones - Periodo: <?php
-                                    $timeperiodo =strtotime('01-'.$pemes.'-'.$peanio);
+                                    $timeperiodo =strtotime('01-'.$pemes.'-'.$peanio.' +1 months');
                                     $dias = array("Domingo","Lunes","Martes","Miercoles","Jueves","Viernes","Sábado");
                                     $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
 //                                    setlocale(LC_ALL,"es_ES");
 //                                    $timestr =
 //                                        strftime('%B del %Y',strtotime('01-'.$pemes.'-'.$peanio));
                                     $timestr =
-                                        $meses[date('n',$timeperiodo)]. " del ".date('Y',$timeperiodo) ;
+                                        $meses[date('n',$timeperiodo)-1]. " del ".date('Y',$timeperiodo) ;
                                     echo $timestr ;
-
                                     ?>
                                 <?php
                                 $diasTop=4;
@@ -979,7 +984,6 @@ if(count($empleado['Valorrecibo'])==0){
                                 </td>
                                 <td class="tdWithLeftRightBorder tdWithNumber">
                                     <?php echo number_format($miempleado['diasaccidenteart'], 2, ",", "."); ?>
-
                                 </td>
                                 <td class="tdWithLeftRightBorder tdWithNumber">
                                 </td>
@@ -1000,6 +1004,26 @@ if(count($empleado['Valorrecibo'])==0){
                             </td>
                             <td class="tdWithLeftRightBorder tdWithNumber">
                                 <?php echo number_format($miempleado['vacacionesremunerativas'], 2, ",", "."); ?>
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                            </td>
+                        </tr>
+                        <?php }
+                        if($miempleado['adicionalalimentacion']*1>0){ ?>
+                        <tr class="trConceptoRecibo">
+                            <td class="tdWithLeftRightBorder">
+                                52
+                            </td>
+                            <td class="tdWithLeftRightBorder">
+                                Adicional por Alimentacion
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                                
+                            </td>
+                            <td class="tdWithLeftRightBorder tdWithNumber">
+                                <?php echo number_format($miempleado['adicionalalimentacion'], 2, ",", "."); ?>
                             </td>
                             <td class="tdWithLeftRightBorder tdWithNumber">
                             </td>

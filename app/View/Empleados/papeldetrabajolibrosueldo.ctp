@@ -30,6 +30,7 @@
             $miempleado['inasistenciapagascantidad'] = 0;
             $miempleado['suspensiones'] = 0;
             $miempleado['vacacionesremunerativas'] = 0;
+            $miempleado['adicionalalimentacion'] = 0;
             $miempleado['vacacionescantidad'] = 0;
             $miempleado['vacacionesnogozadas'] = 0;
             $miempleado['vacacionesnogozadascantidad'] = 0;
@@ -103,6 +104,7 @@
         $inasistencia=0;
         $suspensiones=0;
         $vacacionesremunerativas=0;
+        $adicionalalimentacion=0;
         $vacacionescantidad=0;
         $inasistenciapagas=0;
         $inasistenciapagascantidad=0;
@@ -228,6 +230,9 @@
             //Vacaciones Remunerativas
             if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='20'/*Vacaciones Remunerativas*/){
                 $vacacionesremunerativas += $valorrecibo['valor'];
+            }
+            if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='163'/*Adicional por Alimentacion*/){
+                $adicionalalimentacion += $valorrecibo['valor'];
             }
             //Vacaciones No Gozadas
             if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='105'/*Vacaciones no gozadas*/){
@@ -528,6 +533,7 @@
         $miempleado['inasistenciapagascantidad']=$inasistenciapagascantidad;
         $miempleado['suspensiones']=$suspensiones;
         $miempleado['vacacionesremunerativas']=$vacacionesremunerativas;
+        $miempleado['adicionalalimentacion']=$adicionalalimentacion;
         $miempleado['vacacionescantidad']=$vacacionescantidad;
         $miempleado['vacacionesnogozadas']=$vacacionesnogozadas;
         $miempleado['vacacionesnogozadascantidad']=$vacacionesnogozadascantidad;
@@ -669,7 +675,7 @@
                 <?php echo $empleado['Empleado']['jornada']=='0.5'?"Media":"" ?>
                 Jornada: <?php echo $empleado['Empleado']['jornada']=='0.5'?"":"Completa" ?>
                 F. Ingreso:  <?php echo date('d-m-Y',strtotime($empleado['Empleado']['fechaalta'])); ?>
-                Basico: <?php echo number_format($miempleado['basico'], 2, ",", "."); ?>
+                Basico: <?php echo number_format($empleado['Cargo']['sueldobasico']+$empleado['Cargo']['preciohora'], 2, ",", "."); ?>
                 Modalid ad de contratacion:  <?php echo $empleado['Empleado']['codigoafip']; ?>
             </td>
         </tr><!--5-->
@@ -875,6 +881,19 @@
                 </td>
                 <td class="tdWithNumber">
                     <?php echo number_format($miempleado['vacacionesremunerativas'], 2, ",", "."); ?>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+        <?php }
+        if($miempleado['adicionalalimentacion']*1>0){ ?>
+            <tr>
+                <td>52</td>
+                <td>
+                    Adicional por Alimentacion
+                </td>
+                <td class="tdWithNumber">
+                    <?php echo number_format($miempleado['adicionalalimentacion'], 2, ",", "."); ?>
                 </td>
                 <td></td>
                 <td></td>

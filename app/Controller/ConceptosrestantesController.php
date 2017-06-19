@@ -994,9 +994,10 @@ class ConceptosrestantesController extends AppController {
             ],
 			'fields'=>[],
 			'conditions'=>[
-				'Conceptosrestante.conceptostipo_id'=>2,
+				'Conceptosrestante.conceptostipo_id'=>3,
 				'Conceptosrestante.periodo'=>$periodo,
-				'Conceptosrestante.cliente_id'=>$cliid
+				'Conceptosrestante.cliente_id'=>$cliid,
+				'Conceptosrestante.impcli_id'=>$impcliid
 			]
 		);
 		$conceptosrestantesperiodo = $this->Conceptosrestante->find('all',$optionsconceptosrestantesperiodo);

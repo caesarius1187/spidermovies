@@ -132,7 +132,7 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 					<?php echo $asiento['Asiento']['periodo']; ?>
 				</td>
 				<td>
-
+					<?php echo $asiento['Asiento']['numero']; ?>
 				</td>
 
 				<td>

@@ -60,6 +60,8 @@ $(document).ready(function() {
 	}
 	window.onbeforeprint = beforePrint;
 	window.onafterprint = afterPrint;
+	cargarAsiento();
+	catchAsiento();
 });
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";
@@ -125,7 +127,8 @@ function papelesDeTrabajo(periodo,impcli){
 				alert(respuesta.validationErrors);
 				alert(respuesta.invalidFields);
 			  }else{
-				$('#divLiquidarMonotributo').hide();
+				  $('#AsientoAddForm').submit();
+				  $('#divLiquidarMonotributo').hide();
 			  }
 			},
 			error: function(xhr,textStatus,error){
@@ -249,4 +252,97 @@ function loadFormImpuesto(impcliid,cliid){
 			}
 		});
 	});
+}
+function catchAsiento(){
+	$('#AsientoAddForm').submit(function(){
+		//serialize form data
+		var formData = $(this).serialize();
+		//get form action
+		var formUrl = $(this).attr('action');
+		$.ajax({
+			type: 'POST',
+			url: formUrl,
+			data: formData,
+			success: function(data,textStatus,xhr){
+				var respuesta = jQuery.parseJSON(data);
+				var resp = respuesta.respuesta;
+				callAlertPopint(resp);
+			},
+			error: function(xhr,textStatus,error){
+				callAlertPopint(textStatus);
+				return false;
+			}
+		});
+		return false;
+	});
+}
+function cargarAsiento(){
+	var apagarMonotributo = $('#apagarMonotributo').val()*1;
+	var apagarAutonomo = $('#apagarAutonomo').val()*1;
+	var apagarObrasocial = $('#apagarObrasocial').val()*1;
+	// 50140005	Monotributo
+	if($('#cuenta2548').length > 0){
+		var orden = $('#cuenta2548').attr('orden');
+		var apagar = apagarMonotributo+apagarAutonomo+apagarObrasocial;
+		$('#Asiento0Movimiento'+orden+'Debe').val(apagar);
+	}
+	// 210401805 Monotributo A PAGAR
+	if($('#cuenta1481').length > 0){
+		var orden = $('#cuenta1481').attr('orden');
+		var apagar = apagarMonotributo+apagarAutonomo+apagarObrasocial;
+		$('#Asiento0Movimiento'+orden+'Haber').val(apagar);
+	}
+	$(".inputDebe").each(function () {
+		$(this).change(addTolblTotalDebeAsieto);
+	});
+	$(".inputHaber").each(function () {
+		$(this).change(addTolblTotalhaberAsieto);
+	});
+	$(".inputHaber").each(function(){
+		$(this).trigger('change');
+		return;
+	});
+	$(".inputDebe").each(function(){
+		$(this).trigger('change');
+		return;
+	});
+}
+function addTolblTotalDebeAsieto(event) {
+	var debesubtotal = 0;
+	$(".inputDebe").each(function () {
+		debesubtotal = debesubtotal*1 + this.value*1;
+		if(this.value*1!=0){
+			$(this).removeClass("movimientoSinValor");
+			$(this).addClass("movimientoConValor");
+		}else{
+			$(this).removeClass("movimientoConValor")
+			$(this).addClass("movimientoSinValor");
+		}
+
+	});
+	$("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+	showIconDebeHaber()
+}
+function addTolblTotalhaberAsieto(event) {
+	//        $("#lblTotalAFavor").val(0) ;
+	var habersubtotal = 0;
+	$(".inputHaber").each(function () {
+		habersubtotal = habersubtotal*1 + this.value*1;
+		if(this.value*1!=0){
+			$(this).removeClass("movimientoSinValor");
+			$(this).addClass("movimientoConValor");
+		}else{
+			$(this).removeClass("movimientoConValor")
+			$(this).addClass("movimientoSinValor");
+		}
+	});
+	$("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+	showIconDebeHaber()
+}
+function showIconDebeHaber(){
+	if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
+		$("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+	}else{
+		$("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+	}
 }

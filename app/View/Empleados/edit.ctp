@@ -1,4 +1,4 @@
-<div id="form_empleado" class="form" style="width: 94%;">
+<div id="form_empleado" class="" style="width: 94%;">
 	<?php echo $this->Form->create('Empleado',array('class'=>'formTareaCarga','controller'=>'Empelados','action'=>'add','id'=>'EmpleadoEditForm')); ?>
 	<h3><?php echo __('Editar Empleado'); ?></h3>
 	<fieldset style="border: 1px solid #1e88e5;">
@@ -10,6 +10,11 @@
 		echo $this->Form->input('nombre',array('style'=>'width:150px'));
 		echo $this->Form->input('cuit',array('label'=>'CUIT',));
 		echo $this->Form->input('dni',array('label'=>'DNI'));
+		echo $this->Form->input('localidade_id',array(
+			'label'=>'Localidad',
+			'options'=>$localidades,
+			));
+		echo $this->Form->input('domicilio',array('label'=>'Domicilio','type'=>'text','style'=>'width:250px'));
 		?>
 	</fieldset>
 	<fieldset style="border: 1px solid #1e88e5;">

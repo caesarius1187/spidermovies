@@ -170,8 +170,24 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
                     $comprasArray[$i]['Compra'] = array();
                 }
                 $comprasArray[$i]['Compra']=$linecompra;
+                /*si la compra que agregamos es tipo C tendriamos que crear una alicuota "a mano" por que no va a haber una*/
+                if($comprobanteTipoNuevo=='470'/*Es Factura C*/){
+                    $lineAlicuota = array();
+                    $lineAlicuota['comprobantetipo'] = '011';
+                    $lineAlicuota['puntodeventa'] = $linecompra['puntodeventa'];
+                    $lineAlicuota['comprobantenumero'] = $linecompra['comprobantenumero'];
+                    $lineAlicuota['codigodocumento']=$linecompra['codigodocumento'];
+                    $lineAlicuota['identificacionnumero']=$linecompra['identificacionnumero'];
+                    $lineAlicuota['importenetogravado'] = '0.00';
+                    $lineAlicuota['alicuotaiva'] = '0003';
+                    $lineAlicuota['impuestoliquidado'] = '0.00';
+                    if(!isset($comprasArray[$i]['Alicuota'])){
+                        $comprasArray[$i]['Alicuota']=array();
+                        $comprasArray[$i]['Alicuota'][0]=array();
+                    }
+                    $comprasArray[$i]['Alicuota'][0]=$lineAlicuota;
+                }
                 $i++;
-
             }
             $j++;
             //if($j>100) break;
@@ -441,14 +457,23 @@ if((count($ProvedoreNoCargado)!=0||count($ComprasConFechasIncorrectas)!=0)||!$mo
          }
      }
      unset($domicilioCli);
+     $compraNumero=1;
      foreach ($comprasArray as $compra) {
          if(!isset($compra['Alicuota'])) continue;
          foreach ($compra['Alicuota'] as $alicuota) {
              //hay que controlar que las compras anteriores cargadas no contengan la compra que estamos por mostrar(vamos a incluir solo este periodo)
+                 $class = "par";
+                 if ($compraNumero%2==0){
+                     $class = "par";
+                 }else{
+                     $class = "impar";
+
+                 }
+                 $compraNumero++;
                 ?>
                  <tr id="row<?php echo $i; ?>">
                      <td style="width: 100%;padding: 0px;margin: 0px; " colspan="25">
-                         <div style="margin-top: 1px;background-color: white;" class="compraFormVertical">
+                         <div style="margin-top: 1px;" class="compraFormVertical <?php echo $class;?>">
                              <?php
                              echo $this->Form->input('Compra.' . $i . '.i', array(
                                      'label' => ($i + 9) % 10 == 0 ? 'N' : '',

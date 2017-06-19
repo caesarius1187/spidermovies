@@ -94,35 +94,40 @@ class DepositosController extends AppController {
 		$this->loadModel('Cliente');
 		$this->loadModel('Grupocliente');
 		$options = array(
-			'conditions' => array(
+			'contain'=>[],
+			'conditions' => [
 				'Deposito.cliente_id' => $cliid,
 				'Deposito.periodo' => $periodo
-				)
+				]
 		);
 		$depositos = $this->Deposito->find('all', $options);
 		$this->set('depositos', $depositos);
 
 		$optionsGCLI = array(
 			'conditions' => array(
-				'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+				'Cliente.id' => $cliid,
 				),
-			'contain'=>array()
+			'contain'=>[]
 			);
-		$GrupoClientes = $this->Grupocliente->find('list', $optionsGCLI);
+		$Cliente = $this->Cliente->find('first', $optionsGCLI);
 
 		$options = array(
-			'contain'=>array(
-				'Cliente'=>array(
-
-					)
-				),
+			'joins'=>[
+				['table'=>'clientes',
+					'alias' => 'Cliente',
+					'type'=>'inner',
+					'conditions'=> [
+						'Cliente.grupocliente_id' => $Cliente['Cliente']['grupocliente_id'],
+					]
+				],
+			],
+			'contain'=>[],
 			'conditions' => array(
-				'Cliente.grupocliente_id' => $GrupoClientes,
 				),
 			'fields'=> array(
-				'MAX(Deposito.numero) as depomax'
+				'MAX(Deposito.numero*1) as depomax',
 				),
-			'group' => 'Deposito.numero'
+			'group' => 'Cliente.grupocliente_id'
 		);
 		$maxdeposito = $this->Deposito->find('all', $options);
 		$this->set('maxdeposito', $maxdeposito);
@@ -131,10 +136,11 @@ class DepositosController extends AppController {
 		$this->set('cliid', $cliid);
 
 		$cliente = $this->Cliente->find('first',array(
+										'contain'=>[],
 										'conditions' => array(
 								 			'Cliente.id' => $cliid,
 								 			),
-										'fields'=>array('Cliente.grupocliente_id','Cliente.honorario')
+										'fields'=>array('Cliente.id','Cliente.grupocliente_id','Cliente.honorario')
 										)
 									);
 		$this->set('gcliid', $cliente['Cliente']['grupocliente_id']);
@@ -199,7 +205,6 @@ class DepositosController extends AppController {
 		$this->set('puntosdeventas', $puntosdeventas);
 		
 	}
-
 /**
  * add method
  *
@@ -337,4 +342,43 @@ class DepositosController extends AppController {
 
 		$this->layout = 'ajax';
 		$this->render('serializejson');
-	}}
+	}
+//	public function numerardepositos(){
+//
+//		ini_set('max_execution_time', 600);
+//		$optionsDepositos = array(
+//			'contain'=>[],
+//			'conditions' => array(
+//			),
+//			'order'=>[
+//				'Deposito.cliente_id',
+//				'Deposito.id'
+//			]
+//		);
+//		$depositos = $this->Deposito->find('all', $optionsDepositos);
+//		$numeroDeposito = 1;
+//		$clienteActual = $depositos[0]['Deposito']['cliente_id'];
+//		$respuesta = [];
+//		foreach ($depositos as $deposito) {
+//			$clientenuevo = $deposito['Deposito']['cliente_id'];
+//			if($clienteActual!=$clientenuevo){
+//				$numeroDeposito=1;
+//				$clienteActual = $clientenuevo;
+//			}
+//			$this->Deposito->read(null, $deposito['Deposito']['id']);
+//			$this->Deposito->set('numero',$numeroDeposito);
+//			if(!isset($respuesta[$deposito['Deposito']['cliente_id']]))
+//				$respuesta[$deposito['Deposito']['cliente_id']]=[];
+//			if($this->Deposito->save()){
+//				$respuesta[$deposito['Deposito']['cliente_id']][]=$deposito['Deposito']['id']."_".$numeroDeposito;
+//			}else{
+//				$respuesta[$deposito['Deposito']['cliente_id']][]=$deposito['Deposito']['id']."_".$numeroDeposito."ERROR";
+//			}
+//			$numeroDeposito ++;
+//		}
+//		$this->set('data',$respuesta);
+//		$this->autoRender=false;
+//		$this->layout = 'ajax';
+//		$this->render('serializejson');
+//	}
+}

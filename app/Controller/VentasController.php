@@ -35,6 +35,7 @@ class VentasController extends AppController {
 
 	public function index($id=null,$periodo=null,$page=null)
 	{
+		ini_set('memory_limit', '2560M');
 		$this->loadModel('Cliente');
 		$pemes = substr($periodo, 0, 2);
 		$peanio = substr($periodo, 3);
@@ -875,6 +876,8 @@ class VentasController extends AppController {
 
 	}
 	public function exportartxt($cliid=null,$periodo=null){
+		set_time_limit (360);
+		ini_set('memory_limit', '2560M');
 		$this->loadModel('Cliente');
 		$pemes = substr($periodo, 0, 2);
 		$peanio = substr($periodo, 3);
@@ -941,6 +944,7 @@ class VentasController extends AppController {
 	}
 	public function importar($cliid=null,$periodo=null){
 		set_time_limit (360);
+		ini_set('memory_limit', '2560M');
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');
 		$this->loadModel('Subcliente');
@@ -1078,7 +1082,7 @@ class VentasController extends AppController {
 							'Periodosactivo'=>array(
 								'conditions'=>$conditionsImpCliHabilitados
 							)
-					)
+						)
 					),
 				'conditions' => array(
 						'id' => $cliid,
@@ -1177,14 +1181,8 @@ class VentasController extends AppController {
 		$this->Venta->virtualFields = array(
 			'fullid' => "CONCAT(Venta.comprobante_id, '-' ,Venta.numerocomprobante, '-', Venta.puntosdeventa_id, '-', Venta.alicuota)"
 		);
-		$igualTipoComprobante=false;
-		$igualPuntoDV=false;
-		$igualAlicuota=false;
-		$igualNumeroComprobante=false;
-
 		$optionsventasdelperiodo=array(
-			'contain'=>array(
-			),
+			'contain'=>[],
 			'fields'=>array(
 				'*','fullid'
 			),

@@ -318,6 +318,7 @@ class ImpclisController extends AppController {
 	}
 
 	public function papeldetrabajoconveniomultilateral($impcliid=null,$periodo=null) {
+		ini_set('memory_limit', '2560M');
 		$this->loadModel('Actividadcliente');
 		$this->loadModel('Conceptosrestante');
 		$this->loadModel('Cuenta');
@@ -469,6 +470,7 @@ class ImpclisController extends AppController {
 		$this->set(compact('impuestosactivos'));
 	}
 	public function papeldetrabajoactividadesvarias($impcliid=null,$periodo=null) {
+		ini_set('memory_limit', '2560M');
 		$this->loadModel('Actividadcliente');
 		$this->loadModel('Cuenta');
 		$this->loadModel('Cliente');
@@ -602,6 +604,7 @@ class ImpclisController extends AppController {
 		$this->set(compact('impuestosactivos'));
 	}
 	public function papeldetrabajomonotributo($impcliid=null,$periodo=null){
+		ini_set('memory_limit', '2560M');
 		$this->loadModel('Venta');
 		$this->loadModel('Compra');
 		$this->loadModel('Domicilio');
@@ -715,7 +718,9 @@ class ImpclisController extends AppController {
 						'Cuenta'
 					]
 				],
-				'Cliente',
+				'Cliente'=>[
+					'Cuentascliente'
+				],
 				'Asiento'=>[
 					'Movimiento'=>[
 						'Cuentascliente'
@@ -865,7 +870,8 @@ class ImpclisController extends AppController {
 
     }
     public function papeldetrabajoddjj($periodo=null,$impcliid=null){
-        $this->loadModel('Venta');
+		ini_set('memory_limit', '2560M');
+		$this->loadModel('Venta');
         $this->loadModel('Compra');
         $this->loadModel('Actividadcliente');
         $this->loadModel('Puntosdeventa');
@@ -1156,6 +1162,7 @@ class ImpclisController extends AppController {
 		$this->set(compact('impuestosactivos'));
     }
 	public function papeldetrabajosuss($impcliid=null,$periodo=null){
+		ini_set('memory_limit', '2560M');
 
 		$this->Components->unload('DebugKit.Toolbar');
 

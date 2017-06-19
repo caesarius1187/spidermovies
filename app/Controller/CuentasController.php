@@ -19,27 +19,62 @@ class CuentasController extends AppController {
  * @return void
  */
 	public function view($ClienteId) 
-	{				
-		$options = array(
+	{
+        $this->Components->unload('DebugKit.Toolbar');
+        $options = array(
 			'contain'=>[],
 			'fields'=> [
-                'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.ajuste,Cuenta.level,
-                Cuentascliente.id,Cuentascliente.cuenta_id,Cuentascliente.nombre'],
+                'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.level,
+                Cuentascliente.id,Cuentascliente.nombre'],
 			'joins'=>array(
 				array('table'=>'cuentasclientes', 
-	                  'alias' => 'cuentascliente',
+	                  'alias' => 'Cuentascliente',
 	                  'type'=>'left',
 	                  'conditions'=> [
-	                 		'cuentascliente.cuenta_id = Cuenta.id',
-						    'cuentascliente.cliente_id'=>$ClienteId
+	                 		'Cuentascliente.cuenta_id = Cuenta.id',
+						    'Cuentascliente.cliente_id'=>$ClienteId
 	           		   ]
                  	),
-				)
-		);
+				),
+//            'limit'=>1000,
+//            'page'=>1,
+            'order'=>['numero'],
+        );
 		$cuentas = $this->Cuenta->find('all', $options);
-		$this->set('cuentas',$cuentas);				
+
+        $this->set('cuentas',$cuentas);
 		$this->set('clienteId',$ClienteId);
 	}
+    public function loadCuentas($ClienteId,$pagina)
+    {
+        $this->Components->unload('DebugKit.Toolbar');
+        ini_set('max_execution_time', 300);
+
+        $options = array(
+            'contain'=>[],
+            'order'=>['numero'],
+            'fields'=> [
+                'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.level,
+                Cuentascliente.id,Cuentascliente.nombre'],
+            'joins'=>array(
+                array('table'=>'cuentasclientes',
+                    'alias' => 'cuentascliente',
+                    'type'=>'left',
+                    'conditions'=> [
+                        'cuentascliente.cuenta_id = Cuenta.id',
+                        'cuentascliente.cliente_id'=>$ClienteId
+                    ]
+                ),
+            ),
+            'limits'=>1000,
+            'page'=>$pagina
+        );
+        $cuentas = $this->Cuenta->find('all', $options);
+        $this->set('data',$cuentas);
+        $this->layout = 'ajax';
+        $this->render('serializejson');
+    }
+
 
 	public function activar($ClienteId,$CuentaId,$Activo,$CuentaclienteId=null)
 	{

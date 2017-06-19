@@ -480,9 +480,19 @@
         </td>
     </tr>
    <?php  
-   foreach ($grupoclientesActual as $gcliActual ) {       
-        foreach ($gcliActual['Cliente'] as $cliente) { ?>
-
+   foreach ($grupoclientesActual as $gcliActual ) {
+       $mostrarcliente = false;
+       foreach ($gcliActual['Cliente'] as $cliente) {
+            //si no tiene periodos activos no hay q mostrar este cliente
+            foreach ($cliente['Impcli'] as $impcli) {
+                if (count($impcli['Periodosactivo'])!=0) {
+                    $mostrarcliente = true;
+                }
+            }
+            if(!$mostrarcliente) {
+                continue;
+            }
+            ?>
     <!-- Inicio Tabla Cliente -->
     <tr class="cliente"  >          
         <td width="100%" style='text-align:left;'>
@@ -510,7 +520,7 @@
                                        
         </td>   
     </tr>
-    
+
     <!--INFORME RESUMEN TRIBUTARIO-->              
     <tr class="resultado" >
         <td> 
@@ -731,10 +741,10 @@
         <td align="center">
             <hr width="450px" color="#000000" style='width:100%' />
         </td>
-    </tr>     
+    </tr>
 
         <?php }
-    } ?>       
+    } ?>
 </table><!--fin tabla situacion integral -->   
 </div>
 <?php } ?>

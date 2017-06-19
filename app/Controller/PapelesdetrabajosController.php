@@ -22,6 +22,7 @@ class PapelesdetrabajosController extends AppController {
  * @return void
  */
 	public function iva($ClienteId = null,$periodo=null) {
+		ini_set('memory_limit', '2560M');
 		$this->loadModel('Cliente');
 		$this->loadModel('Venta');
 		$this->loadModel('Actividadcliente');
@@ -249,5 +250,55 @@ class PapelesdetrabajosController extends AppController {
 
 		$this->set(compact('autonomocategorias','impcli','periodo','impcliid'));
 	}
+	public function estadoderesultado($clienteid = null, $periodo = null){
+		$this->loadModel('Cliente');
+		$this->loadModel('Movimiento');
+		$this->loadModel('Cuentascliente');
 
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+
+
+		$fechaFinConsulta  = date('Y',strtotime("01-".$pemes."-".$peanio));
+		$fechadeconsulta = date('Y',strtotime("01-".$pemes."-".$peanio." -1 Year"));
+		$fechaInicioConsulta = $fechadeconsulta;
+		$fechaFinConsulta = $fechaFinConsulta;
+		$this->set('fechaInicioConsulta',$fechaInicioConsulta);
+		$this->set('fechaFinConsulta',$fechaFinConsulta);
+
+		$optionCliente = [
+			'contain' => [
+				'Cuentascliente'=>[
+					'Cuenta',
+					'Movimiento'=>[
+						'Asiento'=>[
+							'fields'=>['id','fecha','tipoasiento']
+						],
+						'conditions'=>[
+							"Movimiento.asiento_id IN (
+								SELECT id FROM asientos as Asiento 
+								WHERE Asiento.cliente_id = ".$clienteid."
+								AND   YEAR ( Asiento.fecha ) >= '".$fechadeconsulta."'
+								AND   YEAR ( Asiento.fecha ) <= '".$fechaFinConsulta."'
+							)"
+						]
+					],
+					'conditions'=>[
+
+					]
+				],
+			],
+			'conditions' => ['Cliente.id'=>$clienteid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
+		$this->set('cliente',$cliente);
+		$this->set('periodo',$periodo);
+	}
 }
+/*
+ * buscar el asiento de apertura del año anterior
+ * sumarle las compras
+ * restarle las devoluciones
+ * eso es la existencia final
+ */
+

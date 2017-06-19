@@ -275,6 +275,7 @@ class EmpleadosController extends AppController {
 		$this->loadModel('Concepto');
 		$this->loadModel('Cctxconcepto');
 		$this->loadModel('Valorrecibo');
+		$this->loadModel('Cargo');
 		if (isset($this->request->data['Cctxconcepto'])) {
 			$this->loadModel('Cctxconcepto');
 			$this->Cctxconcepto->create();
@@ -408,6 +409,29 @@ class EmpleadosController extends AppController {
          * */
         $this->set('empleadobeforeorden',$empleado);
         if(isset($empleado['Conveniocolectivotrabajo'])){
+			//si el convenio es de UTGHRA entonces tenemos que buscar el valor del basico mas bajo
+            $basicoMinimoCargo = 0;
+            if($empleado['Conveniocolectivotrabajo']['id']=='7'){
+                //Gastronomicos
+                $options = [
+                    'contain'=>[
+                    ],
+                    'conditions' => array('Cargo.id' => '169')/*Categoria 1 1 Estrella*/
+                ];
+                $cargoMinimo = $this->Cargo->find('first', $options);
+                $basicoMinimoCargo = $cargoMinimo['Cargo']['sueldobasico'];
+            }
+            if($empleado['Conveniocolectivotrabajo']['id']=='8'){
+                //CACYR
+                $options = [
+                    'contain'=>[
+                    ],
+                    'conditions' => array('Cargo.id' => '77')/*Categoria 1*/
+                ];
+                $cargoMinimo = $this->Cargo->find('first', $options);
+                $basicoMinimoCargo = $cargoMinimo['Cargo']['sueldobasico'];
+            }
+            $this->set(compact('basicoMinimoCargo'));
             //pregunto si esta definido por que puede pasar que no se hayan encontrado empleados que liquiden con esta
             // configuracion
             for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
@@ -843,6 +867,7 @@ class EmpleadosController extends AppController {
 				$this->request->data('Empleado.fechaegreso', date('Y-m-d', strtotime($this->request->data['Empleado']['fechaegreso'])));
 			}
 			if ($this->Empleado->save($this->request->data)) {
+				$this->request->data('Empleado.fechaingreso',date('d-m-Y',strtotime($this->request->data['Empleado']['fechaingreso'])));
 				$respuesta['empleado'] = $this->request->data;
 				if(!isset($respuesta['empleado']['Empleado']['id'])||$respuesta['empleado']['Empleado']['id']==''){
 					$respuesta['empleado']['Empleado']['id'] = $this->Empleado->getLastInsertID();
@@ -869,6 +894,7 @@ class EmpleadosController extends AppController {
 		$this->loadModel('Conveniocolectivotrabajo');
 		$this->loadModel('Cargo');
 		$this->loadModel('Impuesto');
+		$this->loadModel('Localidade');
 		if (!$this->Empleado->exists($id)) {
 			throw new NotFoundException(__('Invalid empleado'));
 		}
@@ -921,6 +947,16 @@ class EmpleadosController extends AppController {
 		);
 		$bancos=$this->Impuesto->find('list',$bancosOptions);
 		$this->set('bancos', $bancos);
+		
+		$optionsLoc = array(
+			'contain'=>array('Partido'),
+			'conditions' => array( ),
+			'fields'=> array('Localidade.id','Localidade.nombre','Partido.nombre'),
+			'order'=>array('Partido.nombre','Localidade.nombre')
+		);
+
+		$localidades = $this->Localidade->find('list',$optionsLoc);
+		$this->set('localidades', $localidades);
 
 		$this->autoRender=false;
 		$this->layout = 'ajax';
