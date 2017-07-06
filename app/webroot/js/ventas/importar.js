@@ -157,7 +157,12 @@ function buscarCoincidenciasFiltro(trToShow, idfiltro, clasefiltro){
 
     var textoEncontrado =  false;
     trToShow.find( "."+clasefiltro ).each(function(){
-        var selectedText = $(this).children(':selected').text();
+        var selectedText = "";
+        if( $(this).is('input:text') ) {
+            selectedText = $(this).val();
+        }else{
+            selectedText = $(this).children(':selected').text();
+        }
         if(selectedText.indexOf(textFiltro)){
             textoEncontrado = false;
             return;

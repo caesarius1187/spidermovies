@@ -20,9 +20,20 @@ class CctxconceptosController extends AppController {
  *
  * @return void
  */
-	public function index() {
-		$this->Cctxconcepto->recursive = 0;
-		$this->set('cctxconceptos', $this->Paginator->paginate());
+	public function index($convenio = null) {
+		$contiditons=[];
+		if($convenio!=null){
+			$contiditons = [
+				'Cctxconcepto.conveniocolectivotrabajo_id'=>$convenio
+			];
+		}
+		$this->set('cctxconceptos', $this->Cctxconcepto->find('all',[
+			'contain'=>[
+				'Conveniocolectivotrabajo',
+				'Concepto',
+			],
+			'conditions'=>$contiditons,
+		]));
 	}
 
 /**

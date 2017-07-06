@@ -274,6 +274,16 @@ if(count($empleado)==0){
                                             $valor = $empleado['Cargo']['acuerdoremunerativo']*1;
                                         }
                                     break;
+
+                                case 117:/*Aporte Adicional OS O3*/
+                                    /* si es construccion no aplica en el SAC*/
+                                    if($empleado['Conveniocolectivotrabajo']['id']==5/*Es Construcción Quincenal?*/){
+                                        if($numeroliquidacion == 7){
+                                            //SAC de construccion = 0, o sea no aplica funcion
+                                            $aplicafuncion = false;
+                                        }
+                                    }
+                                    break;
                                 case 134:/*cuota sindical extra 4*/
                                     /*si el impcli al que pertenece el convenio es SEC entonces vamos a preguntar si
                                     tiene activado el "pago del seguro de vida obligatorio*/

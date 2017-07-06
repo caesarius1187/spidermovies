@@ -6,7 +6,8 @@ if(!$showTheForm){?>
         }
         if( $this->request->data['Impuesto']['id']==14/*Autonomo*/){
           echo $this->request->data['Autonomocategoria']['codigo'];
-        }?></td>
+        }
+        ?></td>
     <td>
         <?php //echo $this->request->data['Impcli']['descripcion'];              
           if (isset($this->request->data['Periodosactivo'][0]['desde']))
@@ -160,6 +161,15 @@ if(!$showTheForm){?>
                             'label' => 'Categor&iacute;a Aut&oacute;nomo',
                             'type'=>'select',
                             'options'=>$autonomocategorias
+                        ]);?>
+                </td>
+            <?php }
+            if( $this->request->data['Impuesto']['id']==19/*IVA*/){?>
+                <td>
+                    <?php
+                    echo $this->Form->input('coeficienteapropiacion',
+                        [
+                            'label' => 'Coeficiente de Apropiacion',
                         ]);?>
                 </td>
             <?php } ?>

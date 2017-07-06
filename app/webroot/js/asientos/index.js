@@ -259,6 +259,24 @@ function cargarMovimiento(){
     $("#nextmovimiento").val(movimientonumero*1);
     $("#Asiento0MovimientoKkkCuentasclienteId option:selected").remove();
     $("#Asiento0MovimientoKkkCuentasclienteId").trigger("chosen:updated");
+    $("#Asiento0MovimientoKkkDebe").val(0);
+    $("#Asiento0MovimientoKkkHaber").val(0);
+    $(".inputDebe").each(function () {
+        $(this).change(addTolblTotalDebeAsieto);
+    });
+    $(".inputHaber").each(function () {
+        $(this).change(addTolblTotalhaberAsieto);
+    });
+    $(".inputDebe").each(function () {
+        $(this).trigger("change");
+        return;
+    });
+    $(".inputHaber").each(function () {
+        $(this).trigger("change");
+        return;
+    });
+
+
 }
 function cargarMovimientoEdit(){
     var cuentaclienteid = $("#FormEditaMovimientoCuentascliente").val();
@@ -307,12 +325,14 @@ function cargarMovimientoEdit(){
                 $("<td>").append(
                     $("<input>")
                         .val(debe)
+                        .css('width','auto')
                         .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteDebe')
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][debe]')
                         .addClass("inputDebe movimientoConValor")
             ).append(
                 $("<input>")
                     .val(haber)
+                    .css('width','auto')
                     .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteHaber')
                     .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][haber]')
                     .addClass("inputHaber movimientoConValor")
@@ -330,7 +350,8 @@ function cargarMovimientoEdit(){
                     .attr('onclick','deleteRowMovimientoEdit('+movimientonumero+')')
             )
         )
-    )
+    );
+
     $(".inputDebe").each(function () {
         $(this).change(addTolblTotalDebeAsieto);
     });
@@ -339,7 +360,13 @@ function cargarMovimientoEdit(){
     });
     $("#topmovimiento").val(movimientonumero*1);
     $("#FormEditaMovimientoCuentascliente option:selected").remove();
+    $("#MovimientoDebe").val(0);
+    $("#MovimientoHaber").val(0)
     $("#FormEditaMovimientoCuentascliente").trigger("chosen:updated");
+    $(".inputDebe").each(function () {
+        $(this).trigger("change");
+        return;
+    });
     $(".inputHaber").each(function () {
         $(this).trigger("change");
         return;

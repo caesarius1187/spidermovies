@@ -45,11 +45,11 @@
         <div style="width:auto; float: left;">
             <a id="aExportarFacturas" href="#" class="buttonImpcli" style="margin-right: 8px;width: initial;"
                onclick="downloadInnerHtml('<?php echo $cliente["Cliente"]['nombre']."-".$periodo; ?>percepcionessifere.txt','divFacturas','text/html')">
-                Descargar Percepciones IIBB
+                Descargar Percepciones SIFERE
             </a>
         </div>
     </div>
-    <h2>Txt Percepciones IIBB</h2>
+    <h2>Txt Percepciones SIFERE</h2>
     <div class="index" style="overflow-x: auto;" id="divFacturas" ><?php
         foreach($compras as $c => $compra ) {
             $lineaCompra = "";

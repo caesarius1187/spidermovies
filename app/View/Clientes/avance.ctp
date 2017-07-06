@@ -807,9 +807,10 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
                 // Anticipos [ Igual A Ganancias Fisica o Soc segun corresponda ]*/
                 if($esPersonaFisica){
                     //vence Solo en Junio,pero se muestra un mes antes
-                    if($periodoSel!='05-2017'){
+                    if($periodoSel!='06-'.$peanio){
                         $mostrarEnEstePeriodo=false;
                     }
+
                 }
                 if($esPersonaJuridica){
                     if(!$periodoSelAprobado){
@@ -825,7 +826,7 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
                 // Anticipos [NO tiene]
                 if($esPersonaJuridica){
                     //vence Solo en Junio,pero se muestra un mes antes
-                    if($periodoSel!='05-2017'){
+                    if($periodoSel!='05-'.$peanio){
                         $mostrarEnEstePeriodo=false;
                     }
                 }
@@ -840,9 +841,15 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
                 }
                 break;
             case '160':/*Ganancias Personas Físicas*/
-                //vence Solo en Junio,pero se muestra un mes antes
-                if($periodoSel!='05-2017'){
-                    $mostrarEnEstePeriodo=false;
+                $periodosAprobado = [];
+                $periodosAprobado[] = "06-".$peanio;//por junio
+                $periodosAprobado[] = "07-".$peanio;//por julio
+                $periodosAprobado[] = "08-".$peanio;//por agosto
+                $periodosAprobado[] = "10-".$peanio;//por Octubre
+                $periodosAprobado[] = "12-".$peanio;//por diciembre
+                $periodosAprobado[] = "02-".$peanio;//por febrero
+                if (in_array($periodoSel, $periodosAprobado, true )){
+                    $mostrarEnEstePeriodo=true;
                 }
                 break;
             case '159':/*Impto. s/Bienes Personales

@@ -202,30 +202,39 @@ function loadFormImpuesto(impcliid,cliid){
 			success: function(response) {
 				$('#divEditImpCliMonotributo').html(response);
 				$('#ImpcliEditForm'+impcliid+' input[type="submit"]').hide();
+				var alertMsg  = "";
 				var mesParaProximaRecategorizacion = $("#mesParaProximaRecategorizacion").val();
+				var recategoriza = false;
 				if(mesParaProximaRecategorizacion==4){
 					//Aca se recategoriza sino no hay q cambiar nada en el impcli
+					recategoriza = true;
+					alertMsg = 'Se cambiara de la categoria '+$('#ImpcliCategoriamonotributo').val()+' a la categoria '+$('#topCategoria').val();
 					$("#ImpcliCategoriamonotributo").after(
 						$('<img>').attr({
 							src: serverLayoutURL+'/img/ii.png',
 							style: 'width:15px;height:15px',
-							title: 'Se cambiara de la categoria '+$('#ImpcliCategoriamonotributo').val()+' a la categoria '+$('#topCategoria').val(),
+							title: alertMsg,
 							alt: ''
 						})
 					);
 					$("#ImpcliCategoriamonotributo").val($('#topCategoria').val());
 				}else{
+					alertMsg = 'NO Se cambiara de la categoria '+$('#ImpcliCategoriamonotributo').val()+' a la categoria '+$('#topCategoria').val() +' Por que no es mes de impacto de recategorizacion.';
 					$("#ImpcliCategoriamonotributo").after(
 						$('<img>').attr({
 							src: serverLayoutURL+'/img/ii.png',
 							style: 'width:15px;height:15px',
-							title: 'NO Se cambiara de la categoria '+$('#ImpcliCategoriamonotributo').val()+' a la categoria '+$('#topCategoria').val()
-								+' Por que no es mes de impacto de recategorizacion.',
+							title: alertMsg,
 							alt: ''
 						})
 					);
 				}
 				$('#ImpcliEditForm'+impcliid).submit(function(){
+
+					if (!confirm(alertMsg)) {
+						alert('No se ha modificado el Impuesto del cliente');
+						return false;
+					}
 					//serialize form data
 					var formData = $(this).serialize();
 					//get form action
@@ -238,10 +247,11 @@ function loadFormImpuesto(impcliid,cliid){
 							callAlertPopint("Impuesto Modificado");
 						},
 						error: function(xhr,textStatus,error){
-							callAlertPopint("Deposito NO Modificado. Intente de nuevo mas Tarde");
+							callAlertPopint("Impuesto NO Modificado. Intente de nuevo mas Tarde");
 						}
 					});
 					return false;
+
 				});
 			},
 

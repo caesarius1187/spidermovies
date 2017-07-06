@@ -1228,7 +1228,7 @@ class ImpclisController extends AppController {
 							),
 							'conditions'=>array(
 								'Valorrecibo.periodo'=>$periodo,
-								'Valorrecibo.tipoliquidacion'=>array(1,2,3)
+								'Valorrecibo.tipoliquidacion'=>array(1,2,3,7)
 							)
 						),
 						'conditions'=>array(
@@ -1493,6 +1493,8 @@ class ImpclisController extends AppController {
 							)
 						),
 						'conditions'=>[
+							'Empleado.conveniocolectivotrabajo_id <> 10',//este convenio no debe impactar en suss por que es
+							//servicio domestico
 							'OR'=>[
 								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
 								'Empleado.fechaegreso is null' ,

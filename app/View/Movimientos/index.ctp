@@ -35,12 +35,23 @@ $asiento = $asientos[0];
 		'type'=>'hidden',
 		]
 	);
+    echo $this->Form->input('Asiento.0.impcli_id',[
+		'value'=>$asiento['Asiento']['impcli_id'],
+		'type'=>'hidden',
+		]
+	);
+    echo $this->Form->input('Asiento.0.cbu_id',[
+		'value'=>$asiento['Asiento']['cbu_id'],
+		'type'=>'hidden',
+		]
+	);
 	echo $this->Form->input('Asiento.0.numero',
 		['value'=>$asiento['Asiento']['numero'],
 			'style'=>"width:100px"]);
 	echo $this->Form->input('Asiento.0.fecha',
 		['value'=>$asiento['Asiento']['fecha'],
 			'style'=>"width:120px"]);
+
 	echo $this->Form->input('Asiento.0.periodo',
 		['value'=>$asiento['Asiento']['periodo'],
 			'style'=>"width:120px"]);
@@ -50,6 +61,34 @@ $asiento = $asientos[0];
 	echo $this->Form->input('Asiento.0.descripcion',
 		['value'=>$asiento['Asiento']['descripcion'],
 			'style'=>"width:300px"]);
+    echo $this->Form->input('Asiento.0.tipoasiento',
+        [
+            'type'=>"select",
+            'default'=>$asiento['Asiento']['tipoasiento'],
+            'val'=>$asiento['Asiento']['tipoasiento'],
+            'options'=>[
+                'Devengamiento'=>'Devengamiento',
+                'Registro'=>'Registro',
+                'Apertura'=>'Apertura',
+                'Refundacion'=>'Refundacion',
+                'Cierre'=>'Cierre',
+                'impuestos'=>'Impuestos',
+                'impuestos2'=>'Impuestos 2',
+                'compras'=>'Compras',
+                'ventas'=>'Ventas',
+                'cobros'=>'Cobros',
+                'pagos'=>'Pagos',
+                'bancos'=>'Bancos Acreditaciones',
+                'bancosretiros'=>'Bancos Retiros',
+                'otros'=>'Otros',
+                'retencionessufridas'=>'Retenciones Sufridas',
+                'retencionesrealizadas'=>'Retenciones Realizadas',
+            ],
+            'style'=>"width:auto",
+            'label'=>'Tipo',
+            'title'=>'No cambiar el tipo de asiento en asientos automaticos por que el sistema intentará crearlos de 
+            nuevo cuando se generen en los asientos automaticos'
+        ]);
 	echo "</br>";
 	?>
 

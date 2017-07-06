@@ -312,7 +312,7 @@ echo $this->Form->button('Imprimir',
                             </td>
                             <td style="padding: 0px;width: 70%;text-align: right">
                             <b>
-                                <p id="obligacionmensual">684.00</p>
+                                <p id="obligacionmensual<?php echo $empleado['Empleado']['id']?>" class="obligacionmensual">684.00</p>
                             </b>
                             </td>
                         </tr>
@@ -521,7 +521,7 @@ echo $this->Form->button('Imprimir',
                     <div style="font-size: 10px; width:80%; float:left;text-align: left">
                         <label style="padding-left:10px; margin-bottom:0px; margin-top:2px">
                         <?php
-                        $identificacionnumeroEmpleador = $cliente['Cliente']['cuitautorizada'];
+                        $identificacionnumeroEmpleador = $cliente['Cliente']['cuitautorizada']!=""?$cliente['Cliente']['cuitautorizada']:$cliente['Cliente']['cuitcontribullente'];
                         $cuitEmpleador="";
                         if(strlen($identificacionnumeroEmpleador)==11){
                             $cuitEmpleador .= substr($identificacionnumeroEmpleador, 0,2);
@@ -583,9 +583,9 @@ echo $this->Form->button('Imprimir',
                 </div>
                 <div style="width:100%;text-align:left">
                     <label style="margin-bottom:0px; margin-left: 5px;font-size: 10px">
-                    <?php
-                        echo  $cliente['Domicilio'][0]['calle'];
-                    ?>
+                        <?php
+                        echo $empleado['Domicilio']['calle'];
+                        ?>
                     </label>
                 </div>                
             </td>
@@ -625,18 +625,18 @@ echo $this->Form->button('Imprimir',
                     ?>
                     </label>
                 </div>
-                <div style="width:100%;text-align:left">
-                    <label style="margin-bottom:0px; margin-left: 5px;font-size: 10px">
-                    Domicilio de trabajo:
-                    </label>
-                </div>
-                <div style="width:100%;text-align:left">
-                    <label style="margin-bottom:0px; margin-left: 5px;font-size: 10px">
-                    <?php
-                        echo $empleado['Domicilio']['calle'];
-                    ?>
-                    </label>
-                </div>
+<!--                <div style="width:100%;text-align:left">-->
+<!--                    <label style="margin-bottom:0px; margin-left: 5px;font-size: 10px">-->
+<!--                    Domicilio de trabajo:-->
+<!--                    </label>-->
+<!--                </div>-->
+<!--                <div style="width:100%;text-align:left">-->
+<!--                    <label style="margin-bottom:0px; margin-left: 5px;font-size: 10px">-->
+<!--                    --><?php
+//                        echo $empleado['Domicilio']['calle'];
+//                    ?>
+<!--                    </label>-->
+<!--                </div>-->
             </td>
             <td style="padding:0px;width:50%;">
                 <table style="margin-bottom:0px; width:80%">
@@ -807,7 +807,7 @@ echo $this->Form->button('Imprimir',
                                 $horastrabajadas+=$valores['140']['valor']*8;
                             }
                             ?>
-                            <input type="text"  maxlength="3" value="<?php echo $horastrabajadas ?>" style="width: 40px;">
+                            <input type="text" class="cantHoras" id="cantidadHoras<?php echo $empleado['Empleado']['id']?>"  maxlength="3" value="<?php echo $horastrabajadas ?>" style="width: 40px;" >
                         </td>
                     </tr>
                     <tr>
@@ -865,8 +865,8 @@ echo $this->Form->button('Imprimir',
                                     </td>
                                     <td style="padding: 0px;font-size:10px;width:40%">
                                         $<?php
-                                        if(isset($valores['12'])) {//S.A.C. Remunerativo
-                                            echo  number_format($valores['12']['valor'], 2, ",", ".");
+                                        if(isset($valores['92'])) {//S.A.C. Remunerativo
+                                            echo  number_format($valores['92']['valor'], 2, ",", ".");
                                         }
                                         ?>
                                     </td>
@@ -888,28 +888,58 @@ echo $this->Form->button('Imprimir',
                                         Otros conceptos:                            
                                     </td>
                                     <td style="padding: 0px;font-size:10px;width:40%">
-                                        - $
-                                        <?php
-                                        if(isset($valores['40'])) {//Total Aportes
-                                            echo  number_format($valores['40']['valor'], 2, ",", ".");
-                                        }
-                                        ?>
+
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 0px;font-size:10px;width:60%">                            
+                                    <td style="padding: 0px;font-size:10px;width:60%">
                                         Aportes:
                                     </td>
-                                    <td style="padding: 0px;font-size:10px;width:40%">                                
+                                    <td style="padding: 0px;font-size:10px;width:40%">
                                         <?php
                                         if(isset($valores['40'])) {//Total Aportes
-                                            echo  number_format($valores['40']['valor'], 2, ",", ".");
-                                            echo  '<p id="aportes">$'.$valores['40']['valor'].'</p>';
+                                            echo  '<p id="aportes">$-'
+                                                .number_format($valores['40']['valor'], 2, ",", ".").
+                                                '</p>';
                                         }else{
                                             echo  '<p id="aportes">$0</p>';
                                         }?>
                                     </td>
                                 </tr>
+                                <?php
+                                if(
+                                    isset($valores['165'])
+                                    &&
+                                    (($valores['165']['valor']*1)>0)
+                                ) { ?>
+                                <tr>
+                                    <td style="padding: 0px;font-size:10px;width:60%">                            
+                                        Adicional:
+                                    </td>
+                                    <td style="padding: 0px;font-size:10px;width:40%">                                
+                                        <?php
+                                            echo  '$'.number_format($valores['165']['valor'], 2, ",", ".");
+                                        ?>
+                                    </td>
+                                </tr>
+                                    <?php } ?>
+                                <?php
+                                if(
+                                    isset($valores['105'])
+                                    &&
+                                    (($valores['105']['valor']*1)>0)
+                                ) { ?>
+                                    <tr>
+                                        <td style="padding: 0px;font-size:10px;width:60%">
+                                            Vacaciones no gozadas:
+                                        </td>
+                                        <td style="padding: 0px;font-size:10px;width:40%">
+                                            <?php
+                                            echo  '$'.number_format($valores['105']['valor'], 2, ",", ".");
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
                                 <tr>
                                     <td style="padding: 0px;font-size:10px;width:60%">
                                         Suma Total
@@ -917,11 +947,12 @@ echo $this->Form->button('Imprimir',
                                     <td style="padding: 0px;font-size:10px;width:40%">
                                         $
                                         <?php
-                                        if(isset($valores['125'])) {//Sueldo
-                                            echo  number_format($valores['125']['valor'], 2, ",", ".");
-                                            echo  '<p id="sueldoTotal">'.$valores['125']['valor'].'</p>';
+                                        if(isset($valores['46'])) {//Sueldo
+                                            echo  '<p id="sueldoTotal" style="display: initial;">'.
+                                                number_format($valores['46']['valor'], 2, ",", ".").
+                                                '</p>';
                                         }else{
-                                            echo  '<p id="sueldoTotal">0</p>';
+                                            echo  '<p id="sueldoTotal" style="display: initial;">0</p>';
                                         }?>
                                     </td>
                                 </tr>
@@ -937,8 +968,8 @@ echo $this->Form->button('Imprimir',
                                 <tr>
                                     <td colspan="2" style="padding:0px;font-size:10px;">
                                         <?php
-                                        if(isset($valores['125'])) {//Sueldo
-                                            echo num2letras(number_format($valores['125']['valor'], 2, ".", "")) .".-";
+                                        if(isset($valores['46'])) {//Neto
+                                            echo num2letras(number_format($valores['46']['valor'], 2, ".", "")) .".-";
                                         }
                                         ?>
                                     </td>

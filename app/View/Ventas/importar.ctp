@@ -1,6 +1,13 @@
 <?php
 echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
-echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
+echo $this->Html->script('ventas/importar',array('inline'=>false));
+function toNumber($target){
+    $switched = str_replace('.', '', $target);
+    $switched = str_replace(',', '.', $switched);
+    return floatval($switched);
+}
+
+?>
     <SCRIPT>
         //$("#loading").css('visibility','visible');
     </SCRIPT>
@@ -165,9 +172,7 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
         $moneyChars = ['.','$'];
 
         $filesVentas = $dirVentas->find('.*\.csv');
-        $i=0;
         $errorInFileVenta=false;
-
 
         foreach ($filesVentas as $dirVenta) {
             if(is_readable($dirVentas->pwd() . DS . $dirVenta)){
@@ -186,7 +191,7 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
 
             while (($line = fgetcsv($handler, 1000, ";")) !== false) {
 //                $line = utf8_decode($line);
-                $date = date_parse($line[0]);
+                $date = date_parse($line[0]."-".$line[1]."-".$line[2]);
                 if ($date["error_count"] == 0 && checkdate($date["month"], $date["day"], $date["year"]))
                     $parceLine = true;
                 else
@@ -195,22 +200,44 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 if((!$parceLine)||$line[1]==""||$line[2]==""||$line[3]==""||$line[4]==""){
                     continue;
                 }
-                $ventasArray[$i] = array();
-                $ventasArray[$i]['Venta'] = array();
+
                 // process the line read.
                 $lineVenta = array();
-                $lineVenta['fecha']=date('d-m-Y',strtotime(str_replace("/", "-", $line[0])));
-                $lineVenta['comprobantetipo']=$line[1];
-                $lineVenta['puntodeventa']=$line[2];
-                $lineVenta['comprobantenumero']=$line[3];
-                $lineVenta['comprobantenumerohasta']=$line[4];
-                $lineVenta['codigodocumento']=$line[5];
-                $lineVenta['identificacionnumero']=$line[6];
-                $lineVenta['nombre']=$line[7];
+
+
+                $lineVenta['fecha']=date('d-m-Y',strtotime($line[0]."-".$line[1]."-".$line[2]));
+                $lineVenta['comprobantetipo']=$line[3];
+                $lineVenta['puntodeventa']=$line[4];
+                $lineVenta['comprobantenumero']=$line[5];
+                $lineVenta['codigodocumento']=80;
+                $lineVenta['identificacionnumero']=$line[7];
+                $lineVenta['nombre']=$line[6];
+
+                //todo primero que nada tengo que buscar si esta venta no existe ya con otra alicuota
+                $numeroVenta = $i;
+                $ventayacargadaenformulario = false;
+                foreach ($ventasArray as $v => $venta) {
+                    if(isset($venta['Venta']['comprobantenumero'])){
+                        $mismocomprobante = $venta['Venta']['comprobantenumero']==$lineVenta['comprobantenumero'];
+                        $mismopuntodeventa = $venta['Venta']['puntodeventa']==$lineVenta['puntodeventa'];
+                        $mismotipocomprobante = $venta['Venta']['comprobantetipo']==$lineVenta['comprobantetipo'];
+                        if($mismocomprobante&&$mismopuntodeventa&&$mismotipocomprobante){
+                            $lineVenta = $venta['Venta'];
+                            $numeroVenta = $v;
+                            $ventayacargadaenformulario = true;
+                            break;
+                        }
+                    }
+                }
+                if(!$ventayacargadaenformulario){
+                    $ventasArray[$numeroVenta] = array();
+                    $ventasArray[$numeroVenta]['Venta'] = array();
+                }
+
                 //aveces la identificacionnumero viene vacia (todos 0) entonces vamos a poner el nombre
                 // en estos casos como identificacion numero
                 if(ltrim($lineVenta['identificacionnumero'],'0')==''){
-                    $lineVenta['identificacionnumero'] = $lineVenta['nombre'];
+                    $lineVenta['identificacionnumero'] = '20000000001';
                 }
                 //hay algunos casos donde los registros vienen sin nombre y sin cuit, en estos casos
                 //vamos a poner que el subcliente es un consumidor final y lo vamos a cargar
@@ -222,21 +249,55 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                     $lineVenta['nombre'] = 'Consumidor Final';
                     $lineVenta['identificacionnumero'] = '20000000001';
                 }
-                $lineVenta['importetotaloperacion']= floatval(str_replace(',', '.', str_replace('.', '', $line[8])));
-                $lineVenta['importeconceptosprecionetogravado']= floatval(str_replace(',', '.', str_replace('.', '', $line[9])));
-                $lineVenta['percepcionesnocategorizados']= floatval(str_replace(',', '.', str_replace('.', '', $line[10])));
-                $lineVenta['importeoperacionesexentas']= floatval(str_replace(',', '.', str_replace('.', '', $line[11])));
-                $lineVenta['importepercepcionespagosacuenta']= floatval(str_replace(',', '.', str_replace('.', '', $line[12])));
-                $lineVenta['importeingresosbrutos']= floatval(str_replace(',', '.', str_replace('.', '', $line[13])));
-                $lineVenta['importeimpuestosmunicipales']= floatval(str_replace(',', '.', str_replace('.', '', $line[14])));
-                $lineVenta['importeimpuestosinternos']= floatval(str_replace(',', '.', str_replace('.', '', $line[15])));
-                $lineVenta['codigomoneda']=$line[16];//no se carga
-                $lineVenta['cambiotipo']=$line[17];//no se carga
-                $lineVenta['cantidadalicuotas']=$line[18];//no se carga
-                $lineVenta['operacioncodigo']=$line[19];
-                $lineVenta['otrostributos']=$line[20];
-                $lineVenta['fechavencimientopago']=$line[21];
-                $ventasArray[$i]['Venta']=$lineVenta;
+//                $lineVenta['condicioniva']=$line[8];
+//                $lineVenta['provincia']=$line[9];
+//                $lineVenta['localidad']=$line[10];
+//                $lineVenta['tipodebito']=$line[11];
+
+                //hay que acumular por que puede haber varias ventas con los mismos datos por las distintas alicuotas
+                if(!isset($lineVenta['importetotaloperacion'])){
+                    $lineVenta['importetotaloperacion'] = 0;
+                    $lineVenta['importeconceptosprecionetogravado'] = 0;
+                    $lineVenta['percepcionesnocategorizados'] = 0;
+                    $lineVenta['importeoperacionesexentas'] = 0;
+//                    $lineVenta['importepercepcionespagosacuenta'] = 0;
+                    $lineVenta['importeingresosbrutos'] = 0;
+                    $lineVenta['importeimpuestosmunicipales'] = 0;
+                    $lineVenta['importeimpuestosinternos'] = 0;
+                    $lineVenta['cantidadalicuotas'] = 0;
+                }
+                $lineVenta['importetotaloperacion'] += toNumber($line[17]);
+                $lineVenta['importeconceptosprecionetogravado']+= toNumber($line[15]);
+                $lineVenta['percepcionesnocategorizados']+= toNumber($line[11]);
+                $lineVenta['importeoperacionesexentas']+= toNumber($line[16]);
+//                $lineVenta['importepercepcionespagosacuenta']+= toNumber($line[12]);
+                $lineVenta['importeingresosbrutos']+= toNumber($line[12]);
+                $lineVenta['importeimpuestosmunicipales']+= toNumber($line[13]);
+                $lineVenta['importeimpuestosinternos']+= toNumber($line[14]);
+
+                //$lineVenta['codigomoneda']=$line[16];//no se carga
+                //$lineVenta['cambiotipo']=$line[17];//no se carga
+                $lineVenta['cantidadalicuotas']+=1;
+//                $lineVenta['operacioncodigo']=$line[19];
+//                $lineVenta['otrostributos']=$line[20];
+//                $lineVenta['fechavencimientopago']=$line[21];
+
+                $ventasArray[$numeroVenta]['Venta']=$lineVenta;
+
+                $lineAlicuota = array();
+                $lineAlicuota['comprobantetipo'] = $lineVenta['comprobantetipo'];
+                $lineAlicuota['puntodeventa'] = $lineVenta['puntodeventa'];
+                $lineAlicuota['comprobantenumero'] = $lineVenta['comprobantenumero'];
+                $lineAlicuota['importenetogravado'] = toNumber($line[9]);
+                $lineAlicuota['alicuotaiva'] = $line[8];
+
+                $lineAlicuota['impuestoliquidado'] = toNumber($line[10]);
+
+                if(!isset($ventasArray[$numeroVenta]['Alicuota'])){
+                    $ventasArray[$numeroVenta]['Alicuota']=array();
+                }
+                array_push($ventasArray[$numeroVenta]['Alicuota'], $lineAlicuota);
+
                 $i++;
                 $j++;
                 // $line="";
@@ -262,9 +323,6 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
             }
         }
         ?>
-
-
-
         </br></br></br></br></br>Alicuotas:</br>
         <?php
         //ACA VAMOS A BUSCAR LOS TXT
@@ -332,72 +390,7 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
                 //echo "handler cerrado ABIERTO! 2";
             }
         }
-        //ACA VAMOS A BUSCAR LOS CSV
-        $filesAlicuotas = $dirAlicuotas->find('.*\.csv');
-        //vamos a crear un array de Ventas con los datos que vayamos recavando de cada archivo
-        $i=0;
-        foreach ($filesAlicuotas as $dirAlicuota) {
-            if(is_readable($dirAlicuotas->pwd() . DS . $dirAlicuota)){
-                $mostrarTabla = true;
-            }else{
-                echo "No se puede acceder al archivo:".$dirAlicuota."</br>";
-                break;
-            }
-            $dirAlicuota = new File($dirAlicuotas->pwd() . DS . $dirAlicuota);
-            $dirAlicuota->open();
-            $contents = $dirAlicuota->read();
-            // $file->delete(); // I am deleting this file
-            $handler = $dirAlicuota->handle;
-            $j=0;
-            while (($line = fgetcsv($handler, 1000, ";")) !== false) {
-                if($line[0]=="comprobantetipo"||$line[0]==""||$line[1]==""||$line[2]==""||$line[3]==""||$line[4]==""){
-                    continue;
-                }
-                // process the line read.
-                $lineAlicuota = array();
-                $lineAlicuota['comprobantetipo'] = $line[0];
-                $lineAlicuota['puntodeventa'] = $line[1];
-                $lineAlicuota['comprobantenumero'] = $line[2];
-                $lineAlicuota['importenetogravado'] = floatval(str_replace(',', '.', str_replace('.', '', $line[3])));
-                $lineAlicuota['alicuotaiva'] = $line[4];
-                $lineAlicuota['impuestoliquidado'] = floatval(str_replace(',', '.', str_replace('.', '', $line[5])));
-                $i++;
-                $j++;
-                //ahora que tenemos la alicuota en un array tenemos que buscar la venta a la que pertenece y agregarla
-                $k=0;
-                foreach ($ventasArray as $venta) {
-                    $mismocomprobante = $venta['Venta']['comprobantenumero']*1==$lineAlicuota['comprobantenumero']*1;
-                    $mismopuntodeventa = $venta['Venta']['puntodeventa']*1==$lineAlicuota['puntodeventa']*1;
-                    $mismotipocomprobante = $venta['Venta']['comprobantetipo']*1==$lineAlicuota['comprobantetipo']*1;
-                    if($mismocomprobante&&$mismopuntodeventa&&$mismotipocomprobante){
-                        if(!isset($venta['Alicuota'])){
-                            $venta['Alicuota']=array();
-                        }
-                        array_push($venta['Alicuota'], $lineAlicuota);
-                        $ventasArray[$k]=$venta;
-                        break;
-                    }
-                    $k++;
-                }
-            }
-            echo $this->Form->button(
-                $dirAlicuota->name.'</br>
-            <label>Alicuotas: '.$j.'</label>',
-                array(
-                    'class'=>'buttonImpcli4',
-                    'onClick'=>"deletefile('".$dirAlicuota->name."','".$cliid."','alicuotas','".$periodo."')",
-                    'id'=>'',
-                ),
-                array()
-            );
-            fclose ( $handler );
-            $dirAlicuota->close(); // Be sure to close the file when you're done
-            if(!is_resource($handler)){
-                //echo "handler cerrado con exito 2";
-            }else{
-                //echo "handler cerrado ABIERTO! 2";
-            }
-        }
+
         ?>
 
     </div>
@@ -437,7 +430,7 @@ echo $this->Html->script('ventas/importar',array('inline'=>false)); ?>
         </table>
     </div>
 <?php
-
+//die("pre puntos de ventas no cargados");
 $PuntoDeVentaNoCargado=array();
 $SubclienteNoCargado=array();
 $VentasConFechasIncorrectas = array();
@@ -509,7 +502,10 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                             <td><?php
                                 echo $this->Form->input('Puntosdeventa.' . $i . '.cliente_id', array('type' => 'hidden', 'value' => $cliid));
                                 echo $this->Form->input('Puntosdeventa.' . $i . '.nombre', array(
-                                    'label' => '', 'maxlength' => '4', 'value' => $puntodeventa['nombre']));
+                                    'label' => '',
+                                    'maxlength' => '4',
+                                    'value' => str_pad($puntodeventa['nombre'], 5, "0", STR_PAD_LEFT)
+                                ));
                                 echo $this->Form->input('Puntosdeventa.' . $i . '.sistemafacturacion', array(
                                     'label' => '',
                                     'type' => 'select',
@@ -721,8 +717,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                 ),
             )
         );
-        /*Debugger::dump($comprobantes);
-        Debugger::dump($puntosdeventas);*/
         function customSearch($keyword, $arrayToSearch){
             foreach($arrayToSearch as $key => $arrayItem){
                 if( stristr( $arrayItem, $keyword ) ){
@@ -836,14 +830,26 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                     //se supone que cuando generemos este formulario ya van a estar creados todos los subclientes
                                     //asi que solo tendriamos queseleccionar por numero de idenficicacion
                                     echo $this->Form->input('Venta.' . $i . '.subcliente_id', array(
-                                            'options' => $subclientes,
                                             'default' => $clienteNuevo,
                                             'defaultmio' => $clienteNuevo,
                                             'required' => true,
-                                            'class' => 'chosen-select',
+                                            'type' => 'hidden',
+                                            'div'=>['style'=>'display:none']
+                                        )
+                                    );
+                                    echo $this->Form->input('Venta.' . $i . '.subclientenombre', array(
                                             'label' => ($i + 9) % 10 == 0 ? 'Cliente' : '',
-                                            'style' => 'width:176px;',
-                                            'class' => 'chosen-select filtrosubcliente'
+                                            'style' => 'width:84px;',
+                                            'class' => 'filtrosubcliente',
+                                            'disabled' => 'disabled',
+                                            'value' => $venta['Venta']['nombre']
+                                        )
+                                    );
+                                    echo $this->Form->input('Venta.' . $i . '.subclientecuit', array(
+                                            'label' => ($i + 9) % 10 == 0 ? 'CUIT' : '',
+                                            'style' => 'width:84px;',
+                                            'disabled' => 'disabled',
+                                            'value' => $venta['Venta']['identificacionnumero']
                                         )
                                     );
                                     $condicioniva = 'monotributista';//defaultavalue
@@ -903,7 +909,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'class' => "chosen-select",
                                             'label' => ($i + 9) % 10 == 0 ? 'Localidad' : '',
                                             'style' => 'width:150px',
-                                            'defaultoptionlocalidade' => $venta['Venta']['puntodeventa'],
+                                            'defaultoptionlocalidade' => str_pad($venta['Venta']['puntodeventa'], 5, "0", STR_PAD_LEFT),
                                             'class' => 'aplicableATodos chosen-select',
                                             'inputclass' => 'VentaAddLocalidad',
                                             'div' => array('class' => 'inputAControlar')

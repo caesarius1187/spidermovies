@@ -84,17 +84,7 @@
                 if(isset($cuentasclientes[$cuentaclienteid])){
                     $cuentaclientenombre= $cuentasclientes[$cuentaclienteid];
                 }
-//                $cuentaclientenombre=$cuentaclientaCm['nombre'];
             }
-            
-//            foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclienta){
-//                if($cuentaclientaCm['cuenta_id']==$asientoestandarCM['cuenta_id']){
-//                    $cuentaclienteid=$cuentaclientaCm['id'];
-//                    $cuentaclientenombre=$cuentaclientaCm['nombre'];
-//                    break;
-//                }
-//            }
-            
             //ahora vamos a sumar las retenciones de este impuesto
             $debe=0;
             $haber=0;

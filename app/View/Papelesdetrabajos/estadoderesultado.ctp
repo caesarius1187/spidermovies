@@ -737,563 +737,1700 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 <div class="index" id="divContenedorAnexos">
     <?php
     echo "<h2>Anexos</h2>";
+    $totalAnexoII = [];
     ?>
-    <table id="tblAnexoI"  class="tbl_border" cellspacing="0" style="width:600px;">
-        <thead>
-        <tr>
-            <th colspan="20" style="background-color: #91a7ff">
-                Anexo I: Costo de los Bienes Vendidos, Servicios Prestados y de Producción al
-                31/12/2016  comparativo con el Ejercicio Anterior
-            </th>
-        </tr>
-        
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                Descripción Actividad
-            </td>
-            <td>
-                Anterior
-            </td>
-            <td>
-                Actual
-            </td>
-        </tr>
-        <tr>
-            <td colspan="20" style="background-color: #91a7ff">
-                Existencia Inicial
-            </td>
+    <div id="AnexoI" class="index" style="width:650px;float: left;">
+        <table id="tblAnexoI"  class="tbl_border" cellspacing="0" style="width:600px;">
+            <thead>
+            <tr>
+                <th colspan="20" style="background-color: #91a7ff">
+                    Anexo I: Costo de los Bienes Vendidos, Servicios Prestados y de Producción al
+                    31/12/2016  comparativo con el Ejercicio Anterior
+                </th>
+            </tr>
 
-        </tr>
-        <tr>
-            <td>
-                Mercaderías
-            </td>
-            <?php
-            //aca vamos a buscar los valores de la cuenta 	110500011 Mercaderia Inicial que esten en un asiento de apertura
-            //capas que no sea necesario usar el asiento de apertura por que
-            $totalPeriodoExistenciaInicial=[];
-            foreach ($cliente['Cuentascliente'] as $cuentascliente) {
-                $numerodecuenta = $cuentascliente['Cuenta']['numero'];
-                if($numerodecuenta == '110500011'){
-                    foreach ($cuentascliente['Movimiento'] as $movimiento){
-                        if($movimiento['Asiento']['tipoasiento']== 'Apertura'){
-                            //entonces este es el valor del asiento de apertura de este periodo
-                            $mesAMostrar = date('Y', strtotime($movimiento['Asiento']['fecha']));
-                            if(!isset($totalPeriodoExistenciaInicial[$mesAMostrar])){
-                                $totalPeriodoExistenciaInicial[$mesAMostrar] = 0;//existen estos valores
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    Descripción Actividad
+                </td>
+                <td>
+                    Anterior
+                </td>
+                <td>
+                    Actual
+                </td>
+            </tr>
+            <tr>
+                <td colspan="20" style="background-color: #91a7ff">
+                    Existencia Inicial
+                </td>
+
+            </tr>
+            <tr>
+                <td>
+                    Mercaderías
+                </td>
+                <?php
+                //aca vamos a buscar los valores de la cuenta 	110500011 Mercaderia Inicial que esten en un asiento de apertura
+                //capas que no sea necesario usar el asiento de apertura por que
+                $totalPeriodoExistenciaInicial=[];
+                foreach ($cliente['Cuentascliente'] as $cuentascliente) {
+                    $numerodecuenta = $cuentascliente['Cuenta']['numero'];
+                    if($numerodecuenta == '110500011'){
+                        foreach ($cuentascliente['Movimiento'] as $movimiento){
+                            if($movimiento['Asiento']['tipoasiento']== 'Apertura'){
+                                //entonces este es el valor del asiento de apertura de este periodo
+                                $mesAMostrar = date('Y', strtotime($movimiento['Asiento']['fecha']));
+                                if(!isset($totalPeriodoExistenciaInicial[$mesAMostrar])){
+                                    $totalPeriodoExistenciaInicial[$mesAMostrar] = 0;//existen estos valores
+                                }
+                                $totalPeriodoExistenciaInicial[$mesAMostrar]+=$movimiento['debe'];
+                                $totalPeriodoExistenciaInicial[$mesAMostrar]-=$movimiento['haber'];
                             }
-                            $totalPeriodoExistenciaInicial[$mesAMostrar]+=$movimiento['debe'];
-                            $totalPeriodoExistenciaInicial[$mesAMostrar]-=$movimiento['haber'];
                         }
                     }
                 }
-            }
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($totalPeriodoExistenciaInicial[$periodoMesAMostrar])?$totalPeriodoExistenciaInicial[$periodoMesAMostrar]:0;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Productos Terminados
-            </td>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar]:0;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                if(!isset($totalPeriodoExistenciaInicial[$mesAMostrar])){
-                    $totalPeriodoExistenciaInicial[$mesAMostrar] = 0;//existen estos valores
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($totalPeriodoExistenciaInicial[$periodoMesAMostrar])?$totalPeriodoExistenciaInicial[$periodoMesAMostrar]:0;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoExistenciaInicial[$mesAMostrar]+=$totalPeriodo;
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Producción en Proceso
-            </td>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110504011'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar]:0;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                if(!isset($totalPeriodoExistenciaInicial[$mesAMostrar])){
-                    $totalPeriodoExistenciaInicial[$mesAMostrar] = 0;//existen estos valores
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Productos Terminados
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar]:0;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    if(!isset($totalPeriodoExistenciaInicial[$mesAMostrar])){
+                        $totalPeriodoExistenciaInicial[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoExistenciaInicial[$mesAMostrar]+=$totalPeriodo;
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoExistenciaInicial[$mesAMostrar]+=$totalPeriodo;
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Materias Primas e Insumos incorporados a la producción
-            </td>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110506011'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar]:0;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                if(!isset($totalPeriodoExistenciaInicial[$mesAMostrar])){
-                    $totalPeriodoExistenciaInicial[$mesAMostrar] = 0;//existen estos valores
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Producción en Proceso
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110504011'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar]:0;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    if(!isset($totalPeriodoExistenciaInicial[$mesAMostrar])){
+                        $totalPeriodoExistenciaInicial[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoExistenciaInicial[$mesAMostrar]+=$totalPeriodo;
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoExistenciaInicial[$mesAMostrar]+=$totalPeriodo;
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Insumos Incorporados a la Prestación de Servicios
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Otros
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Participación en negocios conjuntos
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr style="background-color: #d0d9ff">
-            <th>
-                Total Existencia Inicial
-            </th>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                echo '<th  class="numericTD">' .
-                    number_format($totalPeriodoExistenciaInicial[$mesAMostrar], 2, ",", ".")
-                    . "</th>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <th colspan="20" style="background-color: #91a7ff">
-                Compras
-            </th>
-        </tr>
-        <tr>
-            <td>
-                Mercaderías
-            </td>
-            <?php
-            //vamos a calcular las existencias finales y despues las mostramos mas abajo
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110500013'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110500013'][$periodoMesAMostrar]:0;
-                if(!isset($totalPeriodoExistenciaFinal[$mesAMostrar])){
-                    $totalPeriodoExistenciaFinal[$mesAMostrar] = 0;//existen estos valores
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Materias Primas e Insumos incorporados a la producción
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110506011'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar]:0;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    if(!isset($totalPeriodoExistenciaInicial[$mesAMostrar])){
+                        $totalPeriodoExistenciaInicial[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoExistenciaInicial[$mesAMostrar]+=$totalPeriodo;
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoExistenciaFinal[$mesAMostrar]+=$totalPeriodo;
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            $totalPeriodoCompras = [];
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110506011'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502011'][$periodoMesAMostrar]:0;
-                $totalPeriodo += $totalPeriodoExistenciaFinal[$mesAMostrar];
-                $totalPeriodo -= $totalPeriodoExistenciaInicial[$mesAMostrar];
-                if(!isset($totalPeriodoCompras[$mesAMostrar])){
-                    $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Insumos Incorporados a la Prestación de Servicios
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Otros
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Participación en negocios conjuntos
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr style="background-color: #d0d9ff">
+                <th>
+                    Total Existencia Inicial
+                </th>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    echo '<th  class="numericTD">' .
+                        number_format($totalPeriodoExistenciaInicial[$mesAMostrar], 2, ",", ".")
+                        . "</th>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoCompras[$mesAMostrar] += $totalPeriodo;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
+                ?>
+            </tr>
+            <tr>
+                <th colspan="20" style="background-color: #91a7ff">
+                    Compras
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    Mercaderías
+                </td>
+                <?php
+                //vamos a calcular las existencias finales y despues las mostramos mas abajo
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110500013'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110500013'][$periodoMesAMostrar]:0;
+                    if(!isset($totalPeriodoExistenciaFinal[$mesAMostrar])){
+                        $totalPeriodoExistenciaFinal[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoExistenciaFinal[$mesAMostrar]+=$totalPeriodo;
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
 
-        </tr>
-        <tr>
-            <td>
-                Productos Terminados
-            </td>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110502012'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502012'][$periodoMesAMostrar]:0;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                if(!isset($totalPeriodoCompras[$mesAMostrar])){
-                    $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                $totalPeriodoCompras = [];
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['501000001'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['501000001'][$periodoMesAMostrar]:0;
+                    $totalPeriodo += $totalPeriodoExistenciaFinal[$mesAMostrar];
+                    $totalPeriodo -= $totalPeriodoExistenciaInicial[$mesAMostrar];
+                    if(!isset($totalPeriodoCompras[$mesAMostrar])){
+                        $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoCompras[$mesAMostrar] += $totalPeriodo;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoCompras[$mesAMostrar]+=$totalPeriodo;
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Producción en Proceso
-            </td>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110504012'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110504012'][$periodoMesAMostrar]:0;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                if(!isset($totalPeriodoCompras[$mesAMostrar])){
-                    $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                ?>
+
+            </tr>
+            <tr>
+                <td>
+                    Productos Terminados
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110502012'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502012'][$periodoMesAMostrar]:0;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    if(!isset($totalPeriodoCompras[$mesAMostrar])){
+                        $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoCompras[$mesAMostrar]+=$totalPeriodo;
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoCompras[$mesAMostrar]+=$totalPeriodo;
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Materias Primas e Insumos incorporados a la producción
-            </td>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110506012'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110506012'][$periodoMesAMostrar]:0;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                if(!isset($totalPeriodoCompras[$mesAMostrar])){
-                    $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Producción en Proceso
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110504012'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110504012'][$periodoMesAMostrar]:0;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    if(!isset($totalPeriodoCompras[$mesAMostrar])){
+                        $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoCompras[$mesAMostrar]+=$totalPeriodo;
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoCompras[$mesAMostrar]+=$totalPeriodo;
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Insumos Incorporados a la Prestación de Servicios
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Otros: Gastos Activados
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Participación en negocios conjuntos
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr style="background-color: #d0d9ff">
-            <th>
-                Total de Compras
-            </th>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                echo '<th  class="numericTD">' .
-                    number_format($totalPeriodoCompras[$mesAMostrar], 2, ",", ".")
-                    . "</th>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <th colspan="20" style="background-color: #91a7ff">
-                Devoluciones de Compras
-            </th>
-        </tr>
-        <tr>
-            <td>
-                Mercaderías
-            </td>
-            <?php
-            $totalPeriodoDevoluciones = [];
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110500014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110500014'][$periodoMesAMostrar]:0;
-                if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
-                    $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Materias Primas e Insumos incorporados a la producción
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110506012'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110506012'][$periodoMesAMostrar]:0;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    if(!isset($totalPeriodoCompras[$mesAMostrar])){
+                        $totalPeriodoCompras[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoCompras[$mesAMostrar]+=$totalPeriodo;
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Productos Terminados
-            </td>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110502014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502014'][$periodoMesAMostrar]:0;
-                if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
-                    $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Insumos Incorporados a la Prestación de Servicios
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Otros: Gastos Activados
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Participación en negocios conjuntos
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr style="background-color: #d0d9ff">
+                <th>
+                    Total de Compras
+                </th>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    echo '<th  class="numericTD">' .
+                        number_format($totalPeriodoCompras[$mesAMostrar], 2, ",", ".")
+                        . "</th>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Producción en Proceso
-            </td>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110504014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110504014'][$periodoMesAMostrar]:0;
-                if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
-                    $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                ?>
+            </tr>
+            <tr>
+                <th colspan="20" style="background-color: #91a7ff">
+                    Devoluciones de Compras
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    Mercaderías
+                </td>
+                <?php
+                $totalPeriodoDevoluciones = [];
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110500014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110500014'][$periodoMesAMostrar]:0;
+                    if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
+                        $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Materias Primas e Insumos incorporados a la producción
-            </td>
-            <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                $totalPeriodo = isset($arrayCuentasxPeriodos['110506014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110506014'][$periodoMesAMostrar]:0;
-                if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
-                    $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Productos Terminados
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110502014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502014'][$periodoMesAMostrar]:0;
+                    if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
+                        $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
                 }
-                $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodo, 2, ",", ".")
-                    . "</td>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
-            }
-            ?>
-        </tr>
-        <tr>
-            <td>
-                Insumos Incorporados a la Prestación de Servicios
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Otros
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Participación en negocios conjuntos
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr style="background-color: #d0d9ff">
-            <th>
-                Total de Devoluciones de Compras
-            </th>
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Producción en Proceso
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110504014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110504014'][$periodoMesAMostrar]:0;
+                    if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
+                        $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Materias Primas e Insumos incorporados a la producción
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110506014'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110506014'][$periodoMesAMostrar]:0;
+                    if(!isset($totalPeriodoDevoluciones[$mesAMostrar])){
+                        $totalPeriodoDevoluciones[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoDevoluciones[$mesAMostrar] += $totalPeriodo;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Insumos Incorporados a la Prestación de Servicios
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Otros
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Participación en negocios conjuntos
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr style="background-color: #d0d9ff">
+                <th>
+                    Total de Devoluciones de Compras
+                </th>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    echo '<th  class="numericTD">' .
+                        number_format($totalPeriodoDevoluciones[$mesAMostrar], 2, ",", ".")
+                        . "</th>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
+                ?>
+            </tr>
+            <tr>
+                <th>
+                    Gastos Imputables al Costo
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>
+                    Costos Financieros Activados
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <td>
+                    Resultado por Tenencia
+                </td>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <th>
+                    Otros
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr>
+                <th colspan="20" style="background-color: #91a7ff">
+                    Existencia Final
+                </th>
+            </tr>
+            <tr>
+                <td >
+                    Mercaderías
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodoExistenciaFinal[$mesAMostrar], 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Productos Terminados
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110502013'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110502013'][$periodoMesAMostrar]:0;
+                    if(!isset($totalPeriodoExistenciaFinal[$mesAMostrar])){
+                        $totalPeriodoExistenciaFinal[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoExistenciaFinal[$mesAMostrar] += $totalPeriodo;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Producción en Proceso
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110504013'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110504013'][$periodoMesAMostrar]:0;
+                    if(!isset($totalPeriodoExistenciaFinal[$mesAMostrar])){
+                        $totalPeriodoExistenciaFinal[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoExistenciaFinal[$mesAMostrar] += $totalPeriodo;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Materias Primas y Materiales
+                </td>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = isset($arrayCuentasxPeriodos['110506013'][$periodoMesAMostrar])?$arrayCuentasxPeriodos['110506013'][$periodoMesAMostrar]:0;
+                    if(!isset($totalPeriodoExistenciaFinal[$mesAMostrar])){
+                        $totalPeriodoExistenciaFinal[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoExistenciaFinal[$mesAMostrar] += $totalPeriodo;
+                    echo '<td  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</td>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
+                ?>
+            </tr>
+            <tr>
+                <td>
+                    Insumos Incorporados a la Prestación de Servicios
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Otros
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Participación en negocios conjuntos
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr style="background-color: #d0d9ff">
+                <th>
+                    Total Existencia Final
+                </th>
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    echo '<th  class="numericTD">' .
+                        number_format($totalPeriodoExistenciaFinal[$mesAMostrar], 2, ",", ".")
+                        . "</th>";
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
+                ?>
+            </tr>
+            <tr>
+                <th colspan="20" style="background-color: #91a7ff">
+                    Prestación de Servicios
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    Costo de Prestación Servicios
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Indumentaria
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>
+                    Insumo
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr style="background-color: #d0d9ff">
+                <th>
+                    Total Existencia Final
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr  style="background-color: #d0d9ff">
+                <th>
+                    Costo de los Bienes, de los Servicios y de Producción
+                </th>
+                <?php
+                $totalPeriodoCostoBienesServiciosProduccion = [];
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                while($mesAMostrar<=$fechaFinConsulta) {
+                    $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+                    $totalPeriodo = $totalPeriodoExistenciaInicial[$mesAMostrar];
+                    $totalPeriodo += $totalPeriodoCompras[$mesAMostrar];
+                    $totalPeriodo -= $totalPeriodoDevoluciones[$mesAMostrar];
+                    $totalPeriodo -= $totalPeriodoExistenciaFinal[$mesAMostrar];
+                    echo '<th  class="numericTD">' .
+                        number_format($totalPeriodo, 2, ",", ".")
+                        . "</th>";
+                    if(!isset($totalPeriodoCostoBienesServiciosProduccion[$mesAMostrar])){
+                        $totalPeriodoCostoBienesServiciosProduccion[$mesAMostrar] = 0;//existen estos valores
+                    }
+                    $totalPeriodoCostoBienesServiciosProduccion[$mesAMostrar] += $totalPeriodo;
+                    $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+                }
+                ?>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="AnexoII" class="index" style="width:700px;float: left">
+        <table id="tblAnexoII" class="tbl_border">
+            <thead>
+                <tr style="background-color: #91a7ff">
+                    <th colspan="20">
+                        Anexo II de Costos de Producción y Gastos clasificados por su naturaleza al 31/12/2016 comparativo con el Ejercicio Anterior
+                    </th>
+                </tr>
+                <tr>
+                    <td rowspan="2"></td>
+                    <td colspan="4"></td>
+                    <td colspan="1">Ejercicio Anterior</td>
+                </tr>
+                <tr>
+                    <td>Costo de vta, producc. y adquis de bs de uso, intang. y otros activos</td>
+                    <td>Gastos de Administración</td>
+                    <td>Gastos de Comercialización</td>
+                    <td>Total</td>
+                    <td>Total</td>
+                </tr>
+                <tr>
+                    <td>Porcentajes para el prorrateo</td>
+                    <td>0%</td>
+                    <td>25%</td>
+                    <td>75%</td>
+                    <td>100%</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
             <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                echo '<th  class="numericTD">' .
-                    number_format($totalPeriodoDevoluciones[$mesAMostrar], 2, ",", ".")
-                    . "</th>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            $numerofijo = "50401000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Combustibles, Lubricantes y FM",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+
+            }
+            $numerofijo = "50402000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Servicios Públicos",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50403000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Alquileres y Expensas",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50403000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Alquileres y Expensas",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
             }
             ?>
-        </tr>
-        <tr>
-            <th>
-                Gastos Imputables al Costo
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tr>
-            <th>
-                Costos Financieros Activados
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tr>
-            <td>
-                Resultado por Tenencia
-            </td>
-            <th></th>
-            <th></th>
-        </tr>
-        <tr>
-            <th>
-                Otros
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tr>
-            <th colspan="20" style="background-color: #91a7ff">
-                Existencia Final
-            </th>
-        </tr>
-        <tr>
-            <td >
-                Mercaderías
-            </td>
+            <tr><th colspan="20">Amortizaciones</th></tr>
+             <?php
+            $numerofijo = "50404100";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Amortización Inmuebles",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50404200";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Amortización Rodados",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50404300";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Amortización Instalaciones",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+             $numerofijo = "50404400";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Amortización Muebles y Utiles",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50404500";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Amortización Maquinarias",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50404600";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Amortización Activos Biológico",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50405000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Gastos de Traslados",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50406000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Seguros",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50407000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Gastos de Cortesia y Homenaje",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50408000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Mantenimiento, Reparación, etc",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50409000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Gastos de Librería",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50410000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Gastos Varios",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50411000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Incobrables",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50412000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Honorarios Directores",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50413000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Honorarios Sindicos",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }
+             $numerofijo = "50499000";
+             $indexCuentas = array_keys(
+                 array_filter(
+                     $keysCuentas,
+                     function($var) use ($numerofijo){
+                         return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                     }
+                 )
+             );
+             if(count($indexCuentas)!=0) {
+                 $totalGastosCombustibles = mostrarNotasDeGastos(
+                     $arrayCuentasxPeriodos,
+                     $indexCuentas,
+                     "Otros Gastos (no prorrateables)",
+                     $numerofijo,
+                     $fechaInicioConsulta,
+                     $fechaFinConsulta,$totalAnexoII);
+             }?>
+            <tr><th colspan="20">Gastos Financieros</th></tr>
+            <tr><th colspan="20">Gtos. Financ. de Act. Operativ</th></tr>
             <?php
-            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
-            while($mesAMostrar<=$fechaFinConsulta) {
-                $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
-                echo '<td  class="numericTD">' .
-                    number_format($totalPeriodoExistenciaFinal[$mesAMostrar], 2, ",", ".")
-                    . "</td>";
-                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            $numerofijo = "50501010";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Proveedores",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50501020";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Acreedores Varios",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }?>
+            <tr><th colspan="20">Entidades Crediticias</th></tr>
+            <?php
+            $numerofijo = "5050201";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5050202";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5050203";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5050204";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5050205";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5050206";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5050207";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5050208";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5050209";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5050210";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Banco",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50503000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Otras Entidades Crediticias",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
             }
             ?>
-        </tr>
-        <tr>
-            <td>
-                Productos Terminados
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Producción en Proceso
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Materias Primas y Materiales
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Insumos Incorporados a la Prestación de Servicios
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Otros
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Participación en negocios conjuntos
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr style="background-color: #d0d9ff">
-            <th>
-                Total Existencia Final
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tr>
-            <th colspan="20" style="background-color: #91a7ff">
-                Prestación de Servicios
-            </th>
-        </tr>
-        <tr>
-            <td>
-                Costo de Prestación Servicios
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Indumentaria
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>
-                Insumo
-            </td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr style="background-color: #d0d9ff">
-            <th>
-                Total Existencia Final
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-        <tr>
-            <th>
-                Costo de los Bienes, de los Servicios y de Producción
-            </th>
-            <th></th>
-            <th></th>
-        </tr>
-        </tbody>
-    </table>
+            <tr><th colspan="20">Organismos Públicos</th></tr>
+            <?php
+            $numerofijo = "50504010";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "AFIP",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50504020";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "DGR",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50504030";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "DGRM",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            ?>
+            <tr><th colspan="20">Gastos Fiscales</th></tr>
+            <tr><th colspan="20">Gastos Fiscales - AFIP</th></tr>
+            <?php
+            $numerofijo = "50611000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Ganancias",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50612000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Ganancia Mín. Presunta",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50613000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Bienes Personales",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50614000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Otros Impuestos Nacionales",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            ?>
+            <tr><th colspan="20">Gastos Fiscales - DGR</th></tr>
+            <?php
+            $numerofijo = "50621000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Ingresos Brutos",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50622000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Cooperadoras Asistenciales",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50623000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Inmobiliario Rural",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50624000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Impuesto a los Sellos",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            ?>
+            <tr><th colspan="20">Gastos Fiscales - DGR</th></tr>
+            <?php
+            $numerofijo = "50631000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Actividades Varias",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50632000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Tasa de publicidad y Propaganda",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50633000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Inmobiliario Urbano",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50634000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Alumbrado y Limpieza",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50635000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Impuesto Automotor",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            ?>
+            <tr><th colspan="20">Remuneraciones y Cargas Sociales</th></tr>
+            <?php
+            $numerofijo = "50302000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Mano de Obra",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5030300";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Contribuciones Empleador",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5071000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Mano de Obra",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "5072000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Contribuciones Empleador",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $numerofijo = "50900000";
+            $indexCuentas = array_keys(
+                array_filter(
+                    $keysCuentas,
+                    function($var) use ($numerofijo){
+                        return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                    }
+                )
+            );
+            if(count($indexCuentas)!=0) {
+                $totalGastosCombustibles = mostrarNotasDeGastos(
+                    $arrayCuentasxPeriodos,
+                    $indexCuentas,
+                    "Gastos Extraordinarios",
+                    $numerofijo,
+                    $fechaInicioConsulta,
+                    $fechaFinConsulta,$totalAnexoII);
+            }
+            $mesAMostrar = date('Y', strtotime($fechaFinConsulta.'-01-01'));
+            $subtottalPeriodo = $totalAnexoII[$mesAMostrar];
+            echo '<tr style="background-color: #d0d9ff">
+                    <td>Total Ejercicio Actual</td>
+                    <td  class="numericTD">' .
+                number_format($subtottalPeriodo*0.0, 2, ",", ".")
+                . "</td>";
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo*0.25, 2, ",", ".")
+                . "</td>";
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo*0.75, 2, ",", ".")
+                . "</td>";
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo, 2, ",", ".")
+                . "</td>";
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta .'-01-01'));
+            $subtottalPeriodo = $totalAnexoII[$mesAMostrar];
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo, 2, ",", ".")
+                . "</td></tr>";
+
+
+            echo '<tr style="background-color: #d0d9ff">
+                    <td>Total Ejercicio Anterior</td>
+                    <td  class="numericTD">' .
+                number_format($subtottalPeriodo*0.0, 2, ",", ".")
+                . "</td>";
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo*0.25, 2, ",", ".")
+                . "</td>";
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo*0.75, 2, ",", ".")
+                . "</td>";
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo, 2, ",", ".")
+                . "</td></tr>";
+            ?>
+            </tbody>
+        </table>
+    </div>
 </div>
 <div class="index" id="divContenedorEstadosResultados">
     <?php
@@ -1301,14 +2438,14 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
     ?>
     <table id="tblestadoderesultado"  class="tbl_border" cellspacing="0" style="width:1050px;">
         <thead>
-        <tr class="trnoclickeable">
+        <tr class="trnoclickeable" style="background-color: #91a7ff">
             <td colspan="20">Estado de Resultados por el Ejercicio Anual Finalizado el 31/12/2016 comparativo con el
                 ejercicio anterior
             </td>
         </tr>
         </thead>
         <tbody>
-        <tr>
+        <tr style="background-color: #91a7ff">
             <th>Resultados de las operaciones que continúan</th>
             <th></th>
             <th>Anterior</th>
@@ -1350,13 +2487,21 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                 Costo de bienes vendidos y servicios prestados
             </td>
             <td>
-                Anexo	I
+                Anexo I
             </td>
-            <td>
-                0.000
-            <td>
-                0.000
-            </td>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                echo '<td  class="numericTD">' .
+                    number_format($totalPeriodoCostoBienesServiciosProduccion[$mesAMostrar], 2, ",", ".")
+                    . "</td>";
+                if(!isset($totalPeriodo[$mesAMostrar])){
+                    $totalPeriodo[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodo[$mesAMostrar] -= $totalPeriodoCostoBienesServiciosProduccion[$mesAMostrar];
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
@@ -1416,7 +2561,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             }
             ?>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>Ganancia Bruta</th>
             <th>
 
@@ -1492,11 +2637,17 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td>
                 Anexo II
             </td>
-            <td>
-                0.000
+            <td class="numericTD">
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                echo number_format($totalAnexoII[$mesAMostrar]*0.0, 2, ",", ".");
+                ?>
             </td>
-            <td>
-                0.000
+            <td class="numericTD">
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaFinConsulta.'-01-01'));
+                echo number_format($totalAnexoII[$mesAMostrar]*0.0, 2, ",", ".");
+                ?>
             </td>
         </tr>
         <tr>
@@ -1504,11 +2655,17 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td>
                 Anexo II
             </td>
-            <td>
-                0.000
+            <td class="numericTD">
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                echo number_format($totalAnexoII[$mesAMostrar]*-0.75, 2, ",", ".");
+                ?>
             </td>
-            <td>
-                0.000
+            <td class="numericTD">
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaFinConsulta.'-01-01'));
+                echo number_format($totalAnexoII[$mesAMostrar]*-0.75, 2, ",", ".");
+                ?>
             </td>
         </tr>
         <tr>
@@ -1516,11 +2673,27 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td>
                 Anexo II
             </td>
-            <td>
-                0.000
+            <td class="numericTD">
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                echo number_format($totalAnexoII[$mesAMostrar]*-0.25, 2, ",", ".");
+                ?>
             </td>
-            <td>
-                0.000
+            <td class="numericTD">
+                <?php
+                $mesAMostrar = date('Y', strtotime($fechaFinConsulta.'-01-01'));
+                echo number_format($totalAnexoII[$mesAMostrar]*-0.25, 2, ",", ".");
+                $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+                if(!isset($totalPeriodo[$mesAMostrar])){
+                    $totalPeriodo[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodo[$mesAMostrar] -= $totalAnexoII[$mesAMostrar];
+                $mesAMostrar = date('Y', strtotime($fechaFinConsulta.'-01-01'));
+                if(!isset($totalPeriodo[$mesAMostrar])){
+                    $totalPeriodo[$mesAMostrar] = 0;//existen estos valores
+                }
+                $totalPeriodo[$mesAMostrar] -= $totalAnexoII[$mesAMostrar];
+                ?>
             </td>
         </tr>
         <tr>
@@ -1528,10 +2701,10 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td>
                 0.000
             </td>
-            <td>
+            <td class="numericTD">
                 0.000
             </td>
-            <td>
+            <td class="numericTD">
                 0.000
             </td>
         </tr>
@@ -1687,7 +2860,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             }
             ?>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Ganancia antes del impuesto a las ganancias de operaciones que continúan
             </th>
@@ -1731,7 +2904,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             }
             ?>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Ganancia de las operaciones que continúan
             </th>
@@ -1746,7 +2919,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             }
             ?>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Resultado por las operaciones en descontinuación
             </th>
@@ -1802,7 +2975,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td></td>
             <td></td>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Perdida por las operaciones en descontinuación
             </th>
@@ -1810,7 +2983,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <th></th>
             <th></th>
         </tr>
-        <tr>
+        <tr style="background-color: #d0d9ff">
             <th>
                 Ganancia de las operaciones ordinarias
             </th>
@@ -1826,7 +2999,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <td></td>
             <td></td>
         </tr>
-        <tr>
+        <tr style="background-color: #91a7ff">
             <th>
                 Ganancia del ejercicio
             </th>
@@ -1887,9 +3060,56 @@ function mostrarNotaDelGrupo($arrayCuentasxPeriodos,$indexCuentas,$nombreNota,$n
             $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
         }
         echo "</tr>";
-    ?>
+        ?>
     </table>
     <?php
     return $totalNota;
+}
+function mostrarNotasDeGastos($arrayCuentasxPeriodos,$indexCuentas,$nombreNota,$numerofijo,$fechaInicioConsulta,$fechaFinConsulta,&$totalAnexoII){
+    $keysCuentas = array_keys($arrayCuentasxPeriodos);
+    ?>
+        <tr style="background-color: #91a7ff">
+            <th colspan="20"><?php echo $nombreNota?></th>
+        </tr>
+        <?php
+        foreach ($indexCuentas as $index) {
+            $numeroCuenta = $keysCuentas[$index];
+            echo '<tr>';
+            echo '<td title="'.$numerofijo.'">'.$arrayCuentasxPeriodos[$numeroCuenta]['nombrecuenta'].'</td>' ;
+            $mesAMostrar = date('Y', strtotime($fechaFinConsulta.'-01-01'));
+            //como son dos estados vamos a mostrar cuando estemos en el ultimo y de ahi para abajo :S
+            $periodoMesAMostrar = date('Y', strtotime($mesAMostrar . '-01-01'));
+            if(!isset($totalAnexoII[$mesAMostrar])) {
+                $totalAnexoII[$mesAMostrar]=0;
+            }
+            $subtottalPeriodo = $arrayCuentasxPeriodos[$numeroCuenta][$periodoMesAMostrar];
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo*0.0, 2, ",", ".")
+                . "</td>";
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo*0.25, 2, ",", ".")
+                . "</td>";
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo*0.75, 2, ",", ".")
+                . "</td>";
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo, 2, ",", ".")
+                . "</td>";
+            $totalAnexoII[$mesAMostrar]+=$subtottalPeriodo;
+            //ahora vamos a mostrar el año anterior
+            $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 -1 Year"));
+            if(!isset($totalAnexoII[$mesAMostrar])) {
+                $totalAnexoII[$mesAMostrar]=0;
+            }
+            $subtottalPeriodo = $arrayCuentasxPeriodos[$numeroCuenta][$mesAMostrar];
+            $totalAnexoII[$mesAMostrar]+=$subtottalPeriodo;
+            echo '<td  class="numericTD">' .
+                number_format($subtottalPeriodo, 2, ",", ".")
+                . "</td>";
+            echo "</tr>";
+        }
+        ?>
+    <?php
+    return $totalAnexoII;
 }
 ?>

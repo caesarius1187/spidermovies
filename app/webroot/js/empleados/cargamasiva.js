@@ -202,12 +202,15 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice){
     return false;
 }
 function aplicarATodos(empid,miinput){
+    $("#loading").css('visibility','visible')
     var valueAAplicar = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #'+miinput).val();
     var inputclass = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #'+miinput).attr('inputclass');
     $('input[inputclass="'+inputclass+'"]').each(function() {
         $(this).val(valueAAplicar).trigger('change');
         $(this).closest('form').calx({ });
     });
+    $("#loading").css('visibility','hidden')
+
 }
 var tablaSueldoCalx=[];
 function ocultarFunciones(){
@@ -240,17 +243,30 @@ function ocultarFuncinesDeUnFormulario(empid){
         $('.'+dataCodigo).each(function() {
             $mysheet = $(this).closest('form').calx("getSheet");
             if(dataCodigo=="R33"){
-                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+"= "+$mysheet.getCellValue("R33"));
+                // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+"= "+$mysheet.getCellValue("R33"));
             }
             if(dataCodigo=="R10"){
-                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+"= "+$mysheet.getCellValue("R10"));
+                // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+"= "+$mysheet.getCellValue("R10"));
             }
+            if(dataCodigo.charAt(0)=='O') {
+                 // $mysheet.getCell(dataCodigo).calculate();
+                var myCell = $mysheet.getCell(dataCodigo);
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormat() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormattedValue() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormula() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.evaluateFormula() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getValue() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.renderComputedValue() + "'");
+            }
+
             if(($mysheet.getCellValue(dataCodigo)*1)!=0){
                 todosvacios = false;
-                console.log(empid+"-Este es distinto de 0 != "+$mysheet.getCellValue(dataCodigo));
+                // console.log(empid+"-Este es distinto de 0 != "+$mysheet.getCellValue(dataCodigo));
                 return false;
             }
         });
+        //por alguna razon los que son "O"(otros) no se estan autocalculando (beto a saber por que)
+        //asi que aca vamos a forzar un recalculo
 
         if(todosvacios){
             //tengo que ocultar el row solo si no es cabeza de seccion por que sino me oculta toda la seccion

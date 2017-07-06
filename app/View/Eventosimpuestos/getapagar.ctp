@@ -399,7 +399,11 @@ $(document).ready(function() {
 			}
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
-			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', ['default' => $cuentaclienteid]);
+			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', [
+				'default' => $cuentaclienteid,
+				'class'=>'chosen-select-cuenta',
+				]
+		);
 			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
 				'type'=>'hidden',
 				'readonly','readonly',
@@ -435,7 +439,10 @@ $(document).ready(function() {
 					$asientoyacargado['Movimiento'][$kMov]['cargado']=true;
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id', ['default' => $movid]);
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
-					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id', ['default' => $movimiento['cuentascliente_id']]);
+					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id', [
+						'default' => $movimiento['cuentascliente_id'],
+						'class'=>'chosen-select-cuenta',
+					]);
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
 						'type'=>'hidden',
 						'readonly','readonly',

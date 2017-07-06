@@ -84,7 +84,8 @@
 
             $lineVenta .= str_pad($identificacionnumero, 20, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
     //        $lineVenta['nombre']=substr($line, 78,30);
-            $lineVenta .= str_pad($nombreamostrar, 30, " ", STR_PAD_RIGHT);
+
+            $lineVenta .= substr(str_pad($nombreamostrar, 30, " ", STR_PAD_RIGHT), 0, 30);
             //todo: reemplazar codigo documento
     //        //aveces la identificacionnumero viene vacia (todos 0) entonces vamos a poner el nombre
     //        // en estos casos como identificacion numero

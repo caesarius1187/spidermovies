@@ -517,13 +517,14 @@ class EmpleadosController extends AppController {
         //y devolverlo en el empleado
         $mayorRemunerativo = 0;
         $mayorNORemunerativo = 0;
-        for ($m=1;$m<4;$m++){
-
+        for ($m=1;$m<=5;$m++){
             $timePeriodo = strtotime("01-".$periodo ." -".$m." months");
             $periodoPrevio[] = date("m-Y",$timePeriodo);
-
         }
         $optionsValorecibo = array(
+			'contains'=>[
+				'Cctxconcepto'
+			],
             'joins'=>[
                 [
                     'table'=>'conceptos',
@@ -542,13 +543,10 @@ class EmpleadosController extends AppController {
         );
         $valorRecibos = $this->Valorrecibo->find('all', $optionsValorecibo);
         foreach ($valorRecibos as $valorrecibo) {
-//                if(!isset($valorrecibo['Concepto'])){
-//                    continue;
-//                }
             $this->set($valorrecibo);
             if($valorrecibo['Cctxconcepto']['concepto_id']=='27'){
                 //Total Remunerativos
-                if($mayorRemunerativo<$valorrecibo['Valorrecibo']['valor']*1){
+                if($mayorRemunerativo*1<$valorrecibo['Valorrecibo']['valor']*1){
                     $mayorRemunerativo=$valorrecibo['Valorrecibo']['valor']*1;
                 }
             }
@@ -563,8 +561,6 @@ class EmpleadosController extends AppController {
                         $mayorNORemunerativo=$valorrecibo['Valorrecibo']['valor']*1;
                     }
                 }
-
-
             }
         }
 		$this->set(compact('empleado','mayorRemunerativo','mayorNORemunerativo','tipoliquidacion','numeroliquidacion','tieneLiquidacion'));

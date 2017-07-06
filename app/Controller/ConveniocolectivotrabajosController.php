@@ -22,7 +22,12 @@ class ConveniocolectivotrabajosController extends AppController {
  */
 	public function index() {
 		$this->Conveniocolectivotrabajo->recursive = 0;
-		$this->set('conveniocolectivotrabajos', $this->Paginator->paginate());
+		$this->set('conveniocolectivotrabajos', $this->Conveniocolectivotrabajo->find('all',[
+			'contain'=>[
+				'Impuesto',
+				'Cctxconcepto',
+			],
+		]));
 	}
 
 /**
@@ -36,7 +41,15 @@ class ConveniocolectivotrabajosController extends AppController {
 		if (!$this->Conveniocolectivotrabajo->exists($id)) {
 			throw new NotFoundException(__('Invalid conveniocolectivotrabajo'));
 		}
-		$options = array('conditions' => array('Conveniocolectivotrabajo.' . $this->Conveniocolectivotrabajo->primaryKey => $id));
+		$options = array(
+			'conditions' => array('Conveniocolectivotrabajo.' . $this->Conveniocolectivotrabajo->primaryKey => $id),
+			'contain'=> [
+				'Impuesto',
+				'Cctxconcepto'=>[
+					'Concepto'
+				]
+			],
+		);
 		$this->set('conveniocolectivotrabajo', $this->Conveniocolectivotrabajo->find('first', $options));
 	}
 

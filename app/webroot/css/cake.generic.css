@@ -2091,6 +2091,7 @@ transition: all 0.4s ease-in-out;
 .tdWithLeftRightBorder{
 	border-left: 1px solid rgb(180, 176, 176);
 	border-right: 1px solid rgb(180, 176, 176);
+	padding: 1px 0px 0px 0px;
 }
 .tdWithText{
 	line-height: 160%; font-size: 1em

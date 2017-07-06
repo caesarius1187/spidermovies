@@ -852,7 +852,14 @@ $(document).ready(function() {
                       } 
                     }); 
                     return false;
-                  });                  
+                  });
+
+                   $('.chosen-select-cuenta').chosen(
+                       {
+                           search_contains:true,
+                           include_group_label_in_selected:true
+                       }
+                   );
                },
                error:function (XMLHttpRequest, textStatus, errorThrown) {
                       alert(textStatus);

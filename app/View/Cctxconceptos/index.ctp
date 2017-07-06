@@ -1,30 +1,60 @@
+<?php
+echo $this->Html->css('bootstrapmodal');
+echo $this->Html->script('jquery-ui',array('inline'=>false));
+echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
+echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
+echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
+echo $this->Html->script('dataTables.buttons.min.js',array('inline'=>false));
+echo $this->Html->script('cctxconceptos/index',array('inline'=>false));
+?>
 <div class="cctxconceptos index">
-	<h2><?php echo __('Cctxconceptos'); ?></h2>
-	<table cellpadding="0" cellspacing="0">
-	<tr>
-			<th><?php echo $this->Paginator->sort('id'); ?></th>
-			<th><?php echo $this->Paginator->sort('conveniocolectivotrabajo_id'); ?></th>
-			<th><?php echo $this->Paginator->sort('concepto_id'); ?></th>
-			<th><?php echo $this->Paginator->sort('nombre'); ?></th>
-			<th><?php echo $this->Paginator->sort('funcionaaplicar'); ?></th>
-			<th><?php echo $this->Paginator->sort('unidaddemedida'); ?></th>
-			<th><?php echo $this->Paginator->sort('calculado'); ?></th>
-			<th><?php echo $this->Paginator->sort('orden'); ?></th>
-			<th><?php echo $this->Paginator->sort('campopersonalizado'); ?></th>
-			<th><?php echo $this->Paginator->sort('cliente_id'); ?></th>
-			<th><?php echo $this->Paginator->sort('codigopersonalizado'); ?></th>
-			<th><?php echo $this->Paginator->sort('conporcentaje'); ?></th>
-			<th><?php echo $this->Paginator->sort('porcentaje'); ?></th>
-			<th class="actions"><?php echo __('Actions'); ?></th>
-	</tr>
-	<?php foreach ($cctxconceptos as $cctxconcepto): ?>
-	<tr>
+	<h2><?php echo __('Convenios x Conceptos'); ?></h2>
+	<table cellpadding="0" cellspacing="0" id="cctxconceptosIndex">
+        <thead>
+            <tr>
+                <th><?php echo 'id'; ?></th>
+                <th><?php echo 'conveniocolectivotrabajo_id'; ?></th>
+                <th><?php echo 'concepto_id'; ?></th>
+                <th><?php echo 'nombre'; ?></th>
+                <th><?php echo 'funcionaaplicar'; ?></th>
+                <th><?php echo 'unidaddemedida'; ?></th>
+                <th><?php echo 'calculado'; ?></th>
+                <th><?php echo 'orden'; ?></th>
+                <th><?php echo 'campopersonalizado'; ?></th>
+                <th><?php echo 'cliente_id'; ?></th>
+                <th><?php echo 'codigopersonalizado'; ?></th>
+                <th><?php echo 'conporcentaje'; ?></th>
+                <th><?php echo 'porcentaje'; ?></th>
+                <th class="actions"><?php echo __('Actions'); ?></th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </tfoot>
+        <tbody>
+            <?php foreach ($cctxconceptos as $cctxconcepto): ?>
+            <tr>
 		<td><?php echo h($cctxconcepto['Cctxconcepto']['id']); ?>&nbsp;</td>
 		<td>
-			<?php echo $this->Html->link($cctxconcepto['Conveniocolectivotrabajo']['id'], array('controller' => 'conveniocolectivotrabajos', 'action' => 'view', $cctxconcepto['Conveniocolectivotrabajo']['id'])); ?>
+			<?php echo $this->Html->link($cctxconcepto['Conveniocolectivotrabajo']['nombre'], array('controller' => 'conveniocolectivotrabajos', 'action' => 'view', $cctxconcepto['Conveniocolectivotrabajo']['id'])); ?>
 		</td>
 		<td>
-			<?php echo $this->Html->link($cctxconcepto['Concepto']['id'], array('controller' => 'conceptos', 'action' => 'view', $cctxconcepto['Concepto']['id'])); ?>
+			<?php echo $this->Html->link($cctxconcepto['Concepto']['nombre'], array('controller' => 'conceptos', 'action' => 'view', $cctxconcepto['Concepto']['id'])); ?>
 		</td>
 		<td><?php echo h($cctxconcepto['Cctxconcepto']['nombre']); ?>&nbsp;</td>
 		<td><?php echo h($cctxconcepto['Cctxconcepto']['funcionaaplicar']); ?>&nbsp;</td>
@@ -42,21 +72,9 @@
 			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $cctxconcepto['Cctxconcepto']['id']), null, __('Are you sure you want to delete # %s?', $cctxconcepto['Cctxconcepto']['id'])); ?>
 		</td>
 	</tr>
-<?php endforeach; ?>
-	</table>
-	<p>
-	<?php
-	echo $this->Paginator->counter(array(
-	'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
-	));
-	?>	</p>
-	<div class="paging">
-	<?php
-		echo $this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));
-		echo $this->Paginator->numbers(array('separator' => ''));
-		echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
-	?>
-	</div>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
 </div>
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>

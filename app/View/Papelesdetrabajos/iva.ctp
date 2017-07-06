@@ -1657,7 +1657,10 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
     </div>  <!-- fin divContenedorVentas -->
     <!--COMPRAS-->
     <div id="divContenedorCompras" style="height: 500px">
-        <div style="margin-top:10px">(Coeficiente de Apropiacion 0.5000)</div>
+        <div style="margin-top:10px">(Coeficiente de Apropiacion <?php 
+            $coeficienteapropiacion = $cliente['Impcli'][0]['coeficienteapropiacion']==0?0.5000:$cliente['Impcli'][0]['id']  ;
+            echo $coeficienteapropiacion;?> )
+        </div>
         <div style="width:100%; height: 10px"></div>
         <table id='divTablaCompras_CreditoFiscal'  onclick="MostrarTabla(this,'compras');" style="margin-bottom:0; cursor: pointer">
         <!------------- Credito Fiscal ---------->
@@ -2123,9 +2126,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalBnGral['Neto']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['0'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['0'] + $TotalBnGral['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Directo']['0'] + ($TotalBnGral['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['0'] + ($TotalBnGral['Prorateable']['0'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                 <?php }
                 if($TotalBnGral['Neto']['2.5']+$TotalBnGral['Directo']['2.5']+$TotalBnGral['Prorateable']['2.5'] != 0) { ?>
@@ -2134,9 +2137,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalBnGral['Neto']['2.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['2.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['2.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['2.5'] + $TotalBnGral['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Directo']['2.5'] + ($TotalBnGral['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['2.5'] + ($TotalBnGral['Prorateable']['2.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2146,9 +2149,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalBnGral['Neto']['50'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['50'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Prorateable']['50'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['50'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['50'] + $TotalBnGral['Prorateable']['50'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Directo']['50'] + ($TotalBnGral['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['50'] + ($TotalBnGral['Prorateable']['50'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2158,9 +2161,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalBnGral['Neto']['10.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['10.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['10.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['10.5'] + $TotalBnGral['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Directo']['10.5'] + ($TotalBnGral['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['10.5'] + ($TotalBnGral['Prorateable']['10.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2170,9 +2173,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalBnGral['Neto']['21'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['21'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Prorateable']['21'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['21'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['21'] + $TotalBnGral['Prorateable']['21'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Directo']['21'] + ($TotalBnGral['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['21'] + ($TotalBnGral['Prorateable']['21'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2182,9 +2185,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalBnGral['Neto']['27'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['27'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Prorateable']['27'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['27'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['27'] + $TotalBnGral['Prorateable']['27'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Directo']['27'] + ($TotalBnGral['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['27'] + ($TotalBnGral['Prorateable']['27'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2194,16 +2197,16 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalBnGral['Neto']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Prorateable']['total'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBnGral['Directo']['total'] + $TotalBnGral['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
 
                     <?php
                 }
             }
-            $TotalNoComputable += ($TotalBnGral['Directo']['total'] + $TotalBnGral['Prorateable']['total'])-$TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * 0.5000));
+            $TotalNoComputable += ($TotalBnGral['Directo']['total'] + $TotalBnGral['Prorateable']['total'])-$TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * $coeficienteapropiacion)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * $coeficienteapropiacion));
             if($TotalComprasBienesConsFinales['mostrar']) {
                 ?>
                 <tr>
@@ -2227,9 +2230,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Neto']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['0'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['0'] + $TotalComprasBienesConsFinales['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['0'] + ($TotalComprasBienesConsFinales['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['0'] + ($TotalComprasBienesConsFinales['Prorateable']['0'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                 <?php }
                 if($TotalComprasBienesConsFinales['Neto']['2.5']+$TotalComprasBienesConsFinales['Directo']['2.5']+$TotalComprasBienesConsFinales['Prorateable']['2.5'] != 0) { ?>
@@ -2238,9 +2241,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Neto']['2.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['2.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['2.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['2.5'] + $TotalComprasBienesConsFinales['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['2.5'] + ($TotalComprasBienesConsFinales['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['2.5'] + ($TotalComprasBienesConsFinales['Prorateable']['2.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2250,9 +2253,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Neto']['50'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['50'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['50'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['50'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['50'] + $TotalComprasBienesConsFinales['Prorateable']['50'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['50'] + ($TotalComprasBienesConsFinales['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['50'] + ($TotalComprasBienesConsFinales['Prorateable']['50'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2262,9 +2265,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Neto']['10.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['10.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['10.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['10.5'] + $TotalComprasBienesConsFinales['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['10.5'] + ($TotalComprasBienesConsFinales['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['10.5'] + ($TotalComprasBienesConsFinales['Prorateable']['10.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2274,9 +2277,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Neto']['21'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['21'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['21'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['21'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['21'] + $TotalComprasBienesConsFinales['Prorateable']['21'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['21'] + ($TotalComprasBienesConsFinales['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['21'] + ($TotalComprasBienesConsFinales['Prorateable']['21'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2286,9 +2289,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Neto']['27'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['27'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['27'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['27'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['27'] + $TotalComprasBienesConsFinales['Prorateable']['27'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['27'] + ($TotalComprasBienesConsFinales['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['27'] + ($TotalComprasBienesConsFinales['Prorateable']['27'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2298,16 +2301,16 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Neto']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Prorateable']['total'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['total'] + $TotalComprasBienesConsFinales['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
 
                     <?php
                 }
             }
-            $TotalNoComputable += ($TotalComprasBienesConsFinales['Directo']['total'] + $TotalComprasBienesConsFinales['Prorateable']['total'])-$TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total'] * 0.5000));
+            $TotalNoComputable += ($TotalComprasBienesConsFinales['Directo']['total'] + $TotalComprasBienesConsFinales['Prorateable']['total'])-$TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total'] * $coeficienteapropiacion)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total'] * $coeficienteapropiacion));
             //fin copiado
             if($TotalLocaciones['mostrar']) {
                 ?>
@@ -2332,9 +2335,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalLocaciones['Neto']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalLocaciones['Directo']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalLocaciones['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalLocaciones['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Prorateable']['0'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalLocaciones['Directo']['0'] + $TotalLocaciones['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalLocaciones['Directo']['0'] + ($TotalLocaciones['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Directo']['0'] + ($TotalLocaciones['Prorateable']['0'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2344,9 +2347,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalLocaciones['Neto']['2.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['2.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['2.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['2.5'] + $TotalLocaciones['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Directo']['2.5'] + ($TotalLocaciones['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['2.5'] + ($TotalLocaciones['Prorateable']['2.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2356,9 +2359,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalLocaciones['Neto']['50'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['50'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Prorateable']['50'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['50'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['50'] + $TotalLocaciones['Prorateable']['50'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Directo']['50'] + ($TotalLocaciones['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['50'] + ($TotalLocaciones['Prorateable']['50'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2368,9 +2371,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalLocaciones['Neto']['10.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['10.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['10.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['10.5'] + $TotalLocaciones['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Directo']['10.5'] + ($TotalLocaciones['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['10.5'] + ($TotalLocaciones['Prorateable']['10.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2380,9 +2383,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalLocaciones['Neto']['21'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['21'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Prorateable']['21'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['21'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['21'] + $TotalLocaciones['Prorateable']['21'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Directo']['21'] + ($TotalLocaciones['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['21'] + ($TotalLocaciones['Prorateable']['21'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2392,9 +2395,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalLocaciones['Neto']['27'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['27'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Prorateable']['27'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Prorateable']['27'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalLocaciones['Directo']['27'] + $TotalLocaciones['Prorateable']['27'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalLocaciones['Directo']['27'] + ($TotalLocaciones['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalLocaciones['Directo']['27'] + ($TotalLocaciones['Prorateable']['27'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2404,15 +2407,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalLocaciones['Neto']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalLocaciones['Directo']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalLocaciones['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalLocaciones['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Prorateable']['total'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
             }
-            $TotalNoComputable += ($TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'])-$TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * 0.5000));
+            $TotalNoComputable += ($TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'])-$TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * $coeficienteapropiacion)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * $coeficienteapropiacion));
             if($TotalPresServ['mostrar']) {
                 ?>
                 <tr>
@@ -2436,9 +2439,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalPresServ['Neto']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['0'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['0'] + $TotalPresServ['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Directo']['0'] + ($TotalPresServ['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['0'] + ($TotalPresServ['Prorateable']['0'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2448,9 +2451,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalPresServ['Neto']['2.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['2.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['2.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['2.5'] + $TotalPresServ['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Directo']['2.5'] + ($TotalPresServ['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['2.5'] + ($TotalPresServ['Prorateable']['2.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2460,9 +2463,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalPresServ['Neto']['50'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['50'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Prorateable']['50'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['50'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['50'] + $TotalPresServ['Prorateable']['50'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Directo']['50'] + ($TotalPresServ['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['50'] + ($TotalPresServ['Prorateable']['50'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2472,9 +2475,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalPresServ['Neto']['10.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['10.5'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['10.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['10.5'] + $TotalPresServ['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Directo']['10.5'] + ($TotalPresServ['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['10.5'] + ($TotalPresServ['Prorateable']['10.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2484,9 +2487,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalPresServ['Neto']['21'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['21'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Prorateable']['21'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['21'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['21'] + $TotalPresServ['Prorateable']['21'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Directo']['21'] + ($TotalPresServ['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['21'] + ($TotalPresServ['Prorateable']['21'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2496,9 +2499,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalPresServ['Neto']['27'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['27'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Prorateable']['27'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['27'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['27'] + $TotalPresServ['Prorateable']['27'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Directo']['27'] + ($TotalPresServ['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['27'] + ($TotalPresServ['Prorateable']['27'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2508,15 +2511,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalPresServ['Neto']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Prorateable']['total'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
             }
-            $TotalNoComputable += ($TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'])-$TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * 0.5000));
+            $TotalNoComputable += ($TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'])-$TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * $coeficienteapropiacion)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * $coeficienteapropiacion));
             if($TotalBsUso['mostrar']) {
                 ?>
                 <tr>
@@ -2540,9 +2543,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalBsUso['Neto']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBsUso['Directo']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBsUso['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBsUso['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Prorateable']['0'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBsUso['Directo']['0'] + $TotalBsUso['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBsUso['Directo']['0'] + ($TotalBsUso['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Directo']['0'] + ($TotalBsUso['Prorateable']['0'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2552,9 +2555,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalBsUso['Neto']['2.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['2.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['2.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['2.5'] + $TotalBsUso['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Directo']['2.5'] + ($TotalBsUso['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['2.5'] + ($TotalBsUso['Prorateable']['2.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2564,9 +2567,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalBsUso['Neto']['27'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['50'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Prorateable']['50'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['50'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['50'] + $TotalBsUso['Prorateable']['50'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Directo']['50'] + ($TotalBsUso['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['50'] + ($TotalBsUso['Prorateable']['50'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2576,9 +2579,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalBsUso['Neto']['10.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['10.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['10.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['10.5'] + $TotalBsUso['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Directo']['10.5'] + ($TotalBsUso['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['10.5'] + ($TotalBsUso['Prorateable']['10.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2588,9 +2591,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalBsUso['Neto']['21'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['21'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Prorateable']['21'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['21'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['21'] + $TotalBsUso['Prorateable']['21'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Directo']['21'] + ($TotalBsUso['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['21'] + ($TotalBsUso['Prorateable']['21'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2600,9 +2603,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalBsUso['Neto']['27'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['27'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Prorateable']['27'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Prorateable']['27'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalBsUso['Directo']['27'] + $TotalBsUso['Prorateable']['27'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalBsUso['Directo']['27'] + ($TotalBsUso['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalBsUso['Directo']['27'] + ($TotalBsUso['Prorateable']['27'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                     <?php
                 }
@@ -2612,15 +2615,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalBsUso['Neto']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBsUso['Directo']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBsUso['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBsUso['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Prorateable']['total'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
             }
-            $TotalNoComputable += ($TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'])-$TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * 0.5000));
+            $TotalNoComputable += ($TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'])-$TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * $coeficienteapropiacion)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * $coeficienteapropiacion));
             if($TotalOtrosConceptos['mostrar']) {
                 ?>
                 <tr>
@@ -2644,9 +2647,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td><?php echo number_format($TotalOtrosConceptos['Neto']['total'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalOtrosConceptos['Directo']['0'] , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['0'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['0'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalOtrosConceptos['Directo']['0'] + $TotalOtrosConceptos['Prorateable']['0'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalOtrosConceptos['Directo']['0'] + ($TotalOtrosConceptos['Prorateable']['0'] * 0.5000) , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalOtrosConceptos['Directo']['0'] + ($TotalOtrosConceptos['Prorateable']['0'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                     </tr>
                     <?php
                 }
@@ -2656,9 +2659,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalOtrosConceptos['Neto']['2.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['2.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['2.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['2.5'] + $TotalOtrosConceptos['Prorateable']['2.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['2.5'] + ($TotalOtrosConceptos['Prorateable']['2.5'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['2.5'] + ($TotalOtrosConceptos['Prorateable']['2.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
@@ -2668,9 +2671,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalOtrosConceptos['Neto']['50'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['50'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['50'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['50'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['50'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['50'] + $TotalOtrosConceptos['Prorateable']['50'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['50'] + ($TotalOtrosConceptos['Prorateable']['50'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['50'] + ($TotalOtrosConceptos['Prorateable']['50'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
@@ -2680,9 +2683,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalOtrosConceptos['Neto']['10.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['10.5'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['10.5'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['10.5'] + $TotalOtrosConceptos['Prorateable']['10.5'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['10.5'] + ($TotalOtrosConceptos['Prorateable']['10.5'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['10.5'] + ($TotalOtrosConceptos['Prorateable']['10.5'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
@@ -2692,9 +2695,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalOtrosConceptos['Neto']['21'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['21'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['21'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['21'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['21'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['21'] + $TotalOtrosConceptos['Prorateable']['21'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['21'] + ($TotalOtrosConceptos['Prorateable']['21'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['21'] + ($TotalOtrosConceptos['Prorateable']['21'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
@@ -2704,9 +2707,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalOtrosConceptos['Neto']['27'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['27'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['27'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['27'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['27'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['27'] + $TotalOtrosConceptos['Prorateable']['27'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['27'] + ($TotalOtrosConceptos['Prorateable']['27'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['27'] + ($TotalOtrosConceptos['Prorateable']['27'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                  <?php
                 }
@@ -2716,15 +2719,15 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td><?php echo number_format($TotalOtrosConceptos['Neto']['total'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['total'] , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['total'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Prorateable']['total'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                     <td><?php echo number_format($TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'] , 2, ",", ".")?></td>
-                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000) , 2, ",", ".")?></td>
+                    <td><?php echo number_format($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                 </tr>
                 <?php
                 }
             }
-            $TotalNoComputable += ($TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'])-$TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000)?>
-            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * 0.5000));
+            $TotalNoComputable += ($TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'])-$TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * $coeficienteapropiacion)?>
+            <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * $coeficienteapropiacion));
             if($TotalDcto814['mostrar']) {
                 ?>
                 <tr>
@@ -2753,22 +2756,22 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             );
                             ?></td>
                         <td><?php echo number_format($TotalDcto814['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td><?php echo number_format($TotalDcto814['Prorateable']['total'] * 0.5000 , 2, ",", ".")?></td>
+                        <td><?php echo number_format($TotalDcto814['Prorateable']['total'] * $coeficienteapropiacion , 2, ",", ".")?></td>
                         <td><?php echo number_format($TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'] , 2, ",", ".")?></td>
-                        <td colspan="2"><?php echo number_format($TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * 0.5000), 2, ",", ".") ?></td>
+                        <td colspan="2"><?php echo number_format($TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * $coeficienteapropiacion), 2, ",", ".") ?></td>
                     </tr>
                     <?php
                 }
             }
 
-            $TotalNoComputable += ($TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'])-$TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * 0.5000);
+            $TotalNoComputable += ($TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'])-$TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * $coeficienteapropiacion);
             echo $this->Form->input('totalnocomputable',
                 [
                     'type'=>'hidden',
                     'value'=>$TotalNoComputable
                 ]
             );
-             $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * 0.5000)); ?>
+             $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * $coeficienteapropiacion)); ?>
 <!--            <tr>-->
 <!--                <td colspan="7" style='background-color:#87cfeb'>-->
 <!--                    > OPERACION: Contrib. Seg. Social (Dto 814/01)-->

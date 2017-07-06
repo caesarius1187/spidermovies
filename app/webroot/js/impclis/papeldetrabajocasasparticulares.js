@@ -31,6 +31,7 @@ $(document).ready(function() {
         };
     });
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+    catchAsientoCasasParticulares();
 });
 function cargarTodosLosFormularios102(){
     $("#divSueldoForm").html("");
@@ -44,6 +45,46 @@ function cargarTodosLosFormularios102(){
         });
     });
 }
+function catchAsientoCasasParticulares(){
+    $('#AsientoAddForm').submit(function(){
+        /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+        var asientoyaguardado=false;
+        if($("#AsientoAddForm #Asiento0Id").val()*1!=0){
+            asientoyaguardado=true;
+        }
+        var r=true;
+        if(asientoyaguardado){
+            r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+                " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+                " Sumas y saldos y despues en Asientos");
+        }
+        if (r == true) {
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: formUrl,
+                data: formData,
+                success: function(data,textStatus,xhr){
+                    var respuesta = jQuery.parseJSON(data);
+                    var resp = respuesta.respuesta;
+                    callAlertPopint(resp);
+                },
+                error: function(xhr,textStatus,error){
+                    callAlertPopint(textStatus);
+                    return false;
+                }
+            });
+        }else{
+            callAlertPopint("El asiento no se ha sobreescrito.");
+        }
+
+        return false;
+    });
+}
+
 function papelesDeTrabajo(periodo,impcli){
     var data = "";
     $.ajax({
@@ -108,7 +149,13 @@ function papelesDeTrabajo(periodo,impcli){
     });
     return false;
 }
-
+function getnumberfromString(strnumber){
+    strnumber = strnumber.replace('$','');
+    strnumber = strnumber.replace('.','');
+    strnumber = strnumber.replace('-','');
+    strnumber = strnumber.replace(',','.');
+    return strnumber*1;
+}
 function cargarUnFormulario102(empid,periodo,liquidacion,indice){
     var data ="";
     $.ajax({
@@ -119,14 +166,14 @@ function cargarUnFormulario102(empid,periodo,liquidacion,indice){
             $("#divSueldoForm").append(response);
             $("#volantepago"+empid+" .checkboxrubroI").change(function(){
                 var obligacionmensual = $(this).val();
-                $("#volantepago"+empid+" #obligacionmensual").html(obligacionmensual)*1;
+                $("#obligacionmensual"+empid).html(obligacionmensual)*1;
                 $("#Eventosimpuesto0Montovto").val(obligacionmensual);
                 //Cargar Asiento
                 //Casa Particular < Tope
                 // 599002004	Deduccion Ley 26063 Servicio Domestico
                 if($('#cuenta2776').length > 0){
                     var orden = $('#cuenta2776').attr('orden');
-                    var sueldoTotal = $("#sueldoTotal").html()*1;
+                    var sueldoTotal = getnumberfromString($("#sueldoTotal").html());
                     $('#Asiento0Movimiento'+orden+'Debe').val(sueldoTotal);
                 }
                 // 514000017	Contribuciones SS Ley 26063 Casas Particulares
@@ -137,22 +184,28 @@ function cargarUnFormulario102(empid,periodo,liquidacion,indice){
                 // 230102010	Ley 260663 Aportes Servicios Domesticos a Pagar
                 if($('#cuenta3383').length > 0){
                     var orden = $('#cuenta3383').attr('orden');
-                    var aportes = $("#aportes").html()*1;
+                    var aportes = getnumberfromString($("#aportes").html());
                     $('#Asiento0Movimiento'+orden+'Haber').val(aportes);
                 }
                 // 230102011	Ley 260663 Contribuciones Servicios Domesticos a Pagar
                 if($('#cuenta3384').length > 0){
                     var orden = $('#cuenta3384').attr('orden');
-                    var aportes = $("#aportes").html()*1;
+                    var aportes = getnumberfromString($("#aportes").html());
                     $('#Asiento0Movimiento'+orden+'Haber').val(obligacionmensual-aportes);
                 }
                 // 230101010	Ley 26063 Servicio Domestico a Pagar
                 if($('#cuenta3381').length > 0){
                     var orden = $('#cuenta3381').attr('orden');
-                    var sueldoTotal = $("#sueldoTotal").html()*1;
+                    var sueldoTotal = getnumberfromString($("#sueldoTotal").html());
                     $('#Asiento0Movimiento'+orden+'Haber').val(sueldoTotal);
                 }
             })
+            $(".cantHoras").change(function(){
+                $(this).attr(
+                    'value',
+                    $(this).val()
+                );
+            });
         },
         error:function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);

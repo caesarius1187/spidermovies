@@ -1682,10 +1682,12 @@ function catchFormAndSaveResult(impForm,impTable,impAlta){
 						callAlertPopint("Impuesto relacionado con exito.Periodo activo creado.");
 						$("#rowImpcli"+mirespuesta.impid).replaceWith(mirespuesta.impclirow);
 						$("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
+                        $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
 					}else{
 						$("#"+impTable).append(mirespuesta.impclirow);
 						$("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
-						location.hash ="#x";
+                        $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
+                        location.hash ="#x";
 					}
 				},
 				error: function(xhr,textStatus,error){

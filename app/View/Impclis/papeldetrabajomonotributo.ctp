@@ -295,54 +295,68 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 			</thead>	
 			<tbody>
 			<?php
-			$topOrden=0;
-            foreach ($categoriamonotributos as $categoriamonotributo) {
+			$topOrden=1;
+			$topCategoria=0;
+            foreach ($categoriamonotributos as $c => $categoriamonotributo) {
 				$colorTDIngBrutos = "white";
+
 				if($categoriamonotributo['Categoriamonotributo']['ingresobruto']*1 <= $TotalCuatrimestreIngresoBruto*1 ) {
 					$colorTDIngBrutos = "lightgreen";
                     $topOrden=$categoriamonotributo['Categoriamonotributo']['orden'];
+                    $topCategoria=$c;
 				}
+
 				$colorTDSuperficie = "white";
 				if($categoriamonotributo['Categoriamonotributo']['superficiemaxima']*1 <= $subtotalCompraSuperficie*1 ) {
 					$colorTDSuperficie = "lightgreen";
 					$topOrden=$categoriamonotributo['Categoriamonotributo']['orden'];
+                    $topCategoria=$c;
                 }
+
 				$colorTDKW = "white";
 				if($categoriamonotributo['Categoriamonotributo']['kwmaximo']*1 <= $subtotalCuatrimestreKW*1 ) {
 					$colorTDKW = "lightgreen";
 					$topOrden=$categoriamonotributo['Categoriamonotributo']['orden'];
+                    $topCategoria=$c;
                 }
-					$colorTDAlquiler = "white";
+				$colorTDAlquiler = "white";
 				if($categoriamonotributo['Categoriamonotributo']['alquileranualmaximo']*1 <= $subtotalCuatrimestreAlquiler*1 ) {
 					$colorTDAlquiler = "lightgreen";
 					$topOrden=$categoriamonotributo['Categoriamonotributo']['orden'];
+                    $topCategoria=$c;
                 }
 				?>
 				<tr id="orden-<?php echo $categoriamonotributo['Categoriamonotributo']['orden'];?>">
 					<td>
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['categoria']; ?>
 					</td>
-					<td style="background-color:<?php echo ($topOrden==1)?"lightgreen":$colorTDIngBrutos; ?>;">
+					<td style="background-color:<?php echo $colorTDIngBrutos; ?>;">
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['ingresobruto']; 
 						 ?>
 					</td>
-					<td style="background-color:<?php echo ($topOrden==1)?"lightgreen":$colorTDSuperficie; ?>;">
+					<td style="background-color:<?php echo $colorTDSuperficie; ?>;">
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['superficiemaxima']; ?>
 					</td>
-					<td style="background-color:<?php echo ($topOrden==1)?"lightgreen":$colorTDKW; ?>;">
+					<td style="background-color:<?php echo $colorTDKW; ?>;">
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['kwmaximo']; ?>
 					</td>
-					<td style="background-color:<?php echo ($topOrden==1)?"lightgreen":$colorTDAlquiler; ?>;">
+					<td style="background-color:<?php echo $colorTDAlquiler; ?>;">
 						 <?php echo $categoriamonotributo['Categoriamonotributo']['alquileranualmaximo']; ?>
 					</td>
 				</tr>
 			<?php } ?>
 				<?php 
-				$topOrden++;
-                echo $this->Form->input('topOrden',array('value'=>$topOrden,'type'=>'hidden'));
-                echo $this->Form->input('mesParaProximaRecategorizacion',array('value'=>$mesParaProximaRecategorizacion,'type'=>'hidden'));
-				$selectedCategory = ($topOrden==1)?1:$topOrden-1;
-                echo $this->Form->input('topCategoria',array('value'=>$categoriamonotributos[$selectedCategory]['Categoriamonotributo']['categoria'],'type'=>'hidden'));
+                echo $this->Form->input('topOrden',array('value'=>$topOrden,
+                    'type'=>'hidden'
+                ));
+                echo $this->Form->input('mesParaProximaRecategorizacion',[
+                    'value'=>$mesParaProximaRecategorizacion,
+                    'type'=>'hidden'
+                ]);
+                echo $this->Form->input('topCategoria',[
+					'value'=>$categoriamonotributos[$topCategoria]['Categoriamonotributo']['categoria'],
+					'type'=>'hidden'
+				]);
 				?>
 			</tbody>
 		</table>

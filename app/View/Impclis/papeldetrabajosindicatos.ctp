@@ -674,7 +674,7 @@ Total = 74.74";
                                 $empleadoid = $empleado['id'];
                                 //en este primer loop vamos a calcular todos los siguientes totales
                                 echo "<td>";
-                                $convFeg = $empleadoDatos[$empleadoid]['remuneracionTotal'];
+                                $convFeg = $empleadoDatos[$empleadoid]['remuneracionCD'];
                                 $convFeg = $convFeg*0.02;
                                 echo number_format($convFeg, 2, ",", ".");
                                 $totalConvenioFEGHRA += $convFeg ;
@@ -783,7 +783,76 @@ Total = 74.74";
                         </td>
                     </tr>
 
-                <?php
+                    <?php
+                    break;
+                case '153':/*IERIC*/ ?>
+                    <tr>
+                        <td>
+                            UOCRA Fdo Cese Laboral
+                        </td>
+                        <?php
+                        $totalContribucionFdoCeseLaboral =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+                                //El primer año se paga el 12% y despues el 8%
+                                $periodoALiquidar = new DateTime(date('Y-m-d',strtotime('01-'.$periodo)));
+                                $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
+                                $diff = $periodoALiquidar->diff($fechaIngreso);
+                                $titleUOCRAFdoCeseLaboral = "";
+                                if($diff->y > 1){
+                                    $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
+                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
+                                }else{
+                                    $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.12";
+                                    $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
+                                }
+                                echo '<td title="'.$titleUOCRAFdoCeseLaboral.'">';
+                                echo number_format($contUocraFdoCeseLaboral, 2, ",", ".");
+                                $totalContribucionFdoCeseLaboral += $contUocraFdoCeseLaboral ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td >
+                            <?php echo number_format($totalContribucionFdoCeseLaboral, 2, ",", "."); ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            IERIC
+                        </td>
+                        <?php
+                        $totalContribucionIERIC =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+                                //El primer año se paga el 12% y despues el 8%
+                                $periodoALiquidar = new DateTime(date('Y-m-d',strtotime('01-'.$periodo)));
+                                $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
+                                $diff = $periodoALiquidar->diff($fechaIngreso);
+                                $titleUOCRAFdoCeseLaboral = "";
+                                if($diff->y > 1){
+                                    $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
+                                    $contribucionIERIC = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
+                                }else{
+                                    $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.12";
+                                    $contribucionIERIC = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
+                                }
+                                $contribucionIERIC = $contribucionIERIC*0.02;
+                                echo '<td title="'.$titleUOCRAFdoCeseLaboral.'">';
+                                echo number_format($contribucionIERIC, 2, ",", ".");
+                                $totalContribucionIERIC += $contribucionIERIC ;
+                                $apagarcontribuciones += $contribucionIERIC ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td >
+                            <?php echo number_format($totalContribucionIERIC, 2, ",", "."); ?>
+                        </td>
+                    </tr>
+                    <?php
                     break;
                 case '178':/*ACARA*/ ?>
                     <tr>
@@ -847,6 +916,9 @@ Total = 74.74";
                     case '41':/*UOCRA*/
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2;
                         $impuestoDeterminado += $totalContribucionUocraAporteFics;
+                        break;
+                    case '153':/*IERIC*/
+                        $impuestoDeterminado += $totalContribucionIERIC;
                         break;
                     case '178':/*ACARA*/
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
@@ -1000,6 +1072,7 @@ Total = 74.74";
                     '1441',
                     '1442',
                     '1443',
+                    '3437',
                 ];
                 //aca vamos a ver si el monto va al debe o al haber
                 $debe=0;

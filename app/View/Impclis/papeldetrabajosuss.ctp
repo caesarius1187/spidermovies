@@ -254,7 +254,13 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 }
                 //Adicionales
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    ['18'/*Antiguedad*/,'77'/*Presentismo*/,'82'/*Adicional Complemento SS*/,'127'/*Total Acuerdo Remunerativo*/], true )){
+                    [
+                        '18'/*Antiguedad*/,
+                        '77'/*Presentismo*/,
+//                        '81'/*Plus Vacacional*/,
+//                        '82'/*Adicional Complemento SS*/,
+//                        '127'/*Total Acuerdo Remunerativo*/,
+                    ], true )){
                     $adicionales += $valorrecibo['valor'];
                 }
                 //Embargos
@@ -287,11 +293,36 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 }
                 //Premios
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('120'/*Premios*/), true )
+                    array('91'/*Total otros R32*/), true )
                 ){
                     $premios += $valorrecibo['valor'];
                 }
+                //unificar TOTAL OTROS en todos los convenios
+                //otros:
+                /*
+                 * a cuenta de aumento
+                 * ajuste retroactivo
+                 * gratificacion
+                 * ormigon
+                 * plus vacaciona
+                 * adicional complemento de servicio
+                 * adicional por titulo
+                 * adicional por curso
+                 * adicional por idioma
+                 * ripa de trabajo
+                 * viatico
+                 * vianda
+                 * zona desfaborable
+                 * premio
+                 * */
+
                 //Maternidad
+                /*
+                 * El ANSES paga to do el tiempo de maternidad que esta persona este de lic por maternidad
+                 * puede ser una parte del mes y la otra la paga el empleador
+                 * todo hablar con maria
+                 * podriamos hacer un recibo de sueldo por separado para lo calculado en maternidad
+                 * */
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                     array('29'/*Maternidad*/), true )
                 ){
@@ -381,13 +412,13 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //Remuneracion 9 [La remuneracion 9 tiene que pagar por los no rem pero no por los no rem indenizatorios]
                 if (
                     in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('27'/*Total Remunerativos C/D*/,'109'/*Total Remunerativos C/D*/), true )
+                    array('27'/*Total Remunerativos C/D*/,'109'/*Total Remunerativos S/D*/), true )
                 ){
                     $rem9 += $valorrecibo['valor'];
                 }
                 if (
                 in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('105'/*Vacaciones No Gozadas*/), true )
+                    array('108'/*Total Remunerativos S/D*/), true )
                 ){
                     $rem9 -= $valorrecibo['valor'];
                 }
@@ -467,12 +498,15 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     $rem4=$minimoOS;
                 }else{
                     $titlerem4 .= $rem4aportenegativo.">=".$minimoOS." entonces Rem 4 = Total Remunerativos C/D+S/D: ".$rem4menorminimo;
-                    $rem4=$rem4menorminimo;
+                    $rem4=$rem4aportenegativo;
+//                    $rem4=$rem4menorminimo;
                 }
             }
             //Rem. 8 (Cont. OS)
             $rem8 = $rem4;
             //Jubilacion SIPA
+            //cambiar por concepto guardado solo si se ah guardado un concepto "CODIGO AFIP"
+            //Y si no tiene codigo que use 0
             if($empleado['codigoafip']=='0'){
                 $ContribSSjubilacionsipa+=$rem2*0.1017;
             }
