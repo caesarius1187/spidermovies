@@ -166,51 +166,53 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                 <td class="columnClienteBodyMedio tdBotonesImpuestos"> <!--Tbl 1.2-->
                   <div class="divtareas">
                       <div class="divTareaNombre">
-                          <?php echo $tareaNombre; ?>
+                        <?php echo $tareaNombre; ?>                        
                       </div>
-                  <?php
-                  $hayImpuestoRelacioado=false;
-                  foreach ($cliente["Impcli"] as $impcli){
-                    //Si es un banco no lo vamos a mostrar
-                    if($impcli['Impuesto']['organismo']=='banco'){
-                      continue;
-                    }
-                    //Recorremos los impuestos de cada cliente
-                    $hayImpuestoRelacioado=true;
-                    $eventoNoCreado=true;
-                    //Recorremos los impuestos de cada cliente Chekiamos si el evento esta creado
-                    $montovto = 0;
-                    $montofavor = 0;
-                    $pagado=true;
-                    foreach ($impcli["Eventosimpuesto"] as $evento){
-                      if($evento['periodo']==$periodoSel){
-                        $eventoNoCreado=false;
-                        $montovto += $evento['montovto'];
-                        $montofavor += $evento['monc'];
-                      }
+                      <div style="max-height:210px; overflow:auto">
+                      <?php
+                      $hayImpuestoRelacioado=false;
+                      foreach ($cliente["Impcli"] as $impcli){
+                        //Si es un banco no lo vamos a mostrar
+                        if($impcli['Impuesto']['organismo']=='banco'){
+                          continue;
+                        }
+                        //Recorremos los impuestos de cada cliente
+                        $hayImpuestoRelacioado=true;
+                        $eventoNoCreado=true;
+                        //Recorremos los impuestos de cada cliente Chekiamos si el evento esta creado
+                        $montovto = 0;
+                        $montofavor = 0;
+                        $pagado=true;
+                        foreach ($impcli["Eventosimpuesto"] as $evento){
+                          if($evento['periodo']==$periodoSel){
+                            $eventoNoCreado=false;
+                            $montovto += $evento['montovto'];
+                            $montofavor += $evento['monc'];
+                          }
 
-                      if($evento['tarea13']=='pendiente'){
-                          $pagado=false;
-                      }
-                    }
-                    //Esta faltando sumar SLD si es iva
-                    if($impcli['impuesto_id']==19/*IVA*/){
-                      foreach ($impcli["Conceptosrestante"] as $conceptorestante) {
-                        $montofavor += $conceptorestante['montoretenido'];
-                      }
-                    }
+                          if($evento['tarea13']=='pendiente'){
+                              $pagado=false;
+                          }
+                        }
+                        //Esta faltando sumar SLD si es iva
+                        if($impcli['impuesto_id']==19/*IVA*/){
+                          foreach ($impcli["Conceptosrestante"] as $conceptorestante) {
+                            $montofavor += $conceptorestante['montoretenido'];
+                          }
+                        }
 
-                    $tareaFild='tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"];
-                   /*Como no podemos traer los impuestos ordenados por sql vamos a ordenarlos aqui*/
-                    if($montovto>0){
-                      $montovto = $montovto*-1;
-                    }else{
-                      $montovto = $montofavor;
-                    }
-                    mostrarBotonImpuesto($this,$cliente, $impcli,$montovto ,$periodoSel,$pagado,$eventoNoCreado) ;
-                  }
-                 ?>
-                    </div>
+                        $tareaFild='tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"];
+                       /*Como no podemos traer los impuestos ordenados por sql vamos a ordenarlos aqui*/
+                        if($montovto>0){
+                          $montovto = $montovto*-1;
+                        }else{
+                          $montovto = $montofavor;
+                        }
+                        mostrarBotonImpuesto($this,$cliente, $impcli,$montovto ,$periodoSel,$pagado,$eventoNoCreado) ;
+                      }
+                     ?>
+                     </div>
+                </div>
               </td>
             <?php
               }else if($tarea['Tareascliente']['id']=='19'/*Contabilizar*/) {
@@ -220,6 +222,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                         <div class="divTareaNombre">
                             <?php echo $tareaNombre; ?>
                         </div>
+                        <div style="max-height:210px; overflow:auto">
                     <?php
                     if($cliente['impuestosactivos']['contabiliza']){
                         $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
@@ -313,6 +316,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                     }
                     ?>
                         </div>
+                    </div>
                 </td>
                 <?php
               }else{
@@ -542,12 +546,13 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
             <?php }
             echo $context->Form->end();            
           }else  if($tareaFild=="tarea3"){
-                echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody tdBotonesCarga" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
-                  echo '<div class="divtareas">';
+                echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody tdBotonesCarga" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';                  
                     ?>
-                    <div class="divTareaNombre">
-                        <?php echo $tareaNombre; ?>
-                    </div>
+              <div class="divtareas">
+                  <div class="divTareaNombre">
+                      <?php echo $tareaNombre; ?>
+                  </div>
+                  <div style="max-height:210px; overflow:auto">
                     <?php
                     //En esta tarea vamos a cargar las ventas, compras y novedades del cliente en un periodo determinado
                   $paramsCargar= $eventoID.",'".$periodoSel."','".$cliente['Cliente']['id']."'";
@@ -643,10 +648,12 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
                             'id'=>'buttonCargaRecibos'.$cliente['Cliente']['id'],
                         ),
                         array());
-              echo '</div>
-            </td>';
+                    ?>
+                    </div>
+              </div>
+            </td>
+            <?php
           }
-
           else  if($tareaFild=="tarea4"){
 
             echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody tdBotonesControlar" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
@@ -658,6 +665,7 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
               <div class="divTareaNombre">
                   <?php echo $tareaNombre; ?>
               </div>
+              <div style="max-height:210px; overflow:auto">
               <?php
                 //En esta tarea vamos a crear el Honorario
                 $honorario = array();
@@ -723,9 +731,11 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
                       []
                   );
                 }
-              echo "</div>
-            </td>";
-
+                ?>
+                </div>
+              </div>
+            </td>
+            <?php
           } else {
             echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
             $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"realizarEventoCliente(".$params.")");
