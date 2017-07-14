@@ -5,7 +5,7 @@ if(count($empleado['Valorrecibo'])==0){
 }
 ?>
 <div  style="width:100%;height: 1px; /*break-before: page!important*/"></div>
-<div id="reciboContenedor"  style="width: 100%;">
+<div id="reciboContenedor"  style="width: 100%;" class="parafiltrarempleados" valorparafiltrar="<?php echo $empleado['Empleado']['nombre']." ".$empleado['Empleado']['cuit']?>">
     <?php
     echo $this->Form->button('Imprimir',
         array('type' => 'button',
@@ -49,6 +49,7 @@ if(count($empleado['Valorrecibo'])==0){
                                     +$valores[55]['valor']/*Inasistencias Pagas*/
                                     -$valores[135]['valor']/*Suspensiones*/
                                     -$valores[56]['valor']/*Inasistencias Descontadas*/;
+                                //todo restarle los conceptos tipo DATOS que restan
                             }
                             $valores[$conceptoid]['cantidad']=$cantidad;
                         }
@@ -160,7 +161,7 @@ if(count($empleado['Valorrecibo'])==0){
                             if($valor['seccion']=='DATOS')continue;
                             if($valor['seccion']=='TOTALES'){
                                 //si es el redondeo mostralo sino segui la flecha guacho
-                                if(!in_array($valor['numero'],['124','132','133'])){
+                                if(!in_array($valor['numero'],['124','132'/*Embargos*/,'133'/*Adelantos*/])){
                                     continue;
                                 }
                             }
@@ -184,9 +185,7 @@ if(count($empleado['Valorrecibo'])==0){
                                             $suma = 1;
                                             if($valor['resta']*1==1){
                                                 $suma = -1;
-                                            }
-                                            //hacerlo para totales tmb
-                                            
+                                            }//hacerlo para totales tmb
                                             ?>
                                             <td class="tdWithLeftRightBorder tdWithNumber">
                                                 <?php echo number_format($valor['valor']*$suma, 2, ",", "."); ?>
@@ -266,10 +265,13 @@ if(count($empleado['Valorrecibo'])==0){
                                 echo number_format($valores['41']['valor'], 2, ",", ".");?>
                             </td>
                             <?php
-                            $totalRemSD = $valores['124']['valor']*1//redondeo
-                                         + $valores['42']['valor']*1//Total Remunerativos S/D Excepto INdemnizatorio
-                                         + $valores['43']['valor']*1//Total Remunerativos S/D Indemnizatorio
-                                        ;
+                            $totalRemSD = $valores['124']['valor']*1;//redondeo
+                            if(isset($valores['42'])){
+                                $totalRemSD+=$valores['42']['valor']*1;//Total Remunerativos S/D Indemnizatorio
+                            }
+                            if(isset($valores['43'])){
+                                $totalRemSD+=$valores['43']['valor']*1;//Total Remunerativos S/D Indemnizatorio
+                            }
                             ?>
                             <td class="tdWithBorder tdWithNumber" style="text-align: right;"><?php echo number_format($totalRemSD, 2, ",", ".");?></td>
                             <td class="tdWithBorder tdWithNumber" style="text-align: right;">
@@ -301,7 +303,7 @@ if(count($empleado['Valorrecibo'])==0){
                         </tr>
                     </table>
             </div>
-            <div id="reciboDuplicado<?php echo $empid;?>" class="tblReciboSueldo divToRight" style="margin: 0px 10px;width: 480px; float: right; "></div>
+            <div id="reciboDuplicado<?php echo $empid;?>" class="tblReciboSueldo divToRight" style="margin: 0px 10px 33px 10px;width: 480px; float: right; "></div>
         </div>
     </div>
 </div>

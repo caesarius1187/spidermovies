@@ -12,7 +12,7 @@
     )
 );
 ?>
-<div id="divLibroSueldo">
+<div id="divLibroSueldo" class="parafiltrarempleados" valorparafiltrar="<?php echo $empleado['Empleado']['nombre']." ".$empleado['Empleado']['cuit']?>" >
     <div id="libroSueldoContent<?php echo $empid; ?>" name="" class="index" style="margin: 10px 0px; /*page-break-before:always*/">
         <?php
         $liquidacion = $empleado['Valorrecibo'][0]['tipoliquidacion'];

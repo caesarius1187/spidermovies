@@ -281,22 +281,23 @@ class ImpclisController extends AppController {
  * @param string $id
  * @return void
  */
-	public function delete($id = null) {
+	public function delete($id = null)
+	{
 		$this->Impcli->id = $id;
 		$this->loadModel('Periodosactivo');
 		$data = array();
 		if (!$this->Impcli->exists()) {
-			$data['respuesta']='El impuesto del cliente NO existe.';
+			$data['respuesta'] = 'El impuesto del cliente NO existe.';
 		}
 		$options = array(
 			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $id),
 			'contain' => array('Eventosimpuesto')
-			);
+		);
 		$impcli = $this->Impcli->find('first', $options);
 
-		if(count($impcli['Eventosimpuesto'])){
-			$data['respuesta']='El impuesto del cliente NO ha sido eliminado. Se han creado registros sobre pagos en diferentes periodos.';
-			$this->set('data',$data);
+		if (count($impcli['Eventosimpuesto'])) {
+			$data['respuesta'] = 'El impuesto del cliente NO ha sido eliminado. Se han creado registros sobre pagos en diferentes periodos.';
+			$this->set('data', $data);
 			$this->layout = 'ajax';
 			$this->render('serializejson');
 			return;
@@ -305,18 +306,17 @@ class ImpclisController extends AppController {
 
 		$this->request->onlyAllow('post', 'delete');
 		if ($this->Impcli->delete()) {
-			$data['respuesta']='El impuesto del cliente ha sido eliminado.';
+			$data['respuesta'] = 'El impuesto del cliente ha sido eliminado.';
 			$this->Periodosactivo->deleteAll(array('Periodosactivo.impcli_id' => $id), false);
 
 		} else {
-			$data['respuesta']='El impuesto del cliente NO ha sido eliminado. Por favor intente de nuevo';
+			$data['respuesta'] = 'El impuesto del cliente NO ha sido eliminado. Por favor intente de nuevo';
 		}
 
-		$this->set('data',$data);
+		$this->set('data', $data);
 		$this->layout = 'ajax';
 		$this->render('serializejson');
 	}
-
 	public function papeldetrabajoconveniomultilateral($impcliid=null,$periodo=null) {
 		ini_set('memory_limit', '2560M');
 		$this->loadModel('Actividadcliente');

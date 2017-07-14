@@ -9,22 +9,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 ?>
 <div class="index">
     <div id="Formhead" class="clientes papeldetrabajosuss index" style="margin-bottom:10px;">
-        <h2>Cooperadora Asistencial:</h2>
+        <h2>Cooperadora Asistencial  Periodo <?php echo $periodo; ?></h2>
         Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
         CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
-        Periodo: <?php echo $periodo; ?>
-        <?php echo $this->Form->button('Imprimir',
-            array('type' => 'button',
-                'class' =>"btn_imprimir",
-                'onClick' => "imprimir()"
-            )
-        );?>
-        <?php echo $this->Form->button('Excel',
-            array('type' => 'button',
-                'id'=>"clickExcel",
-                'class' =>"btn_imprimir",
-            )
-        );?>
     </div>
     <div id="divLiquidarCooperadoraAsistencial">
     </div>
@@ -91,6 +78,18 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
         }
         //Debugger::dump($empleadoDatos);
         ?>
+        <?php echo $this->Form->button('Imprimir',
+            array('type' => 'button',
+                'class' =>"btn_imprimir",
+                'onClick' => "imprimir()"
+            )
+        );?>
+        <?php echo $this->Form->button('Excel',
+            array('type' => 'button',
+                'id'=>"clickExcel",
+                'class' =>"btn_imprimir",
+            )
+        );?>
         <table id="tblDatosAIngresar" class="tblInforme tbl_border" cellspacing="0" >
             <tr>
                 <td>Legajo</td>

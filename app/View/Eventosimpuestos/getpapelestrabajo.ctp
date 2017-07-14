@@ -856,10 +856,11 @@
                     'style'=>"display: inline;"
                 ]
         );
-
+        echo '<div style="width:100%;" id="divAsientoDeEventoImpuesto"></div>';
 	    echo '<div style="width:100%; float:right;">
-<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>';
-        echo '<a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a></div>';
+                <a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>
+                <a href="#" onclick="$('."'".'#EventosimpuestoRealizartarea5Form'."'".').submit();" class="btn_aceptar" style="margin-top:14px">'.$botonOK.'</a>
+                </div>';
         if(isset($itemsACompletar)){
             echo $this->Form->input('Eventosimpuesto.0.cantItems', array('type'=>'hidden','value'=>count($itemsACompletar)));
             echo $this->Form->input('Eventosimpuesto.0.jsonItems', array('type'=>'hidden','value'=>json_encode($itemsACompletar)));

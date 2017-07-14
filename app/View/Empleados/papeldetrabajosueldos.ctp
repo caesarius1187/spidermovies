@@ -3,7 +3,7 @@ if(count($empleado)==0){
     return '<div class="divLiquidacionSueldo"></div>';
 }
 ?>
-<div class="divLiquidacionSueldo">
+<div class="divLiquidacionSueldo parafiltrarempleados" valorparafiltrar="<?php echo $empleado['Empleado']['nombre']." ".$empleado['Empleado']['cuit']?>">
     <?php
     /*
      * 1: quincena 1;

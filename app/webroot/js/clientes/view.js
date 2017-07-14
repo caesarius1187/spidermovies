@@ -131,13 +131,11 @@ jQuery(document).ready(function($) {
                 url: formUrl,
                 data: formData,
                 success: function(data,textStatus,xhr){
-                    if (data.indexOf('redireccionar') == -1)
-                    {
-                        callAlertPopint(data);
+                    var respuesta = JSON.parse(data);
+                    if(respuesta.error==0){
+                        callAlertPopint(respuesta.respuesta);
                         loadFormEditarPersona();
-                    }
-                    else
-                    {
+                    }else{
                         //location.href="#close";
                         location.reload();
                     }

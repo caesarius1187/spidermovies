@@ -2366,6 +2366,20 @@ transition: all 0.4s ease-in-out;
 .ventaFormVertical div {
     margin: 0px 2px;
 }
+
+#contentPrint {
+	display: table;
+}
+
+#pageFooter {
+	display: table-footer-group;
+}
+
+#pageFooter:after {
+	counter-increment: page;
+	content: counter(page);
+}
+
 .par {
 	background-color: #455ede;
 	color: white;

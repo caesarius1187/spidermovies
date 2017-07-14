@@ -147,7 +147,7 @@ $(document).ready(function() {
                             },
                             orientation: 'landscape',
                             download: 'open',
-                            message: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+                            message: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo+'</br>Domicilio:'+$("#domiciliocliente").val(),/*todo: completar Domicilios de Libro IVA Ventas*/
 
                         },
                         {
@@ -161,10 +161,23 @@ $(document).ready(function() {
                             extend: 'print',
                             text: 'Imprimir',
                             exportOptions: {
-                                columns: ':visible'
+                                columns: '.printable'
                             },
                             orientation: 'landscape',
-                            message: 'LibroIVA-Ventas-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+                            footer: true,
+                            autoPrint: false,
+                            message: nombrecliente+"</br>"+
+                            'Domicilio: '+$("#domiciliocliente").val()+" - "+
+                            ' Inicio actividad: '+$("#fchcumpleanosconstitucion").val()+
+                            ' Periodo: '+periodo+"</br>"+
+                            '---------------------------------------Libro N° '+/*$("#numerolibro").val()+*/"</br>"+
+                            'Resp: '+$("#condicioniva").val()+' Registro IVA VENTAS',
+                            customize: function ( win ) {
+
+                            },
+                            // action: function ( e, dt, node, config ) {
+                            //     // dt.column( 5 ).visible( false );
+                            // }
                         },
                     ],
                 } );

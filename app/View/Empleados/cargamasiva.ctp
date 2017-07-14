@@ -70,6 +70,18 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     echo $this->Form->label(null, $text = 'Empleados',array('style'=>'text-align:center;margin-top:5px;cursor:pointer'));
                 ?>
             </div>
+            <div class="cliente_view_tab" style="width:275px;margin-right:0px"  onClick="" id="tabNovedades">
+                <?php
+                    echo $this->Form->input('buscarempleado',[
+                        'type'=>'text',
+                        'label'=>[
+                            'text'=>'Filtrar Empleados',
+                            'style'=>'display:inline'
+                        ],
+                        'style'=>'display:inline'
+                    ]);
+                ?>
+            </div>
         </div>
        <?php /**************************************************************************/ ?>
        <?php /*****************************Novedades************************************/ ?>
@@ -121,9 +133,10 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     echo $this->Form->button(
                         $empleadolista['nombre'],
                         array(
-                            'class'=>$classButtonEmpleado,
+                            'class'=>$classButtonEmpleado." parafiltrarempleados",
                             'onClick'=>"cargarunsueldoempleado('".$cliente["Cliente"]['id']."','".$periodo."','".$empleadolista['id']."','-1','0')",
                             'id'=>'buttonEmpleado'.$empleadolista['id'],
+                            'valorparafiltrar'=>$empleadolista['nombre']." ".$empleadolista['cuit'],
                         ),
                         array()
                     );
@@ -175,12 +188,9 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 ?>
             </div>
           <div style="overflow:auto;width:96%; min-height: 400px; margin-top: 10px" class="tareaCargarIndexTable tabNovedades index">
-              <div id="divSueldoForm"  style="width: 5000px;">
+              <div id="divSueldoForm">
               </div>
           </div>
-        <?php
-
-                ?>
     </div>
 </div>
 <?php /**************************************************************************/ ?>

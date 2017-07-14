@@ -627,6 +627,7 @@ class VentasController extends AppController {
 		$this->set('periodo',$periodo);
 		$cliente=$this->Cliente->find('first', array(
 				'contain'=>array(
+					'Domicilio'=>[],
 					'Impcli'=>[
 						'Impuesto',
 						'Periodosactivo'=>[

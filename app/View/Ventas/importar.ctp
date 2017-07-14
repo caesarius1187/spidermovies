@@ -740,6 +740,9 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                     //hay que controlar que las venas anteriores cargadas no contengan la venta que estamos por mostrar
                     $ventaCargadaPreviamente = false;
                     $comprobanteTipoNuevo = ltrim(customSearch($venta['Venta']['comprobantetipo'],$comprobantes), '0');
+                    if($comprobanteTipoNuevo==0){
+                        Debugger::dump("ERROR:: no se encontro el comprobante: ".$venta['Venta']['comprobantetipo']);
+                    }
                     $pdvNuevo = ltrim(customSearch($venta['Venta']['puntodeventa'],$puntosdeventas), '0');
                     $alicuotaNuevo = customSearch($alicuota['alicuotaiva'],$alicuotas);
                     $numeroComprobante = $venta['Venta']['comprobantenumero'];

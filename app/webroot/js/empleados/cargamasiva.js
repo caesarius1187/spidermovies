@@ -30,10 +30,23 @@ $(document).ready(function() {
             }
         };
     });
+    $("#buscarempleado").keyup(function( event ){
+        $(".parafiltrarempleados").each(function () {
+           var valorparafiltrar =  $(this).attr('valorparafiltrar');
+            var contienefiltro =  valorparafiltrar.toLowerCase().indexOf($("#buscarempleado").val().toLowerCase());
+            if(valorparafiltrar!=""&&contienefiltro==-1){
+                $(this).hide();
+            }else{
+                $(this).show();
+            }
+        });
+    });
 });
 function cargarTodosLosSueldos(convenio){
     var liquidacion = $("#tipoliquidacion").val();
     $("#divSueldoForm").html("");
+    $("#divSueldoForm").css('width','5000px');
+
     empleado1=0;
     var empleados = JSON.parse($("#arrayEmpleados").val());
 
@@ -120,6 +133,7 @@ function showHideColumnsEmpleado(empid){
 }
 function cargarunsueldoempleado(clienteid,periodo,empid,liquidacion,indice){
     $("#divSueldoForm").html("");
+    $("#divSueldoForm").css('width','auto');
     empleado1=empid;
     cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice);
 }
@@ -419,6 +433,7 @@ function activarCalXOnSueldos(empid){
 function cargarTodosLosRecibos(){
 
     $("#divSueldoForm").html("");
+    $("#divSueldoForm").css('width','auto');
     empleado1=0;
     var empleados = JSON.parse($("#arrayEmpleados").val());
     var liquidacion = numeroliquidacion[$("#tipoliquidacion").val()];
@@ -477,6 +492,8 @@ function cargarUnReciboSueldo(empid,periodo,liquidacion){
 
 function cargarTodosLosLibros(){
     $("#divSueldoForm").html("");
+    $("#divSueldoForm").css('width','auto');
+
     empleado1=0;
     var empleados = JSON.parse($("#arrayEmpleados").val());
     var liquidacion = numeroliquidacion[$("#tipoliquidacion").val()];

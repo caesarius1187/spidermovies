@@ -987,8 +987,10 @@ echo $this->Form->button('Imprimir',
                                 <tr>
                                     <td colspan="2" style="padding:0px;font-size:10px;">
                                         <?php $mesesN=array(1=>"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio",
-                                            "Agosto","Septiembre","Octubre","Noviembre","Diciembre");?>
-                                        Salta,  <?php echo date('d')." de ".$mesesN[date('n')]." de ".date('Y');?> 
+                                            "Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+                                        $fechaPago = strtotime('05-'.$pemes."-".$peanio." +1 months");
+                                        ?>
+                                        Salta,  <?php echo "05 de ".$mesesN[date('n',$fechaPago)]." de ".date('Y',$fechaPago);?>
                                     </td>
                                 </tr>
                                 <tr>

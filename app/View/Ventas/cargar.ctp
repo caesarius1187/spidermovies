@@ -31,7 +31,16 @@ $tieneAgenteDePercepcionIIBB=$cliente["Cliente"]['tieneAgenteDePercepcionIIBB'];
 /*DGRM*/
 $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePercepcionActividadesVarias'];
 echo $this->Form->input('cliid',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
+$fchcumpleanosconstitucion = date('d-m-Y',strtotime($cliente["Cliente"]['fchcumpleanosconstitucion']));
+echo $this->Form->input('fchcumpleanosconstitucion',array('default'=>$fchcumpleanosconstitucion,'type'=>'hidden'));
+$condicioniva = $tieneMonotributo?'Monotributista':'Insctipto';
+echo $this->Form->input('condicioniva',array('default'=>$condicioniva,'type'=>'hidden'));
 echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
+$domicilio = "";
+if(isset($cliente["Domicilio"][0])){
+    $domicilio = $cliente["Domicilio"][0]['calle'];
+}
+echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'hidden'));
 
 ?>
 <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->

@@ -1835,7 +1835,6 @@ class ClientesController extends AppController {
 		}else{
 			$mostrarView=false;
 		}
-
 		//for index
 		$conditionsCli = array(
 							 'Grupocliente',
@@ -2072,7 +2071,9 @@ class ClientesController extends AppController {
 	public function edit(){	
 		$this->autoRender=false; 
 		if($this->RequestHandler->isAjax()){ 
-			Configure::write('debug', 0); } 
+			Configure::write('debug', 0);
+		}
+        $data = array();
 		if(!empty($this->data)){ 
 			if (isset($this->request->data['Cliente']['fchcumpleanosconstitucion']))
 				if($this->request->data['Cliente']['fchcumpleanosconstitucion']!="")
@@ -2086,34 +2087,43 @@ class ClientesController extends AppController {
 				if($this->request->data['Cliente']['fchiniciocliente']!="")
 					$this->request->data('Cliente.fchiniciocliente',date('Y-m-d',strtotime($this->request->data['Cliente']['fchiniciocliente'])));
 		
-			if($this->request->data['Cliente']['vtocaia']!="")
-				$this->request->data('Cliente.vtocaia',date('Y-m-d',strtotime($this->request->data['Cliente']['vtocaia'])));
-			if($this->request->data['Cliente']['vtocaib']!="")
-				$this->request->data('Cliente.vtocaib',date('Y-m-d',strtotime($this->request->data['Cliente']['vtocaib'])));
-			if($this->request->data['Cliente']['vtocaic']!="")
-				$this->request->data('Cliente.vtocaic',date('Y-m-d',strtotime($this->request->data['Cliente']['vtocaic'])));
+//			if($this->request->data['Cliente']['vtocaia']!="")
+//				$this->request->data('Cliente.vtocaia',date('Y-m-d',strtotime($this->request->data['Cliente']['vtocaia'])));
+//			if($this->request->data['Cliente']['vtocaib']!="")
+//				$this->request->data('Cliente.vtocaib',date('Y-m-d',strtotime($this->request->data['Cliente']['vtocaib'])));
+//			if($this->request->data['Cliente']['vtocaic']!="")
+//				$this->request->data('Cliente.vtocaic',date('Y-m-d',strtotime($this->request->data['Cliente']['vtocaic'])));
 
 			$ClienteGrupoId_nuevo = $this->request->data['Cliente']['grupocliente_id'];
 			$conditionsCli = array('Cliente.id' => $this->request->data['Cliente']['id']);
-			$Cliente = $this->Cliente->find('first',array('conditions' =>$conditionsCli));
+			$Cliente = $this->Cliente->find('first',array(
+                'contain' =>[],
+                'conditions' =>$conditionsCli
+            ));
 			$ClienteGrupoId_anterior = $Cliente['Cliente']['grupocliente_id'];
 
 			if($this->Cliente->save($this->data))
 			{				
 				
-				if ($ClienteGrupoId_nuevo == $ClienteGrupoId_anterior)
-					echo 'El Cliente ha sido modificado.';
-				else					
-					echo 'redireccionar';
-					//return $this->redirect(array('action' => 'view', $this->request->data['Cliente']['id']));									
+				if ($ClienteGrupoId_nuevo == $ClienteGrupoId_anterior){
+                    $data['respuesta'] = 'Se guardaron los datos del cliente con exito.';
+                    $data['error'] = 0;
+                }
+				else{
+                    $data['respuesta'] = 'Se guardaron los datos del cliente con exito. Y se reubico este contribuyente
+                     en el nuevo grupo';
+                    $data['error'] = 1;
+                }
 			}
 			else
-			{ 
-				echo 'El NO Cliente ha sido modificado.';
-				//$this->Session->setFlash(__('El NO Cliente ha sido modificado.'));		
-				//return $this->redirect(array('action' => 'index'));				
+			{
+                $data['respuesta'] = 'Error: no se guardaron los datos del cliente. Intente de nuevo mas tarde por favor.';
+                $data['error'] = 2;
 			} 
-		} 
+		}
+        $this->layout = 'ajax';
+        $this->set('data', $data);
+        $this->render('serializejson');
 	}
 	public function editajax($cliId = null,$nombre = null,$Dni= null,$Honorario=null,$Cuitcontribullente= null,$Numinscripcionconveniomultilateral= null,
 		$Tipopersona = null,$Tipopersonajuridica = null,$Fchcorteejerciciofiscal= null,$Fchcumpleanosconstitucion= null,$Anosduracion= null,
@@ -2146,10 +2156,10 @@ class ClientesController extends AppController {
 				$this->set('respuesta','El Cliente ha sido modificado.');	
 				$this->set('evento_id',$this->Cliente->getLastInsertID());
 			}else{
-				$this->set('respuesta','error');	
+				$this->set('respuesta','Error No se pudo guardar el contribuyente');
 			}
 		}else{
-			$this->set('respuesta','error');			
+			$this->set('respuesta','Error No existe el contribuyente');
 		}
 		$this->layout = 'ajax';
 		$this->render('editajax');
