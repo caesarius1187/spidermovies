@@ -75,6 +75,7 @@ function papelesDeTrabajo(periodo,impcli){
 	    $('#tabsTareaImpuesto').hide();
 		$('#divPagar').hide();
 		$('#buttonPDT').hide();
+	  	$('.btn_cancelar').hide();
 		//$('#EventosimpuestoRealizartarea5Form').css('width','453');
 		for (var i = 0 ; i < 3; i++) {
 			if($('#Eventosimpuesto'+i+'Id').val()==0){//El Evento Impuesto no a sido creado previamente entonces vamos a guardar el monto que calculamos
@@ -137,7 +138,9 @@ function papelesDeTrabajo(periodo,impcli){
 			}
 			});
 return false;
-	    });               
+	    });
+		//aca vamos a mover el div de asientos al de eventos impuesto
+	  	$('#divContenedorContabilidad').detach().appendTo('#divAsientoDeEventoImpuesto');
 	  },
 	 error:function (XMLHttpRequest, textStatus, errorThrown) {
 	    alert(textStatus);

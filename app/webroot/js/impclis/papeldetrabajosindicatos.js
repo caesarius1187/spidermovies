@@ -45,6 +45,7 @@ function papelesDeTrabajo(periodo,impcli){
 	    $('#tabsTareaImpuesto').hide();
 		$('#divPagar').hide();
 		$('#buttonPDT').hide();
+	 	$('.btn_cancelar').hide();
 		//$('#EventosimpuestoRealizartarea5Form').css('width','1500');
 		var apagarInput = $('#apagar');
 		var afavorInput = $('#afavor');
@@ -101,7 +102,9 @@ function papelesDeTrabajo(periodo,impcli){
 		        } 
 		      }); 
 	          return false;
-	    });               
+	    });
+	  	//aca vamos a mover el div de asientos al de eventos impuesto
+	  	$('#divContenedorContabilidad').detach().appendTo('#divAsientoDeEventoImpuesto');
 	  },
 	 error:function (XMLHttpRequest, textStatus, errorThrown) {
 	    alert(textStatus);

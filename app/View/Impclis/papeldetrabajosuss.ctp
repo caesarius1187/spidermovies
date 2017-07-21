@@ -7,11 +7,12 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 echo $this->Form->input('impcliid',array('value'=>$impcliid,'type'=>'hidden'));
 echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));?>
 <div class="eventosclientes index">
-	<div id="Formhead" class="clientes papeldetrabajosuss index" style="margin-bottom:10px;">
-		<h2>SUSS:</h2>
-		Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
-		CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
-		Periodo: <?php echo $periodo; ?>
+    <div id="divLiquidarSUSS">
+    </div>
+	<div id="sheetCooperadoraAsistencial" class="index" style="overflow: auto; margin-bottom:10px;">
+		<!--Esta es la tabla original y vamos a recorrer todos los empleados por cada una de las
+		rows por que -->
+        <b style="display: inline">Papel de Trabajo</b>
         <?php echo $this->Form->button('Imprimir',
             array('type' => 'button',
                 'class' =>"btn_imprimir",
@@ -24,24 +25,6 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 'class' =>"btn_imprimir",
             )
         );?>
-	</div>
-    <div style="width:100%;height:30px;margin-left: 12px;">
-        <div id="tabPdT" class="cliente_view_tab_active" onclick="CambiarTab('papeldetrabajo');" style="width:23%;">
-            <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Papel de Trabajo</label>
-        </div>
-        <div id="tabLiquidacion" class="cliente_view_tab" onclick="CambiarTab('liquidacion');" style="width:23%;">
-            <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Liquidacion</label>
-        </div>
-        <div id="tabExportacion" class="cliente_view_tab" onclick="CambiarTab('exportar');" style="width:23%;">
-            <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Exportar</label>
-        </div>
-        <div id="tabContabilidad" class="cliente_view_tab" onclick="CambiarTab('contabilidad');" style="width:23%;">
-            <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Contabilidad</label>
-        </div>
-    </div>
-	<div id="sheetCooperadoraAsistencial" class="index" style="overflow: auto; margin-bottom:10px;">
-		<!--Esta es la tabla original y vamos a recorrer todos los empleados por cada una de las
-		rows por que -->
         <?php
         $empleadoDatos = array();
         $sindicatos['sindicato']=[];
@@ -1616,17 +1599,16 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             </tbody>
 	</table>
 	</div>
-	<div id="divLiquidarSUSS">
-	</div>
+
     <?php
     if(!$impuestosactivos['contabiliza']){ ?>
         <div id="divContenedorContabilidad" style="margin-top:10px">  </div>
         <?php
     }else{ ?>
-    <div id="divContenedorContabilidad" style="margin-top:10px">
-        <div class="index" id="AsientoAutomaticoDevengamiento931">
+    <div id="divContenedorContabilidad" style="margin-top:10px;width: 100%">
+        <div class="index_pdt" id="AsientoAutomaticoDevengamiento931">
+            <b>Asiento de Devengamiento</b>
             <?php
-
             echo $this->Form->input('cuentasdeSUSSAportesSindicatos',[
                 'id'=> "cuentasdeSUSSAportesSindicatos",
                 'value'=>json_encode($aportesSindicatos),
@@ -1637,7 +1619,6 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 'value'=>json_encode($contribucionesSindicatos),
                 'type'=>'hidden'
             ]);
-
             $Asientoid=0;
             $movId=[];
             if(isset($impcli['Asiento'])) {
@@ -1664,8 +1645,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 ),
                 'readonly','readonly',
                 'value'=>$d->format( 't-m-Y' ),
-                'div' => false,
-                'style'=> 'height:9px;display:inline'
+//                'div' => false,
+                'style'=> 'width:82px'
             ));
             echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Devengamiento SUSS" ,'style'=>'width:250px']);
             echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Automatico",'style'=>'width:250px']);
@@ -1920,28 +1901,37 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 //                    $i++;
 //                }
 //            }
-            echo $this->Form->submit('Contabilizar');
+//            echo $this->Form->submit('Contabilizar');
             echo $this->Form->end();
             $totalDebe=0;
             $totalHaber=0;
-            echo $this->Form->label('','&nbsp; ',[
+            echo $this->Form->label('','Total ',[
                 'style'=>"display: -webkit-inline-box;width:355px;"
             ]);
-            echo $this->Form->label('lblTotalDebe',
-                "$".number_format($totalDebe, 2, ".", ""),
-                [
-                    'id'=>'lblTotalDebe',
-                    'style'=>"display: inline;"
-                ]
-            );
-            echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:100px;"]);
-            echo $this->Form->label('lblTotalHaber',
-                "$".number_format($totalHaber, 2, ".", ""),
-                [
-                    'id'=>'lblTotalHaber',
-                    'style'=>"display: inline;"
-                ]
-            );
+            ?>
+            <div style="width:98px;">
+                <?php
+                echo $this->Form->label('lblTotalDebe',
+                    "$".number_format($totalDebe, 2, ".", ""),
+                    [
+                        'id'=>'lblTotalDebe',
+                        'style'=>"display: inline;float:right"
+                    ]
+                );
+                ?>
+            </div>
+            <div style="width:124px;">
+                <?php
+                echo $this->Form->label('lblTotalHaber',
+                    "$".number_format($totalHaber, 2, ".", ""),
+                    [
+                        'id'=>'lblTotalHaber',
+                        'style'=>"display: inline;float:right"
+                    ]
+                );
+                ?>
+            </div>
+            <?php
             if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
                 echo $this->Html->image('test-pass-icon.png',array(
                         'id' => 'iconDebeHaber',

@@ -392,6 +392,14 @@ input, textarea {
 	/*width:95%;*/
 	border:none;
   	border: solid 1px #E4E4E4;
+	background-color: #BBDEFB;
+}
+input:-moz-read-only { /* For Firefox */
+	background-color: #f1f1f1;
+}
+
+input:read-only {
+	background-color: #f1f1f1;
 }
 select {
 	clear: both;
@@ -2774,7 +2782,7 @@ transition: all 0.4s ease-in-out;
 	text-align: right;
 }
 .movimientoConValor{
-	background-color: #77D124;
+	background-color: #BBDEFB;
 }
 .movimientoSinValor{
 	background-color: #e4e4e4;
@@ -2812,12 +2820,12 @@ transition: all 0.4s ease-in-out;
 }
 
 div.index_pdt{
-	float:right;
+	/*float:right;*/
 	width: 96%;
-	border:1px solid #E4E4E4; 
-	padding:10px 1%;
-	background-color: #FFFFFF;
-	margin: 3px 1% 0px;
+	/*border:1px solid #E4E4E4; */
+	/*padding:10px 1%;*/
+	/*background-color: #FFFFFF;*/
+	/*margin: 3px 1% 0px;*/
 }	
 
 /*CM*/

@@ -470,82 +470,83 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
           <?php
       }else{
         if($Tareahabilitado) {
-          if($tareaFild=="tarea1"){
-            echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody tdBotonesSolicitar" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
-            /**Tarea Solicitar**/
-            echo $context->Form->create('Eventoscliente',array(
-              'class'=>'formTareaCarga checkbox formTareaSolicitar',
-              'controller'=>'Eventosclientes',
-              'action'=>'tareasolicitar',
-              'id'=>'formEventoscliente'));
-            echo $context->Form->input('id', array('type'=>'hidden', 'value'=>$eventoID));
-            echo $context->Form->input('periodo', array('type'=>'hidden', 'value'=>$periodoSel));
-            echo $context->Form->input('cliente_id', array('type'=>'hidden', 'value'=>$cliente['Cliente']['id']));
-
-            if($cliente['Cliente']['cargaFacturaCompras']){
-              echo $context->Form->input('fccompra', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['fccompra'],'class'=>$evento['fccompra']?'checked':''));?>
-              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Compras solicitadas y recibidas" id="blr" class="imgcb" />
-              Fc. de Compra
-              </br>
-              
-            <?php
-            }
-            if($cliente['Cliente']['cargaLibroIVAVentas']){
-              echo $context->Form->input('libroivaventas', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['libroivaventas'],'class'=>$evento['libroivaventas']?'checked':''));?>
-              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Libro IVA Ventas solicitado y recibido" id="blr" class="imgcb" />
-              Libro IVA Ventas
-              </br>
-            <?php 
-            }
-            if($cliente['Cliente']['cargaFacturaVentas']){
-              echo $context->Form->input('fcventa', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['fcventa'],'class'=>$evento['fcventa']?'checked':''));?>
-              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Ventas solicitadas y recibidas" id="blr" class="imgcb" />
-            Fc. de Venta
-            </br>
-            <?php
-            } 
-            if($cliente['Cliente']['cargaVentasWeb']){
-              echo $context->Form->input('descargawebafip', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['descargawebafip'],'class'=>$evento['descargawebafip']?'checked':''));?>
-              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Descarga de ventas Web AFIP realizada" id="blr" class="imgcb" />
-            Descarg. Web AFIP
-            </br>
-            <?php
-            } 
-            if($cliente['Cliente']['cargaBanco']){
-              echo $context->Form->input('banco', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['banco'],'class'=>$evento['banco']?'checked':''));?>
-              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Resumenes Bancarios descargados" id="blr" class="imgcb" />
-            Resumen Bco.
-            </br>
-            <?php 
-            } 
-            if($cliente['Cliente']['cargaTarjetasCredito']){
-              echo $context->Form->input('tarjetadecredito', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['tarjetadecredito'],'class'=>$evento['tarjetadecredito']?'checked':''));?>
-              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Resumenes de Tarjetas de Creditos descargados" id="blr" class="imgcb" />
-            Resumen Tarj. de Cred.
-            </br>
-            <?php 
-            } 
-            if($cliente['Cliente']['cargaFacturaLuz']){
-              echo $context->Form->input('fcluz', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['fcluz'],'class'=>$evento['fcluz']?'checked':''));?>
-              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Luz solicitadas y recibidas" id="blr" class="imgcb" />
-            Fc de Luz
-            </br>
-            <?php 
-            } 
-            if($cliente['Cliente']['cargaNovedades']){
-              echo $context->Form->input('sueldos', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['sueldos'],'class'=>$evento['sueldos']?'checked':''));?>
-              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Recibos de sueldos solicitados y recibidos" id="blr" class="imgcb" />
-            Novedades Sueldos
-            </br>
-            <?php 
-            } 
-            if($cliente['Cliente']['cargaLibroUnico']){
-              echo $context->Form->input('librounico', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['librounico'],'class'=>$evento['librounico']?'checked':''));?>
-              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Libro Unico Firmado" id="blr" class="imgcb" />
-            Libro Unico
-            <?php }
-            echo $context->Form->end();            
-          }else  if($tareaFild=="tarea3"){
+//          if($tareaFild=="tarea1"){
+//            echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody tdBotonesSolicitar" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
+//            /**Tarea Solicitar**/
+//            echo $context->Form->create('Eventoscliente',array(
+//              'class'=>'formTareaCarga checkbox formTareaSolicitar',
+//              'controller'=>'Eventosclientes',
+//              'action'=>'tareasolicitar',
+//              'id'=>'formEventoscliente'));
+//            echo $context->Form->input('id', array('type'=>'hidden', 'value'=>$eventoID));
+//            echo $context->Form->input('periodo', array('type'=>'hidden', 'value'=>$periodoSel));
+//            echo $context->Form->input('cliente_id', array('type'=>'hidden', 'value'=>$cliente['Cliente']['id']));
+//
+//            if($cliente['Cliente']['cargaFacturaCompras']){
+//              echo $context->Form->input('fccompra', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['fccompra'],'class'=>$evento['fccompra']?'checked':''));?>
+<!--              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Compras solicitadas y recibidas" id="blr" class="imgcb" />-->
+<!--              Fc. de Compra-->
+<!--              </br>-->
+<!--              -->
+<!--            --><?php
+//            }
+//            if($cliente['Cliente']['cargaLibroIVAVentas']){
+//              echo $context->Form->input('libroivaventas', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['libroivaventas'],'class'=>$evento['libroivaventas']?'checked':''));?>
+<!--              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Libro IVA Ventas solicitado y recibido" id="blr" class="imgcb" />-->
+<!--              Libro IVA Ventas-->
+<!--              </br>-->
+<!--            --><?php //
+//            }
+//            if($cliente['Cliente']['cargaFacturaVentas']){
+//              echo $context->Form->input('fcventa', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['fcventa'],'class'=>$evento['fcventa']?'checked':''));?>
+<!--              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Ventas solicitadas y recibidas" id="blr" class="imgcb" />-->
+<!--            Fc. de Venta-->
+<!--            </br>-->
+<!--            --><?php
+//            }
+//            if($cliente['Cliente']['cargaVentasWeb']){
+//              echo $context->Form->input('descargawebafip', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['descargawebafip'],'class'=>$evento['descargawebafip']?'checked':''));?>
+<!--              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Descarga de ventas Web AFIP realizada" id="blr" class="imgcb" />-->
+<!--            Descarg. Web AFIP-->
+<!--            </br>-->
+<!--            --><?php
+//            }
+//            if($cliente['Cliente']['cargaBanco']){
+//              echo $context->Form->input('banco', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['banco'],'class'=>$evento['banco']?'checked':''));?>
+<!--              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Resumenes Bancarios descargados" id="blr" class="imgcb" />-->
+<!--            Resumen Bco.-->
+<!--            </br>-->
+<!--            --><?php //
+//            }
+//            if($cliente['Cliente']['cargaTarjetasCredito']){
+//              echo $context->Form->input('tarjetadecredito', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['tarjetadecredito'],'class'=>$evento['tarjetadecredito']?'checked':''));?>
+<!--              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Resumenes de Tarjetas de Creditos descargados" id="blr" class="imgcb" />-->
+<!--            Resumen Tarj. de Cred.-->
+<!--            </br>-->
+<!--            --><?php //
+//            }
+//            if($cliente['Cliente']['cargaFacturaLuz']){
+//              echo $context->Form->input('fcluz', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['fcluz'],'class'=>$evento['fcluz']?'checked':''));?>
+<!--              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Facturas de Luz solicitadas y recibidas" id="blr" class="imgcb" />-->
+<!--            Fc de Luz-->
+<!--            </br>-->
+<!--            --><?php //
+//            }
+//            if($cliente['Cliente']['cargaNovedades']){
+//              echo $context->Form->input('sueldos', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['sueldos'],'class'=>$evento['sueldos']?'checked':''));?>
+<!--              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Recibos de sueldos solicitados y recibidos" id="blr" class="imgcb" />-->
+<!--            Novedades Sueldos-->
+<!--            </br>-->
+<!--            --><?php //
+//            }
+//            if($cliente['Cliente']['cargaLibroUnico']){
+//              echo $context->Form->input('librounico', array('type'=>'checkbox', 'div'=>false, 'label'=>false, 'style'=>'display:none','value'=>$evento['librounico'],'class'=>$evento['librounico']?'checked':''));?>
+<!--              <img src="img/unchecked_checkbox.png" width = '15' height = '15' title="Libro Unico Firmado" id="blr" class="imgcb" />-->
+<!--            Libro Unico-->
+<!--            --><?php //}
+//            echo $context->Form->end();
+//          }else
+            if($tareaFild=="tarea3"){
                 echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody tdBotonesCarga" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';                  
                     ?>
               <div class="divtareas">
@@ -738,7 +739,7 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
             <?php
           } else {
             echo '<td class="'.$class.' '.$tareaFild.' columnClienteBody" '.$impuestoclienteStyle.' id="cell'.$cliente['Cliente']['id'].'-'.$tareaFild.'">';
-            $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"realizarEventoCliente(".$params.")");
+            $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"");
             echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
           }
         } else{
@@ -756,13 +757,8 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
   foreach ($impcli['Periodosactivo'] as $periodoactivo) {
     $impuestoActivo = true;
   }
-
     //todo mostrar los impuestos que si tienen vencimientos
     /*Lista de Impuestos Anuales y su vencimiento
-
-
-
-
         *Participaciones Societarias
         -igual que bienes personales(solo pers juridicas)
         // Anticipos [NO tiene]*/
@@ -774,18 +770,14 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
     $peDiaCorte = substr($diamesCorteEjFiscal, 0, 2);
     $peMesCorte = substr($diamesCorteEjFiscal, 3);
     $fecha = $peanio."-".$peMesCorte."-28";
-
     try{
-
         $DateTimeFecha=new DateTime($fecha);
         
         $DateTimeperiodo=new DateTime($peanio.'-'.$pemes.'-01');
         if( $DateTimeFecha> $DateTimeperiodo ){
             $fecha = ($peanio*1 -1)."-".$peMesCorte."-28";
         }
-        
         //si la fecha es superior al dia 1 del periodo q estamos viendo esta to mal loco hay q volver 1 año a la fecha
-
         $periodoSelAprobado=false;
         $periodosAprobado = [];
         $periodosAprobado[4] = date("m-Y", strtotime($fecha." +4 month"));
@@ -820,7 +812,6 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
                     if($periodoSel!='06-'.$peanio){
                         $mostrarEnEstePeriodo=false;
                     }
-
                 }
                 if($esPersonaJuridica){
                     if(!$periodoSelAprobado){
@@ -879,32 +870,37 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
                 break;
         }
     }
-
     catch(Exception $e){
-
        //no se pudo procesar la fecha
-
     }
-
-
-
-
-  if($impuestoActivo&&$mostrarEnEstePeriodo){
+    if($impuestoActivo&&$mostrarEnEstePeriodo){
         $paramsPrepPapeles= "'".$periodoSel."','".$impcli['id']."'";
         $buttonclass="buttonImpcliListo";
-
+        $imgagenpt = "ptgrey";
+        $imgagenpago = "pesogrey";
         if(!$eventoNoCreado/*Evento creado*/){
 //            if($montoevento>=0)$buttonclass="buttonImpcliSaldoPositivo";
-            if($montoevento>=0)$buttonclass="buttonImpcliRealizado";
-            if($montoevento<0)$buttonclass="buttonImpcliSaldoNegativo";
+            if($montoevento>=0){
+                $buttonclass="buttonImpcliRealizado";
+                $imgagenpt = "ptgreen";
+                $imgagenpago = "pesogreen";
+            }
+            if($montoevento<0){
+                $buttonclass="buttonImpcliSaldoNegativo";
+                $imgagenpt = "ptblue";
+                $imgagenpago = "pesoblue";
+            }
+
         }
         $showlabel=true;
         if(count($impcli["Eventosimpuesto"])>0){
             if($pagado){
                 $buttonclass="buttonImpcliRealizado";
+                $imgagenpt = "ptgreen";
+                $imgagenpago = "pesogreen";
     //          $widthProgressBar=94;
             }else{
-    //            $buttonclass="buttonImpcli2";
+    //          $buttonclass="buttonImpcli2";
     //          $widthProgressBar=50;
             }
         }else{
@@ -920,84 +916,84 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
           <label style="color: inherit;display: initial">
           </label>';
       }
-      echo $context->Form->button(
-          $textoAMostrar,
-        array(
-          'data-style'=>"top-line",
-          'class'=>$buttonclass." progress-button state-loading",
-          'onClick'=>"papelesDeTrabajo(".$paramsPrepPapeles.")",
-          'id'=>'buttonImpCli'.$impcli['id'],
-          'data-sort'=> $impcli['Impuesto']['orden'],
-          ),
-        array()
-      );
+    ?>
+    <div id="divEventoImpuesto" style="width:120px;position: relative;margin: 5px;float: left;min-height: 46px">
+    <?php
+    $impcliid=$impcli['id'];
+    $periodo=$periodoSel;
+    $onclick = 'callAlertPopint("Este impuesto no tiene Papel de trabajo")';;
+    switch ($impcli['Impuesto']['id']) {
+        case 4/*Monotributo*/:
+            $onclick = 'verPapelDeTrabajoMonotributo('."'".$periodo."'".','."'".$impcliid."'".')';
+            break;
+        case 6/*Actividades Varias*/:
+            $onclick = 'verPapelDeTrabajoActividadesVarias('."'".$periodo."'".','."'".$impcliid."'".')';
+            break;
+        case 10/*SUSS*/:
+            $onclick = 'verPapelDeTrabajoSUSS('."'".$periodo."'".','."'".$impcliid."'".')';
+            break;
+        case 12/*Cooperadora Asistencial*/:
+            $onclick = 'verPapelDeTrabajoCooperadoraAsistencial('."'".$periodo."'".','."'".$impcliid."'".')';
+            break;
+        case 14/*Autonomo*/:
+            $onclick = 'verPapelDeTrabajoAutonomo('."'".$periodo."'".','."'".$impcliid."'".')';
+            break;
+        case 19/*IVA*/:
+            $onclick = 'verPapelDeTrabajoIVA('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
+            break;
+        case 21/*Actividades Economicas*/:
+        case 174/*Convenio Multilateral*/:
+        $onclick = 'verPapelDeTrabajoConvenioMultilateral('."'".$periodo."'".','."'".$impcliid."'".')';
+            break;
+        case 37/*Casas Particulares*/:
+            $onclick = 'verPapelDeTrabajoCasasParticulares('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
+            break;
 
+        default:
+            if($impcli['Impuesto']['organismo']=='sindicato'){
+                $onclick = 'verPapelDeTrabajoSindicato('."'".$periodo."'".','."'".$impcliid."'".')';
+            }
+            break;
+    }
+
+    echo $context->Form->button(
+      $textoAMostrar,
+    array(
+      'data-style'=>"top-line",
+      'class'=>$buttonclass." progress-button state-loading",
+      'onClick'=>"papelesDeTrabajo(".$paramsPrepPapeles.")",
+      'id'=>'buttonImpCli'.$impcli['id'],
+      'data-sort'=> $impcli['Impuesto']['orden'],
+      'style'=> 'float:left;margin:0px;min-height: 45px',
+    ),
+    array()
+    );
+    $confImgPdt=array(
+        'id'=>'impPT'.$impcli['id'],
+        'width' => '22',
+        'height' => '22',
+        'title' => 'Abrir papel de Trabajo',
+        'onClick'=> $onclick,
+        'style'=>' position: absolute;top: 0px;right: 0px;float:right',
+    );
+    echo $context->Html->image($imgagenpt.".png",$confImgPdt);
+    $confImgPago=array(
+        'id'=>'impPago'.$impcli['id'],
+        'width' => '22',
+        'height' => '22',
+        'title' => 'Pagar este impuesto',
+        'onClick'=>"loadPagar('".$periodo."','".$impcliid."','".$cliente['Cliente']['id']."')",
+        'style'=>' position: absolute;bottom: 0px;right: 0px;float:right',
+    );
+    echo $context->Html->image($imgagenpago.".png",$confImgPago);
+    ?>
+    </div>
+    <?php
   }else{
     //echo $context->Form->button($impcli['Impuesto']['nombre'].'-$'.number_format($montoevento, 2, ",", "."),array('class'=>'buttonImpcliDesactivado'),array());
   }
 }
-function mostrarEventoImpuesto($context, $evento,$montovto, $tareaFild, $periodoSel, $cliente, $impcli, $Tareahabilitado){
-  $impuestoActivo = false;
-  foreach ($impcli['Periodosactivo'] as $periodoactivo) {
-    $impuestoActivo = true;
-  }
-  $impuestoclienteStyle = "";
-  if(!$impuestoActivo){
-     $impuestoclienteStyle .= "style = 'background-color:#F0F0F0;'";
-  }
-  echo $context->Form->input('eventoID-cliid-'+$cliente['Cliente']['id']+'impclid-'+ $impcli["id"],array('type'=>'hidden','value'=>0)); 
-  $tdClass = 'pendiente';
-  $miEventoId=0;
-  if($evento != null){
-    $miEventoId=$evento['id'];
-    if($evento[$tareaFild]=='pendiente'){
-      $tdClass = 'pendiente';
-    }else if($evento[$tareaFild]=='realizado'){
-      $tdClass = 'realizado';
-    }
-  }else{
-    $tdClass = 'pendiente';
-    $miEventoId=0;
-  }
-  if(!$impuestoActivo){
-      $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente','onClick'=>"noHabilitado()");?>
-      <td class="<?php echo $tdClass.' '.$tareaFild; ?>" <?php echo $impuestoclienteStyle; ?> id="cellimp<?php echo $cliente['Cliente']['id'].'-'.$tareaFild.'-'.$impcli['id']; ?>" >
-        <?php 
-             echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
-        ?>                            
-      </td>
-    </td>
-  <?php
-    return;
-  }
-  //Si el evento esta ""PENDIENTE"" ?>          
-  <td class="<?php echo $tdClass.' '.$tareaFild; ?>" id="cellimp<?php echo $cliente['Cliente']['id'].'-'.$tareaFild.'-'.$impcli['id']; ?>" >
-    <?php $params= $miEventoId.",'".$tareaFild."','".$periodoSel."','".$cliente['Cliente']['id']."','".$impcli['id']."','realizado'"; ?>
-    <?php $paramsPrepPapeles= "'".$periodoSel."','".$impcli['id']."'"; ?>
-
-    <?php 
-      if($Tareahabilitado) {
-        //Aqui controlo si el evento esta que siendo realizado es uno que debe mostrar un popin 
-        if($tareaFild=="tarea5"){
-          //Tarea5 es "Prepar Papeles de Trabajo" debe mostrar popin para inicializar variables del pago a realiar del impuesto
-          echo $context->Html->image('edit.png',array('width' => '20', 'title' => 'Papeles de Trabajo','height' => '20','onClick'=>"papelesDeTrabajo(".$paramsPrepPapeles.")"));
-          echo $context->Form->label("$".number_format($montovto, 2, ",", "."));    
-          echo $context->Form->input('montotarea5',array('type'=>'hidden','value'=>$montovto,'id'=>'montoTarea5'+$cliente['Cliente']['id']+'-'+ $impcli["id"])); 
-        }else if ($tareaFild=="tarea13") {
-          //Tarea13 es "A Pagar" debe mostrar popin para cargar variables del pago realizado del impuesto
-          echo $context->Html->image('ic_add_circle_outline_black_18dp.png',array('width' => '20', 'title' => 'Pagar' , 'height' => '20','onClick'=>"showPagar(".$paramsPrepPapeles.")"));
-
-        }else{
-          echo $context->Html->image('ic_add_circle_outline_black_18dp.png',array('width' => '20', 'title' => 'Cargar','height' => '20','onClick'=>"realizarEventoImpuesto(".$params.")"));
-        }
-
-      } else {
-        //El evento no esta habilitado
-         echo $context->Html->image('ic_add_circle_outline_black_18dp.png',array('width' => '20', 'height' => '20','onClick'=>"noHabilitado()"));
-      }              
-    ?>
-  </td>
-<?php } ?>
+?>
 <!-- Popin Modal para edicion de ventas a utilizar por datatables-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
   <div class="modal-dialog" style="width:90%;">

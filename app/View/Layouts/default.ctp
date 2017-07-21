@@ -40,6 +40,9 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 	<SCRIPT TYPE="text/javascript">
 	var serverLayoutURL = "/contasynfotech";
 		function callAlertPopint(message){
+			//todo callAlertPopint
+			//deberiamos cambiar la forma en la que mostramos esto por que te mueve el scroll
+			//cuando muestra el alerta
 			location.hash ="#PopupMessage";
 			jQuery(document).ready(function($) {
 				$(lblMessagePP).html(message);

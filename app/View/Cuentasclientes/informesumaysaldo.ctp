@@ -358,8 +358,7 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                             <td>
                                 <?php  echo $this->Html->link(
                                     "Agregar",
-                                    array(
-                                    ),
+                                    "#",
                                     array('class' => 'buttonImpcli',
                                         'id'=>'cargarMovimiento',
                                         'style'=> 'margin-right: 8px;width: initial;'

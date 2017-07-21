@@ -128,14 +128,16 @@ $(document).ready(function() {
 	<?php $i=$i+1;
 	 endforeach; ?>
 	</table>
+	echo '<div style="width:100%;" id="divAsientoDePagoEventoImpuesto"></div>';
+
 	<div style="width:100%; float:right;">
 		<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>
 		<a href="#" onclick="$('#FormPagarEventoImpuesto').submit();" class="btn_aceptar" style="margin-top:14px">Aceptar</a>
 		<?php echo $this->Form->end();?>
 	</div>
 </div>
-<div>
-	<div class="index">
+<div id="divContenedorContabilidad" style="margin-top:10px;width: 100%;">
+	<div class="index_pdt">
 		<h3><?php echo __('Contabilizar Pago de : '.$impclinombre); ?></h3>
 		<?php
 		$id = 0;
@@ -186,29 +188,29 @@ $(document).ready(function() {
 			/*Aca vamos a reescribir el debe y el haber si es que corresponde para esta cuenta con este cliente*/
 			//Este switch controla todas las cuetnas que hay en "ventas" obligadamente
 			switch ($asientoestandar['Cuenta']['id']){
-				case '1518'/*110399001 Cliente xx*/:
+				case '260'/*110399001 Cliente xx*/:
+				case '265'/*110403102 Ganancias - Anticipos a Computar*/:
 				case '1389'/*110399001 Ap. SEC a Pagar*/:
-				case '1500'/*110399001 Cliente xx*/:
-				case '1468'/*110399001 Cliente xx*/:
-				case '1481'/*110399001 Cliente xx*/:
-				case '1492'/*110399001 Cliente xx*/:
 				case '1392'/*210303024 Ap. FAECYS a Pagar*/:
-
 				case '1397'/*110399001 Cliente xx*/:
-				case '1403'/*110399001 Cliente xx*/:
-				case '1406'/*110399001 Cliente xx*/:
-				case '3375'/*110399001 Cliente xx*/:
-				case '1412'/*110399001 Cliente xx*/:
-				case '1443'/*110399001 Cliente xx*/:
-				case '1496'/*110399001 Cliente xx*/:
-				case '1428'/*110399001 Cliente xx*/:
 				case '1401'/*110399001 Cliente xx*/:
 				case '1402'/*110399001 Cliente xx*/:
+				case '1403'/*110399001 Cliente xx*/:
+				case '1406'/*110399001 Cliente xx*/:
+				case '1412'/*110399001 Cliente xx*/:
 				case '1414'/*110399001 Cliente xx*/:
-				case '260'/*110399001 Cliente xx*/:
+				case '1428'/*110399001 Cliente xx*/:
+				case '1443'/*110399001 Cliente xx*/:
+				case '1458'/*110399001 Cliente xx*/:
+				case '1468'/*110399001 Cliente xx*/:
 				case '1477'/*210401801 Autonomo A Pagar*/:
-				case '265'/*110403102 Ganancias - Anticipos a Computar*/:
+				case '1481'/*110399001 Cliente xx*/:
+				case '1492'/*110399001 Cliente xx*/:
+				case '1496'/*110399001 Cliente xx*/:
+				case '1500'/*110399001 Cliente xx*/:
+				case '1518'/*110399001 Cliente xx*/:
 				case '2798'/*599000002 Casas Particulares A Pagar*/:
+				case '3375'/*110399001 Cliente xx*/:
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -316,7 +318,7 @@ $(document).ready(function() {
 					$debe = $cuentaAPagar;
 					break;
 				default:
-					
+
 					break;
 			}
 			if(isset($asientoyacargado['Movimiento'])) {
@@ -461,7 +463,7 @@ $(document).ready(function() {
 				}
 			}
 		}
-		echo $this->Form->end('Guardar asiento');
+		echo $this->Form->end();
 		?>
 	</div>
 </div>

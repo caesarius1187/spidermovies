@@ -105,4 +105,67 @@ class EstudiosController extends AppController {
 			$this->Session->setFlash(__('The estudio could not be deleted. Please, try again.'));
 		}
 		return $this->redirect(array('action' => 'index'));
-	}}
+	}
+
+	public function superadminestudioadd() 
+	{		
+		if ($this->request->is('post')) 
+		{			
+			$this->Estudio->create();
+
+			$EtudioNombre = $this->request->data['Estudio']['nombre'];
+			$PrimerUsuario = $this->request->data['Estudio']['usuario'];
+			$PassPrimerUsuario = $this->request->data['Estudio']['password'];
+			$EstudioEmail = $this->request->data['Estudio']['email'];
+
+			if ($this->Estudio->save($this->request->data)) 
+			{
+				$EstudioId = $this->Estudio->getLastInsertID();
+				$this->loadModel('User');
+				$this->User->create();
+				$this->User->set('estudio_id', $EstudioId);
+				$this->User->set('mail', $EstudioEmail);
+				$this->User->set('nombre', $EtudioNombre);
+				$this->User->set('username',$PrimerUsuario);
+				//$RandomPass = 'Conta2017_'.rand(1,4);
+				$this->User->set('password',$PassPrimerUsuario); 
+				$this->User->set('tipo','administrador'); 
+				$this->User->set('etado','habilitado'); 
+				$this->User->save();
+				$UserInertedId = $this->User->getLastInsertID();
+
+				//cargar la tareas.
+				$this->loadModel('Tareascliente');
+				$tareasclientesOpciones = array(
+				    'conditions' => array('Tareascliente.estado' => 'habilitado'), 
+				    'fields' => array('Tareascliente.id','Tareascliente.orden','Tareascliente.descripcion', 'Tareascliente.tipo')
+				    //'group' => 'Deposito.id'
+				    );
+				$tareascliente = $this->Tareascliente->find('all',$tareasclientesOpciones);
+				$this->loadModel('Tareasxclientesxestudio');
+				
+				foreach ($tareascliente as $tareacliente) {
+					$this->Tareasxclientesxestudio->create();
+					$this->Tareasxclientesxestudio->set('orden',$tareacliente['Tareascliente']['orden']); 
+					$this->Tareasxclientesxestudio->set('descripcion',$tareacliente['Tareascliente']['descripcion']); 
+					$this->Tareasxclientesxestudio->set('tareascliente_id',$tareacliente['Tareascliente']['id']); 
+					$this->Tareasxclientesxestudio->set('estado','habilitado'); 
+					$this->Tareasxclientesxestudio->set('tipo',$tareacliente['Tareascliente']['tipo']); 
+					$this->Tareasxclientesxestudio->set('estudio_id',$EstudioId);
+					$this->Tareasxclientesxestudio->set('user_id', $UserInertedId);
+					$this->Tareasxclientesxestudio->save();
+				}
+
+				$this->Session->setFlash(__('El Etudio se ha registrado con exito.'));
+				return $this->redirect(array('controller' => 'superadmins',
+											 'action' => 'index'));
+			} 
+			else 
+			{
+				$this->Session->setFlash(__('No se pudo registrar el Estudio, intente más tarde.'));
+			}
+		}
+		//$estudios = $this->User->Estudio->find('list');
+		//$this->set(compact('estudios'));
+	}
+}

@@ -12,24 +12,6 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));
 ?>
 <div id="index" class="index" style="margin-bottom:10px;">
-	<div id="Formhead" class="clientes papeldetrabajosindicato index" style="margin-bottom:10px;">
-		<h2>Actividades Varias</h2>
-		Contribuyente: <?php echo $impcli['Cliente']['nombre']; ?></br>
-		CUIT: <?php echo $impcli['Cliente']['cuitcontribullente']; ?></br>
-		Periodo: <?php echo $periodo; ?>
-		<?php echo $this->Form->button('Imprimir',
-			array('type' => 'button',
-				'class' =>"btn_imprimir",
-				'onClick' => "imprimir()"
-			)
-		);?>
-		<?php  echo $this->Form->button('Excel',
-			array('type' => 'button',
-				'id'=>"clickExcel",
-				'class' =>"btn_imprimir",
-			)
-		);?>
-	</div>
 	<div id="divLiquidarActividadesVariar">
 
 	</div>
@@ -138,6 +120,21 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 	}
 	?>
 	<div class="index" style="overflow:auto;">
+		<b style="display: inline">Papel de Trabajo</b>
+		<?php echo $this->Form->button('Imprimir',
+			array('type' => 'button',
+				'class' =>"btn_imprimir",
+				'onClick' => "imprimir()",
+				'style' => "display:inline"
+			)
+		);?>
+		<?php  echo $this->Form->button('Excel',
+			array('type' => 'button',
+				'id'=>"clickExcel",
+				'class' =>"btn_imprimir",
+				'style' => "display:inline"
+			)
+		);?>
 		<?php
 		$arrayBasesProrrateadas=array();
 		foreach ($provinciasArecorrer as $miProvincia) { 
@@ -252,10 +249,15 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				</td>
 				<?php
 				$totalOtrosArticulos = 0;
-				$totalArticulo2 = 0;						
+				$totalArticulo2 = 0;
+				$titleArt2="";
+				$titleArtOtros="";
 				switch ($actividadcliente['Actividade']['articulo']) {
 					case '2':
+						$titleArt2="No se calcula base por articulo 2 por que es el primer ejercicio";
 						if($myimpcliprovincia['id']!='Primero'){
+							$titleArt2="Se calcula base por articulo 2 por que no es el primer ejercicio, se usara el porcentaje ".
+								$porcentajeVentas."*".$arrayBasesProrrateadas[$miProvincia][$actividadcliente['Actividadcliente']['id']];
 							//esta es la base que se uso para calcular Actividad Economica en esta provincia
 							$totalArticulo2 = $porcentajeVentas * $arrayBasesProrrateadas[$miProvincia][$actividadcliente['Actividadcliente']['id']];
 						}	
@@ -264,17 +266,21 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 					case '10':
 					case '11':
 					case '12':
+						$titleArtOtros="Art. 7, 10, 11, 12 se aplica ".$subTotalVenta."*0.8";
 						$totalOtrosArticulos = $subTotalVenta*0.8;
 						
 						break;
 					case '6':
 						if($myimpcliprovincia['id']!='Primero'){
+							$titleArtOtros="Art. 6 se aplica ".$subTotalVenta." por ser primer ejercicio";
 							$totalOtrosArticulos = $subTotalVenta;
 						}else{
+							$titleArtOtros="Art. 6 se aplica ".$subTotalVenta."*0.9 por no ser primer ejercicio";
 							$totalOtrosArticulos = $subTotalVenta*0.9;
 						}
 						break;
 					case '9':
+						$titleArtOtros="Art. 9 se aplica ".$subTotalVenta."";
 						$totalOtrosArticulos = $subTotalVenta*1;
 						break;
 					default:
@@ -299,8 +305,8 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				$totalesProvincia[$provinciaid]['TotalOtrosArticulos'][$actividadcliente['Actividadcliente']['id']]+=$totalOtrosArticulos;
 				$totalesProvincia[$provinciaid]['TotalArticulo2'][$actividadcliente['Actividadcliente']['id']]+=$totalArticulo2;
 				?>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($totalOtrosArticulos, 2, ",", "."); ?></td>
-				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>"><?php echo number_format($totalArticulo2, 2, ",", "."); ?></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="<?php echo $titleArtOtros?>"><?php echo number_format($totalOtrosArticulos, 2, ",", "."); ?></td>
+				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>" title="<?php echo $titleArt2?>"><?php echo number_format($totalArticulo2, 2, ",", "."); ?></td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">0</td>
 				<td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
 					<span style="color:#0C0">
@@ -585,8 +591,9 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 		<div id="divContenedorContabilidad" style="margin-top:10px">  </div>
 		<?php
 	}else{ ?>
-	<div id="divContenedorContabilidad" style="margin-top:10px">
-		<div class="index">
+	<div id="divContenedorContabilidad" style="margin-top:10px;width: 100%;">
+		<div class="index_pdt">
+			<b>Asiento de Devengamiento</b>
 			<?php
 			$Asientoid=0;
 			$movId=[];
@@ -611,8 +618,8 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				),
 				'readonly','readonly',
 				'value'=>$d->format( 't-m-Y' ),
-				'div' => false,
-				'style'=> 'height:9px;display:inline'
+//				'div' => false,
+                'style'=> 'width:82px'
 			));
 			echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Devengamiento Act. Varias" ,'style'=>'width:250px']);
 			echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Automatico",'style'=>'width:250px']);
@@ -647,21 +654,21 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 					),
 					'readonly','readonly',
 					'value'=>date('d-m-Y'),
-					'div' => false,
+//					'div' => false,
 					'style'=> 'height:9px;display:inline'
 				));
 
 				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
 				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandaractvs['cuenta_id'],'id'=>'cuenta'.$asientoestandaractvs['cuenta_id']]);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandaractvs['Cuenta']['numero'],'style'=>'width:82px']);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>false,'readonly'=>'readonly','value'=>$asientoestandaractvs['Cuenta']['numero'],'style'=>'width:82px']);
+				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>false,'readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
 				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
-					'label'=>($i!=0)?false:'Debe',
+					'label'=>false,
 					'value'=>0,
 					'class'=>"inputDebe "
 				]);
 				echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
-						'label'=>($i!=0)?false:'Haber',
+						'label'=>false,
 						'value'=>0,
 						'class'=>"inputHaber "
 					])."</br>";
@@ -672,24 +679,33 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 			echo $this->Form->end();
 			$totalDebe=0;
 			$totalHaber=0;
-			echo $this->Form->label('','&nbsp; ',[
-				'style'=>"display: -webkit-inline-box;width:355px;"
-			]);
-			echo $this->Form->label('lblTotalDebe',
-				"$".number_format($totalDebe, 2, ".", ""),
-				[
-					'id'=>'lblTotalDebe',
-					'style'=>"display: inline;"
-				]
-			);
-			echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:100px;"]);
-			echo $this->Form->label('lblTotalHaber',
-				"$".number_format($totalHaber, 2, ".", ""),
-				[
-					'id'=>'lblTotalHaber',
-					'style'=>"display: inline;"
-				]
-			);
+            echo $this->Form->label('','Total ',[
+                'style'=>"display: -webkit-inline-box;width:355px;"
+            ]);
+            ?>
+            <div style="width:98px;">
+                <?php
+                echo $this->Form->label('lblTotalDebe',
+                    "$".number_format($totalDebe, 2, ".", ""),
+                    [
+                        'id'=>'lblTotalDebe',
+                        'style'=>"display: inline;float:right"
+                    ]
+                );
+                ?>
+            </div>
+            <div style="width:124px;">
+                <?php
+                echo $this->Form->label('lblTotalHaber',
+                    "$".number_format($totalHaber, 2, ".", ""),
+                    [
+                        'id'=>'lblTotalHaber',
+                        'style'=>"display: inline;float:right"
+                    ]
+                );
+                ?>
+            </div>
+            <?php
 			if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
 				echo $this->Html->image('test-pass-icon.png',array(
 						'id' => 'iconDebeHaber',

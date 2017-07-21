@@ -236,6 +236,7 @@ class EventosimpuestosController extends AppController {
 		$esMayorQueBaja = array(
 			//HASTA es mayor que el periodo
 			'OR'=>array(
+				'Actividadcliente.baja is null' ,
 				'SUBSTRING(Actividadcliente.baja,4,7)*1 < '.$peanio.'*1',
 				'AND'=>array(
 					'SUBSTRING(Actividadcliente.baja,4,7)*1 <= '.$peanio.'*1',
@@ -246,18 +247,18 @@ class EventosimpuestosController extends AppController {
 		$optionsCli = array(
 			'conditions' => array('Cliente.' . $this->Cliente->primaryKey => $impCli['Impcli']['cliente_id']),
 			'contain' => array(
-                'Venta'=>array(
-					'fields'=>array('Count(*) as misventas'),
-                    'conditions'=>array('Venta.periodo'=>$periodo)
-                ),
-				'Compra'=>array(
-					'fields'=>array('Count(*) as miscompras'),
-					'conditions'=>array('Compra.periodo'=>$periodo)
-				),
-				'Conceptosrestante'=>array(
-					'fields'=>array('Count(*) as misconceptos'),
-					'conditions'=>array('Conceptosrestante.periodo'=>$periodo)
-				),
+//                'Venta'=>array(
+//					'fields'=>array('Count(*) as misventas'),
+//                    'conditions'=>array('Venta.periodo'=>$periodo)
+//                ),
+//				'Compra'=>array(
+//					'fields'=>array('Count(*) as miscompras'),
+//					'conditions'=>array('Compra.periodo'=>$periodo)
+//				),
+//				'Conceptosrestante'=>array(
+//					'fields'=>array('Count(*) as misconceptos'),
+//					'conditions'=>array('Conceptosrestante.periodo'=>$periodo)
+//				),
 				'Actividadcliente'=>[
 					'conditions'=>$esMayorQueBaja
 				],

@@ -9,11 +9,10 @@ echo $this->Form->input('impcliid',array('value'=>$impcliid,'type'=>'hidden'));
 echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));?>
 
 <div class="index">
-	<div id="Formhead" class="clientes papeldetrabajosindicato index" style="margin-bottom:10px;">
-		<h2>Sindicato: <?php echo $impcliSolicitado['Impuesto']['nombre']; ?></h2>
-		Contribuyente: <?php echo $impcliSolicitado['Cliente']['nombre']; ?></br>
-		CUIT: <?php echo $impcliSolicitado['Cliente']['cuitcontribullente']; ?></br>
-		Periodo: <?php echo $periodo; ?>
+    <div id="divLiquidarSindicatos">
+    </div>
+	<div id="sheetSindicato" class="index">
+        <b style="display: inline">Papel de Trabajo</b>
         <?php echo $this->Form->button('Imprimir',
             array('type' => 'button',
                 'class' =>"btn_imprimir",
@@ -26,10 +25,6 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 'class' =>"btn_imprimir",
             )
         );?>
-	</div>
-    <div id="divLiquidarSindicatos">
-    </div>
-	<div id="sheetSindicato" class="index">
 		<!--Esta es la tabla original y vamos a recorrer todos los empleados por cada una de las
         rows por que -->
 		<?php
@@ -39,13 +34,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
         $nombrecuotaSindical2 = "";
         $nombrecuotaSindical3 = "";
         $nombrecuotaSindical4 = "";
-
         $pagaINACAP = false;
-
-
         foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
             /*Aca vamos a ver si para o no paga algunas contribuciones sindicales segun que convenio tenga*/
-
             foreach ($conveniocolectivo['Empleado'] as $empleado) {
                 $jornada = 0;
                 $horasDias = 0;
@@ -59,13 +50,11 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $aportes = 0;
                 $neto = 0;
                 $miempleado = array();
-
                 $cuotasindical = 0;
                 $cuotasindical1 = 0;
                 $cuotasindical2 = 0;
                 $cuotasindical3 = 0;
                 $cuotasindical4 = 0;
-
                 if (!isset($miempleado['horasDias'])) {
                     $miempleado['jornada'] = 0;
                     $miempleado['horasDias'] = 0;
@@ -854,7 +843,7 @@ Total = 74.74";
                     </tr>
                     <?php
                     break;
-                case '178':/*ACARA*/ ?>
+                case '177':/*SMATA*/ ?>
                     <tr>
                         <td>
                             Contribucion Empresarial
@@ -920,7 +909,7 @@ Total = 74.74";
                     case '153':/*IERIC*/
                         $impuestoDeterminado += $totalContribucionIERIC;
                         break;
-                    case '178':/*ACARA*/
+                    case '177':/*ACARA*/
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
                         $impuestoDeterminado += $totalContribucionEmpresarial;
                         break;
@@ -967,8 +956,9 @@ Total = 74.74";
     <?php
     if(count($impcliSolicitado['Impuesto']['Asientoestandare'])>0){
         ?>
-    <div id="divContenedorContabilidad" style="margin-top:10px">
-        <div class="index" id="AsientoAutomaticoDevengamiento931">
+    <div id="divContenedorContabilidad" style="margin-top:10px;width:100%;">
+        <div class="" id="AsientoAutomaticoDevengamiento931">
+            <b>Asiento de Devengamiento</b>
             <?php
             $Asientoid=0;
             $movId=[];
@@ -996,8 +986,8 @@ Total = 74.74";
                 ),
                 'readonly','readonly',
                 'value'=>$d->format( 't-m-Y' ),
-                'div' => false,
-                'style'=> 'height:9px;display:inline'
+//                'div' => false,
+                'style'=> 'width:82px'
             ));
             echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Devengamiento contribuciones ".$impcliSolicitado['Impuesto']['nombre'] ,'style'=>'width:250px']);
             echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Automatico",'style'=>'width:250px']);
@@ -1100,15 +1090,15 @@ Total = 74.74";
                 ));
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',['readonly'=>'readonly','type'=>'hidden','value'=>$cuentaclienteid]);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',['readonly'=>'readonly','type'=>'hidden','orden'=>$i,'value'=>$asientoestandarsindicato['cuenta_id'],'id'=>'cuenta'.$asientoestandarsindicato['cuenta_id']]);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>($i!=0)?false:'Numero','readonly'=>'readonly','value'=>$asientoestandarsindicato['Cuenta']['numero'],'style'=>'width:82px']);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>($i!=0)?false:'Nombre','readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.numero',['label'=>false,'readonly'=>'readonly','value'=>$asientoestandarsindicato['Cuenta']['numero'],'style'=>'width:82px']);
+                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.nombre',['label'=>false,'readonly'=>'readonly','value'=>$cuentaclientenombre,'type'=>'text','style'=>'width:250px']);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
-                    'label'=>($i!=0)?false:'Debe',
+                    'label'=>false,
                     'value'=>number_format($debe, 2, ".", ""),
                     'class'=>"inputDebe "
                 ]);
                 echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
-                        'label'=>($i!=0)?false:'Haber',
+                        'label'=>false,
                         'value'=>number_format($haber, 2, ".", ""),
                         'class'=>"inputHaber "
                     ])."</br>";
@@ -1116,25 +1106,33 @@ Total = 74.74";
                 $totalDebe+=$debe;
                 $totalHaber+=$haber;
             }
-
-            echo $this->Form->label('','&nbsp; ',[
+            echo $this->Form->label('','Total ',[
                 'style'=>"display: -webkit-inline-box;width:355px;"
             ]);
+            ?>
+            <div style="width:98px;">
+            <?php
             echo $this->Form->label('lblTotalDebe',
                 "$".number_format($totalDebe, 2, ".", ""),
                 [
                     'id'=>'lblTotalDebe',
-                    'style'=>"display: inline;"
+                    'style'=>"display: inline;float:right"
                 ]
             );
-            echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:100px;"]);
-            echo $this->Form->label('lblTotalHaber',
-                "$".number_format($totalHaber, 2, ".", ""),
-                [
-                    'id'=>'lblTotalHaber',
-                    'style'=>"display: inline;"
-                ]
-            );
+            ?>
+            </div>
+            <div style="width:124px;">
+                <?php
+                echo $this->Form->label('lblTotalHaber',
+                    "$".number_format($totalHaber, 2, ".", ""),
+                    [
+                        'id'=>'lblTotalHaber',
+                        'style'=>"display: inline;float:right"
+                    ]
+                );
+                ?>
+            </div>
+            <?php
             if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
                 echo $this->Html->image('test-pass-icon.png',array(
                         'id' => 'iconDebeHaber',

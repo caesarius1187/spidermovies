@@ -141,6 +141,8 @@ function papelesDeTrabajo(periodo,impcli){
                 });
                 return false;
             });
+            //aca vamos a mover el div de asientos al de eventos impuesto
+            $('#divContenedorContabilidad').detach().appendTo('#divAsientoDeEventoImpuesto');
         },
         error:function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);

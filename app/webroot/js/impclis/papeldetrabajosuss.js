@@ -19,7 +19,6 @@ $(document).ready(function() {
     });
 	cargarAsiento();
 	catchAsiento();
-    CambiarTab("papeldetrabajo");
 });
 function openWin()
 {
@@ -312,7 +311,8 @@ function papelesDeTrabajo(periodo,impcli){
 	    $('#tabsTareaImpuesto').hide();
 		$('#divPagar').hide();
 		$('#buttonPDT').hide();
-		//$('#EventosimpuestoRealizartarea5Form').css('width','1500');
+        $('.btn_cancelar').hide();
+        //$('#EventosimpuestoRealizartarea5Form').css('width','1500');
         var cantItems = $('#Eventosimpuesto0CantItems').val();
 		for (var i = 0 ; i < cantItems; i++) {
 			var item = $('#Eventosimpuesto'+i+'Item').val();
@@ -367,7 +367,9 @@ function papelesDeTrabajo(periodo,impcli){
 		        } 
 		      }); 
 	          return false;
-	    });               
+	    });
+		  //aca vamos a mover el div de asientos al de eventos impuesto
+		  $('#divContenedorContabilidad').detach().appendTo('#divAsientoDeEventoImpuesto');
 	  },
 	 error:function (XMLHttpRequest, textStatus, errorThrown) {
 	    alert(textStatus);
@@ -375,46 +377,6 @@ function papelesDeTrabajo(periodo,impcli){
 	 }
 	});
   return false;
-}
-function CambiarTab(sTab)
-{
-	$("#tabPdT").attr("class", "cliente_view_tab");
-	$("#tabLiquidacion").attr("class", "cliente_view_tab");
-	$("#tabExportacion").attr("class", "cliente_view_tab");
-	$("#tabContabilidad").attr("class", "cliente_view_tab");
-
-	if(sTab == "papeldetrabajo")
-	{
-		$("#tabPdT").attr("class", "cliente_view_tab_active");
-		$("#sheetCooperadoraAsistencial").show();
-		$("#divLiquidarSUSS").hide();
-		$("#divExportacion").hide();
-		$("#divContenedorContabilidad").hide();
-	}
-	if (sTab == "liquidacion")
-	{
-		$("#tabLiquidacion").attr("class", "cliente_view_tab_active");
-		$("#sheetCooperadoraAsistencial").hide();
-		$("#divLiquidarSUSS").show();
-		$("#divExportacion").hide();
-		$("#divContenedorContabilidad").hide();
-	}
-	if(sTab == "exportar")
-	{
-		$("#tabExportacion").attr("class", "cliente_view_tab_active");
-		$("#sheetCooperadoraAsistencial").hide();
-		$("#divLiquidarSUSS").hide();
-		$("#divExportacion").show();
-		$("#divContenedorContabilidad").hide();
-	}
-	if (sTab == "contabilidad")
-	{
-		$("#tabContabilidad").attr("class", "cliente_view_tab_active");
-		$("#sheetCooperadoraAsistencial").hide();
-		$("#divLiquidarSUSS").hide();
-		$("#divExportacion").hide();
-		$("#divContenedorContabilidad").show();
-	}
 }
 function addTolblTotalDebeAsieto(event) {
 	var debesubtotal = 0;

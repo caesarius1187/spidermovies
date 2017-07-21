@@ -17,6 +17,20 @@ $(document).ready(function() {
     });
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
 	cargarAsiento();
+	$(".inputDebe").each(function () {
+		$(this).change(addTolblTotalDebeAsieto);
+	});
+	$(".inputHaber").each(function () {
+		$(this).change(addTolblTotalhaberAsieto);
+	});
+	$(".inputHaber").each(function(){
+		$(this).trigger('change');
+		return;
+	});
+	$(".inputDebe").each(function(){
+		$(this).trigger('change');
+		return;
+	});
 	catchAsiento();
 });
 function papelesDeTrabajo(periodo,impcli){
@@ -32,6 +46,7 @@ function papelesDeTrabajo(periodo,impcli){
 	    $('#tabsTareaImpuesto').hide();
 		$('#divPagar').hide();
 		$('#buttonPDT').hide();
+		  $('.btn_cancelar').hide();
 		//$('#EventosimpuestoRealizartarea5Form').css('width','1500');
 		var apagarInput = $('#apagarAutonomo');
 		var apagar = 0;
@@ -84,7 +99,9 @@ function papelesDeTrabajo(periodo,impcli){
 		        } 
 		      }); 
 	          return false;
-	    });               
+	    });
+		  //aca vamos a mover el div de asientos al de eventos impuesto
+		  $('#divContenedorContabilidad').detach().appendTo('#divAsientoDeEventoImpuesto');
 	  },
 	 error:function (XMLHttpRequest, textStatus, errorThrown) {
 	    alert(textStatus);
@@ -129,5 +146,44 @@ function catchAsiento(){
 		});
 		return false;
 	});
+}
+function addTolblTotalDebeAsieto(event) {
+	var debesubtotal = 0;
+	$(".inputDebe").each(function () {
+		debesubtotal = debesubtotal*1 + this.value*1;
+		if(this.value*1!=0){
+			$(this).removeClass("movimientoSinValor");
+			$(this).addClass("movimientoConValor");
+		}else{
+			$(this).removeClass("movimientoConValor")
+			$(this).addClass("movimientoSinValor");
+		}
+
+	});
+	$("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+	showIconDebeHaber()
+}
+function addTolblTotalhaberAsieto(event) {
+	//        $("#lblTotalAFavor").val(0) ;
+	var habersubtotal = 0;
+	$(".inputHaber").each(function () {
+		habersubtotal = habersubtotal*1 + this.value*1;
+		if(this.value*1!=0){
+			$(this).removeClass("movimientoSinValor");
+			$(this).addClass("movimientoConValor");
+		}else{
+			$(this).removeClass("movimientoConValor")
+			$(this).addClass("movimientoSinValor");
+		}
+	});
+	$("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+	showIconDebeHaber()
+}
+function showIconDebeHaber(){
+	if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
+		$("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+	}else{
+		$("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+	}
 }
 

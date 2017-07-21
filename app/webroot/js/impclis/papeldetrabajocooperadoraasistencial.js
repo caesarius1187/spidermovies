@@ -15,7 +15,7 @@ $(document).ready(function() {
 
         });
     });
-   papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
+    papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
 	$(".inputDebe").each(function () {
 		$(this).change(addTolblTotalDebeAsieto);
 	});
@@ -45,6 +45,8 @@ function papelesDeTrabajo(periodo,impcli){
 	    $('#tabsTareaImpuesto').hide();
 		$('#divPagar').hide();
 		$('#buttonPDT').hide();
+		$('#divNombreClienteEventoImpuesto').hide();
+		$('.btn_cancelar').hide();
 		//$('#EventosimpuestoRealizartarea5Form').css('width','1500');
 		var apagarInput = $('#apagar');
 		var afavorInput = $('#afavor');
