@@ -915,6 +915,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'defaultoptionlocalidade' => str_pad($venta['Venta']['puntodeventa'], 5, "0", STR_PAD_LEFT),
                                             'class' => 'aplicableATodos chosen-select',
                                             'inputclass' => 'VentaAddLocalidad',
+                                            'required' => true,
                                             'div' => array('class' => 'inputAControlar')
                                         )
                                     );

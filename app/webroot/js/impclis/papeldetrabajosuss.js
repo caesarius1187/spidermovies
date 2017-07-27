@@ -10,8 +10,6 @@ $(document).ready(function() {
 		});
 	});
 	papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
-	var tblDatosAIngresar = $('#tblDatosAIngresar');
-    tblDatosAIngresar.floatThead();
     ordenTxt = 0;
 	cargartxt();
     $("#EmpleadoPapeldetrabajosussForm input").change(function(){
@@ -370,6 +368,8 @@ function papelesDeTrabajo(periodo,impcli){
 	    });
 		  //aca vamos a mover el div de asientos al de eventos impuesto
 		  $('#divContenedorContabilidad').detach().appendTo('#divAsientoDeEventoImpuesto');
+		  var tblDatosAIngresar = $('#tblDatosAIngresar');
+		  tblDatosAIngresar.floatThead();
 	  },
 	 error:function (XMLHttpRequest, textStatus, errorThrown) {
 	    alert(textStatus);

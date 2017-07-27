@@ -156,7 +156,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 
             //calculo auxiliar para sheetAPagar
             $TotalRemCD = 0;
-            $codigoafip = 0;
+            $codigoafip = $empleado['adherente']!=null?$empleado['adherente']:0;
+            //todo esto hay que cambiarlo por el codigo afip que tenga el empleado
             /*Aca voy a averiguar si paga INACAP ( si tiene SEC paga INACAP) */
             $contibuciones=[];
             if($empleado['Conveniocolectivotrabajo']['impuesto_id']=='11'/*SEC*/){
@@ -172,6 +173,11 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             }
 
             foreach ($empleado['Valorrecibo'] as $valorrecibo) {
+                //Codigo AFIP
+                if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    array('51'/*codigo afip*/), true )){
+                    $codigoafip = $valorrecibo['valor'];
+                }
                 //Sindicato
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                     array('36'/*cuota sindical*/,'37'/*cuota sindical 1*/,'38'/*cuota sindical 2*/,), true )){
@@ -239,7 +245,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                     [
                         '18'/*Antiguedad*/,
-                        '77'/*Presentismo*/,
+                        '76'/*Presentismo*/,
 //                        '81'/*Plus Vacacional*/,
 //                        '82'/*Adicional Complemento SS*/,
 //                        '127'/*Total Acuerdo Remunerativo*/,
@@ -407,8 +413,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 }
 
                 //contribucionrenatea Primera parte
-                if ($valorrecibo['Cctxconcepto']['Conveniocolectivotrabajo']['trabajorural']){
-                    $trabajadorAgrario = true;
+                if(isset($valorrecibo['Cctxconcepto']['Conveniocolectivotrabajo']['trabajorural'])){
+                    if ($valorrecibo['Cctxconcepto']['Conveniocolectivotrabajo']['trabajorural']){
+                        $trabajadorAgrario = true;
+                    }
                 }
                 //Aporte RENATEA
                 if (
@@ -488,31 +496,31 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             //Rem. 8 (Cont. OS)
             $rem8 = $rem4;
             //Jubilacion SIPA
-            //cambiar por concepto guardado solo si se ah guardado un concepto "CODIGO AFIP"
+            //todo cambiar por concepto guardado solo si se ah guardado un concepto "CODIGO AFIP"
             //Y si no tiene codigo que use 0
-            if($empleado['codigoafip']=='0'){
+            if($codigoafip=='0'){
                 $ContribSSjubilacionsipa+=$rem2*0.1017;
             }
-            if($empleado['codigoafip']=='1'){
+            if($codigoafip=='1'){
                 $ContribSSjubilacionsipa+=$rem2*0.1017*0.5;
             }
-            if($empleado['codigoafip']=='2'){
+            if($codigoafip=='2'){
                 $ContribSSjubilacionsipa+=$rem2*0.1017*0.75;
             }
-            if($empleado['codigoafip']=='3'){
+            if($codigoafip=='3'){
                 $ContribSSjubilacionsipa+=$rem2*0.1017*0.25;
             }
             //Jubilacion INSSJP
-            if($empleado['codigoafip']=='0'){
+            if($codigoafip=='0'){
                 $INSSJP+=$rem2*0.01500;
             }
-            if($empleado['codigoafip']=='1'){
+            if($codigoafip=='1'){
                 $INSSJP+=$rem2*0.01500*0.5;
             }
-            if($empleado['codigoafip']=='2'){
+            if($codigoafip=='2'){
                 $INSSJP+=$rem2*0.01500*0.75;
             }
-            if($empleado['codigoafip']=='3'){
+            if($codigoafip=='3'){
                 $INSSJP+=$rem2*0.01500*0.25;
             }
             //Contrib Tarea Dif
@@ -520,16 +528,16 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 
             //Jubilacion FNE
             if(!$trabajadorAgrario){
-                if($empleado['codigoafip']=='0'){
+                if($codigoafip=='0'){
                     $FNE+=$rem1*0.0089;
                 }
-                if($empleado['codigoafip']=='1'){
+                if($codigoafip=='1'){
                     $FNE+=$rem1*0.0089*0.5;
                 }
-                if($empleado['codigoafip']=='2'){
+                if($codigoafip=='2'){
                     $FNE+=$rem1*0.0089*0.75;
                 }
-                if($empleado['codigoafip']=='3'){
+                if($codigoafip=='3'){
                     $FNE+=$rem1*0.0089*0.25;
                 }
             }else{}
@@ -541,16 +549,16 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $ContribSSANSSAL+=($rem8*0.060+$ContribucionesOScontribucionadicionalos)*0.15;
             }
             //Asignaciones Familiares
-            if($empleado['codigoafip']=='0'){
+            if($codigoafip=='0'){
                 $asignacionfamiliar+=$rem1*0.04440;
             }
-            if($empleado['codigoafip']=='1'){
+            if($codigoafip=='1'){
                 $asignacionfamiliar+=$rem1*0.04440*0.5;
             }
-            if($empleado['codigoafip']=='2'){
+            if($codigoafip=='2'){
                 $asignacionfamiliar+=$rem1*0.04440*0.75;
             }
-            if($empleado['codigoafip']=='3'){
+            if($codigoafip=='3'){
                 $asignacionfamiliar+=$rem1*0.04440*0.25;
             }
             //Total Contribuciones
@@ -617,7 +625,6 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             If($segurodevida){
                 $SeguroDeVidaObligatorio = $impcli['Impcli']['segurodevida'];
             }
-            $codigoafip = $empleado['codigoafip'];
             $miempleado['horasDias']=$horasDias;
             $miempleado['jornada']=$jornada;
             $miempleado['redondeo']=$redondeo;
@@ -701,15 +708,14 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td style="width:111px;border: 0px;"></td>
                 </tr>
                 <tr>
-                    <td >
-
-                    </td>
+                    <td ></td>
                     <td>Apellido y Nombre</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                         echo "<td>".$empleado['nombre']."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr><!--1-->
             </thead>
             <tbody>
@@ -725,6 +731,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                 echo "<td>".$empleado['cuit']."</td>";
                         }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>OS del Pers de Dirección</td>
@@ -736,6 +743,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo "</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Cobertura ART</td>
@@ -747,6 +755,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo "</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Seguro de Vida</td>
@@ -758,14 +767,16 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo "</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Código AFIP</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>".$empleado['codigoafip']."</td>";
+                        echo "<td>".$empleadoDatos[$empleado['id']]['codigoafip']."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Día de inicio</td>
@@ -774,6 +785,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo "<td>" . $empleado['fechaingreso'] . "</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
 
@@ -785,6 +797,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo $empleadoDatos[$empleadoid]['horasDias']."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Sueldo</td>
@@ -795,6 +808,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo number_format($empleadoDatos[$empleadoid]['sueldo'], 2, ",", ".")."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Adicionales</td>
@@ -805,6 +819,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo number_format($empleadoDatos[$empleadoid]['adicionales'], 2, ",", ".")."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr><!--10-->
                 <tr>
                     <td>Cantidad de Horas Extra</td>
@@ -815,6 +830,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo number_format($empleadoDatos[$empleadoid]['horasextras'], 2, ",", ".")."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Importe Horas extras</td>
@@ -825,6 +841,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo number_format($empleadoDatos[$empleadoid]['importehorasextras'], 2, ",", ".")."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>SAC</td>
@@ -835,6 +852,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo number_format($empleadoDatos[$empleadoid]['SAC'], 2, ",", ".")."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Vacaciones</td>
@@ -845,6 +863,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo number_format($empleadoDatos[$empleadoid]['vacaciones'], 2, ",", ".")."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Premios</td>
@@ -1139,6 +1158,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo $empleado['obrasocial']."</td>";
                     }
                     ?>
+                    <td ></td>
                 </tr><!--30-->
                 <tr>
                     <td>Cantidad de adherentes</td>
@@ -1149,7 +1169,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         echo $empleadoDatos[$empleadoid]['cantidadadherente']."</td>";
                     }
                     ?>
-
+                    <td ></td>
                 </tr>
                 <tr>
                     <td>Aporte Adicional</td>
@@ -1261,7 +1281,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             array(
                                 'type'=>'hidden',
                                 'id'=> 'apagar351ContribucionesSegSocial',
-                                'value'=>$totalContribucionesSS
+                                'value'=>number_format($totalContribucionesSS, 2, ".", "")
                             )
                         );
                         ?>
@@ -1320,7 +1340,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             array(
                                 'id'=>'apagar935RENATEA',
                                 'type'=>'hidden',
-                                'value'=>$aporterenatea
+                                'value'=>number_format($aporterenatea, 2, ".", "")
                             )
                         );?></td>
                 </tr>
@@ -1389,7 +1409,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             array(
                                 'id'=>'apagar301EmpleadorAportesSegSocial',
                                 'type'=>'hidden',
-                                'value'=>$AporteSStotal
+                                'value'=>number_format($AporteSStotal, 2, ".", "")
                             )
                         );?></td>
                 </tr>
@@ -1452,7 +1472,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             array(
                                 'id'=>'apagar352ContribucionesObraSocial',
                                 'type'=>'hidden',
-                                'value'=>$ContribucionesOStotal
+                                'value'=>number_format($ContribucionesOStotal, 2, ".", "")
                             )
                         );?></td>
                 </tr>
@@ -1521,7 +1541,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             array(
                                 'id'=>'apagar302AportesObrasSociales',
                                 'type'=>'hidden',
-                                'value'=>$AporteOStotal
+                                'value'=>number_format($AporteOStotal, 2, ".", "")
                             )
                         );?></td>
                 </tr>
@@ -1546,7 +1566,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             array(
                                 'id'=>'apagar312AsegRiesgodeTrabajoL24557',
                                 'type'=>'hidden',
-                                'value'=>$ARTart
+                                'value'=>number_format($ARTart, 2, ".", "")
                             )
                         );?></td>
                 </tr>
@@ -1572,7 +1592,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             array(
                                 'id'=>'apagar28SegurodeVidaColectivo',
                                 'type'=>'hidden',
-                                'value'=>$SeguroDeVidaObligatorio
+                                'value'=>number_format($SeguroDeVidaObligatorio, 2, ".", "")
                             )
                         ); ?></td>
                 </tr>

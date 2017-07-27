@@ -242,7 +242,7 @@ function cargarAsiento(){
 	//los movimientos que tenemos que guardar son los siguentes
 
 
-	// 506210001	Ingresos Brutos Capital Federal
+	// 506210001 Ingresos Brutos
 	if($('#cuenta2577').length > 0){
 		var orden = $('#cuenta2577').attr('orden');
 		var impuestoDeterminadoTotal = $("#impuestoDeterminadoTotal").val();

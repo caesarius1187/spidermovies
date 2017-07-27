@@ -20,7 +20,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 	<?php
 		echo $this->Html->meta(
 			    'icon',
-			    '/img/sigesec.png',
+			    '/img/logosmall.png',
 			    array('type' => 'icon')
 			);
 		echo $this->Html->script('jquery');

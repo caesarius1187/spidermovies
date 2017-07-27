@@ -147,7 +147,7 @@ if(count($empleado)==0){
                             white-space: nowrap;";
                         ?>
 
-                        <td  class="tdconcepto" style="<?php echo $styleForTd; ?>">
+                        <td  class="tdconcepto" style="<?php echo $styleForTd; ?>" orden="<?php echo $conceptoobligatorio['orden']?>">
                             <?php
                             //aca buscamos el valor que ya guardardamos para este concepto
                             //y mostramos un formulario para modificarlo
@@ -246,8 +246,11 @@ if(count($empleado)==0){
                                 case 39:/*Afiliado al Sindicato*/
                                     $valor = $empleado['Empleado']['afiliadosindicato'];
                                     break;
+                                case 51:/*CODIGO AFIP*/
+                                    $valor = $empleado['Empleado']['codigoafip'];
+                                    break;
                                 case 52:/*Sueldo basico*/
-                                        /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo 
+                                        /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
                                         tiene un sueldo basico cargado*/
                                         if(isset($empleado['Cargo']['sueldobasico'])&&$empleado['Cargo']['sueldobasico']*1!=0){
                                             $valor = $empleado['Cargo']['sueldobasico']*1;
@@ -311,9 +314,7 @@ if(count($empleado)==0){
                                     tiene un Acuerdos Remunerativos cargado*/
                                     $valor = $mayorNORemunerativo;
                                     break;
-                                case 161:/*Basico Categoria Minima*/
-                                    /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
-                                    tiene un Acuerdos Remunerativos cargado*/
+                                case 161:/*Basico Categoria Minima*//*Basico Adm 2da*/
                                     $valor = $basicoMinimoCargo;
                                     break;
                                 case 162:/*Almuerzo o Refrigerio*/

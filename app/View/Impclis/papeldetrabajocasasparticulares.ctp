@@ -121,7 +121,7 @@ echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cli
 //                        'div' => false,
                         'style'=> 'width:88px'
                     ));
-                    echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Devengamiento Act. Varias" ,'style'=>'width:250px']);
+                    echo $this->Form->input('Asiento.0.nombre',['readonly'=>'readonly','value'=>"Devengamiento Casas Particulares" ,'style'=>'width:250px']);
                     echo $this->Form->input('Asiento.0.descripcion',['readonly'=>'readonly','value'=>"Automatico",'style'=>'width:250px']);
                     echo $this->Form->input('Asiento.0.cliente_id',['value'=>$cliente['Cliente']['id'],'type'=>'hidden']);
                     echo $this->Form->input('Asiento.0.impcli_id',['value'=>$impcli['Impcli']['id'],'type'=>'hidden']);

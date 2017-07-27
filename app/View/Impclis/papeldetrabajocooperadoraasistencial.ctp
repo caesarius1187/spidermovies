@@ -308,7 +308,18 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             $haber = $impuestoDeterminado;
                         }
                         break;
-
+                    case '3334'/*608100056 Beneficios Fiscales*/:
+                        if($impuestoDeterminado>=0){
+                            //vamos a acumular solo la diferencia entre estos dos
+                            $haber = $impuestoExento;
+                        }
+                        break;
+                    case '3481'/*110404403 Coop. As -  Otros pagos a cuenta*/:
+                        if($OtrosPagosACuenta>=0){
+                            //vamos a acumular solo la diferencia entre estos dos
+                            $haber = $OtrosPagosACuenta;
+                        }
+                        break;
                 }
 
 

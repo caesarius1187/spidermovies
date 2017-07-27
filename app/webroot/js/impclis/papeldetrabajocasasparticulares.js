@@ -32,6 +32,14 @@ $(document).ready(function() {
     });
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
     catchAsientoCasasParticulares();
+    $(".inputDebe").each(function () {
+        $(this).change(addTolblTotalDebeAsieto);
+    });
+    $(".inputHaber").each(function () {
+        $(this).change(addTolblTotalhaberAsieto);
+    });
+
+
 });
 function cargarTodosLosFormularios102(){
     $("#divSueldoForm").html("");
@@ -167,41 +175,55 @@ function cargarUnFormulario102(empid,periodo,liquidacion,indice){
         success: function(response) {
             $("#divSueldoForm").append(response);
             $("#volantepago"+empid+" .checkboxrubroI").change(function(){
-                var obligacionmensual = $(this).val();
-                $("#obligacionmensual"+empid).html(obligacionmensual)*1;
+                var obligacionmensual = summAllFromClass("checkboxrubroI",'checkbox');
+                $("#obligacionmensual"+empid).html($(this).val())*1;
                 $("#Eventosimpuesto0Montovto").val(obligacionmensual);
                 //Cargar Asiento
                 //Casa Particular < Tope
                 // 599002004	Deduccion Ley 26063 Servicio Domestico
                 if($('#cuenta2776').length > 0){
                     var orden = $('#cuenta2776').attr('orden');
-                    var sueldoTotal = getnumberfromString($("#sueldoTotal").html());
-                    $('#Asiento0Movimiento'+orden+'Debe').val(sueldoTotal);
+                    var sueldoBasico = summAllFromClass("sueldoBasico");
+                    var SAC = summAllFromClass("SAC");
+                    var vacaciones = summAllFromClass("vacaciones");
+                    var adicional = summAllFromClass("adicional");
+                    var vacacionesnogozadas = summAllFromClass("vacacionesnogozadas");
+                    var totalRemunerativos = sueldoBasico+SAC+vacaciones+adicional+vacacionesnogozadas;
+                    $('#Asiento0Movimiento'+orden+'Debe').val(totalRemunerativos);
                 }
                 // 514000017	Contribuciones SS Ley 26063 Casas Particulares
                 if($('#cuenta2789').length > 0){
                     var orden = $('#cuenta2789').attr('orden');
-                    $('#Asiento0Movimiento'+orden+'Debe').val(obligacionmensual);
+                    var aportes = summAllFromClass("aportes");
+                    $('#Asiento0Movimiento'+orden+'Debe').val(obligacionmensual-aportes);
                 }
-                // 230102010	Ley 260663 Aportes Servicios Domesticos a Pagar
+                // 230101010	Ley 260663 Aportes Servicios Domesticos a Pagar
+                if($('#cuenta3381').length > 0){
+                    var orden = $('#cuenta3381').attr('orden');
+                    var sueldoTotal = summAllFromClass("sueldoTotal");
+                    $('#Asiento0Movimiento'+orden+'Haber').val(sueldoTotal);
+                }
+                // 230102010	Ley 26063 Servicio Domestico a Pagar
                 if($('#cuenta3383').length > 0){
                     var orden = $('#cuenta3383').attr('orden');
-                    var aportes = getnumberfromString($("#aportes").html());
+                    var aportes = summAllFromClass("aportes");
                     $('#Asiento0Movimiento'+orden+'Haber').val(aportes);
                 }
                 // 230102011	Ley 260663 Contribuciones Servicios Domesticos a Pagar
                 if($('#cuenta3384').length > 0){
                     var orden = $('#cuenta3384').attr('orden');
-                    var aportes = getnumberfromString($("#aportes").html());
+                    var aportes = summAllFromClass("aportes");
                     $('#Asiento0Movimiento'+orden+'Haber').val(obligacionmensual-aportes);
                 }
-                // 230101010	Ley 26063 Servicio Domestico a Pagar
-                if($('#cuenta3381').length > 0){
-                    var orden = $('#cuenta3381').attr('orden');
-                    var sueldoTotal = getnumberfromString($("#sueldoTotal").html());
-                    $('#Asiento0Movimiento'+orden+'Haber').val(sueldoTotal);
-                }
-            })
+                $(".inputHaber").each(function(){
+                    $(this).trigger('change');
+                    return;
+                });
+                $(".inputDebe").each(function(){
+                    $(this).trigger('change');
+                    return;
+                });
+            });
             $(".cantHoras").change(function(){
                 $(this).attr(
                     'value',
@@ -322,4 +344,55 @@ function reloadInputDates(){
     })(jQuery);
 
 }
+function summAllFromClass(classtosum,atrrvalor){
+    var sum = 0;
+    $('.'+classtosum).each(function(){
+        if(atrrvalor=='checkbox'){
+            if($(this).is(':checked')) {
+                sum += $(this).val()*1;  // Or this.innerHTML, this.innerText
+            }
+        }else{
+            sum += getnumberfromString($(this).html());  // Or this.innerHTML, this.innerText
+        }
+    });
+    return sum;
+}
+function addTolblTotalDebeAsieto(event) {
+    var debesubtotal = 0;
+    $(".inputDebe").each(function () {
+        debesubtotal = debesubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
 
+    });
+    $("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+    showIconDebeHaber()
+}
+function addTolblTotalhaberAsieto(event) {
+    //        $("#lblTotalAFavor").val(0) ;
+    var habersubtotal = 0;
+    $(".inputHaber").each(function () {
+        habersubtotal = habersubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+    });
+    $("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+    showIconDebeHaber()
+}
+function showIconDebeHaber(){
+    if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
+        $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+    }else{
+        $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+    }
+}

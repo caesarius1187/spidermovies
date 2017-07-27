@@ -1285,7 +1285,7 @@ class VentasController extends AppController {
 			);
 
 			$ventas = $this->Venta->find('all',array(
-				'fields' => array('SUM(Venta.total) AS total','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Venta.actividadcliente_id'),
+				'fields' => array('SUM(Venta.total) AS total','SUBSTRING(Venta.periodo,4,7) as anio','SUBSTRING(Venta.periodo,1,2) as mes','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Venta.actividadcliente_id'),
 				'contain'=>array(
 					'Comprobante',
 					'Actividadcliente',
@@ -1297,11 +1297,13 @@ class VentasController extends AppController {
 				),
 				'group'=>array(
 					'Venta.periodo','Venta.comprobante_id','Venta.actividadcliente_id'
+				),
+				'order'=>array(
+					'SUBSTRING(Venta.periodo,4,7)','SUBSTRING(Venta.periodo,1,2)'
 				)
 			));
 			$this->set(compact('ventas'));
 			$mostrarInforme=true;
-
 		}
 		$conditionsCli = array(
 			'Grupocliente',

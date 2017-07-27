@@ -233,13 +233,16 @@ function cargarMovimiento(){
                         .val(debe)
                         .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteDebe')
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][debe]')
+                        .attr('type','number')
+                        .attr('step','any')
                         .addClass("inputDebe movimientoConValor")
-
                 ).append(
                     $("<input>")
                         .val(haber)
                         .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteHaber')
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][haber]')
+                        .attr('type','number')
+                        .attr('step','any')
                         .addClass("inputHaber movimientoConValor")
                 ).append(
                     $("<input>")
@@ -255,7 +258,8 @@ function cargarMovimiento(){
                         .attr('onclick','deleteRowMovimiento('+movimientonumero+')')
                 )
             )
-    )
+    );
+
     $("#nextmovimiento").val(movimientonumero*1);
     $("#Asiento0MovimientoKkkCuentasclienteId option:selected").remove();
     $("#Asiento0MovimientoKkkCuentasclienteId").trigger("chosen:updated");
@@ -371,4 +375,43 @@ function cargarMovimientoEdit(){
         $(this).trigger("change");
         return;
     });
+}
+function addTolblTotalDebeAsieto(event) {
+    var debesubtotal = 0;
+    $(".inputDebe").each(function () {
+        debesubtotal = debesubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+
+    });
+    $("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+    showIconDebeHaber()
+}
+function addTolblTotalhaberAsieto(event) {
+    //        $("#lblTotalAFavor").val(0) ;
+    var habersubtotal = 0;
+    $(".inputHaber").each(function () {
+        habersubtotal = habersubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+    });
+    $("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+    showIconDebeHaber()
+}
+function showIconDebeHaber(){
+    if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
+        $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+    }else{
+        $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+    }
 }

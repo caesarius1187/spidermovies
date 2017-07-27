@@ -325,52 +325,110 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                     echo "</br>";
                     ?>
 
-                    <table id="tablaasiento"
-                        <tr id="rowdecarga">
-                            <td ><?php
-                                echo $this->Form->input('Asiento.0.Movimiento.kkk.id',
-                                    ['value'=>0]);
-                                echo $this->Form->input('Asiento.0.Movimiento.kkk.cuentascliente_id',
-                                    [
-                                        'value'=>$hiddenCuentasValue,
-                                        'class'=>'chosen-select',
+                    <table id="tablaasiento">
+
+                        <thead></thead>
+                        <tbody>
+                            <tr id="rowdecarga">
+                                <td ><?php
+                                    echo $this->Form->input('Asiento.0.Movimiento.kkk.id',
+                                        ['value'=>0]);
+                                    echo $this->Form->input('Asiento.0.Movimiento.kkk.cuentascliente_id',
+                                        [
+                                            'value'=>$hiddenCuentasValue,
+                                            'class'=>'chosen-select',
+                                        ]);
+
+                                    echo $this->Form->input('Asiento.0.Movimiento.kkk.fecha',
+                                        [
+                                            'value'=>date('d-m-Y'),
+                                            'default'=>date('d-m-Y'),
+                                            'type'=>'hidden',
+                                            'class'=>"datepicker",
+                                        ]);
+
+                                    echo $this->Form->input('Asiento.0.Movimiento.kkk.debe',
+                                        ['value'=>$hiddenDebe,
+                                            'style'=>"width:auto",
+                                            'label'=>'Debe']);
+                                    echo $this->Form->input('Asiento.0.Movimiento.kkk.haber',
+                                        ['value'=>$hiddenHaber,
+                                            'style'=>"width:auto",
+                                            'label'=>'Haber']);
+
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php  echo $this->Html->link(
+                                        "Agregar",
+                                        "#",
+                                        array('class' => 'buttonImpcli',
+                                            'id'=>'cargarMovimiento',
+                                            'style'=> 'margin-right: 8px;width: initial;'
+                                        )
+                                    );?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="20">
+
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td>
+                                    <?php
+                                    $totalDebe=0;
+                                    $totalHaber=0;
+                                    echo $this->Form->label('','Total ',[
+                                        'style'=>"display: -webkit-inline-box;width:355px;"
                                     ]);
-
-                                echo $this->Form->input('Asiento.0.Movimiento.kkk.fecha',
-                                    [
-                                        'value'=>date('d-m-Y'),
-                                        'default'=>date('d-m-Y'),
-                                        'type'=>'hidden',
-                                        'class'=>"datepicker",
-                                    ]);
-
-                                echo $this->Form->input('Asiento.0.Movimiento.kkk.debe',
-                                    ['value'=>$hiddenDebe,
-                                        'style'=>"width:auto",
-                                        'label'=>'Debe']);
-                                echo $this->Form->input('Asiento.0.Movimiento.kkk.haber',
-                                    ['value'=>$hiddenHaber,
-                                        'style'=>"width:auto",
-                                        'label'=>'Haber']);
-
-                                ?>
-                            </td>
-                            <td>
-                                <?php  echo $this->Html->link(
-                                    "Agregar",
-                                    "#",
-                                    array('class' => 'buttonImpcli',
-                                        'id'=>'cargarMovimiento',
-                                        'style'=> 'margin-right: 8px;width: initial;'
-                                    )
-                                );?>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="20">
-
-                            </td>
-                        </tr>
+                                    ?>
+                                    <div style="width:98px;">
+                                        <?php
+                                        echo $this->Form->label('lblTotalDebe',
+                                            "$".number_format($totalDebe, 2, ".", ""),
+                                            [
+                                                'id'=>'lblTotalDebe',
+                                                'style'=>"display: inline;float:right"
+                                            ]
+                                        );
+                                        ?>
+                                    </div>
+                                    <div style="width:124px;">
+                                        <?php
+                                        echo $this->Form->label('lblTotalHaber',
+                                            "$".number_format($totalHaber, 2, ".", ""),
+                                            [
+                                                'id'=>'lblTotalHaber',
+                                                'style'=>"display: inline;float:right"
+                                            ]
+                                        );
+                                        ?>
+                                    </div>
+                                    <?php
+                                    if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
+                                        echo $this->Html->image('test-pass-icon.png',array(
+                                                'id' => 'iconDebeHaber',
+                                                'alt' => 'open',
+                                                'class' => 'btn_exit',
+                                                'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+                                            )
+                                        );
+                                    }else{
+                                        echo $this->Html->image('test-fail-icon.png',array(
+                                                'id' => 'iconDebeHaber',
+                                                'alt' => 'open',
+                                                'class' => 'btn_exit',
+                                                'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+                                            )
+                                        );
+                                    }
+                                    ?>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                     <?php
                     ?>

@@ -295,6 +295,8 @@
     $ventasxPeriodo=[];
     foreach ($ventas as $venta) {
         $periodoVenta = $venta['Venta']['periodo'];
+        $periodoAnioVenta = $venta[0]['anio'];
+        $periodoMesVenta = $venta[0]['mes'];
         if(!isset($ingresosActualesClientes[$periodoVenta])){
             $ventasxPeriodo[$periodoVenta]=0;
         }
@@ -306,7 +308,7 @@
 
     }
     ?>
-    <div class="index">
+    <div class="" style="width:48%;height:700px;float: left">
         <?php
         echo $this->Form->input('movimientosbancarios',[
             'value'=>json_encode($ventasxPeriodo),
@@ -315,6 +317,8 @@
         );
         ?>
         <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+    <div class="" style="width:48%;height:700px;float: right">
         <canvas id="myChartline" width="400" height="400"></canvas>
     </div>
 
