@@ -280,15 +280,38 @@ function cargarAsiento(){
 	}
 	// 110404298	I.I.B.B. - Percepciones Bancarias
 	if($('#cuenta317').length > 0){
-		var orden = $('#cuenta317').attr('orden');
-		var totalpercepcionesbancarias = $("#totalpercepcionesbancarias").val();
-		$('#Asiento0Movimiento'+orden+'Haber').val(totalpercepcionesbancarias);
+		if($('#impid').val()==21) {
+			var orden = $('#cuenta317').attr('orden');
+			var totalpercepcionesbancarias = $("#totalpercepcionesbancarias").val();
+			$('#Asiento0Movimiento' + orden + 'Haber').val(totalpercepcionesbancarias);
+		}
 	}
 	// 210402101	Ingresos Brutos a Pagar
 	if($('#cuenta1492').length > 0){
 		var orden = $('#cuenta1492').attr('orden');
 		var totalgeneralapagar = $("#totalgeneralapagar").val();
 		$('#Asiento0Movimiento'+orden+'Haber').val(totalgeneralapagar);
+	}
+	// 110404299	I.I.B.B. - SIRCREB
+	if($('#cuenta318').length > 0){
+		/*SI es CONVENIOO MULTILATERAL*/
+		if($('#impid').val()==174){
+			var orden = $('#cuenta318').attr('orden');
+			var totalpercepcionesbancarias = $("#totalpercepcionesbancarias").val()*1;
+			var totalpercepcionestucuman = $("#totalpercepcionestucuman").val()*1;
+			//restarle las percepciones de tucuman
+			$('#Asiento0Movimiento'+orden+'Haber').val((totalpercepcionesbancarias-totalpercepcionestucuman).toFixed(2));
+		}
+
+	}
+	if($('#cuenta3379').length > 0){
+		/*SI es CONVENIOO MULTILATERAL*/
+		if($('#impid').val()==174) {
+			var orden = $('#cuenta3379').attr('orden');
+			var totalpercepcionestucuman = $("#totalpercepcionestucuman").val() * 1;
+			//restarle las percepciones de tucuman
+			$('#Asiento0Movimiento' + orden + 'Haber').val(totalpercepcionestucuman);
+		}
 	}
 	$(".inputDebe").each(function () {
 		$(this).change(addTolblTotalDebeAsieto);

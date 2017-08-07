@@ -19,8 +19,8 @@ class ComprasController extends AppController {
     ];
     public $alicuotascodigoreverse = [
         '0003' =>  "0" ,
-        '0001' => "2.5",
-        '0002' => "5",
+        '0009' => "2.5",
+        '0008' => "5",
         '0004' => "10.5",
         '0005' => "21" ,
         '0006' => "27" ,
@@ -1007,7 +1007,20 @@ class ComprasController extends AppController {
 		$alicuotas = $this->Compra->find('all',$optionsAlicuotas);
 
 		$optionCliente=[
-			'contain'=>[],
+			'contain'=>[
+                'Conceptosrestante'=>array(
+                    'Localidade'=>array(
+                        'Partido'=>array(
+                            'fields'=>array(
+                                'Partido.nombre'
+                            )
+                        ),
+                    ),
+                    'conditions' => array(
+                        'Conceptosrestante.periodo'=>$periodo
+                    )
+                ),
+            ],
 			'conditions'=>['Cliente.id'=>$cliid]
 		];
 		$cliente = $this->Cliente->find('first',$optionCliente);

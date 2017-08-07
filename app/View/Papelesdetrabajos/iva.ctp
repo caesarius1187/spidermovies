@@ -354,7 +354,7 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
         if($('#cuenta2344').length > 0){
             var orden = $('#cuenta2344').attr('orden');
             var totalnocomputable = $("#totalnocomputable").val();
-            $('#Asiento0Movimiento'+orden+'Haber').val(totalnocomputable);
+            $('#Asiento0Movimiento'+orden+'Debe').val(totalnocomputable);
         }
 //        110403403	IVA - Percepciones
         if($('#cuenta288').length > 0){
@@ -401,7 +401,6 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             });
             $('#Asiento1Movimiento'+orden+'Debe').val(totaldecreto814);
         }
-
     }
     function catchAsientoIVA(){
         $('#AsientoAddForm').submit(function(){
@@ -514,6 +513,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             <?php
                 $TotalDebitoFiscal_SumaTotal = 0;
                 $TotalCreditoFiscal_SumaTotal = 0;
+                $TotalCreditoFiscalComputable_SumaTotal = 0;
             ?>
 
             <?php foreach ($actividades as $actividad){ ?>
@@ -1668,7 +1668,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 echo $this->Form->input('totalpercepciones',
                     [
                         'type'=>'hidden',
-                        'value'=>$TotalPercepcionesIVA
+                        'value'=>number_format($TotalPercepcionesIVA, 2, ".", "")
                     ]
                 );
                 // ACA la restitucion de credito de compra SUMA AL DEBITO tal vez esto deberia restar del credito en realidad
@@ -1741,7 +1741,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <!--COMPRAS-->
         <div id="divContenedorCompras" style="height: 500px">
             <div style="margin-top:10px">(Coeficiente de Apropiacion <?php
-                $coeficienteapropiacion = $cliente['Impcli'][0]['coeficienteapropiacion']==0?0.5000:$cliente['Impcli'][0]['id']  ;
+                $coeficienteapropiacion = $cliente['Impcli'][0]['coeficienteapropiacion']  ;
                 echo $coeficienteapropiacion;?> )
             </div>
             <div style="width:100%; height: 10px"></div>
@@ -1798,6 +1798,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $TotalDcto814['mostrar']=false;
 
             $TotalNoComputable = 0;
+            $CreditoFiscalOtrosConceptosTitle="";
+
             foreach ($compras as $compra){
                 $suma = 1;
                 if($compra['Compra']['tipocredito'] == 'Restitucion credito fiscal')
@@ -2074,6 +2076,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 if ($compra['Compra']['imputacion'] == 'Otros Conceptos')
                     {
                         $TotalOtrosConceptos['mostrar']=true;
+                        $CreditoFiscalOtrosConceptosTitle.="Se agrego la compra N° ". $compra['Compra']['numerocomprobante']."
+                        ";
 
                         $TotalOtrosConceptos['Neto']['total'] += $compra[0]['neto']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
@@ -2131,6 +2135,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             if(count($cuentascliente[0])>0){
                 foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
                     $TotalOtrosConceptos['mostrar'] = true;
+                    $CreditoFiscalOtrosConceptosTitle.="Se agrego el Mov Bancario N° "
+                        . $movimientosbancario['ordencarga']."-"
+                        .$movimientosbancario['concepto']." $"
+                        .$movimientosbancario['debito']."
+                    ";
                     if($movimientosbancario['alicuota']=='0'){
     //                $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']*1.0;
     //                $TotalOtrosConceptos['Neto']['0'] += $movimientosbancario['debito']*1.0;
@@ -2288,8 +2297,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <?php
                     }
                 }
-                $TotalNoComputable += ($TotalBnGral['Directo']['total'] + $TotalBnGral['Prorateable']['total'])-$TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * $coeficienteapropiacion)?>
-                <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * $coeficienteapropiacion));
+                $TotalNoComputable += ($TotalBnGral['Prorateable']['total'])- ($TotalBnGral['Prorateable']['total'] * $coeficienteapropiacion);
+                $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total']));
+                $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + ($TotalBnGral['Directo']['total'] + ($TotalBnGral['Prorateable']['total'] * $coeficienteapropiacion));
                 if($TotalComprasBienesConsFinales['mostrar']) {
                     ?>
                     <tr>
@@ -2392,8 +2402,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <?php
                     }
                 }
-                $TotalNoComputable += ($TotalComprasBienesConsFinales['Directo']['total'] + $TotalComprasBienesConsFinales['Prorateable']['total'])-$TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total'] * $coeficienteapropiacion)?>
-                <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total'] * $coeficienteapropiacion));
+                $TotalNoComputable += ($TotalComprasBienesConsFinales['Prorateable']['total'])-($TotalComprasBienesConsFinales['Prorateable']['total'] * $coeficienteapropiacion);
+                $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total']));
+                $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + ($TotalComprasBienesConsFinales['Directo']['total'] + ($TotalComprasBienesConsFinales['Prorateable']['total'] * $coeficienteapropiacion));
                 //fin copiado
                 if($TotalLocaciones['mostrar']) {
                     ?>
@@ -2497,8 +2508,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <?php
                     }
                 }
-                $TotalNoComputable += ($TotalLocaciones['Directo']['total'] + $TotalLocaciones['Prorateable']['total'])-$TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * $coeficienteapropiacion)?>
-                <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * $coeficienteapropiacion));
+                $TotalNoComputable += ($TotalLocaciones['Prorateable']['total'])-($TotalLocaciones['Prorateable']['total'] * $coeficienteapropiacion);
+                $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total']));
+                $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + ($TotalLocaciones['Directo']['total'] + ($TotalLocaciones['Prorateable']['total'] * $coeficienteapropiacion));
                 if($TotalPresServ['mostrar']) {
                     ?>
                     <tr>
@@ -2601,8 +2613,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <?php
                     }
                 }
-                $TotalNoComputable += ($TotalPresServ['Directo']['total'] + $TotalPresServ['Prorateable']['total'])-$TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * $coeficienteapropiacion)?>
-                <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * $coeficienteapropiacion));
+                $TotalNoComputable += ($TotalPresServ['Prorateable']['total'])-($TotalPresServ['Prorateable']['total'] * $coeficienteapropiacion);
+                $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total']));
+                $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + ($TotalPresServ['Directo']['total'] + ($TotalPresServ['Prorateable']['total'] * $coeficienteapropiacion));
                 if($TotalBsUso['mostrar']) {
                     ?>
                     <tr>
@@ -2705,12 +2718,13 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <?php
                     }
                 }
-                $TotalNoComputable += ($TotalBsUso['Directo']['total'] + $TotalBsUso['Prorateable']['total'])-$TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * $coeficienteapropiacion)?>
-                <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * $coeficienteapropiacion));
+                $TotalNoComputable += ($TotalBsUso['Prorateable']['total'])-($TotalBsUso['Prorateable']['total'] * $coeficienteapropiacion);
+                $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total']));
+                $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + ($TotalBsUso['Directo']['total'] + ($TotalBsUso['Prorateable']['total'] * $coeficienteapropiacion));
                 if($TotalOtrosConceptos['mostrar']) {
                     ?>
                     <tr>
-                        <td colspan="7" style='background-color:#87cfeb'>
+                        <td colspan="7" style='background-color:#87cfeb' title="<?php echo $CreditoFiscalOtrosConceptosTitle;?>">
                             > OPERACION: Otros Conceptos
                         </td>
                     </tr>
@@ -2809,8 +2823,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <?php
                     }
                 }
-                $TotalNoComputable += ($TotalOtrosConceptos['Directo']['total'] + $TotalOtrosConceptos['Prorateable']['total'])-$TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * $coeficienteapropiacion)?>
-                <?php $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * $coeficienteapropiacion));
+                $TotalNoComputable += ($TotalOtrosConceptos['Prorateable']['total'])-($TotalOtrosConceptos['Prorateable']['total'] * $coeficienteapropiacion);
+                $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total']));
+                $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + ($TotalOtrosConceptos['Directo']['total'] + ($TotalOtrosConceptos['Prorateable']['total'] * $coeficienteapropiacion));
                 if($TotalDcto814['mostrar']) {
                     ?>
                     <tr>
@@ -2834,7 +2849,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                 echo $this->Form->input('totaldecreto814',
                                     [
                                         'type'=>'hidden',
-                                        'value'=>$TotalDcto814_Directo
+                                        'value'=>number_format($TotalDcto814_Directo, 2, ".", "")
                                     ]
                                 );
                                 ?></td>
@@ -2847,14 +2862,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     }
                 }
 
-                $TotalNoComputable += ($TotalDcto814['Directo']['total'] + $TotalDcto814['Prorateable']['total'])-$TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * $coeficienteapropiacion);
+                $TotalNoComputable += ($TotalDcto814['Prorateable']['total'])-($TotalDcto814['Prorateable']['total'] * $coeficienteapropiacion);
                 echo $this->Form->input('totalnocomputable',
                     [
                         'type'=>'hidden',
-                        'value'=>$TotalNoComputable
+                        'value'=>number_format($TotalNoComputable, 2, ".", "")
                     ]
                 );
-                 $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * $coeficienteapropiacion)); ?>
+                //el decreto 814 es indirecto por defecto por lo tanto deberia tener un campo donde podamos cargar el monto prorrateable
+                //pero no lo tenemos asi que vamos a tomar por defecto como si fuese directo (todo corregir prorrateo 814)
+                $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + ($TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total']));
+                $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + ($TotalDcto814['Directo']['total'] + ($TotalDcto814['Prorateable']['total'] * $coeficienteapropiacion)); ?>
     <!--            <tr>-->
     <!--                <td colspan="7" style='background-color:#87cfeb'>-->
     <!--                    > OPERACION: Contrib. Seg. Social (Dto 814/01)-->
@@ -3014,6 +3032,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         </tr>
                     ';
                     $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + $TotalDebitoFiscal;
+                    $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + $TotalDebitoFiscal;
                 }
             ?>
             </tr>
@@ -3139,6 +3158,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         </tr>
                     ';
                     $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + $TotalDebitoFiscal;
+                    $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + $TotalDebitoFiscal;
                 }
             ?>
             </tr>
@@ -3265,6 +3285,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         </tr>
                     ';
                     $TotalCreditoFiscal_SumaTotal = $TotalCreditoFiscal_SumaTotal + $TotalDebitoFiscal;
+                    $TotalCreditoFiscalComputable_SumaTotal = $TotalCreditoFiscalComputable_SumaTotal + $TotalDebitoFiscal;
                 }
             ?>
             </tr>
@@ -3338,7 +3359,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 }
                 $TotalPagosACuenta += $TotalPercepcionesIVA ;
                 $CreditoGeneral = 0;
-                $CreditoGeneral = $TotalCreditoFiscal_SumaTotal +  $TotalSaldoTecnicoAFavorRespPeriodoAnterior + $AjusteAnualAFavorResponsable ;
+                $CreditoGeneral = $TotalCreditoFiscalComputable_SumaTotal +  $TotalSaldoTecnicoAFavorRespPeriodoAnterior + $AjusteAnualAFavorResponsable ;
                 $DebitoGeneral = 0;
 
                 if($TotalDebitoFiscal_SumaTotal<$CreditoGeneral){
@@ -3368,7 +3389,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         echo $this->Form->input('totaldebitofiscal',
                             [
                                 'type'=>'hidden',
-                                'value'=>$TotalDebitoFiscal_SumaTotal
+                                'value'=>number_format($TotalDebitoFiscal_SumaTotal, 2, ".", "")
                             ]
                         );
                         ?>
@@ -3378,13 +3399,13 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td>Total del Crédito Fiscal</td>
                     <td style="width:180px">
                         <span id="spnTotalCreditoFiscal">
-                            <?php echo number_format($TotalCreditoFiscal_SumaTotal, 2, ",", "."); ?>
+                            <?php echo number_format($TotalCreditoFiscalComputable_SumaTotal, 2, ",", "."); ?>
                         </span>
                         <?php
                         echo $this->Form->input('totalcreditofiscal',
                             [
                                 'type'=>'hidden',
-                                'value'=>$TotalCreditoFiscal_SumaTotal
+                                'value'=>number_format($TotalCreditoFiscal_SumaTotal, 2, ".", "")
                             ]
                         );
                         ?>
@@ -3460,7 +3481,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <span id="spnSaldoTecnicoAfavorContribuyentePeriodo">
                             <?php echo
                             $TotalSaldoTecnicoAFavorRespPeriodo>0?number_format($TotalSaldoTecnicoAFavorRespPeriodo, 2, ",", "."):0;
-                            echo $this->Form->input('saldoTecnico', array('type'=>'hidden','value'=>$TotalSaldoTecnicoAFavorRespPeriodo>0?$TotalSaldoTecnicoAFavorRespPeriodo:0));
+                            echo $this->Form->input('saldoTecnico', array(
+                                'type'=>'hidden',
+                                'value'=>number_format($TotalSaldoTecnicoAFavorRespPeriodo>0?$TotalSaldoTecnicoAFavorRespPeriodo:0, 2, ".", "")));
                             ?>
                             </span>
 
@@ -3489,8 +3512,12 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             ?>
                         </span>
                         <?php
-                        echo $this->Form->input('usoSLD', array('type'=>'hidden','value'=>$TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior));
-                        echo $this->Form->input('usoSLDID', array('type'=>'hidden','value'=>$sldID));
+                        echo $this->Form->input('usoSLD', array(
+                            'type'=>'hidden',
+                            'value'=>number_format($TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior, 2, ".", "")));
+                        echo $this->Form->input('usoSLDID', array(
+                            'type'=>'hidden',
+                            'value'=>number_format($sldID, 2, ".", "")));
                         ?>
                     </td>
                 </tr>
@@ -3499,7 +3526,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td style="width:180px">
                         <span id="spnTotalRetencionesyPercepciones"><?php echo $TotalPagosACuenta>0?number_format($TotalPagosACuenta, 2, ",", "."):0;?></span>
                         <?php
-                        echo $this->Form->input('totalretenciones', array('type'=>'hidden','value'=>$TotalPagosACuenta-$TotalPercepcionesIVA));
+                        echo $this->Form->input('totalretenciones', array(
+                            'type'=>'hidden',
+                            'value'=>number_format($TotalPagosACuenta-$TotalPercepcionesIVA, 2, ".", "")));
                         ?>
                     </td>
                 </tr>
@@ -3509,7 +3538,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <span id="spnSaldoAFavorLibreDispNetousos">
                             <?php
                             echo $TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?number_format($TotalSaldoLibreDisponibilidadAFavorRespPeriodo, 2, ",", "."):0;
-                            echo $this->Form->input('saldoLD', array('type'=>'hidden','value'=>$TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0));
+                            echo $this->Form->input('saldoLD', array(
+                                'type'=>'hidden',
+                                'value'=>number_format($TotalSaldoLibreDisponibilidadAFavorRespPeriodo>0?$TotalSaldoLibreDisponibilidadAFavorRespPeriodo:0, 2, ".", "")));
                             ?>
                         </span>
                     </td>
@@ -3520,7 +3551,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <span id="spnSaldoAFavorLibreDispNetousos">
                             <?php
                                 echo $TotalSaldoImpuestoAFavorAFIP>0?number_format($TotalSaldoImpuestoAFavorAFIP, 2, ",", "."):0;
-                                echo $this->Form->input('apagar', array('type'=>'hidden','value'=>$TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0));
+                                echo $this->Form->input('apagar', array(
+                                    'type'=>'hidden',
+                                    'value'=>number_format($TotalSaldoImpuestoAFavorAFIP>0?$TotalSaldoImpuestoAFavorAFIP:0, 2, ".", "")));
                             ?>
                         </span>
                     </td>

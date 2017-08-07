@@ -1273,44 +1273,6 @@ class ImpclisController extends AppController {
         //Aca vamos a buscar si tiene Monotributo
         $pemes = substr($periodo, 0, 2);
         $peanio = substr($periodo, 3);
-        //A: Es menor que periodo Hasta
-        $esMenorQueHasta = array(
-            //HASTA es mayor que el periodo
-            'OR'=>array(
-                'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
-                'AND'=>array(
-                    'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
-                    'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
-                ),
-            )
-        );
-        //B: Es mayor que periodo Desde
-        $esMayorQueDesde = array(
-            'OR'=>array(
-                'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
-                'AND'=>array(
-                    'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
-                    'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
-                ),
-            )
-        );
-        //C: Tiene Periodo Hasta 0 NULL
-        $periodoNull = array(
-            'OR'=>array(
-                array('Periodosactivo.hasta'=>null),
-                array('Periodosactivo.hasta'=>""),
-            )
-        );
-        $conditionsImpCliHabilitados = array(
-            //El periodo esta dentro de un desde hasta
-            'AND'=> array(
-                $esMayorQueDesde,
-                'OR'=> array(
-                    $esMenorQueHasta,
-                    $periodoNull
-                )
-            )
-        );
 
 		$impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
         $this->set(compact('impuestosactivos'));

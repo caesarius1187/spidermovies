@@ -687,7 +687,16 @@ Total = 82.22";
                                 $empleadoid = $empleado['id'];
                                 //en este primer loop vamos a calcular todos los siguientes totales
                                 echo "<td>";
+
                                 $contUth = 0;
+                                if($empleado['conveniocolectivotrabajo_id']=='8'/*el convenio del empleado es casir*/){
+                                    $mesesAPagarContEspCASYR = [
+                                        '07-2017'=>300
+                                    ];
+                                    if(isset($mesesAPagarContEspCASYR[$periodo])){
+                                        $contUth = $mesesAPagarContEspCASYR[$periodo];
+                                    }
+                                }
                                 echo number_format($contUth, 2, ",", ".");
                                 $totalContribucionEspecialUTHGRA += $contUth ;
                                 $apagarcontribuciones += $contUth ;
@@ -716,7 +725,7 @@ Total = 82.22";
                                 $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
                                 $diff = $periodoALiquidar->diff($fechaIngreso);
                                 $titleUOCRAFdoCeseLaboral = "";
-                                if($diff->y > 1){
+                                if($diff->y >= 1){
                                     $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
                                     $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
                                 }else{

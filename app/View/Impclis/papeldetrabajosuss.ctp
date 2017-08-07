@@ -398,20 +398,21 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     $rem4aportenegativo -= $valorrecibo['valor'];
                 }
 
-                //Remuneracion 9 [La remuneracion 9 tiene que pagar por los no rem pero no por los no rem indenizatorios]
+                //Remuneracion 9 (
+                //La remuneracion 9 tiene que pagar por los no rem pero no por los no rem indemnizatorios
+                //)
                 if (
                     in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('27'/*Total Remunerativos C/D*/,'109'/*Total Remunerativos S/D*/), true )
+                    array('27'/*Total Remunerativos C/D*/,'103'/*Total Remunerativos S/D*/), true )
                 ){
                     $rem9 += $valorrecibo['valor'];
                 }
-                if (
-                in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('108'/*Total Remunerativos S/D*/), true )
-                ){
-                    $rem9 -= $valorrecibo['valor'];
-                }
-
+//                if (
+//                in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+//                    array('108'/*Total Remunerativos S/D*/), true )
+//                ){
+//                    $rem9 -= $valorrecibo['valor'];
+//                }
                 //contribucionrenatea Primera parte
                 if(isset($valorrecibo['Cctxconcepto']['Conveniocolectivotrabajo']['trabajorural'])){
                     if ($valorrecibo['Cctxconcepto']['Conveniocolectivotrabajo']['trabajorural']){

@@ -99,6 +99,7 @@ function toNumber($target){
                 }
                 $ventasArray[$i] = array();
                 $ventasArray[$i]['Venta'] = array();
+                $ventasArray[$i]['Alicuota'] = array();
                 // process the line read.
                 $lineVenta = array();
                 $lineVenta['fecha']=date('d-m-Y',strtotime(substr($line, 0,8)));

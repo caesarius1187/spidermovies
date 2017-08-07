@@ -1,4 +1,10 @@
 <script>
+    var tblTablaConceptosrestantes;
+    $(document).ready(function() {
+        tblTablaConceptosrestantes = $('#tblTablaConceptosrestantes').DataTable({
+
+        });
+    });
     function exportarFacturas() {
         var container = $('#divFacturas');
         var anchor = $('#aExportarFacturas');
@@ -52,6 +58,43 @@
                 Descargar Compras Alicuotas
             </a>
         </div>
+    </div>
+    <h2>Dcto 814 Cargado en el periodo</h2>
+    <div class="index" style="overflow-x: auto;">
+        <table class="" style="border:1px solid white" id="tblTablaConceptosrestantes">
+            <thead>
+                <tr>
+                    <th>Localidad</th><!-2-->
+                    <th class="sum">Monto Retenido</th><!-9-->
+                    <th>Fecha</th><!-11-->
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+            <tbody id="bodyTablaConceptosrestantes">
+            <?php
+            foreach($cliente["Conceptosrestante"] as $conceptorestante ){
+                $tdClass = "tdViewConceptosrestanteO".$conceptorestante["id"];
+                ?>
+                <tr id="rowconceptorestante<?php echo $conceptorestante["id"]?>" class="concepto<?php echo $conceptorestante["conceptostipo_id"];?>">
+                    <td class="<?php echo $tdClass?>">
+                        <?php if(isset($conceptorestante['Localidade']['Partido']["nombre"])){
+                            echo $conceptorestante['Localidade']['Partido']["nombre"]."-". $conceptorestante['Localidade']["nombre"];
+                        }?>
+                    </td>
+                    <td class="<?php echo $tdClass?>"><?php echo $conceptorestante["montoretenido"]?></td>
+                    <td class="<?php echo $tdClass?>"><?php echo date('d-m-Y',strtotime($conceptorestante["fecha"]))?></td>
+                </tr>
+                <?php
+            }
+            ?>
+            </tbody>
+        </table>
     </div>
     <h2>Txt Compras Facturas</h2>
     <div class="index" style="overflow-x: auto;" id="divFacturas" ><?php
@@ -137,6 +180,7 @@
             if (count($cuentascliente[0]) > 0) {
                 foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
                     $lineaCompra = "";
+                    //0-8
                     $lineaCompra .= date('Y', strtotime($movimientosbancario['fecha'])) . date('m', strtotime($movimientosbancario['fecha'])) . date('d', strtotime($movimientosbancario['fecha']));
                     $lineaCompra .= str_pad(39, 3, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad("00001", 5, "0", STR_PAD_LEFT);
@@ -197,6 +241,7 @@
                     $lineaCompra .= str_pad($moneda, 3, " ", STR_PAD_LEFT);
                     $lineaCompra .= str_pad("0001000000", 10, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad(1, 1, "0", STR_PAD_LEFT);
+                    //este es el codigo de operacion y debe ser E si esta tod o exento
                     $lineaCompra .= str_pad("0", 1, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad("0", 15, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad("0", 15, "0", STR_PAD_LEFT);

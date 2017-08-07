@@ -72,6 +72,12 @@ function cargarAsiento(){
 		var apagar360ContribucionRENATEA = $("#apagar360ContribucionRENATEA").val();
 		$('#Asiento0Movimiento'+orden+'Debe').val(apagar360ContribucionRENATEA);
 	}
+    // 210302062	Ap. RENATEA a Pagar
+    if($('#cuenta1404').length > 0){
+		var orden = $('#cuenta1404').attr('orden');
+		var apagar935RENATEA = $("#apagar935RENATEA").val();
+		$('#Asiento0Movimiento'+orden+'Haber').val(apagar935RENATEA);
+	}
     /*
     *INACAP es un impuesto que se paga si el empleador es comercio asi que vamos a darlo de alta manualmente
     * pero si esta dado de alta vamos a usar este monto para completar ese campo
@@ -187,12 +193,14 @@ function cargarAsiento(){
 		var apagar301EmpleadorAportesSegSocial = $("#apagar301EmpleadorAportesSegSocial").val();
 		var apagar302AportesObrasSociales = $("#apagar302AportesObrasSociales").val();
 		var apagarEmbargos = $("#apagarEmbargos").val();
+        var apagar935RENATEA = $("#apagar935RENATEA").val();
 // =(redondeoTotal+RemuneracionTotal)-apagar301EmpleadorAportesSegSocial-apagar302AportesObrasSociales-SUMA(E32:E43)
 		var sueldospersonal =
 			(redondeoTotal*1+RemuneracionTotal*1)-
 			apagar301EmpleadorAportesSegSocial*1-
 			apagar302AportesObrasSociales*1-
 			apagarEmbargos*1-
+            apagar935RENATEA*1-
 			totalAportesSindicales*1;
 		$('#Asiento0Movimiento'+orden+'Haber').val(sueldospersonal);
 		//Falta restar APORTES DE Sindicatos
@@ -319,7 +327,8 @@ function papelesDeTrabajo(periodo,impcli){
             if(apagarItem.length>0){
                 apagar = apagarItem.val();
             }
-			if($('#Eventosimpuesto'+i+'Id').val()==0){//El Evento Impuesto no a sido creado previamente entonces vamos a guardar el monto que calculamos
+			if($('#Eventosimpuesto'+i+'Id').val()==0){
+				//El Evento Impuesto no a sido creado previamente entonces vamos a guardar el monto que calculamos
 				$('#Eventosimpuesto'+i+'Montovto').val(apagar);
 			}
 		};

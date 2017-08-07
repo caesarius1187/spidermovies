@@ -26,8 +26,8 @@ class VentasController extends AppController {
 	);
 	public $alicuotascodigoreverse = [
 		'0003' =>  "0" ,
-		'0001' => "2.5",
-		'0002' => "5",
+		'0009' => "2.5",
+		'0008' => "5",
 		'0004' => "10.5",
 		'0005' => "21" ,
 		'0006' => "27" ,
@@ -1285,7 +1285,25 @@ class VentasController extends AppController {
 			);
 
 			$ventas = $this->Venta->find('all',array(
-				'fields' => array('SUM(Venta.total) AS total','SUBSTRING(Venta.periodo,4,7) as anio','SUBSTRING(Venta.periodo,1,2) as mes','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Venta.actividadcliente_id'),
+				'fields' => array(
+                    'SUM(Venta.total) AS total',
+                    'SUM(Venta.neto) AS neto',
+                    'SUM(Venta.iva) AS iva',
+                    'SUM(Venta.ivapercep) AS ivapercep',
+                    'SUM(Venta.iibbpercep) AS iibbpercep',
+                    'SUM(Venta.actvspercep) AS actvspercep',
+                    'SUM(Venta.impinternos) AS impinternos',
+                    'SUM(Venta.nogravados) AS nogravados',
+                    'SUM(Venta.excentos) AS excentos',
+                    'SUM(Venta.exentosactividadeseconomicas) AS exentosactividadeseconomicas',
+                    'SUM(Venta.exentosactividadesvarias) AS exentosactividadesvarias',
+                    'SUM(Venta.comercioexterior) AS comercioexterior',
+                    'SUBSTRING(Venta.periodo,4,7) as anio',
+                    'SUBSTRING(Venta.periodo,1,2) as mes',
+                    'Venta.periodo',
+                    'Venta.comprobante_id',
+                    'Comprobante.tipodebitoasociado',
+                    'Venta.actividadcliente_id'),
 				'contain'=>array(
 					'Comprobante',
 					'Actividadcliente',
@@ -1303,6 +1321,15 @@ class VentasController extends AppController {
 				)
 			));
 			$this->set(compact('ventas'));
+			$cliente = $this->Cliente->find('first',array(
+					'contain' =>[],
+					'conditions' => array(
+						'Cliente.id' => $this->request->data['ventas']['cliente_id'] ,
+					),
+				)
+			);
+			$this->set(compact('cliente'));
+
 			$mostrarInforme=true;
 		}
 		$conditionsCli = array(
