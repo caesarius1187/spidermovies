@@ -295,8 +295,8 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 				</thead>
 				<tbody>
 				<?php
-				$topOrden=1;
-				$topCategoria=0;
+				$topOrden=0;
+				$topCategoria=-1;
 				foreach ($categoriamonotributos as $c => $categoriamonotributo) {
 					$colorTDIngBrutos = "white";
 
@@ -344,19 +344,26 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 							<?php echo $categoriamonotributo['Categoriamonotributo']['alquileranualmaximo']; ?>
 						</td>
 					</tr>
-				<?php } ?>
-				<?php
-				echo $this->Form->input('topOrden',array('value'=>$topOrden,
-					'type'=>'hidden'
-				));
+				<?php }
+
 				echo $this->Form->input('mesParaProximaRecategorizacion',[
 					'value'=>$mesParaProximaRecategorizacion,
 					'type'=>'hidden'
 				]);
+                if($topCategoria == count($categoriamonotributos)-1){
+                    $lastCategoriReach = $topCategoria;
+                }else{
+                    $lastCategoriReach = $topCategoria+1;
+                }
+                Debugger::dump($lastCategoriReach);
+                Debugger::dump(count($categoriamonotributo));
 				echo $this->Form->input('topCategoria',[
-					'value'=>$categoriamonotributos[$topCategoria]['Categoriamonotributo']['categoria'],
+					'value'=>$categoriamonotributos[$lastCategoriReach]['Categoriamonotributo']['categoria'],
 					'type'=>'hidden'
 				]);
+                echo $this->Form->input('topOrden',array('value'=>$categoriamonotributos[$lastCategoriReach]['Categoriamonotributo']['orden'],
+                    'type'=>'hidden'
+                ));
 				?>
 				</tbody>
 			</table>

@@ -2,6 +2,8 @@
  * Created by caesarius on 04/01/2017.
  */
 $(document).ready(function() {
+    var nombrecliente = $('#clientenombre').val();
+    var periodo = $('#periododefault').val();
     $( "#clickExcel" ).click(function() {
         $("#tblsys").table2excel({
             // exclude CSS class
@@ -10,29 +12,6 @@ $(document).ready(function() {
             filename:$('#clientenombre').val()+"-"+ $('#periodo').val()+"-"+"IVA"
         });
     });
-    var beforePrint = function() {
-        $('#header').hide();
-        $('button').hide();
-        $('a').hide();
-
-    };
-    var afterPrint = function() {
-        $('#header').show();
-        $('button').show();
-        $('a').show();
-    };
-    if (window.matchMedia) {
-        var mediaQueryList = window.matchMedia('print');
-        mediaQueryList.addListener(function(mql) {
-            if (mql.matches) {
-                beforePrint();
-            } else {
-                afterPrint();
-            }
-        });
-    }
-    window.onbeforeprint = beforePrint;
-    window.onafterprint = afterPrint;
 
     $("#tblsys tr").each(function(){
         if($(this).hasClass('trclickeable')){
@@ -58,9 +37,140 @@ $(document).ready(function() {
                             // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
                         });
                         $('#myModal').modal('show');
-                        $("#tblListaMovimientos").DataTable();
+                        $("#tblListaMovimientos").DataTable( {
+                            dom: 'Bfrtip',
+                            lengthMenu: [
+                                [ 10, 25, 50, -1 ],
+                                [ '10', '25', '50', 'todas' ]
+                            ],
+                            buttons: [
+                                {
+                                    extend: 'pageLength',
+                                    text: 'Ver',
+                                },
+                                {
+                                    extend: 'csv',
+                                    text: 'CSV',
+                                    title: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    exportOptions: {
+                                        columns: ':visible'
+                                    }
+                                },
+                                {
+                                    extend: 'excel',
+                                    text: 'Excel',
+                                    title: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    exportOptions: {
+                                        columns: ':visible'
+                                    }
+                                },
+                                {
+                                    extend: 'pdf',
+                                    text: 'PDF',
+                                    title: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    exportOptions: {
+                                        columns: ':visible'
+                                    },
+                                    orientation: 'landscape',
+                                    download: 'open',
+                                    message: 'Asientos-'+nombrecliente+'-'+periodo,
+
+                                },
+                                {
+                                    extend: 'copy',
+                                    text: 'Copiar',
+                                    exportOptions: {
+                                        columns: ':visible'
+                                    }
+                                },
+                                {
+                                    extend: 'print',
+                                    text: 'Imprimir',
+                                    exportOptions: {
+                                        columns: '.printable'
+                                    },
+                                    orientation: 'landscape',
+                                    footer: true,
+                                    autoPrint: true,
+                                    message: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    customize: function ( win ) {
+                                    },
+                                },
+                            ],
+                        });
                         $("#myModal #cargarAsiento").hide();
-                        $("#tblAsientos").DataTable();
+                        $("#tblAsientos").DataTable( {
+                            scrollY: '20vh',
+                            scrollCollapse: true,
+                            dom: 'Bfrtip',
+                            lengthMenu: [
+                                [ 10, 25, 50, -1 ],
+                                [ '10', '25', '50', 'todas' ]
+                            ],
+                            buttons: [
+                                {
+                                    extend: 'pageLength',
+                                    text: 'Ver',
+                                },
+                                {
+                                    extend: 'csv',
+                                    text: 'CSV',
+                                    title: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    exportOptions: {
+                                        columns: ':visible'
+                                    }
+                                },
+                                {
+                                    extend: 'excel',
+                                    text: 'Excel',
+                                    title: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    exportOptions: {
+                                        columns: ':visible'
+                                    }
+                                },
+                                {
+                                    extend: 'pdf',
+                                    text: 'PDF',
+                                    title: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    exportOptions: {
+                                        columns: ':visible'
+                                    },
+                                    orientation: 'landscape',
+                                    download: 'open',
+                                    message: 'Asientos-'+nombrecliente+'-'+periodo,
+
+                                },
+                                {
+                                    extend: 'copy',
+                                    text: 'Copiar',
+                                    exportOptions: {
+                                        columns: ':visible'
+                                    }
+                                },
+                                {
+                                    extend: 'print',
+                                    text: 'Imprimir',
+                                    exportOptions: {
+                                        columns: '.printable'
+                                    },
+                                    orientation: 'landscape',
+                                    footer: true,
+                                    autoPrint: true,
+                                    message: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    customize: function ( win ) {
+                                    },
+                                },
+                            ],
+                        });
+                        $('#tblAsientos tbody').on( 'click', 'tr', function () {
+                            if ( $(this).hasClass('selected') ) {
+                                $(this).removeClass('selected');
+                            }
+                            else {
+                                tblAsientos.$('tr.selected').removeClass('selected');
+                                $(this).addClass('selected');
+                            }
+                        } );
                         $('.my-div').css('height', window.innerHeight);
                     },
                     error:function (XMLHttpRequest, textStatus, errorThrown) {
@@ -70,7 +180,68 @@ $(document).ready(function() {
             });
         }
     });
-    var tblsys = $('#tblsys').dataTable().api();
+    var tblsys = $('#tblsys').DataTable( {
+        dom: 'Bfrtip',
+        fixedHeader: true,
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10', '25', '50', 'todas' ]
+        ],
+        buttons: [
+            {
+                extend: 'pageLength',
+                text: 'Ver',
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                title: 'SumasYSaldo-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                title: 'SumasYSaldo-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                title: 'SumasYSaldo-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                },
+                orientation: 'landscape',
+                download: 'open',
+                message: 'SumasYSaldo-'+nombrecliente+'-'+periodo,
+            },
+            {
+                extend: 'copy',
+                text: 'Copiar',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Imprimir',
+                exportOptions: {
+                    columns: 'visible'
+                },
+                orientation: 'landscape',
+                footer: true,
+                autoPrint: true,
+                message: 'SumasYSaldo-'+nombrecliente+'-'+periodo,
+                customize: function ( win ) {
+                },
+            },
+        ],
+    });
+    $('#tblsys').floatThead();
 });
 function imprimir(){
     window.print();

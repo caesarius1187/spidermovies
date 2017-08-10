@@ -150,7 +150,12 @@ class PapelesdetrabajosController extends AppController {
 		$opcionesCompra = array(
 			'fields'=>[
 				'Compra.actividadcliente_id','Compra.tipocredito','Compra.imputacion','Compra.condicioniva','Compra.tipoiva',
-                'Compra.alicuota','SUM(neto)as neto','SUM(iva)as iva','SUM(ivapercep)as ivapercep' ],
+                'Compra.alicuota',
+				'SUM(neto)as neto',
+				'SUM(exentos)as exentos',
+				'SUM(nogravados)as nogravados',
+				'SUM(iva)as iva',
+				'SUM(ivapercep)as ivapercep' ],
 			'conditions'=>array(
 				'Compra.cliente_id' => $ClienteId,
 				'Compra.periodo' => $periodo,

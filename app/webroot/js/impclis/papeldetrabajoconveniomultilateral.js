@@ -298,7 +298,10 @@ function cargarAsiento(){
 		if($('#impid').val()==174){
 			var orden = $('#cuenta318').attr('orden');
 			var totalpercepcionesbancarias = $("#totalpercepcionesbancarias").val()*1;
-			var totalpercepcionestucuman = $("#totalpercepcionestucuman").val()*1;
+			var totalpercepcionestucuman = 0;
+			if($("#totalpercepcionestucuman").length>0){
+				totalpercepcionestucuman = $("#totalpercepcionestucuman").val()*1;
+			}
 			//restarle las percepciones de tucuman
 			$('#Asiento0Movimiento'+orden+'Haber').val((totalpercepcionesbancarias-totalpercepcionestucuman).toFixed(2));
 		}

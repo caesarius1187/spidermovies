@@ -325,8 +325,6 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 						$totalesProvincia[$provinciaid]['TotalElMayor']=0;
 					}
 					$totalesProvincia[$provinciaid]['TotalBaseDeterminada'][$actividadcliente['Actividadcliente']['id']]+=$totalBaseDeterminada;
-
-
 					?>
 					</span>
 				</td>
@@ -336,7 +334,6 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 <td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
                     <?php echo number_format($minimoAMostrar, 2, ",", ".");
                     $totalesProvincia[$provinciaid]['TotalMinimo'][$actividadcliente['Actividadcliente']['id']]+=$minimoAMostrar;
-
                     ?>
                 </td>
                 <td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>">
@@ -353,16 +350,10 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 </td>
 				<?php 
 				} ?>
-<!--				<td>--><?php //
-//					$minimoAMostrar += $myimpcliprovincia['minimo'];
-//                    echo number_format($minimoAMostrar, 2, ",", ".");
-//				?><!--</td>-->
+
 				<td>
                     <span style="color:red">
 						<?php
-//                        if($minimoAMostrar>$totalPagoImpuestoLocalidad){
-//                            $totalPagoImpuestoLocalidad = $minimoAMostrar;
-//                        }
                         $totalPagoImpuestoLocalidad = $totalesProvincia[$provinciaid]['TotalElMayor'];
                         echo number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", "."); ?>
                     </span>

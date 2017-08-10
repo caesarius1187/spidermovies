@@ -1065,7 +1065,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         {
                             if ($venta['Venta']['tipodebito'] == 'Debito Fiscal')
                             {
-                                if(($venta['Venta']['nogravados']*1)>0){
+                                if(
+                                    (($venta['Venta']['nogravados']*1)>0)
+                                    ||
+                                    (($venta['Venta']['excentos']*1)>0)
+                                ){
                                     $ExentoYNoGravado = true;
                                 }
                                 $TotalExentoYNoGravado += $venta['Venta']['nogravados'];
@@ -1739,7 +1743,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <?php } ; ?>
         </div>  <!-- fin divContenedorVentas -->
         <!--COMPRAS-->
-        <div id="divContenedorCompras" style="height: 500px">
+        <div id="divContenedorCompras" style="/*height: 500px*/">
             <div style="margin-top:10px">(Coeficiente de Apropiacion <?php
                 $coeficienteapropiacion = $cliente['Impcli'][0]['coeficienteapropiacion']  ;
                 echo $coeficienteapropiacion;?> )
@@ -1774,6 +1778,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $TotalPresServ=[];
             $TotalBsUso=[];
             $TotalOtrosConceptos=[];
+            $TotalOperacionesExentasYNoGravadas=[];
             $TotalDcto814=[];
 
             $TotalComprasBienesConsFinales=inicializarArrayCompras($TotalComprasBienesConsFinales);
@@ -1793,6 +1798,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 
             $TotalOtrosConceptos=inicializarArrayCompras($TotalOtrosConceptos);
             $TotalOtrosConceptos['mostrar']=false;
+
+            $TotalOperacionesExentasYNoGravadas=inicializarArrayCompras($TotalOperacionesExentasYNoGravadas);
+            $TotalOperacionesExentasYNoGravadas['mostrar']=false;
 
             $TotalDcto814=inicializarArrayCompras($TotalDcto814);
             $TotalDcto814['mostrar']=false;
@@ -2128,6 +2136,11 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             }
                         }
                     }
+                if ((($compra[0]['exentos']*1)>0)||(($compra[0]['nogravados']*1)>0)){
+                    $TotalOperacionesExentasYNoGravadas['Neto']['total'] += $compra[0]['exentos']*$suma;
+                    $TotalOperacionesExentasYNoGravadas['Neto']['total'] += $compra[0]['nogravados']*$suma;
+                    $TotalOperacionesExentasYNoGravadas['mostrar']=true;
+                }
             }
             //en 'Otros Conceptos' tengo q acumular los DEBE de los movimientos bancarios
             //que serian los movimientos que apuntan a la cuentacliente de la cuenta
@@ -2861,7 +2874,6 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <?php
                     }
                 }
-
                 $TotalNoComputable += ($TotalDcto814['Prorateable']['total'])-($TotalDcto814['Prorateable']['total'] * $coeficienteapropiacion);
                 echo $this->Form->input('totalnocomputable',
                     [
@@ -2894,6 +2906,38 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
     <!--                <td></td>-->
     <!--                <td></td>-->
     <!--            </tr>-->
+                <?php
+                if($TotalOperacionesExentasYNoGravadas['mostrar']) {
+                ?>
+                <tr>
+                    <td colspan="7" style='background-color:#87cfeb'>
+                        > OPERACION: Exentas y No Gravadas
+                    </td>
+                </tr>
+                <tr style='background-color:#f0f0f0'>
+                    <td>Total</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><?php
+                        echo number_format($TotalOperacionesExentasYNoGravadas['Neto']['total'] , 2, ",", ".");
+                        ?></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <?php
+                }
+                ?>
+
             <!----------- Fin Credito Fiscal ---------->
             </table>
 

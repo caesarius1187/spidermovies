@@ -147,7 +147,7 @@ class ComprasController extends AppController {
 				'contain'=>array(
 					'Compra'=>array(
 						'Provedore'=>array(
-							'fields'=>array('id','nombre')
+							'fields'=>array('id','nombre','cuit')
 						),
 						'Actividadcliente'=>array(
 							'Actividade'
@@ -1017,7 +1017,8 @@ class ComprasController extends AppController {
                         ),
                     ),
                     'conditions' => array(
-                        'Conceptosrestante.periodo'=>$periodo
+                        'Conceptosrestante.periodo'=>$periodo,
+                        'Conceptosrestante.conceptostipo_id = 12'
                     )
                 ),
             ],
@@ -1053,6 +1054,36 @@ class ComprasController extends AppController {
 		$cuentascliente=$this->Cuentascliente->find('all', $optionsCuentascliente);
 		$this->set(compact('cuentascliente'));
 
+	}
+	public function exportartxtpercepcionesiva($cliid,$periodo){
+		$this->loadModel('Cliente');
+		$optionsComptras=[
+			'fields'=>['*','count(*) as cantalicuotas'],
+			'contain'=>[
+				'Comprobante',
+				'Provedore'
+			],
+			'conditions'=>[
+				'Compra.cliente_id'=>$cliid,
+				'Compra.periodo'=>$periodo,
+				'Compra.ivapercep <> 0',
+			],
+			'group'=>[
+				'Compra.comprobante_id',
+				'Compra.puntosdeventa',
+				//'Compra.alicuota',
+				'Compra.numerocomprobante',
+				'Compra.provedore_id',
+			]
+		];
+
+		$compras = $this->Compra->find('all',$optionsComptras);
+		$optionCliente=[
+			'contain'=>[],
+			'conditions'=>['Cliente.id'=>$cliid]
+		];
+		$cliente = $this->Cliente->find('first',$optionCliente);
+		$this->set(compact('compras','cliente','cliid','periodo'));
 	}
 	public function exportartxtpercepcionesiibb($cliid,$periodo){
 		$this->loadModel('Cliente');

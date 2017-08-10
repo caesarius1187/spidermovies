@@ -137,6 +137,18 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
               )
           );
           echo $this->Html->link(
+              "TXT Percepciones IVA",
+              array(
+                  'controller' => 'compras',
+                  'action' => 'exportartxtpercepcionesiva',
+                  $cliente["Cliente"]['id'],
+                  $periodo
+              ),
+              array('class' => 'buttonImpcli',
+                  'style'=> 'margin-right: 8px;width: initial;',
+              )
+          );
+          echo $this->Html->link(
               "TXT Percepciones IIBB",
               array(
                   'controller' => 'compras',
@@ -341,8 +353,9 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
               <tr>
                 <th class="printable" style="width: 95px;">Fecha</th>
                 <th class="printable" style="width: 250px;">Comprobante</th>
-                <th class="printable" style="width: 117px;">Provedor</th>
-                <th class="notPrintable" style="width: 106px;">Cond.IVA</th>
+                <th class="printable" style="width: 117px;">CUIT</th>
+                  <th class="printable" style="width: 117px;">Provedor</th>
+                  <th class="notPrintable" style="width: 106px;">Cond.IVA</th>
                 <th class="notPrintable" style="width: 131px;">Actividad</th>
                 <th class="notPrintable" style="width: 95px;">Localidad</th>
                 <th class="notPrintable" style="width: 95px;">Tipo Cred</th>
@@ -392,7 +405,16 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     $titleComprobanteCompra = $compra["Comprobante"]['nombre']."-".$compra['puntosdeventa']."-".$compra["numerocomprobante"];
                     $labelComprobanteCompra = $compra["Comprobante"]['abreviacion']."-".$compra['puntosdeventa']."-".$compra["numerocomprobante"]; ?>
                   <td class="<?php echo $tdClass?>" title="<?php echo $titleComprobanteCompra ?>"><?php echo $labelComprobanteCompra?></td><!--2-->
-                  <td class="<?php echo $tdClass?>"><?php if(isset($compra["Provedore"]["nombre"])) echo $compra["Provedore"]["nombre"]?></td><!--3-->
+                    <?php
+                    $provedornombre="";
+                    $provedorcuit="";
+                    if(isset($compra["Provedore"]["nombre"])) {
+                        $provedornombre = $compra["Provedore"]["nombre"];
+                        $provedorcuit = $compra["Provedore"]["cuit"];
+                    }
+                    ?>
+                  <td class="<?php echo $tdClass?>"  title="<?php echo $provedorcuit ?>"><?php echo $provedorcuit?></td><!--3-->
+                  <td class="<?php echo $tdClass?>"  title="<?php echo $provedornombre ?>"><?php echo $provedornombre?></td><!--3-->
                   <td class="<?php echo $tdClass?>"><?php echo $compra["condicioniva"]?></td><!--4-->
                   <td class="<?php echo $tdClass?>"><?php echo $compra["Actividadcliente"]['Actividade']['nombre']?></td><!--5-->
                   <td class="<?php echo $tdClass?>"><?php echo $compra["Localidade"]['Partido']["nombre"].'-'.$compra["Localidade"]["nombre"]?></td><!--6-->
@@ -449,6 +471,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                               $labelComprobanteCompra = "OTROS-00001-" . $movimientonumero; ?>
                               <td class="<?php echo $tdClass ?>"
                                   title="<?php echo $titleComprobanteCompra ?>"><?php echo $labelComprobanteCompra ?></td><!--2-->
+                              <td class="<?php echo $tdClass ?>"><?php echo $movimientosbancario["Cbu"]["Impcli"]['Impuesto']['cuit'] ?></td><!--3-->
                               <td class="<?php echo $tdClass ?>"><?php echo $movimientosbancario["Cbu"]["Impcli"]['Impuesto']['nombre'] ?></td><!--3-->
                               <td class="<?php echo $tdClass ?>">Responsable Inscripto</td><!--4-->
                               <td class="<?php echo $tdClass ?>"><?php echo array_values(array_values($actividades)[0])[0]; ?></td><!--5-->
@@ -517,6 +540,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                   <th ></th><!--7-->
                   <th ></th><!--8-->
                   <th ></th><!--9-->
+                  <th ></th><!--10-->
                   <th ></th><!--10-->
                   <th ></th><!--11-->
                   <th ></th><!--12-->

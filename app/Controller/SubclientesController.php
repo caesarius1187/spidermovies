@@ -128,7 +128,12 @@ class SubclientesController extends AppController {
 		} else {
 			
 		}
-		$options = array('conditions' => array('Subcliente.' . $this->Subcliente->primaryKey => $id));
+		$options = array(
+			'conditions' => array(
+				'Subcliente.' . $this->Subcliente->primaryKey => $id
+			),
+			'contain'=>[],
+		);
 		$this->request->data = $this->Subcliente->find('first', $options);
 		$clientes = $this->Subcliente->Cliente->find('list');
 		$this->set(compact('clientes'));

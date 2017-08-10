@@ -1,8 +1,11 @@
+var tblAsientos;
 $(document).ready(function() {
     $('.chosen-select').chosen({
         search_contains:true,
         include_group_label_in_selected:true
     });
+    var nombrecliente = $('#clientenombre').val();
+    var periodo = $('#periododefault').val();
     reloadInputDates();
     $("#cargarAsiento").click(function(){
         $('#myModalFormAgregarAsiento').on('show.bs.modal', function() {
@@ -14,7 +17,71 @@ $(document).ready(function() {
         $('#Asiento0MovimientoKkkCuentasclienteId_chosen').css('width','300px');
         return false;
     });
-    $("#tblAsientos").DataTable();
+    tblAsientos = $("#tblAsientos").DataTable( {
+        dom: 'Bfrtip',
+        select: true,
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10', '25', '50', 'todas' ]
+        ],
+        buttons: [
+            {
+                extend: 'pageLength',
+                text: 'Ver',
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                title: 'Asientos-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                title: 'Asientos-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                title: 'Asientos-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                },
+                orientation: 'landscape',
+                download: 'open',
+                message: 'Asientos-'+nombrecliente+'-'+periodo,
+
+            },
+            {
+                extend: 'copy',
+                text: 'Copiar',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Imprimir',
+                exportOptions: {
+                    columns: '.printable'
+                },
+                orientation: 'landscape',
+                footer: true,
+                autoPrint: true,
+                message: 'Asientos-'+nombrecliente+'-'+periodo,
+                customize: function ( win ) {
+                },
+            },
+        ],
+    });
+
+   
+
     $("#cargarMovimiento").click(function(){
         cargarMovimiento();
         return false;
@@ -89,6 +156,9 @@ function editarMovimientos(asientoID){
                 //Si no existe voy a buscar el div "divEditarAsiento" que deberia estar en asientos/index
                 $('#divEditarAsiento').html(mirespuesta);
             }
+
+            $('.selectedAsiento').removeClass('selectedAsiento');
+            $('#rowasiento'+asientoID).addClass('selectedAsiento');
 
             $('.chosen-select').chosen({search_contains:true});
             $("#FormEditaMovimientoCuentascliente_chosen").css('width','300px');

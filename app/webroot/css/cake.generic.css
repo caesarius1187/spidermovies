@@ -2235,6 +2235,10 @@ transition: all 0.4s ease-in-out;
 	height: 25px;
 	width: 300px;
 }
+.selectedAsiento {
+	background-color: #2e6da4;
+	color: white;
+}
 .formTareaCarga input[type=checkbox] {
 	clear: left;
 	float: left;
@@ -2288,9 +2292,9 @@ transition: all 0.4s ease-in-out;
 .popupNews{
 
     left: 50%;
-  
+
     position: fixed;
-   
+
     top: 40%;
     visibility: hidden;
     z-index: 109;
@@ -2317,7 +2321,7 @@ transition: all 0.4s ease-in-out;
 }
 
 .tooltip input {
-    /*width: 190px;*/
+    width: auto;
 }
 
 .tooltip:hover .tooltiptext {
@@ -2341,22 +2345,22 @@ transition: all 0.4s ease-in-out;
 #bodyTablaVentas tr td{
 	/*max-width: 53px;*/
 	padding: 0px;
-	white-space: nowrap; 
-	text-overflow:ellipsis; 
-	overflow: hidden; 
+	white-space: nowrap;
+	text-overflow:ellipsis;
+	overflow: hidden;
 	max-width:1px;"
 }
 #bodyTablaVentas tr .editTD{
 	/*max-width: 53px;*/
 	padding: 0px;
-	white-space: nowrap; 
-	text-overflow:ellipsis; 
+	white-space: nowrap;
+	text-overflow:ellipsis;
 	max-width:1px;
     overflow: visible;
 }
 
 #bodyTablaVentas tr td table tr td{
-	max-width: 80px;	
+	max-width: 80px;
 	padding: 0px;
 }
 .tableVentaEditForm{
@@ -2427,13 +2431,13 @@ transition: all 0.4s ease-in-out;
 }
 #bodyTablaCompras tr td{
 	padding: 0px;
-	white-space: nowrap; 
-	text-overflow:ellipsis; 
-	overflow: hidden; 
+	white-space: nowrap;
+	text-overflow:ellipsis;
+	overflow: hidden;
 	max-width:1px;"
 }
 #bodyTablaCompras tr td table tr td{
-	max-width: 80px;	
+	max-width: 80px;
 	padding: 0px;
 }
 .tableCompraEditForm{
@@ -2733,7 +2737,7 @@ transition: all 0.4s ease-in-out;
 }
 
 .a_cli{
-	margin: 5px 10px; 
+	margin: 5px 10px;
 }
 
 .lbl_cli{
@@ -2756,7 +2760,7 @@ transition: all 0.4s ease-in-out;
 
 .tbl_planpago td{
 	/*border: 1px solid blue;	*/
-	
+
 }
 
 .tbl_planpago_pagar td{
@@ -2826,7 +2830,7 @@ div.index_pdt{
 	/*padding:10px 1%;*/
 	/*background-color: #FFFFFF;*/
 	/*margin: 3px 1% 0px;*/
-}	
+}
 
 /*CM*/
 

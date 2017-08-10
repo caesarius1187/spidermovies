@@ -1,31 +1,6 @@
 var tblTablaVentas;
 var tblTablaCompras;
 $(document).ready(function() {
-    var beforePrint = function() {
-        $('#header').hide();
-        $('#Formhead').hide();
-        $('#headerCliente').hide();
-        $('#index').css('border-color','#FFF');
-    };
-    var afterPrint = function() {
-        //$('#index').css('font-size','10px');
-        $('#header').show();
-        $('#Formhead').show();
-        $('#headerCliente').show();
-    };
-    if (window.matchMedia) {
-        var mediaQueryList = window.matchMedia('print');
-        mediaQueryList.addListener(function(mql) {
-            if (mql.matches) {
-                beforePrint();
-            } else {
-                afterPrint();
-            }
-        });
-    }
-    window.onbeforeprint = beforePrint;
-    window.onafterprint = afterPrint;
-
     allcomprobantes =  JSON.parse($('#jsonallcomprobantes').val());
     var nombrecliente = $('#clientenombre').val();
     var periodo = $('#periododefault').val();
@@ -55,123 +30,129 @@ $(document).ready(function() {
                         }
                     },
                     {
-                        text: 'Conmutar Provedor',
+                        text: 'Conmutar CUIT',
                         action: function ( e, dt, node, config ) {
                             dt.column( 2 ).visible( ! dt.column( 2 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Cond. IVA',
+                        text: 'Conmutar Provedor',
                         action: function ( e, dt, node, config ) {
                             dt.column( 3 ).visible( ! dt.column( 3 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Actividad',
+                        text: 'Conmutar Cond. IVA',
                         action: function ( e, dt, node, config ) {
                             dt.column( 4 ).visible( ! dt.column( 4 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Localidad',
+                        text: 'Conmutar Actividad',
                         action: function ( e, dt, node, config ) {
                             dt.column( 5 ).visible( ! dt.column( 5 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Tipo Credito',
+                        text: 'Conmutar Localidad',
                         action: function ( e, dt, node, config ) {
                             dt.column( 6 ).visible( ! dt.column( 6 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Tipo Gasto',
+                        text: 'Conmutar Tipo Credito',
                         action: function ( e, dt, node, config ) {
                             dt.column( 7 ).visible( ! dt.column( 7 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Tipo IVA',
+                        text: 'Conmutar Tipo Gasto',
                         action: function ( e, dt, node, config ) {
                             dt.column( 8 ).visible( ! dt.column( 8 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Imputacion',
+                        text: 'Conmutar Tipo IVA',
                         action: function ( e, dt, node, config ) {
                             dt.column( 9 ).visible( ! dt.column( 9 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Alicuota',
+                        text: 'Conmutar Imputacion',
                         action: function ( e, dt, node, config ) {
                             dt.column( 10 ).visible( ! dt.column( 10 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Neto',
+                        text: 'Conmutar Alicuota',
                         action: function ( e, dt, node, config ) {
                             dt.column( 11 ).visible( ! dt.column( 11 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar IVA',
+                        text: 'Conmutar Neto',
                         action: function ( e, dt, node, config ) {
                             dt.column( 12 ).visible( ! dt.column( 12 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar IVA Percep',
+                        text: 'Conmutar IVA',
                         action: function ( e, dt, node, config ) {
                             dt.column( 13 ).visible( ! dt.column( 13 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar IIBB Percep',
+                        text: 'Conmutar IVA Percep',
                         action: function ( e, dt, node, config ) {
                             dt.column( 14 ).visible( ! dt.column( 14 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Act.Vs.Percep',
+                        text: 'Conmutar IIBB Percep',
                         action: function ( e, dt, node, config ) {
                             dt.column( 15 ).visible( ! dt.column( 15 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Imp. Interno',
+                        text: 'Conmutar Act.Vs.Percep',
                         action: function ( e, dt, node, config ) {
                             dt.column( 16 ).visible( ! dt.column( 16 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Imp. Comb.',
+                        text: 'Conmutar Imp. Interno',
                         action: function ( e, dt, node, config ) {
                             dt.column( 17 ).visible( ! dt.column( 17 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar No Gravados',
+                        text: 'Conmutar Imp. Comb.',
                         action: function ( e, dt, node, config ) {
                             dt.column( 18 ).visible( ! dt.column( 18 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Exentos',
+                        text: 'Conmutar No Gravados',
                         action: function ( e, dt, node, config ) {
                             dt.column( 19 ).visible( ! dt.column( 19 ).visible() );
                         }
                     },
                     {
+                        text: 'Conmutar Exentos',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 20 ).visible( ! dt.column( 20 ).visible() );
+                        }
+                    },
+                    {
                         text: 'Conmutar Total',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 21 ).visible( ! dt.column( 20 ).visible() );
+                            dt.column( 21 ).visible( ! dt.column( 21 ).visible() );
                         }
                     },
                     {
                         text: 'Conmutar KW',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 20 ).visible( ! dt.column( 21 ).visible() );
+                            dt.column( 22 ).visible( ! dt.column( 22 ).visible() );
                         }
                     },
                     {
@@ -435,8 +416,7 @@ $(document).ready(function() {
                     callAlertPopint(respuesta.respuesta);
                     if(respuesta.compra.Compra!=null){
                         //Incrementa campo de Factura en 1
-                        $( "#CompraNumerocomprobante" ).val($( "#CompraNumerocomprobante" ).val()*1 + 1);
-
+                        $( "#CompraNumerocomprobante" ).val(pad ($( "#CompraNumerocomprobante" ).val()*1 + 1, 8));
                         var positivo = 1;
                         if(respuesta.compra.Compra.tipocredito=='Restitucion credito fiscal'){
                             positivo= -1;
@@ -449,6 +429,7 @@ $(document).ready(function() {
                             [
                                 respuesta.compra.Compra.fecha,
                                 respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.compra.Compra.puntosdeventa+"-"+respuesta.compra.Compra.numerocomprobante,
+                                respuesta.provedore.Provedore.cuit,
                                 respuesta.provedore.Provedore.nombre,
                                 respuesta.compra.Compra.condicioniva,
                                 respuesta.actividadcliente.Actividade.nombre,
@@ -854,7 +835,7 @@ $(document).ready(function() {
                        var respuesta = JSON.parse(data);
                        // callAlertPopint(respuesta.respuesta);
                       //Incrementa campo de Factura en 1
-                      $( "#CompraNumerocomprobante" ).val($( "#CompraNumerocomprobante" ).val()*1 + 1);
+                      // $( "#CompraNumerocomprobante" ).val($( "#CompraNumerocomprobante" ).val()*1 + 1);
 
                       var positivo = 1;
 
@@ -869,6 +850,7 @@ $(document).ready(function() {
                           [
                               respuesta.compra.Compra.fecha,
                               respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.compra.Compra.puntosdeventa+"-"+respuesta.compra.Compra.numerocomprobante,
+                              respuesta.provedore.Provedore.cuit,
                               respuesta.provedore.Provedore.nombre,
                               respuesta.compra.Compra.condicioniva,
                               respuesta.actividadcliente.Actividade.nombre,

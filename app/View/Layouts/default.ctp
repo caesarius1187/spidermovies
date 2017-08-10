@@ -11,6 +11,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 <!DOCTYPE html>
 <html>
 <head>
+	<meta name="theme-color" content="#1e88e5">
 	<?php echo $this->Html->charset(); ?>
 	<title>
 		<?php echo $cakeDescription ?>:

@@ -1,4 +1,5 @@
 <?php
+echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
 echo $this->Html->script('jquery-ui',array('inline'=>false));
 echo $this->Html->css('bootstrapmodal');
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
@@ -16,6 +17,18 @@ echo $this->Html->script('jszip.min.js',array('inline'=>false));
 echo $this->Html->script('pdfmake.min.js',array('inline'=>false));
 echo $this->Html->script('vfs_fonts.js',array('inline'=>false));
 echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->
+<!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css"/>-->
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.1.2/css/buttons.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/select/1.1.2/css/select.dataTables.min.css"/>
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.0.2/css/responsive.dataTables.min.css"/>
+
+<!--<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>-->
+<!--<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>-->
+
+<script src="https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
 <?php
 /**
  * Created by PhpStorm.
@@ -244,7 +257,7 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
             $mesAMostrar = date('Y/m/d', strtotime($fechaInicioConsulta));
             while($mesAMostrar<$fechaFinConsulta){
                 $periodoMesAMostrar = date('m-Y', strtotime($mesAMostrar));
-                echo "<td >".$periodoMesAMostrar."</td>";
+                echo "<td >"./*$periodoMesAMostrar.*/"</td>";
                 $mesAMostrar = date('Y/m/d', strtotime($mesAMostrar." +1 months"));
             }
             ?>

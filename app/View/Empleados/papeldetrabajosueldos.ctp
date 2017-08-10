@@ -152,7 +152,6 @@ if(count($empleado)==0){
                             //aca buscamos el valor que ya guardardamos para este concepto
                             //y mostramos un formulario para modificarlo
                             $valor = 0;
-                            $valor = 0;
                             $porcentaje = 0;
                             $valorreciboid = 0;
                             $aplicafuncion = true;
@@ -305,17 +304,22 @@ if(count($empleado)==0){
 
                                     break;
                                 case 152:/*Mejor Remunerativos*/
-                                    /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
-                                    tiene un Acuerdos Remunerativos cargado*/
-                                    $valor = $mayorRemunerativo;
+                                    //si ya guardamos un valo no reemplazemos por el nuevo, mostremos el guardado
+                                    if($valorreciboid==0){
+                                        $valor = $mayorRemunerativo;
+                                    }
                                     break;
                                 case 153:/*Mejor NO Remunerativos*/
                                     /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
                                     tiene un Acuerdos Remunerativos cargado*/
-                                    $valor = $mayorNORemunerativo;
+                                    if($valorreciboid==0) {
+                                        $valor = $mayorNORemunerativo;
+                                    }
                                     break;
                                 case 161:/*Basico Categoria Minima*//*Basico Adm 2da*/
-                                    $valor = $basicoMinimoCargo;
+                                    if($valorreciboid==0) {
+                                        $valor = $basicoMinimoCargo;
+                                    }
                                     break;
                                 case 162:/*Almuerzo o Refrigerio*/
                                     /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo

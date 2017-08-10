@@ -324,6 +324,7 @@ class ImpclisController extends AppController {
 		$this->loadModel('Cuenta');
 		$this->loadModel('Eventosimpuesto');
 		$this->loadModel('Cliente');
+		$this->loadModel('Cuentascliente');
 		$this->set('periodo',$periodo);
 		$this->set('impcliid',$impcliid);
         $cuentasdeActEconomicas = $this->Cuenta->cuentasdeActEconomicas;
@@ -468,7 +469,28 @@ class ImpclisController extends AppController {
 
 		$impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
 		$this->set(compact('impuestosactivos'));
-	}
+        $cuentascliente=[];
+        if($impcli['Impcli']['impuesto_id']=='21'){
+            //si es actividades economicas tengo que envias los movimientos bancarios que esten en la cuenta
+            //317   110404298   I.I.B.B. - Percepciones Bancarias
+            //por que son las recuadaciones bancarias (para q no las tengan q cargar en pagos a cuenta)
+            $optionsCuentascliente=[
+                'contain'=>[
+                    'Movimientosbancario'=>[
+                        'conditions'=>[
+                            'Movimientosbancario.periodo'=>$periodo
+                        ]
+                    ]
+                ],
+                'conditions'=>[
+                    'Cuentascliente.cuenta_id = 317',
+                    'Cuentascliente.cliente_id'=>$impcli['Impcli']['cliente_id'],
+                ]
+            ];
+            $cuentascliente=$this->Cuentascliente->find('all', $optionsCuentascliente);
+        }
+        $this->set(compact('cuentascliente'));
+    }
 	public function papeldetrabajoactividadesvarias($impcliid=null,$periodo=null) {
 		ini_set('memory_limit', '2560M');
 		$this->loadModel('Actividadcliente');
