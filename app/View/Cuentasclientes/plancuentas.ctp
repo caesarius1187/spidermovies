@@ -83,7 +83,6 @@
 <?php
 }else{?>
 <div style="" class="index">
-
 	<div style='float:left; width:70%'> 
 		Cliente: <?php echo $cliente['Cliente']['nombre']; ?>
 	</div>

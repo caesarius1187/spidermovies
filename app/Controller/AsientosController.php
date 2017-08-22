@@ -504,8 +504,12 @@ class AsientosController extends AppController {
             ],
         ];
         $ventasgravadas = $this->Venta->find('all',$conditionsVentaGravada);
+
+        $impuestosactivos = $this->Cliente->impuestosActivados($cliid,$periodo);
+
         $this->set(compact('cliid','cliente','periodo','pagaCategoria','asientoestandares','cuentasclientes'
-            ,'asientoyacargado','ventasgravadas'));
+            ,'asientoyacargado','ventasgravadas','impuestosactivos'));
+        
         if($this->request->is('ajax')){
             $this->layout = 'ajax';
         }

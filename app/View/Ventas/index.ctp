@@ -55,9 +55,9 @@
         <tr id="rowventa<?php echo $venta['Venta']["id"]?>">
             <td class="<?php echo $tdClass ?> printable"><?php echo date('d',strtotime($venta['Venta']["fecha"]))?></td><!--1-->
             <td class="<?php echo $tdClass ?> printable" title="<?php echo $titleComprobante; ?>" > <?php echo $labelComprobante; ?> </td><!--2-->
-            <td class="<?php echo $tdClass ?> printable"><?php echo $venta["Subcliente"]["cuit"]?></td><!--3-->
+            <td class="<?php echo $tdClass ?> printable" title="<?php echo $venta["Subcliente"]["cuit"]; ?>"><?php echo $venta["Subcliente"]["cuit"]?></td><!--3-->
             <td class="<?php echo $tdClass ?> printable" title="<?php echo $venta["Subcliente"]["nombre"]?>"><?php echo $venta["Subcliente"]["nombre"]?></td><!--4-->
-            <td class="<?php echo $tdClass ?> printable"><?php
+            <td class="<?php echo $tdClass ?> notPrintable"><?php
                 switch ($venta['Venta']["condicioniva"]) {
                     case 'monotributista':
                         echo 'Monot.';
@@ -77,7 +77,7 @@
             <td class="<?php echo $tdClass?> notPrintable" title="<?php echo $venta["Actividade"]["nombre"]?>">
                 <?php echo $venta["Actividade"]["nombre"]?>
             </td><!--6-->
-            <td class="<?php echo $tdClass?> printable" title="<?php echo $venta["Localidade"]["nombre"]?>">
+            <td class="<?php echo $tdClass?> notPrintable" title="<?php echo $venta["Localidade"]["nombre"]?>">
                 <?php echo $venta['Partido']["nombre"].'-'.$venta["Localidade"]["nombre"]?>
             </td><!--7-->
             <?php
@@ -95,7 +95,7 @@
                 $venta['Venta']["total"] = $venta['Venta']["total"]*-1;
             }
             if(!$cliente['Cliente']['tieneMonotributo']){?>
-                <td class="<?php echo $tdClass?> printable"><?php echo substr($venta['Venta']["tipodebito"],0,10)?></td><!--8-->
+                <td class="<?php echo $tdClass?> notPrintable"><?php echo substr($venta['Venta']["tipodebito"],0,10)?></td><!--8-->
                 <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["alicuota"], 2, ",", ".")?>%</td><!--9-->
                 <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["neto"], 2, ",", ".")?></td><!--10-->
                 <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["iva"], 2, ",", ".")?></td><!--11-->
@@ -119,8 +119,8 @@
                 <?php
             }
             if(!$cliente['Cliente']['tieneMonotributo']){?>
-                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["nogravados"], 2, ",", ".")?></td><!--16-->
-                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["excentos"], 2, ",", ".")?></td><!--17-->
+                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["nogravados"], 2, ",", ".")?></td><!--16-->
+                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["excentos"], 2, ",", ".")?></td><!--17-->
             <?php } ?>
             <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["exentosactividadeseconomicas"], 2, ",", ".")?></td><!--18-->
             <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["exentosactividadesvarias"], 2, ",", ".")?></td><!--19-->

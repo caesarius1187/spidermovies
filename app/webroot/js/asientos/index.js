@@ -1,8 +1,11 @@
+var tblAsientos;
 $(document).ready(function() {
     $('.chosen-select').chosen({
         search_contains:true,
         include_group_label_in_selected:true
     });
+    var nombrecliente = $('#clientenombre').val();
+    var periodo = $('#periododefault').val();
     reloadInputDates();
     $("#cargarAsiento").click(function(){
         $('#myModalFormAgregarAsiento').on('show.bs.modal', function() {
@@ -14,7 +17,71 @@ $(document).ready(function() {
         $('#Asiento0MovimientoKkkCuentasclienteId_chosen').css('width','300px');
         return false;
     });
-    $("#tblAsientos").DataTable();
+    tblAsientos = $("#tblAsientos").DataTable( {
+        dom: 'Bfrtip',
+        select: true,
+        lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10', '25', '50', 'todas' ]
+        ],
+        buttons: [
+            {
+                extend: 'pageLength',
+                text: 'Ver',
+            },
+            {
+                extend: 'csv',
+                text: 'CSV',
+                title: 'Asientos-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'excel',
+                text: 'Excel',
+                title: 'Asientos-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'pdf',
+                text: 'PDF',
+                title: 'Asientos-'+nombrecliente+'-'+periodo,
+                exportOptions: {
+                    columns: ':visible'
+                },
+                orientation: 'landscape',
+                download: 'open',
+                message: 'Asientos-'+nombrecliente+'-'+periodo,
+
+            },
+            {
+                extend: 'copy',
+                text: 'Copiar',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Imprimir',
+                exportOptions: {
+                    columns: '.printable'
+                },
+                orientation: 'landscape',
+                footer: true,
+                autoPrint: true,
+                message: 'Asientos-'+nombrecliente+'-'+periodo,
+                customize: function ( win ) {
+                },
+            },
+        ],
+    });
+
+   
+
     $("#cargarMovimiento").click(function(){
         cargarMovimiento();
         return false;
@@ -89,6 +156,9 @@ function editarMovimientos(asientoID){
                 //Si no existe voy a buscar el div "divEditarAsiento" que deberia estar en asientos/index
                 $('#divEditarAsiento').html(mirespuesta);
             }
+
+            $('.selectedAsiento').removeClass('selectedAsiento');
+            $('#rowasiento'+asientoID).addClass('selectedAsiento');
 
             $('.chosen-select').chosen({search_contains:true});
             $("#FormEditaMovimientoCuentascliente_chosen").css('width','300px');
@@ -233,13 +303,16 @@ function cargarMovimiento(){
                         .val(debe)
                         .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteDebe')
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][debe]')
+                        .attr('type','number')
+                        .attr('step','any')
                         .addClass("inputDebe movimientoConValor")
-
                 ).append(
                     $("<input>")
                         .val(haber)
                         .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteHaber')
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][haber]')
+                        .attr('type','number')
+                        .attr('step','any')
                         .addClass("inputHaber movimientoConValor")
                 ).append(
                     $("<input>")
@@ -255,7 +328,8 @@ function cargarMovimiento(){
                         .attr('onclick','deleteRowMovimiento('+movimientonumero+')')
                 )
             )
-    )
+    );
+
     $("#nextmovimiento").val(movimientonumero*1);
     $("#Asiento0MovimientoKkkCuentasclienteId option:selected").remove();
     $("#Asiento0MovimientoKkkCuentasclienteId").trigger("chosen:updated");
@@ -371,4 +445,43 @@ function cargarMovimientoEdit(){
         $(this).trigger("change");
         return;
     });
+}
+function addTolblTotalDebeAsieto(event) {
+    var debesubtotal = 0;
+    $(".inputDebe").each(function () {
+        debesubtotal = debesubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+
+    });
+    $("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+    showIconDebeHaber()
+}
+function addTolblTotalhaberAsieto(event) {
+    //        $("#lblTotalAFavor").val(0) ;
+    var habersubtotal = 0;
+    $(".inputHaber").each(function () {
+        habersubtotal = habersubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+    });
+    $("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+    showIconDebeHaber()
+}
+function showIconDebeHaber(){
+    if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
+        $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+    }else{
+        $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+    }
 }

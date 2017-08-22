@@ -165,7 +165,7 @@ $(document).ready(function() {
                             },
                             orientation: 'landscape',
                             footer: true,
-                            autoPrint: false,
+                            autoPrint: true,
                             message: nombrecliente+"</br>"+
                             'Domicilio: '+$("#domiciliocliente").val()+" - "+
                             ' Inicio actividad: '+$("#fchcumpleanosconstitucion").val()+
@@ -173,11 +173,7 @@ $(document).ready(function() {
                             '---------------------------------------Libro N° '+/*$("#numerolibro").val()+*/"</br>"+
                             'Resp: '+$("#condicioniva").val()+' Registro IVA VENTAS',
                             customize: function ( win ) {
-
                             },
-                            // action: function ( e, dt, node, config ) {
-                            //     // dt.column( 5 ).visible( false );
-                            // }
                         },
                     ],
                 } );

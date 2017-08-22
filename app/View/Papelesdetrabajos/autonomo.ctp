@@ -58,7 +58,9 @@ echo $this->Form->input('impclinombre',array('value'=>$impcli['Impuesto']['nombr
             ?>
 		</table>
 	</div>
-    <?php echo $this->Form->input('apagarAutonomo',array('value' => $montoAPagar,'type'=>'hidden' )); ?>
+    <?php echo $this->Form->input('apagarAutonomo',array(
+        'value' => $montoAPagar,
+        'type'=>'hidden' )); ?>
 
     <div id="divContenedorContabilidad" style="margin-top:10px;width: 100%">
         <div class="index_pdt" id="AsientoAutomaticoDevengamientoAutonomo">

@@ -26,8 +26,8 @@ class VentasController extends AppController {
 	);
 	public $alicuotascodigoreverse = [
 		'0003' =>  "0" ,
-		'0001' => "2.5",
-		'0002' => "5",
+		'0009' => "2.5",
+		'0008' => "5",
 		'0004' => "10.5",
 		'0005' => "21" ,
 		'0006' => "27" ,
@@ -1160,8 +1160,30 @@ class VentasController extends AppController {
 		$this->set('cliente',$cliente);
 
 		//en esta seccion vamos a listar las ventas por punto de venta y por tipo de comprobante
-		$timePeriodo = strtotime("01-".$periodo ." -1 months");
-		$periodoPrevio = date("m-Y",$timePeriodo);
+		$timePeriodo1 = strtotime("01-".$periodo ." -1 months");
+		$timePeriodo2 = strtotime("01-".$periodo ." -2 months");
+		$timePeriodo3 = strtotime("01-".$periodo ." -3 months");
+		$timePeriodo4 = strtotime("01-".$periodo ." -4 months");
+		$timePeriodo5 = strtotime("01-".$periodo ." -5 months");
+		$timePeriodo6 = strtotime("01-".$periodo ." -6 months");
+		$timePeriodo7 = strtotime("01-".$periodo ." -7 months");
+		$timePeriodo8 = strtotime("01-".$periodo ." -8 months");
+		$timePeriodo9 = strtotime("01-".$periodo ." -9 months");
+		$timePeriodo10 = strtotime("01-".$periodo ." -10 months");
+		$timePeriodo11 = strtotime("01-".$periodo ." -11 months");
+		$timePeriodo12 = strtotime("01-".$periodo ." -12 months");
+		$periodoPrevio1 = date("m-Y",$timePeriodo1);
+		$periodoPrevio2 = date("m-Y",$timePeriodo2);
+		$periodoPrevio3 = date("m-Y",$timePeriodo3);
+		$periodoPrevio4 = date("m-Y",$timePeriodo4);
+		$periodoPrevio5 = date("m-Y",$timePeriodo5);
+		$periodoPrevio6 = date("m-Y",$timePeriodo6);
+		$periodoPrevio7 = date("m-Y",$timePeriodo7);
+		$periodoPrevio8 = date("m-Y",$timePeriodo8);
+		$periodoPrevio9 = date("m-Y",$timePeriodo9);
+		$periodoPrevio10 = date("m-Y",$timePeriodo10);
+		$periodoPrevio11 = date("m-Y",$timePeriodo11);
+		$periodoPrevio12 = date("m-Y",$timePeriodo12);
 		$optionsventas=array(
 			'contain'=>array(
 				'Comprobante',
@@ -1172,7 +1194,20 @@ class VentasController extends AppController {
 			),
 			'group'=>array('Venta.puntosdeventa_id','Venta.comprobante_id'),
 			'conditions'=>array(
-				'Venta.periodo'=>$periodoPrevio,
+                'Venta.periodo'=>[
+                    $periodoPrevio1,
+                    $periodoPrevio2,
+                    $periodoPrevio3,
+                    $periodoPrevio4,
+                    $periodoPrevio5,
+                    $periodoPrevio6,
+                    $periodoPrevio7,
+                    $periodoPrevio8,
+                    $periodoPrevio9,
+                    $periodoPrevio10,
+                    $periodoPrevio11,
+                    $periodoPrevio12,
+                ],
 				'Venta.cliente_id'=>$cliid
 			)
 		);
@@ -1285,7 +1320,25 @@ class VentasController extends AppController {
 			);
 
 			$ventas = $this->Venta->find('all',array(
-				'fields' => array('SUM(Venta.total) AS total','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Venta.actividadcliente_id'),
+				'fields' => array(
+                    'SUM(Venta.total) AS total',
+                    'SUM(Venta.neto) AS neto',
+                    'SUM(Venta.iva) AS iva',
+                    'SUM(Venta.ivapercep) AS ivapercep',
+                    'SUM(Venta.iibbpercep) AS iibbpercep',
+                    'SUM(Venta.actvspercep) AS actvspercep',
+                    'SUM(Venta.impinternos) AS impinternos',
+                    'SUM(Venta.nogravados) AS nogravados',
+                    'SUM(Venta.excentos) AS excentos',
+                    'SUM(Venta.exentosactividadeseconomicas) AS exentosactividadeseconomicas',
+                    'SUM(Venta.exentosactividadesvarias) AS exentosactividadesvarias',
+                    'SUM(Venta.comercioexterior) AS comercioexterior',
+                    'SUBSTRING(Venta.periodo,4,7) as anio',
+                    'SUBSTRING(Venta.periodo,1,2) as mes',
+                    'Venta.periodo',
+                    'Venta.comprobante_id',
+                    'Comprobante.tipodebitoasociado',
+                    'Venta.actividadcliente_id'),
 				'contain'=>array(
 					'Comprobante',
 					'Actividadcliente',
@@ -1297,11 +1350,22 @@ class VentasController extends AppController {
 				),
 				'group'=>array(
 					'Venta.periodo','Venta.comprobante_id','Venta.actividadcliente_id'
+				),
+				'order'=>array(
+					'SUBSTRING(Venta.periodo,4,7)','SUBSTRING(Venta.periodo,1,2)'
 				)
 			));
 			$this->set(compact('ventas'));
-			$mostrarInforme=true;
+			$cliente = $this->Cliente->find('first',array(
+					'contain' =>[],
+					'conditions' => array(
+						'Cliente.id' => $this->request->data['ventas']['cliente_id'] ,
+					),
+				)
+			);
+			$this->set(compact('cliente'));
 
+			$mostrarInforme=true;
 		}
 		$conditionsCli = array(
 			'Grupocliente',

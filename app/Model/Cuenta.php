@@ -71,7 +71,7 @@ class Cuenta extends AppModel {
 //    110405102	Act. Vs. - Percepciones 		43,73
 //    210403101	Actividades Varias a Pagar		534,83
 
-    public $cuentasdeActEconomicas = ['2577','319','313','316','1492','3378','317'];
+    public $cuentasdeActEconomicas = ['2577','319','313','316','1492','3378','317','318','3379'];
     //506210001	Ingresos Brutos Capital Federal	0,00	0
     //110404301	I.I.B.B. - Saldo a Favor Capital Federal	0,00	0
     //110404101	I.I.B.B. - Retenciones Capital Federal	0	0,00
@@ -104,18 +104,62 @@ class Cuenta extends AppModel {
 
 	//Cuentas de Contribuciones de sindicatos en PASIVO
 	public $cuentasdeSUSSContribucionesSindicatosPASIVO = [
-		'1424','1425','1426','1427','1428','1429','1430','1431'
-		,'1432','1433','1434','1435','1436','1437','1438','1439'
-		,'1440','1441','1442','1443'
+		'1424',
+		'1425',
+		'1426',
+		'1427',
+		'1428',
+		'1429',
+		'1430',
+		'1431',
+		'1432',
+		'1433',
+		'1434',
+		'1435',
+		'1436',
+		'1437',
+		'1438',
+		'1439',
+		'1440',
+		'1441',
+		'1442',
+		'1443',
+		'3472',
+		'3484',
+		'3485',
+		'3437',
 	];
 
 	//Cuentas de Contribuciones de sindicatos en PERDIDA
 
     public $cuentasdeSUSSContribucionesSindicatos = [
-		'2258','2259',
-        '2260','2261','2262','2263','2264','2265','2266','2267','2268','2269',
-        '2270','2271','2272','2273','2274','2275','2276','2278','2279',
-        '2280','2281','2282','2283','3476'];
+		'2258',
+		'2259',
+        '2260',
+		'2261',
+		'2262',
+		'2263',
+		'2264',
+		'2265',
+		'2266',
+		'2267',
+		'2268',
+		'2269',
+        '2270',
+		'2271',
+		'2272',
+		'2273',
+		'2274',
+		'2275',
+		'2276',
+		'2278',
+		'2279',
+        '2280',
+		'2281',
+		'2282',
+		'2283',
+		'3476'
+	];
     //503030009	Contr. Seg. De Vida Oblig. Mercantil
     //503030042	Contr. UTHGRA
     //503030072	Contr. UOCRA
@@ -153,7 +197,13 @@ class Cuenta extends AppModel {
 		'1412',
 		'1413',
 		'1414',
-		'1415'
+		'1415',
+		'1416',
+		'1417',
+		'3372',
+		'3373',
+		'3374',
+		'3375',
     ];
 
     //210302021	Ap. SEC a Pagar

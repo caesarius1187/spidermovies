@@ -326,8 +326,6 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 						$totalesProvincia[$provinciaid]['TotalElMayor']=0;
 					}
 					$totalesProvincia[$provinciaid]['TotalBaseDeterminada'][$actividadcliente['Actividadcliente']['id']]+=$totalBaseDeterminada;
-
-
 					?>
 					</span>
 				</td>
@@ -337,7 +335,6 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 <td class="tdActividad<?php echo $actividadcliente['Actividade']['id']; ?>">
                     <?php echo number_format($minimoAMostrar, 2, ",", ".");
                     $totalesProvincia[$provinciaid]['TotalMinimo'][$actividadcliente['Actividadcliente']['id']]+=$minimoAMostrar;
-
                     ?>
                 </td>
                 <td class="tdImpuestoDeterminado<?php echo $actividadcliente['Actividade']['id']; ?>">
@@ -354,16 +351,10 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
                 </td>
 				<?php 
 				} ?>
-<!--				<td>--><?php //
-//					$minimoAMostrar += $myimpcliprovincia['minimo'];
-//                    echo number_format($minimoAMostrar, 2, ",", ".");
-//				?><!--</td>-->
+
 				<td>
                     <span style="color:red">
 						<?php
-//                        if($minimoAMostrar>$totalPagoImpuestoLocalidad){
-//                            $totalPagoImpuestoLocalidad = $minimoAMostrar;
-//                        }
                         $totalPagoImpuestoLocalidad = $totalesProvincia[$provinciaid]['TotalElMayor'];
                         echo number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", "."); ?>
                     </span>
@@ -465,11 +456,15 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				?>
 				<td><?php 
 					echo number_format($subtotalAPagar, 2, ",", ".");
-					echo $this->Form->input('apagar'.$impcliprovincia['Localidade']['id'], array('type'=>'hidden','value'=>$subtotalAPagar));  ?>
+					echo $this->Form->input('apagar'.$impcliprovincia['Localidade']['id'], array(
+						'type'=>'hidden',
+						'value'=>number_format($subtotalAPagar, 2, ".", "")));  ?>
 				</td>
 				<td><?php 
 					echo number_format($subtotalAFavor, 2, ",", "."); 
-					echo $this->Form->input('afavor'.$impcliprovincia['Localidade']['id'], array('type'=>'hidden','value'=>$subtotalAFavor));  ?>
+					echo $this->Form->input('afavor'.$impcliprovincia['Localidade']['id'], array(
+						'type'=>'hidden',
+						'value'=>number_format($subtotalAFavor, 2, ".", "")));  ?>
 				</td>
 			</tr>	
 			<?php }?>
@@ -547,38 +542,51 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<td>
 					<?php
 					echo number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ",", ".");
-					echo $this->Form->input('totaldeterminadogeneral', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalElMayor']));
+					echo $this->Form->input('totaldeterminadogeneral', array(
+						'type'=>'hidden',
+						'value'=>number_format($totalesProvincia[$provinciaid]['TotalElMayor'], 2, ".", "")));
 					?>
 				</td>
 				<td><?php
                     echo number_format($totalesProvincia[$provinciaid]['TotalRetencion'], 2, ",", ".");
-                    echo $this->Form->input('totalretenciones', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalRetencion']));
+                    echo $this->Form->input('totalretenciones', array(
+						'type'=>'hidden',
+						'value'=>number_format($totalesProvincia[$provinciaid]['TotalRetencion'], 2, ".", "")));
                     ?>
                 </td>
 				<td><?php
                     echo number_format($totalesProvincia[$provinciaid]['TotalPagosACuenta'], 2, ",", ".");
-                    echo $this->Form->input('totalpagosacuenta', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalPagosACuenta']));
+                    echo $this->Form->input('totalpagosacuenta', array(
+						'type'=>'hidden',
+						'value'=>number_format($totalesProvincia[$provinciaid]['TotalPagosACuenta'], 2, ".", "")));
                     ?>
                 </td>
 				<td><?php
                     echo number_format($totalesProvincia[$provinciaid]['TotalRetenciones'], 2, ",", ".");
-                    echo $this->Form->input('totalpercepciones', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalRetenciones']));
+                    echo $this->Form->input('totalpercepciones', array('type'=>'hidden',
+						'value'=>number_format($totalesProvincia[$provinciaid]['TotalRetenciones'], 2, ".", "")));
                     ?>
                 </td>
 				<td>
 					<?php
 					echo number_format($totalesProvincia[$provinciaid]['TotalAFavorSaldo'], 2, ",", ".");
-					echo $this->Form->input('totalafavorperiodoanterior', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalAFavorSaldo']));
+					echo $this->Form->input('totalafavorperiodoanterior', array(
+						'type'=>'hidden',
+						'value'=>number_format($totalesProvincia[$provinciaid]['TotalAFavorSaldo'], 2, ".", "")));
 					?>
 				</td>
 				<td><?php echo number_format($totalesProvincia[$provinciaid]['TotalConceptos'], 2, ",", "."); ?></td>
 				<td><?php
                     echo number_format($totalesProvincia[$provinciaid]['TotalAPagar'], 2, ",", ".");
-                    echo $this->Form->input('totalapagar', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalAPagar']));
+                    echo $this->Form->input('totalapagar', array(
+						'type'=>'hidden',
+						'value'=>number_format($totalesProvincia[$provinciaid]['TotalAPagar'], 2, ".", "")));
                     ?></td>
 				<td><?php
                     echo number_format($totalesProvincia[$provinciaid]['TotalAFavor'], 2, ",", ".");
-                    echo $this->Form->input('totalafavor', array('type'=>'hidden','value'=>$totalesProvincia[$provinciaid]['TotalAFavor']));
+                    echo $this->Form->input('totalafavor', array(
+						'type'=>'hidden',
+						'value'=>number_format($totalesProvincia[$provinciaid]['TotalAFavor'], 2, ".", "")));
                     ?></td>
 			</tr>
 		</table>

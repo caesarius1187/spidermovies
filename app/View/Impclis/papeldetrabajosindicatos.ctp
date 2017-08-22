@@ -602,14 +602,14 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                     //en este primer loop vamos a calcular todos los siguientes totales
                                     //Solo calcular este INACAP si es comercio
                                     if($empleado['conveniocolectivotrabajo_id']=='3'){
-                                        $title="Cuota vigente a marzo 2017 (13658.32*0.005)= 68.29
+                                        $title="Cuota vigente a julio 2017 (14948.87*0.005)= 74.74
 +
-Salarizacion del aumento del 12% aplicable desde octubre 2016 (1290.55*0.005) = 6.45 
-Total = 74.74";
+Salarizacion del aumento del 12% aplicable desde julio 2017 (1494.89*0.005) = 7.48
+Total = 82.22";
                                         echo "<td title='".$title."'>";
-                                        echo (13658.32*0.005)+(1290.55*0.005);
-                                        $totalContribucion += (13658.32*0.005)+(1290.55*0.005);
-                                        $apagarcontribuciones +=(13658.32*0.005)+(1290.55*0.005);
+                                        echo (14948.87*0.005)+(1494.89*0.005);
+                                        $totalContribucion += (14948.87*0.005)+(1494.89*0.005);
+                                        $apagarcontribuciones +=(14948.87*0.005)+(1494.89*0.005);
                                         echo "</td>";
                                     }else{
                                         $title="No paga INACAP por que no es de Comercio";
@@ -687,7 +687,16 @@ Total = 74.74";
                                 $empleadoid = $empleado['id'];
                                 //en este primer loop vamos a calcular todos los siguientes totales
                                 echo "<td>";
+
                                 $contUth = 0;
+                                if($empleado['conveniocolectivotrabajo_id']=='8'/*el convenio del empleado es casir*/){
+                                    $mesesAPagarContEspCASYR = [
+                                        '07-2017'=>300
+                                    ];
+                                    if(isset($mesesAPagarContEspCASYR[$periodo])){
+                                        $contUth = $mesesAPagarContEspCASYR[$periodo];
+                                    }
+                                }
                                 echo number_format($contUth, 2, ",", ".");
                                 $totalContribucionEspecialUTHGRA += $contUth ;
                                 $apagarcontribuciones += $contUth ;
@@ -716,7 +725,7 @@ Total = 74.74";
                                 $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
                                 $diff = $periodoALiquidar->diff($fechaIngreso);
                                 $titleUOCRAFdoCeseLaboral = "";
-                                if($diff->y > 1){
+                                if($diff->y >= 1){
                                     $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
                                     $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
                                 }else{

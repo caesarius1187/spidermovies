@@ -59,8 +59,8 @@ $(document).ready(function() {
     });
     comportamientoDeFiltros();
     aplicarFiltros();
+    agregarConsultaCondicionAFIP();
     $("#loading").css('visibility','hidden')
-
 });
 //vamos a inicalizar los Filtros
 function comportamientoDeFiltros(){
@@ -232,5 +232,25 @@ function aplicarATodos(miinput){
                 $(this).val(valueAAplicar).trigger("chosen:updated");
             }
         }
+    });
+}
+function agregarConsultaCondicionAFIP(){
+    /*ahora agregamos los nuevos*/
+    $('.cuitConsultaAFIP').each(function(){
+        var mycuit = $(this).val();
+        var span = $('<span />')
+            .attr('class', 'tooltiptext')
+            .html(
+                $('<input />',{
+                    'type':'button',
+                    'value':"Consultar Condicion AFIP",
+                    'onclick':"consultaCondicionAfip('"+mycuit+"')"
+                })
+            );
+        $(this).closest('div')
+            .addClass( "tooltip" )
+            .append(
+                span
+            );
     });
 }

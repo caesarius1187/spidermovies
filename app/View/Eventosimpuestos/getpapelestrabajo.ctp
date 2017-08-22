@@ -324,7 +324,6 @@
                                                 }
                                             }
                                         }
-
                                         echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Basesprorrateada.'.$eventoPosBase.'.id',array(
                                             'value'=>$basesprorrateadaid,'type'=>'hidden', 'style'=>'width:100px'));
                                         echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Basesprorrateada.'.$eventoPosBase.'.eventosimpuesto_id',array(

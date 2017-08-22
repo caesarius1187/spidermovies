@@ -1,31 +1,6 @@
 var tblTablaVentas;
 var tblTablaCompras;
 $(document).ready(function() {
-    var beforePrint = function() {
-        $('#header').hide();
-        $('#Formhead').hide();
-        $('#headerCliente').hide();
-        $('#index').css('border-color','#FFF');
-    };
-    var afterPrint = function() {
-        //$('#index').css('font-size','10px');
-        $('#header').show();
-        $('#Formhead').show();
-        $('#headerCliente').show();
-    };
-    if (window.matchMedia) {
-        var mediaQueryList = window.matchMedia('print');
-        mediaQueryList.addListener(function(mql) {
-            if (mql.matches) {
-                beforePrint();
-            } else {
-                afterPrint();
-            }
-        });
-    }
-    window.onbeforeprint = beforePrint;
-    window.onafterprint = afterPrint;
-
     allcomprobantes =  JSON.parse($('#jsonallcomprobantes').val());
     var nombrecliente = $('#clientenombre').val();
     var periodo = $('#periododefault').val();
@@ -55,123 +30,129 @@ $(document).ready(function() {
                         }
                     },
                     {
-                        text: 'Conmutar Provedor',
+                        text: 'Conmutar CUIT',
                         action: function ( e, dt, node, config ) {
                             dt.column( 2 ).visible( ! dt.column( 2 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Cond. IVA',
+                        text: 'Conmutar Provedor',
                         action: function ( e, dt, node, config ) {
                             dt.column( 3 ).visible( ! dt.column( 3 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Actividad',
+                        text: 'Conmutar Cond. IVA',
                         action: function ( e, dt, node, config ) {
                             dt.column( 4 ).visible( ! dt.column( 4 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Localidad',
+                        text: 'Conmutar Actividad',
                         action: function ( e, dt, node, config ) {
                             dt.column( 5 ).visible( ! dt.column( 5 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Tipo Credito',
+                        text: 'Conmutar Localidad',
                         action: function ( e, dt, node, config ) {
                             dt.column( 6 ).visible( ! dt.column( 6 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Tipo Gasto',
+                        text: 'Conmutar Tipo Credito',
                         action: function ( e, dt, node, config ) {
                             dt.column( 7 ).visible( ! dt.column( 7 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Tipo IVA',
+                        text: 'Conmutar Tipo Gasto',
                         action: function ( e, dt, node, config ) {
                             dt.column( 8 ).visible( ! dt.column( 8 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Imputacion',
+                        text: 'Conmutar Tipo IVA',
                         action: function ( e, dt, node, config ) {
                             dt.column( 9 ).visible( ! dt.column( 9 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Alicuota',
+                        text: 'Conmutar Imputacion',
                         action: function ( e, dt, node, config ) {
                             dt.column( 10 ).visible( ! dt.column( 10 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Neto',
+                        text: 'Conmutar Alicuota',
                         action: function ( e, dt, node, config ) {
                             dt.column( 11 ).visible( ! dt.column( 11 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar IVA',
+                        text: 'Conmutar Neto',
                         action: function ( e, dt, node, config ) {
                             dt.column( 12 ).visible( ! dt.column( 12 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar IVA Percep',
+                        text: 'Conmutar IVA',
                         action: function ( e, dt, node, config ) {
                             dt.column( 13 ).visible( ! dt.column( 13 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar IIBB Percep',
+                        text: 'Conmutar IVA Percep',
                         action: function ( e, dt, node, config ) {
                             dt.column( 14 ).visible( ! dt.column( 14 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Act.Vs.Percep',
+                        text: 'Conmutar IIBB Percep',
                         action: function ( e, dt, node, config ) {
                             dt.column( 15 ).visible( ! dt.column( 15 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Imp. Interno',
+                        text: 'Conmutar Act.Vs.Percep',
                         action: function ( e, dt, node, config ) {
                             dt.column( 16 ).visible( ! dt.column( 16 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Imp. Comb.',
+                        text: 'Conmutar Imp. Interno',
                         action: function ( e, dt, node, config ) {
                             dt.column( 17 ).visible( ! dt.column( 17 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar No Gravados',
+                        text: 'Conmutar Imp. Comb.',
                         action: function ( e, dt, node, config ) {
                             dt.column( 18 ).visible( ! dt.column( 18 ).visible() );
                         }
                     },
                     {
-                        text: 'Conmutar Exentos',
+                        text: 'Conmutar No Gravados',
                         action: function ( e, dt, node, config ) {
                             dt.column( 19 ).visible( ! dt.column( 19 ).visible() );
                         }
                     },
                     {
+                        text: 'Conmutar Exentos',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 20 ).visible( ! dt.column( 20 ).visible() );
+                        }
+                    },
+                    {
                         text: 'Conmutar Total',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 21 ).visible( ! dt.column( 20 ).visible() );
+                            dt.column( 21 ).visible( ! dt.column( 21 ).visible() );
                         }
                     },
                     {
                         text: 'Conmutar KW',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 20 ).visible( ! dt.column( 21 ).visible() );
+                            dt.column( 22 ).visible( ! dt.column( 22 ).visible() );
                         }
                     },
                     {
@@ -231,10 +212,19 @@ $(document).ready(function() {
                 extend: 'print',
                 text: 'Imprimir',
                 exportOptions: {
-                    columns: ':visible'
+                    columns: '.printable'
                 },
                 orientation: 'landscape',
-                message: 'LibroIVA-Compras-'+nombrecliente+'-'+periodo+'</br>Domicilio:',/*todo: completar Domicilios de Libro IVA Ventas*/
+                footer: true,
+                autoPrint: true,
+                message: nombrecliente+"</br>"+
+                'Domicilio: '+$("#domiciliocliente").val()+" - "+
+                ' Inicio actividad: '+$("#fchcumpleanosconstitucion").val()+
+                ' Periodo: '+periodo+"</br>"+
+                '---------------------------------------Libro N° '+/*$("#numerolibro").val()+*/"</br>"+
+                'Resp: '+$("#condicioniva").val()+' Registro IVA COMPRAS',
+                customize: function ( win ) {
+                },
             },
         ],
     } );
@@ -426,8 +416,7 @@ $(document).ready(function() {
                     callAlertPopint(respuesta.respuesta);
                     if(respuesta.compra.Compra!=null){
                         //Incrementa campo de Factura en 1
-                        $( "#CompraNumerocomprobante" ).val($( "#CompraNumerocomprobante" ).val()*1 + 1);
-
+                        $( "#CompraNumerocomprobante" ).val(pad ($( "#CompraNumerocomprobante" ).val()*1 + 1, 8));
                         var positivo = 1;
                         if(respuesta.compra.Compra.tipocredito=='Restitucion credito fiscal'){
                             positivo= -1;
@@ -440,6 +429,7 @@ $(document).ready(function() {
                             [
                                 respuesta.compra.Compra.fecha,
                                 respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.compra.Compra.puntosdeventa+"-"+respuesta.compra.Compra.numerocomprobante,
+                                respuesta.provedore.Provedore.cuit,
                                 respuesta.provedore.Provedore.nombre,
                                 respuesta.compra.Compra.condicioniva,
                                 respuesta.actividadcliente.Actividade.nombre,
@@ -845,7 +835,7 @@ $(document).ready(function() {
                        var respuesta = JSON.parse(data);
                        // callAlertPopint(respuesta.respuesta);
                       //Incrementa campo de Factura en 1
-                      $( "#CompraNumerocomprobante" ).val($( "#CompraNumerocomprobante" ).val()*1 + 1);
+                      // $( "#CompraNumerocomprobante" ).val($( "#CompraNumerocomprobante" ).val()*1 + 1);
 
                       var positivo = 1;
 
@@ -860,6 +850,7 @@ $(document).ready(function() {
                           [
                               respuesta.compra.Compra.fecha,
                               respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.compra.Compra.puntosdeventa+"-"+respuesta.compra.Compra.numerocomprobante,
+                              respuesta.provedore.Provedore.cuit,
                               respuesta.provedore.Provedore.nombre,
                               respuesta.compra.Compra.condicioniva,
                               respuesta.actividadcliente.Actividade.nombre,
@@ -912,6 +903,81 @@ $(document).ready(function() {
             alert(errorThrown);
        }
     });
+    }
+    function abrirBiendeuso(comid){
+        var data ="";
+        $.ajax({
+        type: "get",  // Request method: post, get
+        url: serverLayoutURL+"/bienesdeusos/add/"+comid,
+
+        // URL to request
+        data: data,  // post data
+        success: function(response) {
+            $('#myModal').on('show.bs.modal', function() {
+                $('#myModal').find('.modal-title').html('Editar Bien de uso de la compra');
+                $('#myModal').find('.modal-body').html(response);
+                // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+            });
+
+            $('#myModal').modal('show');
+            //perzonalizar formulario para tipo de Bien de uso
+            $("#BienesdeusoTipo").on('change', function() {
+                var selectedTipo = $(this).val();
+                switch (selectedTipo){
+                    case 'Automotor':
+                        $(".inmueble").parent().hide();
+                        $(".naves").parent().hide();
+                        $(".aeronaves").parent().hide();
+                        $(".automotor").parent().show();
+                        break;
+                    case 'Inmueble':
+                        $(".automotor").parent().hide();
+                        $(".naves").parent().hide();
+                        $(".aeronaves").parent().hide();
+                        $(".inmueble").parent().show();
+                        break;
+                    case 'Aeronave':
+                        $(".automotor").parent().hide();
+                        $(".inmueble").parent().hide();
+                        $(".naves").parent().hide();
+                        $(".aeronaves").parent().show();
+                        break;
+                    case 'Naves, Yates y similares':
+                        $(".automotor").parent().hide();
+                        $(".inmueble").parent().hide();
+                        $(".aeronaves").parent().hide();
+                        $(".naves").parent().show();
+                        break;
+                }
+            });
+            $("#BienesdeusoTipo" ).trigger( "change" );
+            reloadInputDates();
+            $('.chosen-select').chosen({search_contains:true});
+            $('#BienesdeusoAddForm').submit(function(){
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                      type: 'POST',
+                      url: formUrl,
+                      data: formData,
+                      success: function(data,textStatus,xhr){
+                          var respuesta = JSON.parse(data);
+                           callAlertPopint(respuesta.respuesta);
+                          $('#myModal').modal('hide');
+                        },
+                      error: function(xhr,textStatus,error){
+                        alert(textStatus);
+                      }
+                    });
+                    return false;
+                });
+            },
+           error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+           }
+        });
     }
     function eliminarCompra(comid){
       var r = confirm("Esta seguro que desea eliminar esta compra?. Es una accion que no podra deshacer.");

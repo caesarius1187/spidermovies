@@ -199,6 +199,7 @@ $(document).ready(function() {
 				case '1406'/*110399001 Cliente xx*/:
 				case '1412'/*110399001 Cliente xx*/:
 				case '1414'/*110399001 Cliente xx*/:
+				case '1427'/*210303025 Contr. INACAP a Pagar*/:
 				case '1428'/*110399001 Cliente xx*/:
 				case '1443'/*110399001 Cliente xx*/:
 				case '1458'/*110399001 Cliente xx*/:
@@ -209,7 +210,7 @@ $(document).ready(function() {
 				case '1496'/*110399001 Cliente xx*/:
 				case '1500'/*110399001 Cliente xx*/:
 				case '1518'/*110399001 Cliente xx*/:
-				case '2798'/*599000002 Casas Particulares A Pagar*/:
+//				case '2798'/*599000002 Casas Particulares A Pagar*/:
 				case '3375'/*110399001 Cliente xx*/:
 					$cuentaAPagar = 0;
 					//Cargar la venta total
@@ -317,6 +318,57 @@ $(document).ready(function() {
 					}
 					$debe = $cuentaAPagar;
 					break;
+				case '3383'/*230102010 Ley 260663 Aportes Servicios Domesticos a Pagar*/:
+                    $cuentaAPagar = 0;
+                    //Cargar la venta total
+                    foreach ($eventosimpuestos as $eventosimpuesto){
+                        //aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+                        $cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+                    }
+                    switch ($cuentaAPagar){
+                        case 684:
+                            $debe = 419;
+                            break;
+                        case 1368:
+                            $debe = 838;
+                            break;
+                        case 252:
+                            $debe = 63;
+                            break;
+                        case 176:
+                            $debe = 34;
+                            break;
+                        default:
+                            $debe = $cuentaAPagar;
+                            break;
+                    }
+                    break;
+				case '3384'/*230102011 Ley 260663 Contribuciones Servicios Domesticos a Pagar*/:
+					$cuentaAPagar = 0;
+					//Cargar la venta total
+					foreach ($eventosimpuestos as $eventosimpuesto){
+						//aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
+                        $cuentaAPagar+=$eventosimpuesto['Eventosimpuesto']['montovto']*1;
+					}
+                    //vamos a tratar de dividir contribuciones de aportes si los montos coinciden sino la cantidad a aportes
+					switch (''.$cuentaAPagar.''){
+                        case 684:
+                            $debe = 265;
+                            break;
+                        case 1368:
+                            $debe = 530;
+                            break;
+                        case 252:
+                            $debe = 189;
+                            break;
+                        case 176:
+                            $debe = 142;
+                            break;
+                        default:
+                            $debe = 0;
+                            break;
+                    }
+					break;
 				default:
 
 					break;
@@ -383,7 +435,6 @@ $(document).ready(function() {
 					break;
 			}
 			if(isset($asientoyacargado['Movimiento'])) {
-
 				foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento) {
 					if(!isset($asientoyacargado['Movimiento'][$kMov]['cargado'])) {
 						$asientoyacargado['Movimiento'][$kMov]['cargado'] = false;
@@ -405,7 +456,7 @@ $(document).ready(function() {
 				'default' => $cuentaclienteid,
 				'class'=>'chosen-select-cuenta',
 				]
-		);
+			);
 			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
 				'type'=>'hidden',
 				'readonly','readonly',

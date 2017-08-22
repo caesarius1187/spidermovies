@@ -183,8 +183,9 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
 
 				$CuentaId = $cuenta['Cuenta']['id'];
 				$CuentaClienteId = isset($cuenta['Cuentascliente']['id'])?$cuenta['Cuentascliente']['id']:0;
+
 			?>
-			<tr id="trCuenta_<?php echo $CuentaId ?>" style="<?php echo $trStyle?>" levelCuenta="<?php echo $cuenta['Cuenta']['level']?>">
+			<tr id="trCuenta_<?php echo $CuentaId ?>" style="<?php echo $trStyle?>" levelCuenta="<?php echo $cuenta['Cuenta']['level']?>" class="<?php echo $cuenta['Cuenta']['tipo']?>">
 
 				<td style="">
 					<?php echo $cuenta['Cuenta']['level']==1?$cuenta['Cuenta']['numero']:""; ?>

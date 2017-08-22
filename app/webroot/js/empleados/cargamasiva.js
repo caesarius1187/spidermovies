@@ -161,6 +161,23 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice){
                     $("<div>")
                         .append(response)
                         .addClass('divsueldomasivo')
+                ).prepend(
+                    $('<div />',{
+                        'style':"width:100%",
+                    }).append(
+                        $('<label />',{
+                            'text':"Mostrar Todo",
+                            'for':"mostrarcamposencero",
+                            'style':"display:inline",
+                        })
+                    ) .append(
+                        $('<input />',{
+                            'type':'checkbox',
+                            'id':"mostrarcamposencero",
+                            'style':"display:inline",
+                            'onclick':"ocultarFunciones()",
+                        })
+                    )
                 );
                 $('#ValorreciboPapeldetrabajosueldosForm'+empid).find('.aplicableATodos').each(function(){
                     //$(this).css('background','blue');
@@ -243,6 +260,7 @@ function ocultarFuncinesDeUnFormulario(empid){
     if(ajaxAbierto){
        return false;
     }
+
     console.log("inicio de Ocultar: "+empid);
     var empidFuncion = 0;
     $("#ValorreciboPapeldetrabajosueldosForm"+empid+" .funcionAAplicar").each(function() {
@@ -285,46 +303,55 @@ function ocultarFuncinesDeUnFormulario(empid){
         if(todosvacios){
             //tengo que ocultar el row solo si no es cabeza de seccion por que sino me oculta toda la seccion
             if(headsection=="0"){
-                $('#ValorreciboPapeldetrabajosueldosForm'+empid+' input[valdata-codigo="'+dataCodigo+'"]').each(function() {
-                    //si esta visible tengo que mermar en 1 el rowspan
-                    var rowspan = 0;
-                    var rowVisible =  $(this).closest('tr').is(':visible');
-                    if(rowVisible==true) {
-                        rowspan = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan');
-                        rowspan = rowspan - 1;
-                        // $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan',rowspan);
-                        $('.seccion'+seccion).each(function(){
-                            $(this).attr('rowspan',rowspan);
-                        });
-                    }
-                    $('input[valdata-codigo="'+dataCodigo+'"]').each(function() {
-                        $(this).closest('tr').hide();
-                    });
-                });
+                if($("#mostrarcamposencero").is(':checked')){
+                    showRow(empid,dataCodigo,seccion);
+                }else{
+                    hideRow(empid,dataCodigo,seccion);
+                }
             }
         }else{
-            //si esta oculto tengo que aumentar en 1 el rowspan
-            $('#ValorreciboPapeldetrabajosueldosForm'+empid+' input[valdata-codigo="'+dataCodigo+'"]').each(function() {
-                //si esta visible tengo que mermar en 1 el rowspan
-                var rowspan = 0;
-                var rowVisible = $(this).closest('tr').is(':visible');
-                if(rowVisible==false ) {
-                    rowspan = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion' + seccion).attr('rowspan')*1;
-                    rowspan = rowspan + 1;
-                    // $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan',rowspan);
-                    $('.seccion'+seccion).each(function(){
-                        $(this).attr('rowspan',rowspan);
-                    });
-                }
-                //tengo que mostrar el row
-                $('input[valdata-codigo="'+dataCodigo+'"]').each(function() {
-                    $(this).closest('tr').show();
-                });
-            });
+            showRow(empid,dataCodigo,seccion)
         }
     });
 }
-
+function hideRow(empid,dataCodigo,seccion){
+    $('#ValorreciboPapeldetrabajosueldosForm'+empid+' input[valdata-codigo="'+dataCodigo+'"]').each(function() {
+        //si esta visible tengo que mermar en 1 el rowspan
+        var rowspan = 0;
+        var rowVisible =  $(this).closest('tr').is(':visible');
+        if(rowVisible==true) {
+            rowspan = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan');
+            rowspan = rowspan - 1;
+            // $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan',rowspan);
+            $('.seccion'+seccion).each(function(){
+                $(this).attr('rowspan',rowspan);
+            });
+        }
+        $('input[valdata-codigo="'+dataCodigo+'"]').each(function() {
+            $(this).closest('tr').hide();
+        });
+    });
+}
+function showRow(empid,dataCodigo,seccion){
+    //si esta oculto tengo que aumentar en 1 el rowspan
+    $('#ValorreciboPapeldetrabajosueldosForm'+empid+' input[valdata-codigo="'+dataCodigo+'"]').each(function() {
+        //si esta visible tengo que mermar en 1 el rowspan
+        var rowspan = 0;
+        var rowVisible = $(this).closest('tr').is(':visible');
+        if(rowVisible==false ) {
+            rowspan = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion' + seccion).attr('rowspan')*1;
+            rowspan = rowspan + 1;
+            // $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #seccion'+seccion).attr('rowspan',rowspan);
+            $('.seccion'+seccion).each(function(){
+                $(this).attr('rowspan',rowspan);
+            });
+        }
+        //tengo que mostrar el row
+        $('input[valdata-codigo="'+dataCodigo+'"]').each(function() {
+            $(this).closest('tr').show();
+        });
+    });
+}
 function activarCalXOnSueldos(empid){
 
     $('#ValorreciboPapeldetrabajosueldosForm'+empid+' .funcionAAplicar').on('change', function() {

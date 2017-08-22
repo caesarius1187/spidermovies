@@ -81,7 +81,16 @@
 
 		echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
 		echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial'));
-		echo $this->Form->input('codigoafip',array('label'=>'Codigo Afip','options'=>array('0','1','2','3','4')));
+		echo $this->Form->input('codigoafip',array(
+				'label'=>'Codigo Afip',
+				'options'=>array(
+					'3'=>'25%',
+					'1'=>'50%',
+					'2'=>'75%',
+					'0'=>'100%',
+				)
+			)
+		);
 		echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
 
 		echo $this->Form->input('adherente',array('label'=>'Adherentes','value'=>0));

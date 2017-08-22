@@ -182,7 +182,7 @@ $(document).ready(function() {
                         $('<td>').html(
                             "Debitos $" + api.column( 4, {page:'current'} ).data().sum() +
                             " Creditos $" + api.column( 5, {page:'current'} ).data().sum()
-                        )
+                        ).attr('colspan',4)
                     )
                 );
             }

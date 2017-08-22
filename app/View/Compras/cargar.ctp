@@ -32,7 +32,15 @@ $tieneAgenteDePercepcionIIBB=$cliente["Cliente"]['tieneAgenteDePercepcionIIBB'];
 $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePercepcionActividadesVarias'];
 echo $this->Form->input('cliid',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
 echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
-
+$fchcumpleanosconstitucion = date('d-m-Y',strtotime($cliente["Cliente"]['fchcumpleanosconstitucion']));
+echo $this->Form->input('fchcumpleanosconstitucion',array('default'=>$fchcumpleanosconstitucion,'type'=>'hidden'));
+$condicioniva = $tieneMonotributo?'Monotributista':'Insctipto';
+echo $this->Form->input('condicioniva',array('default'=>$condicioniva,'type'=>'hidden'));
+$domicilio = "";
+if(isset($cliente["Domicilio"][0])){
+    $domicilio = $cliente["Domicilio"][0]['calle'];
+}
+echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'hidden'));
 ?>
 <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->
 <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css"/>-->
@@ -121,6 +129,18 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               array(
                   'controller' => 'compras',
                   'action' => 'exportartxtpercepcionessifere',
+                  $cliente["Cliente"]['id'],
+                  $periodo
+              ),
+              array('class' => 'buttonImpcli',
+                  'style'=> 'margin-right: 8px;width: initial;',
+              )
+          );
+          echo $this->Html->link(
+              "TXT Percepciones IVA",
+              array(
+                  'controller' => 'compras',
+                  'action' => 'exportartxtpercepcionesiva',
                   $cliente["Cliente"]['id'],
                   $periodo
               ),
@@ -331,30 +351,31 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
           <table class="display" id="tablaCompras" cellpadding="0" cellspacing="0" border="0">
             <thead>
               <tr>
-                <th style="width: 95px;">Fecha</th>
-                <th style="width: 250px;">Comprobante</th>
-                <th style="width: 117px;">Provedor</th>
-                <th style="width: 106px;">Cond.IVA</th>
-                <th style="width: 131px;">Actividad</th>
-                <th style="width: 95px;">Localidad</th>
-                <th style="width: 95px;">Tipo Cred</th>
-                <th style="width: 77px;">Tipo Gasto</th>
-                <th style="width: 88px;">Tipo(IVA)</th>
-                <th style="width: 76px;">Imputacion</th>
-                <th style="width: 70px;">Alicuota</th>
-                <th style="width: 81px;" class="sum">Neto</th>
-                <th style="width: 73px;" class="sum">IVA</th>
-                <th style="width: 76px;" class="sum">IVA Percep</th>
-                <th style="width: 76px;" class="sum">IIBB Percep</th>
-                <th style="width: 76px;" class="sum">Act Vs Perc</th>
-                <th style="width: 76px;" class="sum">Imp Interno</th>
-                <th style="width: 76px;" class="sum">Imp Comb</th>
-                <th style="width: 76px;" class="sum">No Gravados</th>
-                <th style="width: 76px;" class="sum">Exentos</th>
-                <th style="width: 76px;" class="sum">Total</th>
-                  <th style="width: 76px;" class="sum">KW</th>
-                  <th>Acciones</th>
-                  <th>Creado</th>
+                <th class="printable" style="width: 95px;">Fecha</th>
+                <th class="printable" style="width: 250px;">Comprobante</th>
+                <th class="printable" style="width: 117px;">CUIT</th>
+                  <th class="printable" style="width: 117px;">Provedor</th>
+                  <th class="notPrintable" style="width: 106px;">Cond.IVA</th>
+                <th class="notPrintable" style="width: 131px;">Actividad</th>
+                <th class="notPrintable" style="width: 95px;">Localidad</th>
+                <th class="notPrintable" style="width: 95px;">Tipo Cred</th>
+                <th class="notPrintable" style="width: 77px;">Tipo Gasto</th>
+                <th class="notPrintable" style="width: 88px;">Tipo(IVA)</th>
+                <th class="notPrintable" style="width: 76px;">Imputacion</th>
+                <th class="notPrintable" style="width: 70px;">Alicuota</th>
+                <th class="sum printable" style="width: 81px;">Neto</th>
+                <th class="sum printable" style="width: 73px;">IVA</th>
+                <th class="sum printable" style="width: 76px;">IVA Percep</th>
+                <th class="sum printable" style="width: 76px;">IIBB Percep</th>
+                <th class="sum printable" style="width: 76px;">Act Vs Perc</th>
+                <th class="sum printable" style="width: 76px;">Imp Interno</th>
+                <th class="sum printable" style="width: 76px;">Imp Comb</th>
+                <th class="sum printable" style="width: 76px;">No Gravados</th>
+                <th class="sum printable" style="width: 76px;">Exentos</th>
+                <th class="sum printable" style="width: 76px;">Total</th>
+                <th class="sum notPrintable" style="width: 76px;" >KW</th>
+                <th class="notPrintable">Acciones</th>
+                <th class="notPrintable">Creado</th>
               </tr>
             </thead>
             <tbody id="bodyTablaCompras">
@@ -384,7 +405,16 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     $titleComprobanteCompra = $compra["Comprobante"]['nombre']."-".$compra['puntosdeventa']."-".$compra["numerocomprobante"];
                     $labelComprobanteCompra = $compra["Comprobante"]['abreviacion']."-".$compra['puntosdeventa']."-".$compra["numerocomprobante"]; ?>
                   <td class="<?php echo $tdClass?>" title="<?php echo $titleComprobanteCompra ?>"><?php echo $labelComprobanteCompra?></td><!--2-->
-                  <td class="<?php echo $tdClass?>"><?php if(isset($compra["Provedore"]["nombre"])) echo $compra["Provedore"]["nombre"]?></td><!--3-->
+                    <?php
+                    $provedornombre="";
+                    $provedorcuit="";
+                    if(isset($compra["Provedore"]["nombre"])) {
+                        $provedornombre = $compra["Provedore"]["nombre"];
+                        $provedorcuit = $compra["Provedore"]["cuit"];
+                    }
+                    ?>
+                  <td class="<?php echo $tdClass?>"  title="<?php echo $provedorcuit ?>"><?php echo $provedorcuit?></td><!--3-->
+                  <td class="<?php echo $tdClass?>"  title="<?php echo $provedornombre ?>"><?php echo $provedornombre?></td><!--3-->
                   <td class="<?php echo $tdClass?>"><?php echo $compra["condicioniva"]?></td><!--4-->
                   <td class="<?php echo $tdClass?>"><?php echo $compra["Actividadcliente"]['Actividade']['nombre']?></td><!--5-->
                   <td class="<?php echo $tdClass?>"><?php echo $compra["Localidade"]['Partido']["nombre"].'-'.$compra["Localidade"]["nombre"]?></td><!--6-->
@@ -412,6 +442,9 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     $paramsCompra=$compra["id"];
                     echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarCompra(".$paramsCompra.")"));
                     echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarCompra(".$paramsCompra.")"));
+                    if($compra["imputacion"]=='Bs Uso'){
+                        echo $this->Html->image('biendeuso.png',array('width' => '20', 'height' => '20','onClick'=>"abrirBiendeuso(".$paramsCompra.")"));
+                    }
                     echo $this->Form->end();
                     ?>
                   </td><!--23-->
@@ -438,6 +471,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                               $labelComprobanteCompra = "OTROS-00001-" . $movimientonumero; ?>
                               <td class="<?php echo $tdClass ?>"
                                   title="<?php echo $titleComprobanteCompra ?>"><?php echo $labelComprobanteCompra ?></td><!--2-->
+                              <td class="<?php echo $tdClass ?>"><?php echo $movimientosbancario["Cbu"]["Impcli"]['Impuesto']['cuit'] ?></td><!--3-->
                               <td class="<?php echo $tdClass ?>"><?php echo $movimientosbancario["Cbu"]["Impcli"]['Impuesto']['nombre'] ?></td><!--3-->
                               <td class="<?php echo $tdClass ?>">Responsable Inscripto</td><!--4-->
                               <td class="<?php echo $tdClass ?>"><?php echo array_values(array_values($actividades)[0])[0]; ?></td><!--5-->
@@ -506,6 +540,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                   <th ></th><!--7-->
                   <th ></th><!--8-->
                   <th ></th><!--9-->
+                  <th ></th><!--10-->
                   <th ></th><!--10-->
                   <th ></th><!--11-->
                   <th ></th><!--12-->

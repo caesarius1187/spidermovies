@@ -1,6 +1,7 @@
 <?php
 echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
 echo $this->Html->script('ventas/importar',array('inline'=>false));
+echo $this->Html->script('ventas/soaafip',array('inline'=>false));
 function toNumber($target){
     $switched = str_replace('.', '', $target);
     $switched = str_replace(',', '.', $switched);
@@ -99,6 +100,7 @@ function toNumber($target){
                 }
                 $ventasArray[$i] = array();
                 $ventasArray[$i]['Venta'] = array();
+                $ventasArray[$i]['Alicuota'] = array();
                 // process the line read.
                 $lineVenta = array();
                 $lineVenta['fecha']=date('d-m-Y',strtotime(substr($line, 0,8)));
@@ -112,7 +114,7 @@ function toNumber($target){
                 //aveces la identificacionnumero viene vacia (todos 0) entonces vamos a poner el nombre
                 // en estos casos como identificacion numero
                 if(ltrim($lineVenta['identificacionnumero'],'0')==''){
-                    $lineVenta['identificacionnumero'] = $lineVenta['nombre'];
+                    $lineVenta['identificacionnumero'] = '20000000001';
                 }
                 //hay algunos casos donde los registros vienen sin nombre y sin cuit, en estos casos
                 //vamos a poner que el subcliente es un consumidor final y lo vamos a cargar
@@ -852,12 +854,16 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'label' => ($i + 9) % 10 == 0 ? 'CUIT' : '',
                                             'style' => 'width:84px;',
                                             'disabled' => 'disabled',
-                                            'value' => $venta['Venta']['identificacionnumero']
+                                            'class' => 'cuitConsultaAFIP',
+                                            'value' => $venta['Venta']['identificacionnumero']*1
                                         )
                                     );
-                                    $condicioniva = 'monotributista';//defaultavalue
+                                    $condicioniva = 'Monotributista';//defaultavalue
                                     $mitipodebito = 'Debito Fiscal';//Default Value
                                     $classcondicionIVA="";
+
+
+
                                     foreach ($supercomprobantes as $micomprobante) {
                                         if ($venta['Venta']['comprobantetipo'] == $micomprobante['Comprobante']['codigo']) {
                                             if ($micomprobante['Comprobante']['tipo'] == 'A' ) {
@@ -870,10 +876,11 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                                 }else{
                                                     $classcondicionIVA="controlarInput";
                                                 }
-                                                $condicioniva = '"Cons. F/Exento/No Alcanza"';
+                                                $condicioniva = 'Cons. F/Exento/No Alcanza';
                                             }else{
-                                                $condicioniva = 'Monotributista';
+                                                $condicioniva = 'Cons. F/Exento/No Alcanza';
                                             }
+
                                             if ($micomprobante['Comprobante']['tipodebitoasociado'] == 'Debito fiscal o bien de uso') {
                                                 $mitipodebito = 'Debito Fiscal';
                                             } else {
@@ -882,8 +889,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             break;
                                         }
                                     }
-                                    if($venta['Venta']['identificacionnumero'] == '20000000001'){
-                                        $condicioniva = '"Cons. F/Exento/No Alcanza"';
+                                    if($venta['Venta']['identificacionnumero'] == '20000000001'||$venta['Venta']['identificacionnumero'] == ''){
+                                        $condicioniva = 'Cons. F/Exento/No Alcanza';
                                     }
                                     echo $this->Form->input('Venta.' . $i . '.condicioniva', array(
                                             'type' => 'select',
@@ -915,6 +922,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'defaultoptionlocalidade' => str_pad($venta['Venta']['puntodeventa'], 5, "0", STR_PAD_LEFT),
                                             'class' => 'aplicableATodos chosen-select',
                                             'inputclass' => 'VentaAddLocalidad',
+                                            'required' => true,
                                             'div' => array('class' => 'inputAControlar')
                                         )
                                     );

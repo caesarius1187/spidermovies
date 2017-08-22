@@ -71,22 +71,24 @@ if(count($empleado['Valorrecibo'])==0){
                                     echo $timestr ;
                                     ?>
                                 <?php
-                                $diasTop=4;
+                                $delay='+ 1 months';
+                                $fechatitle="se pagara el dia 5 del mes siguiente";
                                 switch ($liquidacion){
                                     case '1':
                                         echo "Primera Quincena";
-                                        $diasTop= 20;
+                                        $delay= '+ 10 days';
+                                        $fechatitle="se pagara el dia 15 de este mes";
                                         break;
                                     case '2':
                                         echo "Segunda Quincena";
-                                        $diasTop= 36;
+//                                        $delay= 36;
                                         break;
                                     case '3':
-                                        $diasTop= 36;
+//                                        $delay= 36;
                                         break;
                                     case '7':
                                         echo "SAC";
-                                        $diasTop= 36;
+//                                        $delay= 36;
                                         break;
                                 }
                                 ?></b>
@@ -244,18 +246,29 @@ if(count($empleado['Valorrecibo'])==0){
                         ?>
                         <tr>
                             <td colspan="3" class="tdWithBorder">
-                                <b>Fecha de pago: </b><?php
-                                    //Si la fecha de hoy es anterior al 5 del periodo que estamos pagando poner esa fecha
-                                    //sino tiene q ser el dia 5
-                                    $topDate = date('d-m-Y',strtotime('01-'.$periodo.' +'.$diasTop.' days'));
-
-//                                    $today = date('d-m-Y');
-//                                    if($today<$topDate){
-//                                        echo $today;
-//                                    }else{
-                                        echo $topDate;
-//                                    }
-                                    ?>
+                                <?php
+                                //Si la fecha de hoy es anterior al 5 del periodo que estamos pagando poner esa fecha
+                                //sino tiene q ser el dia 5
+                                $paytime=strtotime('05-'.$periodo.' '.$delay);
+                                $datetime = new DateTime('05-'.$periodo.' '.$delay);
+                                $dw = date("w",$paytime);
+                                if($dw == 0 or $dw == 6){
+                                    if ($dw == 6) {
+                                        $datetime->modify('-1 day');
+                                        $fechatitle.=" Se corrio la fecha de pago 1 dia antes por ser sabado.";
+                                    } else {
+                                        $datetime->modify('-2 day');
+                                        $fechatitle.=" Se corrio la fecha de pago 2 dias antes por ser domingo.";
+                                    }
+                                }
+                                $fechatitle.=$dw;
+                                $topDate = $datetime->format('d-m-Y');
+                                //todo agregar control de FERIADOS
+                                ?>
+                                <b title="<?php echo $fechatitle?>">Fecha de pago: </b>
+                                <?php
+                                echo $topDate;
+                                ?>
                                 <b> Lugar de pago: </b><?php
                                 echo $empleado['Domicilio']['Localidade']['Partido']['nombre']."-"
                                     .$empleado['Domicilio']['Localidade']['nombre']

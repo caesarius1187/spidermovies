@@ -69,4 +69,24 @@ class Compra extends AppModel {
 			'order' => ''
 		)
 	);
+	/**
+	 * hasMany associations
+	 *
+	 * @var array
+	 */
+	public $hasMany = array(
+		'Bienesdeuso' => array(
+			'className' => 'Bienesdeuso',
+			'foreignKey' => 'compra_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		)
+	);
 }

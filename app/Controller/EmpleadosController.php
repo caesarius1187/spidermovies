@@ -431,6 +431,16 @@ class EmpleadosController extends AppController {
                 $cargoMinimo = $this->Cargo->find('first', $options);
                 $basicoMinimoCargo = $cargoMinimo['Cargo']['sueldobasico'];
             }
+			if($empleado['Conveniocolectivotrabajo']['id']=='13'){
+                //UTEDYC
+                $options = [
+                    'contain'=>[
+                    ],
+                    'conditions' => array('Cargo.id' => '195')/*Administrativo de segunda*/
+                ];
+                $cargoMinimo = $this->Cargo->find('first', $options);
+                $basicoMinimoCargo = $cargoMinimo['Cargo']['sueldobasico'];
+            }
             $this->set(compact('basicoMinimoCargo'));
             //pregunto si esta definido por que puede pasar que no se hayan encontrado empleados que liquiden con esta
             // configuracion
@@ -494,23 +504,25 @@ class EmpleadosController extends AppController {
                         $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
                     }
                 }
-//			for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
-//				for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
-//					$ordenburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['orden'];
-//					$ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
-//					$ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
-//
-//					$seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
-//					$seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
-//
-//					if($ordenburbuja>$ordenaux&&$seccionburbuja==$seccionaux){
-//						$myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
-//						$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
-//						$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
-//					}
-//				}
-//			}
             }
+			//ahora vamos a acomodar por cctxconcepto ORDEN
+			for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
+				for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
+					//si son de la misma seccion comparo sino no
+					$seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
+					$seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
+					if($seccionburbuja!=$seccionaux){
+						continue;
+					}
+					$ordenburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['orden'];
+					$ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
+					if($ordenburbuja>$ordenaux){
+						$myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
+						$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
+						$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
+					}
+				}
+			}
         }
         //Resulta que para calcular el SAC tenemos que buscar de los ultimos 6 meses un par de datos
         //como Total Remunerativos y Total SD Excepto Indemnizatorios, tengo que buscar el maximo de ellos

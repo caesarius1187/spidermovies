@@ -964,7 +964,7 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
       'onClick'=>"papelesDeTrabajo(".$paramsPrepPapeles.")",
       'id'=>'buttonImpCli'.$impcli['id'],
       'data-sort'=> $impcli['Impuesto']['orden'],
-      'style'=> 'float:left;margin:0px;min-height: 45px',
+      'style'=> 'float:left;margin:0px;min-height: 45px;padding-right: 22px;',
     ),
     array()
     );
