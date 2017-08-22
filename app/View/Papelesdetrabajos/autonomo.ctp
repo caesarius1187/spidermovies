@@ -18,6 +18,7 @@ echo $this->Form->input('impclinombre',array('value'=>$impcli['Impuesto']['nombr
         <b style="display: inline">Papel de Trabajo</b>
         <?php echo $this->Form->button('Imprimir',
             array('type' => 'button',
+                'id'=>"btnImprimir",
                 'class' =>"btn_imprimir",
                 'onClick' => "imprimir()"
             )

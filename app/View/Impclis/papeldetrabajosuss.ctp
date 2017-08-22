@@ -15,6 +15,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
         <b style="display: inline">Papel de Trabajo</b>
         <?php echo $this->Form->button('Imprimir',
             array('type' => 'button',
+                'id'=>"btnImprimir",
                 'class' =>"btn_imprimir",
                 'onClick' => "openWin()"
             )
@@ -25,6 +26,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 'class' =>"btn_imprimir",
             )
         );?>
+        <!-- Solo para Excel Export -->
+        <table id="tblExcelHeader" class="tbl_tareas" style="border-collapse: collapse; width:100%;">
+        </table>
+        <!-- Solo para Excel Export -->
         <?php
         $empleadoDatos = array();
         $sindicatos['sindicato']=[];

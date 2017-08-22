@@ -1,12 +1,33 @@
 var ordenTxt = 0;
 $(document).ready(function() {
 	$( "#clickExcel" ).click(function() {
-		$("#tblDatosAIngresar").table2excel({
+
+		if (!document.getElementById("pdtSUSS_tr1"))
+		{
+	    	$("#tblExcelHeader").prepend(
+	    		$("<tr id='pdtSUSS_tr1'>").append(
+					$("<td style='display:none'>")
+						.attr("colspan","25")
+						.html("Contribuyente: " + $('#clinombre').val() + " - CUIT: " + $('#nroCuitContribuyente').html())						
+	    			)
+	    		);
+    	}
+    	if (!document.getElementById("pdtSUSS_tr2"))
+    	{
+    		$("#tblExcelHeader").prepend(
+	    		$("<tr id='pdtSUSS_tr2'>").append(
+					$("<td style='display:none'>")
+						.attr("colspan","25")
+						.html($('#tipoorganismoyNombre').html() + " - Periodo: "+ $('#periodoPDT').val())				
+	    			)
+	    		);
+    	}
+
+		$("#sheetCooperadoraAsistencial").table2excel({
 			// exclude CSS class
 			exclude: ".noExl",
 			name: "SUSS",
-			filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"SUSS"
-
+			filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","")+"_"+$('#periodoPDT').val().replace(/-/g,"_")+"_SUSS"			
 		});
 	});
 	papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
@@ -17,9 +38,43 @@ $(document).ready(function() {
     $("#EmpleadoPapeldetrabajosussForm input").change(function(){
         cargartxt();
     });
+
+    var beforePrint = function() {
+		$('#header').hide();				
+		$('#clickExcel').hide();
+		$('#btnImprimir').hide();
+		$('#divPrepararPapelesDeTrabajo').hide();
+        var tblDatosAIngresar = $('#tblDatosAIngresar');
+    	tblDatosAIngresar.floatThead('destroy');
+	};
+	var afterPrint = function() {		
+		$('#header').show();				
+		$('#clickExcel').show();
+		$('#btnImprimir').show();
+		$('#divPrepararPapelesDeTrabajo').show();  		
+		var tblDatosAIngresar = $('#tblDatosAIngresar');
+    	tblDatosAIngresar.floatThead();  
+    };
+	if (window.matchMedia) {
+		var mediaQueryList = window.matchMedia('print');
+		mediaQueryList.addListener(function(mql) {
+			if (mql.matches) {
+				beforePrint();
+			} else {
+				afterPrint();
+			}
+		});
+	}
+	window.onbeforeprint = beforePrint;
+	window.onafterprint = afterPrint;
+
 	cargarAsiento();
 	catchAsiento();
 });
+function openWin(){
+	window.print();
+}
+/*
 function openWin()
 {
 
@@ -36,6 +91,7 @@ function openWin()
 
 		}, 1000);
 }
+*/
 function cargarAsiento(){
 	// 503020017	Mano de Obra Salta
 	if($('#cuenta2250').length > 0){

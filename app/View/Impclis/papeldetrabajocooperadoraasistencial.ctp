@@ -78,6 +78,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
         <b style="display: inline">Papel de Trabajo</b>
         <?php echo $this->Form->button('Imprimir',
             array('type' => 'button',
+                'class' =>"btnImprimir",
                 'class' =>"btn_imprimir",
                 'onClick' => "imprimir()",
                 'style' => "display:inline"
@@ -90,6 +91,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 'style' => "display:inline"
             )
         );?>
+        <!-- Solo para Excel Export -->
+        <table id="tblExcelHeader" class="tbl_tareas" style="border-collapse: collapse; width:100%;">
+        </table>
+        <!-- Solo para Excel Export -->
         <table id="tblDatosAIngresar" class="tblInforme tbl_border" cellspacing="0" >
             <tr>
                 <td>Legajo</td>

@@ -27,11 +27,33 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
         catchAsientoIVA();
 
         $( "#clickExcel" ).click(function() {
+
+            if (!document.getElementById("pdtIVA_tr1"))
+            {
+                $("#tblExcelHeader").prepend(
+                    $("<tr id='pdtIVA_tr1'>").append(
+                        $("<td style='display:none'>")
+                            .attr("colspan","25")
+                            .html("Contribuyente: " + $('#clinombre').val() + " - CUIT: " + $('#nroCuitContribuyente').html())                      
+                        )
+                    );
+            }
+            if (!document.getElementById("pdtIVA_tr2"))
+            {
+                $("#tblExcelHeader").prepend(
+                    $("<tr id='pdtIVA_tr2'>").append(
+                        $("<td style='display:none'>")
+                            .attr("colspan","25")
+                            .html($('#tipoorganismoyNombre').html() + " - Periodo: "+ $('#periodoPDT').val())               
+                        )
+                    );
+            }
+
             $("#contenedor").table2excel({
                 // exclude CSS class
                 exclude: ".noExl",
                 name: "Conveniomultilateral",
-                filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"IVA"
+                filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","")+"_"+$('#periodoPDT').val().replace(/-/g,"_")+"_IVA"
             });
         });
         var beforePrint = function() {
@@ -39,9 +61,11 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             $('.Formhead').hide();
             $('#divContenedorVentas').show();
             $('#divContenedorCompras').show();
-            $('#divContenedorLiquidacion').show();
-//            $('#divContenedorContabilidad').hide();
-            $('#divLiquidarIVA').hide();
+            $('#divContenedorLiquidacion').show();            
+            $('#divPrepararPapelesDeTrabajo').hide();            
+            $('#btnImprimir').hide();
+            $('#clickExcel').hide();
+
             $('#index').css('float','left');
             $('#padding').css('padding','0px');
             $('#index').css('font-size','10px');
@@ -51,7 +75,9 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             $('#index').css('font-size','14px');
             $('#header').show();
             $('.Formhead').show();
-            $('#divLiquidarIVA').show();
+            $('#divPrepararPapelesDeTrabajo').show();            
+            $('#btnImprimir').show();
+            $('#clickExcel').show();
             $('#index').css('float','right');
             $('#padding').css('padding','10px 1%');
             CambiarTab('ventas')
@@ -485,6 +511,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
         <?php
         echo $this->Form->button('Imprimir',
             array('type' => 'button',
+                'id'=>"btnImprimir",
                 'class' =>"btn_imprimir",
                 'onClick' => "imprimir()"
             )
@@ -497,6 +524,10 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             )
         );?>
         </br>
+        <!-- Solo para Excel Export -->
+        <table id="tblExcelHeader" class="tbl_tareas" style="border-collapse: collapse; width:100%;">
+        </table>
+        <!-- Solo para Excel Export -->
         <div style="width:100%; padding-top:5px" class="noExl"></div>
         <div style="width:100%;height:30px;"  class="Formhead noExl" >
             <div id="tabVentas_Iva" class="cliente_view_tab_active" onclick="CambiarTab('ventas');" style="width:24%;">

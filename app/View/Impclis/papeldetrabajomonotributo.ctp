@@ -23,7 +23,11 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 		<div class="tabsTareaImpuesto" onClick="showDDJJ()" id="tab_DDJJ"><h2>DDJJ</h2></div>
 	</div>
 
-	<div id="divRecategorizacion" class="index">
+	<div id="divRecategorizacion" class="">
+		<!-- Solo para Excel Export -->
+		<table id="tblExcelHeader" class="tbl_tareas" style="border-collapse: collapse; width:50%;">
+		</table>
+		<!-- Solo para Excel Export -->
 		<div id="divLiquidarMonotributo">
 
 		</div>
@@ -33,6 +37,7 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 			<b style="display: inline">Papel de Trabajo</b>
 			<?php echo $this->Form->button('Imprimir',
 				array('type' => 'button',
+					'id'=>"btnImprimir",
 					'class' =>"btn_imprimir",
 					'onClick' => "imprimir()"
 				)
@@ -43,6 +48,7 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
 					'class' =>"btn_imprimir",
 				)
 			);?>
+			
 			<table class="tbl_tareas" style="border-collapse: collapse; width:50%;">
 				<thead>
 				<tr>

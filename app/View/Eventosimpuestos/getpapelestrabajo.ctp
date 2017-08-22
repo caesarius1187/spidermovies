@@ -38,15 +38,18 @@
     $labelClifch = $cliente['Cliente']['nombre'];
     ?>
     <b style="display: inline;">
+        <label id="tipoorganismoyNombre" style="display: inline;">
         <?php echo __(strtoupper($cliente['Organismosxcliente'][0]['tipoorganismo'])."-".$impuesto['nombre']); ?>
+        </label>
     </b> - <b>Periodo:</b> <?php echo $periodo; ?></br>
     <b style="display: inline;">
         Contribuyente:
-    </b><?php echo $labelClifch; ?>
+    </b><label style="display: inline;" id="clinombre"><?php echo $labelClifch; ?></label>
      -
     <b style="display: inline;">
         CUIT:
-    </b><?php echo $cliente['Cliente']['cuitcontribullente']; ?></br>
+    </b><label style="display: inline;" id="nroCuitContribuyente"><?php echo $cliente['Cliente']['cuitcontribullente']; ?></label>
+    </br>
     <?php
     $labelCuitfch ="<b> Usuario: </b>".$cliente['Organismosxcliente'][0]['usuario'].' - <b>Clave:</b> '.$cliente['Organismosxcliente'][0]['clave'];
     ?>

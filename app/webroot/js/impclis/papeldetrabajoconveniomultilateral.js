@@ -1,37 +1,57 @@
 $(document).ready(function() {
     $( "#clickExcel" ).click(function() {
-    	$("#pdtconveniomultilateral").prepend(
-    		$("<tr>").append(
-				$("<td>")
-					.attr("colspan","25")
-					.html($('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"Conveniomultilateral")
-    			)
-    		);
+    	if (!document.getElementById("pdtconveniomultilateral_tr1"))
+    	{
+	    	$("#pdtconveniomultilateral").prepend(
+	    		$("<tr id='pdtconveniomultilateral_tr1'>").append(
+					$("<td style='display:none'>")
+						.attr("colspan","25") 
+						.html("Contribuyente: " + $('#clinombre').html() + " - CUIT: " + $('#nroCuitContribuyente').html())
+	    			)
+	    		);
+    	}
+    	if (!document.getElementById("pdtconveniomultilateral_tr2"))
+    	{
+	    	$("#pdtconveniomultilateral").prepend(
+	    		$("<tr id='pdtconveniomultilateral_tr2'>").append(
+					$("<td style='display:none'>")
+						.attr("colspan","25")
+						.html($('#tipoorganismoyNombre').html() + " - Periodo: "+ $('#periodoPDT').val())				
+	    			)
+	    		);    	
+    	}
         $("#pdtconveniomultilateral").table2excel({
             // exclude CSS class
             exclude: ".noExl",
             name: "Conveniomultilateral",
-            filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"Conveniomultilateral"
+            filename:($('#clinombre').html()).replace(/ /g,"_").replace(".","") + "_" + $('#periodoPDT').val().replace(/-/g,"_") + "_Conveniomultilateral"
+            //filename:"Test"
 
         });
     });
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
     var beforePrint = function() {
-        console.log('Functionality to run before printing.');
+        //console.log('New Functionality to run before printing.');
         $('#header').hide();
         $('#Formhead').hide();
-        $('#divLiquidarConvenioMultilateral').hide();
+        $('#clickExcel').hide();
+		$('#btnImprimir').hide();        
+		$('#divPrepararPapelesDeTrabajo').hide();   
+        //$('#divLiquidarConvenioMultilateral').hide();
         $('#index').css('float','left');
         $('#padding').css('padding','0px');
         $('#index').css('font-size','10px');
         $('#index').css('border-color','#FFF');
     };
     var afterPrint = function() {
-        console.log('Functionality to run after printing');
+        //console.log('Functionality to run after printing');
         $('#index').css('font-size','14px');
         $('#header').show();
         $('#Formhead').show();
-        $('#divLiquidarConvenioMultilateral').show();
+        $('#clickExcel').show();
+		$('#btnImprimir').show();        
+		$('#divPrepararPapelesDeTrabajo').show();        		
+        //$('#divLiquidarConvenioMultilateral').show();
         $('#index').css('float','right');
         $('#padding').css('padding','10px 1%');
     };

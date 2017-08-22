@@ -10,6 +10,7 @@ echo $this->Form->input('periodonext',array('value'=>$periodoNext,'type'=>'hidde
 echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
 echo $this->Form->input('impcliid',array('value'=>$impcliid,'type'=>'hidden'));
 echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));?>
+
 <div id="index" class="index" style="margin-bottom:10px;">
     <div id="divLiquidarConvenioMultilateral">
     </div>
@@ -136,6 +137,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             <b style="display: inline">Papel de Trabajo</b>
             <?php echo $this->Form->button('Imprimir',
                 array('type' => 'button',
+                    'id'=>"btnImprimir",
                     'class' =>"btn_imprimir",
                     'onClick' => "imprimir()"
                 )
