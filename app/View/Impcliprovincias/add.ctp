@@ -29,23 +29,15 @@
 					}else{
 						echo $this->Form->input('Impcliprovincia.localidade_id',array('label'=>'Localidad','class'=>'chosen-select'));
 					}
-					echo $this->Form->input('Impcliprovincia.ano',array(
-						'label'=>'Año',
-						'class'=>'chosen-select',
-						 'options' => array(
-					              '2014'=>'2014', 
-					              '2015'=>'2015',     
-					              '2016'=>'2016',     
-					              '2017'=>'2017',     
-					              '2018'=>'2018',     
-					              '2019'=>'2019',     
-					              '2020'=>'2020',     
-					              ),
-			          	'empty' => 'Elegir año',
-			          	'required' => true, 
-			          	'placeholder' => 'Por favor seleccione año',
-			          	'default' =>  date("Y")
-			          	)
+					echo $this->Form->input('Impcliprovincia.periodo', array(
+							'class'=>'datepicker-month-year',
+							'type'=>'text',
+							'label'=>'Periodo Desde',
+							'required'=>true,
+							'style' => 'width:100px',
+							'readonly'=>'readonly',
+							'default' =>  date("m-Y")
+						)
 					);
 					//si el impuesto es actividades varias o acti
 					if($impuestoid==174/*Convenio Multilateral*/) {
@@ -86,7 +78,7 @@
 			$encuadreAlicuotaMinimo=0;
 			$actividadClienteId=$actividadcliente['Actividadcliente']['id'];
 			$actividadClienteCodigo=$actividadcliente['Actividade']['descripcion'];
-			$actividadClienteNombre=$actividadcliente['Actividade']['nombre'];
+			$actividadClienteNombre=$actividadcliente['Actividade']['nombre']."-".$actividadcliente['Actividadcliente']['descripcion'];
 			$precargado = 0;
 			if(isset($this->request->data['Encuadrealicuota'])){
 				if(count($this->request->data['Encuadrealicuota'])>0){
@@ -104,10 +96,17 @@
 					}
 				}
 			}
-			echo '<div class="div_view">';
+			echo '<div class="div_view index">';
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.id',array('type'=>'hidden','value'=>$encuadreAlicuotaId));
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_id',array('type'=>'hidden','value'=>$actividadClienteId));
-			echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_codigo',array('label'=>'Codigo','readonly'=>'readonly','value'=>$actividadClienteCodigo));
+			echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_codigo',array(
+					'style'=>'width:50px',
+					'div'=>['style'=>'width:56px'],
+					'label'=>'Codigo',
+					'readonly'=>'readonly',
+					'value'=>$actividadClienteCodigo
+				)
+			);
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_nombre',array(
 				'label'=>'Nombre',
 				'style'=>'width:400px',
@@ -162,7 +161,7 @@ if($mostrarLista&&!isset($error)){ ?>
 				<?php }else{ ?>
  				<td>Localidad</td>
 				<?php } ?>
- 				<td>Año</td>
+ 				<td>Periodo Desde</td>
 				<td>Coeficiente</td>
 <!--				<td>Minimo</td>-->
  				<td>Sede</td>
@@ -183,7 +182,7 @@ if($mostrarLista&&!isset($error)){ ?>
 						<?php }else{ ?>
 						<td><?php echo $impcliprovincia['Localidade']['nombre'];?></td>
 						<?php } ?>
-         				<td><?php echo $impcliprovincia['Impcliprovincia']['ano'];?></td>
+         				<td><?php echo $impcliprovincia['Impcliprovincia']['periodo'];?></td>
 						<td><?php echo $impcliprovincia['Impcliprovincia']['coeficiente'];?></td>
 <!--						<td>--><?php //echo $impcliprovincia['Impcliprovincia']['minimo'];?><!--</td>-->
          				<td><?php echo $impcliprovincia['Impcliprovincia']['sede']? 'SI':'NO';?></td>

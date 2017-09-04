@@ -35,7 +35,6 @@ $(document).ready(function() {
     $( "#clientesPeriodoanio" ).change(function(){
         clientesAvanceForm.submit();
     });
-
     $( "#clientesGclis" ).change(function(){
         if( $('#clientesGclis').val() ) {
           $("#clientesSelectby").val("grupos");
@@ -148,9 +147,32 @@ $(document).ready(function() {
             success: function(response) {
                 //alert(response);
                 $('#myModal').on('show.bs.modal', function() {
-                      $('#myModal').find('.modal-title').html('Liquidacion');
-                      $('#myModal').find('.modal-body').html(response);
-                      // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                    $('#myModal').find('.modal-title').html('Liquidacion');
+                    $('#myModal').find('.modal-body').html(response);
+                    $('#myModal').find('.modal-content')
+                        .css({
+                            width: 'max-content',
+                            'margin-left': function () {
+                                return -($(this).width() / 2);
+                            }
+                        });
+                    $('#myModal').find('.modal-footer').html("");
+                    $('#myModal').find('.modal-footer').append($('<button>', {
+                        type:'button',
+                        datacontent:'remove',
+                        class:'btn btn-primary',
+                        id:'editRowBtn',
+                        onclick:"$('#EventosimpuestoRealizartarea5Form').submit()",
+                        text:"Aceptar"
+                    }));
+                    $('#myModal').find('.modal-footer').append($('<button>', {
+                        type:'button',
+                        datacontent:'remove',
+                        class:'btn btn-primary',
+                        id:'editRowBtn',
+                        onclick:" $('#myModal').modal('hide')",
+                        text:"Cerrar"
+                    }));
                 });
                 $('#myModal').modal('show');
                 $(document).ready(function() {
@@ -202,11 +224,11 @@ $(document).ready(function() {
                             if(respuesta.numero*1>=0){
                                 $('#buttonImpCli'+impcli).addClass('buttonImpcliRealizado');
                                 srcPT = srcPT.replace("ptgrey.png", "ptgreen.png");
-                                srcPago = srcPago.replace("pagogrey.png", "pagogreen.png");
+                                srcPago = srcPago.replace("pesogrey.png", "pesogreen.png");
                             }else{
                                 $('#buttonImpCli'+impcli).addClass('buttonImpcliSaldoNegativo ');
                                 srcPT = srcPT.replace("ptgrey.png", "ptblue.png")
-                                srcPago = srcPago.replace("pagogrey.png", "pagoblue.png")
+                                srcPago = srcPago.replace("pesogrey.png", "pesoblue.png")
                             }
                             $('#buttonImpCli'+impcli+' label').html("$"+respuesta.numero);
 
@@ -416,8 +438,8 @@ $(document).ready(function() {
         return false;
     }
     function verFormHonorarios(cliid,periodo){
-    var data = "";
-     $.ajax({
+        var data = "";
+        $.ajax({
            type: "post",  // Request method: post, get
            url: serverLayoutURL+"/honorarios/cargar/"+periodo+"/"+cliid, // URL to request
            data: data,  // post data
@@ -452,8 +474,8 @@ $(document).ready(function() {
                               return false;
                             }
                               if($("#buttonCargaHonorarios"+cliid).length>0){
-                                  $('#buttonCargaHonorarios'+cliid).removeClass('buttonImpcli0');
-                                  $('#buttonCargaHonorarios'+cliid).addClass('buttonImpcli4');
+                                  $('#buttonCargaHonorarios'+cliid).removeClass('buttonImpcliListo');
+                                  $('#buttonCargaHonorarios'+cliid).addClass('buttonImpcliRealizado');
                               }
                               verFormHonorarios(cliid,periodo);
                             return false;
@@ -474,8 +496,8 @@ $(document).ready(function() {
         return false;
     }
     function verFormDepositos(cliid,periodo){
-    var data = "";
-     $.ajax({
+        var data = "";
+        $.ajax({
            type: "post",  // Request method: post, get
            url: serverLayoutURL+"/depositos/cargar/"+periodo+"/"+cliid, // URL to request
            data: data,  // post data
@@ -501,12 +523,15 @@ $(document).ready(function() {
                           data: formData,
                         success: function(data,textStatus,xhr){
                             //callAlertPopint(data);
-
                             var mirespuesta =jQuery.parseJSON(data);
                             if(mirespuesta.hasOwnProperty('respuesta')){
                               callAlertPopint(mirespuesta.respuesta);
                             }
                             var newtd="";
+                            if($("#buttonCargaRecibos"+cliid).length>0){
+                                $('#buttonCargaRecibos'+cliid).removeClass('buttonImpcliListo');
+                                $('#buttonCargaRecibos'+cliid).addClass('buttonCargaRecibos');
+                            }
                             verFormDepositos(cliid,periodo);
                             return false;
                           },
@@ -589,37 +614,60 @@ $(document).ready(function() {
     function loadPagar(periodo,impcli,cliid){
      var data = "";
          $.ajax({
-               type: "post",  // Request method: post, get
-               url: serverLayoutURL+"/eventosimpuestos/getapagar/"+periodo+"/"+impcli+"/"+cliid, // URL to request
-               data: data,  // post data
-               success: function(response) {
-                  //Aqui vamos a poner los listeners para los formularios para Pagar Papeles Preparados
-                   //alert(response);
-                   $('#myModal').on('show.bs.modal', function() {
-                       $('#myModal').find('.modal-title').html('Pagos');
-                       $('#myModal').find('.modal-body').html(response);
-                       // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
-                   });
-                   $('#myModal').modal('show');
-                  var i = 0;
-                  while(i<=20){
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/eventosimpuestos/getapagar/"+periodo+"/"+impcli+"/"+cliid, // URL to request
+            data: data,  // post data
+            success: function(response) {
+                //Aqui vamos a poner los listeners para los formularios para Pagar Papeles Preparados
+                //alert(response);
+                $('#myModal').on('show.bs.modal', function() {
+                     $('#myModal').find('.modal-title').html('Pagos');
+                     $('#myModal').find('.modal-body').html(response);
+                     $('#myModal').find('.modal-content')
+                         .css({
+                             width: 'max-content',
+                             'margin-left': function () {
+                                 return -($(this).width() / 2);
+                             }
+                         });
+                     $('#myModal').find('.modal-footer').html("");
+                     $('#myModal').find('.modal-footer').append($('<button>', {
+                        type:'button',
+                        datacontent:'remove',
+                        class:'btn btn-primary',
+                        id:'editRowBtn',
+                        onclick:"$('#FormPagarEventoImpuesto').submit()",
+                        text:"Aceptar"
+                     }));
+                    $('#myModal').find('.modal-footer').append($('<button>', {
+                        type:'button',
+                        datacontent:'remove',
+                        class:'btn btn-primary',
+                        id:'editRowBtn',
+                        onclick:" $('#myModal').modal('hide')",
+                        text:"Cerrar"
+                     }));
+                });
+                $('#myModal').modal('show');
+                var i = 0;
+                while(i<=20){
                     checkVencimientoPagado(i);
                     i++;
-                  }
-                   catchFormAsiento("AsientoAddForm");
-                   $('#FormPagarEventoImpuesto').submit(function(){
+                }
+                catchFormAsiento("AsientoAddForm");
+                $('#FormPagarEventoImpuesto').submit(function(){
                     //vamos a controlar que los campos monto vencimiento sean iguales a los montos pagados
                     //serialize form data
                     var formData = $(this).serialize();
                     //get form action
                     var formUrl = $(this).attr('action');
-                   $('#myModal').modal('hide');
+                    $('#myModal').modal('hide');
                     $.ajax({
-                      type: 'POST',
-                      url: formUrl,
-                      data: formData,
-                      success: function(data,textStatus,xhr){
-                       /*callAlertPopint(data);
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(data,textStatus,xhr){
+                        /*callAlertPopint(data);
                         return;*/
                         var mirespuesta =jQuery.parseJSON(data);
                         callAlertPopint(mirespuesta.sinerror);
@@ -628,29 +676,42 @@ $(document).ready(function() {
                         $('#buttonImpCli'+impcli).addClass('buttonImpcli4');
                         $("#AsientoAddForm").submit();
                         return false;
-                      }, 
-                      error: function(xhr,textStatus,error){ 
-                        callAlertPopint(textStatus); 
+                    },
+                    error: function(xhr,textStatus,error){
+                        callAlertPopint(textStatus);
                         return false;
-                      } 
-                    }); 
+                    }
+                    });
                     return false;
-                  });
-
-                   $('.chosen-select-cuenta').chosen(
-                       {
-                           search_contains:true,
-                           include_group_label_in_selected:true
-                       }
-                   );
-                   //aca vamos a mover el div de asientos al de eventos impuesto
-                   $('#divContenedorContabilidad').detach().appendTo('#divAsientoDePagoEventoImpuesto');
-               },
-               error:function (XMLHttpRequest, textStatus, errorThrown) {
+               });
+                $('.chosen-select-cuenta').chosen(
+                    {
+                        search_contains:true,
+                        include_group_label_in_selected:true
+                    }
+                );
+                //aca vamos a mover el div de asientos al de eventos impuesto
+                $('#divContenedorContabilidad').detach().appendTo('#divAsientoDePagoEventoImpuesto');
+                $(".inputDebe").each(function () {
+                    $(this).change(addTolblTotalDebeAsieto);
+                });
+                $(".inputHaber").each(function () {
+                    $(this).change(addTolblTotalhaberAsieto);
+                });
+                $(".inputHaber").each(function(){
+                    $(this).trigger('change');
+                    return;
+                });
+                $(".inputDebe").each(function(){
+                    $(this).trigger('change');
+                    return;
+                });
+           },
+           error:function (XMLHttpRequest, textStatus, errorThrown) {
                       alert(textStatus);
                       
-               }
-            });
+           }
+        });
       return false;
   }
 /* 19 Tarea Contabilizar*/
@@ -666,11 +727,33 @@ $(document).ready(function() {
             // URL to request
             data: data,  // post data
             success: function(response) {
-
                 $('#myModal').on('show.bs.modal', function() {
                     $('#myModal').find('.modal-title').html('Asiento automatico de venta');
                     $('#myModal').find('.modal-body').html(response);
-                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                    $('#myModal').find('.modal-content')
+                        .css({
+                            width: 'max-content',
+                            'margin-left': function () {
+                                return -($(this).width() / 2);
+                            }
+                        });
+                    $('#myModal').find('.modal-footer').html("");
+                    $('#myModal').find('.modal-footer').append($('<button>', {
+                        type:'button',
+                        datacontent:'remove',
+                        class:'btn btn-primary',
+                        id:'editRowBtn',
+                        onclick:"$('#AsientoAddForm').submit()",
+                        text:"Aceptar"
+                    }));
+                    $('#myModal').find('.modal-footer').append($('<button>', {
+                        type:'button',
+                        datacontent:'remove',
+                        class:'btn btn-primary',
+                        id:'editRowBtn',
+                        onclick:" $('#myModal').modal('hide')",
+                        text:"Cerrar"
+                    }));
                 });
                 $('#myModal').modal('show');
                 $('.chosen-select-cuenta').chosen({
@@ -706,6 +789,10 @@ $(document).ready(function() {
                                 var respuesta = jQuery.parseJSON(data);
                                 var resp = respuesta.respuesta;
                                 $('#myModal').modal('hide');
+                                if($("#buttonAsVenta"+clienteid).length>0){
+                                    $('#buttonAsVenta'+clienteid).removeClass('buttonImpcliListo');
+                                    $('#buttonAsVenta'+clienteid).addClass('buttonImpcliRealizado');
+                                }
                                 callAlertPopint(resp);
                             },
                             error: function(xhr,textStatus,error){
@@ -784,6 +871,10 @@ $(document).ready(function() {
                                 var respuesta = jQuery.parseJSON(data);
                                 var resp = respuesta.respuesta;
                                 $('#myModal').modal('hide');
+                                if($("#buttonAsCompra"+clienteid).length>0){
+                                    $('#buttonAsCompra'+clienteid).removeClass('buttonImpcliListo');
+                                    $('#buttonAsCompra'+clienteid).addClass('buttonImpcliRealizado');
+                                }
                                 callAlertPopint(resp);
                             },
                             error: function(xhr,textStatus,error){
@@ -860,6 +951,10 @@ $(document).ready(function() {
                                 var respuesta = jQuery.parseJSON(data);
                                 var resp = respuesta.respuesta;
                                 $('#myModal').modal('hide');
+                                if($("#buttonRetencionessufridas"+clienteid).length>0){
+                                    $('#buttonRetencionessufridas'+clienteid).removeClass('buttonImpcliListo');
+                                    $('#buttonRetencionessufridas'+clienteid).addClass('buttonImpcliRealizado');
+                                }
                                 callAlertPopint(resp);
                             },
                             error: function(xhr,textStatus,error){
@@ -933,6 +1028,10 @@ $(document).ready(function() {
                                 var respuesta = jQuery.parseJSON(data);
                                 var resp = respuesta.respuesta;
                                 $('#myModal').modal('hide');
+                                if($("#buttonCbu"+cbuid).length>0){
+                                    $('#buttonCbu'+cbuid).removeClass('buttonImpcliListo');
+                                    $('#buttonCbu'+cbuid).addClass('buttonImpcliRealizado');
+                                }
                                 callAlertPopint(resp);
                             },
                             error: function(xhr,textStatus,error){

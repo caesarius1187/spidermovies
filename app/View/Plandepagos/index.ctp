@@ -5,7 +5,7 @@
 	<div class="plandepagos form">
 		<?php
 		echo $this->Form->create('Plandepago',array('class'=>'formTareaCarga','action'=>'index'));
-				echo $this->Form->input('cliente_id');
+				echo $this->Form->input('cliente_id',['class'=>'chosen-select']);
 				echo $this->Form->input('organismo',array('type'=>'select','options'=>$misorganismos));
 				echo $this->Form->input('plan',array('required'=>true,'label'=>'N. Plan'));
 				echo $this->Form->input('cuotas',array('required'=>true));

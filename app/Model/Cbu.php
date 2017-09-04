@@ -39,7 +39,20 @@ class Cbu extends AppModel {
      * @var array
      */
     public $hasMany = array(
-        'Movimientosbancario' => array(
+        'Asiento' => array(
+			'className' => 'Asiento',
+			'foreignKey' => 'cbu_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
+		'Movimientosbancario' => array(
 			'className' => 'Movimientosbancario',
 			'foreignKey' => 'cbu_id',
 			'dependent' => false,

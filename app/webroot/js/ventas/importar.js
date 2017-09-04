@@ -57,10 +57,30 @@ $(document).ready(function() {
         });
         return false;
     });
+    //seleccion de tipos gastos por actividad
+    $.fn.filterGroups = function( options ) {
+        var settings = $.extend( {}, options);
+
+        return this.each(function(){
+
+            var $select = $(this);
+            // Clone the optgroups to data, then remove them from dom
+            $select.data('fg-original-groups', $select.find('optgroup').clone()).children('optgroup').remove();
+
+            $(settings.groupSelector).change(function(){
+                var $this = $(this);
+                var $optgroup_label = $(this).find('option:selected').text();
+                var $optgroup =  $select.data('fg-original-groups').filter('optgroup[label="' + $optgroup_label + '"]').clone();
+                $select.children('optgroup').remove();
+                $select.append($optgroup);
+            }).change();
+        });
+    };
     comportamientoDeFiltros();
     aplicarFiltros();
     agregarConsultaCondicionAFIP();
-    $("#loading").css('visibility','hidden')
+    $("#loading").css('visibility','hidden');
+    actividadCategoria();
 });
 //vamos a inicalizar los Filtros
 function comportamientoDeFiltros(){
@@ -79,9 +99,6 @@ function comportamientoDeFiltros(){
         aplicarFiltros();
     });
     $('#Filtro0ActividadclienteId').change(function() {
-        aplicarFiltros();
-    });
-    $('#Filtro0Tipodebito').change(function() {
         aplicarFiltros();
     });
     $('#Filtro0Alicuota').change(function() {
@@ -131,13 +148,6 @@ function aplicarControlFiltro(mytr){
         mostrarPorActividadcliente = true;
     }
 
-    var mostrarPorTipoDebito = false;
-    if($('#Filtro0Tipodebito option:selected').val()!=''){
-        mostrarPorTipoDebito = buscarCoincidenciasFiltro(mytr,'Filtro0Tipodebito','filtrotipodebito');
-    }else{
-        mostrarPorTipoDebito = true;
-    }
-
     var mostrarPorAlicuota = false;
     if($('#Filtro0Alicuota option:selected').val()!=''){
         mostrarPorAlicuota = buscarCoincidenciasFiltro(mytr,'Filtro0Alicuota','filtroalicuota');
@@ -146,7 +156,7 @@ function aplicarControlFiltro(mytr){
     }
 
     if(mostrarPorComprobante && mostrarPorPuntoVenta && mostrarPorSubcliente && mostrarPorCondicionIVA &&
-        mostrarPorActividadcliente && mostrarPorTipoDebito && mostrarPorAlicuota){
+        mostrarPorActividadcliente && mostrarPorAlicuota){
         mytr.show();
     }else{
         mytr.hide();
@@ -163,7 +173,7 @@ function buscarCoincidenciasFiltro(trToShow, idfiltro, clasefiltro){
         }else{
             selectedText = $(this).children(':selected').text();
         }
-        if(selectedText.indexOf(textFiltro)){
+        if(textFiltro.indexOf(selectedText)){
             textoEncontrado = false;
             return;
         }else{
@@ -221,6 +231,28 @@ function agregarApplyToAllInFirstRow(){
             );
     });
 }
+function actividadCategoria(){
+    $('.inputactividad').each(function(){
+        var orden = $(this).attr('ordeventa');
+        if($('#Venta'+orden+'jsonactividadescategorias option').size()>0 ){
+            console.log( "#Venta"+orden+"TipogastoId filterGroups" );
+            $("#Venta"+orden+"TipogastoId").filterGroups({groupSelector: "#Venta"+orden+"jsonactividadescategorias", });
+            console.log( "#Venta"+orden+"TipogastoId filterGroups Finished" );
+        }
+
+        console.log( "#Venta"+orden+"TipogastoId filterGroups Set ON Change" );
+        $("#Venta"+orden+"ActividadclienteId").on('change', function() {
+            console.log( "#Venta"+orden+"TipogastoId Changed" );
+            $("#Venta"+orden+"jsonactividadescategorias").val($("#Venta"+orden+"ActividadclienteId").val());
+            $("#Venta"+orden+"jsonactividadescategorias").trigger( "change" );
+        });
+        console.log( "#Venta"+orden+"TipogastoId filterGroups Set ON Change Finished" );
+        console.log( "#Venta"+orden+"TipogastoId filterGroups Trigguer Change" );
+        $("#Venta"+orden+"jsonactividadescategorias").trigger( "change" );
+        console.log( "#Venta"+orden+"TipogastoId filterGroups Trigguer Finished" );
+
+    });
+}
 function aplicarATodos(miinput){
     var valueAAplicar = $('#'+miinput).val();
     var inputclass = $('#'+miinput).attr('inputclass');
@@ -231,6 +263,10 @@ function aplicarATodos(miinput){
             if($('#'+$(this).attr('id')+'_chosen').is(":visible")) {
                 $(this).val(valueAAplicar).trigger("chosen:updated");
             }
+        }
+        //si es clase inputactividad vamos a hacer un trigger change
+        if($(this).hasClass('inputactividad')){
+            $(this).trigger("change");
         }
     });
 }

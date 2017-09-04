@@ -36,6 +36,7 @@ $(document).ready(function() {
     $('#PlandepagoIndexForm').change(function(){
         $('#divPlandepagoAddForm').hide();
     });
+    $('.chosen-select').chosen({search_contains:true});
 });
 function pagarPlandePago(pdpid){
     var data ="";

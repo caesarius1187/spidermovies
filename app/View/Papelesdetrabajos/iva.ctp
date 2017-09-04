@@ -566,7 +566,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     foreach ($ventas as $venta){
                         if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                         {
-                            if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
+                            if ($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
                             {
                                 if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                                 {
@@ -737,7 +737,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     foreach ($ventas as $venta){
                         if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                         {
-                            if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
+                            if ($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
                             {
                                 $totalacomputar = $venta['Venta']['total']-$venta['Venta']['excentos']-$venta['Venta']['nogravados'];
                                 if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
@@ -907,7 +907,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         //echo $venta['Actividadcliente']['actividade_id']. ' - '.$ActividadCliente_id;
                         if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                         {
-                            if ($venta['Venta']['tipodebito'] == 'Debito Fiscal' && $venta['Venta']['condicioniva'] == 'monotributista')
+                            if ($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso' && $venta['Venta']['condicioniva'] == 'monotributista')
                             {
                                 if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                                 {
@@ -1063,8 +1063,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     foreach ($ventas as $venta){
                         if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                         {
-                            if ($venta['Venta']['tipodebito'] == 'Debito Fiscal')
+                            if ($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso')
                             {
+                               
                                 if(
                                     (($venta['Venta']['nogravados']*1)>0)
                                     ||
@@ -1074,6 +1075,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                 }
                                 $TotalExentoYNoGravado += $venta['Venta']['nogravados'];
                                 $TotalExentoYNoGravado += $venta['Venta']['excentos'];
+                            }
+                            else{
+                                if(
+                                    (($venta['Venta']['nogravados']*1)>0)
+                                    ||
+                                    (($venta['Venta']['excentos']*1)>0)
+                                ){
+                                    $ExentoYNoGravado = true;
+                                }
+                                $TotalExentoYNoGravado -= $venta['Venta']['nogravados'];
+                                $TotalExentoYNoGravado -= $venta['Venta']['excentos'];
                             }
                         }
                     };
@@ -1144,7 +1156,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 foreach ($ventas as $venta){
                     if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                     {
-                        if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
+                        if (in_array($venta['Venta']['tipogasto_id'],$ingresosBienDeUso) && $venta['Venta']['condicioniva'] == 'responsableinscripto')
                         {
                             if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                             {
@@ -1306,7 +1318,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 foreach ($ventas as $venta){
                     if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                     {
-                        if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'monotributista')
+                        if (in_array($venta['Venta']['tipogasto_id'],$ingresosBienDeUso)  && $venta['Venta']['condicioniva'] == 'monotributista')
                         {
                             if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                             {
@@ -1475,7 +1487,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 foreach ($ventas as $venta){
                     if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                     {
-                        if ($venta['Venta']['tipodebito'] == 'Bien de uso' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
+                        if (in_array($venta['Venta']['tipogasto_id'],$ingresosBienDeUso) && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
                         {
                             if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                             {
@@ -2981,7 +2993,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 $TotalAlicuota27_0 = 0;
 
                 foreach ($ventas as $venta) {
-                    if ($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal') {
+                    if ($venta['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal') {
                         if ($venta['Venta']['condicioniva'] == 'responsableinscripto') {
                             if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50') {
                                 $Alicuota2_5 = true;
@@ -3106,7 +3118,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 $TotalAlicuota27_0 = 0;
 
                 foreach ($ventas as $venta) {
-                    if ($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal') {
+                    if ($venta['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal') {
                         if ($venta['Venta']['condicioniva'] == 'monotributista') {
                             if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50') {
                                 $Alicuota2_5 = true;
@@ -3232,8 +3244,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 $TotalAlicuota27_0 = 0;
 
                 foreach ($ventas as $venta) {
-
-                    if ($venta['Venta']['tipodebito'] == 'Restitucion debito fiscal') {
+                    if ($venta['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal') {
                         if ($venta['Venta']['condicioniva'] == 'consf/exento/noalcanza') {
                             if ($venta['Venta']['alicuota'] == '2.5' || $venta['Venta']['alicuota'] == '2.50') {
                                 $Alicuota2_5 = true;

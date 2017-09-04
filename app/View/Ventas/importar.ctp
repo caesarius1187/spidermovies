@@ -254,7 +254,6 @@ function toNumber($target){
 //                $lineVenta['condicioniva']=$line[8];
 //                $lineVenta['provincia']=$line[9];
 //                $lineVenta['localidad']=$line[10];
-//                $lineVenta['tipodebito']=$line[11];
 
                 //hay que acumular por que puede haber varias ventas con los mismos datos por las distintas alicuotas
                 if(!isset($lineVenta['importetotaloperacion'])){
@@ -396,7 +395,7 @@ function toNumber($target){
         ?>
 
     </div>
-    <div  class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
+    <div  class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;overflow: auto">
         Ultimas ventas cargadas en el sistema
         <table>
             <tr>
@@ -593,7 +592,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
     <?php
 } else {
     ?>
-    <div class="index">
+    <div class="index" style="overflow:auto;">
         <?php
 
         echo $this->Form->input('puntosdeventasdomicilio', array(
@@ -675,15 +674,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                     );?>
                 </td>
                 <td style="width:150px"></td>
-                <td style="width:83px;padding: 4px 0px;">
-                    <?php
-                    echo $this->Form->input('Filtro.0.tipodebito', array(
-                            'empty' => 'Debito',
-                            'style'=>"width: 83px;",
-                            'options'=>$tipodebitos,
-                        )
-                    );?>
-                </td>
                 <td style="width:55px;padding: 4px 0px;">
                     <?php
                     echo $this->Form->input('Filtro.0.alicuota', array(
@@ -713,6 +703,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                 'action'=>'cargarventas',
                 'id'=>'VentaImportar',
                 'class'=>'formTareaCarga',
+                'style'=>'width:1950px',
                 'inputDefaults' => array(
                     'div' => true,
                     'label' => false,
@@ -736,6 +727,32 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             $i=1;
             $cantVentasYaguardadas = 0;
             $misVentasYaCargadas = "";
+            //aca tengo que recorrer las actividades del cliente para relacionar las actividades con sus categorias de
+            // ganancias para que por javascript  las limite solo a las que tienen q ser
+            $actividadesCategorias = [];
+            foreach ($cliente['Actividadcliente'] as $actividadcliente) {
+                foreach ($actividadcliente['Cuentasganancia'] as $cuentaganancia){
+                    $cuentaGananciaTraducida = "";
+                    switch ($cuentaganancia['categoria']){
+                        case 'primeracateg':
+                            $cuentaGananciaTraducida = "primera";
+                            break;
+                        case 'segundacateg':
+                            $cuentaGananciaTraducida = "segunda";
+                            break;
+                        case 'terceracateg':
+                            $cuentaGananciaTraducida = "tercera";
+                            break;
+                        case 'terceracateg45':
+                            $cuentaGananciaTraducida = "tercera otros";
+                            break;
+                        case 'cuartacateg':
+                            $cuentaGananciaTraducida = "cuarta";
+                            break;
+                    }
+                    $actividadesCategorias[$actividadcliente['id']]= $cuentaGananciaTraducida;
+                }
+            }
             foreach ($ventasArray as $keyVenta => $venta) {
                 $numalicuota=0;
                 foreach ($venta['Alicuota'] as $keyAlicuota => $alicuota) {
@@ -859,13 +876,12 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         )
                                     );
                                     $condicioniva = 'Monotributista';//defaultavalue
-                                    $mitipodebito = 'Debito Fiscal';//Default Value
                                     $classcondicionIVA="";
 
 
-
+                                    $codigoComprobanteVenta = substr($venta['Venta']['comprobantetipo'],0,3);
                                     foreach ($supercomprobantes as $micomprobante) {
-                                        if ($venta['Venta']['comprobantetipo'] == $micomprobante['Comprobante']['codigo']) {
+                                        if ($codigoComprobanteVenta == $micomprobante['Comprobante']['codigo']) {
                                             if ($micomprobante['Comprobante']['tipo'] == 'A' ) {
                                                 $condicioniva = 'Responsable Inscripto';//defaultavalue
                                             } else  if ($micomprobante['Comprobante']['tipo'] == 'B'){
@@ -881,11 +897,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                                 $condicioniva = 'Cons. F/Exento/No Alcanza';
                                             }
 
-                                            if ($micomprobante['Comprobante']['tipodebitoasociado'] == 'Debito fiscal o bien de uso') {
-                                                $mitipodebito = 'Debito Fiscal';
-                                            } else {
-                                                $mitipodebito = 'Restitucion debito fiscal';
-                                            }
+
                                             break;
                                         }
                                     }
@@ -910,10 +922,40 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'label' => ($i + 9) % 10 == 0 ? 'Actividad' : '',
                                             'style' => 'width:80px',
                                             'div' => array('class' => 'inputAControlar'),
-                                            'class' => 'aplicableATodos filtroactividadcliente',
+                                            'class' => 'aplicableATodos filtroactividadcliente inputactividad',
                                             'inputclass' => 'VentaAddActividad',
+                                            'ordeventa'=>$i
+
                                         )
                                     );
+                                    //si no tiene categorizado ganancias no se debe poder cargar ventas
+                                    //a menos que sea monotributista y no tenga activado ganancias
+
+                                    echo $this->Form->input('Venta.' . $i . '.actividadescategorias', [
+                                        'type'=>'select',
+                                        'options'=>$actividadesCategorias,
+                                        'id'=>'Venta' . $i . 'jsonactividadescategorias',
+                                        'div'=>[
+                                            'style'=>'display:none'
+                                        ]
+                                    ]);
+                                    $display="content;";
+                                    $tieneMonotributo = $cliente['Cliente']['tieneMonotributo'];
+                                    if($tieneMonotributo){
+                                        $display="none;";
+                                    }
+                                    echo $this->Form->input('Venta.' . $i . '.tipogasto_id', array(
+                                        'default' => '',
+                                        'options' => $tipogastos,
+                                        'label' => ($i + 9) % 10 == 0 ? 'Tipo Ingreso.' : '',
+                                        'style' => 'width:83px;',
+                                        'div' => array(
+                                            'class' => 'inputAControlar',
+                                            'style' => 'display:'.$display,
+                                        ),
+                                        'inputclass' => 'VentaAddTipoGasto',
+                                        'class'=>'row'.$i.' aplicableATodos'
+                                    ));
                                     //esto no trae asi que vamos a tener que elegir
                                     echo $this->Form->input('Venta.' . $i . '.localidade_id', array(
                                             'class' => "chosen-select",
@@ -927,17 +969,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         )
                                     );
                                     //esto no trae asi que vamos a tener que elegir
-                                    echo $this->Form->input('Venta.' . $i . '.tipodebito', array(
-                                        'defaultoption' => $mitipodebito,
-                                        'options' => $tipodebitos,
-                                        'label' => ($i + 9) % 10 == 0 ? 'Tipo Deb.' : '',
-                                        'style' => 'width:83px',
-                                        'class' => 'aplicableATodos chosen-select filtrotipodebito',
-                                        'inputclass' => 'VentaAddTipoDebito',
-                                        'div' => array('class' => 'inputAControlar'),
-
-
-                                    ));
                                     echo $this->Form->input('Venta.' . $i . '.alicuota', array(
                                         'defaultoption' => $alicuota['alicuotaiva'],
                                         'label' => ($i + 9) % 10 == 0 ? 'Alicuota' : '',
@@ -946,7 +977,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         'inputclass' => 'VentaAddAlicuota',
                                     ));
                                     $importenetogravado = 0;
-                                    $tieneMonotributo = $cliente['Cliente']['tieneMonotributo'];
                                     if ($tieneMonotributo) {
                                         $importenetogravado = $venta['Venta']['importetotaloperacion'] * 1;
                                     } else {

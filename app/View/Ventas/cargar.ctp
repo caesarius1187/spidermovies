@@ -240,6 +240,53 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     'style' => 'width:150px'
 
                     ));
+                  //si no tiene categorizado ganancias no se debe poder cargar ventas
+                  //a menos que sea monotributista y no tenga activado ganancias
+                  //aca tengo que recorrer las actividades del cliente para relacionar las actividades con sus categorias de
+                  // ganancias para que por javascript  las limite solo a las que tienen q ser
+                  $actividadesCategorias = [];
+                  foreach ($cliente['Actividadcliente'] as $actividadcliente) {
+                      foreach ($actividadcliente['Cuentasganancia'] as $cuentaganancia){
+                          $cuentaGananciaTraducida = "";
+                          switch ($cuentaganancia['categoria']){
+                              case 'primeracateg':
+                                  $cuentaGananciaTraducida = "primera";
+                                  break;
+                              case 'segundacateg':
+                                  $cuentaGananciaTraducida = "segunda";
+                                  break;
+                              case 'terceracateg':
+                                  $cuentaGananciaTraducida = "tercera";
+                                  break;
+                              case 'terceracateg45':
+                                  $cuentaGananciaTraducida = "tercera otros";
+                                  break;
+                              case 'cuartacateg':
+                                  $cuentaGananciaTraducida = "cuarta";
+                                  break;
+                          }
+                          $actividadesCategorias[$actividadcliente['id']]= $cuentaGananciaTraducida;
+                      }
+                  }
+                  echo $this->Form->input('actividadescategorias', [
+                      'type'=>'select',
+                      'options'=>$actividadesCategorias,
+                      'id'=>'jsonactividadescategorias',
+                      'div'=>[
+                          'style'=>'display:none'
+                      ]
+                  ]);
+                  $display="content;";
+                  if($tieneMonotributo=='1'){
+                      $display="none;";
+                  }
+                echo $this->Form->input('tipogasto_id',array(
+                    'type'=>'select',
+                    'label'=>'Tipo Ingreso',
+                    'style' => 'width:150px; ',
+                    'div' => ['style'=>'display:'.$display],
+                    'class'=>"chosen-select",
+                ));
                 echo $this->Form->input('localidade_id',array(
                   'label'=>'Localidad',
                   'class'=>"chosen-select",
@@ -272,14 +319,6 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                         'style' => 'width:75px',
                         'type'=>'hidden',
                     ));
-                    echo $this->Form->input('tipodebito',array(
-                        'options' => $tipodebitos,
-                        'value' => 'Debito Fiscal',
-                        'default' => 'Debito Fiscal',
-    //                    'type'=>'text',
-                        'style' => 'width:80px',
-                        'div'=>['style'=>'display:none']
-                    ));
                 }else{
                     echo $this->Form->input('alicuota',array(
                       'options' => $alicuotas,
@@ -301,12 +340,6 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     echo $this->Form->input('excentos',array(
                         'label'=>'Exento',
                         'style' => 'width:75px'
-                    ));
-                    echo $this->Form->input('tipodebito',array(
-                        'options' => $tipodebitos,
-                        'label' => 'Tipo Debito',
-                        'class' => 'chosen-select',
-                        'style' => 'width:80px'
                     ));
                 }
                 if($tieneIVAPercepciones){

@@ -21,6 +21,7 @@ class PlandepagosController extends AppController {
  * @return void
  */
 	public function index() {
+		$this->loadModel('Cliente');
 		$this->Plandepago->recursive = 0;
 		if ($this->request->is('post')) {
 			$this->set('cuotas',$this->request->data['Plandepago']['cuotas']);
@@ -43,7 +44,7 @@ class PlandepagosController extends AppController {
 								'fields'=>array('Cliente.id')
 						 		)
 							);
-		$clientes2 = $this->Plandepago->Cliente->find('list',array(
+		$clientes2 = $this->Cliente->find('list',array(
 								'contain' =>$conditionsCli,
 								'conditions' => array(
 						 			'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id')

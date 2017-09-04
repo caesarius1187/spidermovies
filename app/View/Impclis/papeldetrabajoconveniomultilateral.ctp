@@ -78,9 +78,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             foreach ($actividadcliente['Venta'] as $venta) {
                 foreach ($impcli['Impcliprovincia'] as $impcliprovincia) {
                     if(($venta['Localidade']['partido_id']==$impcliprovincia['Partido']['id'])&&($impcliprovincia['ejercicio']!='Primero')){
-                        if($venta['tipodebito']=='Debito Fiscal'){
+                        if($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso'){
                             $subTotalProvincialxActividadVenta +=$venta['neto']+$venta['nogravados']+$venta['excentos']-$venta['exentosactividadeseconomicas'];
-                        }else if($venta['tipodebito']=='Restitucion debito fiscal'){
+                        }else if($venta['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $subTotalProvincialxActividadVenta -=$venta['neto']+$venta['nogravados']+$venta['excentos']-$venta['exentosactividadeseconomicas'];
                         }
                     }
@@ -284,9 +284,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             $subTotalProvincialxActividadVentaBienDeUso = 0;
                             foreach ($actividadcliente['Venta'] as $venta) {
                                 if($venta['Localidade']['partido_id']==$impcliprovincia['Partido']['id']){
-                                    if($venta['tipodebito']=='Debito Fiscal'){
+                                    if($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso'){
                                         $subTotalProvincialxActividadVenta +=$venta['neto']+$venta['nogravados']+$venta['excentos']-$venta['exentosactividadeseconomicas'];
-                                    }else if($venta['tipodebito']=='Restitucion debito fiscal'){
+                                    }else if($venta['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                                         $subTotalProvincialxActividadVenta -=$venta['neto']+$venta['nogravados']+$venta['excentos']-$venta['exentosactividadeseconomicas'];
                                     }else {
                                         $subTotalProvincialxActividadVentaBienDeUso +=$venta['neto']+$venta['nogravados']+$venta['excentos']-$venta['exentosactividadeseconomicas'];
@@ -541,9 +541,27 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                     $TotalPercepcionesEnMovimientosBancarios+=$movimientosbancario['debito'];
                                 }
                             }
+                            //este cartel tiene que mostrar por periodo el monto
+                            //por que puede venir acumulado de varios periodos
+                            //todo Acumular Rec. Bancarias de varios periodos
                             $titleTotalPercepcionesEnMovimientosBancarios = "Se han traido $".$TotalPercepcionesEnMovimientosBancarios.
                                 " de los Movimientos Bancarios cargados en la cuenta 110404298   I.I.B.B. - Percepciones Bancarias en el periodo";
                         }
+
+                        //solo vamos a aplicar el procedimiento de movimientos bancarios a partir de AGOSTO de 2017 para evitar
+                        //duplicaciones de rec bancarias en las liquidaciones.
+                        //EN EL ESTUDIO MANJON SOLAMENTE
+                        if($impcli['Cliente']['Grupocliente']['estudio_id']=='2'/*Estudio Manjon*/){
+                            $timePeriodoactual = "01-".$periodo;
+                            $d = new DateTime( $timePeriodoactual );
+                            $inicioDeAplicacion = new DateTime( "01-07-2017" );
+                            if($d < $inicioDeAplicacion){
+                                $titleTotalPercepcionesEnMovimientosBancarios = "No se tuvo en cuenta $".$TotalPercepcionesEnMovimientosBancarios.
+                                    " de los Movimientos Bancarios cargados en la cuenta 110404298   I.I.B.B. - Percepciones Bancarias en el periodo";
+                                $TotalPercepcionesEnMovimientosBancarios = 0;
+                            }
+                        }
+
                         $percepionBancariaSubtotal += $TotalPercepcionesEnMovimientosBancarios;
                         $afavorSubtotal=$conceptosxProvincia[$impcliprovincia['Partido']['id']]['afavorSubtotal'];
                         $otrosSubtotal=$conceptosxProvincia[$impcliprovincia['Partido']['id']]['otrosSubtotal'];
@@ -552,7 +570,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                 if($impcliprovincia['Partido']['id']==$compra['Localidade']['partido_id']){
                                     if($compra['tipocredito']=='Credito Fiscal'){
                                         $percepionSubtotal+=$compra['iibbpercep'];
-    
+
                                     }else if($compra['tipocredito']=='Restitucion credito fiscal'){
                                         $percepionSubtotal-=$compra['iibbpercep'];
                                     }

@@ -1328,7 +1328,7 @@ if($mostrarView){?>
                         <td colspan="2">
                             <?php
                             echo $this->Form->input('baja', array(
-                                    'class'=>'datepicker',
+                                    'class'=>'datepicker-month-year',
                                     'type'=>'text',
                                     'label'=>'Baja',
                                     'required'=>true,
@@ -2021,6 +2021,11 @@ if($mostrarView){?>
                 );
                 echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
                 echo $this->Form->input('adherente',array('label'=>'Adherentes','value'=>0));
+                echo $this->Form->input('obrasocialsindical',array(
+                    'label'=>'Obra social Sindical',
+                    'value'=>1,
+                    'checked'=>'checked',
+                    'title'=>'Indicar si el empleado tiene una obra social que no sea sindical'));
                 echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad));
                 echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion'));
                 echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion'));

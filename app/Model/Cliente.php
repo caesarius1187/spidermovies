@@ -288,6 +288,19 @@ class Cliente extends AppModel {
 			'exclusive' => '',
 			'finderQuery' => '',
 			'counterQuery' => ''
+		),
+		'Asiento' => array(
+			'className' => 'Asiento',
+			'foreignKey' => 'cliente_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
 		)
 	);
     public function impuestosActivados($cliid,$periodo){
@@ -350,6 +363,8 @@ class Cliente extends AppModel {
         $impuestosactivos['tienebanco'] = false;
         $impuestosactivos['contabiliza'] = false;
         $impuestosactivos['tieneEmpleados'] = false;
+        $impuestosactivos['ganancias'] = false;
+        $impuestosactivos['monotributo'] = false;
         foreach ($cliente['Impcli'] as $impcli) {
             if(Count($impcli['Periodosactivo'])!=0){
                 if( $impcli['Impuesto']['organismo']=='banco'){
@@ -358,6 +373,12 @@ class Cliente extends AppModel {
                 $impuestosactivos[$impcli['impuesto_id']]=true;
                 if( in_array($impcli['Impuesto']['id'], ['19','5','28','160'])){
                     $impuestosactivos['contabiliza']=true;
+                }
+				if( in_array($impcli['Impuesto']['id'], ['5','28','160'])){
+                    $impuestosactivos['ganancias']=true;
+                }
+				if( in_array($impcli['Impuesto']['id'], ['4'])){
+                    $impuestosactivos['monotributo']=true;
                 }
             }else{
                 $impuestosactivos[$impcli['impuesto_id']]=false;

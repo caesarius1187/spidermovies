@@ -153,167 +153,6 @@ class ClientesController extends AppController {
                     'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
                     'Grupocliente.estado' => 'habilitado',
                 );
-//                switch ($filtrodesolicitar) {
-//                    case 'banco':
-//                        $conditionsImpCliHabilitadosBanco = array(
-//                            //El periodo esta dentro de un desde hasta
-//                            'AND' => array(
-//                                'Periodosactivo.impcli_id = Impcli.id',
-//                                $esMayorQueDesde,
-//                                'OR' => array(
-//                                    $esMenorQueHasta,
-//                                    $periodoNull
-//                                )
-//                            )
-//
-//                        );
-//                        $clienteBancoOptions = array(
-//                            'contain' => array(
-//                                'Impuesto' => array()
-//                            ),
-//                            'conditions' => array(
-//                                'Impuesto.organismo' => 'banco'
-//                            ),
-//                            'fields' => array('Impcli.cliente_id'),
-//                            'joins' => array(
-//                                array('table' => 'periodosactivos',
-//                                    'alias' => 'Periodosactivo',
-//                                    'type' => 'inner',
-//                                    'conditions' => array(
-//                                        $conditionsImpCliHabilitadosBanco
-//                                    )
-//                                ),
-//                            )
-//                        );
-//                        $condicionDeSolicitarParaCliente = $this->Impcli->find('list', $clienteBancoOptions);
-//                        break;
-//                    case 'tarjetadecredito':
-//                        $clienteFacturaEnLinea = array(
-//                            'fields' => array('Impcli.cliente_id'),
-//                            'joins' => array(
-//                                array('table' => 'puntosdeventas',
-//                                    'alias' => 'Puntosdeventa',
-//                                    'type' => 'inner',
-//                                    'conditions' => array(
-//                                        'Puntosdeventa.cliente_id = Impcli.cliente_id',
-//                                        'Puntosdeventa.sistemafacturacion = "Factura en Linea"'
-//                                    )
-//                                ),
-//                            )
-//                        );
-//                        $clientesConFacturaEnLinea = $this->Impcli->find('list', $clienteFacturaEnLinea);
-//                        $this->set('clientesConFacturaEnLinea', array_unique(array_values($clientesConFacturaEnLinea)));
-//                        $clienteTarjetaCreditoOptions = array(
-//                            'conditions' => array(
-//                                "NOT" => array(
-//                                    "Cliente.id" => array_unique(array_values($clientesConFacturaEnLinea))
-//                                )
-//                            )
-//                        );
-//                        $condicionDeSolicitarParaCliente = array_keys($this->Cliente->find('list', $clienteTarjetaCreditoOptions));
-//                        break;
-//                    case 'descargawebafip':
-//                        $clienteDescargaWebAfip = array(
-//                            'fields' => array('Impcli.cliente_id'),
-//                            'joins' => array(
-//                                array('table' => 'puntosdeventas',
-//                                    'alias' => 'Puntosdeventa',
-//                                    'type' => 'inner',
-//                                    'conditions' => array(
-//                                        'Puntosdeventa.cliente_id = Impcli.cliente_id',
-//                                        'Puntosdeventa.sistemafacturacion = "Factura en Linea"'
-//                                    )
-//                                ),
-//                            )
-//                        );
-//                        $condicionDeSolicitarParaCliente = array_keys($this->Impcli->find('list', $clienteDescargaWebAfip));
-//                        break;
-//                    case 'libroivaventas':
-//                        $clienteDescargaWebAfip = array(
-//                            'fields' => array('Impcli.cliente_id'),
-//                            'joins' => array(
-//                                array('table' => 'puntosdeventas',
-//                                    'alias' => 'Puntosdeventa',
-//                                    'type' => 'inner',
-//                                    'conditions' => array(
-//                                        'Puntosdeventa.cliente_id = Impcli.cliente_id',
-//                                        'OR' => array(
-//                                            'Puntosdeventa.sistemafacturacion = "Controlador Fiscal"',
-//                                            'Puntosdeventa.sistemafacturacion = "RECE"',
-//                                        )
-//                                    )
-//                                ),
-//                            )
-//                        );
-//                        $condicionDeSolicitarParaCliente = array_values($this->Impcli->find('list', $clienteDescargaWebAfip));
-//                        break;
-//                    case 'fcluz':
-//                        $conditionsImpCliHabilitadosFacturaLuz = array(
-//                            //El periodo esta dentro de un desde hasta
-//                            'AND' => array(
-//                                'Periodosactivo.impcli_id = Impcli.id',
-//                                $esMayorQueDesde,
-//                                'OR' => array(
-//                                    $esMenorQueHasta,
-//                                    $periodoNull
-//                                )
-//                            )
-//
-//                        );
-//                        $clienteFacturaLuzOptions = array(
-//                            'contain' => array(),
-//                            'conditions' => array(
-//                                'Impcli.impuesto_id' => 4/*Monotributo*/
-//                            ),
-//                            'fields' => array('Impcli.cliente_id'),
-//                            'joins' => array(
-//                                array('table' => 'periodosactivos',
-//                                    'alias' => 'Periodosactivo',
-//                                    'type' => 'inner',
-//                                    'conditions' => array(
-//                                        $conditionsImpCliHabilitadosFacturaLuz
-//                                    )
-//                                ),
-//                            )
-//                        );
-//                        $condicionDeSolicitarParaCliente = $this->Impcli->find('list', $clienteFacturaLuzOptions);
-//                        break;
-//                    case 'sueldos':
-//                    case 'librounico':
-//                        $conditionsImpCliHabilitadosLibroUnicoSUSS = array(
-//                            //El periodo esta dentro de un desde hasta
-//                            'AND' => array(
-//                                'Periodosactivo.impcli_id = Impcli.id',
-//                                $esMayorQueDesde,
-//                                'OR' => array(
-//                                    $esMenorQueHasta,
-//                                    $periodoNull
-//                                )
-//                            )
-//
-//                        );
-//                        $clienteLibroUnicoSUSSOptions = array(
-//                            'contain' => array(),
-//                            'conditions' => array(
-//                                'Impcli.impuesto_id' => 10/*SUSS*/
-//                            ),
-//                            'fields' => array('Impcli.cliente_id'),
-//                            'joins' => array(
-//                                array('table' => 'periodosactivos',
-//                                    'alias' => 'Periodosactivo',
-//                                    'type' => 'inner',
-//                                    'conditions' => array(
-//                                        $conditionsImpCliHabilitadosLibroUnicoSUSS
-//                                    )
-//                                ),
-//                            )
-//                        );
-//                        $condicionDeSolicitarParaCliente = $this->Impcli->find('list', $clienteLibroUnicoSUSSOptions);
-//                        break;
-//                    default:
-//                        # code...
-//                        break;
-//                }
                 $aplicafiltro = true;
             } else {
                 $conditionsClientesAvance = array(
@@ -330,6 +169,9 @@ class ClientesController extends AppController {
 
             $this->Paginator->settings = array(
                 'contain' => array(
+					'Actividadcliente'=>array(
+						'Cuentasganancia'
+					),
                     'Grupocliente' => array(
                         'fields' => array('id', 'nombre'),
                     ),
@@ -354,10 +196,20 @@ class ClientesController extends AppController {
                     'Puntosdeventa' => array(
                         'fields' => array('id', 'cliente_id', 'sistemafacturacion', 'nombre'),
                     ),
-                    'Impcli' => array(
-                        'Cbu' => [],
+                    'Impcli' => [
+                        'Cbu' => [
+                            'Asiento'=>[
+                                'fields'=>['id'],
+                                'conditions'=>[
+                                    'Asiento.periodo'=>$pemes.'-'.$peanio,
+                                    'Asiento.tipoasiento'=>[
+                                        'bancosretiros','bancos'
+                                    ]
+                                ]
+                            ]
+                        ],
                         'Impuesto' => array(
-                            'fields' => array('id', 'nombre', 'abreviacion', 'orden', 'organismo'),
+                            'fields' => array('id', 'nombre', 'abreviacion', 'orden', 'organismo', 'tipo'),
                             'conditions' => array(),
                         ),
                         'Eventosimpuesto' => array(
@@ -375,14 +227,15 @@ class ClientesController extends AppController {
                             ]
                         ],
                         'fields' => array('Impcli.id', 'Impcli.cliente_id', 'Impcli.impuesto_id'),
-//				  	'conditions'=>[
-//						"Impcli.impuesto_id NOT IN
-//						(
-//							select id from
-//							impuestos as Impuesto
-//							where Impuesto.organismo == 'banco')",
-//					]
-                    )
+                    ],
+					'Asiento'=>[
+                        'fields'=>['id','tipoasiento'],
+                        'conditions'=>[
+                            'Asiento.tipoasiento'=>[
+                                'compras','ventas','retencionessufridas','retencionesrealizadas'
+                            ]
+                        ]
+					]
                 ),
                 'conditions' => $conditionsClientesAvance,
                 'limit' => 25,
@@ -599,8 +452,10 @@ class ClientesController extends AppController {
 										)
 								)
 						);	
-	   	$this->set('periodo',$periodo);	  
-		$cliente=$this->Cliente->find('first', array(
+	   	$this->set('periodo',$periodo);
+        $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
+        $this->set('ingresosBienDeUso',$ingresosBienDeUso);
+        $cliente=$this->Cliente->find('first', array(
 				   'contain'=>array(
 					   	'Sueldo'=>array(
 						   'conditions' => array(
@@ -940,7 +795,9 @@ class ClientesController extends AppController {
 			'Dcto 814'=>'Dcto 814');
 		$this->set('imputaciones', $imputaciones);
 		
-		$optionsTipoGastos=array('conditions'=>array());
+		$optionsTipoGastos=array('conditions'=>array(
+			
+		));
 		$tipogastos = $this->Compra->Tipogasto->find('list',$optionsTipoGastos);
 		$this->set('tipogastos', $tipogastos);
 
@@ -1296,6 +1153,7 @@ class ClientesController extends AppController {
 						            ],
 				   			],
 				   			'Venta'=>array(
+								'contain'=>['Comprobante'],
 				   				'conditions' => array(
 						            	 'Venta.periodo' => $pemes."-".$peanio
 						            ),

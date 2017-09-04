@@ -51,6 +51,77 @@ class ImpclisController extends AppController {
 		$this->loadModel('Cuenta');
 		$this->loadModel('Cuentascliente');
 		if ($this->request->is('post')) {
+            //primero que nada voy a preguntar si estoy guardando IVA y si no choca con Monotributo
+            //y dsp al reves
+            if($this->request->data['Impcli']['impuesto_id']=='4'/*Monotributo*/){
+                $periodoDesde = $this->request->data['Impcli']['alta'];
+                $options = [
+                    'contain'=>[
+                        'Periodosactivo'=>[
+                            'conditions' => [
+                                'CONCAT(SUBSTRING(`desde` ,4,7) , SUBSTRING(`desde` ,1,2)) <= CONCAT( SUBSTRING("'.$periodoDesde.'",4,7),SUBSTRING("'.$periodoDesde.'" ,1,2))
+                                and
+                                (
+                                    CONCAT(SUBSTRING(`hasta` ,4,7) , SUBSTRING(`hasta` ,1,2)) >= CONCAT( SUBSTRING("'.$periodoDesde.'",4,7),SUBSTRING("'.$periodoDesde.'" ,1,2))
+                                    or
+                                    `hasta` is null
+)                               '
+                            ],
+                        ],
+                        'Impuesto'
+                    ],
+                    'conditions' => [
+                        'Impcli.impuesto_id'=> '19'/*IVA*/,
+                        'Impcli.cliente_id'=> $this->request->data['Impcli']['cliente_id'],
+                    ]
+                ];
+			    $impMonotributo = $this->Impcli->find('first', $options);
+                if(count($impMonotributo)>0){
+                    if (count($impMonotributo['Periodosactivo'])>0) {
+                        $this->set('respuesta','Error: NO se pudo dar de alta el impuesto Monotributo Por que tiene activado IVA en ese periodo.');
+                        $this->autoRender=false;
+                        $this->layout = 'ajax';
+                        $this->render('add');
+                        return;
+                    }
+                }
+
+            }
+			if($this->request->data['Impcli']['impuesto_id']=='19'/*IVA*/){
+				$periodoDesde = $this->request->data['Impcli']['alta'];
+				$options = [
+					'contain'=>[
+						'Periodosactivo'=>[
+							'conditions' => [
+								'CONCAT(SUBSTRING(`desde` ,4,7) , SUBSTRING(`desde` ,1,2)) <= CONCAT( SUBSTRING("'.$periodoDesde.'",4,7),SUBSTRING("'.$periodoDesde.'" ,1,2))
+                                and
+                                (
+                                    CONCAT(SUBSTRING(`hasta` ,4,7) , SUBSTRING(`hasta` ,1,2)) >= CONCAT( SUBSTRING("'.$periodoDesde.'",4,7),SUBSTRING("'.$periodoDesde.'" ,1,2))
+                                    or
+                                    `hasta` is null
+)                               '
+							],
+						],
+						'Impuesto'
+					],
+					'conditions' => [
+						'Impcli.impuesto_id'=> '4'/*Monotributo*/,
+						'Impcli.cliente_id'=> $this->request->data['Impcli']['cliente_id'],
+					]
+				];
+				$impMonotributo = $this->Impcli->find('first', $options);
+				if(count($impMonotributo)>0){
+					if (count($impMonotributo['Periodosactivo'])>0) {
+						$this->set('respuesta','Error: NO se pudo dar de alta el impuesto IVA Por que tiene activado Monotributo en ese periodo.');
+						$this->autoRender=false;
+						$this->layout = 'ajax';
+						$this->render('add');
+						return;
+					}
+				}
+			}
+
+
 			$this->Impcli->create();
 			//tenemos que revisar si ya esta creado el impcli del impuesto seleccionado
 			//vamos a buscar un impcli con el impcli_id y el cliente_id que nos viene en $this->request->data
@@ -325,10 +396,11 @@ class ImpclisController extends AppController {
 		$this->loadModel('Eventosimpuesto');
 		$this->loadModel('Cliente');
 		$this->loadModel('Cuentascliente');
+		$this->loadModel('Tipogasto');
 		$this->set('periodo',$periodo);
 		$this->set('impcliid',$impcliid);
         $cuentasdeActEconomicas = $this->Cuenta->cuentasdeActEconomicas;
-		$options = array(
+        $optionsImplci = array(
 			'contain'=>array(
                 'Impuesto'=>[
                     'Asientoestandare'=>[
@@ -339,6 +411,7 @@ class ImpclisController extends AppController {
 					],
                 ],
 				'Cliente'=>[
+					'Grupocliente'=>[],
 					'Cuentascliente'=>[
 						'Cuenta',
 						'conditions'=>[
@@ -353,13 +426,18 @@ class ImpclisController extends AppController {
 				'Impcliprovincia'=>array(
 					'Partido',
 					'conditions'=>array(
-							"Impcliprovincia.ano = SUBSTRING('".$periodo."',4,7)"
+                            'CONCAT( SUBSTRING(`Impcliprovincia`.`periodo` ,4,7),SUBSTRING(`Impcliprovincia`.`periodo` ,0,3)) = (
+                                select max(CONCAT( SUBSTRING(`periodo`,4,7),SUBSTRING(`periodo`,0,3) )) from  `sigesec`.`impcliprovincias`
+                                where `impcli_id` = ('.$impcliid.')
+                                and CONCAT( SUBSTRING(`periodo` ,4,7),SUBSTRING(`periodo` ,0,3)) <=
+                                CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,0,3))
+                            )'
 						)
 					)
 				),
 			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
         );
-		$impcli = $this->Impcli->find('first',$options);
+		$impcli = $this->Impcli->find('first',$optionsImplci);
 		for ($i=0;$i<count($impcli['Impcliprovincia'])-1;$i++){
 			for ($j=$i;$j<count($impcli['Impcliprovincia']);$j++) {
 				$burbuja = $impcli['Impcliprovincia'][$i]['Partido']['codigo'];
@@ -374,9 +452,22 @@ class ImpclisController extends AppController {
 		$this->set('impcli',$impcli);
         $pemes = substr($periodo, 0, 2);
         $peanio = substr($periodo, 3);
+		$bajaesMayorQuePeriodo = array(
+			'OR'=>array(
+				'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+        $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
 		$conditionsActividades = [
 			'contain'=>[
 				'Actividade'=>[
+					'conditions'=>[
+
+					],
 					'Alicuota'=>[
 						],
 					],
@@ -388,7 +479,8 @@ class ImpclisController extends AppController {
 						],
 					'Comprobante',
 					'conditions'=>[
-						'Venta.periodo'=>$periodo
+						'Venta.periodo'=>$periodo,
+                        'Venta.tipogasto_id NOT IN '=>$ingresosBienDeUso
 						]
 					],
 				'Compra'=>[
@@ -401,7 +493,14 @@ class ImpclisController extends AppController {
 						],
 			],
 			'conditions' => [
-				'Actividadcliente.cliente_id'=>$impcli['Cliente']['id']
+				'Actividadcliente.cliente_id'=>$impcli['Cliente']['id'],
+				//traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+				'OR'=>[
+						$bajaesMayorQuePeriodo,
+						'Actividadcliente.baja = ""',
+						'Actividadcliente.baja = "0000-00-00"',
+						'Actividadcliente.baja is null' ,
+					]
 				],
 		];
 		$actividadclientes = $this->Actividadcliente->find('all',$conditionsActividades);
@@ -527,8 +626,13 @@ class ImpclisController extends AppController {
 						'Partido'
 						],
 					'conditions'=>[
-							"Impcliprovincia.ano = SUBSTRING('".$periodo."',4,7)"
-						],
+                       'CONCAT( SUBSTRING(`Impcliprovincia`.`periodo` ,4,7),SUBSTRING(`Impcliprovincia`.`periodo` ,1,2)) = (
+                            select max(CONCAT( SUBSTRING(`periodo`,4,7),SUBSTRING(`periodo`,1,2) )) from  `sigesec`.`impcliprovincias`
+                            where `impcli_id` = ('.$impcliid.')
+                            and CONCAT( SUBSTRING(`periodo` ,4,7),SUBSTRING(`periodo` ,1,2)) <=
+                            CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))
+                        )'
+                    ],
 				],
             ],
 			'conditions' => ['Impcli.' . $this->Impcli->primaryKey => $impcliid]
@@ -537,7 +641,19 @@ class ImpclisController extends AppController {
 		$this->set('impcli',$impcli);
 
 		//vamos a buscar las actividades y las vamos a traer con las ventas
-		$conditionsActividades = array(
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+		$bajaesMayorQuePeriodo = array(
+			'OR'=>array(
+				'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+        $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
+        $conditionsActividades = array(
 			'contain'=>array(
 				'Actividade'=>array(
 					'Alicuota'=>array(
@@ -559,8 +675,9 @@ class ImpclisController extends AppController {
 						),
 					'Comprobante',
 					'conditions'=>array(
-						'Venta.periodo'=>$periodo
-						)
+						'Venta.periodo'=>$periodo,
+						'Venta.tipogasto_id NOT IN '=>$ingresosBienDeUso
+                        )
 					),
 				'Compra'=>array(
 					'Localidade'=>array(
@@ -585,8 +702,15 @@ class ImpclisController extends AppController {
 				),
 			),
 			'conditions' => array(
-				'Actividadcliente.cliente_id'=>$impcli['Cliente']['id']
-				), 
+				'Actividadcliente.cliente_id'=>$impcli['Cliente']['id'],
+				//traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+				'OR'=>[
+					$bajaesMayorQuePeriodo,
+					'Actividadcliente.baja = ""',
+					'Actividadcliente.baja = "0000-00-00"',
+					'Actividadcliente.baja is null' ,
+				]
+			),
 		);
 		$actividadclientes = $this->Actividadcliente->find('all',$conditionsActividades);
 		$this->set('actividadclientes',$actividadclientes);

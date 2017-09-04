@@ -229,6 +229,15 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                     'class'=>'imgedit',
                     'title' => 'Agregar',
                     'style'=>'width:25px;height:25px;margin-top:8px'));
+                echo $this->Html->image('ii.png',array(
+                        'id' => 'iconInfo',
+                        'alt' => 'open',
+                        'title' => 'Recuerde que al cargar Recaudaciones Bancarias de Actividades Economicas estos serán automáticamente '.
+                            'computados en el papel de trabajo de liquidacion del impuesto a las Actividades Economicas, '.
+                            'como asi tambien los Movimientos bancarios relacionados a la cuenta "110404298   I.I.B.B. - '.
+                            'Percepciones Bancarias". Evite duplicarlos.',
+                    )
+                );
                 echo $this->Form->end();  ?>
             </div>
         <div style="overflow:auto;width:96%; float:left;margin-top:10px;min-height: 400px;" class="tareaCargarIndexTable tabConceptosrestantes index">

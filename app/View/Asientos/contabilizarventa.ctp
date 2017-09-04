@@ -92,11 +92,14 @@ if(isset($error)){ ?>
                     if($categoriaDeLaVenta!='terceracateg'){
                         continue;
                     }
-                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                        continue;
-                    }
+//                    if(!in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                        continue;
+//                    }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
                     $suma = 1;
-                    if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+                    if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                         $suma=-1;
                     }
                     $cuenta110399001+=$ventasgravada[0]['total']*$suma;
@@ -121,10 +124,14 @@ if(isset($error)){ ?>
                     if($categoriaDeLaVenta=='terceracateg'){
                         continue;
                     }
-                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                        continue;
-                    }
-                    if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                    if(!in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                        continue;
+//                    }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                    $suma = 1;
+                    if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                         $suma=-1;
                     }
                     $cuenta1069+=$ventasgravada[0]['total']*$suma;
@@ -139,10 +146,14 @@ if(isset($error)){ ?>
                 $cuenta210401403 = 0;
                 //Cargar la venta total
                 foreach ($ventasgravadas as $ventasgravada) {
-                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                        continue;
-                    }$suma = 1;
-                    if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                    if(in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                        continue;
+//                    }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                    $suma = 1;
+                    if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                         $suma=-1;
                     }
                     $cuenta210401403+=$ventasgravada[0]['ivapercep']*$suma;
@@ -157,11 +168,14 @@ if(isset($error)){ ?>
                 $cuenta210401401 = 0;
                 //Cargar la venta total
                 foreach ($ventasgravadas as $ventasgravada) {
-                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                        continue;
-                    }
+//                    if(in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                        continue;
+//                    }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
                     $suma = 1;
-                    if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+                    if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                         $suma=-1;
                     }
                     $cuenta210401401+=$ventasgravada[0]['iva']*$suma;
@@ -177,10 +191,14 @@ if(isset($error)){ ?>
                 //Cargar la venta total
                 foreach ($ventasgravadas as $ventasgravada) {
                     $suma = 1;
-                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                        continue;
-                    }
-                    if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                    if(in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                        continue;
+//                    }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                    $suma = 1;
+                    if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                         $suma=-1;
                     }
                     $cuenta210402102+=$ventasgravada[0]['iibbpercep']*$suma;
@@ -196,10 +214,14 @@ if(isset($error)){ ?>
                 //Cargar la venta total
                 foreach ($ventasgravadas as $ventasgravada) {
                     $suma = 1;
-                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                        continue;
-                    }
-                    if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                    if(in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                        continue;
+//                    }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                    $suma = 1;
+                    if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                         $suma=-1;
                     }
                     $cuenta210403102+=$ventasgravada[0]['actvspercep']*$suma;
@@ -215,10 +237,14 @@ if(isset($error)){ ?>
                 //Cargar la venta total
                 foreach ($ventasgravadas as $ventasgravada) {
                     $suma = 1;
-                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                        continue;
-                    }
-                    if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                    if(in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                        continue;
+//                    }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                    $suma = 1;
+                    if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                         $suma=-1;
                     }
                     $cuenta210401802+=$ventasgravada[0]['impinternos']*$suma;
@@ -230,6 +256,7 @@ if(isset($error)){ ?>
                 }
                 break;
         }
+
         //dividimos en dos switchs por que si es monotributista van las ventas a la cuenta 606050001
         //si tiene monotributo el total de las ventas van a 606050000
         //ya no importa la categoria
@@ -240,11 +267,12 @@ if(isset($error)){ ?>
                     //Cargar la venta total
                     foreach ($ventasgravadas as $ventasgravada) {
                         $suma = 1;
-                        if ($ventasgravada['Venta']['tipodebito'] == 'Bien de uso') {
-                            continue;
-                        }
-                        if ($ventasgravada['Venta']['tipodebito'] == 'Restitucion debito fiscal') {
-                            $suma = -1;
+//                        if(in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                            continue;
+//                        }
+                        $suma = 1;
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
+                            $suma=-1;
                         }
                         $cuenta3144 += $ventasgravada[0]['neto'] * $suma;
                     }
@@ -261,17 +289,16 @@ if(isset($error)){ ?>
                 /*Casos Primera Categoria*/
                 case '2901'/*602010001 a)Locacion de Inmueble*/:
                 case '2902'/*602010002 b)Contraprestacion recibida por derechos reales*/:
-                case '2903'/*602010003 c)Valor de mejoras en inmuebles introducidas por inquilinos*/:
-                case '2904'/*602010004 d)Grabamenes a cargo del inquilino*/:
-                case '2905'/*602010005 e)Cobro por el uso de muebles que suministra el propietario*/:
-                case '2906'/*602010006 f)Valor locativo de inmueble de veraneo*/:
-                case '2907'/*602010007 g)Valor locativo de inmueble cedidos gratuitamente*/:
-                case '2908'/*602010008 Sublocaciones*/:
-                case '2909'/*602010009 Otros*/:
-                    //Si esta cuenta aparece es por que estoy pagando 1ra categoria
-                    //en almenos 1 actividad tengo que buscar las ventas de esas actividades y sumar el neto
-                    $cuenta601010001 = 0;
-                    //Cargar la venta total
+                case '2909'/*602010009 Bien de uso*/:
+                    //Si esta cuenta aparece es por que estoy pagando 1da categoria
+                    //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
+                    $cuentaprimera=0;
+                    //Cargar la compra neto + no gravado + exento
+                    $cuentasTipoGastos=[
+                        '2901'=>['48'],/*Locacion de Inmueble*/
+                        '2902'=>['49'],/*Contrapresacion recibida por derechos reales*/
+                        '2909'=>['50'],/*Bien de uso*/
+                    ];
                     foreach ($ventasgravadas as $ventasgravada) {
                         $suma = 1;
                         $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
@@ -283,257 +310,242 @@ if(isset($error)){ ?>
                         if($categoriaDeLaVenta!='primeracateg'){
                             continue;
                         }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                        $suma = 1;
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $suma=-1;
                         }
-                        $cuenta601010001+=$ventasgravada[0]['neto']*$suma;
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                            continue;
+                        }
+                       $cuentaprimera+=$ventasgravada[0]['neto']*$suma;
                     }
-                    if($cuenta601010001<0){
-                        $debe = $cuenta601010001*-1;
+                    if($cuentaprimera<0){
+                        $debe = $cuentaprimera*-1;
                     }else{
-                        $haber = $cuenta601010001;
+                        $haber = $cuentaprimera;
                     }
                     break;
 
                 case '2911'/*602020001 a)Locacion de Inmueble*/:
                 case '2912'/*602020002 b)Contraprestacion recibida por derechos reales*/:
-                case '2913'/*602020002 c)Valor de mejoras en inmuebles introducidas por inquilinos*/:
-                case '2914'/*602020003 d)Grabamenes a cargo del inquilino*/:
-                case '2915'/*602020004 e)Cobro por el uso de muebles que suministra el propietario*/:
-                case '2916'/*602020006 f)Valor locativo de inmueble de veraneo*/:
-                case '2917'/*602020007 g)Valor locativo de inmueble cedidos gratuitamente*/:
-                case '2918'/*602020008 Sublocaciones*/:
-                case '2919'/*602020009 Otros*/:
-                    $nogravado1racategoria = ['2911'=>'2901','2912'=>'2902','2913'=>'2903','2914'=>'2904','2915'=>'2905',
-                        '2916'=>'2906','2917'=>'2907','2918'=>'2908','2919'=>'2909'];
-                    //este array muestra la relacion entre las cuentas de la primera categoria y las cuentas de la primer categoria
-                    //para las ventas no gravadas
+                case '2919'/*602020009 c)Bien de Uso*/:
+                    $cuentasTipoGastos=[
+                        '2911'=>['48'],/*Locacion de Inmueble*/
+                        '2912'=>['49'],/*Contrapresacion recibida por derechos reales*/
+                        '2919'=>['50'],/*Bien de uso*/
+                    ];
 
                     //Si esta cuenta aparece es por que estoy pagando la parte no gravada de la 1ra categoria
                     //en almenos 1 actividad tengo que buscar las ventas no gravadas de esas actividades y sumar el neto
-                    $cuenta602020001 = 0;
+                    $cuentaprimeraexenta = 0;
                     //Cargar la venta total
 
                     foreach ($ventasgravadas as $ventasgravada) {
                         $suma = 1;
-                        //todo mejorar la forma en que buscamos la categoria ganancia de la actividad de la venta
                         $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        $cuentadelaactiviadad = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
-                        if($nogravado1racategoria[$asientoestandar['Cuenta']['id']] != $cuentadelaactiviadad){
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
                         if($categoriaDeLaVenta!='primeracateg'){
                             continue;
                         }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                        $suma = 1;
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $suma=-1;
                         }
-                        $cuenta602020001+=$ventasgravada[0]['nogravados']*$suma;
-                        $cuenta602020001+=$ventasgravada[0]['exentos']*$suma;
+                        $cuentaprimeraexenta+=$ventasgravada[0]['nogravados']*$suma;
+                        $cuentaprimeraexenta+=$ventasgravada[0]['exentos']*$suma;
                     }
-                    if($cuenta602020001<0){
-                        $debe = $cuenta602020001*-1;
+                    if($cuentaprimeraexenta<0){
+                        $debe = $cuentaprimeraexenta*-1;
                     }else{
-                        $haber = $cuenta602020001;
+                        $haber = $cuentaprimeraexenta;
                     }
                     break;
-
                 /*Casos Segunda Categoria*/
-                case '2922'/*603010001 a)Renta de titulo*/:
                 case '2923'/*603010002 b)Locacion de cosa mueble*/:
-                case '2924'/*603010003 c)Renta vitalicia y de seguro de vida*/:
-                case '2925'/*603010004 d)Seguro de retiro privado*/:
-                case '2926'/*603010005 e)Rescates de planes de seguro de retiro*/:
-                case '2927'/*603010006 f)Obligaciones de no hacer*/:
-                case '2928'/*603010007 g)Interes de cooperativas excepto las de consumo*/:
                 case '2929'/*603010008 h)Ingreso por derecho llave y patentes*/:
-                case '2930'/*603010009 i)Dividendos que distribuyan soc del Ins a) Art 69*/:
-                case '2931'/*603010011 k)Compraventa, acciones, cuotas sociales y titulos*/:
-                case '2932'/*603010012 Otros*/:
+                case '2932'/*603010012 Bien de uso*/:
+                    //Si esta cuenta aparece es por que estoy pagando 1da categoria
+                    //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
+                    $cuentasegunda=0;
+                    //Cargar la compra neto + no gravado + exento
+                    $cuentasTipoGastos=[
+                        '2923'=>['51'],/*Locacion de Cosa mueble*/
+                        '2929'=>['52'],/*Ingreso por derecho llave y patentes*/
+                        '2932'=>['53'],/*Bien de uso*/
+                    ];
+                    foreach ($ventasgravadas as $ventasgravada) {
+                        $suma = 1;
+                        $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                        $cuentadelaactiviadad =
+                            $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
+                        if($cuentadelaactiviadad!=$asientoestandar['Cuenta']['id']){
+                            continue;
+                        }
+                        if($categoriaDeLaVenta!='segundacateg'){
+                            continue;
+                        }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                        $suma = 1;
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
+                            $suma=-1;
+                        }
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                            continue;
+                        }
+                        $cuentasegunda+=$ventasgravada[0]['neto']*$suma;
+                    }
+                    if($cuentasegunda<0){
+                        $debe = $cuentasegunda*-1;
+                    }else{
+                        $haber = $cuentasegunda;
+                    }
+                    break;
 
-                case '2934'/*603010001 a)Renta de titulo*/:
-                case '2935'/*603010002 b)Locacion de cosa mueble*/:
-                case '2936'/*603010003 c)Renta vitalicia y de seguro de vida*/:
-                case '2937'/*603010004 d)Seguro de retiro privado*/:
-                case '2938'/*603010005 e)Rescates de planes de seguro de retiro*/:
-                case '2939'/*603010006 f)Obligaciones de no hacer*/:
-                case '2940'/*603010007 g)Interes de cooperativas excepto las de consumo*/:
-                case '2941'/*603010008 h)Ingreso por derecho llave y patentes*/:
-                case '2942'/*603010009 i)Dividendos que distribuyan soc del Ins a) Art 69*/:
-                case '2943'/*603010011 k)Compraventa, acciones, cuotas sociales y titulos*/:
-                case '2944'/*602020009 Otros*/:
-                    $nogravado2racategoria = [
-                        '2922'=>'2934','2923'=>'2935','2924'=>'2936','2925'=>'2937','2926'=>'2938','2927'=>'2939',
-                        '2928'=>'2940','2929'=>'2941','2930'=>'2942','2931'=>'2943','2932'=>'2944'];
-                    //este array muestra la relacion entre las cuentas de la primera categoria y las cuentas de la primer categoria
-                    //para las ventas no gravadas
+                case '2934'/*603020002 b)Locacion de cosa mueble*/:
+                case '2941'/*603020008 h)Ingreso por derecho llave y patentes*/:
+                case '2944'/*603020012 Bien de Uso*/:
+                    $cuentasTipoGastos=[
+                        '2934'=>['51'],/*Locacion de Cosa mueble*/
+                        '2941'=>['52'],/*Ingreso por derecho llave y patentes*/
+                        '2944'=>['53'],/*Bien de uso*/
+                    ];
 
                     //Si esta cuenta aparece es por que estoy pagando la parte no gravada de la 1ra categoria
                     //en almenos 1 actividad tengo que buscar las ventas no gravadas de esas actividades y sumar el neto
-                    $cuenta2danogravada = 0;
+                    $cuentasegundaexenta = 0;
                     //Cargar la venta total
 
                     foreach ($ventasgravadas as $ventasgravada) {
                         $suma = 1;
                         $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        $cuentadelaactiviadad = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
-                        if($nogravado2racategoria[$asientoestandar['Cuenta']['id']] != $cuentadelaactiviadad){
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        if($categoriaDeLaVenta!='primeracateg'){
+                        if($categoriaDeLaVenta!='segundacateg'){
                             continue;
                         }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+                        $suma = 1;
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $suma=-1;
                         }
-                        $cuenta2danogravada+=$ventasgravada[0]['nogravados']*$suma;
-                        $cuenta2danogravada+=$ventasgravada[0]['exentos']*$suma;
+                        $cuentasegundaexenta+=$ventasgravada[0]['nogravados']*$suma;
+                        $cuentasegundaexenta+=$ventasgravada[0]['exentos']*$suma;
                     }
-                    if($cuenta2danogravada<0){
-                        $debe = $cuenta2danogravada*-1;
+                    if($cuentasegundaexenta<0){
+                        $debe = $cuentasegundaexenta*-1;
                     }else{
-                        $haber = $cuenta2danogravada;
+                        $haber = $cuentasegundaexenta;
                     }
                     break;
-
-                /*Casos Tercera Empresas Categoria*/
-                case '2888'/*601010001 Venta Neta*/:
-                    //Si esta cuenta aparece es por que estoy pagando 3ra categoria
-                    //en almenos 1 actividad tengo que buscar las ventas de esas actividades y sumar el neto
-                    $cuenta601010001 = 0;
-                    //Cargar la venta total
+                /*Casos Tercera Categoria*/
+                case '2888'/*601010001 Venta neta*/:
+                case '2889'/*601010002 Venta Bien de uso*/:
+                    //Si esta cuenta aparece es por que estoy pagando 1da categoria
+                    //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
+                    $cuentatercera=0;
+                    //Cargar la compra neto + no gravado + exento
+                    $cuentasTipoGastos=[
+                        '2888'=>['54'],/*Venta neta*/
+                        '2889'=>['55'],/*Venta Bien de uso*/
+                    ];
                     foreach ($ventasgravadas as $ventasgravada) {
                         $suma = 1;
                         $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                        $cuentadelaactiviadad =
+                            $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
+                        if($cuentadelaactiviadad!=$asientoestandar['Cuenta']['id']){
+                            continue;
+                        }
                         if($categoriaDeLaVenta!='terceracateg'){
                             continue;
                         }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
-                            $suma=-1;
-                        }
-                        $cuenta601010001+=$ventasgravada[0]['neto']*$suma;
-                    }
-                    if($cuenta601010001<0){
-                        $debe = $cuenta601010001*-1;
-                    }else{
-                        $haber = $cuenta601010001;
-                    }
-                    break;
-                case '2889'/*601010002 Venta Bien de uso */:
-                    //Si esta cuenta aparece es por que estoy pagando 3ra categoria
-                    //en almenos 1 actividad tengo que buscar las ventas de esas actividades y sumar el neto
-                    $cuenta601010002 = 0;
-                    //Cargar la venta total
-                    foreach ($ventasgravadas as $ventasgravada) {
-                        $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        if($categoriaDeLaVenta!='terceracateg'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            $cuenta601010002+=$ventasgravada[0]['neto']*$suma;
-                        }
-                    }
-                    if($cuenta601010002<0){
-                        $debe = $cuenta601010002*-1;
-                    }else{
-                        $haber = $cuenta601010002;
-                    }
-                    break;
-                case '3368'/*601011001 Venta Exenta */:
-                    //Si esta cuenta aparece es por que estoy pagando 3ra categoria
-                    //en almenos 1 actividad tengo que buscar las ventas de esas actividades y sumar el neto
-                    $cuenta601011001 = 0;
-                    //Cargar la venta total
-                    foreach ($ventasgravadas as $ventasgravada) {
                         $suma = 1;
-                        $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        if($categoriaDeLaVenta!='terceracateg'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $suma=-1;
                         }
-                        $cuenta601011001+=$ventasgravada[0]['nogravados']*$suma;
-                        $cuenta601011001+=$ventasgravada[0]['exentos']*$suma;
-                    }
-                    if($cuenta601011001<0){
-                        $debe = $cuenta601011001*-1;
-                    }else{
-                        $haber = $cuenta601011001;
-                    }
-                    break;
-                case '3369'/*601011002 Venta Exenta Bien de uso*/:
-                    //Si esta cuenta aparece es por que estoy pagando 3ra categoria
-                    //en almenos 1 actividad tengo que buscar las ventas de esas actividades y sumar el neto
-                    $cuenta601011002 = 0;
-                    //Cargar la venta total
-                    foreach ($ventasgravadas as $ventasgravada) {
-                        $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        if($categoriaDeLaVenta!='terceracateg'){
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            $cuenta601011002+=$ventasgravada[0]['nogravados']*$suma;
-                            $cuenta601011002+=$ventasgravada[0]['exentos']*$suma;
-                        }
+                        $cuentatercera+=$ventasgravada[0]['neto']*$suma;
                     }
-                    if($cuenta601011002<0){
-                        $debe = $cuenta601011002*-1;
+                    if($cuentatercera<0){
+                        $debe = $cuentatercera*-1;
                     }else{
-                        $haber = $cuenta601011002;
+                        $haber = $cuentatercera;
                     }
                     break;
 
-                /*Casos Tercera Otros Categoria*/
-                case '2948'/*604011001 Fideicomisos xX*/:
-                case '2949'/*604011002 Fideicomisos xX*/:
-                case '2950'/*604011003 Fideicomisos xX*/:
-                case '2951'/*604011004 Fideicomisos xX*/:
-                case '2952'/*604011005 Fideicomisos xX*/:
-                case '2954'/*604012001 Loteos con findes de urbanizacion xX*/:
-                case '2955'/*604012002 Loteos con findes de urbanizacion xX*/:
-                case '2956'/*604012003 Loteos con findes de urbanizacion xX*/:
-                case '2957'/*604012004 Loteos con findes de urbanizacion xX*/:
-                case '2958'/*604012005 Loteos con findes de urbanizacion xX*/:
-                case '2960'/*604013001 Otros xX*/:
-                case '2961'/*604013002 Otros xX*/:
-                case '2962'/*604013003 Otros xX*/:
-                case '2963'/*604013004 Otros xX*/:
-                case '2964'/*604013005 Otros xX*/:
-                case '2966'/*604014002 Profesion u oficion con explotacion xX*/:
-                case '2967'/*604014003 Profesion u oficion con explotacion xX*/:
-                case '2968'/*604014004 Profesion u oficion con explotacion xX*/:
-                case '2969'/*604014005 Profesion u oficion con explotacion xX*/:
-                case '2970'/*604014001 Profesion u oficion con explotacion xX*/:
-                case '2972'/*604015001 Enajenacion de inmueble según ley 13512 xX*/:
-                case '2973'/*604015002 Enajenacion de inmueble según ley 13512 xX*/:
-                case '2974'/*604015003 Enajenacion de inmueble según ley 13512 xX*/:
-                case '2975'/*604015004 Enajenacion de inmueble según ley 13512 xX*/:
-                case '2976'/*604015005 Enajenacion de inmueble según ley 13512 xX*/:
-                case '2978'/*604016001 Comisionista rematador y demas auxiliares de comercio xX*/:
-                case '2979'/*604016002 Comisionista rematador y demas auxiliares de comercio xX*/:
-                case '2980'/*604016003 Comisionista rematador y demas auxiliares de comercio xX*/:
-                case '2981'/*604016004 Comisionista rematador y demas auxiliares de comercio xX*/:
-                case '2982'/*604016005 Comisionista rematador y demas auxiliares de comercio xX*/:
-                    //Si esta cuenta aparece es por que estoy pagando 1ra categoria
-                    //en almenos 1 actividad tengo que buscar las ventas de esas actividades y sumar el neto
-                    $cuentaterceraotros = 0;
+                case '3368'/*601011001 Venta exenta y no gravada*/:
+                case '3369'/*601011002 Venta Bien de uso*/:
+                    $cuentasTipoGastos=[
+                        '3368'=>['54'],/*Venta neta*/
+                        '3369'=>['55'],/*Venta Bien de uso*/
+                    ];
+
+                    //Si esta cuenta aparece es por que estoy pagando la parte no gravada de la 1ra categoria
+                    //en almenos 1 actividad tengo que buscar las ventas no gravadas de esas actividades y sumar el neto
+                    $cuentaterceraexenta = 0;
                     //Cargar la venta total
+
+                    foreach ($ventasgravadas as $ventasgravada) {
+                        $suma = 1;
+                        $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                            continue;
+                        }
+                        if($categoriaDeLaVenta!='terceracateg'){
+                            continue;
+                        }
+//                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                            continue;
+//                        }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                        $suma = 1;
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
+                            $suma=-1;
+                        }
+                        $cuentaterceraexenta+=$ventasgravada[0]['nogravados']*$suma;
+                        $cuentaterceraexenta+=$ventasgravada[0]['exentos']*$suma;
+                    }
+                    if($cuentaterceraexenta<0){
+                        $debe = $cuentaterceraexenta*-1;
+                    }else{
+                        $haber = $cuentaterceraexenta;
+                    }
+                    break;
+                /*Casos Tercera Auxiliar Comercio Categoria*/
+                case '2948'/*604011001 Fideicomisos */:
+                case '2954'/*604012001 Loteos con findes de urbanizacion*/:
+                case '2960'/*604013001 Otros*/:
+                case '2966'/*604014001 Profesion u oficion con explotacion*/:
+                case '2972'/*604015001 Enajenacion de inmueble según ley 13512*/:
+                case '2978'/*604016001 Comisionista rematador y demas auxiliares de comercio*/:
+                case '3492'/*604017001 Bien de Uso*/:
+                    //Si esta cuenta aparece es por que estoy pagando 3ra Auxiliar comercio categoria
+                    //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
+                    $cuentaterceraauxiliarcomercio=0;
+                    //Cargar la compra neto + no gravado + exento
+                    $cuentasTipoGastos=[
+                        '2948'=>['56'],
+                        '2954'=>['57'],
+                        '2960'=>['58'],
+                        '2966'=>['59'],
+                        '2972'=>['60'],
+                        '2978'=>['61'],
+                        '3492'=>['62'],
+                    ];
                     foreach ($ventasgravadas as $ventasgravada) {
                         $suma = 1;
                         $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
@@ -545,136 +557,93 @@ if(isset($error)){ ?>
                         if($categoriaDeLaVenta!='terceracateg45'){
                             continue;
                         }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                            continue;
+//                        }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                        $suma = 1;
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $suma=-1;
                         }
-                        $cuentaterceraotros+=$ventasgravada[0]['neto']*$suma;
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                            continue;
+                        }
+                        $cuentaterceraauxiliarcomercio+=$ventasgravada[0]['neto']*$suma;
                     }
-                    if($cuentaterceraotros<0){
-                        $debe = $cuentaterceraotros*-1;
+                    if($cuentaterceraauxiliarcomercio<0){
+                        $debe = $cuentaterceraauxiliarcomercio*-1;
                     }else{
-                        $haber = $cuentaterceraotros;
+                        $haber = $cuentaterceraauxiliarcomercio;
                     }
                     break;
 
-                case '2985'/*604011001 Fideicomisos xX*/:
-                case '2986'/*604011002 Fideicomisos xX*/:
-                case '2987'/*604011003 Fideicomisos xX*/:
-                case '2988'/*604011004 Fideicomisos xX*/:
-                case '2989'/*604011005 Fideicomisos xX*/:
-                case '2991'/*604012001 Loteos con findes de urbanizacion xX*/:
-                case '2992'/*604012002 Loteos con findes de urbanizacion xX*/:
-                case '2993'/*604012003 Loteos con findes de urbanizacion xX*/:
-                case '2994'/*604012004 Loteos con findes de urbanizacion xX*/:
-                case '2995'/*604012005 Loteos con findes de urbanizacion xX*/:
-                case '2997'/*604013001 Otros xX*/:
-                case '2998'/*604013002 Otros xX*/:
-                case '2999'/*604013003 Otros xX*/:
-                case '3000'/*604013004 Otros xX*/:
-                case '3001'/*604013005 Otros xX*/:
-                case '3003'/*604014003 Profesion u oficion con explotacion xX*/:
-                case '3004'/*604014004 Profesion u oficion con explotacion xX*/:
-                case '3005'/*604014005 Profesion u oficion con explotacion xX*/:
-                case '3006'/*604014001 Profesion u oficion con explotacion xX*/:
-                case '3007'/*604014002 Profesion u oficion con explotacion xX*/:
-                case '3009'/*604015002 Enajenacion de inmueble según ley 13512 xX*/:
-                case '3010'/*604015003 Enajenacion de inmueble según ley 13512 xX*/:
-                case '3011'/*604015004 Enajenacion de inmueble según ley 13512 xX*/:
-                case '3012'/*604015005 Enajenacion de inmueble según ley 13512 xX*/:
-                case '3013'/*604015001 Enajenacion de inmueble según ley 13512 xX*/:
-                case '3015'/*604016001 Comisionista rematador y demas auxiliares de comercio xX*/:
-                case '3016'/*604016002 Comisionista rematador y demas auxiliares de comercio xX*/:
-                case '3017'/*604016003 Comisionista rematador y demas auxiliares de comercio xX*/:
-                case '3018'/*604016004 Comisionista rematador y demas auxiliares de comercio xX*/:
-                case '3019'/*604016005 Comisionista rematador y demas auxiliares de comercio xX*/:
-                    $nogravado3racategoria = [
-                        '2948'=>'2985','2949'=>'2986','2950'=>'2987','2951'=>'2988','2952'=>'2989','2954'=>'2991',
-                        '2955'=>'2992','2956'=>'2993','2957'=>'2994','2958'=>'2995','2960'=>'2997','2961'=>'2998',
-                        '2962'=>'2999','2963'=>'3000','2964'=>'3001','2966'=>'3003','2967'=>'3004','2968'=>'3005',
-                        '2969'=>'3006','2970'=>'3007','2972'=>'3009','2973'=>'3010','2974'=>'3011','2975'=>'3012',
-                        '2976'=>'3013','2978'=>'3015','2979'=>'3016','2980'=>'3017','2981'=>'3018','2982'=>'3019'];
-                    //este array muestra la relacion entre las cuentas de la primera categoria y las cuentas de la primer categoria
-                    //para las ventas no gravadas
+                case '2984'/*604021001 Fideicomisos */:
+                case '2991'/*604022001 Loteos con findes de urbanizacion*/:
+                case '2997'/*604023001 Otros*/:
+                case '3003'/*604024001 Profesion u oficion con explotacion*/:
+                case '3009'/*604025001 Enajenacion de inmueble según ley 13512*/:
+                case '3015'/*604026001 Comisionista rematador y demas auxiliares de comercio*/:
+                case '3494'/*604027001 Bien de Uso*/:
+                    $cuentasTipoGastos=[
+                        '2984'=>['56'],/*Fideicomisos*/
+                        '2991'=>['57'],/*Loteos con findes de urbanizacion*/
+                        '2997'=>['58'],/*Otros*/
+                        '3003'=>['59'],/*Profesion u oficio con explotacion*/
+                        '3009'=>['60'],/*Enajenacion de inmueble segun ley 13512*/
+                        '3015'=>['61'],/*Comisionista rematador y demas auxiliares de comercio*/
+                        '3494'=>['62'],/*Bien de uso*/
+                    ];
 
                     //Si esta cuenta aparece es por que estoy pagando la parte no gravada de la 1ra categoria
                     //en almenos 1 actividad tengo que buscar las ventas no gravadas de esas actividades y sumar el neto
-                    $cuenta3ranogravada = 0;
+                    $cuentaterceraauxiliarcomercioexenta = 0;
                     //Cargar la venta total
 
                     foreach ($ventasgravadas as $ventasgravada) {
                         $suma = 1;
                         $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        $cuentadelaactiviadad = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
-                        if($nogravado3racategoria[$asientoestandar['Cuenta']['id']] != $cuentadelaactiviadad){
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        if($categoriaDeLaVenta!='primeracateg'){
+                        if($categoriaDeLaVenta!='terceracateg45'){
                             continue;
                         }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                            continue;
+//                        }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                        $suma = 1;
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $suma=-1;
                         }
-                        $cuenta3ranogravada+=$ventasgravada[0]['nogravados']*$suma;
-                        $cuenta3ranogravada+=$ventasgravada[0]['exentos']*$suma;
+                        $cuentaterceraauxiliarcomercioexenta+=$ventasgravada[0]['nogravados']*$suma;
+                        $cuentaterceraauxiliarcomercioexenta+=$ventasgravada[0]['exentos']*$suma;
                     }
-                    if($cuenta3ranogravada<0){
-                        $debe = $cuenta3ranogravada*-1;
+                    if($cuentaterceraauxiliarcomercioexenta<0){
+                        $debe = $cuentaterceraauxiliarcomercioexenta*-1;
                     }else{
-                        $haber = $cuenta3ranogravada;
+                        $haber = $cuentaterceraauxiliarcomercioexenta;
                     }
                     break;
-
                 /*Casos Cuarta Categoria*/
-                case '3023'/*605011001 Cargos publicos xX*/:
-                case '3024'/*605011002 Cargos publicos xX*/:
-                case '3025'/*605011003 Cargos publicos xX*/:
-                case '3026'/*605011004 Cargos publicos xX*/:
-                case '3027'/*605011005 Cargos publicos xX*/:
-                case '3029'/*605012001 Trabajo relacion de dependencia xX*/:
-                case '3030'/*605012002 Trabajo relacion de dependencia xX*/:
-                case '3031'/*605012003 Trabajo relacion de dependencia xX*/:
-                case '3032'/*605012004 Trabajo relacion de dependencia xX*/:
-                case '3033'/*605012005 Trabajo relacion de dependencia xX*/:
-                case '3035'/*605013001 Jubilaciones xX*/:
-                case '3036'/*605013002 Jubilaciones xX*/:
-                case '3037'/*605013003 Jubilaciones xX*/:
-                case '3038'/*605013004 Jubilaciones xX*/:
-                case '3039'/*605013005 Jubilaciones xX*/:
-                case '3041'/*605014001 Beneficio neto de seguro de retiro privado xX*/:
-                case '3042'/*605014002 Beneficio neto de seguro de retiro privado xX*/:
-                case '3043'/*605014003 Beneficio neto de seguro de retiro privado xX*/:
-                case '3044'/*605014004 Beneficio neto de seguro de retiro privado xX*/:
-                case '3045'/*605014005 Beneficio neto de seguro de retiro privado xX*/:
-                case '3047'/*605015001 Servicios personales de soc cooperativas xX*/:
-                case '3048'/*605015002 Servicios personales de soc cooperativas xX*/:
-                case '3049'/*605015003 Servicios personales de soc cooperativas xX*/:
-                case '3050'/*605015004 Servicios personales de soc cooperativas xX*/:
-                case '3051'/*605015005 Servicios personales de soc cooperativas xX*/:
-                case '3053'/*605016001 Profesiones liberales u oficios xX*/:
-                case '3054'/*605016002 Profesiones liberales u oficios xX*/:
-                case '3055'/*605016003 Profesiones liberales u oficios xX*/:
-                case '3056'/*605016004 Profesiones liberales u oficios xX*/:
-                case '3057'/*605016005 Profesiones liberales u oficios xX*/:
-                case '3059'/*605017001 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3060'/*605017002 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3061'/*605017003 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3062'/*605017004 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3063'/*605017005 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3065'/*605018001 Socio administrador de SRL xX*/:
-                case '3066'/*605018002 Socio administrador de SRL xX*/:
-                case '3067'/*605018003 Socio administrador de SRL xX*/:
-                case '3068'/*605018004 Socio administrador de SRL xX*/:
-                case '3069'/*605018005 Socio administrador de SRL xX*/:
-                    //Si esta cuenta aparece es por que estoy pagando 1ra categoria
-                    //en almenos 1 actividad tengo que buscar las ventas de esas actividades y sumar el neto
-                    $cuentacuartaotros = 0;
-                    //Cargar la venta total
+                case '3047'/*605015001 Servicios personales de soc cooperativas*/:
+                case '3054'/*605016002 Profesiones liberales u oficios*/:
+                case '3059'/*605017001 Corredores, viajante de comercio y despachante de aduana*/:
+                case '3496'/*605019001 Bien de Uso*/:
+                    //Si esta cuenta aparece es por que estoy pagando 3ra Auxiliar comercio categoria
+                    //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
+                    $cuentacuarta=0;
+                    //Cargar la compra neto + no gravado + exento
+                    $cuentasTipoGastos=[
+                        '3047'=>['63'],
+                        '3054'=>['64'],
+                        '3059'=>['65'],
+                        '3496'=>['66'],
+                    ];
                     foreach ($ventasgravadas as $ventasgravada) {
                         $suma = 1;
                         $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
@@ -686,140 +655,76 @@ if(isset($error)){ ?>
                         if($categoriaDeLaVenta!='cuartacateg'){
                             continue;
                         }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            continue;
-                        }
-                        if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+//                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                            continue;
+//                        }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
+                        $suma = 1;
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $suma=-1;
                         }
-                        $cuentacuartaotros+=$ventasgravada[0]['neto']*$suma;
-                        $cuentacuartaotros+=$ventasgravada[0]['exentos']*$suma;
+
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                            continue;
+                        }
+
+                        $cuentacuarta+=$ventasgravada[0]['neto']*$suma;
                     }
-                    if($cuentacuartaotros<0){
-                        $debe = $cuentacuartaotros*-1;
+                    if($cuentacuarta<0){
+                        $debe = $cuentacuarta*-1;
                     }else{
-                        $haber = $cuentacuartaotros;
+                        $haber = $cuentacuarta;
                     }
                     break;
 
-                case '3071'/*605011001 Cargos publicos xX*/:
-                case '3072'/*605011002 Cargos publicos xX*/:
-                case '3073'/*605011003 Cargos publicos xX*/:
-                case '3074'/*605011004 Cargos publicos xX*/:
-                case '3075'/*605011005 Cargos publicos xX*/:
-                case '3078'/*605012001 Trabajo relacion de dependencia xX*/:
-                case '3079'/*605012002 Trabajo relacion de dependencia xX*/:
-                case '3080'/*605012003 Trabajo relacion de dependencia xX*/:
-                case '3081'/*605012004 Trabajo relacion de dependencia xX*/:
-                case '3082'/*605012005 Trabajo relacion de dependencia xX*/:
-                case '3084'/*605013001 Jubilaciones xX*/:
-                case '3085'/*605013002 Jubilaciones xX*/:
-                case '3086'/*605013003 Jubilaciones xX*/:
-                case '3087'/*605013004 Jubilaciones xX*/:
-                case '3088'/*605013005 Jubilaciones xX*/:
-                case '3090'/*605014001 Beneficio neto de seguro de retiro privado xX*/:
-                case '3091'/*605014002 Beneficio neto de seguro de retiro privado xX*/:
-                case '3092'/*605014003 Beneficio neto de seguro de retiro privado xX*/:
-                case '3093'/*605014004 Beneficio neto de seguro de retiro privado xX*/:
-                case '3094'/*605014005 Beneficio neto de seguro de retiro privado xX*/:
-                case '3096'/*605015001 Servicios personales de soc cooperativas xX*/:
-                case '3097'/*605015002 Servicios personales de soc cooperativas xX*/:
-                case '3098'/*605015003 Servicios personales de soc cooperativas xX*/:
-                case '3099'/*605015004 Servicios personales de soc cooperativas xX*/:
-                case '3100'/*605015005 Servicios personales de soc cooperativas xX*/:
-                case '3102'/*605016001 Profesiones liberales u oficios xX*/:
-                case '3103'/*605016002 Profesiones liberales u oficios xX*/:
-                case '3104'/*605016003 Profesiones liberales u oficios xX*/:
-                case '3105'/*605016004 Profesiones liberales u oficios xX*/:
-                case '3106'/*605016005 Profesiones liberales u oficios xX*/:
-                case '3108'/*605017001 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3109'/*605017002 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3110'/*605017003 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3111'/*605017004 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3112'/*605017005 Corredores, viajante de comercio y despachante de aduana xX*/:
-                case '3114'/*605018001 Socio administrador de SRL xX*/:
-                case '3115'/*605018002 Socio administrador de SRL xX*/:
-                case '3116'/*605018003 Socio administrador de SRL xX*/:
-                case '3117'/*605018004 Socio administrador de SRL xX*/:
-                case '3118'/*605018005 Socio administrador de SRL xX*/:
-                    $nogravado4tacategoria = [
-                        '3023'=>'3071',
-                        '3024'=>'3072',
-                        '3025'=>'3073',
-                        '3026'=>'3074',
-                        '3027'=>'3075',
-                        '3029'=>'3078',
-                        '3030'=>'3079',
-                        '3031'=>'3080',
-                        '3032'=>'3081',
-                        '3033'=>'3082',
-                        '3035'=>'3084',
-                        '3036'=>'3085',
-                        '3037'=>'3086',
-                        '3038'=>'3087',
-                        '3039'=>'3088',
-                        '3041'=>'3090',
-                        '3042'=>'3091',
-                        '3043'=>'3092',
-                        '3044'=>'3093',
-                        '3045'=>'3094',
-                        '3047'=>'3096',
-                        '3048'=>'3097',
-                        '3049'=>'3098',
-                        '3050'=>'3099',
-                        '3051'=>'3100',
-                        '3053'=>'3102',
-                        '3054'=>'3103',
-                        '3055'=>'3104',
-                        '3056'=>'3105',
-                        '3057'=>'3106',
-                        '3059'=>'3108',
-                        '3060'=>'3109',
-                        '3061'=>'3110',
-                        '3062'=>'3111',
-                        '3063'=>'3112',
-                        '3065'=>'3114',
-                        '3066'=>'3115',
-                        '3067'=>'3116',
-                        '3068'=>'3117',
-                        '3069'=>'3118'];
-                    //este array muestra la relacion entre las cuentas de la primera categoria y las cuentas de la primer categoria
-                    //para las ventas no gravadas
+                case '3096'/*605025001 Servicios personales de soc cooperativas*/:
+                case '3102'/*605026002 Profesiones liberales u oficios*/:
+                case '3108'/*605027001 Corredores, viajante de comercio y despachante de aduana*/:
+                case '3498'/*605029001 Bien de Uso*/:
+                    $cuentasTipoGastos=[
+                        '3096'=>['63'],
+                        '3102'=>['64'],
+                        '3108'=>['65'],
+                        '3498'=>['66'],
+                    ];
 
                     //Si esta cuenta aparece es por que estoy pagando la parte no gravada de la 1ra categoria
                     //en almenos 1 actividad tengo que buscar las ventas no gravadas de esas actividades y sumar el neto
-                    $cuenta4tanogravada = 0;
+                    $cuentacuartaexenta = 0;
                     //Cargar la venta total
 
                     foreach ($ventasgravadas as $ventasgravada) {
+                        $suma = 1;
                         $categoriaDeLaVenta = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        $cuentadelaactiviadad = $ventasgravada['Actividadcliente']['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
-                        if(isset($nogravado4tacategoria[$asientoestandar['Cuenta']['id']])){
-                            Debugger::dump("Usted ha seleccionado una cuenta para la cuerta categoria que pertenece a los NO GRAVADOS.
-                         Por favor seleccione la correspondiente en el orden de los gravados.");
-                        }
-                        if($nogravado4tacategoria[$asientoestandar['Cuenta']['id']] != $cuentadelaactiviadad){
+                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
                         if($categoriaDeLaVenta!='cuartacateg'){
                             continue;
                         }
-                        if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
-                            continue;
-                        }
+//                        if(!in_array($ventasgravada['Venta']['tipogasto_id'],$ingresosBienDeUso)){
+//                            continue;
+//                        }
+//                    if($ventasgravada['Venta']['tipodebito']=='Bien de uso'){
+//                        continue;
+//                    }
                         $suma = 1;
-                        if($ventasgravada['Venta']['tipodebito']=='Restitucion debito fiscal'){
+                        if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $suma=-1;
                         }
-                        $cuenta4tanogravada+=$ventasgravada[0]['nogravados']*$suma;
-                        $cuenta4tanogravada+=$ventasgravada[0]['exentos']*$suma;
+                        $cuentacuartaexenta+=$ventasgravada[0]['nogravados']*$suma;
+                        $cuentacuartaexenta+=$ventasgravada[0]['exentos']*$suma;
                     }
-                    if($cuenta4tanogravada<0){
-                        $debe = $cuenta4tanogravada*-1;
+                    if($cuentacuartaexenta<0){
+                        $debe = $cuentacuartaexenta*-1;
                     }else{
-                        $haber = $cuenta4tanogravada;
+                        $haber = $cuentacuartaexenta;
                     }
                     break;
+
+
             }
         }
         //si el debe y el haber son 0 y el movimiento no estaba previamente guardado no tengo por que mostrar este movimiento

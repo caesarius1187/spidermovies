@@ -184,11 +184,15 @@ if(isset($error)){ ?>
                 $haber = $cuenta110499001;
                 break;
             /*Casos Primera Categoria*/
-            case '2645'/*510001001 Gastos de mantenimiento del inmueble*/:
-                //Si esta cuenta aparece es por que estoy pagando 1ra categoria
+            case '3490'/*510001001 Gastos Reales*/:
+                //Si esta cuenta aparece es por que estoy pagando 1da categoria
                 //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
-                $cuenta510001001 = 0;
+                $cuentaprimera=0;
                 //Cargar la compra neto + no gravado + exento
+                $cuentasTipoGastos=[
+                    '3490'=>['27'],/*Mercaderia-Insumos*/
+                ];
+
                 foreach ($comprasgravadas as $comprasgravada) {
                     $suma = 1;
                     $categoriaDeLaCompra = $comprasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
@@ -198,35 +202,63 @@ if(isset($error)){ ?>
                     if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
                         continue;
                     }
+                    if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                        continue;
+                    }
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
                     }
-                    $cuenta510001001+=$comprasgravada[0]['neto']*1+$comprasgravada[0]['nogravados']*1+$comprasgravada[0]['exentos']*$suma;
+                    $cuentaprimera+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
                 }
-                $debe = $cuenta510001001;
+                $debe = $cuentaprimera;
                 break;
             /*Casos Segunda Categoria*/
-            case '2650'/*511001101 Gasto 1*/:
-                //Si esta cuenta aparece es por que estoy pagando 2da categoria
-                //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
-                $cuenta510001001=0;
-                //Cargar la compra neto + no gravado + exento
-                foreach ($comprasgravadas as $comprasgravada) {
-                    $suma = 1;
-                    $categoriaDeLaCompra = $comprasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                    if("compra".$categoriaDeLaCompra!='comprasegundacateg'){
-                        continue;
+            case '2650'/*511001101 Gasto de Transferencia Definitiva de Acciones y participaciones sociales y demas valores 1*/:
+            case '2656'/*511001201 Gasto de Transferencia Temporaria de Acciones y participaciones sociales y demas valores 1*/:
+            case '2681'/*511002111 Gastos en el Pais de Transferencia Definitiva de Instrumentos exepto de cobertura 1*/:
+            case '2687'/*511002121 Gastos en el Pais de Transferencia Temporaria de Instrumentos exepto de cobertura 1*/:
+            case '2694'/*511002211 Gastos en el Exterior de Transferencia Definitiva de Instrumentos exepto de cobertura 1*/:
+            case '2700'/*511002221 Gastos en el Exterior de Transferencia Temporaria de Instrumentos exepto de cobertura 1*/:
+            case '2707'/*511002311 Otros gastos que implican erogacion de fondos de Transferencia Definitiva 1 */:
+            case '2713'/*511002321 Otros gastos que implican erogacion de fondos de Transferencia Temporaria 1*/:
+            case '2733'/*511002511 Quebrantos de Transferencia Definitiva 1*/:
+            case '2744'/*511002531 Quebrantos de Transferencia Temporaria 1*/:
+                    //Si esta cuenta aparece es por que estoy pagando 2da categoria
+                    //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
+                    $cuentasegunda=0;
+                    //Cargar la compra neto + no gravado + exento
+                    $cuentasTipoGastos=[
+                        '2650'=>['28'],/*Transferencia Definitiva de Acciones y participaciones sociales y demas valores*/
+                        '2656'=>['29'],/*Transferencia Temporaria de Acciones y participaciones sociales y demas valores*/
+                        '2681'=>['30'],/*En el Pais de Transferencia Definitiva de Instrumentos exepto de cobertura*/
+                        '2687'=>['31'],/*En el Pais de Transferencia Temporaria de Instrumentos exepto de cobertura*/
+                        '2694'=>['32'],/*En el Exterior de Transferencia Definitiva de Instrumentos exepto de cobertura*/
+                        '2700'=>['33'],/*En el Exterior de Transferencia Temporaria de Instrumentos exepto de cobertura */
+                        '2707'=>['34'],/*Otros gastos que implican erogacion de fondos de Transferencia Definitiva */
+                        '2713'=>['35'],/*Otros gastos que implican erogacion de fondos de Transferencia Temporaria*/
+                        '2733'=>['36'],/*Quebrantos de Transferencia Definitiva */
+                        '2744'=>['37'],/*Quebrantos de Transferencia Temporaria */
+                    ];
+
+                    foreach ($comprasgravadas as $comprasgravada) {
+                        $suma = 1;
+                        $categoriaDeLaCompra = $comprasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                        if("compra".$categoriaDeLaCompra!='comprasegundacateg'){
+                            continue;
+                        }
+                        if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
+                            continue;
+                        }
+                        if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                            continue;
+                        }
+                        if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                            $suma=-1;
+                        }
+                        $cuentasegunda+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
                     }
-                    if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
-                        continue;
-                    }
-                    if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
-                        $suma=-1;
-                    }
-                    $cuenta510001001+=$comprasgravada[0]['neto']*1+$comprasgravada[0]['nogravados']*1+$comprasgravada[0]['exentos']*$suma;
-                }
-                $debe = $cuenta510001001;
-                break;
+                    $debe = $cuentasegunda;
+                    break;
             /*Casos Tercera Empresas Categoria*/
             case '2222'/*501000001 Compras*/:
             case '2286'/*504010001 Combus, Lubric y FM*/:
@@ -243,7 +275,7 @@ if(isset($error)){ ?>
             case '2345'/*504990016 Otros*/:
                 //Si esta cuenta aparece es por que estoy pagando 2da categoria
                 //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
-                $cuenta504070001=0;
+                $cuentatercera=0;
                 //Cargar la compra neto + no gravado + exento
                 $cuentasTipoGastos=[
                     '2222'=>['1'],/*Mercaderia-Insumos*/
@@ -280,16 +312,36 @@ if(isset($error)){ ?>
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
                     }
-                    $cuenta504070001+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
+                    $cuentatercera+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
                 }
-                $debe = $cuenta504070001;
+                $debe = $cuentatercera;
                 break;
             /*Casos Tercera Otros Categoria*/
-            case '3371'/*505010000 Gtos. Financ. de Act. Operativ*/:
-                //Si esta cuenta aparece es por que estoy pagando 3da categoria otros
+            case '2753'/*512001011 Gastos de organización*/:
+            case '2754'/*512001012 Gastos de representacion*/:
+            case '3371'/*512001013 Otras erogaciones */:
+            case '2756'/*512001021 Sueldos y aguinaldos*/:
+            case '2757'/*512001022 Gratificaciones*/:
+            case '2758'/*512001023 Cargas sociales*/:
+            case '2760'/*512001031 Comisiones incurridos en el extranjero*/:
+            case '2761'/*512001032 Gastos incurridos en el extranjero*/:
+            case '2762'/*512001033 Otros gastos que implican erogacion de fondos*/:
+                //Si esta cuenta aparece es por que estoy pagando 1da categoria
                 //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
-                $cuenta505010000=0;
+                $cuentatercera45 = 0;
                 //Cargar la compra neto + no gravado + exento
+                $cuentasTipoGastos = [
+                    '2753'=>['38'],/*Gastos de organización*/
+                    '2754'=>['39'],/*Gastos de representacion*/
+                    '3371'=>['40'],/*Otras erogaciones */
+                    '2756'=>['41'],/*Sueldos y aguinaldos*/
+                    '2757'=>['42'],/*Gratificaciones*/
+                    '2758'=>['43'],/*Cargas sociales*/
+                    '2760'=>['44'],/*Comisiones incurridos en el extranjero*/
+                    '2761'=>['45'],/*Gastos incurridos en el extranjero*/
+                    '2762'=>['46'],/*Otros gastos que implican erogacion de fondos*/
+                ];
+
                 foreach ($comprasgravadas as $comprasgravada) {
                     $suma = 1;
                     $categoriaDeLaCompra = $comprasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
@@ -299,19 +351,26 @@ if(isset($error)){ ?>
                     if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
                         continue;
                     }
+                    if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                        continue;
+                    }
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
                     }
-                    $cuenta505010000+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
+                    $cuentatercera45+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
                 }
-                $debe = $cuenta505010000;
+                $debe = $cuentatercera45;
                 break;
             /*Casos Cuarta Categoria*/
             case '2768'/*513000001 Que implican erogacion de fondos*/:
-                //Si esta cuenta aparece es por que estoy pagando 3da categoria otros
+                //Si esta cuenta aparece es por que estoy pagando 1da categoria
                 //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
-                $cuenta513000001=0;
+                $cuentacuarta=0;
                 //Cargar la compra neto + no gravado + exento
+                $cuentasTipoGastos=[
+                    '3490'=>['27'],/*Mercaderia-Insumos*/
+                ];
+
                 foreach ($comprasgravadas as $comprasgravada) {
                     $suma = 1;
                     $categoriaDeLaCompra = $comprasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
@@ -321,45 +380,47 @@ if(isset($error)){ ?>
                     if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
                         continue;
                     }
+                    if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                        continue;
+                    }
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
                     }
-                    $cuenta513000001+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
+                    $cuentacuarta+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
                 }
-                $debe = $cuenta513000001;
+                $debe = $cuentacuarta;
                 break;
         }
+        //si el debe y el haber son 0 y el movimiento no estaba previamente guardado no tengo por que mostrar este movimiento
+        if((($debe*1) != 0) || (($haber*1) != 0)||($movid!= 0)) {
+            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
+            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
+            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', [
+                'label' => ($i != 0) ? false : 'Cuenta',
+                'default' => $cuentaclienteid,
+                'defaultoption' => $cuentaclienteid,
+                'class' => 'chosen-select-cuenta',
+            ]);
+            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.fecha', array(
+                'type' => 'hidden',
+                'label' => ($i != 0) ? false : 'Fecha',
+                'readonly', 'readonly',
+                'value' => date('d-m-Y'),
+            ));
 
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',[
-            'label'=>($i!=0)?false:'Cuenta',
-            'default'=>$cuentaclienteid,
-            'defaultoption'=>$cuentaclienteid,
-            'class'=>'chosen-select-cuenta',
-        ]);
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
-            'type'=>'hidden',
-            'label'=>($i!=0)?false:'Fecha',
-            'readonly','readonly',
-            'value'=>date('d-m-Y'),
-        ));
-        $movimientoConValor = "movimientoSinValor";
-        if(($debe*1) != 0 || ($haber*1) != 0){
-            $movimientoConValor = "movimientoConValor";
+            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [
+                'label' => ($i != 0) ? false : 'Debe',
+                'class' => "inputDebe ",
+                'default' => number_format($debe, 2, ".", ""),]);
+            $totalDebe += $debe;
+            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
+                'class' => "inputHaber ",
+                'label' => ($i != 0) ? false : 'Haber',
+                'default' => number_format($haber, 2, ".", ""),]);
+            $totalHaber += $haber;
+            echo "</br>";
+            $i++;
         }
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
-            'label'=>($i!=0)?false:'Debe',
-            'class'=>"inputDebe ".$movimientoConValor,
-            'default'=>number_format($debe, 2, ".", ""),]);
-        $totalDebe+=$debe;
-        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
-            'class'=>"inputHaber ".$movimientoConValor,
-            'label'=>($i!=0)?false:'Haber',
-            'default'=>number_format($haber, 2, ".", ""),]);
-        $totalHaber +=$haber;
-        echo "</br>";
-        $i++;
     }
     /*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
     entonces tenemos que recorrer los movimientos y aquellos que esten marcados como cargado=false se deben mostrar*/

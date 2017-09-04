@@ -271,23 +271,64 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                   'style' => 'width:150px',
                   'class'=>'chosen-select',
                   ));
+
+            //si no tiene categorizado ganancias no se debe poder cargar compras
+            //a menos que sea monotributista y no tenga activado ganancias
+              //aca tengo que recorrer las actividades del cliente para relacionar las actividades con sus categorias de
+              // ganancias para que por javascript  las limite solo a las que tienen q ser
+              $actividadesCategorias = [];
+              foreach ($cliente['Actividadcliente'] as $actividadcliente) {
+                  foreach ($actividadcliente['Cuentasganancia'] as $cuentaganancia){
+                      $cuentaGananciaTraducida = "";
+                      switch ($cuentaganancia['categoria']){
+                          case 'primeracateg':
+                              $cuentaGananciaTraducida = "primera";
+                          break;
+                          case 'segundacateg':
+                              $cuentaGananciaTraducida = "segunda";
+                          break;
+                          case 'terceracateg':
+                              $cuentaGananciaTraducida = "tercera";
+                          break;
+                          case 'terceracateg45':
+                              $cuentaGananciaTraducida = "tercera otros";
+                          break;
+                          case 'cuartacateg':
+                              $cuentaGananciaTraducida = "cuarta";
+                          break;
+                      }
+                      $actividadesCategorias[$actividadcliente['id']]= $cuentaGananciaTraducida;
+                  }
+              }
+              echo $this->Form->input('actividadescategorias', [
+                    'type'=>'select',
+                    'options'=>$actividadesCategorias,
+                    'id'=>'jsonactividadescategorias',
+                    'div'=>[
+                        'style'=>'display:none'
+                    ]
+                 ]);
+              echo $this->Form->input('tipogasto_id', array(
+                      'label'=>'Tipo Gasto',
+                      'style' => 'width:150px',
+                      'class'=>'chosen-select',
+                      'title'=>'Usted ha vinculado una actividad a un tipo de categoria de ganancias '.
+                      'la cual condiciona el tipo de gasto que se puede elegir.',
+                  )
+              );
               echo $this->Form->input('localidade_id',array(
                   'class'=>'chosen-select',
                   'style' => 'width:150px'
                   )
               );
+
               echo $this->Form->input('tipocredito',array(
                     'label'=>'Tipo Credito',
                     'options'=>$tipocreditos,
                     'style' => 'width:150px',
                     'class'=>'chosen-select',
                 ));
-              echo $this->Form->input('tipogasto_id', array(
-                    'label'=>'Tipo Gasto',
-                    'style' => 'width:150px',
-                    'class'=>'chosen-select',
-                    )
-              );
+
               echo $this->Form->input('tipoiva',array(
                     'label'=>'Tipo (IVA)',
                     'options'=>array('directo'=>'Directo','prorateable'=>'Prorateable'),
@@ -299,7 +340,8 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     'options'=>$imputaciones,
                     'style' => 'width:150px',
                     'class'=>'chosen-select',
-                    ));
+                    'required'=>true,
+              ));
               echo $this->Form->input('alicuota',array(
                'options' => $alicuotas,
                 'style'=>'width:60px',
@@ -565,6 +607,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                   <th ></th><!--7-->
                   <th ></th><!--8-->
                   <th ></th><!--9-->
+                  <th ></th><!--10-->
                   <th ></th><!--10-->
                   <th ></th><!--11-->
                   <th >   <?php echo number_format($movNeto * 1, 2, ",", ".") ?></th><!--12-->

@@ -13,7 +13,7 @@ $(document).ready(function() {
 <?php /*Este es el formulario para PAGAR papeles de Trabajo YA generados */ ?>
 <h3><?php echo __('Papeles preparados para pagar en : '.$impclinombre); ?></h3>
 <?php echo $this->Form->create('Eventosimpuesto',array('action'=>'realizartarea13', 'id'=>'FormPagarEventoImpuesto')); ?>
-<table cellpadding="0" cellspacing="0" id="tablePapelesPreparados" class="tbl_getpagar">
+<table cellpadding="0" cellspacing="0" id="tablePapelesPreparados" class="tbl_getpagar" style="width: auto;">
 	<tr>
 			<?php
 			switch ($impuesto['tipopago']) {
@@ -131,12 +131,12 @@ $(document).ready(function() {
 	echo '<div style="width:100%;" id="divAsientoDePagoEventoImpuesto"></div>';
 
 	<div style="width:100%; float:right;">
-		<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>
-		<a href="#" onclick="$('#FormPagarEventoImpuesto').submit();" class="btn_aceptar" style="margin-top:14px">Aceptar</a>
+<!--		<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>-->
+<!--		<a href="#" onclick="$('#FormPagarEventoImpuesto').submit();" class="btn_aceptar" style="margin-top:14px">Aceptar</a>-->
 		<?php echo $this->Form->end();?>
 	</div>
 </div>
-<div id="divContenedorContabilidad" style="margin-top:10px;width: 100%;">
+<div id="divContenedorContabilidad" style="margin-top:10px;width: 100%;min-width: 600px;">
 	<div class="index_pdt">
 		<h3><?php echo __('Contabilizar Pago de : '.$impclinombre); ?></h3>
 		<?php
@@ -145,10 +145,11 @@ $(document).ready(function() {
 		$descripcion = "Automatico";
 		$fecha = date('d-m-Y');
 		$miAsiento=array();
-		if(!isset($miAsiento['Movimiento'])){
+        $totalDebe=0;
+        $totalHaber=0;
+        if(!isset($miAsiento['Movimiento'])){
 			$miAsiento['Movimiento']=array();
 		}
-
 		if(isset($asientoyacargado['Asiento'])){
 			$miAsiento = $asientoyacargado['Asiento'];
 			$id = $miAsiento['id'];
@@ -156,7 +157,6 @@ $(document).ready(function() {
 			$descripcion = $miAsiento['descripcion'];
 			$fecha = date('d-m-Y',strtotime($miAsiento['fecha']));
 		}
-
 		echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add']);
 		echo $this->Form->input('Asiento.0.id',['default'=>$id]);
 		echo $this->Form->input('Asiento.0.nombre',['default'=>$nombre]);
@@ -394,7 +394,8 @@ $(document).ready(function() {
 			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
 			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
 			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',[
-				'default'=>$cuentaclienteid,
+                'label' => ($i != 0) ? false : 'Cuenta',
+                'default'=>$cuentaclienteid,
 				'defaultoption'=>$cuentaclienteid,
 				'class'=>'chosen-select-cuenta',
 			]);
@@ -404,14 +405,20 @@ $(document).ready(function() {
 				'value'=>date('d-m-Y'),
 			));
 			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
-				'yacargado'=>$debeyacargado,
+                'label' => ($i != 0) ? false : 'Debe',
+                'class'=>'inputDebe',
+                'yacargado'=>$debeyacargado,
 				'default'=>number_format($debe, 2, ".", "")
 			]);
-			echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
-				'yacargado'=>$haberyacargado,
+            $totalDebe += $debe;
+            echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
+                'label' => ($i != 0) ? false : 'Haber',
+                'class'=>'inputHaber',
+                'yacargado'=>$haberyacargado,
 				'default'=>number_format($haber, 2, ".", "")
 			]);
-			echo "</br>";
+            $totalHaber += $haber;
+            echo "</br>";
 			$i++;
 		}
 		//cuentas comun a todos los pagos
@@ -450,9 +457,10 @@ $(document).ready(function() {
 					}
 				}
 			}
-			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
+            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', [
+                    'label' => ($i != 0) ? false : 'Cuenta',
 				'default' => $cuentaclienteid,
 				'class'=>'chosen-select-cuenta',
 				]
@@ -463,14 +471,20 @@ $(document).ready(function() {
 				'value'=>date('d-m-Y'),
 			));
 			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [
-				'yacargado' => $debeyacargado,
+                'label' => ($i != 0) ? false : 'Debe',
+                'class'=>'inputDebe',
+                'yacargado' => $debeyacargado,
 				'default' => $debe
 			]);
-			echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
-				'yacargado' => $haberyacargado,
+            $totalDebe += $debe;
+            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
+                'label' => ($i != 0) ? false : 'Haber',
+                'class'=>'inputHaber',
+                'yacargado' => $haberyacargado,
 				'default' => $haber
 			]);
-			echo "</br>";
+            $totalHaber += $haber;
+            echo "</br>";
 			$i++;
 		}
 		/*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
@@ -493,7 +507,8 @@ $(document).ready(function() {
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id', ['default' => $movid]);
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id', [
-						'default' => $movimiento['cuentascliente_id'],
+                        'label' => ($i != 0) ? false : 'Cuenta',
+                        'default' => $movimiento['cuentascliente_id'],
 						'class'=>'chosen-select-cuenta',
 					]);
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
@@ -502,20 +517,61 @@ $(document).ready(function() {
 						'value'=>date('d-m-Y'),
 					));
 					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe', [
-						'yacargado' => $debeyacargado,
+                        'label' => ($i != 0) ? false : 'Debe',
+                        'class'=>'inputDebe',
+                        'yacargado' => $debeyacargado,
 						'value' => number_format($debe, 2, ".", "")
 					]);
-					echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber', [
-						'yacargado' => $haberyacargado,
+                    $totalDebe += $debe;
+                    echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber', [
+                        'label' => ($i != 0) ? false : 'Haber',
+                        'class'=>'inputHaber',
+                        'yacargado' => $haberyacargado,
 						'value' => number_format($haber, 2, ".", "")
 					]);
-					echo "</br>";
+                    $totalHaber += $haber;
+                    echo "</br>";
 					$i++;
 				}
 			}
 		}
 		echo $this->Form->end();
-		?>
+        echo $this->Form->label('','&nbsp; ',[
+            'style'=>"display: -webkit-inline-box;width:330px;"
+        ]);
+        echo $this->Form->label('lblTotalDebe',
+            "$".number_format($totalDebe, 2, ".", ""),
+            [
+                'id'=>'lblTotalDebe',
+                'style'=>"display: inline;"
+            ]
+        );
+        echo $this->Form->label('','&nbsp;',['style'=>"display: -webkit-inline-box;width:70px;"]);
+        echo $this->Form->label('lblTotalHaber',
+            "$".number_format($totalHaber, 2, ".", ""),
+            [
+                'id'=>'lblTotalHaber',
+                'style'=>"display: inline;"
+            ]
+        );
+        if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
+            echo $this->Html->image('test-pass-icon.png',array(
+                    'id' => 'iconDebeHaber',
+                    'alt' => 'open',
+                    'class' => 'btn_exit',
+                    'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+                )
+            );
+        }else{
+            echo $this->Html->image('test-fail-icon.png',array(
+                    'id' => 'iconDebeHaber',
+                    'alt' => 'open',
+                    'class' => 'btn_exit',
+                    'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+                )
+            );
+        }
+        ?>
 	</div>
 </div>
 

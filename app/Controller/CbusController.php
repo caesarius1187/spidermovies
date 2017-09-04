@@ -231,10 +231,15 @@ class CbusController extends AppController {
             $this->set('impcli',$impcli);
 
             //Ahora vamosa  buscar las cuentas clientes de este CBU
+            $cuentasDeBanco = array_merge (
+                $this->Cuenta->cuentasDeBancoActivables,
+                $this->Cuenta->cuentasDeBancoNoRelacionadosAActividadActivables
+            );
             $optionsCuentascliente=[
                 'conditions'=>[
                     'Cuentascliente.cliente_id'=>$impcli['Impcli']['cliente_id'],
-                    'Cuentascliente.cuenta_id'=>$this->Cuenta->cuentasDeBancoActivables
+                    'Cuentascliente.cuenta_id'=>
+                        $cuentasDeBanco
                 ]
             ];
             $cuentasclientes = $this->Cuentascliente->find('list',$optionsCuentascliente);

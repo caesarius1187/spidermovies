@@ -249,7 +249,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         '76'/*Presentismo*/,
 //                        '81'/*Plus Vacacional*/,
 //                        '82'/*Adicional Complemento SS*/,
-//                        '127'/*Total Acuerdo Remunerativo*/,
+                        '127'/*Total Acuerdo Remunerativo*/,
                     ], true )){
                     $adicionales += $valorrecibo['valor'];
                 }
@@ -542,13 +542,36 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 if($codigoafip=='3'){
                     $FNE+=$rem1*0.0089*0.25;
                 }
-            }else{}
+            }else{
+
+            }
             //Contrib Seg Soc ANSSAL
             $minimoANSSAL = 2400;
+            /*este dato de obra social sindical debe ser marcado en el empleado
+            para que cambie la distribucion de ANSSAL con este formato
+            Para las Obras Sociales Sindicales:
+            Hasta $ 2.400.-: 90% Obra social y 10% ANSSAL
+            Más de $ 2.400.-: 85% Obra social y 15% ANSSAL.
+            Obras Sociales del Personal de Dirección y de las Asociaciones profesionales de empresarios:
+            Hasta $ 2.400.-: 85% Obra social y 15% ANSSAL
+            Más de $ 2.400.-: 80% Obra social y 20% ANSSAL
+            */
+            $ObraSocialSindical = $empleado['obrasocialsindical'];
+            $alicuotaMinimoANSSAL = 0.1;
+            $alicuotaANSSAL = 0.15;
+            $alicuotaAporteObraSocial = 0.0255;
+            $alicuotaContribucionObraSocial = 0.051;
+            if(!$ObraSocialSindical){
+                $alicuotaMinimoANSSAL = 0.15;
+                $alicuotaANSSAL = 0.20;
+                $alicuotaAporteObraSocial = 0.024;
+                $alicuotaContribucionObraSocial = 0.048;
+            }
+
             if($rem8<$minimoANSSAL){
-                $ContribSSANSSAL+=($rem8*0.060+$ContribucionesOScontribucionadicionalos)*0.1;
+                $ContribSSANSSAL+=($rem8*0.060+$ContribucionesOScontribucionadicionalos)*$alicuotaMinimoANSSAL;
             }else{
-                $ContribSSANSSAL+=($rem8*0.060+$ContribucionesOScontribucionadicionalos)*0.15;
+                $ContribSSANSSAL+=($rem8*0.060+$ContribucionesOScontribucionadicionalos)*$alicuotaANSSAL;
             }
             //Asignaciones Familiares
             if($codigoafip=='0'){
@@ -574,9 +597,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             }
             //Aporte Seguridad Social ANSSAL
             if($rem8<$minimoANSSAL){
-                $AporteSSANSSAL = (($rem4*0.03000)+($rem4*0.01500*$cantidadAdherentes)+($AporteOSaporteadicionalos))*0.1;
+                $AporteSSANSSAL = (($rem4*0.03000)+($rem4*0.01500*$cantidadAdherentes)+($AporteOSaporteadicionalos))*$alicuotaMinimoANSSAL;
             }else{
-                $AporteSSANSSAL = (($rem4*0.03000)+($rem4*0.01500*$cantidadAdherentes)+($AporteOSaporteadicionalos))*0.15;
+                $AporteSSANSSAL = (($rem4*0.03000)+($rem4*0.01500*$cantidadAdherentes)+($AporteOSaporteadicionalos))*$alicuotaANSSAL;
             }
             //Aporte Seguridad Social Total
             $AporteSStotal = $AporteSSjubilacionsipa+$ley19032+$AporteSSaporteadicional+$AporteSSANSSAL;
@@ -585,13 +608,13 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             if($rem8<$minimoANSSAL) {
                 $ContribucionesOScontribucionos = $rem8 * 0.054;
             }else{
-                $ContribucionesOScontribucionos = $rem8 * 0.051;
+                $ContribucionesOScontribucionos = $rem8 * $alicuotaContribucionObraSocial;
             }
             //Contribucion OS ANSSAL
             if($rem8<$minimoANSSAL){
-                $ContribucionesOSANSSAL = $ContribucionesOScontribucionadicionalos*0.1;
+                $ContribucionesOSANSSAL = $ContribucionesOScontribucionadicionalos*$alicuotaMinimoANSSAL;
             }else{
-                $ContribucionesOSANSSAL = $ContribucionesOScontribucionadicionalos*0.15;
+                $ContribucionesOSANSSAL = $ContribucionesOScontribucionadicionalos*$alicuotaANSSAL;
             }
             //Contribucion OS TOTAL
             $ContribucionesOStotal = $ContribucionesOScontribucionos+$ContribucionesOScontribucionadicionalos-$ContribucionesOSANSSAL;
@@ -599,14 +622,14 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             if($rem4<$minimoANSSAL){
                 $AporteOSaporteos = $rem4 * 0.027;
             }else{
-                $AporteOSaporteos = $rem4 * 0.0255;
+                $AporteOSaporteos = $rem4 * $alicuotaAporteObraSocial;
             }
             //Aporte OS ANSSAL
 
             if($rem4<$minimoANSSAL){
-                $AporteOSANSSAL = $AporteOSaporteadicionalos * 0.1;
+                $AporteOSANSSAL = $AporteOSaporteadicionalos * $alicuotaMinimoANSSAL;
             }else{
-                $AporteOSANSSAL = $AporteOSaporteadicionalos * 0.15;
+                $AporteOSANSSAL = $AporteOSaporteadicionalos * $alicuotaANSSAL;
             }
             //Aporte OS Adicional Adherente
             if($cantidadAdherentes>0){
@@ -617,10 +640,13 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 }
             }
             //Aporte OS Total
-            $AporteOStotal = $AporteOSaporteos+$AporteOSaporteadicionalos-$AporteOSANSSAL+$AporteOSadicionaladherente;
+            $AporteOStotal =
+                $AporteOSaporteos+
+                $AporteOSaporteadicionalos-
+                $AporteOSANSSAL+
+                $AporteOSadicionaladherente;
             //ART
             if($coberturaart){
-
                 $ARTart = (($rem9 *$impcli['Impcli']['alicuotaart']) / 100) + $impcli['Impcli']['fijoart'];
             }
             //Seguro de Vida obligatorio Seguro de Vida

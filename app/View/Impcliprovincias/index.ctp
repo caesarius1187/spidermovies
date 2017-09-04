@@ -15,7 +15,7 @@
 		<td>
 			<?php echo $this->Html->link($impcliprovincia['Partido']['nombre'], array('controller' => 'partidos', 'action' => 'view', $impcliprovincia['Partido']['id'])); ?>
 		</td>
-		<td><?php echo h($impcliprovincia['Impcliprovincia']['ano']); ?>&nbsp;</td>
+		<td><?php echo h($impcliprovincia['Impcliprovincia']['periodo']); ?>&nbsp;</td>
 		<td><?php echo h($impcliprovincia['Impcliprovincia']['coeficiente']); ?>&nbsp;</td>
 		<td><?php echo h($impcliprovincia['Impcliprovincia']['ejercicio']); ?>&nbsp;</td>
 		<td class="actions">
