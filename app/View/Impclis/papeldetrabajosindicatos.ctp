@@ -697,6 +697,17 @@ Total = 82.22";
                                         $contUth = $mesesAPagarContEspCASYR[$periodo];
                                     }
                                 }
+                                if($empleado['conveniocolectivotrabajo_id']=='7'/*el convenio del empleado es feghra*/){
+                                    $mesesAPagarContEspCASYR = [
+                                        '08-2017'=>200,
+                                        '10-2017'=>200,
+                                        '12-2017'=>200,
+                                        '02-2018'=>200,
+                                    ];
+                                    if(isset($mesesAPagarContEspCASYR[$periodo])){
+                                        $contUth = $mesesAPagarContEspCASYR[$periodo];
+                                    }
+                                }
                                 echo number_format($contUth, 2, ",", ".");
                                 $totalContribucionEspecialUTHGRA += $contUth ;
                                 $apagarcontribuciones += $contUth ;
@@ -759,15 +770,13 @@ Total = 82.22";
                                 $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
                                 $diff = $periodoALiquidar->diff($fechaIngreso);
                                 $titleUOCRAAporteFICS = "";
-                                if($diff->y > 1){
-                                    $titleUOCRAAporteFICS .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
+                                if($diff->y >= 1){
                                     $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
                                 }else{
-                                    $titleUOCRAAporteFICS .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.12";
                                     $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
                                 }
-
                                 $contUocraAporteFics = $contUocraFdoCeseLaboral*0.02 ;
+                                $titleUOCRAAporteFICS .= "(".$contUocraFdoCeseLaboral.")*0.02";
                                 echo '<td title="'.$titleUOCRAAporteFICS.'">';
                                 echo number_format($contUocraAporteFics, 2, ",", ".");
                                 $totalContribucionUocraAporteFics += $contUocraAporteFics ;
@@ -780,7 +789,43 @@ Total = 82.22";
                             <?php echo number_format($totalContribucionUocraAporteFics, 2, ",", "."); ?>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            UOCRA Contribucion especial
+                        </td>
+                        <?php
+                        $totalContribucionUocraEspecial=0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+                                //en este primer loop vamos a calcular todos los siguientes totales
+                                $mesesAPagarContEspUOCRA = [
+                                    '07-2017'=>110,
+                                    '08-2017'=>110,
+                                    '09-2017'=>110,
+                                    '10-2017'=>110,
+                                    '11-2017'=>110,
+                                    '12-2017'=>110,
+                                    '01-2018'=>110,
+                                    '02-2018'=>110,
+                                ];
+                                $contUO=0;
+                                if(isset($mesesAPagarContEspUOCRA[$periodo])){
+                                    $contUO = $mesesAPagarContEspUOCRA[$periodo];
+                                }
 
+                                echo "<td>";
+                                echo $contUO;
+                                $totalContribucionUocraEspecial += $contUO;
+                                $apagarcontribuciones += $contUO;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td>
+                            <?php echo number_format($totalContribucionUocraEspecial, 2, ",", "."); ?>
+                        </td>
+                    </tr>
                     <?php
                     break;
                 case '153':/*IERIC*/ ?>
@@ -914,6 +959,7 @@ Total = 82.22";
                     case '41':/*UOCRA*/
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2;
                         $impuestoDeterminado += $totalContribucionUocraAporteFics;
+                        $impuestoDeterminado += $totalContribucionUocraEspecial;
                         break;
                     case '153':/*IERIC*/
                         $impuestoDeterminado += $totalContribucionIERIC;

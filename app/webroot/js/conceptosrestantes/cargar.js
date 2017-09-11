@@ -70,36 +70,34 @@ $(document).ready(function() {
     reloadInputDates();
     function hiddeAllImputsFromConceptosRestantesAddForm(){
         $('#saveConceptosrestantesForm div').hide();
-
         var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
         var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
+        for (var i = 24 - 1; i >= 0; i--) {
+            var columni = tblTablaConceptosrestantes.column(i);
+            columni.visible( false );
+        };
 
-          for (var i = 24 - 1; i >= 0; i--) {
-              var columni = tblTablaConceptosrestantes.column(i);
-              columni.visible( false );
-          };
-
-            switch (impuestoseleccionado){
-                  //estos impuestos se pagan por provincia todos los otros por localidad
-                  case '21':/*Actividades Economicas*/
-                  case '174':/*Convenio Multilateral*/
-                      $('#ConceptosrestanteLocalidadeId').closest('div').hide();
-                      $('#ConceptosrestantePartidoId').closest('div').show();
-                      showcolumnConceptoRestante(tblTablaConceptosrestantes,1,true);//Partido
-                      break;
-                  default:
-                      $('#ConceptosrestanteLocalidadeId').closest('div').show();
-                      $('#ConceptosrestantePartidoId').closest('div').hide();
-                      showcolumnConceptoRestante(tblTablaConceptosrestantes,2,true);//Localidad
-                      break;
-            }
-            $('#ConceptosrestanteConceptostipoId').closest('div').show();
-            $('#ConceptosrestanteImpcliId').closest('div').show();
-            $('.chosen-container').show();
-            $('.chosen-container div').show();
-            $('#ConceptosrestanteMontoretenido').closest('div').show();
-            $('#saveConceptosrestantesForm .submit input').closest('div').show();
-            $('#ConceptosrestanteFecha').closest('div').show();
+        switch (impuestoseleccionado){
+              //estos impuestos se pagan por provincia todos los otros por localidad
+              case '21':/*Actividades Economicas*/
+              case '174':/*Convenio Multilateral*/
+                  $('#ConceptosrestanteLocalidadeId').closest('div').hide();
+                  $('#ConceptosrestantePartidoId').closest('div').show();
+                  showcolumnConceptoRestante(tblTablaConceptosrestantes,1,true);//Partido
+                  break;
+              default:
+                  $('#ConceptosrestanteLocalidadeId').closest('div').show();
+                  $('#ConceptosrestantePartidoId').closest('div').hide();
+                  showcolumnConceptoRestante(tblTablaConceptosrestantes,2,true);//Localidad
+                  break;
+        }
+        $('#ConceptosrestanteConceptostipoId').closest('div').show();
+        $('#ConceptosrestanteImpcliId').closest('div').show();
+        $('.chosen-container').show();
+        $('.chosen-container div').show();
+        $('#ConceptosrestanteMontoretenido').closest('div').show();
+        $('#saveConceptosrestantesForm .submit input').closest('div').show();
+        $('#ConceptosrestanteFecha').closest('div').show();
 
 
 
@@ -455,7 +453,10 @@ $(document).ready(function() {
                                 conceptoCargado.enterecaudador,
                                 conceptoCargado.regimen,
                                 conceptoCargado.descripcion,
-                                conceptoCargado.numeropadron
+                                conceptoCargado.numeropadron,
+                                conceptoCargado.puntosdeventa,
+                                conceptoCargado.numerofactura,
+                                conceptoCargado.ordendepago
                             ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarConceptosrestante('+conceptoCargado.id+')" alt="">';
                         tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarConceptosrestante('+conceptoCargado.id+')" alt="">';
@@ -513,8 +514,7 @@ function addTolblTotalhaberAsieto(event) {
         $("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
         showIconDebeHaber()
     }
-
-    function showIconDebeHaber(){
+function showIconDebeHaber(){
         if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
             $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
         }else{
@@ -564,164 +564,164 @@ function calcularFooterTotales(mitabla){
                 }
             } );
         }
-    var tipodecomprobanteseleccionado = 'A';
-    var tipodecomprobanteCompraseleccionado = '';
+var tipodecomprobanteseleccionado = 'A';
+var tipodecomprobanteCompraseleccionado = '';
 
-    function adaptarConceptorestanteForm(formnombre,conid){
-        hiddeAllImputsFromConceptosRestantesAddForm(formnombre,conid);
-        var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
-        if(impcliseleccionado==null) return;
-        var impuestoseleccionadoNombre = $('#ConceptosrestanteImpcliId option[value="' + impcliseleccionado + '"]').html();
-        var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
-        switch (impuestoseleccionado){
-            case '21':/*Actividades Economicas*/
-            case '174':/*Convenio Multilateral*/
-                $('#'+formnombre+' #ConceptosrestanteLocalidadeId').closest('div').hide();
-                $('#'+formnombre+' #ConceptosrestantePartidoId').closest('div').show();
-                break;
-            default:
-                $('#'+formnombre+' #ConceptosrestanteLocalidadeId').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestantePartidoId').closest('div').hide();
-                break;
-        }
-        switch($("#"+formnombre+" #ConceptosrestanteConceptostipoId").val()*1){
-            case 1:/*Saldos A Favor*/
-                $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-                switch(impuestoseleccionado) {
-                    case '19':
-                        $('#' + formnombre + ' #ConceptosrestanteMonto').closest('div').show();
-                        break;
-                }
-                break;
-            case 2:/*Retenciones*/
-                switch(impuestoseleccionado){
-                    case '174':/*Convenio Multilateral*/
-                        $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumerofactura').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestantePuntosdeventa').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteComprobanteId').closest('div').show();
-                        break
-                    case '21':/*Actividades Economicas*/
-                        $('#'+formnombre+' #ConceptosrestanteNumeropadron').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteMonto').closest('div').show();
-                        break
-                    case '160':/*Ganancia(PF)*/
-                    case '5':/*Ganancia(PJ)*/
-                        $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
-                        break;
-                    case '19':/*IVA*/
-                        $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
-                        break;
-                    case '6':/*Actividades Varias*/
-                        $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumeropadron').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
-
-                        break;
-                    case '10':/*SUSS*/
-                        $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
-                        break;
-                    default:
-                        $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteComprobanteId').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
-                        break;
-                }
-                break;
-            case 3:/*Recaudacion Bancaria*/
-                switch(impuestoseleccionado){
-                    case 21:/*Actividades Economicas*/
-                        $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteMonto').closest('div').show();
-                        break
-                    default:
-                        $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteAnticipo').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteCbu').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteTipocuenta').closest('div').show();
-                        $('#'+formnombre+' #ConceptosrestanteTipomoneda').closest('div').show();
-                        break;
-                }
-                break;
-            case 4:/*Otros*/
-                $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-                break;
-            case 5:/*Percepciones Aduaneras*/
-                $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteNumerodespachoaduanero').closest('div').show();
-                break;
-            case 6:/*Credito por adicional*/
-                break;
-            case 7:/*Anticipos especiales*/
-                break;
-            case 8:/*Pago en bonos*/
-                $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-                break;
-            case 9:/*Compensaciones*/
-                $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
-                break;
-            case 10:/*Pagos a Cuenta*/
-                $('#'+formnombre+' #ConceptosrestanteEnterecaudador').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
-                break;
-            case 11:/*SICREB*/
-                $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteCbu').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteTipocuenta').closest('div').show();
-                $('#'+formnombre+' #ConceptosrestanteTipomoneda').closest('div').show();
-                break;
-        }
+function adaptarConceptorestanteForm(formnombre,conid){
+    hiddeAllImputsFromConceptosRestantesAddForm(formnombre,conid);
+    var impcliseleccionado = $("#ConceptosrestanteImpcliId").val();
+    if(impcliseleccionado==null) return;
+    var impuestoseleccionadoNombre = $('#ConceptosrestanteImpcliId option[value="' + impcliseleccionado + '"]').html();
+    var impuestoseleccionado = $('#ConceptosrestanteImpclisid option[value="' + impcliseleccionado + '"]').html();
+    switch (impuestoseleccionado){
+        case '21':/*Actividades Economicas*/
+        case '174':/*Convenio Multilateral*/
+            $('#'+formnombre+' #ConceptosrestanteLocalidadeId').closest('div').hide();
+            $('#'+formnombre+' #ConceptosrestantePartidoId').closest('div').show();
+            break;
+        default:
+            $('#'+formnombre+' #ConceptosrestanteLocalidadeId').closest('div').show();
+            $('#'+formnombre+' #ConceptosrestantePartidoId').closest('div').hide();
+            break;
     }
-    function reloadInputDates(){
-        var d = new Date( );
-        d.setMonth( d.getMonth( ) - 1 );
-        (function($){
-           $( "input.datepicker" ).datepicker({
-            yearRange: "-100:+50",
-            changeMonth: true,
-            changeYear: true,
-            constrainInput: false,
-            dateFormat: 'dd-mm-yy',
-            defaultDate: d,
-          });
-          $( "input.datepicker-dia" ).datepicker({
-            yearRange: "-100:+50",
-            changeMonth: false,
-            changeYear: false,
-            constrainInput: false,
-            dateFormat: 'dd',
-            defaultDate: d,
-    
-          });
-        })(jQuery);
-        
-      }
+    switch($("#"+formnombre+" #ConceptosrestanteConceptostipoId").val()*1){
+        case 1:/*Saldos A Favor*/
+            $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
+            switch(impuestoseleccionado) {
+                case '19':
+                    $('#' + formnombre + ' #ConceptosrestanteMonto').closest('div').show();
+                    break;
+            }
+            break;
+        case 2:/*Retenciones*/
+            switch(impuestoseleccionado){
+                case '174':/*Convenio Multilateral*/
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerofactura').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestantePuntosdeventa').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteComprobanteId').closest('div').show();
+                    break
+                case '21':/*Actividades Economicas*/
+                    $('#'+formnombre+' #ConceptosrestanteNumeropadron').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteMonto').closest('div').show();
+                    break
+                case '160':/*Ganancia(PF)*/
+                case '5':/*Ganancia(PJ)*/
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
+                    break;
+                case '19':/*IVA*/
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
+                    break;
+                case '6':/*Actividades Varias*/
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumeropadron').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
+
+                    break;
+                case '10':/*SUSS*/
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteRegimen').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
+                    break;
+                default:
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteComprobanteId').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteOrdendepago').closest('div').show();
+                    break;
+            }
+            break;
+        case 3:/*Recaudacion Bancaria*/
+            switch(impuestoseleccionado){
+                case 21:/*Actividades Economicas*/
+                    $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteMonto').closest('div').show();
+                    break
+                default:
+                    $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteAnticipo').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteCbu').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteTipocuenta').closest('div').show();
+                    $('#'+formnombre+' #ConceptosrestanteTipomoneda').closest('div').show();
+                    break;
+            }
+            break;
+        case 4:/*Otros*/
+            $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
+            break;
+        case 5:/*Percepciones Aduaneras*/
+            $('#'+formnombre+' #ConceptosrestanteCuit').closest('div').show();
+            $('#'+formnombre+' #ConceptosrestanteNumerodespachoaduanero').closest('div').show();
+            break;
+        case 6:/*Credito por adicional*/
+            break;
+        case 7:/*Anticipos especiales*/
+            break;
+        case 8:/*Pago en bonos*/
+            $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
+            break;
+        case 9:/*Compensaciones*/
+            $('#'+formnombre+' #ConceptosrestanteDescripcion').closest('div').show();
+            break;
+        case 10:/*Pagos a Cuenta*/
+            $('#'+formnombre+' #ConceptosrestanteEnterecaudador').closest('div').show();
+            $('#'+formnombre+' #ConceptosrestanteNumerocomprobante').closest('div').show();
+            break;
+        case 11:/*SICREB*/
+            $('#'+formnombre+' #ConceptosrestanteAgente').closest('div').show();
+            $('#'+formnombre+' #ConceptosrestanteCbu').closest('div').show();
+            $('#'+formnombre+' #ConceptosrestanteTipocuenta').closest('div').show();
+            $('#'+formnombre+' #ConceptosrestanteTipomoneda').closest('div').show();
+            break;
+    }
+}
+function reloadInputDates(){
+    var d = new Date( );
+    d.setMonth( d.getMonth( ) - 1 );
+    (function($){
+       $( "input.datepicker" ).datepicker({
+        yearRange: "-100:+50",
+        changeMonth: true,
+        changeYear: true,
+        constrainInput: false,
+        dateFormat: 'dd-mm-yy',
+        defaultDate: d,
+      });
+      $( "input.datepicker-dia" ).datepicker({
+        yearRange: "-100:+50",
+        changeMonth: false,
+        changeYear: false,
+        constrainInput: false,
+        dateFormat: 'dd',
+        defaultDate: d,
+
+      });
+    })(jQuery);
+
+  }
 
 /*Update Pagos a cuenta*/
-    function eliminarConceptosrestante(conresid){
+function eliminarConceptosrestante(conresid){
         var r = confirm("Esta seguro que desea eliminar este pago a cuenta?. Es una accion que no podra deshacer.");
         if (r == true) {
             $.ajax({
@@ -752,7 +752,7 @@ function calcularFooterTotales(mitabla){
         }/*
          */
     }
-    function modificarConceptosrestante(conid){
+function modificarConceptosrestante(conid){
         var data ="";
         $.ajax({
             type: "post",  // Request method: post, get
@@ -871,68 +871,68 @@ function calcularFooterTotales(mitabla){
         });
     }
 /*fin Update Pagos a cuenta*/
-    function realizarEventoCliente(periodo,clienteid,estadotarea){
-    var datas =  "0/tarea3/"+periodo+"/"+clienteid;
+function realizarEventoCliente(periodo,clienteid,estadotarea){
+var datas =  "0/tarea3/"+periodo+"/"+clienteid;
+var data ="";
+$.ajax({
+type: "post",  // Request method: post, get
+url: serverLayoutURL+"/eventosclientes/realizareventocliente/0/pagosacuentacarados/"+periodo+"/"+clienteid+"/"+estadotarea, // URL to request
+data: data,  // post data
+success: function(response) {
+  var resp = response.split("&&");
+  var respuesta=resp[1];
+  var error=resp[0];
+  if(error!=0){
+    callAlertPopint('Error por favor intente mas tarde');
+    return;
+  }else{
+    callAlertPopint('Estado de la tarea modificado');
+  }
+  return false;
+},
+error:function (XMLHttpRequest, textStatus, errorThrown) {
+  alert(textStatus);
+  return false;
+}
+});
+return false;
+}
+function usosSLD(conid){
     var data ="";
     $.ajax({
-    type: "post",  // Request method: post, get
-    url: serverLayoutURL+"/eventosclientes/realizareventocliente/0/pagosacuentacarados/"+periodo+"/"+clienteid+"/"+estadotarea, // URL to request
-    data: data,  // post data
-    success: function(response) {
-      var resp = response.split("&&");
-      var respuesta=resp[1];
-      var error=resp[0];
-      if(error!=0){
-        callAlertPopint('Error por favor intente mas tarde');
-        return;
-      }else{
-        callAlertPopint('Estado de la tarea modificado');
-      }
-      return false;
-    },
-    error:function (XMLHttpRequest, textStatus, errorThrown) {
-      alert(textStatus);
-      return false;
-    }
-    });
-    return false;
-    }
-    function usosSLD(conid){
-        var data ="";
-        $.ajax({
-            type: "post",  // Request method: post, get
-            url: serverLayoutURL+"/usosaldos/index/"+conid,
-            // URL to request
-            data: data,  // post data
-            success: function(response) {
-                //var oldRow = $("#rowconceptorestante"+conid).html();
-                $("#divUsosaldos").html(response);
-                location.href="#popinUsosaldos";
-                $('#UsosaldoAddForm').submit(function(){
-                    //serialize form data
-                    var formData = $(this).serialize();
-                    //get form action
-                    var formUrl = $(this).attr('action');
-                    $.ajax({
-                        type: 'POST',
-                        url: formUrl,
-                        data: formData,
-                        success: function(response2,textStatus,xhr){
-                            var respuesta = JSON.parse(response2);
-                            callAlertPopint(respuesta.respuesta);
-                            return false;
-                        },
-                        error: function(xhr,textStatus,error){
-                            alert(textStatus);
-                            return false;
-                        }
-                    });
-                    return false;
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/usosaldos/index/"+conid,
+        // URL to request
+        data: data,  // post data
+        success: function(response) {
+            //var oldRow = $("#rowconceptorestante"+conid).html();
+            $("#divUsosaldos").html(response);
+            location.href="#popinUsosaldos";
+            $('#UsosaldoAddForm').submit(function(){
+                //serialize form data
+                var formData = $(this).serialize();
+                //get form action
+                var formUrl = $(this).attr('action');
+                $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(response2,textStatus,xhr){
+                        var respuesta = JSON.parse(response2);
+                        callAlertPopint(respuesta.respuesta);
+                        return false;
+                    },
+                    error: function(xhr,textStatus,error){
+                        alert(textStatus);
+                        return false;
+                    }
                 });
-            },
-            error:function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(errorThrown);
-            }
-        });
-    }
+                return false;
+            });
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
+}
 

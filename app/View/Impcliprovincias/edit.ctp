@@ -2,6 +2,13 @@
 	<?php if(isset($error)){
 		echo $error;
 	}else{
+	echo $this->Html->image('ii.png',array(
+			'id' => 'iconInfo',
+			'alt' => 'open',
+			'title' => 'Al modificar estas alicuotas uds va a cambiar la forma en la que se calculan los papeles de trabajo. '.
+			'Recuerde que si ya tiene liquidaciones deberia corregirlas o no modificar estas alicuotas',
+		)
+	);
 	echo $this->Form->create('Impcliprovincia',array('class'=>'formTareaCarga formAddImpcliprovincia','type' => 'post')); ?>
 	<h3><?php
 		$cargarProvincia=true;
@@ -29,22 +36,32 @@
 					}else{
 						echo $this->Form->input('Impcliprovincia.localidade_id',array('label'=>'Localidad','class'=>'chosen-select'));
 					}
-					echo $this->Form->input('Impcliprovincia.ano',array(
-							'label'=>'Año',
-							'class'=>'chosen-select',
-							'options' => array(
-								'2014'=>'2014',
-								'2015'=>'2015',
-								'2016'=>'2016',
-								'2017'=>'2017',
-								'2018'=>'2018',
-								'2019'=>'2019',
-								'2020'=>'2020',
-							),
-							'empty' => 'Elegir año',
-							'required' => true,
-							'placeholder' => 'Por favor seleccione año',
-							'default' =>  date("Y")
+//					echo $this->Form->input('Impcliprovincia.ano',array(
+//							'label'=>'Año',
+//							'class'=>'chosen-select',
+//							'options' => array(
+//								'2014'=>'2014',
+//								'2015'=>'2015',
+//								'2016'=>'2016',
+//								'2017'=>'2017',
+//								'2018'=>'2018',
+//								'2019'=>'2019',
+//								'2020'=>'2020',
+//							),
+//							'empty' => 'Elegir año',
+//							'required' => true,
+//							'placeholder' => 'Por favor seleccione año',
+//							'default' =>  date("Y")
+//						)
+//					);
+					echo $this->Form->input('Impcliprovincia.periodo', array(
+							'class'=>'datepicker-month-year',
+							'type'=>'text',
+							'label'=>'Periodo Desde',
+							'required'=>true,
+							'style' => 'width:100px',
+							'readonly'=>'readonly',
+							'default' =>  date("m-Y")
 						)
 					);
 					//si el impuesto es actividades varias o acti

@@ -211,6 +211,7 @@ class DepositosController extends AppController {
  * @return void
  */
 	public function add() {
+		$this->loadModel('Eventoscliente');
 		$resp ="";
 		$this->autoRender=false; 
 		if ($this->request->is('post')) {
@@ -229,6 +230,39 @@ class DepositosController extends AppController {
 					$createdDepo = $this->Deposito->find('first', $options);	
 					$this->set('deposito',$createdDepo);
 					$this->set('evento',$this->request->data['Deposito']['evento_id']);
+
+					//Vamos a guardar esto en el evento cliente del periodo correspondiente
+					$eventoId=0;
+					$options = array(
+						'conditions' => array(
+							'Eventoscliente.cliente_id'=> $this->request->data['Deposito']['cliente_id'],
+							'Eventoscliente.periodo'=>$this->request->data['Deposito']['periodo']
+						)
+					);
+					$eventocliente = $this->Eventoscliente->find('all', $options);
+					if(count($eventocliente)!=0){
+						$eventoId=$eventocliente[0]['Eventoscliente']['id'];
+					}
+					if ($eventoId!=0) {
+						$this->Eventoscliente->read(null, $eventoId);
+						$this->Eventoscliente->set('reciboscargados',1);
+						if ($this->Eventoscliente->save()) {
+						} else {
+							$this->set('error',1);
+						}
+					}else{
+						$this->Eventoscliente->create();
+						$this->Eventoscliente->set('cliente_id',$this->request->data['Deposito']['cliente_id']);
+						$this->Eventoscliente->set('periodo',$this->request->data['Deposito']['periodo']);
+						$this->Eventoscliente->set('reciboscargados',1);
+						$this->Eventoscliente->set('user_id',$this->Session->read('Auth.User.estudio_id'));
+						if($this->Eventoscliente->save()){
+
+						}else{
+							$this->set('error',1);
+						}
+					}
+
 					$this->autoRender=false; 		
 					$this->layout = 'ajax';
 					$this->render('add');		

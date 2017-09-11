@@ -59,17 +59,17 @@
             $totalVenta  = 0;
             $lineVenta = "";
             //         $lineVenta = array();
-    //        $lineVenta['fecha']=date('d-m-Y',strtotime(substr($line, 0,8)));
+            //        $lineVenta['fecha']=date('d-m-Y',strtotime(substr($line, 0,8)));
             $lineVenta = date('Y', strtotime($venta['Venta']['fecha'])) . date('m', strtotime($venta['Venta']['fecha'])) . date('d', strtotime($venta['Venta']['fecha']));
-    //        $lineVenta['comprobantetipo']=substr($line, 8,3);
+            //        $lineVenta['comprobantetipo']=substr($line, 8,3);
             $lineVenta .= str_pad($venta["Comprobante"]['codigo'], 3, "0", STR_PAD_LEFT);
-    //        $lineVenta['puntodeventa']=substr($line, 11,5);
+            //        $lineVenta['puntodeventa']=substr($line, 11,5);
             $lineVenta .= str_pad($venta["Puntosdeventa"]['nombre'], 5, "0", STR_PAD_LEFT);
-    //        $lineVenta['comprobantenumero']=substr($line, 16,20);
+            //        $lineVenta['comprobantenumero']=substr($line, 16,20);
             $lineVenta .= str_pad($venta['Venta']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
-    //        $lineVenta['comprobantenumerohasta']=substr($line, 36,20);
+            //        $lineVenta['comprobantenumerohasta']=substr($line, 36,20);
             $lineVenta .= str_pad($venta['Venta']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
-    //        $lineVenta['codigodocumento']=substr($line, 56,2);
+            //        $lineVenta['codigodocumento']=substr($line, 56,2);
 
             //si CUIT mostrar 80, SI DNI(lenght = 8) mostrar 96
             $nombreamostrar = $venta['Subcliente']['nombre'];
@@ -80,59 +80,68 @@
             }else{
                 $lineVenta .= str_pad(80, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
             }
-    //        $lineVenta['identificacionnumero']=substr($line, 58,20);
+            //        $lineVenta['identificacionnumero']=substr($line, 58,20);
 
             $lineVenta .= str_pad($identificacionnumero, 20, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
-    //        $lineVenta['nombre']=substr($line, 78,30);
+            //        $lineVenta['nombre']=substr($line, 78,30);
 
             $lineVenta .= substr(str_pad($nombreamostrar, 30, " ", STR_PAD_RIGHT), 0, 30);
             //todo: reemplazar codigo documento
-    //        //aveces la identificacionnumero viene vacia (todos 0) entonces vamos a poner el nombre
-    //        // en estos casos como identificacion numero
-    //        if(ltrim($lineVenta['identificacionnumero'],'0')==''){
-    //            $lineVenta['identificacionnumero'] = $lineVenta['nombre'];
-    //        }
-    //        //hay algunos casos donde los registros vienen sin nombre y sin cuit, en estos casos
-    //        //vamos a poner que el subcliente es un consumidor final y lo vamos a cargar
-    //        //el formato del consumidor final es
-    //        //Nombre:   Consumidor Final
-    //        //CUIT:     20000000001
-    //        //DNI:      20000000001
-    //        if(ltrim($lineVenta['identificacionnumero'],' ')=='' && ltrim($lineVenta['nombre'],' ')==''){
-    //            $lineVenta['nombre'] = 'Consumidor Final';
-    //            $lineVenta['identificacionnumero'] = '20000000001';
-    //        }
-    //        $lineVenta['importetotaloperacion']=substr($line, 108,13).'.'.substr($line, 121, 2);
+            //        //aveces la identificacionnumero viene vacia (todos 0) entonces vamos a poner el nombre
+            //        // en estos casos como identificacion numero
+            //        if(ltrim($lineVenta['identificacionnumero'],'0')==''){
+            //            $lineVenta['identificacionnumero'] = $lineVenta['nombre'];
+            //        }
+            //        //hay algunos casos donde los registros vienen sin nombre y sin cuit, en estos casos
+            //        //vamos a poner que el subcliente es un consumidor final y lo vamos a cargar
+            //        //el formato del consumidor final es
+            //        //Nombre:   Consumidor Final
+            //        //CUIT:     20000000001
+            //        //DNI:      20000000001
+            //        if(ltrim($lineVenta['identificacionnumero'],' ')=='' && ltrim($lineVenta['nombre'],' ')==''){
+            //            $lineVenta['nombre'] = 'Consumidor Final';
+            //            $lineVenta['identificacionnumero'] = '20000000001';
+            //        }
+            //        $lineVenta['importetotaloperacion']=substr($line, 108,13).'.'.substr($line, 121, 2);
             $lineVenta .= str_pad(number_format($venta[0]['totalfactura'], 2, "", ""), 15, "0", STR_PAD_LEFT);
-    //        $lineVenta['importeconceptosprecionetogravado']=substr($line, 123,13).'.'.substr($line, 136, 2);
+            //        $lineVenta['importeconceptosprecionetogravado']=substr($line, 123,13).'.'.substr($line, 136, 2);
             $lineVenta .= str_pad(number_format($venta['Venta']['nogravados'], 2, "", ""), 15, "0", STR_PAD_LEFT);
-    //        $lineVenta['percepcionesnocategorizados']=substr($line, 138,13).'.'.substr($line, 151, 2);
+            //        $lineVenta['percepcionesnocategorizados']=substr($line, 138,13).'.'.substr($line, 151, 2);
             $lineVenta .= str_pad(number_format($venta['Venta']['ivapercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
-    //        $lineVenta['importeoperacionesexentas']=substr($line, 153,13).'.'.substr($line, 166, 2);
+            //        $lineVenta['importeoperacionesexentas']=substr($line, 153,13).'.'.substr($line, 166, 2);
             $lineVenta .= str_pad(number_format($venta['Venta']['excentos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
-    //        $lineVenta['importepercepcionespagosacuenta']=substr($line, 168,13).'.'.substr($line, 181, 2);
+            //        $lineVenta['importepercepcionespagosacuenta']=substr($line, 168,13).'.'.substr($line, 181, 2);
             $lineVenta .= str_pad(number_format(0, 2, "", ""), 15, "0", STR_PAD_LEFT);
             //Todo: Buscar importepercepcionespagosacuenta en ventas importar y recuperarlos al exportar
-    //        $lineVenta['importeingresosbrutos']=substr($line, 183,13).'.'.substr($line, 196, 2);
+            //        $lineVenta['importeingresosbrutos']=substr($line, 183,13).'.'.substr($line, 196, 2);
             $lineVenta .= str_pad(number_format($venta['Venta']['iibbpercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
-    //        $lineVenta['importeimpuestosmunicipales']=substr($line, 198,13).'.'.substr($line, 211, 2);
+            //        $lineVenta['importeimpuestosmunicipales']=substr($line, 198,13).'.'.substr($line, 211, 2);
             $lineVenta .= str_pad(number_format($venta['Venta']['actvspercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
-    //        $lineVenta['importeimpuestosinternos']=substr($line, 213,13).'.'.substr($line, 223, 2);
+            //        $lineVenta['importeimpuestosinternos']=substr($line, 213,13).'.'.substr($line, 223, 2);
             $lineVenta .= str_pad(number_format($venta['Venta']['impinternos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
-    //        $lineVenta['codigomoneda']=substr($line, 228,3);
+            //        $lineVenta['codigomoneda']=substr($line, 228,3);
             $lineVenta .= str_pad("PES", 3, " ", STR_PAD_LEFT);
-    //        $lineVenta['cambiotipo']=substr($line, 231,10);
+            //        $lineVenta['cambiotipo']=substr($line, 231,10);
             $lineVenta .= str_pad("0001000000", 10, "0", STR_PAD_LEFT);
-    //        $lineVenta['cantidadalicuotas']=substr($line, 241,1);
+            //        $lineVenta['cantidadalicuotas']=substr($line, 241,1);
             $lineVenta .= str_pad($venta[0]['cantalicuotas'], 1, "0", STR_PAD_LEFT);
-    //        $lineVenta['operacioncodigo']=substr($line, 242,1);
-            $lineVenta .= str_pad(0, 1, "0", STR_PAD_LEFT);
-    //        $lineVenta['otrostributos']=substr($line, 243,13).'.'.substr($line, 256, 2);
+            //        $lineVenta['operacioncodigo']=substr($line, 242,1);
+
+            if(isset($venta[0]['alicuota'])){
+                if($venta[0]['alicuota']==0){
+                    $lineVenta .= str_pad("E", 1, "0", STR_PAD_LEFT);
+                }else{
+                }
+            }else{
+                $lineVenta .= str_pad(0, 1, "0", STR_PAD_LEFT);
+            }
+
+            //        $lineVenta['otrostributos']=substr($line, 243,13).'.'.substr($line, 256, 2);
             $lineVenta .= str_pad(0, 15, "0", STR_PAD_LEFT);
-    //        $lineVenta['fechavencimientopago']=substr($line, 258,8);
+            //        $lineVenta['fechavencimientopago']=substr($line, 258,8);
             $lineVenta .= str_pad(0, 8, "0", STR_PAD_LEFT);
 //            $lineVenta['lineacompleta']=$line;
-    //        $ventasArray[$i]['Venta']=$lineVenta;
+            //        $ventasArray[$i]['Venta']=$lineVenta;
             echo $lineVenta."</br>";
         }
         ?></div>

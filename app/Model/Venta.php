@@ -75,6 +75,13 @@ class Venta extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
+		),
+		'Tipogasto' => array(
+			'className' => 'Tipogasto',
+			'foreignKey' => 'tipogasto_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
 		)
 	);
 	public $hasMany = array(

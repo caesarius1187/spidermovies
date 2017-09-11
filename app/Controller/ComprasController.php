@@ -53,13 +53,6 @@ class ComprasController extends AppController {
 		$this->set('compras', $this->Paginator->paginate());
 	}
 
-/**
- * view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
 	public function view($id = null) {
 		if (!$this->Compra->exists($id)) {
 			throw new NotFoundException(__('Invalid compra'));
@@ -67,12 +60,6 @@ class ComprasController extends AppController {
 		$options = array('conditions' => array('Compra.' . $this->Compra->primaryKey => $id));
 		$this->set('compra', $this->Compra->find('first', $options));
 	}
-
-/**
- * add method
- *
- * @return void
- */
 	public function add() {
 		if ($this->request->is('post')) {
 			$this->Compra->create();
@@ -88,11 +75,6 @@ class ComprasController extends AppController {
 		$localidades = $this->Compra->Localidade->find('list');
 		$this->set(compact('clientes', 'subclientes', 'localidades'));
 	}
-
-	/**
-	 * @param null $id
-	 * @param null $periodo
-     */
 	public function cargar($id=null, $periodo=null){
 		$this->loadModel('Localidade');
 		$this->loadModel('Partido');
@@ -170,7 +152,11 @@ class ComprasController extends AppController {
 						'Periodosactivo'=>[
 							'conditions'=>$conditionsImpCliHabilitados
 						]
-					]
+					],
+                    'Actividadcliente'=>array(
+                        'Actividade',
+                        'Cuentasganancia'
+                    ),
 				),
 				'conditions' => array(
 					'id' => $id,
@@ -320,7 +306,10 @@ class ComprasController extends AppController {
 			'Dcto 814'=>'Dcto 814');
 		$this->set('imputaciones', $imputaciones);
 
-		$optionsTipoGastos=array('conditions'=>array());
+		$optionsTipoGastos=array(
+			'conditions'=>array('Tipogasto.tipo'=>'compras'),
+			'fields'=>array('id','nombre','categoria'),
+		);
 		$tipogastos = $this->Compra->Tipogasto->find('list',$optionsTipoGastos);
 		$this->set('tipogastos', $tipogastos);
 
@@ -374,7 +363,6 @@ class ComprasController extends AppController {
         $this->set(compact('lclis','cuentascliente'));
 
 	}
-
 	public function addajax(){
 	 	//$this->request->onlyAllow('ajax');
 	 	$this->loadModel('Subcliente');
@@ -399,7 +387,7 @@ class ComprasController extends AppController {
 				$data = array(
 		            "respuesta" => "La Compra ".$this->request->data['Compra']['numerocomprobante']." ya ha sido creada. Por favor cambie el numero de comprobante o la alicuota",
 		            "compra_id" => 0,
-		            "compra"=> array(),		            
+		            "compra"=> array(),
 		        );
 		        $this->layout = 'ajax';
 		        $this->set('data', $data);
@@ -413,7 +401,13 @@ class ComprasController extends AppController {
 			}				
 			if ($this->Compra->save($this->request->data)) {
 				$optionsComprobante = array('contain'=>[],'conditions'=>array('Comprobante.id' => $this->request->data['Compra']['comprobante_id']));
-				$optionsTipoGasto = array('contain'=>[],'conditions'=>array('Tipogasto.id' => $this->request->data['Compra']['tipogasto_id']));
+				$optionsTipoGasto = array(
+					'conditions'=>array(
+						'Tipogasto.id' => $this->request->data['Compra']['tipogasto_id'],
+						'Tipogasto.tipo'=>'compras'),
+					'fields'=>array('id','nombre','categoria'),
+                    'contain'=>[],
+                );
 				$optionsProverode = array('contain'=>[],'conditions'=>array('Provedore.id'=>$this->request->data['Compra']['provedore_id']));
 				$optionsLocalidade = [
 					'contain'=>[
@@ -523,8 +517,9 @@ class ComprasController extends AppController {
 
 	}
 	public function importar($cliid=null,$periodo=null){
-		App::uses('Folder', 'Utility');
 		set_time_limit (360);
+//		ini_set('memory_limit', '2560M');
+		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');
 		$this->loadModel('Provedore');
 		$this->loadModel('Localidade');
@@ -582,9 +577,14 @@ class ComprasController extends AppController {
 		$this->set('tipocreditos', $this->tipocreditos);
 		$this->set('imputaciones', $this->imputaciones);
 
-		$optionsTipoGastos=array('conditions'=>array());
-		$tipogastos = $this->Compra->Tipogasto->find('list',$optionsTipoGastos);
-		$this->set('tipogastos', $tipogastos);
+        $optionsTipoGastos=array(
+			'conditions'=>array(
+						'Tipogasto.tipo'=>'compras'),
+			'fields'=>array('id','nombre','categoria'),
+			'contain'=>[],
+        );
+        $tipogastos = $this->Compra->Tipogasto->find('list',$optionsTipoGastos);
+        $this->set('tipogastos', $tipogastos);
 
 		$clienteActividadList=$this->Actividadcliente->find('list', array(
 				'contain' => array(
@@ -613,7 +613,11 @@ class ComprasController extends AppController {
 		$this->set('domicilios', $domicilios);
 		$cliente=$this->Cliente->find('first', array(
 				'contain'=>array(
-					'Domicilio'
+					'Domicilio',
+                    'Actividadcliente'=>array(
+                        'Actividade',
+                        'Cuentasganancia'
+                    ),
 				),
 				'conditions' => array(
 					'id' => $cliid,
@@ -642,16 +646,38 @@ class ComprasController extends AppController {
 			$myParser = new ParserUnlimited();
             //Debugger::dump($this->request->data);
             $myParser->my_parse_str($this->request->data['Compra'][0]['jsonencript'],$params);
-            foreach ($params['data']['Compra'] as $k => $micompra){
+			$data['respuesta'] = '';
+			$data['comprasyacargadas'] = '';
+			foreach ($params['data']['Compra'] as $k => $micompra){
                 $mifecha = $micompra['fecha'];
                 $params['data']['Compra'][$k]['fecha'] = date('Y-m-d',strtotime($mifecha));
+
+				//vamos a recorrer las compras que estamos importanto para ver si no las estamos repitiendo
+				$optionsCompra = array(
+					'Compra.cliente_id'=>$params['data']['Compra'][$k]['cliente_id'],
+					'Compra.comprobante_id'=>$params['data']['Compra'][$k]['comprobante_id'],
+					'Compra.puntosdeventa*1 = '.$params['data']['Compra'][$k]['puntosdeventa']*1,
+					'Compra.numerocomprobante*1 = '.$params['data']['Compra'][$k]['numerocomprobante']*1,
+					'Compra.alicuota'=>$params['data']['Compra'][$k]['alicuota'],
+					'Compra.provedore_id'=>$params['data']['Compra'][$k]['provedore_id'],
+				);
+				$compraAnterior = $this->Compra->hasAny($optionsCompra);
+
+				if($compraAnterior){
+					$data ["comprasyacargadas" ].="La Compra ".$params['data']['Compra'][$k]['numerocomprobante']
+                        ." ya ha sido creada. Por favor cambie el numero de comprobante o la alicuota.";
+					unset($params['data']['Compra'][$k]);
+				}
             }
-			$this->Compra->create();
+            if($data ["comprasyacargadas" ]!="")
+                $this->Session->setFlash($data ["comprasyacargadas" ]);
+
+            $this->Compra->create();
             if ($this->Compra->saveAll($params['data']['Compra'])) {
             //if (1==1) {
-                    $data['respuesta'] = 'Las Compras han sido guardadas.';
+                    $data['respuesta'] .= 'Las Compras han sido guardadas.';
                 } else {
-                    $data['respuesta'] = 'Error al guardar compras, por favor intende de nuevo mas tarde.';
+                    $data['respuesta'] .= 'Error al guardar compras, por favor intende de nuevo mas tarde.';
                 }
 		}else{
 			$data['respuesta'] = 'acceso denegado';
@@ -691,7 +717,6 @@ class ComprasController extends AppController {
 			)
 		);
 	}
-
 	public function edit($id = null,
 		$tieneMonotributo = null,
 		$tieneIVAPercepciones = null, 
@@ -879,16 +904,20 @@ class ComprasController extends AppController {
 		$comprobantes = $this->Compra->Comprobante->find('list',array('contain'=>array()));
 		$this->set('comprobantes', $comprobantes);
 		
-		$imputaciones=array('Bs en Gral'=>'Bs en Gral','Locaciones'=>'Locaciones','Prest. Servicios'=>'Prest. Servicios','Bs Uso'=>'Bs Uso','Otros Conceptos'=>'Otros Conceptos','Dcto 814'=>'Dcto 814');
+		$imputaciones=array('Bs en Gral'=>'Bs en Gral','Locaciones'=>'Locaciones','Prest. Servicios'=>'Prest. Servicios','Bs Uso'=>'Bs Uso','Otros Conceptos'=>'Otros Conceptos');
 		$this->set('imputaciones', $imputaciones);
-		
-		$optionsTipoGastos=array('conditions'=>array());
-		$tipogastos = $this->Compra->Tipogasto->find('list',$optionsTipoGastos);
+
+		$optionsTipoGastos=array(
+			'conditions'=>array(
+				'Tipogasto.tipo'=>'compras'),
+			'fields'=>array('id','nombre','categoria'),
+			'contain'=>[],
+		);
+        $tipogastos = $this->Compra->Tipogasto->find('list',$optionsTipoGastos);
 
 		$this->set('tipogastos', $tipogastos);
 		$this->layout = 'ajax';
 	}
-
 	public function delete($id = null) {
 		$this->Compra->id = $id;
 		if (!$this->Compra->exists()) {
@@ -973,7 +1002,7 @@ class ComprasController extends AppController {
 			'fields'=>['*','count(*) as cantalicuotas'
 				,'sum(total) as total','sum(nogravados) as nogravados','sum(exentos) as exentos'
 				,'sum(ivapercep) as ivapercep','sum(iibbpercep) as iibbpercep','sum(actvspercep) as actvspercep'
-				,'sum(impinternos) as impinternos','sum(impcombustible) as impcombustible'],
+				,'sum(impinternos) as impinternos','sum(impcombustible) as impcombustible','alicuota'],
 			'contain'=>[
 				'Comprobante',
 				'Provedore'
@@ -999,7 +1028,8 @@ class ComprasController extends AppController {
 			],
 			'conditions'=>[
 				'Compra.cliente_id'=>$cliid,
-				'Compra.periodo'=>$periodo
+				'Compra.periodo'=>$periodo,
+				'Compra.comprobante_id <> 520',
 			],
 
 		];
@@ -1176,6 +1206,104 @@ class ComprasController extends AppController {
 		];
 		$cliente = $this->Cliente->find('first',$optionCliente);
 		$this->set(compact('compras','cliente','cliid','periodo','optionCliente'));
+	}
+	public function resumen(){
+		$this->loadModel('Cliente');
+		$mostrarInforme=false;
+		if ($this->request->is('post')) {
+			$pemesdesde=$this->request->data['compras']['periodomesdesde'];
+			$peaniodesde=$this->request->data['compras']['periodoaniodesde'];
+			$this->set('periodomesdesde', $pemesdesde);
+			$this->set('periodoaniodesde', $peaniodesde);
+			$pemeshasta=$this->request->data['compras']['periodomeshasta'];
+			$peaniohasta=$this->request->data['compras']['periodoaniohasta'];
+			$this->set('periodomeshasta', $pemeshasta);
+			$this->set('periodoaniohasta', $peaniohasta);
+
+			//A: Es menor que periodo Hasta
+			$esMayorQueDesde = array(
+				//HASTA es mayor que el periodo
+				'OR'=>array(
+					'SUBSTRING(Compra.periodo,4,7)*1 > '.$peaniodesde.'*1',
+					'AND'=>array(
+						'SUBSTRING(Compra.periodo,4,7)*1 >= '.$peaniodesde.'*1',
+						'SUBSTRING(Compra.periodo,1,2) >= '.$pemesdesde.'*1'
+					),
+				)
+			);
+			//B: Es mayor que periodo Desde
+			$esMenorQueHasta= array(
+				'OR'=>array(
+					'SUBSTRING(Compra.periodo,4,7)*1 < '.$peaniohasta.'*1',
+					'AND'=>array(
+						'SUBSTRING(Compra.periodo,4,7)*1 <= '.$peaniohasta.'*1',
+						'SUBSTRING(Compra.periodo,1,2) <= '.$pemeshasta.'*1'
+					),
+				)
+			);
+
+			$compras = $this->Compra->find('all',array(
+				'fields' => array(
+					'SUM(Compra.total) AS total',
+					'SUM(Compra.neto) AS neto',
+					'SUM(Compra.iva) AS iva',
+					'SUM(Compra.ivapercep) AS ivapercep',
+					'SUM(Compra.iibbpercep) AS iibbpercep',
+					'SUM(Compra.actvspercep) AS actvspercep',
+					'SUM(Compra.impinternos) AS impinternos',
+					'SUM(Compra.impcombustible) AS impcombustible',
+					'SUM(Compra.nogravados) AS nogravados',
+					'SUM(Compra.exentos) AS excentos',
+					'SUBSTRING(Compra.periodo,4,7) as anio',
+					'SUBSTRING(Compra.periodo,1,2) as mes',
+					'Compra.periodo',
+					'Compra.comprobante_id',
+					'Comprobante.tipodebitoasociado',
+					'Compra.actividadcliente_id'),
+				'contain'=>array(
+					'Comprobante',
+					'Actividadcliente',
+				),
+				'conditions'=>array(
+					'Compra.cliente_id'=> $this->request->data['compras']['cliente_id'],
+					$esMayorQueDesde,
+					$esMenorQueHasta
+				),
+				'group'=>array(
+					'Compra.periodo','Compra.comprobante_id','Compra.actividadcliente_id'
+				),
+				'order'=>array(
+					'SUBSTRING(Compra.periodo,4,7)','SUBSTRING(Compra.periodo,1,2)'
+				)
+			));
+			$this->set(compact('compras'));
+			$cliente = $this->Cliente->find('first',array(
+					'contain' =>[],
+					'conditions' => array(
+						'Cliente.id' => $this->request->data['compras']['cliente_id'] ,
+					),
+				)
+			);
+			$this->set(compact('cliente'));
+
+			$mostrarInforme=true;
+		}
+		$conditionsCli = array(
+			'Grupocliente',
+		);
+		$clientes = $this->Cliente->find('list',array(
+				'contain' =>$conditionsCli,
+				'conditions' => array(
+					'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+					'Cliente.estado' => 'habilitado' ,
+					'Grupocliente.estado' => 'habilitado' ,
+				),
+				'order'=>array('Grupocliente.nombre','Cliente.nombre'),
+				'fields'=>array('Cliente.id','Cliente.nombre','Grupocliente.nombre')
+			)
+		);
+		$this->set(compact('clientes'));
+		$this->set('mostrarInforme',$mostrarInforme);
 	}
 
 }

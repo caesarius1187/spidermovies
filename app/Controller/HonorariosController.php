@@ -81,7 +81,6 @@ class HonorariosController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('cargar');
 	}
-
 	public function add() {
 		$this->loadModel('Eventoscliente');
 		$resp ="";

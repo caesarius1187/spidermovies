@@ -88,7 +88,8 @@ class CuentasclientesController extends AppController {
 		$this->render('serializejson');	
 	}
 	public function informesumaysaldo($clienteid = null, $periodo = null){
-		$this->loadModel('Cliente');
+        ini_set('memory_limit', '2560M');
+        $this->loadModel('Cliente');
 		$this->loadModel('Movimiento');
 		$this->loadModel('Cuentascliente');
 
@@ -158,7 +159,8 @@ class CuentasclientesController extends AppController {
 			],
 			'conditions' => ['Cliente.id'=>$clienteid]
 		];
-		$cliente = $this->Cliente->find('first',$optionCliente);
+
+        $cliente = $this->Cliente->find('first',$optionCliente);
 //		for ($i=0;$i<count($cliente['Cuentascliente'])-1;$i++){
 //			for ($j=$i;$j<count($cliente['Cuentascliente']);$j++) {
 //				$burbuja = $cliente['Cuentascliente'][$i]['Cuenta']['numero'];
@@ -192,11 +194,13 @@ class CuentasclientesController extends AppController {
 				],
 			],
 		];
-		$cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
+
+        $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
 		$this->set('cuentasclientes',$cuentasclientes);
 		$this->set('cliente',$cliente);
 		$this->set('periodo',$periodo);
-	}
+
+    }
 
 	public function activarcuentasdeimpuestos(){
 		set_time_limit ( 1200 );
@@ -432,6 +436,7 @@ class CuentasclientesController extends AppController {
 				'Cuentascliente.cliente_id' => $impcli['Impcli']['cliente_id'],
 				'Cuentascliente.cuenta_id' => $cuentaactivable
 			);
+			$respuesta=[];
 			if (!$this->Cuentascliente->hasAny($conditionsCuentascliente)){
 				/*Ahora si estamos seguro de que esta cuenta no esta activada y podemos activarla
                 para este cliente y relacionarla al CBU*/

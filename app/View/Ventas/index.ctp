@@ -7,37 +7,17 @@
             <th class="printable" style="width: 95px;">Nombre</th><!--4-->
             <th class="notPrintable" style="width: 95px;">Cond.IVA</th><!--5-->
             <th class="notPrintable" style="width: 144px;">Actividad</th><!--6-->
-            <th class="notPrintable" style="width: 144px;">Localidad</th><!--7-->
-            <?php
-            if(!$cliente['Cliente']['tieneMonotributo']){
-                echo
-                '<th class="notPrintable" style="width: 89px;">Debito</th><!--8-->
-                <th class="notPrintable" style="width:64px">Alicuota</th> <!--9-->
-                <th class="printable sum" style="width: 89px;">Neto</th><!--10-->
-                <th class="printable sum" style="width: 89px;">IVA</th>   <!--11-->
-                ';
-            }
-            if($cliente['Cliente']['tieneIVAPercepciones']){
-                echo
-                '<th style="width: 89px;" class="sum printable" >IVA Percep</th><!--12-->';
-            }
-            if($cliente['Cliente']['tieneAgenteDePercepcionIIBB']){
-                echo
-                '<th style="width: 89px;" class="sum printable" >IIBB Percep</th><!--13-->';
-            }
-            if($cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias']){
-                echo
-                '<th style="width: 89px;" class="sum printable" >Act Vs Perc</th><!--14-->';
-            }
-            if($cliente['Cliente']['tieneImpuestoInterno']){
-                echo
-                '<th style="width: 89px;" class="sum printable" >Imp Internos</th><!--15-->';
-            }
-            if(!$cliente['Cliente']['tieneMonotributo']){
-                ?>
-                <th style="width: 89px;" class="sum printable" >No Gravados</th><!--16-->
-                <th style="width: 89px;" class="sum printable" >Exento</th><!--17-->
-            <?php } ?>
+            <th class="notPrintable" style="width: 144px;">Tipo Ingreso</th><!--7-->
+            <th class="notPrintable" style="width: 144px;">Localidad</th><!--8-->
+            <th class="notPrintable" style="width:64px">Alicuota</th> <!--9-->
+            <th class="printable sum" style="width: 89px;">Neto</th><!--10-->
+            <th class="printable sum" style="width: 89px;">IVA</th>   <!--11-->
+            <th style="width: 89px;" class="sum printable" >IVA Percep</th><!--12-->
+            <th style="width: 89px;" class="sum printable" >IIBB Percep</th><!--13-->
+            <th style="width: 89px;" class="sum printable" >Act Vs Perc</th><!--14-->
+            <th style="width: 89px;" class="sum printable" >Imp Internos</th><!--15-->
+            <th style="width: 89px;" class="sum printable" >No Gravados</th><!--16-->
+            <th style="width: 89px;" class="sum printable" >Exento</th><!--17-->
             <th class="printable sum" style="width: 89px;"  >Exento Act. Econom.</th><!--18-->
             <th class="printable sum" style="width: 89px;"  >Exento Act. Varias</th><!--19-->
             <th class="printable sum" style="width: 89px;" >Total</th><!--20-->
@@ -77,9 +57,13 @@
             <td class="<?php echo $tdClass?> notPrintable" title="<?php echo $venta["Actividade"]["nombre"]?>">
                 <?php echo $venta["Actividade"]["nombre"]?>
             </td><!--6-->
+            <?php $tipogasto = isset($venta["Tipogasto"]["nombre"])?$venta["Tipogasto"]["nombre"]:""; ?>
+            <td class="<?php echo $tdClass?> notPrintable" title="<?php echo $tipogasto?>">
+                <?php echo $tipogasto?>
+            </td><!--7-->
             <td class="<?php echo $tdClass?> notPrintable" title="<?php echo $venta["Localidade"]["nombre"]?>">
                 <?php echo $venta['Partido']["nombre"].'-'.$venta["Localidade"]["nombre"]?>
-            </td><!--7-->
+            </td><!--8-->
             <?php
             if($venta['Comprobante']["tipodebitoasociado"]=='Restitucion de debito fiscal'){
                 $venta['Venta']["neto"] = $venta['Venta']["neto"]*-1;
@@ -93,38 +77,19 @@
                 $venta['Venta']["exentosactividadeseconomicas"] = $venta['Venta']["exentosactividadeseconomicas"]*-1;
                 $venta['Venta']["exentosactividadesvarias"] = $venta['Venta']["exentosactividadesvarias"]*-1;
                 $venta['Venta']["total"] = $venta['Venta']["total"]*-1;
-            }
-            if(!$cliente['Cliente']['tieneMonotributo']){?>
-                <td class="<?php echo $tdClass?> notPrintable"><?php echo substr($venta['Venta']["tipodebito"],0,10)?></td><!--8-->
-                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["alicuota"], 2, ",", ".")?>%</td><!--9-->
-                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["neto"], 2, ",", ".")?></td><!--10-->
-                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["iva"], 2, ",", ".")?></td><!--11-->
-                <?php
-                //Hay que agregar Condicion frente al IVA ??
-            }
-            if($cliente['Cliente']['tieneIVAPercepciones']){?>
-                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["ivapercep"], 2, ",", ".")?></td><!--12-->
-                <?php
-            }
-            if($cliente['Cliente']['tieneAgenteDePercepcionIIBB']){?>
-                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["iibbpercep"], 2, ",", ".")?></td><!--13-->
-                <?php
-            }
-            if($cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias']){?>
-                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["actvspercep"], 2, ",", ".")?></td><!--14-->
-                <?php
-            }
-            if($cliente['Cliente']['tieneImpuestoInterno']){?>
-                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["impinternos"], 2, ",", ".")?></td><!--15-->
-                <?php
-            }
-            if(!$cliente['Cliente']['tieneMonotributo']){?>
-                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["nogravados"], 2, ",", ".")?></td><!--16-->
-                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["excentos"], 2, ",", ".")?></td><!--17-->
-            <?php } ?>
-            <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["exentosactividadeseconomicas"], 2, ",", ".")?></td><!--18-->
-            <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["exentosactividadesvarias"], 2, ",", ".")?></td><!--19-->
-            <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["total"], 2, ",", ".")?></td><!--20-->
+            }?>
+                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["alicuota"], 2, ",", ".")?>%</td><!--10-->
+                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["neto"], 2, ",", ".")?></td><!--11-->
+                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["iva"], 2, ",", ".")?></td><!--12-->
+                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["ivapercep"], 2, ",", ".")?></td><!--13-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["iibbpercep"], 2, ",", ".")?></td><!--14-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["actvspercep"], 2, ",", ".")?></td><!--15-->
+                <td class="<?php echo $tdClass?> numericTD"><?php echo number_format($venta['Venta']["impinternos"], 2, ",", ".")?></td><!--16-->
+                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["nogravados"], 2, ",", ".")?></td><!--17-->
+                <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["excentos"], 2, ",", ".")?></td><!--18-->
+            <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["exentosactividadeseconomicas"], 2, ",", ".")?></td><!--19-->
+            <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["exentosactividadesvarias"], 2, ",", ".")?></td><!--20-->
+            <td class="<?php echo $tdClass?> numericTD printable"><?php echo number_format($venta['Venta']["total"], 2, ",", ".")?></td><!--21-->
             <td class="<?php echo $tdClass?> notPrintable">
                 <?php
                 $paramsVenta = $venta['Venta']["id"];
@@ -132,7 +97,7 @@
                 echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarVenta(".$paramsVenta.")"));
                 //echo $this->Form->end();
                 ?>
-            </td><!--21-->
+            </td><!--22-->
         </tr>
         <?php
     }
@@ -148,38 +113,16 @@
         <th class="printable"></th><!--5-->
         <th class="notPrintable" ></th><!--6-->
         <th class="printable"></th><!--7-->
-        <?php
-        if(!$cliente['Cliente']['tieneMonotributo']){
-            echo
-            '<th class="printable"></th><!--8-->
-                       <th class="printable"></th><!--9--> 
-                       <th class="printable"></th><!--10-->
-                       <th class="printable"></th><!--11-->   
-                       ';
-        }
-        if($cliente['Cliente']['tieneIVAPercepciones']){
-            echo
-            '<th class="printable"></th><!--12-->';
-        }
-        if($cliente['Cliente']['tieneAgenteDePercepcionIIBB']){
-            echo
-            '<th class="printable"></th><!--13-->';
-        }
-        if($cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias']){
-            echo
-            '<th class="printable"></th><!--14-->';
-        }
-        if($cliente['Cliente']['tieneImpuestoInterno']){
-            echo
-            '<th class="printable"></th><!--15-->';
-        }
-        if(!$cliente['Cliente']['tieneMonotributo']) {
-            echo
-            '
-                  <th class="printable"></th><!--16-->
-                  <th class="printable"></th><!--17-->';
-        }
-        ?>
+        <th class="printable"></th><!--8-->
+        <th class="printable"></th><!--9-->
+        <th class="printable"></th><!--10-->
+        <th class="printable"></th><!--11-->
+        <th class="printable"></th><!--12-->
+        <th class="printable"></th><!--13-->
+        <th class="printable"></th><!--14-->
+        <th class="printable"></th><!--15-->
+        <th class="printable"></th><!--16-->
+        <th class="printable"></th><!--17-->
         <th class="printable"></th><!--18-->
         <th class="printable"></th><!--19-->
         <th class="printable"></th><!--20-->

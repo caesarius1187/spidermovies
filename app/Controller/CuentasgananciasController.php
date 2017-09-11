@@ -76,66 +76,6 @@ class CuentasgananciasController extends AppController {
 			$this->Cuentasganancia->create();
 			/*Aca tenemos que preguntar cual es la cuenta_id que selecciono y si existe una cuentasclietes relacionada*/
 			/*Sino existe se la crea y si existe se usa ese ID para crear las Cuentas Ganancias*/
-			foreach ($this->request->data['Cuentasganancia'] as $c => $cuentaganancia){
-				$conditionsCuentascliente = array(
-					'Cuentascliente.cliente_id' => $cuentaganancia['cliente_id'],
-					'Cuentascliente.cuenta_id' => $cuentaganancia['cuenta_id']
-				);
-				if (!$this->Cuentascliente->hasAny($conditionsCuentascliente)){
-					/*Ahora si estamos seguro de que esta cuenta no esta activada y podemos activarla
-                    para este cliente y relacionarla al CBU*/
-					$conditionsCuentas=[
-						'conditions'=>['Cuenta.id'=> $cuentaganancia['cuenta_id']]
-					];
-					$cuentaACargar = $this->Cuenta->find('first', $conditionsCuentas);
-					$nombreCuentaClie = $cuentaACargar['Cuenta']['nombre'];
-					$this->Cuentascliente->create();
-					$this->Cuentascliente->set('cliente_id',$cuentaganancia['cliente_id']);
-					$this->Cuentascliente->set('cuenta_id',$cuentaganancia['cuenta_id']);
-					$this->Cuentascliente->set('nombre',$nombreCuentaClie);
-					if ($this->Cuentascliente->save())
-					{
-						$respuesta['respuesta'] .= 'Cuenta de banco activada correctamente.';
-						//Si estamos en la 4ta categoria hay que relacionar tambien las cuentas que estan en el mismo tipo
-						//pero siendo NO GRAVADOS EN IVA
-						//para q el asiento pueda darse cuenta de q tiene no gravados, levantarlos y cargarlos
-						//Vamos a hacer un array relacionando las cuentas
-						if(array_key_exists ( $cuentaganancia['cuenta_id'] , $cuentas4taCategRelacionGravadoNoGravado )){
-							$conditionsCuentasclienteAsociada = array(
-								'Cuentascliente.cliente_id' => $cuentaganancia['cliente_id'],
-								'Cuentascliente.cuenta_id' => $cuentas4taCategRelacionGravadoNoGravado['cuenta_id']
-							);
-							if (!$this->Cuentascliente->hasAny($conditionsCuentasclienteAsociada)) {
-								/*Ahora si estamos seguro de que esta cuenta no esta activada y podemos activarla
-                                para este cliente y relacionarla al CBU*/
-								$conditionsCuentasAsociada = [
-									'conditions' => ['Cuenta.id' => $cuentas4taCategRelacionGravadoNoGravado['cuenta_id']]
-								];
-								$cuentaACargarAsociada = $this->Cuenta->find('first', $conditionsCuentasAsociada);
-								$nombreCuentaClieAsociada = $cuentaACargarAsociada['Cuenta']['nombre'];
-								$this->Cuentascliente->create();
-								$this->Cuentascliente->set('cliente_id', $cuentaganancia['cliente_id']);
-								$this->Cuentascliente->set('cuenta_id', $cuentas4taCategRelacionGravadoNoGravado['cuenta_id']);
-								$this->Cuentascliente->set('nombre', $nombreCuentaClieAsociada);
-							}
-						}
-
-					}
-					else
-					{
-						$respuesta['respuesta'] .= 'Error: Al guardar cuenta de impuesto. Por favor intente nuevamente.';
-					}
-					$CuentaClienteNuevaId = $this->Cuentascliente->getLastInsertId();
-					$respuesta[$c.'1CuentaClienteNuevaId'] = $this->request->data['Cuentasganancia'][$c]['cuentascliente_id'];
-					$this->request->data['Cuentasganancia'][$c]['cuentascliente_id'] = $CuentaClienteNuevaId;
-					$respuesta[$c.'2CuentaClienteNuevaId'] = $this->request->data['Cuentasganancia'][$c]['cuentascliente_id'];
-				}else{
-					$cuentacliente = $this->Cuentascliente->find('first',['conditions'=>$conditionsCuentascliente]);
-					$CuentaClienteNuevaId = $cuentacliente['Cuentascliente']['id'];
-					$this->request->data['Cuentasganancia'][$c]['cuentascliente_id'] = $CuentaClienteNuevaId;
-					$respuesta[$c.'La Modificada:'] = $this->request->data['Cuentasganancia'];
-				}
-			}
 			if ($this->Cuentasganancia->saveAll($this->request->data['Cuentasganancia']))
 			{
 				$respuesta['respuesta'] .='Cuenta de de la actividad ha sido relacionada correctamente.';
@@ -171,45 +111,18 @@ class CuentasgananciasController extends AppController {
 
 		if($cliente['Cliente']['tipopersona']=='fisica'){
 			$categorias = [
-				'primeracateg'=>'primera',
-				'segundacateg'=>'segunda',
-				'terceracateg'=>'tercera empresas',
-				'terceracateg45'=>'tercera otros',
-				'cuartacateg'=>'cuarta'
+				'primeracateg'=>'Primera',
+				'segundacateg'=>'Segunda',
+				'terceracateg'=>'Tercera Empresas',
+				'terceracateg45'=>'Tercera Auxiliar Comercio',
+				'cuartacateg'=>'Cuarta'
 			];
 		}else{
 			$categorias = [
-				'terceracateg'=>'tercera empresas',
+				'terceracateg'=>'Tercera Empresas',
 			];
 		}
-		$optionsAsientosestandares = [
-			'contain'=>[
-				'Cuenta'
-			],
-			'fields'=>[
-				'Asientoestandare.cuenta_id','Cuenta.nombre'
-			],
-			'conditions'=>[
-				'tipoasiento'=>'primeracateg'
-			]
-		];
-		$cuentascategoriaprimera =	$this->Asientoestandare->find('list',$optionsAsientosestandares);
-		$optionsAsientosestandares['conditions']['tipoasiento'] = 'segundacateg';
-		$cuentascategoriasegunda =	$this->Asientoestandare->find('list',$optionsAsientosestandares);
-		$optionsAsientosestandares['conditions']['tipoasiento'] = 'terceracateg';
-
-		//Aca no tendria que traer todo el asiento estandar por que solo la cuenta de "venta neta" es la que
-		//se deberia poder  seleccionar
-		$cuentascategoriatercera =	$this->Asientoestandare->find('list',$optionsAsientosestandares);
-		$optionsAsientosestandares['conditions']['tipoasiento'] = 'terceracateg45';
-
-		$cuentascategoriaterceraotros =	$this->Asientoestandare->find('list',$optionsAsientosestandares);
-		
-		$optionsAsientosestandares['conditions']['tipoasiento'] = 'cuartacateg';
-		$cuentascategoriacuarta =	$this->Asientoestandare->find('list',$optionsAsientosestandares);
-
-		$this->set(compact('cliente','categorias','cuentascategoriaprimera','cuentascategoriasegunda',
-			'cuentascategoriatercera','cuentascategoriaterceraotros','cuentascategoriacuarta'));
+		$this->set(compact('cliente','categorias'));
 		$this->layout = 'ajax';
 
 	}

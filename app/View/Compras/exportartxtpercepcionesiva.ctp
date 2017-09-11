@@ -96,10 +96,10 @@
                 'options'=>$codigos,
                 'class'=>'codigocomprasselect',
              ]);
-            $lineaCompra = date('d/m/Y', strtotime($compra['Compra']['fecha'])) ;
             $identificacionnumero = $compra['Provedore']['cuit'];
-            $lineaCompra .= str_pad($identificacionnumero, 11, "0", STR_PAD_LEFT);
+            $lineaCompra = str_pad($identificacionnumero, 11, "0", STR_PAD_LEFT);
             $lineaCompra .= str_pad($compra['Compra']['numerocomprobante'], 16, " ", STR_PAD_RIGHT);
+            $lineaCompra .= date('d/m/Y', strtotime($compra['Compra']['fecha'])) ;
 
             if($compra['Compra']["tipocredito"]=='Restitucion credito fiscal'){
                 $lineaCompra .= "-";
@@ -115,9 +115,9 @@
     <div class="index" style="overflow-x: auto;" id="divFacturas" ><?php
         foreach($compras as $c => $compra ) {
             $lineaCompra = '<span class="spancodigo" id="codigoCompra'.$c.'">714</span>';
-            $lineaCompra .= date('d/m/Y', strtotime($compra['Compra']['fecha'])) ;
             $identificacionnumero = $compra['Provedore']['cuit'];
             $lineaCompra .= str_pad($identificacionnumero, 11, "0", STR_PAD_LEFT);
+            $lineaCompra .= date('d/m/Y', strtotime($compra['Compra']['fecha'])) ;
             $lineaCompra .= str_pad($compra['Compra']['numerocomprobante'], 16, " ", STR_PAD_RIGHT);
 
             if($compra['Compra']["tipocredito"]=='Restitucion credito fiscal'){

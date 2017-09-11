@@ -128,7 +128,6 @@
             $lineaCompra .= $nombreamostrar;
             $lineaCompra .=  "@";
             $identificacionnumero = $compra['Provedore']['cuit'];
-            $identificacionnumero = $compra['Provedore']['cuit'];
             if(strlen($identificacionnumero)==11){
                 $lineaCompra .= substr($identificacionnumero, 0,2);
                 $lineaCompra .= "-";

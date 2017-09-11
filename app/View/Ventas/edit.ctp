@@ -17,10 +17,14 @@ if(!$mostrarForm) { ?>
             <td class="<?php echo $tdClass?>" title=""><?php echo $venta["Venta"]["condicioniva"]?></td>
 
             <td class="<?php echo $tdClass?>" title="<?php echo $venta["Actividadcliente"]["Actividade"]["nombre"]?>"><?php echo $venta["Actividadcliente"]["Actividade"]["nombre"]?></td>
+            <?php $tipogasto = isset($venta["Tipogasto"]["nombre"])?$venta["Tipogasto"]["nombre"]:""; ?>
+            <td class="<?php echo $tdClass?> notPrintable" title="<?php echo $tipogasto?>">
+                <?php echo $tipogasto?>
+            </td><!--7-->
+
             <td class="<?php echo $tdClass?>" title="<?php echo $venta["Localidade"]["nombre"]?>"><?php echo $venta["Localidade"]['Partido']["nombre"].'-'.$venta["Localidade"]["nombre"]?></td>
             <?php
             if(!filter_var($venta['Venta']["tieneMonotributo"], FILTER_VALIDATE_BOOLEAN)){ ?>
-                <td class="<?php echo $tdClass?>"><?php echo $venta['Venta']["tipodebito"]?></td>
                 <td class="<?php echo $tdClass?>"><?php echo "%".number_format($venta['Venta']["alicuota"], 2, ",", ".")?></td>
                 <td class="<?php echo $tdClass?>"><?php echo number_format($venta['Venta']["neto"], 2, ",", ".")?></td>
                 <td class="<?php echo $tdClass?>"><?php echo "$".number_format($venta['Venta']["iva"], 2, ",", ".")?></td>
@@ -112,19 +116,61 @@ if(!$mostrarForm) { ?>
         'type'=>'select', 
         'options'=>$actividades,
         'style'=>'width:130px' 
-        ));  
+        ));
+      //si no tiene categorizado ganancias no se debe poder cargar ventas
+      //a menos que sea monotributista y no tenga activado ganancias
+      //aca tengo que recorrer las actividades del cliente para relacionar las actividades con sus categorias de
+      // ganancias para que por javascript  las limite solo a las que tienen q ser
+      $actividadesCategorias = [];
+      foreach ($cliente['Actividadcliente'] as $actividadcliente) {
+          foreach ($actividadcliente['Cuentasganancia'] as $cuentaganancia){
+              $cuentaGananciaTraducida = "";
+              switch ($cuentaganancia['categoria']){
+                  case 'primeracateg':
+                      $cuentaGananciaTraducida = "primera";
+                      break;
+                  case 'segundacateg':
+                      $cuentaGananciaTraducida = "segunda";
+                      break;
+                  case 'terceracateg':
+                      $cuentaGananciaTraducida = "tercera";
+                      break;
+                  case 'terceracateg45':
+                      $cuentaGananciaTraducida = "tercera otros";
+                      break;
+                  case 'cuartacateg':
+                      $cuentaGananciaTraducida = "cuarta";
+                      break;
+              }
+              $actividadesCategorias[$actividadcliente['id']]= $cuentaGananciaTraducida;
+          }
+      }
+      echo $this->Form->input('actividadescategorias', [
+          'type'=>'select',
+          'options'=>$actividadesCategorias,
+          'id'=>'jsonactividadescategorias',
+          'div'=>[
+              'style'=>'display:none'
+          ]
+      ]);
+      $display="content;";
+      if(filter_var($tieneMonotributo, FILTER_VALIDATE_BOOLEAN)){
+          $display="none;";
+      }
+      echo $this->Form->input('tipogasto_id',array(
+          'type'=>'select',
+          'label'=>'Tipo Ingreso',
+          'class'=>"chosen-select",
+          'style' => 'width:150px; ',
+          'div' => ['style'=>'display:'.$display],
+      ));
       echo $this->Form->input('localidade_id',array(
         'label'=>'Localidad',
         'class'=>"chosen-select",
         'style'=>'width:130px' 
         ));    
       if(!filter_var($tieneMonotributo, FILTER_VALIDATE_BOOLEAN)){ 
-         echo $this->Form->input('tipodebito',array(
-            'label'=>'Tipo Debito',
-            'default'=> $this->data['Venta']['tipodebito'],
-            'options'=>$tipodebitos,
-            'style'=>'width:83px' 
-            ));    
+
           echo $this->Form->input('alicuota',array(
             'label'=>'Alicuota',
             'default'=> $this->data['Venta']['alicuota'],
@@ -139,13 +185,7 @@ if(!$mostrarForm) { ?>
             'style'=>'max-width: 70px;' 
              ));    
       }else{
-           echo $this->Form->input('tipodebito',array(
-            'label'=>'Tipo Debito',
-            'default'=> $this->data['Venta']['tipodebito'],
-            'options'=>$tipodebitos,
-            'style'=>'width:83px' ,
-               'type'=>'hidden'
-            ));    
+          
           echo $this->Form->input('alicuota',array(
             'label'=>'Alicuota',
             'default'=> $this->data['Venta']['alicuota'],

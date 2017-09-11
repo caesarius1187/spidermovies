@@ -1000,6 +1000,7 @@ function loadFormImpuestoProvincias(impcliid){
 					});
 					return false;
 				});
+                reloadDatePickers();
 			},
 			error:function (XMLHttpRequest, textStatus, errorThrown) {
 				callAlertPopint(textStatus);
@@ -1052,7 +1053,8 @@ function loadFormImpuestoLocalidades(impcliid){
 						});
 						return false;
 					});
-				}
+                    reloadDatePickers();
+                }
 				catch(err) {
 
 				}
@@ -1361,46 +1363,46 @@ function loadFormImpuestoCuentasganancias(cliid){
                 $("#form_impcli_dgrm_provincia").html(response);
                 $('.chosen-select').chosen({search_contains:true});
                 location.href='#nuevo_IMPProv';
-                $(".inputcategoria").change(function () {
-                    var categoriaelegida = $(this).val();
-                    var posicion = $(this).attr('posicion');
-                    var miCategoria = $('#Cuentasganancia'+posicion+'CuentaId');
-                    miCategoria.empty();
-                    var options;
-                    switch (categoriaelegida){
-                        
-                        /*$categorias = [
-                         'primeracateg'=>'primera',
-                         'segundacateg'=>'segunda',
-                         'terceracateg'=>'tercera empresas',
-                         'terceracateg45'=>'tercera otros',
-                         'cuartacateg'=>'cuarta'
-                         ];*/
-                        case 'primeracateg':
-                            options = jQuery.parseJSON($("#cuentascategoriaprimera").val());
-                            break;
-                        case 'segundacateg':
-                            options = jQuery.parseJSON($("#cuentascategoriasegunda").val());
-                            break;
-                        case 'terceracateg':
-                            options = jQuery.parseJSON($("#cuentascategoriatercera").val());
-                            break;
-                        case 'terceracateg45':
-                            options = jQuery.parseJSON($("#cuentascategoriaterceraotros").val());
-                            break;
-                        case 'cuartacateg':
-                            options = jQuery.parseJSON($("#cuentascategoriacuarta").val());
-                            break;
-                    };
-                    $.each(options, function(key, value) {
-                        miCategoria
-                            .append($("<option></option>")
-                                .attr("value",key)
-                                .text(value));
-                    });
-                    miCategoria.val($(miCategoria).attr('defaultoption'))
-                });
-                $(".inputcategoria").trigger("change");
+                // $(".inputcategoria").change(function () {
+                //     var categoriaelegida = $(this).val();
+                //     var posicion = $(this).attr('posicion');
+                //     var miCategoria = $('#Cuentasganancia'+posicion+'CuentaId');
+                //     miCategoria.empty();
+                //     var options;
+                //     switch (categoriaelegida){
+                //
+                //         /*$categorias = [
+                //          'primeracateg'=>'primera',
+                //          'segundacateg'=>'segunda',
+                //          'terceracateg'=>'tercera empresas',
+                //          'terceracateg45'=>'tercera otros',
+                //          'cuartacateg'=>'cuarta'
+                //          ];*/
+                //         case 'primeracateg':
+                //             options = jQuery.parseJSON($("#cuentascategoriaprimera").val());
+                //             break;
+                //         case 'segundacateg':
+                //             options = jQuery.parseJSON($("#cuentascategoriasegunda").val());
+                //             break;
+                //         case 'terceracateg':
+                //             options = jQuery.parseJSON($("#cuentascategoriatercera").val());
+                //             break;
+                //         case 'terceracateg45':
+                //             options = jQuery.parseJSON($("#cuentascategoriaterceraotros").val());
+                //             break;
+                //         case 'cuartacateg':
+                //             options = jQuery.parseJSON($("#cuentascategoriacuarta").val());
+                //             break;
+                //     };
+                //     $.each(options, function(key, value) {
+                //         miCategoria
+                //             .append($("<option></option>")
+                //                 .attr("value",key)
+                //                 .text(value));
+                //     });
+                //     miCategoria.val($(miCategoria).attr('defaultoption'))
+                // });
+                // $(".inputcategoria").trigger("change");
 
                 $('#CuentasgananciaIndexForm').submit(function(){
                     //serialize form data
@@ -1537,7 +1539,7 @@ function editImpcliProvincia(impcliprovinciaid,impcliid){
                     });
                     return false;
                 });
-
+                reloadDatePickers();
             },
             error:function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(textStatus);
@@ -1934,9 +1936,6 @@ function loadFormProvedore(provedorid){
 }
 function loadFormAddEmpleado(){
     jQuery(document).ready(function($) {
-
-
-
         $('#myModal').on('show.bs.modal', function () {
             $('#myModal').find('.modal-title').html('Agregar Empleado');
             $('#myModal').find('.modal-body').html(form_empleadoHTML);

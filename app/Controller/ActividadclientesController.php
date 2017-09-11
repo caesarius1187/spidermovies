@@ -83,7 +83,7 @@ class ActividadclientesController extends AppController {
 		$mostrarFormulario=true;
 		if ($this->request->is(array('post'))) {
 			if($this->request->data['Actividadcliente']['baja'.$id]!=""){
-				$this->request->data('Actividadcliente.baja',date('Y-m-d',strtotime($this->request->data['Actividadcliente']['baja'.$id])));
+				$this->request->data('Actividadcliente.baja',$this->request->data['Actividadcliente']['baja'.$id]);
 			}
 			if ($this->Actividadcliente->save($this->request->data)) {
 				$mostrarFormulario=false;

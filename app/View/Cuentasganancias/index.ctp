@@ -5,32 +5,6 @@
  * Date: 10/01/2017
  * Time: 11:43 AM
  */
-//Debugger::dump($cuentascategoriaprimera);
-//Debugger::dump($cuentascategoriasegunda);
-//Debugger::dump($cuentascategoriatercera);
-//Debugger::dump($cuentascategoriaterceraotros);
-//Debugger::dump($cuentascategoriacuarta);
-
-echo $this->Form->input('cuentascategoriaprimera',[
-    'type'=>'hidden',
-    'value'=> json_encode($cuentascategoriaprimera)
-]);
-echo $this->Form->input('cuentascategoriasegunda',[
-    'type'=>'hidden',
-    'value'=> json_encode($cuentascategoriasegunda)
-]);
-echo $this->Form->input('cuentascategoriatercera',[
-    'type'=>'hidden',
-    'value'=> json_encode($cuentascategoriatercera)
-]);
-echo $this->Form->input('cuentascategoriaterceraotros',[
-    'type'=>'hidden',
-    'value'=> json_encode($cuentascategoriaterceraotros)
-]);
-echo $this->Form->input('cuentascategoriacuarta',[
-    'type'=>'hidden',
-    'value'=> json_encode($cuentascategoriacuarta)
-]);
 ?>
     <h2><?php echo __('Asignar Categorias a las actividades'); ?></h2>
 <?php
@@ -44,7 +18,7 @@ foreach ($cliente['Actividadcliente'] as $a => $actividade){
     ?>
     <div>
     <?php
-    echo $this->Form->label('',$actividade['Actividade']['nombre']);
+    echo $this->Form->label('',$actividade['Actividade']['descripcion'].'-'.$actividade['Actividade']['nombre'].'-'.$actividade['descripcion']);
             //vamos a ver si ya esta creada esta cuenta cliente para esta actividad
     $numeroDecuentaYaseleccionada = 0;
     $idCuentasganancia = 0;
@@ -77,10 +51,12 @@ foreach ($cliente['Actividadcliente'] as $a => $actividade){
     ]);
     echo $this->Form->input('Cuentasganancia.'.$a.'.categoria',[
         'class'=>'inputcategoria',
+        'style'=>'width: auto;',
         'default'=>$categoriaCuentasganancia,
         'posicion'=>$a,
     ]);
     echo $this->Form->input('Cuentasganancia.'.$a.'.cuenta_id',[
+        'type'=>'hidden',
         'label'=>'Cuenta',
         'defaultoption'=>$idCuentas,
         'title'=>'Esta es la cuenta que se usara por defecto para asignar el neto de ventas en los asientos'

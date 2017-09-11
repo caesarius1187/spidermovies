@@ -342,6 +342,7 @@ class AsientosController extends AppController {
         $this->loadModel('Cuentascliente');
         $this->loadModel('Asientoestandare');
         $this->loadModel('Venta');
+        $this->loadModel('Tipogasto');
         $pemes = substr($periodo, 0, 2);
         $peanio = substr($periodo, 3);
         $esMayorQueBaja = array(
@@ -373,6 +374,7 @@ class AsientosController extends AppController {
         $pagaCategoria = [];
         $cuentaclienteaseleccionar=[];
 
+        $tieneGananciasConfigurado = 1;
         foreach ($cliente['Actividadcliente'] as $actividadcliente){
             if(count($actividadcliente['Cuentasganancia'])>0){
                 $categoriaActividad = $actividadcliente['Cuentasganancia'][0]['categoria'];
@@ -384,9 +386,11 @@ class AsientosController extends AppController {
                 }else{
                     $cuentaclienteaseleccionar[]=$actividadcliente['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
                 }
+            }else{
+                $tieneGananciasConfigurado *= 0;
             }
         }
-        if(count($pagaCategoria)==0&&count($cuentaclienteaseleccionar)==0){
+        if($tieneGananciasConfigurado==0){
             if($this->request->is('ajax')){
                 $this->layout = 'ajax';
             }
@@ -487,17 +491,25 @@ class AsientosController extends AppController {
         //Vamos a agrupar y sumar las ventas gravadas y las no gravadas
         $conditionsVentaGravada = [
             'contain'=>[
+                'Comprobante'=>[
+                    'fields'=>[
+                        'tipodebitoasociado'
+                    ]
+                ],
                 'Actividadcliente'=>[
                     'Cuentasganancia'=>['Cuentascliente']
                 ],
             ],
             'fields'=>[
-                'Venta.tipodebito','Venta.actividadcliente_id','sum(total) as total,sum(neto) as neto,sum(iva) as iva,
+                'Venta.comprobante_id',
+                'Venta.actividadcliente_id',
+                'Venta.tipogasto_id',
+                'sum(total) as total,sum(neto) as neto,sum(iva) as iva,
                 sum(nogravados) as nogravados, sum(excentos) as exentos, sum(ivapercep) as ivapercep, 
                 sum(iibbpercep) as iibbpercep,sum(actvspercep) as actvspercep,sum(impinternos) as impinternos'
             ],
             'group'=>
-                ['Venta.tipodebito','Venta.actividadcliente_id'],
+                ['Venta.comprobante_id','Venta.actividadcliente_id','Venta.tipogasto_id',],
             'conditions'=>[
                 'Venta.cliente_id'=>$cliid,
                 'Venta.periodo'=>$periodo,
@@ -506,9 +518,9 @@ class AsientosController extends AppController {
         $ventasgravadas = $this->Venta->find('all',$conditionsVentaGravada);
 
         $impuestosactivos = $this->Cliente->impuestosActivados($cliid,$periodo);
-
+        $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
         $this->set(compact('cliid','cliente','periodo','pagaCategoria','asientoestandares','cuentasclientes'
-            ,'asientoyacargado','ventasgravadas','impuestosactivos'));
+            ,'asientoyacargado','ventasgravadas','impuestosactivos','ingresosBienDeUso'));
         
         if($this->request->is('ajax')){
             $this->layout = 'ajax';
@@ -536,7 +548,7 @@ class AsientosController extends AppController {
         $tiposDeAsientos[] = 'compras';
         $pagaCategoria = [];
         $cuentaclienteaseleccionar=[];
-
+        $tieneGananciasConfigurado = 1;
         foreach ($cliente['Actividadcliente'] as $actividadcliente){
             if(count($actividadcliente['Cuentasganancia'])>0){
                 $categoriaActividad = $actividadcliente['Cuentasganancia'][0]['categoria'];
@@ -544,9 +556,11 @@ class AsientosController extends AppController {
                     $tiposDeAsientos[] = "compra".$categoriaActividad;
                     $pagaCategoria[]   = "compra".$categoriaActividad;
                 }
+            }else{
+                $tieneGananciasConfigurado *= 0;
             }
         }
-        if(count($pagaCategoria)==0){
+        if($tieneGananciasConfigurado==0){
             if($this->request->is('ajax')){
                 $this->layout = 'ajax';
             }
@@ -672,7 +686,7 @@ class AsientosController extends AppController {
         $this->loadModel('Asientoestandare');
         $this->loadModel('Movimientosbancarios');
         $this->loadModel('Cuenta');
-        $options = [
+        $optionsCliente = [
             'contain'=>[
                 'Impcli'=>[
                     'Cbu'=>[
@@ -693,7 +707,7 @@ class AsientosController extends AppController {
                 'Cliente.' . $this->Cliente->primaryKey => $cliid,
             ],
         ];
-        $cliente = $this->Cliente->find('first', $options);
+        $cliente = $this->Cliente->find('first', $optionsCliente);
         $cuentasDeMovimientoBancario = $this->Cuenta->cuentasDeMovimientoBancario;
         $options = array(
             'contain'=>[

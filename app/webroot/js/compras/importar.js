@@ -36,12 +36,12 @@ $(document).ready(function() {
             success: function(data,textStatus,xhr){
                 var midata = jQuery.parseJSON(data);
                 callAlertPopint(midata.respuesta);
+                callAlertPopint(midata.comprasyacargadas);
                 var cliid = $("#CompraCliid").val();
                 var periodo = $("#CompraPeriodo").val();
+                $("#loading").css('visibility','visible');
                 callAlertPopint('Recargando formulario por favor espere');
-                window.location.reload(true);
                 setTimeout(function(){
-                    $("#loading").css('visibility','visible');
                     window.location.reload(true);
                 },4000);
             },
@@ -52,6 +52,41 @@ $(document).ready(function() {
         return false;
     });
     agregarApplyToAllInFirstRow();
+
+    //seleccion de tipos gastos por actividad
+    $.fn.filterGroups = function( options ) {
+        var settings = $.extend( {}, options);
+
+        return this.each(function(){
+
+            var $select = $(this);
+            // Clone the optgroups to data, then remove them from dom
+            $select.data('fg-original-groups', $select.find('optgroup').clone()).children('optgroup').remove();
+
+            $(settings.groupSelector).change(function(){
+                var $this = $(this);
+                var $optgroup_label = $(this).find('option:selected').text();
+                var $optgroup =  $select.data('fg-original-groups').filter('optgroup[label="' + $optgroup_label + '"]').clone();
+                $select.children('optgroup').remove();
+                $select.append($optgroup);
+            }).change();
+        });
+    };
+    $('#CompraTipogastoId').filterGroups({groupSelector: '#jsonactividadescategorias', });
+
+    $('.inputactividad').each(function(){
+        var orden = $(this).attr('ordecompra');
+        if($('#Compra'+orden+'jsonactividadescategorias option').size()>0 ){
+            $("#Compra"+orden+"TipogastoId").filterGroups({groupSelector: "#Compra"+orden+"jsonactividadescategorias", });
+        }
+
+        $("#Compra"+orden+"ActividadclienteId").on('change', function() {
+            $("#Compra"+orden+"jsonactividadescategorias").val($("#Compra"+orden+"ActividadclienteId").val());
+            $("#Compra"+orden+"jsonactividadescategorias").trigger( "change" );
+        });
+        $("#Compra"+orden+"jsonactividadescategorias").trigger( "change" );
+    });
+
 });
 function deleterow(rowid){
     $("#row"+rowid).remove();
@@ -82,8 +117,6 @@ function agregarApplyToAllInFirstRow(){
     $('.tooltiptext').each(function(){
         $(this).remove();
     });
-
-
     /*ahora agregamos los nuevos*/
     var row = $('#tblAddCompras').find('tr:visible:first');
     $(row).find('.aplicableATodos').each(function(){
@@ -104,6 +137,8 @@ function agregarApplyToAllInFirstRow(){
                 span
             );
     });
+    
+
 }
 function aplicarATodos(miinput){
     var valueAAplicar = $('#'+miinput).val();

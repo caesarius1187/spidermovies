@@ -179,6 +179,7 @@ $(document).ready(function() {
                 } );
                 $('#bodyTablaVentas').width("100%");
                 calcularFooterTotales(tblTablaVentas);
+                hidecolumnstablaventas();
                 ventasOnChange();
                 $('#saveVentasForm').submit(function(){
                     var formData = $(this).serialize();
@@ -208,7 +209,7 @@ $(document).ready(function() {
                                 //Agregar la fila nueva a la tabla
                                 var  tdClass = "tdViewVenta"+respuesta.venta_id;
                                 var positivo = 1;
-                                if(respuesta.venta.Venta.tipodebito=='Restitucion debito fiscal'){
+                                if(respuesta.comprobante.Comprobante.tipodebitoasociado=='Restitucion de debito fiscal'){
                                     positivo = positivo*-1;
                                 }
                                 var rowData =
@@ -219,31 +220,20 @@ $(document).ready(function() {
                                         respuesta.subcliente.Subcliente.nombre,
                                         respuesta.venta.Venta.condicioniva,
                                         respuesta.actividadcliente.Actividade.nombre,
-                                        respuesta.localidade.Localidade.nombre,
                                     ];
-
-                                if(!respuesta.tieneMonotributo){
-                                    rowData.push(respuesta.venta.Venta.tipodebito);
-                                    rowData.push(respuesta.venta.Venta.alicuota+"%");
-                                    rowData.push(respuesta.venta.Venta.neto*positivo);
-                                    rowData.push(respuesta.venta.Venta.iva*positivo);
+                                if(respuesta.hasOwnProperty('tipogasto')){
+                                    rowData.push(respuesta.tipogasto.Tipogasto.nombre);
                                 }
-                                if(respuesta.tieneIVAPercepciones){
-                                    rowData.push(respuesta.venta.Venta.ivapercep*positivo);
-                                }
-                                if(respuesta.tieneAgenteDePercepcionIIBB){
-                                    rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
-                                }
-                                if(respuesta.tieneAgenteDePercepcionActividadesVarias){
-                                    rowData.push(respuesta.venta.Venta.actvspercep*positivo);
-                                }
-                                if(respuesta.tieneImpuestoInterno){
-                                    rowData.push(respuesta.venta.Venta.impinternos*positivo);
-                                }
-                                if(!respuesta.tieneMonotributo) {
-                                    rowData.push(respuesta.venta.Venta.nogravados * positivo);
-                                    rowData.push(respuesta.venta.Venta.excentos * positivo);
-                                }
+                                rowData.push( respuesta.localidade.Localidade.nombre);
+                                rowData.push(respuesta.venta.Venta.alicuota+"%");
+                                rowData.push(respuesta.venta.Venta.neto*positivo);
+                                rowData.push(respuesta.venta.Venta.iva*positivo);
+                                rowData.push(respuesta.venta.Venta.ivapercep*positivo);
+                                rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
+                                rowData.push(respuesta.venta.Venta.actvspercep*positivo);
+                                rowData.push(respuesta.venta.Venta.impinternos*positivo);
+                                rowData.push(respuesta.venta.Venta.nogravados * positivo);
+                                rowData.push(respuesta.venta.Venta.excentos * positivo);
                                 rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);
                                 rowData.push(respuesta.venta.Venta.exentosactividadesvarias*positivo);
                                 rowData.push(respuesta.venta.Venta.total*positivo);
@@ -376,22 +366,6 @@ $(document).ready(function() {
         $("#VentaComprobanteId").on('change paste', function() {
             allcomprobantes.forEach(function(comprobante) {
                 if($("#VentaComprobanteId").val()==comprobante.Comprobante.id){
-                    switch(comprobante.Comprobante.tipodebitoasociado){
-                        case 'Debito fiscal o bien de uso':
-                            $("#VentaTipodebito option[value='Debito Fiscal']").show();
-                            $("#VentaTipodebito option[value='Bien de uso']").show();
-                            $("#VentaTipodebito option[value='Restitucion debito fiscal']").hide();
-                            $("#VentaTipodebito").val($("#VentaTipodebito option:eq(0)").val());
-                            break;
-                        case 'Restitucion de debito fiscal':
-                            $("#VentaTipodebito option[value='Debito Fiscal']").hide();
-                            $("#VentaTipodebito option[value='Bien de uso']").hide();
-                            $("#VentaTipodebito option[value='Restitucion debito fiscal']").show();
-                            $("#VentaTipodebito").val($("#VentaTipodebito option:eq(2)").val());
-                            break;
-                    }
-                    $("#VentaTipodebito").trigger("chosen:updated");
-
                     if(comprobante.Comprobante.tipo=="A"){
                         $("#VentaNeto").prop("readonly",false);
                         $("#VentaIva").prop("readonly",true);
@@ -416,9 +390,12 @@ $(document).ready(function() {
                     }
                 }
             }, this);
+            $('.chosen-select').chosen({search_contains:true});
+
         });
         $( "#VentaComprobanteId" ).trigger( "change" );
         reloadInputDates();
+        $('.chosen-select').chosen({search_contains:true});
     }
 
     function addFormSubmitCatchs(){
@@ -452,7 +429,69 @@ $(document).ready(function() {
         });
     }
 
+    $.fn.filterGroups = function( options ) {
+        var settings = $.extend( {}, options);
+
+        return this.each(function(){
+
+            var $select = $(this);
+            // Clone the optgroups to data, then remove them from dom
+            $select.data('fg-original-groups', $select.find('optgroup').clone()).children('optgroup').remove();
+
+            $(settings.groupSelector).change(function(){
+                var $this = $(this);
+                var $optgroup_label = $(this).find('option:selected').text();
+                var $optgroup =  $select.data('fg-original-groups').filter('optgroup[label="' + $optgroup_label + '"]').clone();
+                $select.children('optgroup').remove();
+                $select.append($optgroup);
+                $('.chosen-select').trigger("chosen:updated");
+            }).change();
+        });
+    };
+    if($('#jsonactividadescategorias option').size()>0 ){
+        $('#VentaTipogastoId').filterGroups({groupSelector: '#jsonactividadescategorias', });
+    }
+    $("#VentaActividadclienteId").on('change', function() {
+        $("#jsonactividadescategorias").val($("#VentaActividadclienteId").val());
+        $('#jsonactividadescategorias').trigger( "change" );
+    });
+    $('#jsonactividadescategorias').trigger( "change" );
+
 });
+    function hidecolumnstablaventas() {
+        var tieneMonotributo = $("#saveVentasForm #VentaTieneMonotributo").val();
+        var tieneIVA = $("#saveVentasForm #VentaTieneIVA").val();
+        var tieneIVAPercepciones = $("#saveVentasForm #VentaTieneIVAPercepciones").val();
+        var tieneImpuestoInterno = $("#saveVentasForm #VentaTieneImpuestoInterno").val();
+        var tieneAgenteDePercepcionActividadesVarias = $("#saveVentasForm #VentaTieneAgenteDePercepcionActividadesVarias").val();
+        var tieneAgenteDePercepcionIIBB = $("#saveVentasForm #VentaTieneAgenteDePercepcionIIBB").val();
+        if(tieneMonotributo){
+            hidecolumn(tblTablaVentas,6,false);//tipoingreso*/
+            // hidecolumn(tblTablaVentas,8,false);//Debito*/
+            hidecolumn(tblTablaVentas,8,false);//Alicuota*/
+            hidecolumn(tblTablaVentas,9,false);//Neto*/
+            hidecolumn(tblTablaVentas,10,false);//IVA*/
+
+            hidecolumn(tblTablaVentas,15,false);//No Gravadoss*/
+            hidecolumn(tblTablaVentas,16,false);//Exento*/
+        }
+        if(!tieneIVAPercepciones){
+            hidecolumn(tblTablaVentas,11,false);//IVA Percep*/
+           }
+        if(!tieneAgenteDePercepcionIIBB){
+            hidecolumn(tblTablaVentas,12,false);//IIBB Percep*/
+        }
+        if(!tieneAgenteDePercepcionActividadesVarias){
+            hidecolumn(tblTablaVentas,13,false);//Act Vs Perc*/
+        }
+        if(!tieneImpuestoInterno){
+            hidecolumn(tblTablaVentas,14,false);//Imp Internos*/
+        }
+    }
+    function hidecolumn(table,column,visible){
+        var column = table.column( column );
+        column.visible( visible );
+    }
     function setTwoNumberDecimal(event) {
         this.value = parseFloat(this.value).toFixed(2);
     }
@@ -755,7 +794,7 @@ $(document).ready(function() {
                         //Agregar la fila nueva a la tabla
                         var  tdClass = "tdViewVenta"+respuesta.venta_id;
                         var positivo = 1;
-                        if(respuesta.venta.Venta.tipodebito=='Restitucion debito fiscal'){
+                        if(respuesta.comprobante.Comprobante.tipodebitoasociado=='Restitucion de debito fiscal'){
                             positivo = -1;
                         }
                         var rowData =
@@ -766,26 +805,16 @@ $(document).ready(function() {
                                 respuesta.subcliente.Subcliente.nombre,
                                 respuesta.venta.Venta.condicioniva,
                                 respuesta.actividadcliente.Actividade.nombre,
+                                respuesta.tipogasto.Tipogasto.nombre,
                                 respuesta.localidade.Localidade.nombre,
                             ];
-                        if(!(respuesta.tieneMonotributo=="true")){
-                            rowData.push(respuesta.venta.Venta.tipodebito);
-                            rowData.push(respuesta.venta.Venta.alicuota+"%");
-                            rowData.push(respuesta.venta.Venta.neto*positivo);
-                            rowData.push(respuesta.venta.Venta.iva*positivo);
-                        }
-                        if(respuesta.tieneIVAPercepciones=="true"){
-                            rowData.push(respuesta.venta.Venta.ivapercep*positivo);
-                        }
-                        if(respuesta.tieneAgenteDePercepcionIIBB=="true"){
-                            rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
-                        }
-                        if(respuesta.tieneAgenteDePercepcionActividadesVarias=="true"){
-                            rowData.push(respuesta.venta.Venta.actvspercep*positivo);
-                        }
-                        if(respuesta.tieneImpuestoInterno=="true"){
-                            rowData.push(respuesta.venta.Venta.impinternos*positivo);
-                        }
+                        rowData.push(respuesta.venta.Venta.alicuota+"%");
+                        rowData.push(respuesta.venta.Venta.neto*positivo);
+                        rowData.push(respuesta.venta.Venta.iva*positivo);
+                        rowData.push(respuesta.venta.Venta.ivapercep*positivo);
+                        rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
+                        rowData.push(respuesta.venta.Venta.actvspercep*positivo);
+                        rowData.push(respuesta.venta.Venta.impinternos*positivo);
                         rowData.push(respuesta.venta.Venta.nogravados*positivo);
                         rowData.push(respuesta.venta.Venta.excentos*positivo);
                         rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);

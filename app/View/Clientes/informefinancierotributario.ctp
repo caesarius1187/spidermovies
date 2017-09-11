@@ -140,7 +140,7 @@
             }
             //Calculo de Ingresos(Ventas)
             foreach ($cliente['Venta'] as $venta) {
-                if($venta["tipodebito"]=='Restitucion debito fiscal'){
+                if($venta['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                     $ingresosActuales -= $venta['total'];
                     $ingresosActualesClientes[$cliente['id']] -= $venta['total'];
                 }else{

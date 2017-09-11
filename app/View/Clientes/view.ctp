@@ -1168,6 +1168,103 @@ if($mostrarView){?>
                 </table>
             </td>
         </tr>
+        <?php /**************************************************************************/ ?>
+        <?php /*****************************Bienes de Uso********************************/ ?>
+        <?php /**************************************************************************/ ?>
+        <tr class="rowheaderbienesdeusos" ><!--18. Bienes de usos-->
+            <th colspan="7" class="tbl_view_th1">
+                <h2 class="h2header" id="lblBienesdeusos">
+                    <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgBienesdeusos','class'=>'imgOpenClose'));?>
+                    <?php echo __('Bienes de usos'); ?>
+                </h2>
+            </th>
+            <th class="tbl_view_th2">
+                <a class="button_view" onclick="loadFormAddBiendeuso();">
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
+                </a>
+            </th>
+        </tr>
+        <tr class="rowheaderbienesdeusos">
+            <td class="biendeuso">
+                <table id="relatedBienesdeusos" class="tbl_related">
+                    <thead>
+                    <tr class="biendeuso">
+                        <th><?php echo __('Tipo'); ?></th>
+                        <th><?php echo __('Periodo'); ?></th>
+                        <th><?php echo __('Titularidad'); ?></th>
+                        <th><?php echo __('Descripcion'); ?></th>
+                        <th class=""><?php echo __('Acciones'); ?></th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    </tfoot>
+                    <tbody>
+                    <?php if (!empty($cliente['Bienesdeuso'])): ?>
+                        <?php foreach ($cliente['Bienesdeuso'] as $bienesdeuso): ?>
+                            <tr class="biendeuso" id="rowBiendeuso<?php echo $bienesdeuso['id']; ?>">
+                                <td><?php echo $bienesdeuso['tipo']; ?></td>
+                                <td><?php echo $bienesdeuso['periodo']; ?></td>
+                                <td><?php echo $bienesdeuso['titularidad']; ?></td>
+                                <?php
+                                $descripcionBDU = "";
+                                //todo separar en case desc Bien de uso
+                                //esto seria mas correcto si lo separamos en un case
+                                if($bienesdeuso['patente']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['patente'];
+                                if($bienesdeuso['aniofabricacion']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['aniofabricacion'];
+                                if($bienesdeuso['tipoinmueble']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['tipoinmueble'];
+                                if($bienesdeuso['calle']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['calle'];
+                                if($bienesdeuso['numero']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['numero'];
+                                if($bienesdeuso['nombre']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['nombre'];
+                                if($bienesdeuso['matricula']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['matricula'];
+                                if($bienesdeuso['fechaadquisicion']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['fechaadquisicion'];
+                                if($bienesdeuso['marca']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['marca'];
+                                if($bienesdeuso['modelo']!="")
+                                    $descripcionBDU .= " -".$bienesdeuso['modelo'];
+                                ?>
+                                <td><?php echo $bienesdeuso['marca']; ?></td>
+                                <td><?php echo date('d-m-Y',strtotime($empleado['fechaingreso'])) ?></td>
+                                <td >
+                                    <a href="#"  onclick="loadFormEmpleado(<?php echo $empleado['id']; ?>)" class="button_view">
+                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                    </a>
+                                    <?php echo $this->Form->postLink(
+                                        $this->Html->image('ic_delete_black_24dp.png', array(
+                                            'alt' => 'Eliminar',
+                                        )),
+                                        array(
+                                            'controller' => 'Bienesdeusos',
+                                            'action' => 'delete',
+                                            $empleado['id'],
+                                        ),
+                                        array(
+                                            'class'=>'deleteEmpleado',
+                                            'escape' => false // Add this to avoid Cake from printing the img HTML code instead of the actual image
+                                        ),
+                                        __('Esta seguro que quiere eliminar este provedor?')
+                                    ); ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
     </table>
 </div>
 
@@ -1328,7 +1425,7 @@ if($mostrarView){?>
                         <td colspan="2">
                             <?php
                             echo $this->Form->input('baja', array(
-                                    'class'=>'datepicker',
+                                    'class'=>'datepicker-month-year',
                                     'type'=>'text',
                                     'label'=>'Baja',
                                     'required'=>true,
@@ -2021,6 +2118,11 @@ if($mostrarView){?>
                 );
                 echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
                 echo $this->Form->input('adherente',array('label'=>'Adherentes','value'=>0));
+                echo $this->Form->input('obrasocialsindical',array(
+                    'label'=>'Obra social Sindical',
+                    'value'=>1,
+                    'checked'=>'checked',
+                    'title'=>'Indicar si el empleado tiene una obra social que no sea sindical'));
                 echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad));
                 echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion'));
                 echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion'));

@@ -3,19 +3,32 @@
 	[
 		'class'=>'formTareaCarga formAddCompra'
 	]); ?>
-	<fieldset>
-	<?php
+    <div class="index">
+        <?php
+		echo $this->Form->input('id',[
+			'type'=>'hidden'
+		]);
 		echo $this->Form->input('compra_id',[
 			'class'=>'all',
-			'type'=>'text',
+			'type'=>'hidden',
 			'value'=>$compra['Compra']['id'],
 		]);
-		echo $this->Form->input('tipo',[
-            'options'=>['Automotor'=>'Automotor','Inmueble'=>'Inmueble','Aeronave'=>'Aeronave','Naves, Yates y similares'=>'Naves, Yates y similares'],
-            'class'=>'all'
+        echo $this->Form->input('cliente_id',[
+			'class'=>'all',
+			'type'=>'hidden',
+			'value'=>$compra['Compra']['cliente_id'],
 		]);
+		echo $this->Form->input('tipo',[
+            'options'=>[
+                'Automotor'=>'Automotor',
+                'Inmueble'=>'Inmueble',
+                'Aeronave'=>'Aeronave',
+                'Naves, Yates y similares'=>'Naves, Yates y similares'],
+            'class'=>'all',
+            'style'=>'width:auto'
+		])."</br>";
 		echo $this->Form->input('periodo',[
-			'class'=>'all'
+			'class'=>'all datepicker-month-year'
 		]);
 		echo $this->Form->input('titularidad',[
             'label'=>'% de Titularidad',
@@ -31,7 +44,8 @@
 			'class'=>'automotor'
 		]);
 		echo $this->Form->input('aniofabricacion',[
-			'class'=>'automotor'
+			'class'=>'automotor',
+            'label'=>'Año fabricacion'
 		]);
 		echo $this->Form->input('patente',[
 			'class'=>'automotor'
@@ -44,7 +58,8 @@
 		]);
 		echo $this->Form->input('tipoautomotor',[
             'options'=>['Auto'=>'Auto','Moto'=>'Moto','Camion'=>'Camion','Trans. pasajeros'=>'Trans. pasajeros'],
-            'class'=>'automotor'
+            'class'=>'automotor',
+            'label'=>'Tipo automotor'
 		]);
 		echo $this->Form->input('fechaadquisicion',[
 			'class'=>'inmueble datepicker',
@@ -56,7 +71,8 @@
             'style'=>'width:60px;font:8px'
 		]);
 		echo $this->Form->input('tipoinmueble',[
-			'class'=>'inmueble'
+			'class'=>'inmueble',
+            'label'=>'Tipo inmueble'
 		]);
 		echo $this->Form->input('calle',[
 			'class'=>'inmueble'
@@ -74,17 +90,20 @@
 			'class'=>'inmueble'
 		]);
 		echo $this->Form->input('localidade_id',[
-			'class'=>'inmueble'
+			'class'=>'inmueble chosen-select',
+			'style'=>'width:auto',
+            'empty'=>'Localidad'
 		]);
 		echo $this->Form->input('codigopostal',[
-			'class'=>'inmueble'
+			'class'=>'inmueble',
+            'label'=>'Codigo postal'
 		]);
 		echo $this->Form->input('catastro',[
 			'class'=>'inmueble'
 		]);
-		echo $this->Form->input('partido',[
-			'class'=>'inmueble'
-		]);
+//		echo $this->Form->input('partido',[
+//			'class'=>'inmueble'
+//		]);
 		echo $this->Form->input('partida',[
 			'class'=>'inmueble'
 		]);
@@ -92,7 +111,8 @@
 			'class'=>'inmueble'
 		]);
 		echo $this->Form->input('tipoembarcacion',[
-            'class'=>'naves'
+            'class'=>'naves',
+            'label'=>'Tipo embarcacion'
         ]);
 		echo $this->Form->input('nombre',[
             'class'=>'naves'
@@ -104,16 +124,19 @@
             'class'=>'naves'
         ]);
 		echo $this->Form->input('tonelajeneto',[
-            'class'=>'naves'
+            'class'=>'naves',
+            'label'=>'Tonelaje neto'
         ]);
 		echo $this->Form->input('registro',[
             'class'=>'naves'
         ]);
 		echo $this->Form->input('registrojur',[
-            'class'=>'naves'
+            'class'=>'naves',
+            'label'=>'Registro JUR'
         ]);
 		echo $this->Form->input('otroregistro',[
-            'class'=>'naves'
+            'class'=>'naves',
+            'label'=>'Otro registro'
         ]);
 		echo $this->Form->input('matricula',[
             'class'=>'naves aeronaves'
@@ -125,19 +148,40 @@
             'class'=>'naves'
         ]);
 		echo $this->Form->input('modelomotor',[
-            'class'=>'naves'
+            'class'=>'naves',
+            'label'=>'Modelo motor'
         ]);
 		echo $this->Form->input('potencia',[
             'class'=>'naves'
         ]);
 		echo $this->Form->input('numeromotor',[
-            'class'=>'naves'
+            'class'=>'naves',
+            'label'=>'N motor'
         ]);
 		echo $this->Form->input('origen',[
             'class'=>'naves'
         ]);
 	?>
-	</fieldset>
+	</div>
+    <div class="index">
+        <?php
+        echo $this->Form->input('motivoexencion',[
+            'class'=>'all'
+        ]);
+        echo $this->Form->input('valuacionfiscaltotal',[
+            'class'=>'inmueble'
+        ]);
+        echo $this->Form->input('valorcompraactualizado',[
+            'class'=>'inmueble'
+        ]);
+        echo $this->Form->input('importe',[
+            'class'=>'aeronaves automotor naves'
+        ]);
+        echo $this->Form->input('importeexento',[
+            'class'=>'all'
+        ]);
+        ?>
+    </div>
 <?php echo $this->Form->end(__('Aceptar')); ?>
 </div>
 

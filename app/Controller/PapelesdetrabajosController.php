@@ -30,6 +30,7 @@ class PapelesdetrabajosController extends AppController {
         $this->loadModel('Compra');
         $this->loadModel('Cuenta');
 		$this->loadModel('Cuentascliente');
+		$this->loadModel('Tipogasto');
 //$this->Archivo->recursive = 0;
 		//$this->set('archivos', $this->Paginator->paginate());
 		$añoPeriodo="SUBSTRING( '".$periodo."',4,7)";
@@ -47,6 +48,17 @@ class PapelesdetrabajosController extends AppController {
 		$periodoPrev = date("m-Y",$timePeriodo);
 		$cuentasIVA = $this->Cuenta->cuentasdeIVA;
 		$this->set('cuentasIVA', $cuentasIVA);
+		$pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+		$bajaesMayorQuePeriodo = array(
+			'OR'=>array(
+				'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
 		$options = 
 			[
 			'conditions' => ['Cliente.' . $this->Cliente->primaryKey => $ClienteId],
@@ -83,12 +95,22 @@ class PapelesdetrabajosController extends AppController {
 					],
 				'Actividadcliente' => [
 					'Actividade',
+					'conditions'=>[
+						//traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+						'OR'=>[
+							$bajaesMayorQuePeriodo,
+							'Actividadcliente.baja = ""',
+							'Actividadcliente.baja = "0000-00-00"',
+							'Actividadcliente.baja is null' ,
+						]
 					],
+				],
 				'Cuentascliente'=>[
 					'Cuenta',
 					'conditions'=>[
 						'Cuentascliente.cuenta_id' => $cuentasIVA
 					]
+
 				]
 			],
 		];
@@ -113,15 +135,18 @@ class PapelesdetrabajosController extends AppController {
         $this->set('periodoPrev', $periodoPrev);
 
 		$opcionesActividad = array(
-								   'conditions'=>array('Actividadcliente.cliente_id' => $ClienteId),
+								   'conditions'=>array(
+									   'Actividadcliente.cliente_id' => $ClienteId,
+                                       //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+                                       'OR'=>[
+                                           $bajaesMayorQuePeriodo,
+                                           'Actividadcliente.baja = ""',
+                                           'Actividadcliente.baja = "0000-00-00"',
+                                           'Actividadcliente.baja is null' ,
+                                       ]
+								   ),
 								   'contain'=> array(
 								   	  'Actividade',
-									  'Venta' => array(
-										  'conditions' => array(
-											 'Venta.cliente_id' => $ClienteId,
-											 'Venta.periodo' => $periodo,
-											)
-									  )
 								 	)
 							 );
 		$actividades = $this->Actividadcliente->find('all', $opcionesActividad);
@@ -140,9 +165,19 @@ class PapelesdetrabajosController extends AppController {
 									'Venta.periodo' => $periodo,
 									),
 								'contain' => array(
+									'Comprobante' => [],
 									'Actividadcliente' => array(
-																'Actividade'
-																)
+                                        'conditions'=>array(
+                                            //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+                                            'OR'=>[
+                                                $bajaesMayorQuePeriodo,
+                                                'Actividadcliente.baja = ""',
+                                                'Actividadcliente.baja = "0000-00-00"',
+                                                'Actividadcliente.baja is null' ,
+                                            ]
+                                        ),
+                                        'Actividade',
+                                        )
 								  )
 							  );
 		$ventas = $this->Venta->find('all', $opcionesVenta);
@@ -162,7 +197,16 @@ class PapelesdetrabajosController extends AppController {
 				),
 			'contain' => array(
                 'Actividadcliente' => [
-                        'fields'=>['actividade_id']
+                        'fields'=>['actividade_id'],
+						'conditions'=>[
+							//traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+							'OR'=>[
+								$bajaesMayorQuePeriodo,
+								'Actividadcliente.baja = ""',
+								'Actividadcliente.baja = "0000-00-00"',
+								'Actividadcliente.baja is null' ,
+							]
+						],
                                         ]
                 //'actividades' => array(
                 //						'conditions' => array('Actividade.id' => 'Actividadcliente.actividade_id')
@@ -196,12 +240,10 @@ class PapelesdetrabajosController extends AppController {
 		$this->set('cuentascliente', $cuentascliente);
 		$this->set('actividades', $actividades);
 		$this->set('ventas', $ventas);
-		$this->set('compras', $compras); 
-		//$CondicionVenta = array('conditions' => array('Venta.cliente_id' => $ClienteId));
-		//$Ventas = $this->Venta->find('all', $CondicionVenta);
-		//$this->set('venta', $Ventas);
-
-
+		$this->set('compras', $compras);
+		
+		$ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
+		$this->set('ingresosBienDeUso',$ingresosBienDeUso);
 	}
 	public function autonomo($impcliid=null, $periodo=null){
 		$this->loadModel('Autonomocategoria');

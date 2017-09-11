@@ -5,6 +5,10 @@
         //este empleado no tiene liquidacion
         return "";
     }
+    if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
+        /*Servicio domestico no tiene q responder recibo*/
+        return "";
+    }
  echo $this->Form->button('Imprimir',
     array('type' => 'button',
         'class' =>"btn_imprimir",

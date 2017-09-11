@@ -8,17 +8,6 @@
 		<?php
 		$params= "'0','reciboscargados','".$periodo."','".$cliid."','realizado'";
 
-		 echo $this->Form->button('Finalizar',
-			array('type' => 'button',
-				'class' =>"btn_realizar_tarea",
-				'div' => false,
-				'style' => array('style' => 'float:right'),
-				'onClick' => "realizarEventoCliente(".$params.")"
-			)
-		);
-
-
-
 		echo $this->Form->create('Deposito',array(
 			'id'=>'formAddDeposito',
 			'controller'=>'depositos',

@@ -50,11 +50,6 @@ if(!$mostrarFormulario){ ?>
 			<td colspan="2">
 				<?php
 				$fechabaja = $this->request->data['Actividadcliente']['baja'];
-				if($fechabaja==""||$fechabaja=="0000-00-00"){
-					$fechabaja = "";
-				}else{
-					$fechabaja = $actividad['baja'];
-				}
 				echo $this->Form->input('baja'.$this->request->data['Actividadcliente']['id'], array(
 						'class'=>'datepicker-month-year',
 						'type'=>'text',

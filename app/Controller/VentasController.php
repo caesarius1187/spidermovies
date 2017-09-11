@@ -139,11 +139,11 @@ class VentasController extends AppController {
 		);
 		$ventas=$this->Venta->find('all', array(
 						'contain'=>[],
-						'fields'=>['id','fecha','condicioniva','condicioniva','numerocomprobante','alicuota','tipodebito'
+						'fields'=>['id','fecha','condicioniva','condicioniva','numerocomprobante','alicuota'
 							,'neto','iva','ivapercep','iibbpercep','actvspercep','impinternos','nogravados','excentos'
 							,'exentosactividadeseconomicas','exentosactividadesvarias','total',
 							'Puntosdeventa.nombre','Subcliente.nombre','Subcliente.cuit','Localidade.nombre',
-							'Partido.nombre','Actividade.nombre','Actividade.nombre','Comprobante.tipodebitoasociado'
+							'Partido.nombre','Actividade.nombre','Tipogasto.nombre','Comprobante.tipodebitoasociado'
 							,'Comprobante.tipocreditoasociado','Comprobante.nombre','Comprobante.abreviacion','Comprobante.codigo'],
 						'joins'=>[
 							[
@@ -168,7 +168,7 @@ class VentasController extends AppController {
 								'table' => 'localidades',
 								'alias' => 'Localidade',
 //								'fields'=> ['id','nombre'],
-								'type' => 'INNER',
+								'type' => 'LEFT',
 								'conditions' => array(
 									'Localidade.id = Venta.localidade_id',
 								)
@@ -211,6 +211,21 @@ class VentasController extends AppController {
 //									'codigo'],
 								'conditions' => array(
 									'Comprobante.id = Venta.comprobante_id',
+								)
+							],
+							[
+								'table' => 'tipogastos',
+								'alias' => 'Tipogasto',
+								'type' => 'LEFT',
+//								'fields'=>[
+//									'id',
+//									'tipodebitoasociado',
+//									'tipocreditoasociado',
+//									'nombre',
+//									'abreviacion',
+//									'codigo'],
+								'conditions' => array(
+									'Tipogasto.id = Venta.tipogasto_id',
 								)
 							]
 						],
@@ -306,7 +321,8 @@ class VentasController extends AppController {
 	 	$this->loadModel('Puntosdeventa');
 	 	$this->loadModel('Actividadcliente');
 	 	$this->loadModel('Comprobante');
-	 	$this->autoRender=false; 
+	 	$this->loadModel('Tipogasto');
+	 	$this->autoRender=false;
 	 	if ($this->request->is('post')) {
 	 		$optionsVenta = array( );
 	 		//controlar que no se repita la factura para el mismo cluente(subcliente), punto de venta, numero de comprobante y alicuota(si tiene iva)
@@ -351,6 +367,10 @@ class VentasController extends AppController {
 				$optionsSubCliente = array('contain'=>[],'conditions'=>array('Subcliente.id'=>$this->request->data['Venta']['subcliente_id']));
 				$optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Venta']['localidade_id']));
 				$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id']));
+				$data = [];
+
+
+
 				$this->request->data['Venta']['fecha'] = date('d',strtotime($this->request->data['Venta']['fecha']));
 
 				$data = array(
@@ -362,6 +382,7 @@ class VentasController extends AppController {
 		            "subcliente"=> $this->Subcliente->find('first',$optionsSubCliente),
 		            "localidade"=> $this->Localidade->find('first',$optionsLocalidade),
 		            "actividadcliente"=> $this->Actividadcliente->find('first',$optionsActividadCliente),
+
 		            "actividadcliente_id"=> $this->request->data['Venta']['actividadcliente_id'],
 		            /*AFIP*/
 		            "tieneMonotributo"=> $this->request->data['Venta']['tieneMonotributo'],
@@ -373,6 +394,18 @@ class VentasController extends AppController {
 			        /*DGRM*/
 		            "tieneAgenteDePercepcionActividadesVarias"=> $this->request->data['Venta']['tieneAgenteDePercepcionActividadesVarias'],
 		        );
+				if(isset($this->request->data['Venta']['tipogasto_id'])){
+					$optionstipogasto = array(
+						'contain'=>[],
+						'conditions'=>array(
+							'Tipogasto.id'=>$this->request->data['Venta']['tipogasto_id'],
+						)
+					);
+					$data["tipogasto"] =
+						$this->Tipogasto->find('first',$optionstipogasto);
+				}else{
+
+				}
 			}
 			else{
 				$data = array(
@@ -393,6 +426,8 @@ class VentasController extends AppController {
 		$this->loadModel('Actividadcliente');
 		$this->loadModel('Puntosdeventa');
 		$this->loadModel('Comprobante');
+		$this->loadModel('Cliente');
+		$this->loadModel('Tipogasto');
 		if (!$this->Venta->exists($id)) {
 			throw new NotFoundException(__('Venta No Existe'));
 			return;
@@ -474,7 +509,14 @@ class VentasController extends AppController {
 				$optionsSubCliente = array('contain'=>[],'conditions'=>array('Subcliente.id'=>$this->request->data['Venta']['subcliente_id']));
 				$optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Venta']['localidade_id']));
 				$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id']));
-				$this->request->data['Venta']['fecha'] = date('d',strtotime($this->request->data['Venta']['fecha']));
+                $optionstipogasto = array(
+					'contain'=>[],
+					'conditions'=>array(
+						'Tipogasto.id'=>$this->request->data['Venta']['tipogasto_id'],
+						'Tipogasto.tipo'=>'ventas'
+					)
+				);
+                $this->request->data['Venta']['fecha'] = date('d',strtotime($this->request->data['Venta']['fecha']));
 				$data = array(
 					"respuesta" => "La Venta ha sido modificada.",
 					"error" => "0",
@@ -486,7 +528,8 @@ class VentasController extends AppController {
 					"localidade"=> $this->Localidade->find('first',$optionsLocalidade),
 					"actividadcliente"=> $this->Actividadcliente->find('first',$optionsActividadCliente),
 		            "actividadcliente_id"=> $this->request->data['Venta']['actividadcliente_id'],
-					/*AFIP*/
+                    "tipogasto"=> $this->Tipogasto->find('first',$optionstipogasto),
+                    /*AFIP*/
 					"tieneMonotributo"=> $this->request->data['Venta']['tieneMonotributo'],
 					"tieneIVA"=> $this->request->data['Venta']['tieneIVA'],
 					"tieneIVAPercepciones"=> $this->request->data['Venta']['tieneIVAPercepciones'],
@@ -571,7 +614,28 @@ class VentasController extends AppController {
 													'Actividadcliente.id','Actividade.nombre'
 														)
 											)
-									);	
+									);
+        $cliente=$this->Cliente->find('first', array(
+                'contain'=>array(
+                    'Actividadcliente'=>array(
+                        'Actividade',
+                        'Cuentasganancia'
+                    ),
+                ),
+                'conditions' => array(
+                    'id' => $this->request->data['Venta']['cliente_id'],
+                ),
+            )
+        );
+        $this->set('cliente', $cliente);
+        $optionsTipoGastos=array(
+            'conditions'=>array(
+                'Tipogasto.tipo'=>'ventas'),
+            'fields'=>array('id','nombre','categoria'),
+            'contain'=>[],
+        );
+        $tipogastos = $this->Venta->Tipogasto->find('list',$optionsTipoGastos);
+        $this->set('tipogastos', $tipogastos);
 		$this->set('actividades', $clienteActividadList);
 		$this->layout = 'ajax';
 	}
@@ -633,7 +697,11 @@ class VentasController extends AppController {
 						'Periodosactivo'=>[
 							'conditions'=>$conditionsImpCliHabilitados
 						]
-					]
+					],
+					'Actividadcliente'=>array(
+						'Actividade',
+						'Cuentasganancia'
+					),
 				),
 				'conditions' => array(
 					'id' => $id,
@@ -746,7 +814,6 @@ class VentasController extends AppController {
 		$localidades = $this->Localidade->find('list',$conditionsLocalidades);
 		$this->set('localidades', $localidades);
 
-
 		$partidos = $this->Partido->find('list');
 		$this->set('partidos', $partidos);
 
@@ -772,6 +839,15 @@ class VentasController extends AppController {
 
 		$tipodebitos = array('Debito Fiscal'=>'Debito Fiscal','Bien de uso'=>'Bien de uso','Restitucion debito fiscal'=>'Restitucion debito fiscal');
 		$this->set('tipodebitos', $tipodebitos);
+
+		$optionsTipoGastos=array(
+			'conditions'=>array(
+				'Tipogasto.tipo'=>'ventas'),
+			'fields'=>array('id','nombre','categoria'),
+			'contain'=>[],
+		);
+		$tipogastos = $this->Venta->Tipogasto->find('list',$optionsTipoGastos);
+		$this->set('tipogastos', $tipogastos);
 
 		$conditionsCli = array(
 			'Grupocliente',
@@ -894,7 +970,7 @@ class VentasController extends AppController {
 
 		$conditionsVentas = [
 			'fields'=>[
-				'Venta.*','Count(*) as cantalicuotas','SUM(Venta.total) as totalfactura'
+				'Venta.*','Count(*) as cantalicuotas','SUM(Venta.total) as totalfactura','Venta.total','Venta.alicuota'
 			],
 			'group'=>[
 				'Venta.puntosdeventa_id',
@@ -988,10 +1064,16 @@ class VentasController extends AppController {
 				'contain' =>$containpuntosdeventa,
 				'conditions' =>$conditionspuntosdeventa,
 				'fields'=>$fieldspuntosdeventa)
-			);
+		);
 		//Subclientes
-		$conditionsSubClientes = array('Subcliente.cliente_id' => $cliid,);
-		$subclientes = $this->Subcliente->find('list',array('conditions' =>$conditionsSubClientes));
+		$conditionsSubClientes = array(
+				'conditions' =>[
+					'Subcliente.cliente_id' => $cliid,
+				],
+			
+			);
+		$subclientes = $this->Subcliente->find('list',$conditionsSubClientes
+		);
 		//Localidades
 		$conditionsLocalidades = array(
 			'contain'=>'Partido',
@@ -1083,7 +1165,11 @@ class VentasController extends AppController {
 							'Periodosactivo'=>array(
 								'conditions'=>$conditionsImpCliHabilitados
 							)
-						)
+						),
+                        'Actividadcliente'=>array(
+                            'Actividade',
+                            'Cuentasganancia'
+                        ),
 					),
 				'conditions' => array(
 						'id' => $cliid,
@@ -1229,6 +1315,16 @@ class VentasController extends AppController {
 		);
 		$ventasperiodo = $this->Venta->find('all',$optionsventasdelperiodo);
 		$this->set('ventasperiodo',$ventasperiodo);
+        $this->set('cliente', $cliente);
+        $optionsTipoGastos=array(
+            'conditions'=>array(
+                'Tipogasto.tipo'=>'ventas'
+			),
+            'fields'=>array('id','nombre','categoria'),
+            'contain'=>[],
+        );
+        $tipogastos = $this->Venta->Tipogasto->find('list',$optionsTipoGastos);
+        $this->set('tipogastos', $tipogastos);
 	}
 	public function cargarventas(){
 		$data=array();

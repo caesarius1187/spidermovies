@@ -1,7 +1,10 @@
-var tblTablaVentas;
 var tblTablaCompras;
+var actividadescategorias;
+var allcomprobantes;
+
 $(document).ready(function() {
     allcomprobantes =  JSON.parse($('#jsonallcomprobantes').val());
+    actividadescategorias =  JSON.parse($('#jsonactividadescategorias').val());
     var nombrecliente = $('#clientenombre').val();
     var periodo = $('#periododefault').val();
 
@@ -240,6 +243,7 @@ $(document).ready(function() {
   
     calcularFooterTotales(tblTablaCompras);
     $('.chosen-select').chosen({search_contains:true});
+
     comprasOnChange();
     reloadInputDates();
     addFormSubmitCatchs();
@@ -314,7 +318,6 @@ $(document).ready(function() {
                         //Preparar para recibir Neto y calcular IVA y Total
                         $("#CompraNeto").prop("readonly",false);
                         $("#CompraIva").prop("readonly",true);
-                        $("#CompraImputacion").prop("readonly",false);
                         $("#CompraIvapercep").prop('readonly', false);
                         $("#CompraTotal").prop("readonly",true);
                         //Permitir editar los campos relacionados a IVA
@@ -334,12 +337,10 @@ $(document).ready(function() {
                     }else  if(comprobante.Comprobante.tipo=="B"){
                         $("#CompraNeto").prop("readonly",false);
                         $("#CompraIva").prop("readonly",true);
-                        $("#CompraImputacion").prop("readonly",true);
                         $("#CompraIvapercep").prop('readonly', true);
                         $("#CompraTotal").prop("readonly",false);
 
                         $("#CompraIva").val(0);
-                        $("#CompraImputacion").val(0);
                         $("#CompraIvapercep").val(0);
                         tipodecomprobanteCompraseleccionado = 'B';
                         $("#CompraCondicioniva option[value='monotributista']").show();
@@ -357,12 +358,10 @@ $(document).ready(function() {
                     }else  if(comprobante.Comprobante.tipo=="C"){
                         $("#CompraNeto").prop("readonly",false);
                         $("#CompraIva").prop("readonly",true);
-                        $("#CompraImputacion").prop("readonly",true);
                         $("#CompraIvapercep").prop('readonly', true);
                         $("#CompraTotal").prop("readonly",false);
 
                         $("#CompraIva").val(0);
-                        $("#CompraImputacion").val(0);
                         $("#CompraIvapercep").val(0);
                         tipodecomprobanteCompraseleccionado = 'C';
                         $("#CompraCondicioniva option[value='monotributista']").show();
@@ -383,6 +382,7 @@ $(document).ready(function() {
             }, this);
         });
         $("#CompraComprobanteId" ).trigger( "change" );
+        $('.chosen-select').trigger("chosen:updated");
     }
     function addFormSubmitCatchs(){
         $('#saveComprasForm').submit(function(){
@@ -498,7 +498,39 @@ $(document).ready(function() {
             return false;
         });
     }
+
+    $("#CompraActividadclienteId").on('change', function() {
+        $("#CompraPuntosdeventa").val(pad ($("#CompraPuntosdeventa").val(), 4));
+    });
+    $.fn.filterGroups = function( options ) {
+        var settings = $.extend( {}, options);
+
+        return this.each(function(){
+
+            var $select = $(this);
+            // Clone the optgroups to data, then remove them from dom
+            $select.data('fg-original-groups', $select.find('optgroup').clone()).children('optgroup').remove();
+
+            $(settings.groupSelector).change(function(){
+                var $this = $(this);
+                var $optgroup_label = $(this).find('option:selected').text();
+                var $optgroup =  $select.data('fg-original-groups').filter('optgroup[label="' + $optgroup_label + '"]').clone();
+                $select.children('optgroup').remove();
+                $select.append($optgroup);
+                $('.chosen-select').trigger("chosen:updated");
+            }).change();
+        });
+    };
+    if($('#jsonactividadescategorias option').size()>0 ){
+        $('#CompraTipogastoId').filterGroups({groupSelector: '#jsonactividadescategorias', });
+    }
+    $("#CompraActividadclienteId").on('change', function() {
+        $("#jsonactividadescategorias").val($("#CompraActividadclienteId").val());
+        $('#jsonactividadescategorias').trigger( "change" );
+    });
+    $('#jsonactividadescategorias').trigger( "change" );
 });
+
     function setTwoNumberDecimal(event) {
         this.value = parseFloat(this.value).toFixed(2);
     }
@@ -572,11 +604,15 @@ $(document).ready(function() {
                             sum = sum.replace('.', "");
                             sum = sum.replace(',', ".");
                             $( this.footer() ).html((sum*1).toFixed(2));
-                            $(mitabla.table().footer()).find(" tr:last td").html((sum*1).toFixed(2));
+                            // $(mitabla.table().footer()).find(" tr:last td").html((sum*1).toFixed(2));
                         }else{
                             $( this.footer() ).html(sum.toFixed(2));
-                            $(mitabla.table().footer()).find(" tr:last td").html((sum).toFixed(2));
-
+                            // $(mitabla.table().footer()).find(" tr:last td").html((sum).toFixed(2));
+                            var position = $(this)[0] - 2;
+                            var prevoiusVal = $(mitabla.table().footer()).find(" tr:eq(1) th:eq("+position+")").html()*1 + 0;
+                            prevoiusVal *= 1;
+                            var totalSUM = sum + prevoiusVal;
+                            $(mitabla.table().footer()).find(" tr:last th:eq("+position+")").html((totalSUM).toFixed(2));
                         }
                     }
                 }
@@ -586,7 +622,6 @@ $(document).ready(function() {
                 }
             } );
         }
-    var allcomprobantes;
     var tipodecomprobanteseleccionado = 'A';
     var tipodecomprobanteCompraseleccionado = '';
 
@@ -677,6 +712,20 @@ $(document).ready(function() {
             defaultDate: d,
     
           });
+            $( "input.datepicker-day-month" ).datepicker({
+                yearRange: "-100:+50",
+                changeMonth: true,
+                changeYear: false,
+                constrainInput: false,
+                dateFormat: 'dd-mm',
+            });
+            $( "input.datepicker-month-year" ).datepicker({
+                yearRange: "-100:+50",
+                changeMonth: true,
+                changeYear: true,
+                constrainInput: false,
+                dateFormat: 'mm-yy',
+            });
         })(jQuery);
         
       }
@@ -752,7 +801,6 @@ $(document).ready(function() {
                   //Preparar para recibir Neto y calcular IVA y Total
                   $("#CompraFormEdit"+comid+" #CompraNeto").prop("readonly",false);
                   $("#CompraFormEdit"+comid+" #CompraIva").prop("readonly",true);
-                  $("#CompraFormEdit"+comid+" #CompraImputacion").prop("readonly",false);
                   $("#CompraFormEdit"+comid+" #CompraIvapercep").prop('readonly', false);
                   $("#CompraFormEdit"+comid+" #CompraTotal").prop("readonly",true);
                   //Permitir editar los campos relacionados a IVA
@@ -771,12 +819,10 @@ $(document).ready(function() {
                 }else  if(comprobante.Comprobante.tipo=="B"){
                   $("#CompraFormEdit"+comid+" #CompraNeto").prop("readonly",false);
                   $("#CompraFormEdit"+comid+" #CompraIva").prop("readonly",true);
-                  $("#CompraFormEdit"+comid+" #CompraImputacion").prop("readonly",true);
                   $("#CompraFormEdit"+comid+" #CompraIvapercep").prop('readonly', true);
                   $("#CompraFormEdit"+comid+" #CompraTotal").prop("readonly",false);
 
                   $("#CompraFormEdit"+comid+" #CompraIva").val(0);
-                  $("#CompraFormEdit"+comid+" #CompraImputacion").val(0);
                   $("#CompraFormEdit"+comid+" #CompraIvapercep").val(0);
                   tipodecomprobanteCompraseleccionado = 'B';
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='monotributista']").show();
@@ -793,12 +839,10 @@ $(document).ready(function() {
                 }else  if(comprobante.Comprobante.tipo=="C"){
                   $("#CompraFormEdit"+comid+" #CompraNeto").prop("readonly",false);
                   $("#CompraFormEdit"+comid+" #CompraIva").prop("readonly",true);
-                  $("#CompraFormEdit"+comid+" #CompraImputacion").prop("readonly",true);
                   $("#CompraFormEdit"+comid+" #CompraIvapercep").prop('readonly', true);
                   $("#CompraFormEdit"+comid+" #CompraTotal").prop("readonly",false);
 
                   $("#CompraFormEdit"+comid+" #CompraIva").val(0);
-                  $("#CompraFormEdit"+comid+" #CompraImputacion").val(0);
                   $("#CompraFormEdit"+comid+" #CompraIvapercep").val(0);
                   tipodecomprobanteCompraseleccionado = 'C';
                   $("#CompraFormEdit"+comid+" #CompraCondicioniva option[value='monotributista']").show();
@@ -815,7 +859,8 @@ $(document).ready(function() {
                 }
 
               }
-            }, this);
+                $('.chosen-select').chosen({search_contains:true});
+                }, this);
           });
           $('.chosen-select').chosen({search_contains:true});
 
@@ -951,7 +996,6 @@ $(document).ready(function() {
                 }
             });
             $("#BienesdeusoTipo" ).trigger( "change" );
-            reloadInputDates();
             $('.chosen-select').chosen({search_contains:true});
             $('#BienesdeusoAddForm').submit(function(){
                     //serialize form data
@@ -973,8 +1017,11 @@ $(document).ready(function() {
                     });
                     return false;
                 });
-            },
-           error:function (XMLHttpRequest, textStatus, errorThrown) {
+            $('.chosen-select').chosen({search_contains:true});
+            $("#BienesdeusoLocalidadeId_chosen").css('width','auto');
+            reloadInputDates();
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(errorThrown);
            }
         });
@@ -1016,7 +1063,6 @@ $(document).ready(function() {
     function imprimirElemento(elemento){
         PopupPrint($(elem).html());
     }
-
     function realizarEventoCliente(periodo,clienteid,estadotarea){
         var datas =  "0/tarea3/"+periodo+"/"+clienteid;
         var data ="";

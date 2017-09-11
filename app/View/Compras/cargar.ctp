@@ -271,23 +271,64 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                   'style' => 'width:150px',
                   'class'=>'chosen-select',
                   ));
+
+            //si no tiene categorizado ganancias no se debe poder cargar compras
+            //a menos que sea monotributista y no tenga activado ganancias
+              //aca tengo que recorrer las actividades del cliente para relacionar las actividades con sus categorias de
+              // ganancias para que por javascript  las limite solo a las que tienen q ser
+              $actividadesCategorias = [];
+              foreach ($cliente['Actividadcliente'] as $actividadcliente) {
+                  foreach ($actividadcliente['Cuentasganancia'] as $cuentaganancia){
+                      $cuentaGananciaTraducida = "";
+                      switch ($cuentaganancia['categoria']){
+                          case 'primeracateg':
+                              $cuentaGananciaTraducida = "primera";
+                          break;
+                          case 'segundacateg':
+                              $cuentaGananciaTraducida = "segunda";
+                          break;
+                          case 'terceracateg':
+                              $cuentaGananciaTraducida = "tercera";
+                          break;
+                          case 'terceracateg45':
+                              $cuentaGananciaTraducida = "tercera otros";
+                          break;
+                          case 'cuartacateg':
+                              $cuentaGananciaTraducida = "cuarta";
+                          break;
+                      }
+                      $actividadesCategorias[$actividadcliente['id']]= $cuentaGananciaTraducida;
+                  }
+              }
+              echo $this->Form->input('actividadescategorias', [
+                    'type'=>'select',
+                    'options'=>$actividadesCategorias,
+                    'id'=>'jsonactividadescategorias',
+                    'div'=>[
+                        'style'=>'display:none'
+                    ]
+                 ]);
+              echo $this->Form->input('tipogasto_id', array(
+                      'label'=>'Tipo Gasto',
+                      'style' => 'width:150px',
+                      'class'=>'chosen-select',
+                      'title'=>'Usted ha vinculado una actividad a un tipo de categoria de ganancias '.
+                      'la cual condiciona el tipo de gasto que se puede elegir.',
+                  )
+              );
               echo $this->Form->input('localidade_id',array(
                   'class'=>'chosen-select',
                   'style' => 'width:150px'
                   )
               );
+
               echo $this->Form->input('tipocredito',array(
                     'label'=>'Tipo Credito',
                     'options'=>$tipocreditos,
                     'style' => 'width:150px',
                     'class'=>'chosen-select',
                 ));
-              echo $this->Form->input('tipogasto_id', array(
-                    'label'=>'Tipo Gasto',
-                    'style' => 'width:150px',
-                    'class'=>'chosen-select',
-                    )
-              );
+
               echo $this->Form->input('tipoiva',array(
                     'label'=>'Tipo (IVA)',
                     'options'=>array('directo'=>'Directo','prorateable'=>'Prorateable'),
@@ -299,7 +340,8 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     'options'=>$imputaciones,
                     'style' => 'width:150px',
                     'class'=>'chosen-select',
-                    ));
+                    'required'=>true,
+              ));
               echo $this->Form->input('alicuota',array(
                'options' => $alicuotas,
                 'style'=>'width:60px',
@@ -351,31 +393,31 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
           <table class="display" id="tablaCompras" cellpadding="0" cellspacing="0" border="0">
             <thead>
               <tr>
-                <th class="printable" style="width: 95px;">Fecha</th>
-                <th class="printable" style="width: 250px;">Comprobante</th>
-                <th class="printable" style="width: 117px;">CUIT</th>
-                  <th class="printable" style="width: 117px;">Provedor</th>
-                  <th class="notPrintable" style="width: 106px;">Cond.IVA</th>
-                <th class="notPrintable" style="width: 131px;">Actividad</th>
-                <th class="notPrintable" style="width: 95px;">Localidad</th>
-                <th class="notPrintable" style="width: 95px;">Tipo Cred</th>
-                <th class="notPrintable" style="width: 77px;">Tipo Gasto</th>
-                <th class="notPrintable" style="width: 88px;">Tipo(IVA)</th>
-                <th class="notPrintable" style="width: 76px;">Imputacion</th>
-                <th class="notPrintable" style="width: 70px;">Alicuota</th>
-                <th class="sum printable" style="width: 81px;">Neto</th>
-                <th class="sum printable" style="width: 73px;">IVA</th>
-                <th class="sum printable" style="width: 76px;">IVA Percep</th>
-                <th class="sum printable" style="width: 76px;">IIBB Percep</th>
-                <th class="sum printable" style="width: 76px;">Act Vs Perc</th>
-                <th class="sum printable" style="width: 76px;">Imp Interno</th>
-                <th class="sum printable" style="width: 76px;">Imp Comb</th>
-                <th class="sum printable" style="width: 76px;">No Gravados</th>
-                <th class="sum printable" style="width: 76px;">Exentos</th>
-                <th class="sum printable" style="width: 76px;">Total</th>
-                <th class="sum notPrintable" style="width: 76px;" >KW</th>
-                <th class="notPrintable">Acciones</th>
-                <th class="notPrintable">Creado</th>
+                <th class="printable" style="width: 95px;">Fecha</th><!--1-->
+                <th class="printable" style="width: 250px;">Comprobante</th><!--2-->
+                <th class="printable" style="width: 117px;">CUIT</th><!--3-->
+                  <th class="printable" style="width: 117px;">Provedor</th><!--4-->
+                  <th class="notPrintable" style="width: 106px;">Cond.IVA</th><!--5-->
+                <th class="notPrintable" style="width: 131px;">Actividad</th><!--6-->
+                <th class="notPrintable" style="width: 95px;">Localidad</th><!--7-->
+                <th class="notPrintable" style="width: 95px;">Tipo Cred</th><!--8-->
+                <th class="notPrintable" style="width: 77px;">Tipo Gasto</th><!--9-->
+                <th class="notPrintable" style="width: 88px;">Tipo(IVA)</th><!--10-->
+                <th class="notPrintable" style="width: 76px;">Imputacion</th><!--11-->
+                <th class="notPrintable" style="width: 70px;">Alicuota</th><!--12-->
+                <th class="sum printable" style="width: 81px;">Neto</th><!--13-->
+                <th class="sum printable" style="width: 73px;">IVA</th><!--14-->
+                <th class="sum printable" style="width: 76px;">IVA Percep</th><!--15-->
+                <th class="sum printable" style="width: 76px;">IIBB Percep</th><!--16-->
+                <th class="sum printable" style="width: 76px;">Act Vs Perc</th><!--17-->
+                <th class="sum printable" style="width: 76px;">Imp Interno</th><!--18-->
+                <th class="sum printable" style="width: 76px;">Imp Comb</th><!--19-->
+                <th class="sum printable" style="width: 76px;">No Gravados</th><!--20-->
+                <th class="sum printable" style="width: 76px;">Exentos</th><!--21-->
+                <th class="sum printable" style="width: 76px;">Total</th><!--22-->
+                <th class="sum notPrintable" style="width: 76px;" >KW</th><!--23-->
+                <th class="notPrintable">Acciones</th><!--24-->
+                <th class="notPrintable">Creado</th><!--25-->
               </tr>
             </thead>
             <tbody id="bodyTablaCompras">
@@ -414,30 +456,30 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     }
                     ?>
                   <td class="<?php echo $tdClass?>"  title="<?php echo $provedorcuit ?>"><?php echo $provedorcuit?></td><!--3-->
-                  <td class="<?php echo $tdClass?>"  title="<?php echo $provedornombre ?>"><?php echo $provedornombre?></td><!--3-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["condicioniva"]?></td><!--4-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["Actividadcliente"]['Actividade']['nombre']?></td><!--5-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["Localidade"]['Partido']["nombre"].'-'.$compra["Localidade"]["nombre"]?></td><!--6-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["tipocredito"]?></td><!--7-->
+                  <td class="<?php echo $tdClass?>"  title="<?php echo $provedornombre ?>"><?php echo $provedornombre?></td><!--4-->
+                  <td class="<?php echo $tdClass?>"><?php echo $compra["condicioniva"]?></td><!--5-->
+                  <td class="<?php echo $tdClass?>"><?php echo $compra["Actividadcliente"]['Actividade']['nombre']?></td><!--6-->
+                  <td class="<?php echo $tdClass?>"><?php echo $compra["Localidade"]['Partido']["nombre"].'-'.$compra["Localidade"]["nombre"]?></td><!--7-->
+                  <td class="<?php echo $tdClass?>"><?php echo $compra["tipocredito"]?></td><!--8-->
                   <td class="<?php echo $tdClass?>"><?php
                       if(isset($compra["Tipogasto"]["nombre"]))
                       echo $compra["Tipogasto"]["nombre"]
-                      ?></td><!--8-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["tipoiva"]?></td><!--9-->
-                  <td class="<?php echo $tdClass?>"><?php echo $compra["imputacion"]?></td><!--10-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["alicuota"], 2, ",", ".")?>%</td><!--11-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["neto"], 2, ",", ".")?></td><!--12-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["iva"], 2, ",", ".")?></td><!--13-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["ivapercep"], 2, ",", ".")?></td><!--14-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["iibbpercep"], 2, ",", ".")?></td><!--15-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["actvspercep"], 2, ",", ".")?></td><!--16-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impinternos"], 2, ",", ".")?></td><!--17-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impcombustible"], 2, ",", ".")?></td><!--18-->
-                    <td class="<?php echo $tdClass?>"><?php echo number_format($compra["nogravados"], 2, ",", ".")?></td><!--19-->
-                    <td class="<?php echo $tdClass?>"><?php echo number_format($compra["exentos"], 2, ",", ".")?></td><!--20-->
+                      ?></td><!--9-->
+                  <td class="<?php echo $tdClass?>"><?php echo $compra["tipoiva"]?></td><!--10-->
+                  <td class="<?php echo $tdClass?>"><?php echo $compra["imputacion"]?></td><!--11-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["alicuota"], 2, ",", ".")?>%</td><!--12-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["neto"], 2, ",", ".")?></td><!--13-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["iva"], 2, ",", ".")?></td><!--14-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["ivapercep"], 2, ",", ".")?></td><!--15-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["iibbpercep"], 2, ",", ".")?></td><!--16-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["actvspercep"], 2, ",", ".")?></td><!--17-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impinternos"], 2, ",", ".")?></td><!--18-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impcombustible"], 2, ",", ".")?></td><!--19-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["nogravados"], 2, ",", ".")?></td><!--20-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["exentos"], 2, ",", ".")?></td><!--21-->
                   <td class="<?php echo $tdClass?>"><?php echo number_format($compra["total"], 2, ",", ".")?></td><!--22-->
-                    <td class="<?php echo $tdClass?>"><?php echo number_format($compra["kw"], 2, ",", ".")?></td><!--21-->
-                    <td class="<?php echo $tdClass?>">
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["kw"], 2, ",", ".")?></td><!--23-->
+                  <td class="<?php echo $tdClass?>">
                     <?php
                     $paramsCompra=$compra["id"];
                     echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarCompra(".$paramsCompra.")"));
@@ -447,8 +489,8 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     }
                     echo $this->Form->end();
                     ?>
-                  </td><!--23-->
-                    <td class="<?php echo $tdClass?>"><?php echo $compra["created"]; ?></td><!--21-->
+                  </td><!--24-->
+                    <td class="<?php echo $tdClass?>"><?php echo $compra["created"]; ?></td><!--25-->
                 </tr>
                 <?php
               }
@@ -532,55 +574,80 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
               ?>
             </tbody>
             <tfoot>
-              <tr>
-                  <th colspan = 3>Total Compras</th><!--1-->
-                  <th ></th><!--4-->
-                  <th ></th><!--5-->
-                  <th ></th><!--6-->
-                  <th ></th><!--7-->
-                  <th ></th><!--8-->
-                  <th ></th><!--9-->
-                  <th ></th><!--10-->
-                  <th ></th><!--10-->
-                  <th ></th><!--11-->
-                  <th ></th><!--12-->
-                  <th ></th><!--13-->
-                  <th ></th><!--14-->
-                  <th ></th><!--15-->
-                  <th ></th><!--16-->
-                  <th ></th><!--17-->
-                  <th ></th><!--18-->
-                  <th ></th><!--19-->
-                  <th ></th><!--20-->
-                  <th ></th><!--21-->
-                  <th></th><!--22-->
-                  <th></th><!--23 Acciones-->
-                  <th></th><!--24 Creado-->
+                <tr>
+                    <th colspan = 3>Total Compras</th><!--1-->
+                    <th ></th><!--4-->
+                    <th ></th><!--5-->
+                    <th ></th><!--6-->
+                    <th ></th><!--7-->
+                    <th ></th><!--8-->
+                    <th ></th><!--9-->
+                    <th ></th><!--10-->
+                    <th ></th><!--10-->
+                    <th ></th><!--11-->
+                    <th ></th><!--12-->
+                    <th ></th><!--13-->
+                    <th ></th><!--14-->
+                    <th ></th><!--15-->
+                    <th ></th><!--16-->
+                    <th ></th><!--17-->
+                    <th ></th><!--18-->
+                    <th ></th><!--19-->
+                    <th ></th><!--20-->
+                    <th ></th><!--21-->
+                    <th></th><!--22-->
+                    <th></th><!--23 Acciones-->
+                    <th></th><!--24 Creado-->
                 </tr>
                 <tr>
-                  <th colspan = 3>Total Mov. Banc.</th><!--1-->
-                  <th ></th><!--4-->
-                  <th ></th><!--5-->
-                  <th ></th><!--6-->
-                  <th ></th><!--7-->
-                  <th ></th><!--8-->
-                  <th ></th><!--9-->
-                  <th ></th><!--10-->
-                  <th ></th><!--11-->
-                  <th >   <?php echo number_format($movNeto * 1, 2, ",", ".") ?></th><!--12-->
-                  <th >   <?php echo number_format($movIVA * 1, 2, ",", ".") ?></th><!--13-->
-                  <th ></th><!--14-->
-                  <th ></th><!--15-->
-                  <th ></th><!--16-->
-                  <th ></th><!--17-->
-                  <th ></th><!--18-->
-                  <th ></th><!--19-->
-                  <th ></th><!--20-->
-                  <th >   <?php echo number_format($movTotal * 1, 2, ",", ".") ?></th><!--13-->
-
-                  <th></th><!--22-->
-                  <th></th><!--23 Acciones-->
-                  <th></th><!--24 Creado-->
+                    <th colspan = 3>Total Mov. Banc.</th><!--1-->
+                    <th ></th><!--4-->
+                    <th ></th><!--5-->
+                    <th ></th><!--6-->
+                    <th ></th><!--7-->
+                    <th ></th><!--8-->
+                    <th ></th><!--9-->
+                    <th ></th><!--10-->
+                    <th ></th><!--10-->
+                    <th ></th><!--11-->
+                    <th >   <?php echo number_format($movNeto * 1, 2, ".", "") ?></th><!--12-->
+                    <th >   <?php echo number_format($movIVA * 1, 2, ".", "") ?></th><!--13-->
+                    <th ><?php echo number_format(0, 2, ".", "") ?></th><!--14-->
+                    <th ><?php echo number_format(0, 2, ".", "") ?></th><!--15-->
+                    <th ><?php echo number_format(0, 2, ".", "") ?></th><!--16-->
+                    <th ><?php echo number_format(0, 2, ".", "") ?></th><!--17-->
+                    <th ><?php echo number_format(0, 2, ".", "") ?></th><!--18-->
+                    <th ><?php echo number_format(0, 2, ".", "") ?></th><!--19-->
+                    <th ><?php echo number_format(0, 2, ".", "") ?></th><!--20-->
+                    <th >   <?php echo number_format($movTotal * 1, 2, ".", "") ?></th><!--13-->
+                    <th></th><!--22-->
+                    <th></th><!--23 Acciones-->
+                    <th></th><!--24 Creado-->
+                </tr>
+                <tr>
+                    <th colspan = 3>Total</th><!--1-->
+                    <th ></th><!--4-->
+                    <th ></th><!--5-->
+                    <th ></th><!--6-->
+                    <th ></th><!--7-->
+                    <th ></th><!--8-->
+                    <th ></th><!--9-->
+                    <th ></th><!--10-->
+                    <th ></th><!--10-->
+                    <th ></th><!--11-->
+                    <th ><?php echo number_format($movNeto * 1, 2, ",", ".") ?></th><!--12-->
+                    <th ><?php echo number_format($movIVA * 1, 2, ",", ".") ?></th><!--13-->
+                    <th ></th><!--14-->
+                    <th ></th><!--15-->
+                    <th ></th><!--16-->
+                    <th ></th><!--17-->
+                    <th ></th><!--18-->
+                    <th ></th><!--19-->
+                    <th ></th><!--20-->
+                    <th ><?php echo number_format($movTotal * 1, 2, ",", ".") ?></th><!--13-->
+                    <th></th><!--22-->
+                    <th></th><!--23 Acciones-->
+                    <th></th><!--24 Creado-->
                 </tr>
               </tfoot>
           </table>

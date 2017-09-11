@@ -229,35 +229,65 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                         echo $this->Form->button(
                             'Sumas y Saldos',
                             array(
-                                'class'=>"buttonImpcliListo progress-button state-loading",
+                                'class'=>"buttonImpcliRealizado progress-button state-loading",
                                 'onClick'=>"abrirsumasysaldos(".$paramsPrepPapeles.")",
+                                'style'=>'color:#1e88e5',
                                 'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
                             ),
                             array());
+                        $tieneasientodeventas=false;
+                        $tieneasientodecompras=false;
+                        $tieneasientoderetenciones=false;
+                        foreach ($cliente["Asiento"] as $asiento ){
+                            if($asiento['tipoasiento']=='ventas'){
+                                $tieneasientodeventas=true;
+                            }
+                            if($asiento['tipoasiento']=='compras'){
+                                $tieneasientodecompras=true;
+                            }
+                            if($asiento['tipoasiento']=='retencionessufridas'){
+                                $tieneasientoderetenciones=true;
+                            }
+                        }
+                        if($tieneasientodeventas){
+                            $buttonclass="buttonImpcliRealizado";
+                        }else{
+                            $buttonclass="buttonImpcliListo";
+                        }
                         echo $this->Form->button(
                             'As. Ventas',
                             array(
-                                'class'=>"buttonImpcliListo progress-button state-loading",
+                                'class'=>$buttonclass." progress-button state-loading",
                                 'onClick'=>"contabilizarventas(".$paramsPrepPapeles.")",
-                                'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
+                                'id'=>'buttonAsVenta'.$cliente['Cliente']['id'],
                             ),
                             array());
+                        if($tieneasientodecompras){
+                            $buttonclass="buttonImpcliRealizado";
+                        }else{
+                            $buttonclass="buttonImpcliListo";
+                        }
                         echo $this->Form->button(
                             'As. Compras',
                             array(
                                 'onClick'=>"contabilizarcompras(".$paramsPrepPapeles.")",
-                                'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
+                                'id'=>'buttonAsCompra'.$cliente['Cliente']['id'],
                                 'data-style'=>"top-line",
-                                'class'=>"buttonImpcliListo progress-button state-loading",
+                                'class'=>$buttonclass." progress-button state-loading",
                             ),
                             array());
+                        if($tieneasientoderetenciones){
+                            $buttonclass="buttonImpcliRealizado";
+                        }else{
+                            $buttonclass="buttonImpcliListo";
+                        }
                         echo $this->Form->button(
                             'As. Retenciones sufridas',
                             array(
                                 'onClick'=>"contabilizarretencionessufridas(".$paramsPrepPapeles.")",
                                 'id'=>'buttonRetencionessufridas'.$cliente['Cliente']['id'],
                                 'data-style'=>"top-line",
-                                'class'=>"buttonImpcliListo progress-button state-loading",
+                                'class'=>$buttonclass." progress-button state-loading",
                             ),
                             array());
                         foreach ($cliente["Impcli"] as $impcli){
@@ -302,13 +332,17 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                                     $abreviacionCBUTipo = "cc $";
                                     break;
                                 }
+                                if(count($cbu['Asiento'])>0){
+                                    $buttonclass="buttonImpcliRealizado";
+                                }else{
+                                    $buttonclass="buttonImpcliListo";
+                                }
                                 echo $this->Form->button(
                                     "As. ".$impcli['Impuesto']['nombre']." ".substr($cbu['numerocuenta'], -5)." ".$abreviacionCBUTipo,
                                     array(
-                                        'class'=>'buttonImpcliListo progress-button state-loading',
+                                        'class'=>$buttonclass.' progress-button state-loading',
                                         'onClick'=>"contabilizarBanco('".$cliente['Cliente']['id']."','".$periodoSel."','".$impcli['id']."','".$cbu['id']."')",
-
-                                        'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
+                                        'id'=>'buttonCbu'.$cbu['id'],
                                     ),
                                     array());
                             }
@@ -559,28 +593,59 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
                   $paramsCargar= $eventoID.",'".$periodoSel."','".$cliente['Cliente']['id']."'";
                   $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente' ,'onClick'=>"verFormCargar(".$paramsCargar.")");
                   //echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
-                  $buttonclass = "buttonImpcliListo";
+                    $onclickcompras = "verFormCargarCompras('".$cliente['Cliente']['id']."','".$periodoSel."')";
+                    $onclickventas = "verFormCargarVentas('".$cliente['Cliente']['id']."','".$periodoSel."')";
+                    $titlecompras = "Se puede cargar compras por que esta configurado Ganancias";
+                    $titleventas = "Se puede cargar ventas por que esta configurado Ganancias";
+                    //solo se debe poder hacer compras si se configuro ganancias, sino NO!
+                    //a menos que sea monotributista y no tenga ganancias activado tonces si
+                    $tieneGananciasConfigurado = 1;
+                    foreach ($cliente['Actividadcliente'] as $actividadcliente) {
+                        if(count($actividadcliente['Cuentasganancia'])>0){
+                            $tieneGananciasConfigurado *= 1;
+                        }else{
+                            $tieneGananciasConfigurado *= 0;
+                        }
+                    }
+                    if($tieneGananciasConfigurado==0){
+                        //si tiene monotributo pero NO ganancias dejalo cargar
+                        if($cliente['impuestosactivos']['monotributo']&&!$cliente['impuestosactivos']['ganancias']){
+                            $titlecompras = "Se puede cargar compras por que es monotributista y no tiene ganancias";
+                            $titleventas = "Se puede cargar ventas por que es monotributista y no tiene ganancias";
+                        }else{
+                            $titlecompras = "NO se puede cargar por que no tiene configurado Ganancias";
+                            $titleventas = "NO se puede cargar por que no tiene configurado Ganancias";
+                            $onclickcompras="callAlertPopint('Antes de cargar Compras Por Favor configurar el impuesto Ganancias para este contribuyente');";
+                            $onclickventas="callAlertPopint('Antes de cargar Ventas Por Favor configurar el impuesto Ganancias para este contribuyente');";
+                        }
+                    }
 
-                  if($evento['ventascargadas']){
-                    $buttonclass = "buttonImpcliRealizado";
-                  }
-                  echo $context->Form->button(
-                    "Ventas",
-                    array(
-                        'class'=>$buttonclass.' progress-button state-loading',
-                        'onClick'=>"verFormCargarVentas('".$cliente['Cliente']['id']."','".$periodoSel."')",
-                        'id'=>'buttonCargaVenta'.$cliente['Cliente']['id'],
-                    ),
-                    array());
+                    $buttonclass = "buttonImpcliListo";
+                    if($evento['ventascargadas']){
+                      $buttonclass = "buttonImpcliRealizado";
+                    }
+                    echo $context->Form->button(
+                        "Ventas",
+                        array(
+                            'title'=>$titleventas,
+                            'class'=>$buttonclass.' progress-button state-loading',
+                            'onClick'=>$onclickventas,
+                            'id'=>'buttonCargaVenta'.$cliente['Cliente']['id'],
+                        ),
+                        array()
+                    );
+
                     $buttonclass = "buttonImpcliListo";
                     if($evento['comprascargadas']){
                       $buttonclass = "buttonImpcliRealizado";
                     }
+
                     echo $context->Form->button(
                         "Compras",
                         array(
+                            'title'=>$titlecompras,
                             'class'=>$buttonclass.' progress-button state-loading',
-                            'onClick'=>"verFormCargarCompras('".$cliente['Cliente']['id']."','".$periodoSel."')",
+                            'onClick'=>$onclickcompras,
                             'id'=>'buttonCargaCompra'.$cliente['Cliente']['id'],
                         ),
                         array());
@@ -685,7 +750,7 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
                 $confImg=array('width' => '20', 'height' => '20', 'title' => 'Pendiente' ,'onClick'=>"verFormInformar(".$paramsSolicitar.")");
     //            echo $context->Html->image('ic_add_circle_outline_black_18dp.png',$confImg);
 
-                $buttonclass = "buttonImpcliListo";
+                $buttonclass = "buttonImpcliRealizado";
 
                  echo $context->Form->create('clientes',array('action' => 'informefinancierotributario','target'=>'_blank'));
 
@@ -704,14 +769,13 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
                                 'value' => substr($periodoSel, 3, 6)
                             )
                         );
-
                     $options = array(
                       'label' => "Inf. Tributario Financ.",
                       'type' => 'button',
                       'div' => false,
                       'class' => $buttonclass.' progress-button state-loading',
+                      'style'=>'color:#1e88e5',
                       'onClick' => 'submitparent(this)',
-
                     );
                 echo $context->Form->end($options);
 
@@ -719,13 +783,14 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
                   $buttonclass = "buttonImpcli4";
                 }
               if($cliente['impuestosactivos']['tienebanco']){
-                  $buttonclass="buttonImpcliListo  progress-button state-loading";
+                  $buttonclass="buttonImpcliRealizado  progress-button state-loading";
                   $paramsPrepPapeles= "'".$cliente['Cliente']['id']."','".$periodoSel."'";
 
                   echo $context->Form->button(
                       'Acreditaciones depuradas',
                       [
                           'class'=>$buttonclass,
+                          'style'=>'color:#1e88e5',
                           'onClick'=>"verCuentasDepuradas(".$paramsPrepPapeles.")",
                           'id'=>'buttonCuentaDepurada'.$cliente['Cliente']['id'],
                       ],
@@ -948,7 +1013,6 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
         case 37/*Casas Particulares*/:
             $onclick = 'verPapelDeTrabajoCasasParticulares('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
             break;
-
         default:
             if($impcli['Impuesto']['organismo']=='sindicato'){
                 $onclick = 'verPapelDeTrabajoSindicato('."'".$periodo."'".','."'".$impcliid."'".')';
@@ -956,12 +1020,24 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
             break;
     }
 
+    $onclickbotonimpcli = "papelesDeTrabajo(".$paramsPrepPapeles.")";
+    $onclickbotonpagar = "loadPagar('".$periodo."','".$impcliid."','".$cliente['Cliente']['id']."')";
+    //si el impuesto es informativo se deberia marcar como realizado nada mas por que no se paga
+    //a menos que tenga el papel de trabajo echo
+    if($impcli['Impuesto']['tipo']=='informativo'){
+        $onclickbotonimpcli = "marcarImpcliComoRealizado(".$paramsPrepPapeles.")";
+        $onclickbotonpagar = 'callAlertPopint("Este impuesto no se paga")';
+        $textoAMostrar = $impcli['Impuesto']['abreviacion'] . ' 
+          <label style="color: inherit;display: initial">
+          </label>';
+    }
+
     echo $context->Form->button(
       $textoAMostrar,
     array(
       'data-style'=>"top-line",
       'class'=>$buttonclass." progress-button state-loading",
-      'onClick'=>"papelesDeTrabajo(".$paramsPrepPapeles.")",
+      'onClick'=>$onclickbotonimpcli,
       'id'=>'buttonImpCli'.$impcli['id'],
       'data-sort'=> $impcli['Impuesto']['orden'],
       'style'=> 'float:left;margin:0px;min-height: 45px;padding-right: 22px;',
@@ -982,7 +1058,7 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
         'width' => '22',
         'height' => '22',
         'title' => 'Pagar este impuesto',
-        'onClick'=>"loadPagar('".$periodo."','".$impcliid."','".$cliente['Cliente']['id']."')",
+        'onClick'=>$onclickbotonpagar,
         'style'=>' position: absolute;bottom: 0px;right: 0px;float:right',
     );
     echo $context->Html->image($imgagenpago.".png",$confImgPago);

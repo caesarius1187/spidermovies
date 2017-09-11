@@ -3,6 +3,10 @@ if(count($empleado['Valorrecibo'])==0){
     //este empleado no tiene liquidacion
     return "";
 }
+if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
+    /*Servicio domestico no tiene q responder recibo*/
+    return "";
+}
 ?>
 <div  style="width:100%;height: 1px; /*break-before: page!important*/"></div>
 <div id="reciboContenedor"  style="width: 100%;" class="parafiltrarempleados" valorparafiltrar="<?php echo $empleado['Empleado']['nombre']." ".$empleado['Empleado']['cuit']?>">
@@ -46,6 +50,7 @@ if(count($empleado['Valorrecibo'])==0){
                                 //calculo de la cantidad para Acuerdo Remunerativo
                                 $cantidad=
                                     $valores[12]['valor']/*Días Trabajados u Horas */
+                                    +$valores[13]['valor']/*Vacaciones*/
                                     +$valores[55]['valor']/*Inasistencias Pagas*/
                                     -$valores[135]['valor']/*Suspensiones*/
                                     -$valores[56]['valor']/*Inasistencias Descontadas*/;
