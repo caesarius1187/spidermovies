@@ -85,7 +85,6 @@ class ImpclisController extends AppController {
                         return;
                     }
                 }
-
             }
 			if($this->request->data['Impcli']['impuesto_id']=='19'/*IVA*/){
 				$periodoDesde = $this->request->data['Impcli']['alta'];
@@ -426,11 +425,11 @@ class ImpclisController extends AppController {
 				'Impcliprovincia'=>array(
 					'Partido',
 					'conditions'=>array(
-                            'CONCAT( SUBSTRING(`Impcliprovincia`.`periodo` ,4,7),SUBSTRING(`Impcliprovincia`.`periodo` ,0,3)) = (
-                                select max(CONCAT( SUBSTRING(`periodo`,4,7),SUBSTRING(`periodo`,0,3) )) from  `sigesec`.`impcliprovincias`
+                            'CONCAT( SUBSTRING(`Impcliprovincia`.`periodo` ,4,7),SUBSTRING(`Impcliprovincia`.`periodo` ,1,2)) = (
+                                select max(CONCAT( SUBSTRING(`periodo`,4,7),SUBSTRING(`periodo`,1,2) )) from  `sigesec`.`impcliprovincias`
                                 where `impcli_id` = ('.$impcliid.')
-                                and CONCAT( SUBSTRING(`periodo` ,4,7),SUBSTRING(`periodo` ,0,3)) <=
-                                CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,0,3))
+                                and CONCAT( SUBSTRING(`periodo` ,4,7),SUBSTRING(`periodo` ,1,2)) <=
+                                CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))
                             )'
 						)
 					)
@@ -595,6 +594,7 @@ class ImpclisController extends AppController {
 		$this->loadModel('Actividadcliente');
 		$this->loadModel('Cuenta');
 		$this->loadModel('Cliente');
+		$this->loadModel('Tipogasto');
 		$this->set('periodo',$periodo);
 		$this->set('impcliid',$impcliid);
         $cuentasdeActVarias = $this->Cuenta->cuentasdeActVarias;

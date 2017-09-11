@@ -633,7 +633,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                 <td style="width:50px">
                     <?php
                     echo $this->Form->input('Filtro.0.comprobante_id', array(
-                            'empty' => 'Cmprobante',
+                            'empty' => 'Comprobante',
                             'style'=>"width: 50px;",
                         )
                     );?>
@@ -863,6 +863,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'label' => ($i + 9) % 10 == 0 ? 'Cliente' : '',
                                             'style' => 'width:84px;',
                                             'class' => 'filtrosubcliente',
+                                            'paraFiltrar' => $venta['Venta']['nombre']." ".$venta['Venta']['identificacionnumero']." ".$venta['Venta']['identificacionnumero'],
                                             'disabled' => 'disabled',
                                             'value' => $venta['Venta']['nombre']
                                         )

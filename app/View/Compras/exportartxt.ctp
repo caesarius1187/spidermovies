@@ -158,7 +158,11 @@
                 }
             //Buscar cantidad de alicuotas para esta factura
     //        $linecompra['operacioncodigo']=substr($line, 238,1);
-            $lineaCompra .= str_pad("0", 1, "0", STR_PAD_LEFT);
+            if($compra['Compra']['alicuota']==0){
+                $lineaCompra .= str_pad("E", 1, "0", STR_PAD_LEFT);
+            }else{
+                $lineaCompra .= str_pad(0, 1, "0", STR_PAD_LEFT);
+            }
     //        $linecompra['creditofiscalcomputable']=substr($line, 239,15);
             $lineaCompra .= str_pad("0", 15, "0", STR_PAD_LEFT);
     //       TODO: No estamos guardando creditofiscalcomputable en compras
@@ -279,7 +283,11 @@
                     $alicCodigoAMostrar = $alicCodigo;
                 }
             }
-            $lineaAlicuota .= str_pad($alicCodigoAMostrar, 4, "0", STR_PAD_LEFT);
+            if($alicuota['Compra']['iva']*1==0){
+                $lineaAlicuota .= str_pad("0003", 4, "0", STR_PAD_LEFT);
+            }else{
+                $lineaAlicuota .= str_pad($alicCodigoAMostrar, 4, "0", STR_PAD_LEFT);
+            }
 //            $lineAlicuota['impuestoliquidado'] = substr($line, 69, 13).'.'.substr($line, 82, 2);
             $lineaAlicuota .= str_pad(number_format($alicuota['Compra']['iva'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             echo $lineaAlicuota."</br>";

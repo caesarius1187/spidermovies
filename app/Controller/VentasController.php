@@ -970,7 +970,7 @@ class VentasController extends AppController {
 
 		$conditionsVentas = [
 			'fields'=>[
-				'Venta.*','Count(*) as cantalicuotas','SUM(Venta.total) as totalfactura'
+				'Venta.*','Count(*) as cantalicuotas','SUM(Venta.total) as totalfactura','Venta.total','Venta.alicuota'
 			],
 			'group'=>[
 				'Venta.puntosdeventa_id',
@@ -1064,10 +1064,16 @@ class VentasController extends AppController {
 				'contain' =>$containpuntosdeventa,
 				'conditions' =>$conditionspuntosdeventa,
 				'fields'=>$fieldspuntosdeventa)
-			);
+		);
 		//Subclientes
-		$conditionsSubClientes = array('Subcliente.cliente_id' => $cliid,);
-		$subclientes = $this->Subcliente->find('list',array('conditions' =>$conditionsSubClientes));
+		$conditionsSubClientes = array(
+				'conditions' =>[
+					'Subcliente.cliente_id' => $cliid,
+				],
+			
+			);
+		$subclientes = $this->Subcliente->find('list',$conditionsSubClientes
+		);
 		//Localidades
 		$conditionsLocalidades = array(
 			'contain'=>'Partido',

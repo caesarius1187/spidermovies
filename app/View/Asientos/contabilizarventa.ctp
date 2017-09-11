@@ -34,7 +34,7 @@ if(isset($error)){ ?>
         $explicacionAsiento = "El asiento ya estaba cargado asi que vamos a modificarlo.";
     }
 
-    echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add']);
+    echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add','style'=>' min-width: max-content;']);
     echo $this->Form->input('Asiento.0.id',['default'=>$id]);
     echo $this->Form->input('Asiento.0.nombre',['default'=>$nombre]);
     echo $this->Form->input('Asiento.0.descripcion',['default'=>$descripcion]);
@@ -110,7 +110,7 @@ if(isset($error)){ ?>
                     $debe = $cuenta110399001;
                 }
                 break;
-            case '1069'/*130113001 Dinero en Efectivo xX*/:
+            case '1051'/*130111001 Clientes*/:
                 //3 esta cuenta se va a usar si estamos laburando con 3ra categoria empresas
                 //sino hay que usar 130113001 1069
 

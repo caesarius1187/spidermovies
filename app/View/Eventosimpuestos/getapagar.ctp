@@ -11,7 +11,7 @@ $(document).ready(function() {
 </SCRIPT>
 <div>
 <?php /*Este es el formulario para PAGAR papeles de Trabajo YA generados */ ?>
-<h3><?php echo __('Papeles preparados para pagar en : '.$impclinombre); ?></h3>
+<h3><?php echo __('Conceptos a pagar de : '.$impclinombre); ?></h3>
 <?php echo $this->Form->create('Eventosimpuesto',array('action'=>'realizartarea13', 'id'=>'FormPagarEventoImpuesto')); ?>
 <table cellpadding="0" cellspacing="0" id="tablePapelesPreparados" class="tbl_getpagar" style="width: auto;">
 	<tr>
@@ -28,9 +28,9 @@ $(document).ready(function() {
           		break;	          	
           	}?>
 			<th>Fch. Vto.</th>
-			<th>Monto</th>
-			<th>Monto Realizado</th>
-			<th>Fch. Realizado</th>
+			<th>A Pagar</th>
+			<th>Monto Pagado</th>
+			<th>Fch. Pagado</th>
 			<?php 
 			//los sindicatos no tienen monto a favor ni el impuesto Autonomo(id=14)
 			if($impuesto['organismo']!='sindicato'&&$impuesto['id']!=14){ ?>
@@ -53,8 +53,11 @@ $(document).ready(function() {
       		case 'provincia':
           		?>
           		<td>
-
-          			<?php echo $this->Form->input('Eventosimpuesto.'.$i.'.partido_id',array('value'=>$eventosimpuesto['Eventosimpuesto']['partido_id'],'label'=>false, 'style' => 'width:80px','disabled'=>'disabled')); ?>
+          			<?php echo $this->Form->input('Eventosimpuesto.'.$i.'.partido_id',array(
+						'value'=>$eventosimpuesto['Eventosimpuesto']['partido_id'],
+						'label'=>false,
+						'style' => 'width:160px',
+						'disabled'=>'disabled')); ?>
       			</td>
           		<?php 
           		break;
@@ -68,7 +71,12 @@ $(document).ready(function() {
       		case 'item':
       			?>
       			<td>
-      				<?php echo $this->Form->input('Eventosimpuesto.'.$i.'.item',array('value'=>$eventosimpuesto['Eventosimpuesto']['item'],'label'=>false, 'style' => 'width:80px','disabled'=>'disabled')); ?>
+      				<?php echo $this->Form->input('Eventosimpuesto.'.$i.'.item',array(
+						'value'=>$eventosimpuesto['Eventosimpuesto']['item'],
+						'label'=>false,
+						'style' => 'width:185px',
+						'orden' => $i,
+						'disabled'=>'disabled')); ?>
       			</td>
       			<?php 
       		break;	          	
@@ -85,7 +93,9 @@ $(document).ready(function() {
 			?></td>
 		<td ><?php 
 			echo $this->Form->input('Eventosimpuesto.'.$i.'.montovtoreal',array(
-				'type'=>'hidden','value'=>$eventosimpuesto['Eventosimpuesto']['montovto']));
+				'type'=>'hidden',
+				'value'=>$eventosimpuesto['Eventosimpuesto']['montovto']
+			));
 			echo $this->Form->input('Eventosimpuesto.'.$i.'.montovto',array(
 												'value'=>"$".number_format($eventosimpuesto['Eventosimpuesto']['montovto'], 2, ",", "."),
 												'disabled'=>'disabled',												
@@ -136,9 +146,10 @@ $(document).ready(function() {
 		<?php echo $this->Form->end();?>
 	</div>
 </div>
+
 <div id="divContenedorContabilidad" style="margin-top:10px;width: 100%;min-width: 600px;">
 	<div class="index_pdt">
-		<h3><?php echo __('Contabilizar Pago de : '.$impclinombre); ?></h3>
+		<h3><?php echo __('Asiento de Pago de : '.$impclinombre); ?></h3>
 		<?php
 		$id = 0;
 		$nombre = "Pago de impuesto: ".$impclinombre;
@@ -185,6 +196,10 @@ $(document).ready(function() {
 			$debeyacargado=0;
 			$key=0;
 
+			$relacionar = "no";
+			$relacionarA = "";//este campo va a tomar valor solo cuando el debe tenga que tomar valor
+			//segun lo que se paga cuando se esta completando el formulario para registrar el pago.
+
 			/*Aca vamos a reescribir el debe y el haber si es que corresponde para esta cuenta con este cliente*/
 			//Este switch controla todas las cuetnas que hay en "ventas" obligadamente
 			switch ($asientoestandar['Cuenta']['id']){
@@ -220,6 +235,8 @@ $(document).ready(function() {
 				$debe = $cuentaAPagar;
 				break;
 				case '1383'/*210302001 Ap. Seguridad Social a Pagar*/:
+					$relacionar = "si";
+					$relacionarA = "301EmpleadorAportesSegSocial";
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -242,6 +259,8 @@ $(document).ready(function() {
 					$debe = $cuentaAPagar;
 					break;
 				case '1384'/*210302002 Ap. Obra Social a Pagar*/:
+					$relacionar = "si";
+					$relacionarA = "302AportesObrasSociales";
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -253,6 +272,8 @@ $(document).ready(function() {
 					$debe = $cuentaAPagar;
 					break;
 				case '1419'/*210303001 Contr. Seg. Social a Pagar*/:
+					$relacionar = "si";
+					$relacionarA = "351ContribucionesSegSocial";
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -264,6 +285,8 @@ $(document).ready(function() {
 					$debe = $cuentaAPagar;
 					break;
 				case '1420'/*210303002 Contr. Obra Social a Pagar*/:
+					$relacionar = "si";
+					$relacionarA = "352ContribucionesObraSocial";
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -275,6 +298,8 @@ $(document).ready(function() {
 					$debe = $cuentaAPagar;
 					break;
 				case '1421'/*210303003 ART a Pagar*/:
+					$relacionar = "si";
+					$relacionarA = "312AsegRiesgodeTrabajoL24557";
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -286,6 +311,8 @@ $(document).ready(function() {
 					$debe = $cuentaAPagar;
 					break;
 				case '1422'/*210303004 Seguro de Vida Colectivo a Pag*/:
+					$relacionar = "si";
+					$relacionarA = "28SegurodeVidaColectivo";
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -297,6 +324,8 @@ $(document).ready(function() {
 					$debe = $cuentaAPagar;
 					break;
 				case '1423'/*210303005 RENATRE a pagar*/:
+					$relacionar = "si";
+					$relacionarA = "935RENATEA";
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -307,7 +336,9 @@ $(document).ready(function() {
 					}
 					$debe = $cuentaAPagar;
 					break;
-				case '3377'/*210302062 Ap. RENATEA a Pagar */:
+				case '1404'/*210302062 Ap. RENATEA a Pagar */:
+					$relacionar = "si";
+					$relacionarA = "360ContribuciónRENATEA";
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -319,7 +350,7 @@ $(document).ready(function() {
 					$debe = $cuentaAPagar;
 					break;
 				case '3383'/*230102010 Ley 260663 Aportes Servicios Domesticos a Pagar*/:
-                    $cuentaAPagar = 0;
+					$cuentaAPagar = 0;
                     //Cargar la venta total
                     foreach ($eventosimpuestos as $eventosimpuesto){
                         //aca vamos a controlar que el item que tenga caqrgado coincida con el de la cuenta
@@ -408,7 +439,10 @@ $(document).ready(function() {
                 'label' => ($i != 0) ? false : 'Debe',
                 'class'=>'inputDebe',
                 'yacargado'=>$debeyacargado,
-				'default'=>number_format($debe, 2, ".", "")
+				'default'=>number_format($debe, 2, ".", ""),
+				'relacionara'=>$relacionarA,
+				'relacionar'=>$relacionar,
+				'orden'=>$i,
 			]);
             $totalDebe += $debe;
             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
@@ -433,6 +467,7 @@ $(document).ready(function() {
 			switch ($cuentaspagoimpuesto['Cuenta']['id']){
 				/*Casos comun a todas las ventas*/
 				case '5' /*110101002 Caja Efectivo*/:
+				case '1069' /*130113001 Dinero en Efectivo*/:
 					$cuentaAPagar = 0;
 					//Cargar la venta total
 					foreach ($eventosimpuestos as $eventosimpuesto){
@@ -481,7 +516,10 @@ $(document).ready(function() {
                 'label' => ($i != 0) ? false : 'Haber',
                 'class'=>'inputHaber',
                 'yacargado' => $haberyacargado,
-				'default' => $haber
+				'default' => $haber,
+				'cuentaasientopago' => 'si',
+				'cuentacontable' => $cuentaspagoimpuesto['Cuenta']['id'],
+				'orden' => $i,
 			]);
             $totalHaber += $haber;
             echo "</br>";

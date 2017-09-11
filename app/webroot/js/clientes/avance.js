@@ -325,6 +325,42 @@ $(document).ready(function() {
    
       return false;
   }  
+    function marcarImpcliComoRealizado(periodo,impcli){
+        var r = confirm("Esta seguro que desea marcar el impuesto como realizado?.");
+        if (r == true) {
+         //var datas =  $id = null,$tarea = null,$periodo= null,$implcid= null,$estadoTarea=null;
+         var data ="";
+         $.ajax({
+               type: "post",  // Request method: post, get
+               url: serverLayoutURL+"/eventosimpuestos/realizareventoimpuesto/0/tarea5/"+periodo+"/"+impcli+"/realizado", // URL to request
+               data: data,  // post data
+               success: function(response) {
+                   var mirespuesta = jQuery.parseJSON(response);
+                   callAlertPopint(mirespuesta.respuesta);
+                   $('#buttonImpCli'+impcli).removeClass('buttonImpcliListo');
+
+                   var srcPT = $("#impPT"+impcli).attr('src');
+                   var srcPago = $("#impPago"+impcli).attr('src');
+                   $('#buttonImpCli'+impcli).addClass('buttonImpcliRealizado');
+                   srcPT = srcPT.replace("ptgrey.png", "ptgreen.png");
+                   srcPago = srcPago.replace("pesogrey.png", "pesogreen.png");
+
+                   $("#impPT"+impcli).attr('src',srcPT);
+                   $("#impPago"+impcli).attr('src',srcPago);
+               },
+               error:function (XMLHttpRequest, textStatus, errorThrown) {
+                      alert(textStatus);
+
+              }
+          });
+          return false;
+        }else{
+          callAlertPopint("No se marco el impuesto como realizado");
+          return false;
+        }
+
+      return false;
+  }
 /* 5  Eliminar Evento Impuesto */
     function eliminarEventoImpuesto(evenimpid){
         var r = confirm("Esta seguro que desea eliminar este registro?. Es una accion que no podra deshacer.");
@@ -692,6 +728,21 @@ $(document).ready(function() {
                 );
                 //aca vamos a mover el div de asientos al de eventos impuesto
                 $('#divContenedorContabilidad').detach().appendTo('#divAsientoDePagoEventoImpuesto');
+
+                $( "input[relacionar='si']" ).each(function(){
+                    var valObjetivo = $(this).attr('relacionara');
+                    var ordenCuenta = $(this).attr('orden');
+                    $( "input[value="+valObjetivo+"]" ).each(function(){
+                        var orden = $(this).attr('orden');
+                        $("#Eventosimpuesto"+orden+"Montorealizado").on('change paste', function() {
+                            var valorDebe = $(this).val()*1 + 0;
+                            $("#Asiento0Movimiento"+ordenCuenta+"Debe").val(valorDebe);
+                            calcularValorCaja();
+                        });
+                        $("#Eventosimpuesto"+orden+"Montorealizado").trigger('change');
+                    });
+                });
+
                 $(".inputDebe").each(function () {
                     $(this).change(addTolblTotalDebeAsieto);
                 });
@@ -1059,6 +1110,25 @@ $(document).ready(function() {
             }
         });
     }
+    function calcularValorCaja() {
+        var valorCaja = 0;
+        $( "input[relacionar='si']" ).each(function(){
+            var valObjetivo = $(this).attr('relacionara');
+            var ordenCuenta = $(this).attr('orden');
+            $( "input[value="+valObjetivo+"]" ).each(function(){
+                valorCaja += $("#Asiento0Movimiento"+ordenCuenta+"Debe").val()*1;
+            });
+        });
+        $( "input[cuentaasientopago='si']" ).each(function(){
+            var ordenCuenta = $(this).attr('orden');
+            $( "input[cuentacontable='5']" ).each(function(){
+                $(this).val(valorCaja.toFixed(2));
+            });
+            $( "input[cuentacontable='1069']" ).each(function(){
+                $(this).val(valorCaja.toFixed(2));
+            });
+        });
+    }
     function addTolblTotalDebeAsieto(event) {
         var debesubtotal = 0;
         $(".inputDebe").each(function () {
@@ -1070,7 +1140,6 @@ $(document).ready(function() {
                 $(this).removeClass("movimientoConValor")
                 $(this).addClass("movimientoSinValor");
             }
-
         });
         $("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
         showIconDebeHaber()

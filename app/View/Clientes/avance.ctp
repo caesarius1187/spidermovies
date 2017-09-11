@@ -621,18 +621,19 @@ function mostrarEventoCliente($context, $evento, $periodoSel, $tareaNombre, $tar
                     }
 
                     $buttonclass = "buttonImpcliListo";
-                  if($evento['ventascargadas']){
-                    $buttonclass = "buttonImpcliRealizado";
-                  }
-                  echo $context->Form->button(
-                    "Ventas",
-                    array(
-                        'title'=>$titleventas,
-                        'class'=>$buttonclass.' progress-button state-loading',
-                        'onClick'=>$onclickventas,
-                        'id'=>'buttonCargaVenta'.$cliente['Cliente']['id'],
-                    ),
-                    array());
+                    if($evento['ventascargadas']){
+                      $buttonclass = "buttonImpcliRealizado";
+                    }
+                    echo $context->Form->button(
+                        "Ventas",
+                        array(
+                            'title'=>$titleventas,
+                            'class'=>$buttonclass.' progress-button state-loading',
+                            'onClick'=>$onclickventas,
+                            'id'=>'buttonCargaVenta'.$cliente['Cliente']['id'],
+                        ),
+                        array()
+                    );
 
                     $buttonclass = "buttonImpcliListo";
                     if($evento['comprascargadas']){
@@ -1020,10 +1021,15 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
     }
 
     $onclickbotonimpcli = "papelesDeTrabajo(".$paramsPrepPapeles.")";
+    $onclickbotonpagar = "loadPagar('".$periodo."','".$impcliid."','".$cliente['Cliente']['id']."')";
     //si el impuesto es informativo se deberia marcar como realizado nada mas por que no se paga
     //a menos que tenga el papel de trabajo echo
     if($impcli['Impuesto']['tipo']=='informativo'){
         $onclickbotonimpcli = "marcarImpcliComoRealizado(".$paramsPrepPapeles.")";
+        $onclickbotonpagar = 'callAlertPopint("Este impuesto no se paga")';
+        $textoAMostrar = $impcli['Impuesto']['abreviacion'] . ' 
+          <label style="color: inherit;display: initial">
+          </label>';
     }
 
     echo $context->Form->button(
@@ -1052,7 +1058,7 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
         'width' => '22',
         'height' => '22',
         'title' => 'Pagar este impuesto',
-        'onClick'=>"loadPagar('".$periodo."','".$impcliid."','".$cliente['Cliente']['id']."')",
+        'onClick'=>$onclickbotonpagar,
         'style'=>' position: absolute;bottom: 0px;right: 0px;float:right',
     );
     echo $context->Html->image($imgagenpago.".png",$confImgPago);

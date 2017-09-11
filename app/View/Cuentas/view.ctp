@@ -47,6 +47,15 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
                 }
             });
 		});
+		$('#cbxOcultarcuentas').change(function () {
+
+			if($(this).prop('checked') == true){
+				$(".cuenta").hide();
+			}else{
+				$(".cuenta").show();
+			}
+		});
+
 		/**
 		 * Jumps to the element matching the currentIndex
 		 */
@@ -108,6 +117,15 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
 				}
 		});
 	}
+    function showhide(numero){
+        $("."+numero).each(function(){
+            if($(this).is(":visible")){
+                $(this).hide();
+            }else{
+                $(this).show();
+            }
+        });
+    }
 </script>
 
 <div class="index">
@@ -134,6 +152,14 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
 	</div>
 </div>
 <div id="divPlanCuentasStandard" class="index">
+	<?php
+	echo $this->Form->input('ocultarcuentas',[
+		'id'=>'cbxOcultarcuentas',
+		'label'=>'Ocultar cuentas',
+		'type'=>'checkbox'
+	]);
+	?>
+
 	<table id="tblPlanDeCuentas">
 		<thead>
 			<tr>
@@ -154,7 +180,7 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
 		<tbody>
 			<?php
 			$trStyle="background-color:#2a36b1;color:white;";
-
+            $lastRubro = "110000000";
 			foreach ($cuentas as $cuenta)
 			{
 				switch ($cuenta['Cuenta']['level']){
@@ -183,9 +209,21 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
 
 				$CuentaId = $cuenta['Cuenta']['id'];
 				$CuentaClienteId = isset($cuenta['Cuentascliente']['id'])?$cuenta['Cuentascliente']['id']:0;
-
-			?>
-			<tr id="trCuenta_<?php echo $CuentaId ?>" style="<?php echo $trStyle?>" levelCuenta="<?php echo $cuenta['Cuenta']['level']?>" class="<?php echo $cuenta['Cuenta']['tipo']?>">
+                if($cuenta['Cuenta']['tipo']=='rubro'){
+                    $lastRubro=$cuenta['Cuenta']['numero'];
+                }
+                ?>
+			<tr id="trCuenta<?php echo $cuenta['Cuenta']['numero'] ?>"
+                style="<?php echo $trStyle?>"
+                levelCuenta="<?php echo $cuenta['Cuenta']['level']?>"
+                <?php
+                $class =$cuenta['Cuenta']['tipo']." ";
+                if($cuenta['Cuenta']['tipo']=='cuenta'){
+                    $class .= $lastRubro;
+                }
+                ?>
+                class="<?php echo $class; ?>"
+                onclick="showhide(<?php echo $cuenta['Cuenta']['numero']; ?>)">
 
 				<td style="">
 					<?php echo $cuenta['Cuenta']['level']==1?$cuenta['Cuenta']['numero']:""; ?>

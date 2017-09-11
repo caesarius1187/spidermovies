@@ -218,6 +218,39 @@ class Cuenta extends AppModel {
     //210302071	Ap. UOCRA a Pagar
     //210302081	Ap. UOM a Pagar
     //210302091	Ap. AOMA a Pagar
+
+	//cuentas Inmueble 120601000
+	public $cuentasInmuebleTerreno = 'Rodado "XX" Valor Origen';
+	public $cuentasInmuebleEdif = 'Rodado "XX" Actualización';
+	public $cuentasInmuebleMejora = 'Cat. "XX" Mejora';
+	public $cuentasInmuebleActualiz = 'Cat. "XX" Actualiz.';
+	//cuentas Rodado  120602000
+	public $cuentasRodadoValorOrigen = 'Rodado "XX" Valor Origen';
+	public $cuentasRodadoActualizacion = 'Rodado "XX" Actualización';
+	//cuentas Instalaciones  120603000
+	public $cuentasInstalacionesValorOrigen = 'Instalaciones "XX" Valor Orígen';
+	public $cuentasInstalacionesActualizacion = 'Instalaciones "XX" Actualizaci';
+	//cuentas Muebles y Útiles  120604000
+	public $cuentasMueblesYUtilesValorOrigen = 'Muebles y Út. "XX" Valor Orig';
+	public $cuentasMueblesYUtilesActualizacion = 'Muebles y Út. "XX" Actualizac';
+	//cuentas Rodado  120604000
+	public $cuentasActivosBiologicosValorOrigen = 'Reproductor XX 01/01 Valor Act';
+	public $cuentasActivosBiologicosActualizacion = 'Reproductor XX 01/01 Actualiza';
+	//cuentas Rodado  120604000
+	public $cuentasMaquinariasValorOrigen = 'Maquinaria "XX" Valor Orígen';
+	public $cuentasMaquinariasActualizacion = 'Maquinaria "XX" Actualización';
+    //cuentas Rodado  120604000
+	public $cuentasParticipacionesenSociedadesValorOrigen = [];
+	public $cuentasParticipacionesenSociedadesActualizacion = [];
+    //cuentas Rodado  120604000
+	public $cuentasActivosIntangiblesValorOrigen = [];
+	public $cuentasActivosIntangiblesActualizacion = [];
+    //cuentas Rodado  120604000
+	public $cuentasOtrosActivosNoCorrientesValorOrigen = [];
+	public $cuentasOtrosActivosNoCorrientesActualizacion = [];
+    //cuentas Rodado  120604000
+	public $cuentasLlavedenegocioValorOrigen = [];
+	public $cuentasLlavedenegocioActualizacion = [];
     /**
  * Validation rules
  *

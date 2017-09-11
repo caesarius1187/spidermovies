@@ -904,7 +904,7 @@ class ComprasController extends AppController {
 		$comprobantes = $this->Compra->Comprobante->find('list',array('contain'=>array()));
 		$this->set('comprobantes', $comprobantes);
 		
-		$imputaciones=array('Bs en Gral'=>'Bs en Gral','Locaciones'=>'Locaciones','Prest. Servicios'=>'Prest. Servicios','Bs Uso'=>'Bs Uso','Otros Conceptos'=>'Otros Conceptos','Dcto 814'=>'Dcto 814');
+		$imputaciones=array('Bs en Gral'=>'Bs en Gral','Locaciones'=>'Locaciones','Prest. Servicios'=>'Prest. Servicios','Bs Uso'=>'Bs Uso','Otros Conceptos'=>'Otros Conceptos');
 		$this->set('imputaciones', $imputaciones);
 
 		$optionsTipoGastos=array(
@@ -1002,7 +1002,7 @@ class ComprasController extends AppController {
 			'fields'=>['*','count(*) as cantalicuotas'
 				,'sum(total) as total','sum(nogravados) as nogravados','sum(exentos) as exentos'
 				,'sum(ivapercep) as ivapercep','sum(iibbpercep) as iibbpercep','sum(actvspercep) as actvspercep'
-				,'sum(impinternos) as impinternos','sum(impcombustible) as impcombustible'],
+				,'sum(impinternos) as impinternos','sum(impcombustible) as impcombustible','alicuota'],
 			'contain'=>[
 				'Comprobante',
 				'Provedore'
@@ -1028,7 +1028,8 @@ class ComprasController extends AppController {
 			],
 			'conditions'=>[
 				'Compra.cliente_id'=>$cliid,
-				'Compra.periodo'=>$periodo
+				'Compra.periodo'=>$periodo,
+				'Compra.comprobante_id <> 520',
 			],
 
 		];

@@ -495,23 +495,23 @@
                                     foreach ($conceptosrestantesimpcli as $conceptosrestante){
                                         if($conceptosrestante['localidade_id']==$impcliprovincia['localidade_id']){
                                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.id',array(
-                                                'value'=>$conceptosrestante['id'],'type'=>''));
+                                                'value'=>$conceptosrestante['id'],'type'=>'hidden'));
                                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.loalidade_id',array(
-                                                'value'=>$conceptosrestante['partido_id'],'type'=>''));
+                                                'value'=>$conceptosrestante['partido_id'],'type'=>'hidden'));
                                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.cliente_id',array(
-                                                'value'=>$conceptosrestante['cliente_id'],'type'=>''));
+                                                'value'=>$conceptosrestante['cliente_id'],'type'=>'hidden'));
                                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.impcli_id',array(
-                                                'value'=>$conceptosrestante['impcli_id'],'type'=>''));
+                                                'value'=>$conceptosrestante['impcli_id'],'type'=>'hidden'));
                                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.conceptostipo_id',array(
-                                                'value'=>$conceptosrestante['conceptostipo_id'],'type'=>''));
+                                                'value'=>$conceptosrestante['conceptostipo_id'],'type'=>'hidden'));
                                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.periodo',array(
-                                                'value'=>$conceptosrestante['periodo'],'type'=>''));
+                                                'value'=>$conceptosrestante['periodo'],'type'=>'hidden'));
                                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.montoretenido',array(
-                                                'value'=>$conceptosrestante['montoretenido'],'type'=>''));
+                                                'value'=>$conceptosrestante['montoretenido'],'type'=>'hidden'));
                                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.fecha',array(
-                                                'value'=>$conceptosrestante['fecha'],'type'=>''));
+                                                'value'=>$conceptosrestante['fecha'],'type'=>'hidden'));
                                             echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.Conceptosrestante.'.$eventoPos.'.descripcion',array(
-                                                'value'=>$conceptosrestante['descripcion'],'type'=>''));
+                                                'value'=>$conceptosrestante['descripcion'],'type'=>'hidden'));
                                         }
                                     }
                                 }
@@ -594,15 +594,15 @@
                     $daAFavor=true;
                     switch ($impuesto['id']) {
                         case 10/*SUSS*/:
-                        $itemsACompletar=$optionsSUSS;
-                        $daAFavor=false;
-                        $mostrarAFavor=false;
+                            $itemsACompletar = $optionsSUSS;
+                            $daAFavor=false;
+                            $mostrarAFavor=false;
                         break;
                         case 19/*IVA*/:
-                        $itemsACompletar=$optionsIVA;
+                            $itemsACompletar = $optionsIVA;
                         break;
                         case 4/*Monotributo*/:
-                        $itemsACompletar=$optionsMono;
+                            $itemsACompletar = $optionsMono;
                         break;
                         default:
                         break;
@@ -615,9 +615,9 @@
                         $descripcion = '';
                         $eventosimpuestoUsosaldo = array();
                         foreach ($eventosimpuestos as $key => $eventosimpuesto){//vamos a buscar el evento para ver si ya esta creada este item
-                            $botonOK="Modificar";
+                            $botonOK = "Modificar";
                             if(!isset( $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'])){
-                                $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=0;
+                                $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'] = 0;
                             }
                             if($eventosimpuesto['Eventosimpuesto']['item']==$keyOS){
                                 $eventoid = $eventosimpuesto['Eventosimpuesto']['id'];
@@ -625,10 +625,10 @@
                                 $montovto = $eventosimpuesto['Eventosimpuesto']['montovto'];
                                 $descripcion = $eventosimpuesto['Eventosimpuesto']['descripcion'];
                                 $montoc = $eventosimpuesto['Eventosimpuesto']['monc'];
-                                $eventosimpuestos[$key]['Eventosimpuesto']['mostrado']=1;
+                                $eventosimpuestos[$key]['Eventosimpuesto']['mostrado'] = 1;
                                 $eventosimpuestoUsosaldo = $eventosimpuestos[$key]['Usosaldo'];
-                                $totalAPagar+=$montovto;
-                                $totalAFavor+=$montoc;
+                                $totalAPagar += $montovto;
+                                $totalAFavor += $montoc;
                             }
                         }
                         echo $this->Form->input('Eventosimpuesto.'.$eventoPos.'.id',array('type'=>'hidden','value'=>$eventoid));

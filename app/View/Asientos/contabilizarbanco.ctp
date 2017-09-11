@@ -32,7 +32,7 @@
     }
 
     //Asiento de acreditaciones
-    echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add']);
+    echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add','style'=>' min-width: max-content;']);
     echo $this->Form->input('Asiento.0.id',['value'=>$id]);
     echo $this->Form->input('Asiento.0.nombre',['value'=>$nombre]);
     echo $this->Form->input('Asiento.0.descripcion',['value'=>$descripcion]);

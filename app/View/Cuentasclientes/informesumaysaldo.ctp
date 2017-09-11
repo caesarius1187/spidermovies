@@ -1,4 +1,5 @@
 <?php
+
 echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
 echo $this->Html->script('jquery-ui',array('inline'=>false));
 echo $this->Html->css('bootstrapmodal');
@@ -158,6 +159,7 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
             $debes = 0;
             $haberes = 0;
             $arrayPeriodos = [];
+
             foreach ($cuentascliente['Movimiento'] as $movimiento){
                 $periodoAImputar = date('m-Y', strtotime($movimiento['Asiento']['fecha']));
                 if(!isset($arrayPeriodos[$periodoAImputar])){
@@ -178,6 +180,7 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
                 $saldoCalculado -= $movimiento['haber'];
                 $arrayTotales[$periodoAImputar]['debes']+= $movimiento['debe'];
                 $arrayTotales[$periodoAImputar]['haberes']+= $movimiento['haber'];
+
             }
 
             //Saldos de cuentas esperados

@@ -54,6 +54,30 @@ class BienesdeusosController extends AppController {
 			}
 			if ($this->Bienesdeuso->save($this->request->data)) {
 				$respuesta['respuesta']='El bien de uso ha sido guardado correctamente.';
+				//aca vamos a crear las relaciones con cuentas contables, que se van a generar en funcion de si tiene 3ra o no 
+				$cliente=$this->Cliente->find('first', array(
+					'contain'=>array(
+						'Actividadcliente'=>array(
+							'Cuentasganancia'
+						),
+					),
+					'conditions' => array(
+						'Cliente.id' => $this->request->data['Bienesdeuso']['cliente_id'], // <-- Notice this addition
+					),
+				));
+				$tienetercera = false;
+				foreach ($cliente['Actividadcliente'] as $actividadcliente){
+					foreach ($actividadcliente['Cuentasganancia'] as $cuentasganancia){
+						if($cuentasganancia['categoria']=='terceracateg'){
+							$tienetercera = true;
+						}
+					}
+				}
+				if($tienetercera){
+                    
+				}else{
+
+				}
 			} else {
 				$respuesta['respuesta']='El bien de uso no se guardo correctamente. Por favor intente de nuevo mas tarde.';
 			}
@@ -74,8 +98,12 @@ class BienesdeusosController extends AppController {
 		if(count($compra['Bienesdeuso'])>0){
 			$this->request->data = ['Bienesdeuso'=>$compra['Bienesdeuso'][0]];
 		}
-
-		$localidades = $this->Bienesdeuso->Localidade->find('list');
+		$conditionsLocalidades = array(
+			'contain'=>'Partido',
+			'fields'=>array('Localidade.id','Localidade.nombre','Partido.nombre'),
+			'order'=>array('Partido.nombre','Localidade.nombre')
+		);
+		$localidades = $this->Bienesdeuso->Localidade->find('list',$conditionsLocalidades);
 		$this->set(compact('compra', 'localidades'));
 		if($this->request->is('ajax')){
 			$this->layout = 'ajax';

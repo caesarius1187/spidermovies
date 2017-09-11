@@ -83,27 +83,59 @@ $(document).ready(function() {
     actividadCategoria();
 });
 //vamos a inicalizar los Filtros
+function reducirFiltros(filtroID,filtroClase){
+    //vamos a reducir el filtro a los elementos presentes en el formulario.
+    $("#"+filtroID+" > option").each(function() {
+        var opcionEnForm =false;
+        var textoOpcionComprobante = this.text;
+
+        if( this.value != ''  ){
+            $("."+filtroClase).each(function(){
+                var selectedText="";
+                if( $(this).is('input:text') ) {
+                    selectedText = $(this).val();
+                }else{
+                    selectedText = $(this).children(':selected').text();
+                }
+                if(textoOpcionComprobante.indexOf(selectedText)!=-1){
+                    opcionEnForm =true;
+                }
+            });
+            if(!opcionEnForm){
+                $(this).detach();
+            }
+        }
+
+    });
+}
 function comportamientoDeFiltros(){
     callAlertPopint("Cargando filtros");
 
     $('#Filtro0ComprobanteId').change(function() {
         aplicarFiltros();
     });
+    reducirFiltros("Filtro0ComprobanteId","filtrocomprobante");
     $('#Filtro0PuntosdeventaId').change(function() {
         aplicarFiltros();
     });
+    reducirFiltros("Filtro0PuntosdeventaId","filtropuntodeventa");
+
     $('#Filtro0SubclienteId').change(function() {
         aplicarFiltros();
     });
+    reducirFiltros("Filtro0SubclienteId","filtrosubcliente");
+
     $('#Filtro0Condicioniva').change(function() {
         aplicarFiltros();
     });
+    reducirFiltros("Filtro0Condicioniva","filtrocondicioniva");
     $('#Filtro0ActividadclienteId').change(function() {
         aplicarFiltros();
     });
     $('#Filtro0Alicuota').change(function() {
         aplicarFiltros();
     });
+    reducirFiltros("Filtro0Alicuota","filtroalicuota");
 }
 function aplicarFiltros(){
     callAlertPopint("Aplicando filtros");
@@ -206,7 +238,7 @@ function agregarApplyToAllInFirstRow(){
     $('.aplicableATodos').each(function(){
         $(this).removeClass('tooltip');
     });
-    $('.tooltiptext').each(function(){
+    $('.aplicableATodos.tooltiptext').each(function(){
         $(this).remove();
     });
 

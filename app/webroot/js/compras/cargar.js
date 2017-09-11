@@ -604,11 +604,15 @@ $(document).ready(function() {
                             sum = sum.replace('.', "");
                             sum = sum.replace(',', ".");
                             $( this.footer() ).html((sum*1).toFixed(2));
-                            $(mitabla.table().footer()).find(" tr:last td").html((sum*1).toFixed(2));
+                            // $(mitabla.table().footer()).find(" tr:last td").html((sum*1).toFixed(2));
                         }else{
                             $( this.footer() ).html(sum.toFixed(2));
-                            $(mitabla.table().footer()).find(" tr:last td").html((sum).toFixed(2));
-
+                            // $(mitabla.table().footer()).find(" tr:last td").html((sum).toFixed(2));
+                            var position = $(this)[0] - 2;
+                            var prevoiusVal = $(mitabla.table().footer()).find(" tr:eq(1) th:eq("+position+")").html()*1 + 0;
+                            prevoiusVal *= 1;
+                            var totalSUM = sum + prevoiusVal;
+                            $(mitabla.table().footer()).find(" tr:last th:eq("+position+")").html((totalSUM).toFixed(2));
                         }
                     }
                 }
@@ -708,6 +712,20 @@ $(document).ready(function() {
             defaultDate: d,
     
           });
+            $( "input.datepicker-day-month" ).datepicker({
+                yearRange: "-100:+50",
+                changeMonth: true,
+                changeYear: false,
+                constrainInput: false,
+                dateFormat: 'dd-mm',
+            });
+            $( "input.datepicker-month-year" ).datepicker({
+                yearRange: "-100:+50",
+                changeMonth: true,
+                changeYear: true,
+                constrainInput: false,
+                dateFormat: 'mm-yy',
+            });
         })(jQuery);
         
       }
@@ -978,7 +996,6 @@ $(document).ready(function() {
                 }
             });
             $("#BienesdeusoTipo" ).trigger( "change" );
-            reloadInputDates();
             $('.chosen-select').chosen({search_contains:true});
             $('#BienesdeusoAddForm').submit(function(){
                     //serialize form data
@@ -1000,8 +1017,11 @@ $(document).ready(function() {
                     });
                     return false;
                 });
-            },
-           error:function (XMLHttpRequest, textStatus, errorThrown) {
+            $('.chosen-select').chosen({search_contains:true});
+            $("#BienesdeusoLocalidadeId_chosen").css('width','auto');
+            reloadInputDates();
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(errorThrown);
            }
         });

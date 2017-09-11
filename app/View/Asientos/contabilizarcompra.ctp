@@ -32,7 +32,7 @@ if(isset($error)){ ?>
         $fecha = date('d-m-Y',strtotime($miAsiento['fecha']));
     }
 
-    echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add']);
+    echo $this->Form->create('Asiento',['class'=>'formTareaCarga formAsiento','action'=>'add','style'=>' min-width: max-content;']);
     echo $this->Form->input('Asiento.0.id',['default'=>$id]);
     echo $this->Form->input('Asiento.0.nombre',['default'=>$nombre]);
     echo $this->Form->input('Asiento.0.descripcion',['default'=>$descripcion]);

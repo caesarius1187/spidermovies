@@ -1153,7 +1153,7 @@ class ClientesController extends AppController {
 						            ],
 				   			],
 				   			'Venta'=>array(
-								'contain'=>['Comprobante'],
+								'Comprobante',
 				   				'conditions' => array(
 						            	 'Venta.periodo' => $pemes."-".$peanio
 						            ),
@@ -1419,6 +1419,7 @@ class ClientesController extends AppController {
 		$this->loadModel('Empleado');
 		$this->loadModel('Cargo');
 		$this->loadModel('Autonomocategoria');
+		$this->loadModel('Bienesdeuso');
 
 		if(!is_null($id)){
 			$containCliAuth = array(
@@ -1434,11 +1435,11 @@ class ClientesController extends AppController {
 			$numClis = sizeof($clientesAuth);
 			if($numClis==0){
 				$this->Session->setFlash(__('Cliente No existente. Alerta enviada.'));
-				return $this->redirect(array('controller'=>'users','action' => 'index'));
+				return $this->redirect(array('controller'=>'clientes','action' => 'index'));
 			}
 			if (!$this->Cliente->exists($id)) {
 				$this->Session->setFlash(__('Cliente No existente '.$numClis));
-				return $this->redirect(array('controller'=>'users','action' => 'index'));
+				return $this->redirect(array('controller'=>'clientes','action' => 'index'));
 			}
 			$clientes3=$this->Cliente->find('first', array(
 										   'contain'=>array(
@@ -1452,6 +1453,8 @@ class ClientesController extends AppController {
 											    'Personasrelacionada',
 												'Empleado'=>array(
 													'order'=>'(Empleado.legajo * 1)'
+											  	),
+                                               'Bienesdeuso'=>array(
 											  	),
 											  	'Actividadcliente'=>array(
 										      		 'Actividade'
@@ -1629,20 +1632,7 @@ class ClientesController extends AppController {
 				);
 			$this->set('optionSisFact', $optionSisFact);
 
-//			$clienteActividadList = $this->Cliente->Actividadcliente->find('list', array(
-//											   'conditions' => array(
-//												                'Actividadcliente.cliente_id' => $id,
-//												            ),
-//											   'fields' => array(
-//													'Actividadcliente.actividade_id'
-//														)
-//											)
-//									);
-//			$this->set('clienteActividadList', $clienteActividadList);
 			$optionsAct = array(
-//					'conditions' => array(
-//							'NOT' => array('Actividade.id' => $clienteActividadList)
-//						),
 					'order'=> array('Actividade.descripcion')
 					);
 
@@ -1676,11 +1666,8 @@ class ClientesController extends AppController {
 			$categoriasmonotributos = ['A'=>'A','B'=>'B','C'=>'C','D'=>'D','E'=>'E','F'=>'F','G'=>'G','H'=>'H','I'=>'I',
 				'J'=>'J','K'=>'K','L'=>'L'];
 			$this->set(compact('grupoclientes','categoriasmonotributos'));
-
 			$autonomocategorias = $this->Autonomocategoria->find('list');
 			$this->set('autonomocategorias', $autonomocategorias);
-
-
 			$bancosOptions = array(
 				'conditions' => array(
 					'Impuesto.organismo'=> 'banco'
@@ -1688,8 +1675,8 @@ class ClientesController extends AppController {
 			);
 			$bancos=$this->Impuesto->find('list',$bancosOptions);
 			$this->set('bancos', $bancos);
-			$mostrarView=true;
 
+            $mostrarView=true;
 		}else{
 			$mostrarView=false;
 		}
@@ -1739,6 +1726,7 @@ class ClientesController extends AppController {
 				]
 			)
 		);
+
 
 	}
 	public function habilitar($id=null) {
