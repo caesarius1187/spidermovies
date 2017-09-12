@@ -47,50 +47,88 @@ class BienesdeusosController extends AppController {
  * @return void
  */
 	public function add($compraid = null) {
+        $this->loadModel('Cliente');
 		if ($this->request->is('post')) {
 			$this->Bienesdeuso->create();
 			if($this->request->data['Bienesdeuso']['fechaadquisicion']!=""){
 				$this->request->data('Bienesdeuso.fechaadquisicion',date('Y-m-d',strtotime($this->request->data['Bienesdeuso']['fechaadquisicion'])));
 			}
-			if ($this->Bienesdeuso->save($this->request->data)) {
-				$respuesta['respuesta']='El bien de uso ha sido guardado correctamente.';
-				//aca vamos a crear las relaciones con cuentas contables, que se van a generar en funcion de si tiene 3ra o no 
-				$cliente=$this->Cliente->find('first', array(
-					'contain'=>array(
-						'Actividadcliente'=>array(
-							'Cuentasganancia'
-						),
-					),
-					'conditions' => array(
-						'Cliente.id' => $this->request->data['Bienesdeuso']['cliente_id'], // <-- Notice this addition
-					),
-				));
-				$tienetercera = false;
-				foreach ($cliente['Actividadcliente'] as $actividadcliente){
-					foreach ($actividadcliente['Cuentasganancia'] as $cuentasganancia){
-						if($cuentasganancia['categoria']=='terceracateg'){
-							$tienetercera = true;
-						}
-					}
-				}
-				if($tienetercera){
-                    //hay que dar de alta la cuenta de bien de uso reemplazando XX
-                    //vamos a armar el nombre del Bien de uso
-                    switch ($this->request->data['Bienesdeuso']['cliente_id']){
-                        case 'Automotor':
-                            break;
-                        case 'Inmueble':
-                            break;
-                        case 'Aeronave':
-                            break;
-                        case 'Naves, Yates y similares':
-                            
-                        break;
+            $cliid = $this->request->data['Bienesdeuso']['cliente_id'];
+            //aca vamos a crear las relaciones con cuentas contables, que se van a generar en funcion de si tiene 3ra o no
+            $cliente=$this->Cliente->find('first', array(
+                'contain'=>array(
+                    'Actividadcliente'=>array(
+                        'Cuentasganancia'
+                    ),
+                ),
+                'conditions' => array(
+                    'Cliente.id' => $this->request->data['Bienesdeuso']['cliente_id'], // <-- Notice this addition
+                ),
+            ));
+            $tienetercera = false;
+            foreach ($cliente['Actividadcliente'] as $actividadcliente){
+                foreach ($actividadcliente['Cuentasganancia'] as $cuentasganancia){
+                    if($cuentasganancia['categoria']=='terceracateg'){
+                        $tienetercera = true;
                     }
-				}else{
+                }
+            }
+            if($tienetercera){
+                //hay que dar de alta la cuenta de bien de uso reemplazando XX
+                //vamos a armar el nombre del Bien de uso
+                $nombreBDU = " ";
+                $nombreCuentaActivable = "";
+                switch ($this->request->data['Bienesdeuso']['tipo']){
+                    case 'Automotor':
+                        if($this->request->data['Bienesdeuso']['patente']!="")
+                            $nombreBDU  .= " -".$this->request->data['Bienesdeuso']['patente'];
+                        if($this->request->data['Bienesdeuso']['aniofabricacion']!="")
+                            $nombreBDU  .= " -".$this->request->data['Bienesdeuso']['aniofabricacion'];
+                        $prefijo = "120601";
+                        $cuentasInmuebleTerreno=altaBienDeUso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleTerreno,$nombreBDU );
+                        $cuentasInmuebleEdif=altaBienDeUso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleEdif,$nombreBDU );
+                        $cuentasInmuebleMejora=altaBienDeUso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleMejora,$nombreBDU );
+                        $cuentasInmuebleActualiz=altaBienDeUso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleActualiz,$nombreBDU );
+                        $this->request->data['Bienesdeuso']['terreno_id']=$cuentasInmuebleTerreno;
+                        $this->request->data['Bienesdeuso']['edificacion_id']=$cuentasInmuebleEdif;
+                        $this->request->data['Bienesdeuso']['mejora_id']=$cuentasInmuebleMejora;
+                        $this->request->data['Bienesdeuso']['actualizacion_id']=$cuentasInmuebleActualiz;
+                        break;
+                    case 'Inmueble':
+                        if($this->request->data['Bienesdeuso']['calle']!="")
+                            $nombreBDU  .= $this->request->data['Bienesdeuso']['calle'];
+                        if($this->request->data['Bienesdeuso']['numero']!="")
+                            $nombreBDU  .= " -".$this->request->data['Bienesdeuso']['numero'];
+                        $prefijo = "120601";
+                        $cuentasInmuebleTerreno=altaBienDeUso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleTerreno,$nombreBDU );
+                        $cuentasInmuebleEdif=altaBienDeUso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleEdif,$nombreBDU );
+                        $cuentasInmuebleMejora=altaBienDeUso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleMejora,$nombreBDU );
+                        $cuentasInmuebleActualiz=altaBienDeUso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleActualiz,$nombreBDU );
+                        $this->request->data['Bienesdeuso']['terreno_id']=$cuentasInmuebleTerreno;
+                        $this->request->data['Bienesdeuso']['edificacion_id']=$cuentasInmuebleEdif;
+                        $this->request->data['Bienesdeuso']['mejora_id']=$cuentasInmuebleMejora;
+                        $this->request->data['Bienesdeuso']['actualizacion_id']=$cuentasInmuebleActualiz;
+                        break;
+                    case 'Aeronave':
+                        if($this->request->data['Bienesdeuso']['marca']!="")
+                            $nombreBDU  .= " -".$this->request->data['Bienesdeuso']['marca'];
+                        if($this->request->data['Bienesdeuso']['modelo']!="")
+                            $nombreBDU  .= " -".$this->request->data['Bienesdeuso']['modelo'];
+                        break;
+                    case 'Naves, Yates y similares':
+                        if($this->request->data['Bienesdeuso']['matricula']!="")
+                            $nombreBDU  .= " -".$this->request->data['Bienesdeuso']['matricula'];
+                        if($this->request->data['Bienesdeuso']['fechaadquisicion']!="")
+                            $nombreBDU  .= " -".$this->request->data['Bienesdeuso']['fechaadquisicion'];
+                    break;
+                }
 
-				}
-			} else {
+            }else{
+
+            }
+            if ($this->Bienesdeuso->save($this->request->data)) {
+                $respuesta['respuesta']='El bien de uso ha sido guardado correctamente.';
+            } else {
 				$respuesta['respuesta']='El bien de uso no se guardo correctamente.
 				 Por favor intente de nuevo mas tarde.';
 			}
