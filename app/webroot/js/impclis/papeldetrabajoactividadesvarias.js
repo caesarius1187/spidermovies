@@ -1,24 +1,43 @@
 $(document).ready(function() {
 	$( "#clickExcel" ).click(function() {
-		$("#pdtactividadesvarias").prepend(
-    		$("<tr>").append(
-				$("<td>")
-					.attr("colspan","25")
-					.html($('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"ActividadesVarias")
-    			)
-    		);
+		if (!document.getElementById("pdtActividadesVarias_tr1"))
+        {
+            $("#pdtactividadesvarias").prepend(
+                $("<tr id='pdtActividadesVarias_tr1'>").append(
+                    $("<td style='display:none'>")
+                        .attr("colspan","25")
+                        .html("Contribuyente: " + $('#clinombre').val() + " - CUIT: " + $('#nroCuitContribuyente').html())                      
+                    )
+                );
+        }
+        if (!document.getElementById("pdtActividadesVarias_tr2"))
+        {
+            $("#pdtactividadesvarias").prepend(
+                $("<tr id='pdtActividadesVarias_tr2'>").append(
+                    $("<td style='display:none'>")
+                        .attr("colspan","25")
+                        .html($('#tipoorganismoyNombre').html() + " - Periodo: "+ $('#periodoPDT').val())               
+                    )
+                );
+        }
 		$("#pdtactividadesvarias").table2excel({
 			// exclude CSS class
 			exclude: ".noExl",
 			name: "ActividadesVarias",
-			filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"ActividadesVarias"
+			filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","")+"_"+$('#periodoPDT').val().replace(/-/g,"_")+"_ActividadesVarias"
+			//filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"ActividadesVarias"
 		});
 	});
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
 	var beforePrint = function() {
 		$('#header').hide();
 		$('#Formhead').hide();
-		$('#divLiquidarActividadesVariar').hide();
+		//$('#divLiquidarActividadesVariar').hide();
+
+		$('#clickExcel').hide();
+		$('#btnImprimir').hide();
+		$('#divPrepararPapelesDeTrabajo').hide();
+
 		$('#index').css('float','left');
 		$('#padding').css('padding','0px');
 		$('#index').css('font-size','10px');
@@ -28,7 +47,12 @@ $(document).ready(function() {
 		$('#index').css('font-size','14px');
 		$('#header').show();
 		$('#Formhead').show();
-		$('#divLiquidarActividadesVariar').show();
+		//$('#divLiquidarActividadesVariar').show();
+
+		$('#clickExcel').show();
+		$('#btnImprimir').show();
+		$('#divPrepararPapelesDeTrabajo').show();
+
 		$('#index').css('float','right');
 		$('#padding').css('padding','10px 1%');
 	};

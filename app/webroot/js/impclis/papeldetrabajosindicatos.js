@@ -1,20 +1,58 @@
 $(document).ready(function() { 
 	$( "#clickExcel" ).click(function() {
-    	$("#tblSindicatos").prepend(
-    		$("<tr>").append(
-				$("<td>")
-					.attr("colspan","25")
-					.html($('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+$('#impclinombre').val())
-    			)
-    		);
+		if (!document.getElementById("pdtSindicato_tr1"))
+        {
+            $("#tblSindicatos").prepend(
+                $("<tr id='pdtSindicato_tr1'>").append(
+                    $("<td style='display:none'>")
+                        .attr("colspan","25")
+                        .html("Contribuyente: " + $('#clinombre').val() + " - CUIT: " + $('#nroCuitContribuyente').html())                      
+                    )
+                );
+        }
+        if (!document.getElementById("pdtSindicato_tr2"))
+        {
+            $("#tblSindicatos").prepend(
+                $("<tr id='pdtSindicato_tr2'>").append(
+                    $("<td style='display:none'>")
+                        .attr("colspan","25")
+                        .html($('#tipoorganismoyNombre').html() + " - Periodo: "+ $('#periodoPDT').val())               
+                    )
+                );
+        }       
         $("#tblSindicatos").table2excel({
             // exclude CSS class
             exclude: ".noExl",
             name: $('#impclinombre').val(),
-            filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+$('#impclinombre').val()
-
+            filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","")+"_"+$('#periodoPDT').val().replace(/-/g,"_")+"_Sindicatos"
         });
     });
+	var beforePrint = function() {
+		$('#header').hide();
+		$('#Formhead').hide();
+		$('#clickExcel').hide();
+		$('#btnImprimir').hide();
+		$('#divPrepararPapelesDeTrabajo').hide();		
+	};
+	var afterPrint = function() {		
+		$('#header').show();
+		$('#Formhead').show();
+		$('#clickExcel').show();
+		$('#btnImprimir').show();
+		$('#divPrepararPapelesDeTrabajo').show();		
+	};
+	if (window.matchMedia) {
+		var mediaQueryList = window.matchMedia('print');
+		mediaQueryList.addListener(function(mql) {
+			if (mql.matches) {
+				beforePrint();
+			} else {
+				afterPrint();
+			}
+		});
+	}
+	window.onbeforeprint = beforePrint;
+	window.onafterprint = afterPrint;    
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
 	catchAsiento();
 	$(".inputDebe").each(function () {
@@ -32,6 +70,9 @@ $(document).ready(function() {
 		return;
 	});
 });
+function imprimir(){
+	window.print();
+}
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";
 	$.ajax({

@@ -123,6 +123,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 		<b style="display: inline">Papel de Trabajo</b>
 		<?php echo $this->Form->button('Imprimir',
 			array('type' => 'button',
+				'id' =>"btnImprimir",
 				'class' =>"btn_imprimir",
 				'onClick' => "imprimir()",
 				'style' => "display:inline"
@@ -139,7 +140,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 		$arrayBasesProrrateadas=array();
 		foreach ($provinciasArecorrer as $miProvincia) { 
 			$arrayBasesProrrateadas[$miProvincia]=array(); ?>
-		<table class="tbl_ActividadesEconomicasProvincia tbl_tareas aimprimir" style="border-collapse: collapse;" id="pdtactividadesvarias">
+		<table id="pdtactividadesvarias" class="tbl_ActividadesEconomicasProvincia tbl_tareas aimprimir" style="border-collapse: collapse;" >
 			<tr id="1">
 				<td colspan="2"> </td>
 				<?php 

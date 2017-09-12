@@ -1,18 +1,40 @@
 $(document).ready(function() {
     $( "#clickExcel" ).click(function() {
         if($('#divRecategorizacion').is(':visible')){
+
+        	if (!document.getElementById("pdtMonotributo_tr1"))
+			{
+		    	$("#tblExcelHeader").prepend(
+		    		$("<tr id='pdtMonotributo_tr1'>").append(
+						$("<td style='display:none'>")
+							.attr("colspan","25")
+							.html("Contribuyente: " + $('#clinombre').val() + " - CUIT: " + $('#nroCuitContribuyente').html())						
+		    			)
+		    		);
+	    	}
+	    	if (!document.getElementById("pdtMonotributo_tr2"))
+	    	{
+	    		$("#tblExcelHeader").prepend(
+		    		$("<tr id='pdtMonotributo_tr2'>").append(
+						$("<td style='display:none'>")
+							.attr("colspan","25")
+							.html($('#tipoorganismoyNombre').html() + " - Periodo: "+ $('#periodoPDT').val())				
+		    			)
+		    		);
+	    	}
+
             $("#divRecategorizacion").table2excel({
                 // exclude CSS class
                 exclude: ".noExl",
                 name: "Monotributo",
-                filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"Recategoizacion"
+                filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","") + "_"+ $('#periodoPDT').val().replace(/-/g,"_")+"_"+"Recategoizacion"
             });
         }else{
             $("#divDDJJ").table2excel({
                 // exclude CSS class
                 exclude: ".noExl",
                 name: "Monotributo",
-                filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"DDJJ"
+                filename:$('#clinombre').val().replace(/ /g,"_").replace(".","")+"_"+ $('#periodoPDT').val().replace(/-/g,"_")+"_"+"DDJJ"
             });
         }
 
@@ -26,10 +48,12 @@ $(document).ready(function() {
 	var beforePrint = function() {
 		$('#header').hide();
 		//$('#Formhead').hide();
-		$('#divLiquidarMonotributo').hide();
-		$('#tabsTareaMonotributo').hide();
-		$('.btn_imprimir').hide();
-
+		//$('#divLiquidarMonotributo').hide();
+		$('#tabsTareaMonotributo').hide();		
+		$('#clickExcel').hide();
+		$('#btnImprimir').hide();
+		$('#divPrepararPapelesDeTrabajo').hide();
+		//$('#divHeaderEventoImpuesto').hide();   
 		$('#index').css('float','left');
 		$('#padding').css('padding','0px');
 		$('#index').css('font-size','10px');
@@ -41,9 +65,12 @@ $(document).ready(function() {
 		$('#index').css('font-size','14px');
 		$('#header').show();
 		//$('#Formhead').show();
-		$('#divLiquidarMonotributo').show();
-		 $('#tabsTareaMonotributo').show();
-		 $('.btn_imprimir').show();
+		//$('#divLiquidarMonotributo').show();
+		$('#tabsTareaMonotributo').show();
+		$('#clickExcel').show();
+		$('#btnImprimir').show();
+		//$('#divHeaderEventoImpuesto').show();   
+		$('#divPrepararPapelesDeTrabajo').show();  
 		 $('#index').css('float','right');
 		$('#padding').css('padding','10px 1%');
         $('.tbl_tareas').css('width','50%');

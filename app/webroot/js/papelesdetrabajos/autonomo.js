@@ -1,20 +1,71 @@
 $(document).ready(function() { 
 	$( "#clickExcel" ).click(function() {
-    	$("#sheetAutonomo").prepend(
-    		$("<tr>").append(
-				$("<td>")
-					.attr("colspan","25")
-					.html($('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+$('#impclinombre').val())
-    			)
-    		);
+		if (!document.getElementById("pdtconveniomultilateral_tr1"))
+		{
+	    	$("#sheetAutonomo").prepend(
+	    		$("<tr id='pdtconveniomultilateral_tr1'>").append(
+					$("<td style='display:none'>")
+						.attr("colspan","25")
+						.html("Contribuyente: " + $('#clinombre').val() + " - CUIT: " + $('#nroCuitContribuyente').html())						
+	    			)
+	    		);
+    	}
+    	if (!document.getElementById("pdtconveniomultilateral_tr2"))
+    	{
+    		$("#sheetAutonomo").prepend(
+	    		$("<tr id='pdtconveniomultilateral_tr2'>").append(
+					$("<td style='display:none'>")
+						.attr("colspan","25")
+						.html($('#tipoorganismoyNombre').html() + " - Periodo: "+ $('#periodoPDT').val())				
+	    			)
+	    		);
+    	}
         $("#sheetAutonomo").table2excel({
             // exclude CSS class
             exclude: ".noExl",
             name: $('#impclinombre').val(),
-            filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+$('#impclinombre').val()
-
+            filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","") + "_" + $('#periodoPDT').val().replace(/-/g,"_") + "_Autonomo"
         });
     });
+
+	var beforePrint = function() {
+        //console.log('New Functionality to run before printing.');
+        $('#header').hide();
+        $('#Formhead').hide();
+        $('#clickExcel').hide();
+		$('#btnImprimir').hide();        
+		$('#divPrepararPapelesDeTrabajo').hide();   
+        //$('#divLiquidarConvenioMultilateral').hide();
+        $('#index').css('float','left');
+        $('#padding').css('padding','0px');
+        $('#index').css('font-size','10px');
+        $('#index').css('border-color','#FFF');
+    };
+    var afterPrint = function() {
+        //console.log('Functionality to run after printing');
+        $('#index').css('font-size','14px');
+        $('#header').show();
+        $('#Formhead').show();
+        $('#clickExcel').show();
+		$('#btnImprimir').show();        
+		$('#divPrepararPapelesDeTrabajo').show();        		
+        //$('#divLiquidarConvenioMultilateral').show();
+        $('#index').css('float','right');
+        $('#padding').css('padding','10px 1%');
+    };
+    if (window.matchMedia) {
+        var mediaQueryList = window.matchMedia('print');
+        mediaQueryList.addListener(function(mql) {
+            if (mql.matches) {
+                beforePrint();
+            } else {
+                afterPrint();
+            }
+        });
+    }
+    window.onbeforeprint = beforePrint;
+    window.onafterprint = afterPrint;
+
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
 	cargarAsiento();
 	$(".inputDebe").each(function () {
@@ -33,6 +84,9 @@ $(document).ready(function() {
 	});
 	catchAsiento();
 });
+function imprimir(){
+    window.print();
+}
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";
 	$.ajax({

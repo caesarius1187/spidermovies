@@ -1,20 +1,58 @@
 $(document).ready(function() { 
 	$( "#clickExcel" ).click(function() {
-    	$("#sheetCooperadoraAsistencial").prepend(
-    		$("<tr>").append(
-				$("<td>")
-					.attr("colspan","25")
-					.html($('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"Cooperadora Asistencial")
-    			)
-    		);
+		if (!document.getElementById("pdtCooperadoraAsistencial_tr1"))
+        {
+            $("#tblExcelHeader").prepend(
+                $("<tr id='pdtCooperadoraAsistencial_tr1'>").append(
+                    $("<td style='display:none'>")
+                        .attr("colspan","25")
+                        .html("Contribuyente: " + $('#clinombre').val() + " - CUIT: " + $('#nroCuitContribuyente').html())                      
+                    )
+                );
+        }
+        if (!document.getElementById("pdtCooperadoraAsistencial_tr2"))
+        {
+            $("#tblExcelHeader").prepend(
+                $("<tr id='pdtCooperadoraAsistencial_tr2'>").append(
+                    $("<td style='display:none'>")
+                        .attr("colspan","25")
+                        .html($('#tipoorganismoyNombre').html() + " - Periodo: "+ $('#periodoPDT').val())               
+                    )
+                );
+        }  		
         $("#sheetCooperadoraAsistencial").table2excel({
             // exclude CSS class
             exclude: ".noExl",
             name: "CooperadoraAsistencial",
-            filename:$('#clinombre').val()+"-"+ $('#periodoPDT').val()+"-"+"Cooperadora Asistencial"
-
+            filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","")+"_"+$('#periodoPDT').val().replace(/-/g,"_")+"_Cooperadora_Asistencial"            
         });
     });
+    var beforePrint = function() {
+		$('#header').hide();
+		$('#Formhead').hide();
+		$('#clickExcel').hide();
+		$('#btnImprimir').hide();
+		$('#divPrepararPapelesDeTrabajo').hide();		
+	};
+	var afterPrint = function() {		
+		$('#header').show();
+		$('#Formhead').show();
+		$('#clickExcel').show();
+		$('#btnImprimir').show();
+		$('#divPrepararPapelesDeTrabajo').show();		
+	};
+	if (window.matchMedia) {
+		var mediaQueryList = window.matchMedia('print');
+		mediaQueryList.addListener(function(mql) {
+			if (mql.matches) {
+				beforePrint();
+			} else {
+				afterPrint();
+			}
+		});
+	}
+	window.onbeforeprint = beforePrint;
+	window.onafterprint = afterPrint;   
     papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
 	$(".inputDebe").each(function () {
 		$(this).change(addTolblTotalDebeAsieto);
@@ -32,6 +70,9 @@ $(document).ready(function() {
 	});
 	catchAsientoIVA();
 });
+function imprimir(){
+	window.print();
+}
 function papelesDeTrabajo(periodo,impcli){
 	var data = "";
 	$.ajax({
