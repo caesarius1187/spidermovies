@@ -74,12 +74,25 @@ class BienesdeusosController extends AppController {
 					}
 				}
 				if($tienetercera){
-                    
+                    //hay que dar de alta la cuenta de bien de uso reemplazando XX
+                    //vamos a armar el nombre del Bien de uso
+                    switch ($this->request->data['Bienesdeuso']['cliente_id']){
+                        case 'Automotor':
+                            break;
+                        case 'Inmueble':
+                            break;
+                        case 'Aeronave':
+                            break;
+                        case 'Naves, Yates y similares':
+                            
+                        break;
+                    }
 				}else{
 
 				}
 			} else {
-				$respuesta['respuesta']='El bien de uso no se guardo correctamente. Por favor intente de nuevo mas tarde.';
+				$respuesta['respuesta']='El bien de uso no se guardo correctamente.
+				 Por favor intente de nuevo mas tarde.';
 			}
 			$this->layout = 'ajax';
 			$this->set('data', $respuesta);
