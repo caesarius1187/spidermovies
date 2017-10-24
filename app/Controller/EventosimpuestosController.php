@@ -272,16 +272,13 @@ class EventosimpuestosController extends AppController {
 						),
 					),
 				),
-				'Impcliprovincia'=>array(
-					'conditions'=>array(
-						'CONCAT( SUBSTRING(`Impcliprovincia`.`periodo` ,4,7),SUBSTRING(`Impcliprovincia`.`periodo` ,1,2)) = (
-                                select max(CONCAT( SUBSTRING(`periodo`,4,7),SUBSTRING(`periodo`,1,2) )) from  `sigesec`.`impcliprovincias`
-                                where `impcli_id` = ('.$impcli.')
-                                and CONCAT( SUBSTRING(`periodo` ,4,7),SUBSTRING(`periodo` ,1,2)) <=
-                                CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))
-                            )'
-						)
-					),
+				'Impcliprovincia'=>[
+					'conditions'=>[
+						'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
+							'impcli_id' => $impcli,
+						],
+					'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']				
+					],
 				'Conceptosrestante'=>array(
 					'conditions'=>array(
 						'Conceptosrestante.periodo'=>$periodoNext,
@@ -294,7 +291,33 @@ class EventosimpuestosController extends AppController {
 			),
 		);
 		$myImpCli = $this->Impcli->find('first', $options);
-
+		switch ($myImpCli["Impuesto"]['id']) {
+			case 21/*Actividades Económicas*/:
+			case 174/*Convenio Multilateral*/:
+				//no se pudo hacer la consulta para que traiga los resultados que debia, asi que vamos a borrar los repetidos
+				//y dejar el maximo para cada jurisdiccion y nada mas
+				$impcliprovinciasnorepetidas = [];
+				foreach ($myImpCli["Impcliprovincia"] as $icp => $impcliprovincia) {
+					if(in_array($impcliprovincia['partido_id'], $impcliprovinciasnorepetidas)){
+						 unset($myImpCli["Impcliprovincia"][$icp]);
+					}else{
+						 $impcliprovinciasnorepetidas[] = $impcliprovincia['partido_id'];
+					}
+				}
+				break;
+			case 6/*Actividades Varias*/:
+				//no se pudo hacer la consulta para que traiga los resultados que debia, asi que vamos a borrar los repetidos
+				//y dejar el maximo para cada jurisdiccion y nada mas
+				$impcliprovinciasnorepetidas = [];
+				foreach ($myImpCli["Impcliprovincia"] as $icp => $impcliprovincia) {
+					if(in_array($impcliprovincia['localidade_id'], $impcliprovinciasnorepetidas)){
+						 unset($myImpCli["Impcliprovincia"][$icp]);
+					}else{
+						 $impcliprovinciasnorepetidas[] = $impcliprovincia['localidade_id'];
+					}
+				}
+				break;	
+			}
 		$this->set('conceptosrestantesimpcli',$myImpCli["Conceptosrestante"]);
 	
 		$options = array(
@@ -573,6 +596,7 @@ class EventosimpuestosController extends AppController {
                 case 'otros':
                     break;
                 case 'sindicato':
+                	$cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
                     break;
                 case 'banco':
                     break;
@@ -584,19 +608,20 @@ class EventosimpuestosController extends AppController {
             switch ($myImpCli["Impuesto"]["organismo"]){
                 case 'afip':
                     $cuentasDeAsientoPago[]='3499'/*230102101 Plan de Pagos AFIP N°*/;
-//                    $cuentasDeAsientoPago[]='2523'/*505040101 Intereses Generales*/;
+                    $cuentasDeAsientoPago[]='2523'/*505040101 Intereses Generales*/;
                     break;
                 case 'dgr':
                     $cuentasDeAsientoPago[]='3508'/*230102150 Plan de Pagos DGR N°*/;
-//                    $cuentasDeAsientoPago[]='2526'/*505040201 Intereses Generales*/;
+                    $cuentasDeAsientoPago[]='2526'/*505040201 Intereses Generales*/;
                     break;
                 case 'dgrm':
                     $cuentasDeAsientoPago[]='3518'/*230102201 PPlan de Pagos DGRM N°*/;
-//                    $cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
+                    $cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
                     break;
                 case 'otros':
                     break;
                 case 'sindicato':
+                 	$cuentasDeAsientoPago[]='2526'/*505040201 Intereses Generales*/;
                     break;
                 case 'banco':
                     break;

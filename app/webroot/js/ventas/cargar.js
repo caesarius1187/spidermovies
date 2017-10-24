@@ -161,18 +161,27 @@ $(document).ready(function() {
                             extend: 'print',
                             text: 'Imprimir',
                             exportOptions: {
-                                columns: '.printable'
+                                columns: '.printable',
+                                stripHtml: false,
                             },
                             orientation: 'landscape',
                             footer: true,
                             autoPrint: true,
-                            message: nombrecliente+"</br>"+
-                            'Domicilio: '+$("#domiciliocliente").val()+" - "+
+                            title: function(){
+                                 /*$("#pagenumberTotal").each(function(){
+                                    $(this).html(" Pagina N°: 001")                                        
+                                        });*/
+                                 return "";
+                            },
+                            message: '<label>'+nombrecliente+"</label>"+
+                            '<label>Domicilio: '+$("#domiciliocliente").val()+" - "+
                             ' Inicio actividad: '+$("#fchcumpleanosconstitucion").val()+
-                            ' Periodo: '+periodo+"</br>"+
-                            '---------------------------------------Libro N° '+/*$("#numerolibro").val()+*/"</br>"+
-                            'Resp: '+$("#condicioniva").val()+' Registro IVA VENTAS',
+                            ' Periodo: '+periodo+"</label>"+
+                              '<label>Libro N° 0001'+/*$("#numerolibro").val()+*/"</label>"+
+                            '<label>Resp: '+$("#condicioniva").val()+' Registro IVA VENTAS</label>',
                             customize: function ( win ) {
+                                    $( win.document.body )
+                                        .css( "/css/cake.generic.css");
                             },
                         },
                     ],
@@ -212,10 +221,11 @@ $(document).ready(function() {
                                 if(respuesta.comprobante.Comprobante.tipodebitoasociado=='Restitucion de debito fiscal'){
                                     positivo = positivo*-1;
                                 }
+                                var ventaDescripcion = respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante;
                                 var rowData =
                                     [
                                         respuesta.venta.Venta.fecha,
-                                        respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante,
+                                        ventaDescripcion,
                                         respuesta.subcliente.Subcliente.cuit,
                                         respuesta.subcliente.Subcliente.nombre,
                                         respuesta.venta.Venta.condicioniva,
@@ -239,6 +249,13 @@ $(document).ready(function() {
                                 rowData.push(respuesta.venta.Venta.total*positivo);
                                 var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarVenta('+respuesta.venta_id+')" alt="">';
                                 tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarVenta('+respuesta.venta_id+')" alt="">';
+                                if(respuesta.hasOwnProperty('tipogasto')) {
+                                    var tipoIngresosBiendeUso = [];
+                                    tipoIngresosBiendeUso = JSON.parse($("#jsonalltiposingresosbiendeuso").val());
+                                    if ($.inArray(respuesta.tipogasto.Tipogasto.id, tipoIngresosBiendeUso)!=-1 /*Tipo Gasto Bien de uso*/) {
+                                        tdactions = tdactions + '<img src="' + serverLayoutURL + '/img/biendeuso.png" width="20" height="20" onclick="relacionarBienesdeuso(\'' + respuesta.venta_id + '\',\'' + ventaDescripcion + '\')" alt="">';
+                                    }
+                                }
                                 rowData.push(tdactions);
 
                                 var rowIndex = $('#tablaVentas').dataTable().fnAddData(rowData);
@@ -285,7 +302,22 @@ $(document).ready(function() {
                 $('#myModal').on('show.bs.modal', function() {
                     $('#myModal').find('.modal-title').html('Asiento automatico de venta');
                     $('#myModal').find('.modal-body').html(response);
-                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                    // $('#myModal').find('.modal-footer').append($('<button>', {
+                    //     type:'button',
+                    //     datacontent:'remove',
+                    //     class:'btn btn-primary',
+                    //     id:'editRowBtn',
+                    //     onclick:"$('#BienesdeusoRelacionarventaForm').submit()",
+                    //     text:"Aceptar"
+                    // }));
+                    $('#myModal').find('.modal-footer').append($('<button>', {
+                        type:'button',
+                        datacontent:'remove',
+                        class:'btn btn-primary',
+                        id:'editRowBtn',
+                        onclick:" $('#myModal').modal('hide')",
+                        text:"Cerrar"
+                    }));
                 });
                 $('#myModal').modal('show');
                 $('.chosen-select-cuenta').chosen({
@@ -723,7 +755,23 @@ $(document).ready(function() {
             $('#myModal').on('show.bs.modal', function() {
                 $('#myModal').find('.modal-title').html('Editar Venta');
                 $('#myModal').find('.modal-body').html(response);
-                // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                // $('#myModal').find('.modal-footer').append($('<button>', {
+                //     type:'button',
+                //     datacontent:'remove',
+                //     class:'btn btn-primary',
+                //     id:'editRowBtn',
+                //     onclick:"$('#BienesdeusoRelacionarventaForm').submit()",
+                //     text:"Aceptar"
+                // }));
+                $('#myModal').find('.modal-footer').html("")
+                $('#myModal').find('.modal-footer').append($('<button>', {
+                    type:'button',
+                    datacontent:'remove',
+                    class:'btn btn-primary',
+                    id:'editRowBtn',
+                    onclick:" $('#myModal').modal('hide')",
+                    text:"Cerrar"
+                }));
             });
 
             $('#myModal').modal('show');
@@ -780,6 +828,18 @@ $(document).ready(function() {
             }, this);
           });
           $('.chosen-select').chosen({search_contains:true});
+
+            $("#VentaFormEdit"+venid+" #VentaActividadclienteId").on('change', function() {
+                $('#VentaFormEdit'+venid+' #jsonactividadescategorias').val($("#VentaFormEdit"+venid+" #VentaActividadclienteId").val());
+                $('#VentaFormEdit'+venid+' #jsonactividadescategorias').trigger( "change" );
+            });
+            if($('#VentaFormEdit'+venid+' #jsonactividadescategorias option').size()>0 ){
+                $('#VentaFormEdit'+venid+' #VentaTipogastoId').filterGroups({groupSelector: '#VentaFormEdit'+venid+' #jsonactividadescategorias', });
+            }
+            $('#VentaFormEdit'+venid+' #jsonactividadescategorias').trigger( "change" );
+
+
+
           $('#VentaFormEdit'+venid).submit(function(){
             var formData = $(this).serialize();
             var formUrl = $(this).attr('action');
@@ -850,7 +910,7 @@ $(document).ready(function() {
        }
     });
     }
-    function eliminarVenta(venid){
+    function eliminarVenta(venid,descripcion){
       var r = confirm("Esta seguro que desea eliminar esta venta?. Es una accion que no podra deshacer.");
       if (r == true) {
         $.ajax({
@@ -883,6 +943,70 @@ $(document).ready(function() {
           callAlertPopint(txt);
       }/*
       */
+    }
+    function relacionarBienesdeuso(venid,descripcion){
+        //primero vamos a cargar el id de la venta (con una descripcion) en el formulario
+        //despues es ejecutar el ajax cargado al principio nada mas
+        var clienteid = $('#cliid').val();
+        $.ajax({
+            type: "get",  // Request method: post, get
+            url: serverLayoutURL+"/bienesdeusos/relacionarventa/"+clienteid+"/"+venid,
+
+            // URL to request
+            data: "",  // post data
+            success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Relacionar Bien de uso a la Venta: ' +descripcion);
+                    $('#myModal').find('.modal-body').html(response);
+                    $('#myModal').find('.modal-footer').html("");
+                    $('#myModal').find('.modal-footer').append($('<button>', {
+                        type:'button',
+                        datacontent:'remove',
+                        class:'btn btn-primary',
+                        id:'editRowBtn',
+                        onclick:"$('#BienesdeusoRelacionarventaForm').submit()",
+                        text:"Aceptar"
+                    }));
+                    $('#myModal').find('.modal-footer').append($('<button>', {
+                        type:'button',
+                        datacontent:'remove',
+                        class:'btn btn-primary',
+                        id:'editRowBtn',
+                        onclick:" $('#myModal').modal('hide')",
+                        text:"Cerrar"
+                    }));
+                });
+                $('#myModal').modal('show');
+
+                $('#BienesdeusoRelacionarventaForm').submit(function(){
+                    $('#myModal').modal('hide');
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    //aca tenemos que sacar todos los disabled para que se envien los campos
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(data,textStatus,xhr){
+                            var respuesta = JSON.parse(data);
+                            callAlertPopint(respuesta.respuesta);
+                        },
+                        error: function(xhr,textStatus,error){
+                            $('#myModal').modal('show');
+                            alert(textStatus);
+                        }
+                    });
+                    return false;
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
     }
 /* fin Update Ventas*/
     function realizarEventoCliente(periodo,clienteid,estadotarea){

@@ -916,6 +916,22 @@ echo $this->Form->button('Imprimir',
                                 </tr>
                                 <tr>
                                     <td style="padding: 0px;font-size:10px;width:60%">
+                                        Licencia Matrimonio:
+                                    </td>
+                                    <td style="padding: 0px;font-size:10px;width:40%">
+                                        $<?php
+                                        if(isset($valores['180'])) {//Licencia por matrimonio
+                                            echo  '<p id="licanciamatrimonio" class="licanciamatrimonio" style="display: initial;">'.
+                                                number_format($valores['180']['valor'], 2, ",", ".").
+                                                '</p>';
+                                        }else{
+                                            echo  '<p id="licanciamatrimonio" class="licanciamatrimonio" style="display: initial;"></p>';
+                                        }
+                                        ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 0px;font-size:10px;width:60%">
                                         Otros conceptos:                            
                                     </td>
                                     <td style="padding: 0px;font-size:10px;width:40%">

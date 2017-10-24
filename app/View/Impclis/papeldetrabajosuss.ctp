@@ -48,6 +48,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
 
                 $miempleado['horasDias'] = 0;
                 $miempleado['sueldo'] = 0;
+                $miempleado['diadelgremiotrabajado'] = 0;
+                $miempleado['diadelgremio'] = 0;
                 $miempleado['adicionales'] = 0;
                 $miempleado['embargos'] = 0;
                 $miempleado['horasextras'] = 0;
@@ -112,7 +114,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             $coberturaart = $miempleado['coberturaart'];//todo inicializar en false cuando tengamos de donde sacar el dato
             $segurodevida = $miempleado['segurodevida'];//todo inicializar en false cuando tengamos de donde sacar el dato
 
-            $horasDias=0;$jornada=0;$sueldo=0;
+            $horasDias=0;$jornada=0;
+            $sueldo=0;
+            $diadelgremiotrabajado=0;
+            $diadelgremio=0;
             $adicionales=0;
             $embargos=0;
             $horasextras=0;$importehorasextras=0;
@@ -239,6 +244,13 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //Sueldo
                 if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='21'/*Total basicos*/){
                     $sueldo += $valorrecibo['valor'];
+                }
+                //si no trabajo el dia del gremio hay que sumarlo al basico, si lo trabajo al adicional
+                if($valorrecibo['Cctxconcepto']['Concepto']['id']=='178'/*Dia del gremio trabajado*/){
+                    $diadelgremiotrabajado = $valorrecibo['valor'];
+                }
+                if ($valorrecibo['Cctxconcepto']['Concepto']['id'] == '75'/*Dia del gremio*/) {
+                    $diadelgremio += $valorrecibo['valor'];
                 }
                 //Redondeo
                 if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='124'/*Redondeo*/){
@@ -517,6 +529,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             if($codigoafip=='3'){
                 $ContribSSjubilacionsipa+=$rem2*0.1017*0.25;
             }
+            if($codigoafip=='4'){
+                $ContribSSjubilacionsipa+=$rem2*0.1017*0.0;
+            }
             //Jubilacion INSSJP
             if($codigoafip=='0'){
                 $INSSJP+=$rem2*0.01500;
@@ -529,6 +544,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             }
             if($codigoafip=='3'){
                 $INSSJP+=$rem2*0.01500*0.25;
+            }
+            if($codigoafip=='4'){
+                $INSSJP+=$rem2*0.01500*0.0;
             }
             //Contrib Tarea Dif
             $ContribSScontribtareadif = $rem1*($seguridadsocialcontribtareadif/100);
@@ -546,6 +564,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 }
                 if($codigoafip=='3'){
                     $FNE+=$rem1*0.0089*0.25;
+                }
+                if($codigoafip=='4'){
+                    $FNE+=$rem1*0.0089*0.0;
                 }
             }else{
 
@@ -590,6 +611,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             }
             if($codigoafip=='3'){
                 $asignacionfamiliar+=$rem1*0.04440*0.25;
+            }
+            if($codigoafip=='4'){
+                $asignacionfamiliar+=$rem1*0.04440*0.0;
             }
             //Total Contribuciones
             $totalContribucionesSS =
@@ -663,6 +687,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             $miempleado['redondeo']=$redondeo;
             $miempleado['cantidadadherente']=$cantidadAdherentes;
             $miempleado['sueldo']=$sueldo;
+            $miempleado['diadelgremiotrabajado']=$diadelgremiotrabajado;
+            $miempleado['diadelgremio']=$diadelgremio;
             $miempleado['adicionales']=$adicionales;
             $miempleado['embargos']=$embargos;
             $miempleado['horasextras']=$horasextras;
@@ -806,7 +832,25 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td>Código AFIP</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>".$empleadoDatos[$empleado['id']]['codigoafip']."</td>";
+                        $reduccion= 0;
+                        switch ($empleadoDatos[$empleado['id']]['codigoafip']){
+                            case 0:
+                                $reduccion= 0;
+                                break;
+                            case 1:
+                                $reduccion= 50;
+                                break;
+                            case 2:
+                                $reduccion= 75;
+                                break;
+                            case 3:
+                                $reduccion= 25;
+                                break;
+                           case 4:
+                                $reduccion= 100;
+                                break;
+                        }
+                        echo "<td> reduccion del ".$reduccion."%</td>";
                     }
                     ?>
                     <td ></td>
@@ -836,9 +880,14 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td>Sueldo</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        //si no trabajo el dia del gremio hay que sumarlo al basico, si lo trabajo al adicional
                         $empleadoid = $empleado['id'];
-                        echo number_format($empleadoDatos[$empleadoid]['sueldo'], 2, ",", ".")."</td>";
+                        $sueldoAMostrar = $empleadoDatos[$empleadoid]['sueldo'];
+                        if($empleadoDatos[$empleadoid]['diadelgremiotrabajado']==0){
+                            $sueldoAMostrar += $empleadoDatos[$empleadoid]['diadelgremio'];
+                        }
+                        echo "<td>";
+                        echo number_format($sueldoAMostrar, 2, ",", ".")."</td>";
                     }
                     ?>
                     <td ></td>
@@ -849,7 +898,11 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                         echo "<td>";
                         $empleadoid = $empleado['id'];
-                        echo number_format($empleadoDatos[$empleadoid]['adicionales'], 2, ",", ".")."</td>";
+                        $adicionalesAMostrar = $empleadoDatos[$empleadoid]['adicionales'];
+                        if($empleadoDatos[$empleadoid]['diadelgremiotrabajado']==1){
+                            $adicionalesAMostrar += $empleadoDatos[$empleadoid]['diadelgremio'];
+                        }
+                        echo number_format($adicionalesAMostrar, 2, ",", ".")."</td>";
                     }
                     ?>
                     <td ></td>

@@ -31,6 +31,7 @@ $tieneAgenteDePercepcionIIBB=$cliente["Cliente"]['tieneAgenteDePercepcionIIBB'];
 /*DGRM*/
 $tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePercepcionActividadesVarias'];
 echo $this->Form->input('cliid',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
+echo $this->Form->input('tipopersona',array('default'=>$cliente["Cliente"]['tipopersona'],'type'=>'hidden'));
 echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
 $fchcumpleanosconstitucion = date('d-m-Y',strtotime($cliente["Cliente"]['fchcumpleanosconstitucion']));
 echo $this->Form->input('fchcumpleanosconstitucion',array('default'=>$fchcumpleanosconstitucion,'type'=>'hidden'));
@@ -485,7 +486,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarCompra(".$paramsCompra.")"));
                     echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarCompra(".$paramsCompra.")"));
                     if($compra["imputacion"]=='Bs Uso'){
-                        echo $this->Html->image('biendeuso.png',array('width' => '20', 'height' => '20','onClick'=>"abrirBiendeuso(".$paramsCompra.")"));
+                        echo $this->Html->image('biendeuso.png',array('width' => '20', 'height' => '20','onClick'=>"abrirBiendeuso(".$cliente['Cliente']['id'].",".$paramsCompra.")"));
                     }
                     echo $this->Form->end();
                     ?>
@@ -538,8 +539,8 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                               } elseif ($movimientosbancario['alicuota'] == '21') {
                                   $neto = $movimientosbancario['debito'] / 0.21;
                               } elseif ($movimientosbancario['alicuota'] == '27') {
-                                  $neto = $movimientosbancario['debito'] / 0.27; ?>
-                              <?php } ?>
+                                  $neto = $movimientosbancario['debito'] / 0.27;
+                              } ?>
                               <td class="<?php echo $tdClass ?>"><p id="nosuma"><?php echo number_format($neto, 2, ",", ".") ?></p></td><!--12-->
                               <td class="<?php echo $tdClass ?>"><p id="nosuma"><?php echo number_format($movimientosbancario['debito'], 2, ",", ".") ?></p></td><!--13-->
                               <td class="<?php echo $tdClass ?>">0,00</td><!--14-->

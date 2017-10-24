@@ -16,7 +16,7 @@ class Cuenta extends AppModel {
 
 	//cuentas que se pueden usar para un cliente en un banco
 
-	public $cuentasDeBancoActivables = ['17','18','19','20','21','22','23','24','25','26','27'];
+	public $cuentasDeBancoActivables = ['17','18','19','20','21','22','23','24','25','26'];
 	//estas cuentas se van a usar cuando demos de alta una cuenta de banco marcada como "no usada para actividad"
 	public $cuentasDeBancoNoRelacionadosAActividadActivables = ['1060','1061','1062','1063','1064','1065','1066','1067'];
 
@@ -35,15 +35,18 @@ class Cuenta extends AppModel {
 			'1468','1477','1479','1492','1495','1496','1500','1505','1506','1507','1508','1509','1510','1511','1512',
 			'1513','1518','1521','1522','1526','1529','1575','1576','1577','1578','1579','1580','1581','1582','1583',
 			'1584','1585','1586','1587','1588','1589','1590','1591','1592','1593','1594','1595','1597','1598','1599',
-			'1600','1601','1602','1604','1605','1606','1607','1608','1609','2386','2387','2388','2389','2390','2391',
+			'1600','1601','1602','1604','1605','1606','1607','1608','1609',
+			'2139','2140','2141','2142','2143','2144','2145','2146','2147',
+			'2149','2150','2151','2152','2153','2154','2155','2156','2157',
+			'2334','2386','2387','2388','2389','2390','2391',
 			'2392','2393','2394','2395','2396','2400','2401','2402','2403','2404','2405','2410','2414','2415','2416',
 			'2419','2424','2428','2429','2430','2433','2438','2443',
 			'2444','2447','2452','2456','2460','2468','2472','2480','2484','2492','2496','2504','2508','2523','2545',
-			'2546','2585','2799','3279','3330',
-			'3347','3348','3349','3350','3351','3352','3353','3354','3355','3356','3357','3358','3359','3360','3361',
-			'3362','3363','3364','3365',
-			'3350','3379'];
-	
+			'2546','2585','2799','2800','2801','2802',
+			'3218','3279',
+			'3347','3350',
+			'3379'];
+
 	public $cuentasComisionGastosInteresesOtros = [
 		'2386','2387','2388','2391','2396','2400','2401','2402','2405','2410','2414','2415','2416','2419','2424','2428',
 		'2429','2430','2433','2438','2443','2444','2447','2452','2456','2460','2468','2472','2480','2484','2492','2496',
@@ -219,9 +222,10 @@ class Cuenta extends AppModel {
     //210302081	Ap. UOM a Pagar
     //210302091	Ap. AOMA a Pagar
 
+	//Nombre de Cuentas de Bien de Uso de EMPRESAS
 	//cuentas Inmueble 120601000
-	public $cuentasInmuebleTerreno = 'Rodado "XX" Valor Origen';
-	public $cuentasInmuebleEdif = 'Rodado "XX" Actualización';
+	public $cuentasInmuebleTerreno = 'Cat. "XX" Terreno %';
+	public $cuentasInmuebleEdif = 'Cat. "XX" Edif. %';
 	public $cuentasInmuebleMejora = 'Cat. "XX" Mejora';
 	public $cuentasInmuebleActualiz = 'Cat. "XX" Actualiz.';
 	//cuentas Rodado  120602000
@@ -239,18 +243,20 @@ class Cuenta extends AppModel {
 	//cuentas Rodado  120604000
 	public $cuentasMaquinariasValorOrigen = 'Maquinaria "XX" Valor Orígen';
 	public $cuentasMaquinariasActualizacion = 'Maquinaria "XX" Actualización';
-    //cuentas Rodado  120604000
-	public $cuentasParticipacionesenSociedadesValorOrigen = [];
-	public $cuentasParticipacionesenSociedadesActualizacion = [];
-    //cuentas Rodado  120604000
-	public $cuentasActivosIntangiblesValorOrigen = [];
-	public $cuentasActivosIntangiblesActualizacion = [];
-    //cuentas Rodado  120604000
-	public $cuentasOtrosActivosNoCorrientesValorOrigen = [];
-	public $cuentasOtrosActivosNoCorrientesActualizacion = [];
-    //cuentas Rodado  120604000
-	public $cuentasLlavedenegocioValorOrigen = [];
-	public $cuentasLlavedenegocioActualizacion = [];
+	//Nombre de Cuentas de Bien de Uso de NO EMPRESAS
+	//cuentas Rodado  130101000
+	public $cuentasInmuebles = 'Inmueble Cat XX';
+	//cuentas Rodado  130103000
+	public $cuentasAutomotores = 'Automotores XX';
+	//cuentas Rodado  130104000
+	public $cuentasNaves = 'Naves, Yates y Similares XX';
+	//cuentas Rodado  130105000
+	public $cuentasAeronaves = 'Aeronaves XX';
+	//cuentas Rodado  130114000
+	public $cuentasBienesMueblesRegistrables = 'Bienes Muebles Registrables XX';
+	//cuentas Rodado  130115000
+	public $cuentasOtrosbienes = 'Otros bienes XX';
+
     /**
  * Validation rules
  *

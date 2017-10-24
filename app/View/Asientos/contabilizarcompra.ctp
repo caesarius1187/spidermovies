@@ -91,6 +91,13 @@ if(isset($error)){ ?>
                     }
                     $cuenta110403401+=$comprasgravada[0]['iva']*$suma;
                 }
+                foreach ($comprasbiendeuso as $comprasbdu) {
+                    $suma = 1;
+                    if($comprasbdu['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                        $suma=-1;
+                    }
+                    $cuenta110403401+=$comprasbdu['Compra']['iva']*$suma;
+                }
                 $debe = $cuenta110403401;
                 break;
             case '288'/*110403403 IVA - Percepciones*/:
@@ -103,8 +110,8 @@ if(isset($error)){ ?>
                     $suma = 1;
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
-                    }
-                    $cuenta110403403+=$comprasgravada[0]['ivapercep']*$suma;
+                    }                    
+                    $cuenta110403403 += $comprasgravada[0]['ivapercep']*$suma;
                 }
                 $debe = $cuenta110403403;
                 break;
@@ -180,6 +187,13 @@ if(isset($error)){ ?>
                         $suma=-1;
                     }
                     $cuenta110499001+=$comprasgravada[0]['total']*$suma;
+                }
+                foreach ($comprasbiendeuso as $comprasbdu) {
+                    $suma = 1;
+                    if($comprasbdu['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                        $suma=-1;
+                    }
+                    $cuenta110499001+=$comprasbdu['Compra']['total']*$suma;
                 }
                 $haber = $cuenta110499001;
                 break;
@@ -368,7 +382,7 @@ if(isset($error)){ ?>
                 $cuentacuarta=0;
                 //Cargar la compra neto + no gravado + exento
                 $cuentasTipoGastos=[
-                    '3490'=>['27'],/*Mercaderia-Insumos*/
+                    '2768'=>['27'],/*Mercaderia-Insumos*/
                 ];
 
                 foreach ($comprasgravadas as $comprasgravada) {
@@ -380,9 +394,9 @@ if(isset($error)){ ?>
                     if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
                         continue;
                     }
-                    if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
-                        continue;
-                    }
+                    //if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                    //    continue;
+                    //}
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
                         $suma=-1;
                     }
@@ -391,35 +405,175 @@ if(isset($error)){ ?>
                 $debe = $cuentacuarta;
                 break;
         }
-        //si el debe y el haber son 0 y el movimiento no estaba previamente guardado no tengo por que mostrar este movimiento
-        if((($debe*1) != 0) || (($haber*1) != 0)||($movid!= 0)) {
-            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
-            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
-            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', [
-                'label' => ($i != 0) ? false : 'Cuenta',
-                'default' => $cuentaclienteid,
-                'defaultoption' => $cuentaclienteid,
-                'class' => 'chosen-select-cuenta',
-            ]);
-            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.fecha', array(
-                'type' => 'hidden',
-                'label' => ($i != 0) ? false : 'Fecha',
-                'readonly', 'readonly',
-                'value' => date('d-m-Y'),
-            ));
 
-            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [
-                'label' => ($i != 0) ? false : 'Debe',
-                'class' => "inputDebe ",
-                'default' => number_format($debe, 2, ".", ""),]);
-            $totalDebe += $debe;
-            echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
-                'class' => "inputHaber ",
-                'label' => ($i != 0) ? false : 'Haber',
-                'default' => number_format($haber, 2, ".", ""),]);
-            $totalHaber += $haber;
-            echo "</br>";
-            $i++;
+        //si el debe y el haber son 0 y el movimiento no estaba previamente guardado no tengo por que mostrar este movimiento
+        showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+        $i++;
+        $totalDebe += $debe;
+        $totalHaber += $haber;
+    }
+    // aca vamos a cargar las compras como movimientos con sus respectivas cuentas
+    foreach ($comprasbiendeuso as $compra){
+        $biendeuso = $compra['Bienesdeuso'][0];
+        $debe = 0;
+        $haber = 0;
+        $cuentaclienteid = $biendeuso['cuentaclientevalororigen_id'];
+        $movid = 0;
+        if(isset($asientoyacargado['Movimiento'])) {
+            foreach ($asientoyacargado['Movimiento'] as $kMov => $movimiento){
+                if(!isset($asientoyacargado['Movimiento'][$kMov]['cargado'])) {
+                    $asientoyacargado['Movimiento'][$kMov]['cargado'] = false;
+                }
+                if($cuentaclienteid==$movimiento['cuentascliente_id']){
+                    $movid=$movimiento['id'];
+                    $asientoyacargado['Movimiento'][$kMov]['cargado']=true;
+                }
+            }
+        }
+        switch ($biendeuso['tipo']){
+            //Empresa
+            case 'Rodado':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Inmueble':
+                if(count($biendeuso['Cuentaclienteterreno'])>0){
+                    $cuentaId = $biendeuso['Cuentaclienteterreno']['cuenta_id'];
+                    $debe = $compra['Compra']['neto']*$biendeuso['porcentajeterreno']/100;
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                if(count($biendeuso['Cuentaclienteedificacion'])>0){
+                    $cuentaId = $biendeuso['Cuentaclienteedificacion']['cuenta_id'];
+                    $debe = $compra['Compra']['neto']*$biendeuso['porcentajeedificacion']/100;
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Instalaciones':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Otros bienes de uso Muebles':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Otros bienes de uso Maquinas':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Otros bienes de uso Activos Biologicos':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            //NO empresa
+            case 'Inmuebles':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Automotor':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Naves, Yates y similares':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Aeronave':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Bien mueble registrable':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
+            case 'Otros bienes':
+                if(count($biendeuso['Cuentaclientevalororigen'])>0){
+                    $cuentaId = $biendeuso['Cuentaclientevalororigen']['cuenta_id'];
+                    $debe = $compra['Compra']['neto'];
+                    $haber = 0;
+                    showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                    $i++;
+                    $totalDebe += $debe;
+                    $totalHaber += $haber;
+                }
+                break;
         }
     }
     /*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
@@ -437,33 +591,10 @@ if(isset($error)){ ?>
                 $debe = $movimiento['debe'];
                 $haber = $movimiento['haber'];
                 $cuentaclienteid = $movimiento['cuentascliente_id'];
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', [
-                    'label'=>($i!=0)?false:'Cuenta',
-                    'default' => $cuentaclienteid]);
-                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha', array(
-                    'type'=>'hidden',
-                    'label'=>($i!=0)?false:'Fecha',
-                    'readonly','readonly',
-                    'value'=>date('d-m-Y'),
-                ));
-                $movimientoConValor = "movimientoSinValor";
-                if(($debe*1) != 0 || ($haber*1) != 0){
-                    $movimientoConValor = "movimientoConValor";
-                }
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [
-                    'class'=>"inputDebe ".$movimientoConValor,
-                    'label'=>($i!=0)?false:'Debe',
-                    'default'=>number_format($debe, 2, ".", ""),]);
-                $totalDebe+=$debe;
-                echo $this->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
-                    'label'=>($i!=0)?false:'Haber',
-                    'class'=>"inputHaber ".$movimientoConValor,
-                    'default'=>number_format($haber, 2, ".", ""),]);
-                $totalHaber +=$haber;
-                echo "</br>";
+                showMovimiento($debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
                 $i++;
+                $totalDebe += $debe;
+                $totalHaber += $haber;
             }
         }
     }
@@ -505,3 +636,33 @@ if(isset($error)){ ?>
     }
     ?>
 </div>
+<?php
+function showMovimiento($context,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid){
+    if((($debe*1) != 0) || (($haber*1) != 0)||($movid!= 0)) {
+        echo $context->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
+        echo $context->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);
+        echo $context->Form->input('Asiento.0.Movimiento.' . $i . '.cuentascliente_id', [
+            'label' => ($i != 0) ? false : 'Cuenta',
+            'default' => $cuentaclienteid,
+            'defaultoption' => $cuentaclienteid,
+            'class' => 'chosen-select-cuenta',
+        ]);
+        echo $context->Form->input('Asiento.0.Movimiento.' . $i . '.fecha', array(
+            'type' => 'hidden',
+            'label' => ($i != 0) ? false : 'Fecha',
+            'readonly', 'readonly',
+            'value' => date('d-m-Y'),
+        ));
+
+        echo $context->Form->input('Asiento.0.Movimiento.' . $i . '.debe', [
+            'label' => ($i != 0) ? false : 'Debe',
+            'class' => "inputDebe ",
+            'default' => number_format($debe, 2, ".", ""),]);
+        echo $context->Form->input('Asiento.0.Movimiento.' . $i . '.haber', [
+            'class' => "inputHaber ",
+            'label' => ($i != 0) ? false : 'Haber',
+            'default' => number_format($haber, 2, ".", ""),]);
+        echo "</br>";
+    }
+}
+?>

@@ -379,9 +379,12 @@ jQuery(document).ready(function($) {
             return false;
         });
         $("#relatedEmpleados").DataTable();
-
+        $("#relatedBienesdeusos").DataTable();
+        //por alguna razon el width de los datatable se va a 0 y no a 100
+        $(".dataTable").css('width','100%');
         catchEliminarProvedore();
         catchEliminarEmpleado();
+        catchEliminarBienesdeuso();
         catchEliminarSubcliente();
 	/*General*/
         var iHeaderHeight = $("#header").height() + 40;
@@ -540,6 +543,15 @@ function activateLabelsFunctionality(){
 				$("#imgEmpleados").attr('src',serverLayoutURL+"/img/mas2.png");
 			}
 		});
+        $( "#lblBienesdeusos" ).click(function() {
+			if($('.biendeuso').is(":visible")){
+				$('.biendeuso').hide();
+				$("#imgBienesdeusos").attr('src',serverLayoutURL+"/img/menos2.png");
+			}else{
+				$('.biendeuso').show();
+				$("#imgBienesdeusos").attr('src',serverLayoutURL+"/img/mas2.png");
+			}
+		});
 	});
 }
 function showDatosCliente(){
@@ -562,7 +574,8 @@ function showDatosCliente(){
 		$('.rowheaderpuntosdeventas').hide();
 		$('.rowheadersubclientes').hide();
 		$('.rowheaderempleados').hide();
-		$('.rowheaderprovedores').hide();
+        $('.rowheaderbienesdeusos').hide();
+        $('.rowheaderprovedores').hide();
 		$('.rowheadercompras').hide();
 	});
 }
@@ -587,7 +600,8 @@ function showDatosImpuesto(){
 		$('.rowheaderpuntosdeventas').hide();
 		$('.rowheadersubclientes').hide();
 		$('.rowheaderempleados').hide();
-		$('.rowheaderprovedores').hide();
+        $('.rowheaderbienesdeusos').hide();
+        $('.rowheaderprovedores').hide();
 		$('.rowheadercompras').hide();
 	});
 }
@@ -617,6 +631,7 @@ function showDatosVenta(){
 		$('.rowheadersubclientes').show();
 		$('.rowheaderprovedores').show();
 		$('.rowheaderempleados').show();
+		$('.rowheaderbienesdeusos').show();
 		$('.rowheadercompras').hide();
 	});
 }
@@ -676,6 +691,9 @@ function hiddeAll(){
 
 		$("#imgEmpleados").attr('src',serverLayoutURL+"/img/menos2.png");
 		$('.empleado').hide();
+
+        $("#imgBienesdeusos").attr('src',serverLayoutURL+"/img/menos2.png");
+		$('.biendeuso').hide();
 	});
 }
 
@@ -1828,6 +1846,8 @@ function loadSubclientes(cliid){
                 var respuesta = JSON.parse(data);
                 if(respuesta.subclientes != null){
                     $("#subclientesDatatable").DataTable();
+                    //por alguna razon el width de los datatable se va a 0 y no a 100
+                    $(".dataTable").css('width','100%');
                     respuesta.subclientes.forEach(function(subcliente){
                         var rowData =
                             [
@@ -1868,6 +1888,8 @@ function loadProvedores(cliid){
                 var respuesta = JSON.parse(data);
                 if(respuesta.provedores != null){
                     $("#provedoresDatatable").DataTable();
+                    //por alguna razon el width de los datatable se va a 0 y no a 100
+                    $(".dataTable").css('width','100%');
                     respuesta.provedores.forEach(function(provedore){
                         var rowData =
                             [
@@ -2165,7 +2187,280 @@ function catchEliminarSubcliente(){
         });
     });
 }
+function catchEliminarBienesdeuso(){
+    jQuery(document).ready(function($) {
 
+        $('.deleteBiendeuso').removeAttr('onclick');
+
+        $('.deleteBiendeuso').click(function(e) {
+            e.preventDefault();
+            if (!confirm('Esta seguro que desea eliminar este Bien de uso?')) {
+                return false;
+            }
+            var form = $(this).prev();
+            var url = $(form).attr("action");
+            var tr = $(this).closest('tr');
+            url = url + '.json';
+            $.post(url)
+                .success(function(res) {
+                    var respuesta = jQuery.parseJSON(res);
+                    if(!respuesta.error){
+                        tr.fadeOut(200);
+                    }else{
+                    }
+                    callAlertPopint(respuesta.respuesta);
+                })
+                .error(function() {
+                    alert("Error");
+                })
+            return false;
+        });
+    });
+}
+function hideallinputsbdu(){
+    jQuery(document).ready(function($) {
+        $(".inmuebleFNE").parent().hide();
+        $(".inmuebleFE").parent().hide();
+        $(".inmuebleJE").parent().hide();
+        $(".naves").parent().hide();
+        $(".aeronaves").parent().hide();
+        $(".instalacionesPF").parent().hide();
+        $(".instalacionesPJ").parent().hide();
+        $(".otrobiendeusoPF").parent().hide();
+        $(".otrobiendeusoPJ").parent().hide();
+        $(".bienesmueblesregistrables").parent().hide();
+        $(".otrosbienes").parent().hide();
+        $(".rodadoPJ").parent().hide();
+        $(".rodadoPF").parent().hide();
+        $(".automotor").parent().hide();
+    });
+}
+function loadFormBiendeuso(cliid,biendeusoid){
+    jQuery(document).ready(function($) {
+        var data = "";
+        $.ajax({
+            type: "get",  // Request method: post, get
+            url: serverLayoutURL + "/bienesdeusos/add/" + cliid + "/" + biendeusoid + "/0",
+
+            // URL to request
+            data: data,  // post data
+            success: function (response) {
+                $('#myModal').on('show.bs.modal', function () {
+                    $('#myModal').find('.modal-title').html('Agregar Bien de uso de la compra');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+
+                $('#myModal').modal('show');
+//perzonalizar formulario para tipo de Bien de uso
+                $("#BienesdeusoTipo").on('change', function () {
+                    var selectedTipo = $(this).val();
+                    var tipoPersona = $("#ClienteTipopersona").val();
+                    /*
+                   * Fisica - Empresa
+                   * Fisica NO Empresa
+                   * Juridica Empresa*/
+                    hideallinputsbdu();
+                    switch (selectedTipo) {
+                        case 'Automotor':
+                            $(".automotor").parent().show();
+                            break;
+                        case 'Rodado':
+                            if(tipoPersona=="fisica"){
+                                $(".rodadoPJ").parent().hide();
+                                $(".rodadoPF").parent().show();
+                                /*estos dos son para personas Fisica Empresa*/
+                            }else{
+                                $(".rodadoPF").parent().hide();
+                                $(".rodadoPJ").parent().show();
+                                /*estos dos son para personas Juridica Empresa*/
+                            }
+                            break;
+                        case 'Inmueble':
+                            if(tipoPersona=="fisica"){
+                                $(".inmuebleFE").parent().show();
+                                /*estos dos son para personas Fisica Empresa*/
+                            }else{
+                                $(".inmuebleJE").parent().show();
+                                /*estos dos son para personas Juridica Empresa*/
+                            }
+                            break;
+                        case 'Inmuebles':
+                            /*estos dos son para personas Fisicas No Empresa*/
+                            $(".inmuebleFNE").parent().show();
+                            break;
+                        case 'Aeronave':
+                            $(".aeronaves").parent().show();
+                            break;
+                        case 'Naves, Yates y similares':
+                            $(".naves").parent().show();
+                            break;
+                        case 'Instalaciones':
+                            if(tipoPersona=="fisica"){
+                                $(".instalacionesPF").parent().show();
+                                /*estos dos son para personas Fisica Empresa*/
+                            }else{
+                                $(".instalacionesPJ").parent().show();
+                                /*estos dos son para personas Juridica Empresa*/
+                            }
+                            break;
+                        case 'Otros bienes de uso Muebles':
+                        case 'Otros bienes de uso Maquinas':
+                        case 'Otros bienes de uso Activos Biologicos':
+                            if(tipoPersona=="fisica"){
+                                $(".otrobiendeusoPF").parent().show();
+                                /*estos dos son para personas Fisica Empresa*/
+                            }else{
+                                $(".otrobiendeusoPJ").parent().show();
+                                /*estos dos son para personas Juridica Empresa*/
+                            }
+                            break;
+                        case 'Bien mueble registrable':
+                            $(".bienesmueblesregistrables").parent().show();
+                            break;
+                        case 'Otros bienes':
+                            $(".otrosbienes").parent().show();
+                            break;
+                    }
+                });
+                $("#BienesdeusoTipo").trigger("change");
+                $("#BienesdeusoPorcentajeamortizacion").on('change', function() {
+                    var valororiginal = $("#BienesdeusoValororiginal").val();
+                    var amortizacionperiodo = valororiginal / $("#BienesdeusoPorcentajeamortizacion").val();
+                    if($("#BienesdeusoImporteamorteizaciondelperiodo is:visible")){
+                        $("#BienesdeusoImporteamorteizaciondelperiodo").val(amortizacionperiodo);                                    
+                    }           
+                });
+                $("#BienesdeusoPorcentajeamortizacion" ).trigger( "change" );
+                
+                $('#BienesdeusoAddForm').submit(function () {
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                        type: 'post',
+                        url: formUrl,
+                        data: formData,
+                        success: function (data, textStatus, xhr) {
+                            var respuesta = JSON.parse(data);
+                            callAlertPopint(respuesta.respuesta);
+                            if(respuesta.bienesdeuso.Bienesdeuso!=null){
+                                var bienesdeusoID = respuesta.bienesdeuso.Bienesdeuso.id;
+                                var descripcionBDU = "";
+                                switch (respuesta.bienesdeuso.Bienesdeuso.tipo){
+                                    //Empresa
+                                    case 'Rodado':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.patente!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.patente;
+                                        if(respuesta.bienesdeuso.Bienesdeuso.aniofabricacion!="")
+                                            descripcionBDU  += " -"+respuesta.bienesdeuso.Bienesdeuso.aniofabricacion;
+                                        
+                                        break;
+                                    case 'Inmueble':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.calle!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.calle;
+                                        if(respuesta.bienesdeuso.Bienesdeuso.numero!="")
+                                            descripcionBDU  += " -"+respuesta.bienesdeuso.Bienesdeuso.numero;
+                                       
+                                        break;
+                                    case 'Instalaciones':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.descripcion!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.descripcion;
+                                        
+                                        break;
+                                    case 'Otros bienes de uso Muebles':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.descripcion!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.descripcion;
+                                       
+                                        break;
+                                    case 'Otros bienes de uso Maquinas':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.descripcion!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.descripcion;
+                                       
+                                        break;
+                                    case 'Otros bienes de uso Activos Biologicos':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.descripcion!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.descripcion;
+                                         
+                                        break;
+                                    //NO empresa
+                                    case 'Inmuebles':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.calle!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.calle;
+                                        if(respuesta.bienesdeuso.Bienesdeuso.numero!="")
+                                            descripcionBDU  += " -"+respuesta.bienesdeuso.Bienesdeuso.numero;
+                                        break;
+                                    case 'Automotor':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.patente!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.patente;
+                                        if(respuesta.bienesdeuso.Bienesdeuso.aniofabricacion!="")
+                                            descripcionBDU  += " -"+respuesta.bienesdeuso.Bienesdeuso.aniofabricacion;
+                                         
+                                        break;
+                                    case 'Naves, Yates y similares':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.marca!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.marca;
+                                        if(respuesta.bienesdeuso.Bienesdeuso.modelo!="")
+                                            descripcionBDU  += " -"+respuesta.bienesdeuso.Bienesdeuso.modelo;
+                                         
+                                        break;
+                                    case 'Aeronave':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.matricula!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.matricula;
+                                        if(respuesta.bienesdeuso.Bienesdeuso.fechaadquisicion!="")
+                                            descripcionBDU  += " -"+respuesta.bienesdeuso.Bienesdeuso.fechaadquisicion;
+                                         
+                                        break;
+                                    case 'Bien mueble registrable':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.descripcion!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.descripcion;
+                                         
+                                        break;
+                                    case 'Otros bienes':
+                                        if(respuesta.bienesdeuso.Bienesdeuso.descripcion!="")
+                                            descripcionBDU  += respuesta.bienesdeuso.Bienesdeuso.descripcion;                                         
+                                        break;
+                                    }       
+                                var rowData =
+                                    [
+                                       respuesta.bienesdeuso.Bienesdeuso.tipo,
+                                       respuesta.bienesdeuso.Bienesdeuso.periodo,
+                                       respuesta.bienesdeuso.Bienesdeuso.titularidad,
+                                       descripcionBDU,
+                                    ];
+                                var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormBiendeuso('+respuesta.bienesdeuso.Bienesdeuso.cliente_id+','+bienesdeusoID+')" alt="">';
+                                tdactions = tdactions + '<form action="'+serverLayoutURL+'/Bienesdeusos/delete/'+bienesdeusoID+'" name="post_58b8299bb3aae846453655'+bienesdeusoID+'" id="post_58b6e59f6102d291860796'+bienesdeusoID+'" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
+                                tdactions = tdactions + '<a href="#" class="deleteBiendeuso"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                                //onclick="eliminarProvedore('+respuesta.compra_id+')"
+                                rowData.push(tdactions);
+
+                                var rowIndex = $('#relatedBienesdeusos').dataTable().fnAddData(rowData);
+                                var row = $('#relatedBienesdeusos').dataTable().fnGetNodes(rowIndex);
+                                $(row).attr( 'id', "rowBiendeuso"+bienesdeusoID);
+
+                                catchEliminarBienesdeuso();
+                            }
+                            $('#myModal').modal('hide');
+
+                        },
+                        error: function (xhr, textStatus, error) {
+                            alert(textStatus);
+                        }
+                    });
+                    return false;
+                });
+                $('.chosen-select').chosen({search_contains: true});
+                $("#BienesdeusoLocalidadeId_chosen").css('width', 'auto');
+                $("#BienesdeusoModeloId_chosen").css('width', 'auto');
+                reloadDatePickers();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    });
+}
 /*General*/
 function restoreRow(row,oldrow,button){
 	$( "#"+button ).click(function() {		

@@ -33,7 +33,6 @@ class ComprasController extends AppController {
 				'Prest. Servicios'=>'Prest. Servicios',
 				'Bs Uso'=>'Bs Uso',
 				'Otros Conceptos'=>'Otros Conceptos',
-				'Dcto 814'=>'Dcto 814'
 	);
 
 	/**
@@ -303,7 +302,7 @@ class ComprasController extends AppController {
 			'Prest. Servicios'=>'Prest. Servicios',
 			'Bs Uso'=>'Bs Uso',
 			'Otros Conceptos'=>'Otros Conceptos',
-			'Dcto 814'=>'Dcto 814');
+			);
 		$this->set('imputaciones', $imputaciones);
 
 		$optionsTipoGastos=array(
@@ -742,7 +741,8 @@ class ComprasController extends AppController {
 		$compraAnterior=false;
 		if(!empty($this->data)){ 
 			$id = $this->request->data['Compra']['id'];
-			//Antes de guardar vamos a revisar que el comprobante o la alicuota cambie y tenemos que controlar que no estemos guardando una venta igual a otra que ya este guardada
+			//Antes de guardar vamos a revisar que el comprobante o la alicuota cambie y tenemos que controlar que no
+			// estemos guardando una venta igual a otra que ya este guardada
 			$options = array(
 				'contain'=>array( ),
 				'conditions' => array('Compra.' . $this->Compra->primaryKey => $id)
@@ -753,6 +753,7 @@ class ComprasController extends AppController {
 				$compra['Compra']['comprobante_id'] != $this->request->data['Compra']['comprobante_id']||
 				$compra['Compra']['puntosdeventa'] != $this->request->data['Compra']['puntosdeventa']||
 				$compra['Compra']['numerocomprobante'] != $this->request->data['Compra']['numerocomprobante']||
+				$compra['Compra']['provedore_id'] != $this->request->data['Compra']['provedore_id']||
 				$compra['Compra']['alicuota'] != $this->request->data['Compra']['alicuota']
 			)
 			{
@@ -761,6 +762,7 @@ class ComprasController extends AppController {
 					'Compra.comprobante_id'=>$this->request->data['Compra']['comprobante_id'],
 					'Compra.puntosdeventa'=>$this->request->data['Compra']['puntosdeventa'],
 					'Compra.numerocomprobante'=>$this->request->data['Compra']['numerocomprobante'],
+					'Compra.provedore_id'=>$this->request->data['Compra']['provedore_id'],
 					'Compra.alicuota'=>$this->request->data['Compra']['alicuota'],
 				);
 				$compraAnterior = $this->Compra->hasAny($optionsCompra);

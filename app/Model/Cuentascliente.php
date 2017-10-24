@@ -23,40 +23,41 @@ class Cuentascliente extends AppModel {
  *
  * @var array
  */
-	public function altaBienDeUso($cliid,$prefijo,$descripcion,$nombre){
+	public function altabiendeuso($cliid,$prefijo,$descripcion,$nombre){
         $Cuenta = ClassRegistry::init('Cuenta');
         //hay que buscar las cuentas que tengan el prefijo y que se llamen como el parametro descripcion
         //la primera que no tenga cuenta cliente la activamos, reemplazando XX por el nombre
         $optionCuentas=[
             'contain'=>[
                 'Cuentascliente'=>[
-                    'contitions'=>[
+                    'conditions'=>[
                         'Cuentascliente.cliente_id'=>$cliid
                     ]
                 ]
             ],
             'conditions'=>[
-                'Cuenta.numero LIKE "'+$prefijo+'%"',
+                'Cuenta.numero LIKE "'.$prefijo.'%"',
                 'Cuenta.nombre'=>$descripcion,
             ]
         ];
         $cuentas = $Cuenta->find('all',$optionCuentas);
         $respuesta=[];
         $respuesta['respuesta']="";
-        foreach ($cuentas as $cuenta) {
-            if(count($cuenta['Cuentascliente'])==0){
+        foreach ($cuentas as $micuenta) {
+            if(count($micuenta['Cuentascliente'])==0){
                 //podemos usar esta cuenta
-                $this->Cuentascliente->create();
+                $this->create();
                 $nombreCuentaClie = str_replace("XX", $nombre, $descripcion);
-                $this->Cuentascliente->set('cliente_id',$this->request->data['Impcli']['cliente_id']);
-                $this->Cuentascliente->set('cuenta_id',$cuenta['Cuenta']['id']);
-                $this->Cuentascliente->set('nombre',$nombreCuentaClie);
-                if ($this->Cuentascliente->save()){
+                $this->set('cliente_id',$cliid);
+                $this->set('cuenta_id',$micuenta['Cuenta']['id']);
+                $this->set('nombre',$nombreCuentaClie);
+                if ($this->save()){
                     $respuesta['respuesta'].="Se dio de alta la cuenta del Bien de Uso: ".$nombreCuentaClie."</br>";
-                    $respuesta['cuenta_id'].=$this->Cuentascliente->getLastInsertID();;
+                    $respuesta['cuenta_id']=$this->getLastInsertID();;
                 }else{
                     $respuesta['respuesta'].="NO se dio de alta la cuenta del Bien de Uso: ".$nombreCuentaClie."</br>";
                 }
+				return $this->getLastInsertID();
                 break;
             }
         }

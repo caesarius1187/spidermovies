@@ -85,7 +85,19 @@ class Venta extends AppModel {
 		)
 	);
 	public $hasMany = array(
-		
+		'Bienesdeuso' => array(
+			'className' => 'Bienesdeuso',
+			'foreignKey' => 'venta_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		)
 	);
 
 }

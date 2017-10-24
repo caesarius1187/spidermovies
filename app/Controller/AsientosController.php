@@ -49,10 +49,10 @@ class AsientosController extends AppController {
         $fechaFinConsulta = "";
         if($fechadeconsulta<$fechadecorteAñoActual){
             $fechaInicioConsulta =  date('Y/m/d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
-//			$fechaFinConsulta =  $fechadecorteAñoActual;
+        //			$fechaFinConsulta =  $fechadecorteAñoActual;
         }else {
             $fechaInicioConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 days"));;
-//			$fechaFinConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 Years"));
+        //			$fechaFinConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 Years"));
         }
         //la fecha fin consulta es esta por quesolo vamos a ver hasta el ultimo dia del periodo que estamos
         // consultando
@@ -371,6 +371,7 @@ class AsientosController extends AppController {
         $cliente = $this->Cliente->find('first', $options);
         $tiposDeAsientos = [];
         $tiposDeAsientos[] = 'ventas';
+        $tiposDeAsientosCosto = [];
         $pagaCategoria = [];
         $cuentaclienteaseleccionar=[];
 
@@ -378,14 +379,17 @@ class AsientosController extends AppController {
         foreach ($cliente['Actividadcliente'] as $actividadcliente){
             if(count($actividadcliente['Cuentasganancia'])>0){
                 $categoriaActividad = $actividadcliente['Cuentasganancia'][0]['categoria'];
-                if(!in_array($categoriaActividad,array('terceracateg45','cuartacateg'), true )){
-                    if(!in_array($categoriaActividad,$tiposDeAsientos)){
-                        $tiposDeAsientos[]=$categoriaActividad;
-                        $pagaCategoria[] = $categoriaActividad;
-                    }
-                }else{
-                    $cuentaclienteaseleccionar[]=$actividadcliente['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
-                }
+                $tiposDeAsientos[]=$categoriaActividad;
+                $tiposDeAsientosCosto[]= "costo".$categoriaActividad;
+                $pagaCategoria[] = $categoriaActividad;
+        //                if(!in_array($categoriaActividad,array('terceracateg45','cuartacateg'), true )){
+        //                    if(!in_array($categoriaActividad,$tiposDeAsientos)){
+        //                        $tiposDeAsientos[]=$categoriaActividad;
+        //                        $pagaCategoria[] = $categoriaActividad;
+        //                    }
+        //                }else{
+        ////                    $cuentaclienteaseleccionar[]=$actividadcliente['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
+        //                }
             }else{
                 $tieneGananciasConfigurado *= 0;
             }
@@ -398,6 +402,41 @@ class AsientosController extends AppController {
             No se configuro el impuesto Ganancias en el organismo AFIP, configurelo y vuelva a intentar 
             contabilizar');
             return;
+        }
+        $optionVentas=[
+            'contain'=>[
+                'Actividadcliente'=>[
+                    'Cuentasganancia'
+                ],
+                'Bienesdeuso'=>[
+                    'Cuentaclientevalororigen',
+                    'Cuentaclienteactualizacion',
+                    'Cuentaclienteterreno',
+                    'Cuentaclienteedificacion',
+                    'Cuentaclientemejora',
+                ],
+                'Comprobante'=>[
+                ],
+                'Tipogasto'=>[
+                ],
+            ],
+            'conditions'=>[
+                'Venta.tipogasto_id'=>$this->Tipogasto->ingresosBienDeUso,
+                'Venta.periodo'=>$periodo,
+                'Venta.cliente_id'=>$cliid
+            ]
+        ];
+        $ventasbiendeuso = $this->Venta->find('all',$optionVentas);
+        foreach ($ventasbiendeuso as $venta){
+            if(count($venta['Bienesdeuso'])==0){
+                if($this->request->is('ajax')){
+                    $this->layout = 'ajax';
+                }
+                $this->set('error','Atencion: 
+                   Se cargo una Venta como Bien de Uso y no se relaciono un bien de uso a la venta.</br> Por favor cargue el bien de uso y vuelva a
+                   intentar Contabilizar.');
+                return;
+            }
         }
         $options = array(
             'contain'=>array(
@@ -414,41 +453,59 @@ class AsientosController extends AppController {
                 'Asientoestandare.tipoasiento'=> $tiposDeAsientos,
             ),
         );
-        if(count($cuentaclienteaseleccionar)!=0){
-            unset($options['conditions']);
-            $options['conditions']=[
-                'OR'=>[
-                    'Asientoestandare.tipoasiento'=> $tiposDeAsientos,
-                    'Asientoestandare.cuenta_id'=> $cuentaclienteaseleccionar,
-                ]
-            ];
-        }
         $asientoestandares = $this->Asientoestandare->find('all', $options);
+
         /*vamos a controlar que el asiento estandar tenga sus cuentas por defecto creadas en cuentacliente*/
         $secrearoncuentas=false;
         foreach ($asientoestandares as $asientoestandar) {
             if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
                 //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
-                //Pero solo si es de la 1ra , 2da o 3ra categoria
-                if(
-                !in_array($asientoestandar['Asientoestandare']['tipoasiento'],
-                    ['terceracateg45','cuartacateg'], true )
-                ){
+                //Pero solo si es de la 1ra , 2da o 3ra categoria        
                     $this->Cuentascliente->create();
                     $this->Cuentascliente->set('cliente_id',$cliid);
                     $this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
                     $this->Cuentascliente->set('nombre',$asientoestandar['Cuenta']['nombre']);
                     $this->Cuentascliente->save();
                     $secrearoncuentas=true;
-                }
             }
-        }
-        if(count($cuentaclienteaseleccionar)){
-
         }
         //ahora ya estamos seguros de que las cuentas clientes existen
         if($secrearoncuentas){
             $asientoestandares = $this->Asientoestandare->find('all', $options);
+        }
+         $optionsCosto = array(
+            'contain'=>array(
+                'Cuenta'=>[
+                    'Cuentascliente'=>[
+                        'Cuenta',
+                        'conditions'=>[
+                            'Cuentascliente.cliente_id'=>$cliid
+                        ]
+                    ]
+                ]
+            ),
+            'conditions' => array(
+                'Asientoestandare.tipoasiento'=> $tiposDeAsientosCosto,
+            ),
+        );
+        $asientoestandarescosto = $this->Asientoestandare->find('all', $optionsCosto);
+
+        /*vamos a controlar que el asiento estandar tenga sus cuentas por defecto creadas en cuentacliente*/
+        $secrearoncuentascosto=false;
+        foreach ($asientoestandarescosto as $asientoestandarcosto) {
+            if(count($asientoestandarcosto['Cuenta']['Cuentascliente'])==0){
+                //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
+                //Pero solo si es de la 1ra , 2da o 3ra categoria        
+                    $this->Cuentascliente->create();
+                    $this->Cuentascliente->set('cliente_id',$cliid);
+                    $this->Cuentascliente->set('cuenta_id',$asientoestandarcosto['Cuenta']['id']);
+                    $this->Cuentascliente->set('nombre',$asientoestandarcosto['Cuenta']['nombre']);
+                    $this->Cuentascliente->save();
+                    $secrearoncuentascosto=true;
+            }
+        }
+        if($secrearoncuentascosto){
+            $asientoestandarescosto = $this->Asientoestandare->find('all', $optionsCosto);
         }
         /*Aca vamos a armar la lista de cuentas incluidas en el asiento estandar para traer las cuentas cliente relacionadas
         */
@@ -488,6 +545,17 @@ class AsientosController extends AppController {
             ],
         ];
         $asientoyacargado = $this->Asiento->find('first', $options);
+        $optionsasientocosto = [
+            'contain'=>[
+                'Movimiento',
+            ],
+            'conditions' => [
+                'Asiento.tipoasiento'=> 'costo',
+                'Asiento.periodo'=>$periodo,
+                'Asiento.cliente_id'=>$cliid
+            ],
+        ];
+        $asientoyacargadocosto = $this->Asiento->find('first', $optionsasientocosto);
         //Vamos a agrupar y sumar las ventas gravadas y las no gravadas
         $conditionsVentaGravada = [
             'contain'=>[
@@ -519,8 +587,8 @@ class AsientosController extends AppController {
 
         $impuestosactivos = $this->Cliente->impuestosActivados($cliid,$periodo);
         $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
-        $this->set(compact('cliid','cliente','periodo','pagaCategoria','asientoestandares','cuentasclientes'
-            ,'asientoyacargado','ventasgravadas','impuestosactivos','ingresosBienDeUso'));
+        $this->set(compact('cliid','cliente','periodo','pagaCategoria','asientoestandares','asientoestandarescosto','cuentasclientes'
+            ,'asientoyacargado','asientoyacargadocosto','ventasgravadas','ventasbiendeuso','impuestosactivos','ingresosBienDeUso'));
         
         if($this->request->is('ajax')){
             $this->layout = 'ajax';
@@ -568,6 +636,36 @@ class AsientosController extends AppController {
             No se configuro el impuesto Ganancias en el organismo AFIP, configurelo y vuelva a intentar 
             contabilizar');
             return;
+        }
+        //vamos a revisar que todas las compras del tipo Bien de uso tengan configurado su bien de uso
+        $optionCompras=[
+            'contain'=>[
+                'Bienesdeuso'=>[
+                    'Cuentaclientevalororigen',
+                    'Cuentaclienteactualizacion',
+                    'Cuentaclienteterreno',
+                    'Cuentaclienteedificacion',
+                    'Cuentaclientemejora',
+                ],
+
+            ],
+            'conditions'=>[
+                'Compra.imputacion'=>'Bs Uso',
+                'Compra.periodo'=>$periodo,
+                'Compra.cliente_id'=>$cliid
+            ]
+        ];
+        $comprasbiendeuso = $this->Compra->find('all',$optionCompras);
+        foreach ($comprasbiendeuso as $compra){
+            if(count($compra['Bienesdeuso'])==0){
+                if($this->request->is('ajax')){
+                    $this->layout = 'ajax';
+                }
+                $this->set('error','Atencion: 
+                   Se cargo una Compra como Bien de Uso y no se cargaron los datos del mismo. Por favor completelos y vuelva a
+                   intentar Contabilizar.');
+                    return;
+            }
         }
         $options = array(
             'contain'=>array(
@@ -664,7 +762,7 @@ class AsientosController extends AppController {
                 sum(impinternos) as impinternos,sum(impcombustible) as impcombustible'
             ],
             'group'=>
-                ['Compra.tipocredito','Compra.actividadcliente_id','Compra.tipogasto_id'],
+                ['Compra.tipocredito','Compra.imputacion','Compra.actividadcliente_id','Compra.tipogasto_id'],
             'conditions'=>[
                 'Compra.cliente_id'=>$cliid,
                 'Compra.periodo'=>$periodo,
@@ -672,12 +770,224 @@ class AsientosController extends AppController {
         ];
         $comprasgravadas = $this->Compra->find('all',$conditionsCompraGravada);
         $this->set(compact('cliid','cliente','periodo','pagaCategoria','asientoestandares','cuentasclientes','asientoyacargado',
-            'comprasgravadas'));
+            'comprasgravadas','comprasbiendeuso'));
 
         if($this->request->is('ajax')){
             $this->layout = 'ajax';
         }
+        return;
+    }
+     public function contabilizaramortizacion($cliid = null, $periodo = null){
+        $this->loadModel('Cliente');
+        $this->loadModel('Cuentascliente');
+        $this->loadModel('Asientoestandare');
+        $this->loadModel('Compra');
+        $options = array(
+            'contain'=>[
+                'Actividadcliente'=>[
+                    'Cuentasganancia'=>['Cuentascliente'],
+                ]
+            ],
+            'conditions' => array(
+                'Cliente.' . $this->Cliente->primaryKey => $cliid,
+            ),
+        );
 
+        $cliente = $this->Cliente->find('first', $options);
+        $tiposDeAsientos = [];
+        //$tiposDeAsientos[] = 'compras';
+        $pagaCategoria = [];
+        $cuentaclienteaseleccionar=[];
+        $tieneGananciasConfigurado = 1;
+        foreach ($cliente['Actividadcliente'] as $actividadcliente){
+            if(count($actividadcliente['Cuentasganancia'])>0){
+                $categoriaActividad = $actividadcliente['Cuentasganancia'][0]['categoria'];
+                if(!in_array($categoriaActividad,$tiposDeAsientos)){
+                    $tiposDeAsientos[] = "amortizacion".$categoriaActividad;
+                    $pagaCategoria[]   = "amortizacion".$categoriaActividad;
+                }
+            }else{
+                $tieneGananciasConfigurado *= 0;
+            }
+        }
+        if($tieneGananciasConfigurado==0){
+            if($this->request->is('ajax')){
+                $this->layout = 'ajax';
+            }
+            $this->set('error','Atencion: 
+            No se configuro el impuesto Ganancias en el organismo AFIP, configurelo y vuelva a intentar 
+            contabilizar');
+            return;
+        }
+        //vamos a revisar que todas las compras del tipo Bien de uso tengan configurado su bien de uso
+        // tienen que ser las compras con bienes de usos que no se hayan vendido ya
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+        $fechadeconsulta = date('Y/m/d',strtotime("01-".$pemes."-".$peanio));
+
+        if(!isset($cliente['Cliente']['fchcorteejerciciofiscal'])||is_null($cliente['Cliente']['fchcorteejerciciofiscal'])||$cliente['Cliente']['fchcorteejerciciofiscal']==""){
+            $this->Session->setFlash(__('No se ha configurado fecha decorte de ejercicio fiscal para este
+             ccontribuyente .'));
+            $fechadecorteAñoActual = date('Y/m/d',strtotime("01-01-".$peanio));
+        }else{
+            $fechadecorteAñoActual = date('Y/m/d',strtotime($cliente['Cliente']['fchcorteejerciciofiscal']."-".$peanio));
+        }
+        $fechaInicioConsultaAnio = "";
+        $fechaInicioConsultaMes = "";
+        $fechaFinConsulta = "";
+        if($fechadeconsulta<$fechadecorteAñoActual){
+            $fechaInicioConsultaAnio =  date('Y',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+            $fechaInicioConsultaMes = date('m', strtotime($fechadecorteAñoActual . " + 1 days"));;
+//          $fechaFinConsulta =  $fechadecorteAñoActual;
+        }else {
+            $fechaInicioConsultaAnio =  date('Y',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+            $fechaInicioConsultaMes = date('m', strtotime($fechadecorteAñoActual . " + 1 days"));;
+//          $fechaFinConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 Years"));
+        }
+
+
+        $optionCompras=[
+            'contain'=>[
+                'Actividadcliente'=>[
+                    'Cuentasganancia'=>['Cuentascliente']
+                ],
+                'Bienesdeuso'=>[
+                    'Cuentaclientevalororigen',
+                    'Cuentaclienteactualizacion',
+                    'Cuentaclienteterreno',
+                    'Cuentaclienteedificacion',
+                    'Cuentaclientemejora',
+                    'conditions'=>[
+                            //'Bienesdeuso.venta_id IN '=>[null,"",0]
+                        ]
+                ],
+            ],
+            'conditions'=>[
+                'Compra.imputacion'=>'Bs Uso',
+                [
+                    'OR'=>array(//es <= que el periodo q consultamos
+                        'SUBSTRING(Compra.periodo,4,7)*1 < '.$peanio.'*1',
+                        'AND'=>array(
+                            'SUBSTRING(Compra.periodo,4,7)*1 <= '.$peanio.'*1',
+                            'SUBSTRING(Compra.periodo,1,2) <= '.$pemes.'*1'
+                        ),
+                     ),                    
+                    ],
+                [
+                    'OR'=>array(//es >= que el periodo inicio de periodo fiscal
+                        'SUBSTRING(Compra.periodo,4,7)*1 > '.$fechaInicioConsultaAnio.'*1',
+                        'AND'=>array(
+                            'SUBSTRING(Compra.periodo,4,7)*1 >= '.$fechaInicioConsultaAnio.'*1',
+                            'SUBSTRING(Compra.periodo,1,2) >= '.$fechaInicioConsultaMes.'*1'
+                        ),
+                     ),
+                ],
+                'Compra.cliente_id'=>$cliid,
+            ]
+        ];
+        $comprasbiendeuso = $this->Compra->find('all',$optionCompras);
+        foreach ($comprasbiendeuso as $compra){
+            if(count($compra['Bienesdeuso'])==0){
+                if($this->request->is('ajax')){
+                    $this->layout = 'ajax';
+                }
+                Debugger::dump($cliente['Actividadcliente'][0]['Cuentasganancia']);
+                $this->set('error','Atencion: 
+                   Se cargo la Compra '.$compra['Compra']['puntosdeventa'].'-'.$compra['Compra']['numerocomprobante'].' como Bien de Uso en el periodo '.$compra['Compra']['periodo'].' y no se cargaron los datos del mismo. Por favor completelos y vuelva a
+                   intentar Contabilizar.');
+                 $this->set(compact('comprasbiendeuso'));
+                    return;
+            }
+        }
+        $options = array(
+            'contain'=>array(
+                'Cuenta'=>[
+                    'Cuentascliente'=>[
+                        'Cuenta',
+                        'conditions'=>[
+                            'Cuentascliente.cliente_id'=>$cliid
+                        ]
+                    ]
+                ]
+            ),
+            'conditions' => array(
+                'Asientoestandare.tipoasiento'=> $tiposDeAsientos,
+            ),
+        );
+        if(count($cuentaclienteaseleccionar)!=0){
+            unset($options['conditions']);
+            $options['conditions']=[
+                'OR'=>[
+                    'Asientoestandare.tipoasiento'=> $tiposDeAsientos,
+                    'Asientoestandare.cuenta_id'=> $cuentaclienteaseleccionar,
+                ]
+            ];
+        }
+        $asientoestandares = $this->Asientoestandare->find('all', $options);
+        /*vamos a controlar que el asiento estandar tenga sus cuentas por defecto creadas en cuentacliente*/
+        $secrearoncuentas=false;
+        foreach ($asientoestandares as $asientoestandar) {
+            if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
+                //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
+                $this->Cuentascliente->create();
+                $this->Cuentascliente->set('cliente_id',$cliid);
+                $this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
+                $this->Cuentascliente->set('nombre',$asientoestandar['Cuenta']['nombre']);
+                $this->Cuentascliente->save();
+                $secrearoncuentas=true;
+            }
+        }
+        //ahora ya estamos seguros de que las cuentas clientes existen
+        if($secrearoncuentas){
+            $asientoestandares = $this->Asientoestandare->find('all', $options);
+        }
+        /*Aca vamos a armar la lista de cuentas incluidas en el asiento estandar para traer las cuentas cliente relacionadas
+        */
+        //ahora vamos a listar las cuentas clientes activadas y pero con el nombre de la cuenta
+        $cuentaclienteOptions = array(
+            'conditions' => array(
+                'Cuentascliente.cliente_id'=> $cliid
+            ),
+            'fields' => [
+                'Cuentascliente.id',
+                'Cuentascliente.nombre',
+                'Cuenta.numero',
+            ],
+            'order'=>['Cuenta.numero'],
+            'joins'=>array(
+                array('table'=>'cuentas',
+                    'alias' => 'Cuenta',
+                    'type'=>'inner',
+                    'conditions'=> array(
+                        'Cuentascliente.cuenta_id = Cuenta.id',
+                    )
+                ),
+            ),
+        );
+        $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
+        //el tema es que el asiento automatico siempre va a ser unico para un periodo para un cliente por lo que
+        //por estos datos vamos a asegurarnos de que si ya creamos el asiento, estemos editando el mismo, y no
+        //creando uno nuevo cada vez que generemos este informe
+        $options = array(
+            'contain'=>array(
+                'Movimiento',
+            ),
+            'conditions' => array(
+                'Asiento.tipoasiento'=> 'amortizacion',
+                'Asiento.periodo'=>$periodo,
+                'Asiento.cliente_id'=>$cliid
+            ),
+        );
+        $asientoyacargado = $this->Asiento->find('first', $options);
+
+        //Vamos a agrupar y sumar las compras gravadas y las no gravadas
+       
+        $this->set(compact('cliid','cliente','periodo','pagaCategoria','asientoestandares','cuentasclientes','asientoyacargado',
+            'comprasgravadas','comprasbiendeuso'));
+
+        if($this->request->is('ajax')){
+            $this->layout = 'ajax';
+        }
         return;
     }
     public function contabilizarbanco($cliid = null, $periodo = null,$bancimpcli = null, $cbuid = null){

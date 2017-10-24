@@ -55,7 +55,7 @@ h1 {
 	font-size: 100%;
 }
 h2 {
-	//background:#fff;
+	/*background:#fff;*/
 	color: #009ae1;
 	font-family:'RobotoDraft',sans-serif;
 	font-size: 190%;
@@ -1809,7 +1809,7 @@ transition: all 0.4s ease-in-out;
 	color: #333;
 	margin:0% 0%;
 	width: 100%;
-	//border: 1px solid #FFF;
+	/*border: 1px solid #FFF;*/
 	background-color: #FFF;
 	border-radius: 3px;
 	-webkit-box-shadow: -1px 4px 5px -1px rgba(38,38,38,1);
@@ -2303,17 +2303,18 @@ transition: all 0.4s ease-in-out;
 .tooltip {
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black;
+    border-right: 1px dotted black;
 }
 
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: 200px;
+    width: 90px;
     background-color: #1c94c4;
     color: white;
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
+	max-width: unset;
 
     /* Position the tooltip */
     position: absolute;
@@ -2326,6 +2327,9 @@ transition: all 0.4s ease-in-out;
 
 .tooltip:hover .tooltiptext {
     visibility: visible;
+}
+.tooltiptext input{
+   font-size: 10px;
 }
 
 /*End Tooltip*/
@@ -2348,7 +2352,7 @@ transition: all 0.4s ease-in-out;
 	white-space: nowrap;
 	text-overflow:ellipsis;
 	overflow: hidden;
-	max-width:1px;"
+	max-width:1px;
 }
 #bodyTablaVentas tr .editTD{
 	/*max-width: 53px;*/
@@ -2388,9 +2392,19 @@ transition: all 0.4s ease-in-out;
 }
 
 #pageFooter:after {
-	counter-increment: page;
-	content: counter(page);
-}
+    counter-increment: page;
+    counter-reset: page;
+    content:"Pagina " counter(page);
+    left: 0; 
+    top: 100%;
+    white-space: nowrap; 
+    z-index: 20px;
+    -moz-border-radius: 5px; 
+    -moz-box-shadow: 0px 0px 4px #222;  
+    background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);  
+    background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);  
+  }
+
 
 .par {
 	background-color: #455ede;
@@ -2434,7 +2448,7 @@ transition: all 0.4s ease-in-out;
 	white-space: nowrap;
 	text-overflow:ellipsis;
 	overflow: hidden;
-	max-width:1px;"
+	max-width:1px;
 }
 #bodyTablaCompras tr td table tr td{
 	max-width: 80px;
@@ -2726,11 +2740,21 @@ transition: all 0.4s ease-in-out;
 	font-size: 13px;
 }
 .tbl_sueldo td span {
-	display:inline-block;
-	text-overflow:ellipsis;
-	overflow:hidden;
-	width:100%;
+	display: inline-block;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	/* width: 100%; */
+	max-width: 70px;
+	height: 36px;
+	font-size: 11px;
 }
+.tbl_sueldo td span:hover {
+	cursor: pointer;
+}
+.tbl_sueldo td .tooltip input {
+	width:70px;
+}
+
 .btn_exit{
 	cursor: pointer;
 	margin: 0px 3px;

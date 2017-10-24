@@ -305,7 +305,7 @@ function cargarMovimiento(){
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][debe]')
                         .attr('type','number')
                         .attr('step','any')
-                        .addClass("inputDebe movimientoConValor")
+                        .addClass("inputDebeAdd movimientoConValor")
                 ).append(
                     $("<input>")
                         .val(haber)
@@ -313,7 +313,7 @@ function cargarMovimiento(){
                         .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][haber]')
                         .attr('type','number')
                         .attr('step','any')
-                        .addClass("inputHaber movimientoConValor")
+                        .addClass("inputHaberAdd movimientoConValor")
                 ).append(
                     $("<input>")
                         .val(fecha)
@@ -335,17 +335,17 @@ function cargarMovimiento(){
     $("#Asiento0MovimientoKkkCuentasclienteId").trigger("chosen:updated");
     $("#Asiento0MovimientoKkkDebe").val(0);
     $("#Asiento0MovimientoKkkHaber").val(0);
-    $(".inputDebe").each(function () {
+    $(".inputDebeAdd").each(function () {
         $(this).change(addTolblTotalDebeAsieto);
     });
-    $(".inputHaber").each(function () {
+    $(".inputHaberAdd").each(function () {
         $(this).change(addTolblTotalhaberAsieto);
     });
-    $(".inputDebe").each(function () {
+    $(".inputDebeAdd").each(function () {
         $(this).trigger("change");
         return;
     });
-    $(".inputHaber").each(function () {
+    $(".inputHaberAdd").each(function () {
         $(this).trigger("change");
         return;
     });
@@ -460,6 +460,19 @@ function addTolblTotalDebeAsieto(event) {
 
     });
     $("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+    var debesubtotalAdd = 0;
+    $(".inputDebeAdd").each(function () {
+        debesubtotalAdd = debesubtotalAdd*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+
+    });
+    $("#lblTotalDebeAdd").text(parseFloat(debesubtotalAdd).toFixed(2)) ;
     showIconDebeHaber()
 }
 function addTolblTotalhaberAsieto(event) {
@@ -476,12 +489,31 @@ function addTolblTotalhaberAsieto(event) {
         }
     });
     $("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+    var habersubtotalAdd = 0;
+    $(".inputHaberAdd").each(function () {
+        habersubtotalAdd = habersubtotalAdd*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+    });
+    $("#lblTotalHaberAdd").text(parseFloat(habersubtotalAdd).toFixed(2)) ;
     showIconDebeHaber()
 }
 function showIconDebeHaber(){
+    //Este es del edit
     if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
         $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
     }else{
         $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+    }
+    //este es del add
+    if($("#lblTotalHaberAdd").text()==$("#lblTotalDebeAdd").text()){
+        $("#iconDebeHaberAdd").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+    }else{
+        $("#iconDebeHaberAdd").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
     }
 }

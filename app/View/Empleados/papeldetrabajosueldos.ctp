@@ -31,7 +31,7 @@ if(count($empleado)==0){
             <thead>
                 <tr>
                     <td colspan="7" >
-                        <span class="spanempleado" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>">
+                        <span class="spanempleado shown" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>">
                         <?php
                             echo $empleado['Empleado']['nombre'];
                         ?>
@@ -269,6 +269,15 @@ if(count($empleado)==0){
                                             $valor = $empleado['Cargo']['sueldosereno']*1;
                                         }
                                     break;
+                                case 75:/*Dia del Gremio*/
+                                        /* Solo SEC tiene esto y se tiene que activar solo si estamos en Septiembre*/
+                                        if($empleado['Conveniocolectivotrabajo']['Impuesto']['id']==11/*Es SEC?*/){
+                                            $pemes = substr($periodo, 0, 2);
+                                            if($pemes!='09'){
+                                                $aplicafuncion=false;
+                                            }
+                                        }
+                                    break;
                                 case 117:/*Aporte Adicional OS O3*/
                                     /* si es construccion no aplica en el SAC*/
                                     if($empleado['Conveniocolectivotrabajo']['id']==5/*Es Construcción Quincenal?*/){
@@ -277,6 +286,12 @@ if(count($empleado)==0){
                                             $aplicafuncion = false;
                                         }
                                     }
+                                    break;
+                                case 123:/*Contribucion Tarea Diff*/
+                                        /* si es UOCRA tenemos que poner que es un 5%*/
+                                         if($empleado['Conveniocolectivotrabajo']['Impuesto']['id']==41/*Es UOCRA?*/){
+                                            $valor = 5;
+                                        }
                                     break;
                                 case 126:/*Acuerdos Remunerativos*/
                                         /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo

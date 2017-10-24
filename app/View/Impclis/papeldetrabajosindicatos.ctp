@@ -843,7 +843,7 @@ Total = 82.22";
                                 $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
                                 $diff = $periodoALiquidar->diff($fechaIngreso);
                                 $titleUOCRAFdoCeseLaboral = "";
-                                if($diff->y > 1){
+                                if($diff->y >= 1){
                                     $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
                                     $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
                                 }else{
@@ -875,7 +875,7 @@ Total = 82.22";
                                 $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
                                 $diff = $periodoALiquidar->diff($fechaIngreso);
                                 $titleUOCRAFdoCeseLaboral = "";
-                                if($diff->y > 1){
+                                if($diff->y >= 1){
                                     $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
                                     $contribucionIERIC = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
                                 }else{
@@ -921,7 +921,10 @@ Total = 82.22";
                         }
                         ?>
                         <td >
-                            <?php echo number_format($totalContribucionEmpresarial, 2, ",", "."); ?>
+                            <?php
+                            echo number_format($totalContribucionEmpresarial, 2, ",", ".");
+                            $apagarcontribuciones += $totalContribucionEmpresarial ;
+                            ?>
                         </td>
                     </tr>
                 <?php

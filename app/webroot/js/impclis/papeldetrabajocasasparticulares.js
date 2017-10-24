@@ -188,7 +188,8 @@ function cargarUnFormulario102(empid,periodo,liquidacion,indice){
                     var vacaciones = summAllFromClass("vacaciones");
                     var adicional = summAllFromClass("adicional");
                     var vacacionesnogozadas = summAllFromClass("vacacionesnogozadas");
-                    var totalRemunerativos = sueldoBasico+SAC+vacaciones+adicional+vacacionesnogozadas;
+                    var licanciamatrimonio = summAllFromClass("licanciamatrimonio");
+                    var totalRemunerativos = sueldoBasico+SAC+vacaciones+adicional+vacacionesnogozadas+licanciamatrimonio;
                     $('#Asiento0Movimiento'+orden+'Debe').val(totalRemunerativos);
                 }
                 // 514000017	Contribuciones SS Ley 26063 Casas Particulares

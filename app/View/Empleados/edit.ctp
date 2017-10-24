@@ -84,10 +84,11 @@
 		echo $this->Form->input('codigoafip',array(
 				'label'=>'Codigo Afip',
 				'options'=>array(
+					'0'=>'0%',
 					'3'=>'25%',
 					'1'=>'50%',
 					'2'=>'75%',
-					'0'=>'100%',
+					'4'=>'100%',
 				)
 			)
 		);

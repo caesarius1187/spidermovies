@@ -65,7 +65,7 @@ class ImpclisController extends AppController {
                                     CONCAT(SUBSTRING(`hasta` ,4,7) , SUBSTRING(`hasta` ,1,2)) >= CONCAT( SUBSTRING("'.$periodoDesde.'",4,7),SUBSTRING("'.$periodoDesde.'" ,1,2))
                                     or
                                     `hasta` is null
-)                               '
+								)'
                             ],
                         ],
                         'Impuesto'
@@ -98,7 +98,7 @@ class ImpclisController extends AppController {
                                     CONCAT(SUBSTRING(`hasta` ,4,7) , SUBSTRING(`hasta` ,1,2)) >= CONCAT( SUBSTRING("'.$periodoDesde.'",4,7),SUBSTRING("'.$periodoDesde.'" ,1,2))
                                     or
                                     `hasta` is null
-)                               '
+								)'
 							],
 						],
 						'Impuesto'
@@ -422,33 +422,44 @@ class ImpclisController extends AppController {
 					'Movimiento'=>['Cuentascliente'],
 					'conditions'=>['periodo'=>$periodo]
 				],
-				'Impcliprovincia'=>array(
-					'Partido',
-					'conditions'=>array(
-                            'CONCAT( SUBSTRING(`Impcliprovincia`.`periodo` ,4,7),SUBSTRING(`Impcliprovincia`.`periodo` ,1,2)) = (
-                                select max(CONCAT( SUBSTRING(`periodo`,4,7),SUBSTRING(`periodo`,1,2) )) from  `sigesec`.`impcliprovincias`
-                                where `impcli_id` = ('.$impcliid.')
-                                and CONCAT( SUBSTRING(`periodo` ,4,7),SUBSTRING(`periodo` ,1,2)) <=
-                                CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))
-                            )'
-						)
-					)
+				/*'Impcliprovincia'=>array(
+					'fields'=>["*", "MAX( periodo)"],					
+					'conditions'=>[
+								'//*el periodo es menor o igual que el que se esta evaluando
+								CONCAT( SUBSTRING(`Impcliprovincia`.periodo ,4,7),SUBSTRING(`Impcliprovincia`.periodo ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2)) 
+								and impcli_id = ('.$impcliid.') ',
+								'group'=>['`Impcliprovincia`.`partido_id`'],
+						],
+					'Partido',										
+					),*/
 				),
 			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
         );
 		$impcli = $this->Impcli->find('first',$optionsImplci);
-		for ($i=0;$i<count($impcli['Impcliprovincia'])-1;$i++){
-			for ($j=$i;$j<count($impcli['Impcliprovincia']);$j++) {
-				$burbuja = $impcli['Impcliprovincia'][$i]['Partido']['codigo'];
-				$aux = $impcli['Impcliprovincia'][$j]['Partido']['codigo'];
-				if($burbuja>$aux){
-					$myaux=$impcli['Impcliprovincia'][$i];
-					$impcli['Impcliprovincia'][$i]=$impcli['Impcliprovincia'][$j];
-					$impcli['Impcliprovincia'][$j]=$myaux;
-				}
+		$impcliprovinciasoptions = [
+			'contain'=>['Partido',],
+			//'fields'=>["*"],					
+			'conditions'=>[
+				'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
+				'impcli_id' => $impcliid,
+			],		
+			'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']							
+		]; 
+		$impcliprovincias = $this->Impcli->Impcliprovincia->find('all',$impcliprovinciasoptions);		
+		$impcliprovinciasnorepetidas = [];
+		//no se pudo hacer la consulta para que traiga los resultados que debia, asi que vamos a borrar los repetidos
+		//y dejar el maximo para cada jurisdiccion y nada mas
+		foreach ($impcliprovincias as $icp => $impcliprovincia) {
+			if(in_array($impcliprovincia['Impcliprovincia']['partido_id'], $impcliprovinciasnorepetidas)){
+				 unset($impcliprovincias[$icp]);
+			}else{
+				 $impcliprovinciasnorepetidas[] = $impcliprovincia['Impcliprovincia']['partido_id'];
 			}
 		}
+
+
 		$this->set('impcli',$impcli);
+		$this->set('impcliprovincias',$impcliprovincias);
         $pemes = substr($periodo, 0, 2);
         $peanio = substr($periodo, 3);
 		$bajaesMayorQuePeriodo = array(
@@ -526,9 +537,9 @@ class ImpclisController extends AppController {
 		$provinciasVentasDiff = array();
 		$provinciasCompras = array();
 		$provinciasComprasDiff = array();
-		foreach ($impcli['Impcliprovincia'] as $key => $impcliprovincia) {
-			if(!array_key_exists($impcliprovincia['partido_id'], $provinciasActivadas)){
-		        $provinciasActivadas[$impcliprovincia['partido_id']]=$impcliprovincia['Partido']['nombre'];
+		foreach ($impcliprovincias as $key => $impcliprovincia) {
+			if(!array_key_exists($impcliprovincia['Impcliprovincia']['partido_id'], $provinciasActivadas)){
+		        $provinciasActivadas[$impcliprovincia['Impcliprovincia']['partido_id']]=$impcliprovincia['Partido']['nombre'];
 		    }
 		}
 		foreach ($actividadclientes as $key => $actividadcliente) {
@@ -621,24 +632,48 @@ class ImpclisController extends AppController {
 					'Movimiento'=>['Cuentascliente'],
 					'conditions'=>['periodo'=>$periodo]
 				],
-				'Impcliprovincia'=>[
+				/*'Impcliprovincia'=>[
 					'Localidade'=>[
 						'Partido'
 						],
 					'conditions'=>[
-                       'CONCAT( SUBSTRING(`Impcliprovincia`.`periodo` ,4,7),SUBSTRING(`Impcliprovincia`.`periodo` ,1,2)) = (
-                            select max(CONCAT( SUBSTRING(`periodo`,4,7),SUBSTRING(`periodo`,1,2) )) from  `sigesec`.`impcliprovincias`
-                            where `impcli_id` = ('.$impcliid.')
-                            and CONCAT( SUBSTRING(`periodo` ,4,7),SUBSTRING(`periodo` ,1,2)) <=
-                            CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))
-                        )'
-                    ],
-				],
+						'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
+							'impcli_id' => $impcliid,
+						],
+						'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']				
+					],
+				],*/
             ],
 			'conditions' => ['Impcli.' . $this->Impcli->primaryKey => $impcliid]
         ];
 		$impcli = $this->Impcli->find('first', $options);
 		$this->set('impcli',$impcli);
+
+		$impcliprovinciasoptions = [
+			'contain'=>[
+				'Localidade'=>[
+					'Partido'
+				],
+			],
+			//'fields'=>["*"],					
+			'conditions'=>[
+				'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
+				'impcli_id' => $impcliid,
+			],		
+			'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']							
+		]; 
+		$impcliprovincias = $this->Impcli->Impcliprovincia->find('all',$impcliprovinciasoptions);		
+		$impcliprovinciasnorepetidas = [];
+		//no se pudo hacer la consulta para que traiga los resultados que debia, asi que vamos a borrar los repetidos
+		//y dejar el maximo para cada jurisdiccion y nada mas
+		foreach ($impcliprovincias as $icp => $impcliprovincia) {
+			if(in_array($impcliprovincia['Impcliprovincia']['localidade_id'], $impcliprovinciasnorepetidas)){
+				 unset($impcliprovincias[$icp]);
+			}else{
+				 $impcliprovinciasnorepetidas[] = $impcliprovincia['Impcliprovincia']['localidade_id'];
+			}
+		}
+		$this->set('impcliprovincias',$impcliprovincias);
 
 		//vamos a buscar las actividades y las vamos a traer con las ventas
 		$pemes = substr($periodo, 0, 2);
@@ -720,9 +755,9 @@ class ImpclisController extends AppController {
 		$provinciasVentasDiff = array();
 		$provinciasCompras = array();
 		$provinciasComprasDiff = array();
-		foreach ($impcli['Impcliprovincia'] as $key => $impcliprovincia) {
-			if(!array_key_exists($impcliprovincia['localidade_id'], $provinciasActivadas)){
-		        $provinciasActivadas[$impcliprovincia['localidade_id']]=$impcliprovincia['Localidade']['Partido']['nombre']."-".$impcliprovincia['Localidade']['nombre'];
+		foreach ($impcliprovincias as $key => $impcliprovincia) {
+			if(!array_key_exists($impcliprovincia['Impcliprovincia']['localidade_id'], $provinciasActivadas)){
+		        $provinciasActivadas[$impcliprovincia['Impcliprovincia']['localidade_id']]=$impcliprovincia['Localidade']['Partido']['nombre']."-".$impcliprovincia['Localidade']['nombre'];
 		    }
 		}
 		foreach ($actividadclientes as $key => $actividadcliente) {

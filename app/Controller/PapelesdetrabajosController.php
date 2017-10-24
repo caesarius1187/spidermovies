@@ -31,7 +31,7 @@ class PapelesdetrabajosController extends AppController {
         $this->loadModel('Cuenta');
 		$this->loadModel('Cuentascliente');
 		$this->loadModel('Tipogasto');
-//$this->Archivo->recursive = 0;
+		//$this->Archivo->recursive = 0;
 		//$this->set('archivos', $this->Paginator->paginate());
 		$añoPeriodo="SUBSTRING( '".$periodo."',4,7)";
 		$mesPeriodo="SUBSTRING( '".$periodo."',1,2)";

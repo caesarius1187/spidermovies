@@ -254,7 +254,7 @@ if($mostrarView){?>
                                 ); ?>
             </th>
         </tr>
-        <tr class="datosPersonales"><!--1.1 Tabla datos clientes-->
+        <tr class="datosPersonales" style="display: none/*inicialmente no se muestra*/"><!--1.1 Tabla datos clientes-->
             <td>
                 <?php 
                 echo $this->Form->create('Cliente',array('action'=>'edit','id'=>'saveDatosPersonalesForm', 'class' => 'form_popin'));            
@@ -366,7 +366,7 @@ if($mostrarView){?>
             </th>
         </tr>
        
-        <tr class="domicilios"> <!--2.1 Tabla Domicilios-->
+        <tr class="domicilios" style="display: none/*inicialmente no se muestra*/"> <!--2.1 Tabla Domicilios-->
             <td colspan="7">
             <table id="relatedDomicilios" class="tbl_related">
                 <head>
@@ -433,7 +433,7 @@ if($mostrarView){?>
                 </a>
             </th>
         </tr>
-        <tr class="personas">
+        <tr class="personas" style="display: none/*inicialmente no se muestra*/">
             <td colspan="7">
             <table id="relatedPersonas" class="tbl_related"> <!--Tabla Persona Relacionada-->
                 <head>
@@ -497,7 +497,7 @@ if($mostrarView){?>
                 </a>
             </th>
         </tr>
-        <tr class="actividades">
+        <tr class="actividades" style="display: none/*inicialmente no se muestra*/">
             <td colspan="7">
             <table id="relatedActividades" class="tbl_related"> <!--Tabla Persona Relacionada-->
                 <head>
@@ -556,7 +556,7 @@ if($mostrarView){?>
  <?php /**************************************************************************/ ?>
  <?php /*****************************AFIP*****************************************/ ?>
  <?php /**************************************************************************/ ?>
- 	<tr class="rowheaderafip"> <!--7. AFIP-->
+ 	<tr class="rowheaderafip" style="display: none/*inicialmente no se muestra*/"> <!--7. AFIP-->
     	<th colspan="7" class="tbl_view_th1">
     		<h2 class="h2header" id="lblAFIP">
    				<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgAFIP','class'=>'imgOpenClose'));?>
@@ -565,7 +565,7 @@ if($mostrarView){?>
            
         </th>    		
     </tr> 
-    <tr class="afip">
+    <tr class="afip" style="display: none/*inicialmente no se muestra*/">
         <td>
         <table class="tbl_related"> <!--7.1 Tabla Organismos-->
 
@@ -588,7 +588,7 @@ if($mostrarView){?>
         </table>
         </td>
     </tr>   		       
-    <tr class="afip">  <!--7.2 Impuestos del Organismo -->   
+    <tr class="afip"  style="display: none/*inicialmente no se muestra*/">  <!--7.2 Impuestos del Organismo -->
         <td colspan="7"> 
         <table id="tablaImpAfip" class="tbl_related">    
             <tr>    
@@ -656,7 +656,7 @@ if($mostrarView){?>
 <?php /**************************************************************************/ ?>
 <?php /*****************************DGR******************************************/ ?>
 <?php /**************************************************************************/ ?>        
-        <tr class="rowheaderdgr"><!--8. DGR-->
+        <tr class="rowheaderdgr"  style="display: none/*inicialmente no se muestra*/"><!--8. DGR-->
         	<th  colspan="7" class="tbl_view_th1">
         		<h2 class="h2header" id="lblDGR">
        				<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgDGR','class'=>'imgOpenClose'));?>
@@ -665,7 +665,7 @@ if($mostrarView){?>
                 
             </th>		
         </tr>
-        <tr class="dgr"> 
+        <tr class="dgr"  style="display: none/*inicialmente no se muestra*/">
             <td>
                 <table class="tbl_related"> <!--7.1 Tabla Organismos-->
 
@@ -688,7 +688,7 @@ if($mostrarView){?>
                 </table>       
             </td>
         </tr>         
-        <tr class="dgr"> 
+        <tr class="dgr"  style="display: none/*inicialmente no se muestra*/">
             <td colspan="7"> 
                 <table id="tablaImpDGR" class="tbl_related">   <!--8.2 Impuestos del Organismo -->  
                     <tr>    
@@ -748,7 +748,7 @@ if($mostrarView){?>
  <?php /**************************************************************************/ ?>
  <?php /*****************************DGRM*****************************************/ ?>
  <?php /**************************************************************************/ ?>
-        <tr  class="rowheaderdgrm" ><!--9. DGRM-->
+        <tr class="rowheaderdgrm" style="display: none/*inicialmente no se muestra*/"><!--9. DGRM-->
         	<th  colspan="7" class="tbl_view_th1">
         		<h2 class="h2header" id="lblDGRM">
        				<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgDGRM','class'=>'imgOpenClose'));?>
@@ -756,7 +756,7 @@ if($mostrarView){?>
 	   		<th class="tbl_view_th2">
             </th>
         </tr> 
-        <tr class="dgrm"><!--9.1 Tabla DGRM -->
+        <tr class="dgrm" style="display: none/*inicialmente no se muestra*/"><!--9.1 Tabla DGRM -->
             <td> 
                 <table class="tbl_related"> <!--7.1 Tabla Organismos-->
 
@@ -780,7 +780,7 @@ if($mostrarView){?>
             </td>
         </tr>
         <!--9.2 Impuestos del Organismo -->        
-        <tr class="dgrm"> 
+        <tr class="dgrm" style="display: none/*inicialmente no se muestra*/">
             <td colspan="7"> 
             <table id="tablaImpDGRM" class="tbl_related">    
                 <tr>     
@@ -838,18 +838,20 @@ if($mostrarView){?>
  <?php /**************************************************************************/ ?>
  <?php /*****************************Sindicatos***********************************/ ?>
  <?php /**************************************************************************/ ?>        
-        <tr  class="rowheadersindicatos" ><!--9.1. SINDICATO-->
+        <tr  class="rowheadersindicatos" style="display: none/*inicialmente no se muestra*/" ><!--9.1. SINDICATO-->
             <th  colspan="7" class="tbl_view_th1">
                 <h2 class="h2header" id="lblSINDICATO">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'ImgSindicatos','class'=>'imgOpenClose'));?>
                     <?php echo __('Sindicatos'); ?></h2></th>
             <th class="tbl_view_th2">
                 
-            </th>                
+            </th>
+        </tr>
         <!--9.2 Impuestos del Organismo -->        
-        <tr class="sindicatos"> 
-            <td colspan="7"> 
-            <table id="tablaImpSINDICATO" class="tbl_related">    
+        <tr class="sindicatos" style="display: none/*inicialmente no se muestra*/">
+            <td colspan="7">
+
+            <table id="tablaImpSINDICATO" class="tbl_related">
                 <tr>     
                     <th><?php echo __('Impuesto'); ?></th>
                     <th><?php echo __('Alta'); ?></th>                   
@@ -899,7 +901,7 @@ if($mostrarView){?>
  <?php /**************************************************************************/ ?>
  <?php /*****************************Bancos***************************************/ ?>      
  <?php /**************************************************************************/ ?>                   
-        <tr  class="rowheaderbancos" ><!--9.1. BANCO-->
+        <tr  class="rowheaderbancos" style="display: none/*inicialmente no se muestra*/" ><!--9.1. BANCO-->
             <th  colspan="7" class="tbl_view_th1">
                 <h2 class="h2header" id="lblBANCO">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgBancos','class'=>'imgOpenClose'));?>
@@ -910,7 +912,7 @@ if($mostrarView){?>
                 
             </th>        
         </tr> 
-        <tr class="bancos"> 
+        <tr class="bancos" style="display: none/*inicialmente no se muestra*/">
             <td colspan="7"> 
             <table id="tablaImpBanco" class="tbl_related">    
                 <tr>     
@@ -965,7 +967,7 @@ if($mostrarView){?>
  <?php /**************************************************************************/ ?>
  <?php /*****************************Puntos de Ventas*****************************/ ?>
  <?php /**************************************************************************/ ?>                
-        <tr class="rowheaderpuntosdeventas" ><!--15. Puntos de Ventas-->
+        <tr class="rowheaderpuntosdeventas" style="display: none/*inicialmente no se muestra*/" ><!--15. Puntos de Ventas-->
             <th colspan="7" class="tbl_view_th1">
                 <h2 class="h2header" id="lblPuntosdeventas">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgPuntosdeventas','class'=>'imgOpenClose'));?>
@@ -978,7 +980,7 @@ if($mostrarView){?>
                 </a>
             </th>
         </tr>
-        <tr class="puntosdeventa">
+        <tr class="puntosdeventa" style="display: none/*inicialmente no se muestra*/">
             <td>
                 <table class="tbl_related" id="tablepuntosdeventas">
                 <tr class="puntosdeventa">
@@ -1013,7 +1015,7 @@ if($mostrarView){?>
         <?php /**************************************************************************/ ?>
         <?php /*****************************SubClientes***********************************/ ?>
         <?php /**************************************************************************/ ?>
-        <tr class="rowheadersubclientes" ><!--15. Sub Clientes-->
+        <tr class="rowheadersubclientes" style="display: none/*inicialmente no se muestra*/" ><!--15. Sub Clientes-->
             <th colspan="7" class="tbl_view_th1">
                 <h2 class="h2header" id="lblSubclientes">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgSubclientes','class'=>'imgOpenClose'));?>
@@ -1027,7 +1029,7 @@ if($mostrarView){?>
             </th>
         </tr>
 
-        <tr class="subcliente">
+        <tr class="subcliente" style="display: none/*inicialmente no se muestra*/">
             <td colspan = "20">
                 <?php
                 echo $this->Form->input('tablaSubclienteVacia',array('value'=>1,'type'=>'hidden'));
@@ -1055,7 +1057,7 @@ if($mostrarView){?>
         <?php /**************************************************************************/ ?>
         <?php /*****************************Provedores***********************************/ ?>
         <?php /**************************************************************************/ ?>
-        <tr class="rowheaderprovedores" ><!--16. Provedores-->
+        <tr class="rowheaderprovedores" style="display: none/*inicialmente no se muestra*/" ><!--16. Provedores-->
             <th colspan="7" class="tbl_view_th1">
                 <h2 class="h2header" id="lblProvedores">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgProvedores','class'=>'imgOpenClose'));?>
@@ -1069,7 +1071,7 @@ if($mostrarView){?>
             </th>
         </tr>
        
-        <tr class="rowheaderprovedores">
+        <tr class="rowheaderprovedores" style="display: none/*inicialmente no se muestra*/">
             <td class="provedor">
                 <?php
                 echo $this->Form->input('tablaProvedoresVacia',array('value'=>1,'type'=>'hidden'));
@@ -1098,7 +1100,7 @@ if($mostrarView){?>
         <?php /**************************************************************************/ ?>
         <?php /*****************************Empleados***********************************/ ?>
         <?php /**************************************************************************/ ?>
-        <tr class="rowheaderempleados" ><!--17. Empleados-->
+        <tr class="rowheaderempleados" style="display: none/*inicialmente no se muestra*/" ><!--17. Empleados-->
             <th colspan="7" class="tbl_view_th1">
                 <h2 class="h2header" id="lblEmpleados">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgEmpleados','class'=>'imgOpenClose'));?>
@@ -1111,7 +1113,7 @@ if($mostrarView){?>
                 </a>
             </th>
         </tr>
-        <tr class="rowheaderempleados">
+        <tr class="rowheaderempleados" style="display: none/*inicialmente no se muestra*/">
             <td class="empleado">
                 <table id="relatedEmpleados" class="tbl_related">
                     <thead>
@@ -1171,7 +1173,7 @@ if($mostrarView){?>
         <?php /**************************************************************************/ ?>
         <?php /*****************************Bienes de Uso********************************/ ?>
         <?php /**************************************************************************/ ?>
-        <tr class="rowheaderbienesdeusos" ><!--18. Bienes de usos-->
+        <tr class="rowheaderbienesdeusos" style="display: none/*inicialmente no se muestra*/" ><!--18. Bienes de usos-->
             <th colspan="7" class="tbl_view_th1">
                 <h2 class="h2header" id="lblBienesdeusos">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgBienesdeusos','class'=>'imgOpenClose'));?>
@@ -1179,12 +1181,12 @@ if($mostrarView){?>
                 </h2>
             </th>
             <th class="tbl_view_th2">
-                <a class="button_view" onclick="loadFormAddBiendeuso();">
+                <a class="button_view" onclick="loadFormBiendeuso(<?php echo $cliente['Cliente']['id'].",0,0"?>);">
                     <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
                 </a>
             </th>
         </tr>
-        <tr class="rowheaderbienesdeusos">
+        <tr class="rowheaderbienesdeusos" style="display: none/*inicialmente no se muestra*/">
             <td class="biendeuso">
                 <table id="relatedBienesdeusos" class="tbl_related">
                     <thead>
@@ -1197,12 +1199,11 @@ if($mostrarView){?>
                     </tr>
                     </thead>
                     <tfoot>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                     </tfoot>
                     <tbody>
                     <?php if (!empty($cliente['Bienesdeuso'])): ?>
@@ -1215,31 +1216,87 @@ if($mostrarView){?>
                                 $descripcionBDU = "";
                                 //todo separar en case desc Bien de uso
                                 //esto seria mas correcto si lo separamos en un case
-                                if($bienesdeuso['patente']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['patente'];
-                                if($bienesdeuso['aniofabricacion']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['aniofabricacion'];
-                                if($bienesdeuso['tipoinmueble']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['tipoinmueble'];
-                                if($bienesdeuso['calle']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['calle'];
-                                if($bienesdeuso['numero']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['numero'];
-                                if($bienesdeuso['nombre']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['nombre'];
-                                if($bienesdeuso['matricula']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['matricula'];
-                                if($bienesdeuso['fechaadquisicion']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['fechaadquisicion'];
-                                if($bienesdeuso['marca']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['marca'];
-                                if($bienesdeuso['modelo']!="")
-                                    $descripcionBDU .= " -".$bienesdeuso['modelo'];
+                                switch ($bienesdeuso['tipo']){
+                                    //Empresa
+                                    case 'Rodado':
+                                        if($bienesdeuso['patente']!="")
+                                            $descripcionBDU  .= $bienesdeuso['patente'];
+                                        if($bienesdeuso['aniofabricacion']!="")
+                                            $descripcionBDU  .= " -".$bienesdeuso['aniofabricacion'];
+                                        
+                                        break;
+                                    case 'Inmueble':
+                                        if($bienesdeuso['calle']!="")
+                                            $descripcionBDU  .= $bienesdeuso['calle'];
+                                        if($bienesdeuso['numero']!="")
+                                            $descripcionBDU  .= " -".$bienesdeuso['numero'];
+                                        if($bienesdeuso['catastro']!="")
+                                            $descripcionBDU  .= " -".$bienesdeuso['catastro'];
+                                       
+                                        break;
+                                    case 'Instalaciones':
+                                        if($bienesdeuso['descripcion']!="")
+                                            $descripcionBDU  .= $bienesdeuso['descripcion'];
+                                        
+                                        break;
+                                    case 'Otros bienes de uso Muebles':
+                                        if($bienesdeuso['descripcion']!="")
+                                            $descripcionBDU  .= $bienesdeuso['descripcion'];
+                                       
+                                        break;
+                                    case 'Otros bienes de uso Maquinas':
+                                        if($bienesdeuso['descripcion']!="")
+                                            $descripcionBDU  .= $bienesdeuso['descripcion'];
+                                       
+                                        break;
+                                    case 'Otros bienes de uso Activos Biologicos':
+                                        if($bienesdeuso['descripcion']!="")
+                                            $descripcionBDU  .= $bienesdeuso['descripcion'];
+                                         
+                                        break;
+                                    //NO empresa
+                                    case 'Inmuebles':
+                                        if($bienesdeuso['calle']!="")
+                                            $descripcionBDU  .= $bienesdeuso['calle'];
+                                        if($bienesdeuso['numero']!="")
+                                            $descripcionBDU  .= " -".$bienesdeuso['numero'];
+                                        if($bienesdeuso['catastro']!="")
+                                            $descripcionBDU  .= " -".$bienesdeuso['catastro'];
+                                        break;
+                                    case 'Automotor':
+                                        if($bienesdeuso['patente']!="")
+                                            $descripcionBDU  .= $bienesdeuso['patente'];
+                                        if($bienesdeuso['aniofabricacion']!="")
+                                            $descripcionBDU  .= " -".$bienesdeuso['aniofabricacion'];
+                                        break;
+                                    case 'Naves, Yates y similares':
+                                        if($bienesdeuso['marca']!="")
+                                            $descripcionBDU  .= $bienesdeuso['marca'];
+                                        if($bienesdeuso['modelo']!="")
+                                            $descripcionBDU  .= " -".$bienesdeuso['modelo'];
+                                         
+                                        break;
+                                    case 'Aeronave':
+                                        if($bienesdeuso['matricula']!="")
+                                            $descripcionBDU  .= $bienesdeuso['matricula'];
+                                        if($bienesdeuso['fechaadquisicion']!="")
+                                            $descripcionBDU  .= " -".$bienesdeuso['fechaadquisicion'];
+                                         
+                                        break;
+                                    case 'Bien mueble registrable':
+                                        if($bienesdeuso['descripcion']!="")
+                                            $descripcionBDU  .= $bienesdeuso['descripcion'];
+                                         
+                                        break;
+                                    case 'Otros bienes':
+                                        if($bienesdeuso['descripcion']!="")
+                                            $descripcionBDU  .= $bienesdeuso['descripcion'];                                         
+                                        break;
+                                }                               
                                 ?>
-                                <td><?php echo $bienesdeuso['marca']; ?></td>
-                                <td><?php echo date('d-m-Y',strtotime($empleado['fechaingreso'])) ?></td>
+                                <td><?php echo $descripcionBDU; ?></td>
                                 <td >
-                                    <a href="#"  onclick="loadFormEmpleado(<?php echo $empleado['id']; ?>)" class="button_view">
+                                    <a href="#"  onclick="loadFormBiendeuso(<?php echo $cliente['Cliente']['id'].",".$bienesdeuso['id'].",0"?>)" class="button_view">
                                         <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
                                     </a>
                                     <?php echo $this->Form->postLink(
@@ -1249,13 +1306,13 @@ if($mostrarView){?>
                                         array(
                                             'controller' => 'Bienesdeusos',
                                             'action' => 'delete',
-                                            $empleado['id'],
+                                            $bienesdeuso['id'],
                                         ),
                                         array(
-                                            'class'=>'deleteEmpleado',
+                                            'class'=>'deleteBiendeuso',
                                             'escape' => false // Add this to avoid Cake from printing the img HTML code instead of the actual image
                                         ),
-                                        __('Esta seguro que quiere eliminar este provedor?')
+                                        __('Esta seguro que quiere eliminar este bien de uso?')
                                     ); ?>
                                 </td>
                             </tr>
@@ -2109,10 +2166,11 @@ if($mostrarView){?>
                 echo $this->Form->input('codigoafip',array(
                         'label'=>'Codigo Afip',
                         'options'=>array(
+                            '0'=>'0%',
                             '3'=>'25%',
                             '1'=>'50%',
                             '2'=>'75%',
-                            '0'=>'100%',
+                            '4'=>'100%',
                         )
                     )
                 );

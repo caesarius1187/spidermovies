@@ -37,6 +37,7 @@ class VentasController extends AppController {
 	{
 		ini_set('memory_limit', '2560M');
 		$this->loadModel('Cliente');
+		$this->loadModel('Tipogasto');
 		$pemes = substr($periodo, 0, 2);
 		$peanio = substr($periodo, 3);
 
@@ -143,7 +144,7 @@ class VentasController extends AppController {
 							,'neto','iva','ivapercep','iibbpercep','actvspercep','impinternos','nogravados','excentos'
 							,'exentosactividadeseconomicas','exentosactividadesvarias','total',
 							'Puntosdeventa.nombre','Subcliente.nombre','Subcliente.cuit','Localidade.nombre',
-							'Partido.nombre','Actividade.nombre','Tipogasto.nombre','Comprobante.tipodebitoasociado'
+							'Partido.nombre','Actividade.nombre','Tipogasto.id','Tipogasto.nombre','Comprobante.tipodebitoasociado'
 							,'Comprobante.tipocreditoasociado','Comprobante.nombre','Comprobante.abreviacion','Comprobante.codigo'],
 						'joins'=>[
 							[
@@ -309,11 +310,13 @@ class VentasController extends AppController {
 
 		$this->set(compact('cliente'));
 		$this->set(compact('ventas'));
-//		if($this->request->is('ajax')){
+		if($this->request->is('ajax')){
 			$this->layout = 'ajax';
-//		}
+		}
+        $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
+        $this->set(compact('ingresosBienDeUso'));
 
-	}
+    }
 	public function addajax(){
 	 	//$this->request->onlyAllow('ajax');
 	 	$this->loadModel('Subcliente');
@@ -647,6 +650,8 @@ class VentasController extends AppController {
 		$this->loadModel('Cliente');
 		$this->loadModel('Comprobante');
 		$this->loadModel('Impcli');
+		$this->loadModel('Bienesdeuso');
+		$this->loadModel('Tipogasto');
 
 		$pemes = substr($periodo, 0, 2);
 		$peanio = substr($periodo, 3);
@@ -862,6 +867,8 @@ class VentasController extends AppController {
 			),
 		));
 		$this->set(compact('lclis'));
+		$ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
+		$this->set(compact('ingresosBienDeUso'));
 	}
 	public function delete($id = null) {
 		$this->Venta->id = $id;

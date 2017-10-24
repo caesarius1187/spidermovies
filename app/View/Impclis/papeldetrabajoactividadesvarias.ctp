@@ -73,8 +73,8 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 <?php } else { 
 	$provinciasArecorrer = array();
 	$totalesProvincia = array();
-	foreach ($impcli['Impcliprovincia'] as $impcliprovincia) { 
-		$impcliprovinciaid='localidad'.$impcliprovincia['id'];
+	foreach ($impcliprovincias as $impcliprovincia) { 
+		$impcliprovinciaid='localidad'.$impcliprovincia['Impcliprovincia']['id'];
 		$provinciaid='provincia'.$impcliprovincia['Localidade']['Partido']['id'];
 		if (!in_array($impcliprovincia['Localidade']['Partido']['id'], $provinciasArecorrer))
 		{
@@ -156,7 +156,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 					$baseprorrateadaImpCLI = 0;
 					//echo json_encode($actividadcliente['Basesprorrateada']);
 					foreach ($actividadcliente['Basesprorrateada'] as $key => $basesprorrateada) {
-						if($basesprorrateada['Impcliprovincia']['Partido']['id']==$miProvincia&&$impcliprovincia['ejercicio']!='Primero'){
+						if($basesprorrateada['Impcliprovincia']['Partido']['id']==$miProvincia&&$impcliprovincia['Impcliprovincia']['ejercicio']!='Primero'){
 							//esta es la base que se uso para calcular Actividad Economica en esta provincia
 							$baseprorrateadaImpCLI=$basesprorrateada['baseprorrateada'];
 							echo "<td >".number_format($baseprorrateadaImpCLI, 2, ",", ".")."</td>";
@@ -172,7 +172,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 			</tr>
 			<tr id="2">
 				<td ><?php
-				foreach ($impcli['Impcliprovincia'] as $impcliprovincia) { 
+				foreach ($impcliprovincias as $impcliprovincia) { 
 					$provinciaid=$impcliprovincia['Localidade']['Partido']['id'];	
 					$provinciaid=$impcliprovincia['Localidade']['Partido']['id'];	
 					if($miProvincia==$provinciaid){
@@ -208,11 +208,11 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 			<?php 
 			$provinciaAMostrar=array();
 			$localidadAMostrar=array();
-			foreach ($impcli['Impcliprovincia'] as $impcliprovincia) { 
+			foreach ($impcliprovincias as $impcliprovincia) { 
 				
 				$provinciaid=$impcliprovincia['Localidade']['Partido']['id'];	
-				$impcliprovinciaid = 'localidad'.$impcliprovincia['id'];
-				$myimpcliprovincia = $impcliprovincia;
+				$impcliprovinciaid = 'localidad'.$impcliprovincia['Impcliprovincia']['id'];
+				$myimpcliprovincia = $impcliprovincia['Impcliprovincia'];
 				if($miProvincia==$provinciaid){
 					$totalPagoImpuestoLocalidad=0;
 					$provinciaAMostrar = $impcliprovincia['Localidade']['Partido'];
@@ -226,7 +226,7 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<td>
 					<?php echo $localidadAMostrar['nombre'];  ?>
 				</td>
-				<td><?php echo $impcliprovincia['sede']?  "SI": "NO";?>
+				<td><?php echo $impcliprovincia['Impcliprovincia']['sede']?  "SI": "NO";?>
 					</td>
 				<?php 
 				foreach ($actividadclientes as $actividadcliente) { 
@@ -473,8 +473,8 @@ echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],
 				<td></td>
 				<?php 
 
-				foreach ($impcli['Impcliprovincia'] as $impcliprovincia) { 
-					$impcliprovinciaid = 'localidad'.$impcliprovincia['id'];
+				foreach ($impcliprovincias as $impcliprovincia) { 
+					$impcliprovinciaid = 'localidad'.$impcliprovincia['Impcliprovincia']['id'];
 					$provinciaid='provincia'.$miProvincia;
 					$partidoid='provincia'.$impcliprovincia['Localidade']['Partido']['id'];
 					if(!isset($totalesProvincia[$provinciaid]['ventas'])) {

@@ -17,7 +17,17 @@ if(!$mostrarForm) { ?>
             <td class="<?php echo $tdClass?>" title=""><?php echo $venta["Venta"]["condicioniva"]?></td>
 
             <td class="<?php echo $tdClass?>" title="<?php echo $venta["Actividadcliente"]["Actividade"]["nombre"]?>"><?php echo $venta["Actividadcliente"]["Actividade"]["nombre"]?></td>
-            <?php $tipogasto = isset($venta["Tipogasto"]["nombre"])?$venta["Tipogasto"]["nombre"]:""; ?>
+            <?php
+            echo $this->Form->input('actividadescategorias', [
+                'type'=>'select',
+                'options'=>$actividadesCategorias,
+                'id'=>'jsonactividadescategorias',
+                'div'=>[
+                    'style'=>'display:none'
+                ]
+            ]);
+            $tipogasto = isset($venta["Tipogasto"]["nombre"])?$venta["Tipogasto"]["nombre"]:"";
+            ?>
             <td class="<?php echo $tdClass?> notPrintable" title="<?php echo $tipogasto?>">
                 <?php echo $tipogasto?>
             </td><!--7-->

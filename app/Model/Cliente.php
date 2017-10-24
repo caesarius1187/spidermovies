@@ -301,6 +301,19 @@ class Cliente extends AppModel {
 			'exclusive' => '',
 			'finderQuery' => '',
 			'counterQuery' => ''
+		),
+		'Bienesdeuso' => array(
+			'className' => 'Bienesdeuso',
+			'foreignKey' => 'cliente_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
 		)
 	);
     public function impuestosActivados($cliid,$periodo){

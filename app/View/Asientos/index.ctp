@@ -44,7 +44,7 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 			<td style="text-align: left;">
 				<?php
 				if(isset($cuentasclienteseleccionada)){
-					echo "<h2>Mayor de cuenta: ".$cuentasclienteseleccionada['Cuenta']['nombre']."</h2>";
+					echo "<h2>Mayor de cuenta: ".$cuentasclienteseleccionada['Cuentascliente']['nombre']."</h2>";
 				}else{
 					echo "<h2>Asientos</h2>";
 				}

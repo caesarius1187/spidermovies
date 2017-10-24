@@ -26,10 +26,10 @@ foreach ($cliente['Actividadcliente'] as $a => $actividade){
     $idCuentas = 0;
     $categoriaCuentasganancia = "";
     if(count($actividade['Cuentasganancia'])>0){
-        $idCuentas = $actividade['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
-        $idCuentascliente = $actividade['Cuentasganancia'][0]['Cuentascliente']['id'];
+//        $idCuentas = $actividade['Cuentasganancia'][0]['Cuentascliente']['cuenta_id'];
+//        $idCuentascliente = $actividade['Cuentasganancia'][0]['Cuentascliente']['id'];
         $idCuentasganancia = $actividade['Cuentasganancia'][0]['id'] ;
-        $nombreCuentasganancia = $actividade['Cuentasganancia'][0]['Cuentascliente']['nombre'];
+//        $nombreCuentasganancia = $actividade['Cuentasganancia'][0]['Cuentascliente']['nombre'];
         $categoriaCuentasganancia = $actividade['Cuentasganancia'][0]['categoria'];
     }
     echo $this->Form->input('Cuentasganancia.'.$a.'.id',[
@@ -38,8 +38,8 @@ foreach ($cliente['Actividadcliente'] as $a => $actividade){
     ]);
     echo $this->Form->input('Cuentasganancia.'.$a.'.cuentascliente_id',[
         'type'=>'hidden',
-        'value'=>$idCuentascliente,
-        'dafaultvalue'=>$idCuentascliente,
+//        'value'=>$idCuentascliente,
+//        'dafaultvalue'=>$idCuentascliente,
     ]);
     echo $this->Form->input('Cuentasganancia.'.$a.'.actividadcliente_id',[
         'type'=>'hidden',
@@ -58,7 +58,7 @@ foreach ($cliente['Actividadcliente'] as $a => $actividade){
     echo $this->Form->input('Cuentasganancia.'.$a.'.cuenta_id',[
         'type'=>'hidden',
         'label'=>'Cuenta',
-        'defaultoption'=>$idCuentas,
+//        'defaultoption'=>$idCuentas,
         'title'=>'Esta es la cuenta que se usara por defecto para asignar el neto de ventas en los asientos'
     ]);
     ?>

@@ -85,7 +85,7 @@ echo $this->Form->input('Movimientosbancario.periodo',array('type'=>'hidden','va
         ?>
     </div>
 </div>
-<div class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
+<div class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;overflow: auto;" >
 	<?php
     $dirMovimientosbancarios = new Folder($folderMovimientosbancarios, true, 0777);
 	?>

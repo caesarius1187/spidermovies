@@ -61,7 +61,7 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                         $valores[$conceptoid]['valor'] += $valorrecibo['valor'];
                     }
                     ?>
-                    <table id="tblReciboSueldo" cellspacing="0" class="tblInforme" style="padding:0px">
+                    <table id="tblReciboSueldo" cellspacing="0" class="tblInforme" style="padding:0px;height: 750px;width: 530px;">
                         <tr>
                             <td colspan="20" class="tdWithBorder" style="border-top: 0px;border-left: 0px;border-right: 0px;">
                                 <b>Recibo de remuneraciones - Periodo: <?php
@@ -112,7 +112,6 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                                 <b> Empleado: </b>Legajo <?php echo $empleado['Empleado']['legajo'] ?>
                                 <b>Apellido y nombre: </b> <?php echo $empleado['Empleado']['nombre'] ?>
                                 <b>CUIL: </b><?php echo $empleado['Empleado']['cuit']; ?>
-                                </br>
                                 <b>Fecha de ingreso: </b> <?php echo date('d/m/Y',strtotime($empleado['Empleado']['fechaalta'])); ?>
                                 <b>O.S.: </b> <?php echo $valores['33']['concepto']; ?>
                                 <b>Condición: </b> <?php echo $empleado['Empleado']['codigoafip']; ?>
@@ -125,7 +124,8 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                                         'options'=>$impuestos,
                                         'value'=>$empleado['Empleado']['impuesto_id'],
                                         'class'=>'hideOnPrint',
-                                        'empty'=>'Efectivo'
+                                        'empty'=>'Efectivo',
+                                        'div'=>['style'=>['display: inline;']]
                                     ]); ?>
                                 <b>Cargo: </b><?php echo $empleado['Cargo']['nombre'] ?>
                                 <b>Jornada: </b><?php echo $empleado['Empleado']['jornada']=='0.5'?"Media":"Completa" ?>
@@ -164,7 +164,7 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                         </tr>
                         <?php
 
-                        foreach ($valores as $valor){
+                        foreach ($valores as $v => $valor){
                             if($valor['seccion']=='DATOS')continue;
                             if($valor['seccion']=='TOTALES'){
                                 //si es el redondeo mostralo sino segui la flecha guacho
@@ -194,27 +194,27 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                                                 $suma = -1;
                                             }//hacerlo para totales tmb
                                             ?>
-                                            <td class="tdWithLeftRightBorder tdWithNumber">
+                                            <td class="tdWithLeftRightBorder tdWithNumber" >
                                                 <?php echo number_format($valor['valor']*$suma, 2, ",", "."); ?>
                                             </td>
-                                            <td class="tdWithLeftRightBorder tdWithNumber"></td>
-                                            <td class="tdWithLeftRightBorder tdWithNumber"></td>
+                                            <td class="tdWithLeftRightBorder tdWithNumber" ></td>
+                                            <td class="tdWithLeftRightBorder tdWithNumber" ></td>
                                             <?php
                                             break;
                                         case 'NO REMUNERATIVOS':
                                             ?>
-                                            <td class="tdWithLeftRightBorder tdWithNumber"></td>
-                                            <td class="tdWithLeftRightBorder tdWithNumber">
+                                            <td class="tdWithLeftRightBorder tdWithNumber" ></td>
+                                            <td class="tdWithLeftRightBorder tdWithNumber" >
                                                 <?php echo number_format($valor['valor'], 2, ",", "."); ?>
                                             </td>
-                                            <td class="tdWithLeftRightBorder tdWithNumber"></td>
+                                            <td class="tdWithLeftRightBorder tdWithNumber" ></td>
                                             <?php
                                             break;
                                         case 'APORTES':
                                             ?>
-                                            <td class="tdWithLeftRightBorder tdWithNumber"></td>
-                                            <td class="tdWithLeftRightBorder tdWithNumber"></td>
-                                            <td class="tdWithLeftRightBorder tdWithNumber">
+                                            <td class="tdWithLeftRightBorder tdWithNumber" ></td>
+                                            <td class="tdWithLeftRightBorder tdWithNumber" ></td>
+                                            <td class="tdWithLeftRightBorder tdWithNumber" >
                                             <?php echo number_format($valor['valor'], 2, ",", "."); ?>
                                             </td>
                                             <?php
@@ -223,19 +223,19 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                                             switch ($valor['numero']){
                                                 case '124':
                                                     ?>
-                                                    <td class="tdWithLeftRightBorder tdWithNumber"></td>
-                                                    <td class="tdWithLeftRightBorder tdWithNumber">
+                                                    <td class="tdWithLeftRightBorder tdWithNumber" ></td>
+                                                    <td class="tdWithLeftRightBorder tdWithNumber" >
                                                         <?php echo number_format($valor['valor'], 2, ",", "."); ?>
                                                     </td>
-                                                    <td class="tdWithLeftRightBorder tdWithNumber"></td>
+                                                    <td class="tdWithLeftRightBorder tdWithNumber" ></td>
                                                     <?php
-                                                break;
+                                                    break;
                                                 case '132':
                                                 case '133':
                                                     ?>
-                                                    <td class="tdWithLeftRightBorder tdWithNumber"></td>
-                                                    <td class="tdWithLeftRightBorder tdWithNumber"></td>
-                                                    <td class="tdWithLeftRightBorder tdWithNumber">
+                                                    <td class="tdWithLeftRightBorder tdWithNumber" ></td>
+                                                    <td class="tdWithLeftRightBorder tdWithNumber" ></td>
+                                                    <td class="tdWithLeftRightBorder tdWithNumber" >
                                                         <?php echo number_format($valor['valor'], 2, ",", "."); ?>
                                                     </td>
                                                     <?php
@@ -249,6 +249,14 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                             <?php
                         };
                         ?>
+                        <tr style="height: auto"">
+                            <td class="tdWithLeftRightBorder" style="height: auto;">&nbsp;</td>
+                            <td class="tdWithLeftRightBorder" style="height: auto;">&nbsp;</td>
+                            <td class="tdWithLeftRightBorder" style="height: auto;">&nbsp;</td>
+                            <td class="tdWithLeftRightBorder" style="height: auto;">&nbsp;</td>
+                            <td class="tdWithLeftRightBorder" style="height: auto;">&nbsp;</td>
+                            <td style="height: auto;">&nbsp;</td>
+                        </tr>
                         <tr>
                             <td colspan="3" class="tdWithBorder">
                                 <?php
@@ -321,7 +329,7 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                         </tr>
                     </table>
             </div>
-            <div id="reciboDuplicado<?php echo $empid;?>" class="tblReciboSueldo divToRight" style="margin: 0px 10px 33px 10px;width: 480px; float: right; "></div>
+            <div id="reciboDuplicado<?php echo $empid;?>" class="tblReciboSueldo divToRight" style="margin: 0px 10px; float: right; "></div>
         </div>
     </div>
 </div>
