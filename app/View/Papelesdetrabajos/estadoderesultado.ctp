@@ -108,20 +108,18 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
     ?>
     <table id="tblsys"  class="tbl_border" cellspacing="0">
         <thead>
-        <tr class="trnoclickeable">
-            <td>N&uacute;mero</td>
-            <td>Cuenta</td>
-            <td>Saldo Anterior</td>
-            <td>Saldo Actual</td>
-        </tr>
-
+            <tr class="trnoclickeable">
+                <td>N&uacute;mero</td>
+                <td>Cuenta</td>
+                <td>Saldo Anterior</td>
+                <td>Saldo Actual</td>
+            </tr>
         </thead>
-
         <tbody>
         <?php
         $arrayTotales=[];
         $arrayCuentasxPeriodos=[];/*En este array vamos a guardar los valores de cada cuenta
-        con su periodo(asociado el valor al numero de cuenta)*/
+        con su periodo(asociado el valor al numero de cuenta)*/        
         foreach ($cliente['Cuentascliente'] as $cuentascliente){
             $numerodecuenta = $cuentascliente['Cuenta']['numero'];
 
@@ -2932,80 +2930,94 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                 Resultados de las operaciones antes del impuesto a las gananancias
             </td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td>0,00</td>
+            <td>0,00</td>
         </tr>
         <tr>
             <td>
                 Impuesto a las ganancias sobre los resultados de las operaciones
             </td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td>0,00</td>
+            <td>0,00</td>
         </tr>
         <tr>
             <td>
                 Resultado de las operaciones
             </td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td>0,00</td>
+            <td>0,00</td>
         </tr>
         <tr>
             <td>
                 Resultado de por disposición de activos o cancelación de pasivos antes de impuesto a las ganancias (nota)
             </td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td>0,00</td>
+            <td>0,00</td>
         </tr>
         <tr>
             <td>
                 Impuesto a las ganancias sobre los resultados por disposición de activos y/o liquidación de deudas
             </td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td>0,00</td>
+            <td>0,00</td>
         </tr>
         <tr>
             <td>
                 Resultado por disposición de activos y/o cancelación de pasivos
             </td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td>0,00</td>
+            <td>0,00</td>
         </tr>
         <tr style="background-color: #d0d9ff">
             <th>
                 Perdida por las operaciones en descontinuación
             </th>
             <th></th>
-            <th></th>
-            <th></th>
+            <th>0,00</th>
+            <th>0,00</th>
         </tr>
         <tr style="background-color: #d0d9ff">
             <th>
                 Ganancia de las operaciones ordinarias
             </th>
             <th></th>
-            <th></th>
-            <th></th>
+           <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                echo '<th  class="numericTD">' .
+                    number_format($totalPeriodo[$mesAMostrar], 2, ",", ".")
+                    . "</th>";
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
         <tr>
             <td>
                 Resultado de las operaciones extraordinarias
             </td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td>0,00</td>
+            <td>0,00 Chekiar esto</td>
         </tr>
         <tr style="background-color: #91a7ff">
             <th>
                 Ganancia del ejercicio
             </th>
             <th></th>
-            <th></th>
-            <th></th>
+            <?php
+            $mesAMostrar = date('Y', strtotime($fechaInicioConsulta.'-01-01'));
+            while($mesAMostrar<=$fechaFinConsulta) {
+                echo '<th  class="numericTD">' .
+                    number_format($totalPeriodo[$mesAMostrar], 2, ",", ".")
+                    . "</th>";
+                $mesAMostrar = date('Y', strtotime($mesAMostrar . "-01-01 +1 Year"));
+            }
+            ?>
         </tr>
 
         </tbody>

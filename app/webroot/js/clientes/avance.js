@@ -954,6 +954,119 @@ $(document).ready(function() {
             }
         });
     }
+    function contabilizaramortizacion (clienteid,periodo) {
+        var data="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/asientos/contabilizaramortizacion/"+clienteid+"/"+periodo,
+
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Asiento automatico de compra');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                $('.chosen-select-cuenta').chosen({
+                    search_contains:true,
+                    include_group_label_in_selected:true
+                });
+                catchEdicionAmortizacionBien();
+                $('#AsientoAddForm').submit(function(){
+                    $('#myModal').modal('hide');
+                    /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+                    var asientoyaguardado=false;
+                    if($("#AsientoAddForm #Asiento0Id").val()*1!=0){
+                        asientoyaguardado=true;
+                    }
+                    var r=true;
+                    if(asientoyaguardado){
+                        r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+                            " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+                            " Sumas y saldos y despues en Asientos");
+                    }
+                    if (r == true) {
+                        $('#AsientoAddForm input').each(function(){
+                            $(this).removeAttr('disabled');
+                        });
+                        //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                            type: 'POST',
+                            url: formUrl,
+                            data: formData,
+                            success: function(data,textStatus,xhr){
+                                var respuesta = jQuery.parseJSON(data);
+                                var resp = respuesta.respuesta;
+                                if($("#buttonAsAmortizacion"+clienteid).length>0){
+                                    $('#buttonAsAmortizacion'+clienteid).removeClass('buttonImpcliListo');
+                                    $('#buttonAsAmortizacion'+clienteid).addClass('buttonImpcliRealizado');
+                                }
+                                callAlertPopint(resp);
+                                $('#myModal').modal('hide');
+                                $('#BienesdeusoAmortizarForm').submit();
+                            },
+                            error: function(xhr,textStatus,error){
+                                $('#myModal').modal('show');
+                                alert(textStatus);
+                                callAlertPopint(textStatus);
+                                return false;
+                            }
+                        });
+                    }else{
+                        callAlertPopint("El asiento no se ha sobreescrito.");
+                    }
+                    return false;
+                });
+                $(".inputDebe").each(function () {
+                    $(this).change(addTolblTotalDebeAsieto);
+                });
+                $(".inputHaber").each(function () {
+                    $(this).change(addTolblTotalhaberAsieto);
+                });
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
+    }
+    function catchEdicionAmortizacionBien(){
+        $('#BienesdeusoAmortizarForm').submit(function(){
+            //desactivar los inputs q son para agregar movimientos
+            $("#rowdecarga :input").prop("disabled", true);
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+            $.ajax({
+                type: 'POST',
+                url: formUrl,
+                data: formData,
+                success: function(data,textStatus,xhr){
+                    var respuesta = JSON.parse(data);
+                    // $('#myModal').modal('hide');
+                    // $('#myModalFormAgregarAsiento').modal('hide');
+                    callAlertPopint(respuesta.respuesta);
+                    // reiniciarFormAgregarAsiento()
+                },
+                error: function(xhr,textStatus,error){
+                    // $('#myModal').modal('hide');
+                    // $('#myModalFormAgregarAsiento').modal('hide');
+                    callAlertPopint(respuesta.error);
+                    alert(textStatus);
+                }
+            });
+            $("#rowdecarga :input").prop("disabled", false);
+            return false;
+        });        
+    }
+    
     function contabilizarretencionessufridas (clienteid,periodo) {
         var data="";
         $.ajax({

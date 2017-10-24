@@ -7,7 +7,7 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  */
 
-$cakeDescription = __d('sigesec.com.ar', 'SIGESEC');
+$cakeDescription = __d('conta.com.ar', 'CONTA');
 ?>
 <!DOCTYPE html>
 <html lang="en" class="no-js">
@@ -20,9 +20,9 @@ $cakeDescription = __d('sigesec.com.ar', 'SIGESEC');
 		</title>
 		<?php
 			echo $this->Html->meta(
-			    'icon',
-			    '/img/cake.icon.png',
-			    array('type' => 'icon')
+				'icon',
+				'/img/logosolo.png',
+				array('type' => 'icon')
 			);
 			echo $this->Html->script('jquery-1.8.2.min.js');
 			echo $this->Html->script('supersized.3.2.7.min.js');

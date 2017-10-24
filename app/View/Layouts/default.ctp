@@ -21,7 +21,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 	<?php
 		echo $this->Html->meta(
 			    'icon',
-			    '/img/logosmall.png',
+			    '/img/logosolo.png',
 			    array('type' => 'icon')
 			);
 		echo $this->Html->script('jquery');
@@ -89,7 +89,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 		<div id="header">
 			<div id='cssmenu' style="text-align: center">
 				<div style="float:left;">
-					<?php echo $this->Html->image('logoBig.png', array('style' => 'width: 266px;')) ?>
+					<?php echo $this->Html->image('logosolo.png', array('style' => 'width: 46px;margin-top: 6px;')) ?>
 				</div>
 				<ul style="float:left;" >
 					<!--<li><a>

@@ -17,7 +17,25 @@ class Alicuota extends AppModel {
 
 
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
+/*Tipos de Asientos
+'impuestos',
+'impuestos2',
+'compras',
+'ventas',
+'cobros',
+'pagos',
+'amortizacionbdu',
+'bancos',
+'bancosretiros',
+'otros',
+'Devengamiento',
+'Registro',
+'Apertura',
+'Refundacion',
+'Cierre',
+'retencionessufridas',
+'retencionesrealizadas'
+ * */
 /**
  * belongsTo associations
  *

@@ -81,20 +81,35 @@ function guardarTodosLosSueldos(){
 function showHideEmpleadoOnClick(){
     $(".snapempleado").click(function(){
         var empid = $(this).attr('data-identificacion');
-        showHideColumnsEmpleado(empid);
+        if($(this).hasClass("shown")){
+            showHideColumnsEmpleado(empid);
+            $(this).addClass('shown');
+        }else{
+            showHideColumnsEmpleado(empid);
+            $(this).removeClass('shown');
+        }
     });
 }
 function showHideColumnsEmpleado(empid){
+    var empleado = $( "span[data-identificacion="+empid+"]" );
+    var show = false;
+    if($(empleado).hasClass("shown")){
+        show = false;
+        $(empleado).removeClass('shown');
+    }else{
+        show = true;
+        $(empleado).addClass('shown');
+    }
     if( $("#indiceCargaEmpleado"+empid).val()!=0){
         $('#ValorreciboPapeldetrabajosueldosForm'+empid+' .tdconcepto').each(function(){
-            if($(this).is(":visible")){
+            if(!show){
                 $(this).hide();
             }else{
                 $(this).show();
             }
         });
         $('#ValorreciboPapeldetrabajosueldosForm'+empid+' .tdseccion').each(function(){
-            if($(this).is(":visible")){
+            if(!show){
                 $(this).hide();
             }else{
                 $(this).show();
@@ -103,28 +118,28 @@ function showHideColumnsEmpleado(empid){
     }
 
     $('#ValorreciboPapeldetrabajosueldosForm'+empid+' .tdalicuota').each(function(){
-        if($(this).is(":visible")){
+        if(!show){
             $(this).hide();
         }else{
             $(this).show();
         }
     });
     $('#ValorreciboPapeldetrabajosueldosForm'+empid+' .tdformula').each(function(){
-        if($(this).is(":visible")){
+        if(!show){
             $(this).hide();
         }else{
             $(this).show();
         }
     });
     $('#ValorreciboPapeldetrabajosueldosForm'+empid+' .tdcodigo').each(function(){
-        if($(this).is(":visible")){
+        if(!show){
             $(this).hide();
         }else{
             $(this).show();
         }
     });
     $('#ValorreciboPapeldetrabajosueldosForm'+empid+' .tdcodigoalicuota').each(function(){
-        if($(this).is(":visible")){
+        if(!show){
             $(this).hide();
         }else{
             $(this).show();
@@ -221,8 +236,8 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice){
             }
             $("#indiceCargaEmpleado"+empid).val(indice);
 
-            showHideColumnsEmpleado(empid)
             activarCalXOnSueldos(empid);
+            showHideColumnsEmpleado(empid);
             showHideEmpleadoOnClick()
         },
         error:function (XMLHttpRequest, textStatus, errorThrown) {
@@ -237,11 +252,16 @@ function aplicarATodos(empid,miinput){
     var valueAAplicar = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #'+miinput).val();
     var inputclass = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #'+miinput).attr('inputclass');
     $('input[inputclass="'+inputclass+'"]').each(function() {
-        $(this).val(valueAAplicar).trigger('change');
-        $(this).closest('form').calx({ });
+        // $(this).val(valueAAplicar);
+        var mysheet = $(this).closest('form').calx("getSheet");
+        var cell = mysheet.getCell($(this).attr('data-cell'));
+        cell.setValue(valueAAplicar);
+        cell.calculate();
+        mysheet.calculate();
+        // $(this).val(valueAAplicar).trigger('change');
+        // $(this).closest('form').calx({ });
     });
-    $("#loading").css('visibility','hidden')
-
+    $("#loading").css('visibility','hidden');
 }
 var tablaSueldoCalx=[];
 function ocultarFunciones(){
@@ -282,13 +302,13 @@ function ocultarFuncinesDeUnFormulario(empid){
             }
             if(dataCodigo.charAt(0)=='O') {
                  // $mysheet.getCell(dataCodigo).calculate();
-                var myCell = $mysheet.getCell(dataCodigo);
-                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormat() + "'");
-                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormattedValue() + "'");
-                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormula() + "'");
-                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.evaluateFormula() + "'");
-                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getValue() + "'");
-                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.renderComputedValue() + "'");
+                // var myCell = $mysheet.getCell(dataCodigo);
+                // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormat() + "'");
+                // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormattedValue() + "'");
+                // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormula() + "'");
+                // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.evaluateFormula() + "'");
+                // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getValue() + "'");
+                // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.renderComputedValue() + "'");
             }
 
             if(($mysheet.getCellValue(dataCodigo)*1)!=0){
@@ -452,8 +472,8 @@ function activarCalXOnSueldos(empid){
 
 
     $('#ValorreciboPapeldetrabajosueldosForm'+empid+' input').change(function(){
-       // $('#ValorreciboPapeldetrabajosueldosForm'+empid).calx({ });
-       //      ocultarFuncinesDeUnFormulario(empleado1);
+        var mysheet = $(this).closest('form').calx("getSheet");
+        mysheet.calculate();
     });
 }
 

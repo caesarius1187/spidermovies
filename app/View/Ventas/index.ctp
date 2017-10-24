@@ -1,5 +1,6 @@
 <table class="tbl_vtas_det" style="border:1px solid white" id="tablaVentas" cellspacing="0" cellpadding="0" >
     <thead>
+
         <tr>
             <th class="printable" style="width: 47px">Fecha</th><!--1-->
             <th class="printable" style="width: 275px;">Comprobante</th><!--2-->
@@ -20,9 +21,12 @@
             <th style="width: 89px;" class="sum printable" >Exento</th><!--17-->
             <th class="printable sum" style="width: 89px;"  >Exento Act. Econom.</th><!--18-->
             <th class="printable sum" style="width: 89px;"  >Exento Act. Varias</th><!--19-->
-            <th class="printable sum" style="width: 89px;" >Total</th><!--20-->
+            <th class="printable sum" style="width: 89px;" >Total
+                <div id="pageFooter" class="printable"> </div>
+            </th><!--20-->
             <th class="notPrintable" >Acciones</td><!--21-->
         </tr>
+      
     </thead>
     <tbody id="bodyTablaVentas">
     <?php
@@ -95,7 +99,11 @@
                 $paramsVenta = $venta['Venta']["id"];
                 echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarVenta(".$paramsVenta.")"));
                 echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarVenta(".$paramsVenta.")"));
+                if(in_array($venta["Tipogasto"]["id"],$ingresosBienDeUso)){
+                    echo $this->Html->image('biendeuso.png',array('width' => '20', 'height' => '20','onClick'=>"relacionarBienesdeuso('".$paramsVenta."','".$titleComprobante."')"));
+                }
                 //echo $this->Form->end();
+
                 ?>
             </td><!--22-->
         </tr>

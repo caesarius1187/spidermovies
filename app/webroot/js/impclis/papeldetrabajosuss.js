@@ -258,6 +258,7 @@ function cargarAsiento(){
 			apagarEmbargos*1-
             apagar935RENATEA*1-
 			totalAportesSindicales*1;
+		sueldospersonal = parseFloat(sueldospersonal).toFixed(2);
 		$('#Asiento0Movimiento'+orden+'Haber').val(sueldospersonal);
 		//Falta restar APORTES DE Sindicatos
 	}

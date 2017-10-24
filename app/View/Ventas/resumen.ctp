@@ -492,7 +492,7 @@ if($mostrarInforme){
         $periodoVenta = $venta['Venta']['periodo'];
         $periodoAnioVenta = $venta[0]['anio'];
         $periodoMesVenta = $venta[0]['mes'];
-        if(!isset($ingresosActualesClientes[$periodoVenta])){
+        if(!isset($ventasxPeriodo[$periodoVenta])){
             $ventasxPeriodo[$periodoVenta]['total']=0;
             $ventasxPeriodo[$periodoVenta]['neto']=0;
             $ventasxPeriodo[$periodoVenta]['iva']=0;
@@ -506,7 +506,7 @@ if($mostrarInforme){
             $ventasxPeriodo[$periodoVenta]['exentosactividadesvarias']=0;
             $ventasxPeriodo[$periodoVenta]['comercioexterior']=0;
         }
-        if($venta['Comprobante']["tipodebitoasociado"]=='Restitucion debito fiscal'){
+        if($venta['Comprobante']["tipodebitoasociado"]=='Restitucion de debito fiscal'){
             $ventasxPeriodo[$periodoVenta]['total'] -= $venta[0]['total'];
             $ventasxPeriodo[$periodoVenta]['neto'] -= $venta[0]['neto'];
             $ventasxPeriodo[$periodoVenta]['iva'] -= $venta[0]['iva'];

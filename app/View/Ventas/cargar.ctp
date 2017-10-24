@@ -280,6 +280,12 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                   if($tieneMonotributo=='1'){
                       $display="none;";
                   }
+                  echo $this->Form->input('jsonalltiposingresosbiendeuso',array(
+                          'value'=>json_encode($ingresosBienDeUso) ,
+                          'type'=>'hidden',
+                          "id"=>"jsonalltiposingresosbiendeuso"
+                      )
+                  );
                 echo $this->Form->input('tipogasto_id',array(
                     'type'=>'select',
                     'label'=>'Tipo Ingreso',

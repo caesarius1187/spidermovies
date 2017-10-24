@@ -238,6 +238,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                         $tieneasientodeventas=false;
                         $tieneasientodecompras=false;
                         $tieneasientoderetenciones=false;
+                        $tieneasientodeamortizacion=false;
                         foreach ($cliente["Asiento"] as $asiento ){
                             if($asiento['tipoasiento']=='ventas'){
                                 $tieneasientodeventas=true;
@@ -247,6 +248,9 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                             }
                             if($asiento['tipoasiento']=='retencionessufridas'){
                                 $tieneasientoderetenciones=true;
+                            }
+                            if($asiento['tipoasiento']=='amortizacion'){
+                                $tieneasientodeamortizacion=true;
                             }
                         }
                         if($tieneasientodeventas){
@@ -347,6 +351,31 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                                     array());
                             }
                         }
+                        //si estamos en el periodo de cierre podemos hacer este asiento
+                        //todo controlar que solo se muestre en periodo de cierre
+                        $diamesCorteEjFiscal = $cliente['Cliente']['fchcorteejerciciofiscal']!=null?$cliente['Cliente']['fchcorteejerciciofiscal']:'01-01';
+                        $pemes = substr($periodoSel, 0, 2);
+                        $peanio = substr($periodoSel, 3);
+                        $peDiaCorte = substr($diamesCorteEjFiscal, 0, 2);
+                        $peMesCorte = substr($diamesCorteEjFiscal, 3);
+
+                        $ultimoPeriodo = $peMesCorte."-".$peanio;
+
+                        if($ultimoPeriodo == $periodoSel){
+                           if($tieneasientodeamortizacion){
+                            $buttonclass="buttonImpcliRealizado";
+                          }else{
+                              $buttonclass="buttonImpcliListo";
+                          }
+                          echo $this->Form->button(
+                              'As. Amortizacion',
+                              array(
+                                  'class'=>$buttonclass." progress-button state-loading",
+                                  'onClick'=>"contabilizaramortizacion(".$paramsPrepPapeles.")",
+                                  'id'=>'buttonAsAmortizacion'.$cliente['Cliente']['id'],
+                              ),
+                              array());
+                        }                       
                     }
                     ?>
                         </div>
@@ -835,109 +864,109 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
     $peDiaCorte = substr($diamesCorteEjFiscal, 0, 2);
     $peMesCorte = substr($diamesCorteEjFiscal, 3);
     $fecha = $peanio."-".$peMesCorte."-28";
-    try{
-        $DateTimeFecha=new DateTime($fecha);
-        
-        $DateTimeperiodo=new DateTime($peanio.'-'.$pemes.'-01');
-        if( $DateTimeFecha> $DateTimeperiodo ){
-            $fecha = ($peanio*1 -1)."-".$peMesCorte."-28";
-        }
-        //si la fecha es superior al dia 1 del periodo q estamos viendo esta to mal loco hay q volver 1 año a la fecha
-        $periodoSelAprobado=false;
-        $periodosAprobado = [];
-        $periodosAprobado[4] = date("m-Y", strtotime($fecha." +4 month"));
-        $periodosAprobado[5] = date("m-Y", strtotime($fecha." +5 month"));
-        $periodosAprobado[6] = date("m-Y", strtotime($fecha." +6 month"));
-        $periodosAprobado[7] = date("m-Y", strtotime($fecha." +7 month"));
-        $periodosAprobado[8] = date("m-Y", strtotime($fecha." +8 month"));
-        $periodosAprobado[9] = date("m-Y", strtotime($fecha." +9 month"));
-        $periodosAprobado[10] = date("m-Y", strtotime($fecha." +10 month"));
-        $periodosAprobado[11] = date("m-Y", strtotime($fecha." +11 month"));
-        $periodosAprobado[12] = date("m-Y", strtotime($fecha." +12 month"));
-        $periodosAprobado[13] = date("m-Y", strtotime($fecha." +13 month"));
-        $periodosAprobado[14] = date("m-Y", strtotime($fecha." +14 month"));
-        if (in_array($periodoSel, $periodosAprobado, true )){
-            $periodoSelAprobado=true;
-        }
-        $esPersonaFisica=false;
-        $esPersonaJuridica=false;
-        if($cliente['Cliente']['tipopersona']=='fisica'){
-            $esPersonaFisica=true;
-        }
-        if($cliente['Cliente']['tipopersona']=='juridica'){
-            $esPersonaJuridica=true;
-        }
-        switch ($impcli['impuesto_id']){
-            case '28':
-                /*Ganancia Mínima Presunta
-                -Junio (Si pers Fisica)  o 5to A partir del mes de cierre ( si pers juridica)
-                // Anticipos [ Igual A Ganancias Fisica o Soc segun corresponda ]*/
-                if($esPersonaFisica){
-                    //vence Solo en Junio,pero se muestra un mes antes
-                    if($periodoSel!='06-'.$peanio){
-                        $mostrarEnEstePeriodo=false;
-                    }
-                }
-                if($esPersonaJuridica){
-                    if(!$periodoSelAprobado){
-                        //entonces el periodo que queremos mostrar NO esta en uno de estos "meses aprobados"
-                        // y no debo mostrarlo
-                        $mostrarEnEstePeriodo=false;
-                    }
-                }
-                break;
-            case '16':/*BP - Acciones o Participaciones*
-             BP - Acciones o Participaciones(Este impuesto solo se usa para pers juridicas)
-             -Mayo*/
-                // Anticipos [NO tiene]
-                if($esPersonaJuridica){
-                    //vence Solo en Junio,pero se muestra un mes antes
-                    if($periodoSel!='05-'.$peanio){
-                        $mostrarEnEstePeriodo=false;
-                    }
-                }
-                break;
-            case '5':/*Ganancias Sociedades
-            -5to A partir del mes de cierre
-            // Anticipos [10 Anticipos que empiezan a partir del mes siguiente en el que se paga el imp]*/
-                if(!$periodoSelAprobado){
-                    //entonces el periodo que queremos mostrar NO esta en uno de estos "meses aprobados"
-                    // y no debo mostrarlo
-                    $mostrarEnEstePeriodo=false;
-                }
-                break;
-            case '160':/*Ganancias Personas Físicas*/
-                $periodosAprobado = [];
-                $periodosAprobado[] = "06-".$peanio;//por junio
-                $periodosAprobado[] = "07-".$peanio;//por julio
-                $periodosAprobado[] = "08-".$peanio;//por agosto
-                $periodosAprobado[] = "10-".$peanio;//por Octubre
-                $periodosAprobado[] = "12-".$peanio;//por diciembre
-                $periodosAprobado[] = "02-".$peanio;//por febrero
-                if (in_array($periodoSel, $periodosAprobado, true )){
-                    $mostrarEnEstePeriodo=true;
-                }
-                break;
-            case '159':/*Impto. s/Bienes Personales
-                -Abril (si Part Soc)
-                // Anticipos [5 Anticipos Junio - Agosto - Octubre - Diciembre - Febrero]*/
-                $periodosAprobado = [];
-                $periodosAprobado[] = "05-".$peanio;//por junio
-                $periodosAprobado[] = "07-".$peanio;//por agosto
-                $periodosAprobado[] = "09-".$peanio;//por Octubre
-                $periodosAprobado[] = "11-".$peanio;//por diciembre
-                $periodosAprobado[] = "01-".$peanio;//por febrero
-                if (in_array($periodoSel, $periodosAprobado, true )){
-                    $mostrarEnEstePeriodo=true;
-                }
-                break;
-            case '172':/*Participaciones Societarias*/
-                break;
-        }
-    }
-    catch(Exception $e){
-       //no se pudo procesar la fecha
-    }
+//    try{
+//        $DateTimeFecha=new DateTime($fecha);
+//
+//        $DateTimeperiodo=new DateTime($peanio.'-'.$pemes.'-01');
+//        if( $DateTimeFecha> $DateTimeperiodo ){
+//            $fecha = ($peanio*1 -1)."-".$peMesCorte."-28";
+//        }
+//        //si la fecha es superior al dia 1 del periodo q estamos viendo esta to mal loco hay q volver 1 año a la fecha
+//        $periodoSelAprobado=false;
+//        $periodosAprobado = [];
+//        $periodosAprobado[4] = date("m-Y", strtotime($fecha." +4 month"));
+//        $periodosAprobado[5] = date("m-Y", strtotime($fecha." +5 month"));
+//        $periodosAprobado[6] = date("m-Y", strtotime($fecha." +6 month"));
+//        $periodosAprobado[7] = date("m-Y", strtotime($fecha." +7 month"));
+//        $periodosAprobado[8] = date("m-Y", strtotime($fecha." +8 month"));
+//        $periodosAprobado[9] = date("m-Y", strtotime($fecha." +9 month"));
+//        $periodosAprobado[10] = date("m-Y", strtotime($fecha." +10 month"));
+//        $periodosAprobado[11] = date("m-Y", strtotime($fecha." +11 month"));
+//        $periodosAprobado[12] = date("m-Y", strtotime($fecha." +12 month"));
+//        $periodosAprobado[13] = date("m-Y", strtotime($fecha." +13 month"));
+//        $periodosAprobado[14] = date("m-Y", strtotime($fecha." +14 month"));
+//        if (in_array($periodoSel, $periodosAprobado, true )){
+//            $periodoSelAprobado=true;
+//        }
+//        $esPersonaFisica=false;
+//        $esPersonaJuridica=false;
+//        if($cliente['Cliente']['tipopersona']=='fisica'){
+//            $esPersonaFisica=true;
+//        }
+//        if($cliente['Cliente']['tipopersona']=='juridica'){
+//            $esPersonaJuridica=true;
+//        }
+//        switch ($impcli['impuesto_id']){
+//            case '28':
+//                /*Ganancia Mínima Presunta
+//                -Junio (Si pers Fisica)  o 5to A partir del mes de cierre ( si pers juridica)
+//                // Anticipos [ Igual A Ganancias Fisica o Soc segun corresponda ]*/
+//                if($esPersonaFisica){
+//                    //vence Solo en Junio,pero se muestra un mes antes
+//                    if($periodoSel!='06-'.$peanio){
+//                        $mostrarEnEstePeriodo=false;
+//                    }
+//                }
+//                if($esPersonaJuridica){
+//                    if(!$periodoSelAprobado){
+//                        //entonces el periodo que queremos mostrar NO esta en uno de estos "meses aprobados"
+//                        // y no debo mostrarlo
+//                        $mostrarEnEstePeriodo=false;
+//                    }
+//                }
+//                break;
+//            case '16':/*BP - Acciones o Participaciones*
+//             BP - Acciones o Participaciones(Este impuesto solo se usa para pers juridicas)
+//             -Mayo*/
+//                // Anticipos [NO tiene]
+//                if($esPersonaJuridica){
+//                    //vence Solo en Junio,pero se muestra un mes antes
+//                    if($periodoSel!='05-'.$peanio){
+//                        $mostrarEnEstePeriodo=false;
+//                    }
+//                }
+//                break;
+//            case '5':/*Ganancias Sociedades
+//            -5to A partir del mes de cierre
+//            // Anticipos [10 Anticipos que empiezan a partir del mes siguiente en el que se paga el imp]*/
+//                if(!$periodoSelAprobado){
+//                    //entonces el periodo que queremos mostrar NO esta en uno de estos "meses aprobados"
+//                    // y no debo mostrarlo
+//                    $mostrarEnEstePeriodo=false;
+//                }
+//                break;
+//            case '160':/*Ganancias Personas Físicas*/
+//                $periodosAprobado = [];
+//                $periodosAprobado[] = "06-".$peanio;//por junio
+//                $periodosAprobado[] = "07-".$peanio;//por julio
+//                $periodosAprobado[] = "08-".$peanio;//por agosto
+//                $periodosAprobado[] = "10-".$peanio;//por Octubre
+//                $periodosAprobado[] = "12-".$peanio;//por diciembre
+//                $periodosAprobado[] = "02-".$peanio;//por febrero
+//                if (in_array($periodoSel, $periodosAprobado, true )){
+//                    $mostrarEnEstePeriodo=true;
+//                }
+//                break;
+//            case '159':/*Impto. s/Bienes Personales
+//                -Abril (si Part Soc)
+//                // Anticipos [5 Anticipos Junio - Agosto - Octubre - Diciembre - Febrero]*/
+//                $periodosAprobado = [];
+//                $periodosAprobado[] = "05-".$peanio;//por junio
+//                $periodosAprobado[] = "07-".$peanio;//por agosto
+//                $periodosAprobado[] = "09-".$peanio;//por Octubre
+//                $periodosAprobado[] = "11-".$peanio;//por diciembre
+//                $periodosAprobado[] = "01-".$peanio;//por febrero
+//                if (in_array($periodoSel, $periodosAprobado, true )){
+//                    $mostrarEnEstePeriodo=true;
+//                }
+//                break;
+//            case '172':/*Participaciones Societarias*/
+//                break;
+//        }
+//    }
+//    catch(Exception $e){
+//       //no se pudo procesar la fecha
+//    }
     if($impuestoActivo&&$mostrarEnEstePeriodo){
         $paramsPrepPapeles= "'".$periodoSel."','".$impcli['id']."'";
         $buttonclass="buttonImpcliListo";

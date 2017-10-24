@@ -453,6 +453,9 @@ $(document).ready(function() {
                             ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarCompra('+respuesta.compra_id+')" alt="">';
                         tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarCompra('+respuesta.compra_id+')" alt="">';
+                        if(respuesta.compra.Compra.imputacion=='Bs Uso') {
+                            tdactions = tdactions + '<img src="' + serverLayoutURL + '/img/biendeuso.png" width="20" height="20" onclick="abrirBiendeuso(' + respuesta.compra.Compra.cliente_id + ',' + respuesta.compra_id + ')" alt="">';
+                        }
                         rowData.push(tdactions);
                         rowData.push(respuesta.compra.Compra.created);
 
@@ -949,11 +952,27 @@ $(document).ready(function() {
        }
     });
     }
-    function abrirBiendeuso(comid){
+    function hideallinputsbdu(){
+        $(".inmuebleFNE").parent().hide();
+        $(".inmuebleFE").parent().hide();
+        $(".inmuebleJE").parent().hide();
+        $(".naves").parent().hide();
+        $(".aeronaves").parent().hide();
+        $(".instalacionesPF").parent().hide();
+        $(".instalacionesPJ").parent().hide();
+        $(".otrobiendeusoPF").parent().hide();
+        $(".otrobiendeusoPJ").parent().hide();
+        $(".bienesmueblesregistrables").parent().hide();
+        $(".otrosbienes").parent().hide();
+        $(".rodadoPJ").parent().hide();
+        $(".rodadoPF").parent().hide();
+        $(".automotor").parent().hide();
+    }
+    function abrirBiendeuso(cliid,comid){
         var data ="";
         $.ajax({
         type: "get",  // Request method: post, get
-        url: serverLayoutURL+"/bienesdeusos/add/"+comid,
+        url: serverLayoutURL+"/bienesdeusos/add/"+cliid+"/0/"+comid,
 
         // URL to request
         data: data,  // post data
@@ -966,44 +985,88 @@ $(document).ready(function() {
 
             $('#myModal').modal('show');
             //perzonalizar formulario para tipo de Bien de uso
+            var tipoPersona = $("#tipopersona").val();
             $("#BienesdeusoTipo").on('change', function() {
                 var selectedTipo = $(this).val();
-                switch (selectedTipo){
+                hideallinputsbdu();
+                switch (selectedTipo) {
                     case 'Automotor':
-                        $(".inmueble").parent().hide();
-                        $(".naves").parent().hide();
-                        $(".aeronaves").parent().hide();
                         $(".automotor").parent().show();
                         break;
+                    case 'Rodado':
+                        if(tipoPersona=="fisica"){
+                            $(".rodadoPJ").parent().hide();
+                            $(".rodadoPF").parent().show();
+                            /*estos dos son para personas Fisica Empresa*/
+                        }else{
+                            $(".rodadoPF").parent().hide();
+                            $(".rodadoPJ").parent().show();
+                            /*estos dos son para personas Juridica Empresa*/
+                        }
+                        break;
                     case 'Inmueble':
-                        $(".automotor").parent().hide();
-                        $(".naves").parent().hide();
-                        $(".aeronaves").parent().hide();
-                        $(".inmueble").parent().show();
+                        if(tipoPersona=="fisica"){
+                            $(".inmuebleFE").parent().show();
+                            /*estos dos son para personas Fisica Empresa*/
+                        }else{
+                            $(".inmuebleJE").parent().show();
+                            /*estos dos son para personas Juridica Empresa*/
+                        }
+                        break;
+                    case 'Inmuebles':
+                        /*estos dos son para personas Fisicas No Empresa*/
+                        $(".inmuebleFNE").parent().show();
                         break;
                     case 'Aeronave':
-                        $(".automotor").parent().hide();
-                        $(".inmueble").parent().hide();
-                        $(".naves").parent().hide();
                         $(".aeronaves").parent().show();
                         break;
                     case 'Naves, Yates y similares':
-                        $(".automotor").parent().hide();
-                        $(".inmueble").parent().hide();
-                        $(".aeronaves").parent().hide();
                         $(".naves").parent().show();
+                        break;
+                    case 'Instalaciones':
+                        if(tipoPersona=="fisica"){
+                            $(".instalacionesPF").parent().show();
+                            /*estos dos son para personas Fisica Empresa*/
+                        }else{
+                            $(".instalacionesPJ").parent().show();
+                            /*estos dos son para personas Juridica Empresa*/
+                        }
+                        break;
+                    case 'Otros bienes de uso Muebles':
+                    case 'Otros bienes de uso Maquinas':
+                    case 'Otros bienes de uso Activos Biologicos':
+                        if(tipoPersona=="fisica"){
+                            $(".otrobiendeusoPF").parent().show();
+                            /*estos dos son para personas Fisica Empresa*/
+                        }else{
+                            $(".otrobiendeusoPJ").parent().show();
+                            /*estos dos son para personas Juridica Empresa*/
+                        }
+                        break;
+                    case 'Bien mueble registrable':
+                        $(".bienesmueblesregistrables").parent().show();
+                        break;
+                    case 'Otros bienes':
+                        $(".otrosbienes").parent().show();
                         break;
                 }
             });
             $("#BienesdeusoTipo" ).trigger( "change" );
-            $('.chosen-select').chosen({search_contains:true});
+            $("#BienesdeusoPorcentajeamortizacion").on('change', function() {
+                var valororiginal = $("#BienesdeusoValororiginal").val();
+                var amortizacionperiodo = valororiginal / $("#BienesdeusoPorcentajeamortizacion").val();
+                if($("#BienesdeusoImporteamorteizaciondelperiodo is:visible")){
+                    $("#BienesdeusoImporteamorteizaciondelperiodo").val(amortizacionperiodo);                                    
+                }                
+            });
+            $("#BienesdeusoPorcentajeamortizacion" ).trigger( "change" );
             $('#BienesdeusoAddForm').submit(function(){
                     //serialize form data
                     var formData = $(this).serialize();
                     //get form action
                     var formUrl = $(this).attr('action');
                     $.ajax({
-                      type: 'POST',
+                      type: 'post',
                       url: formUrl,
                       data: formData,
                       success: function(data,textStatus,xhr){
@@ -1017,9 +1080,10 @@ $(document).ready(function() {
                     });
                     return false;
                 });
-            $('.chosen-select').chosen({search_contains:true});
-            $("#BienesdeusoLocalidadeId_chosen").css('width','auto');
-            reloadInputDates();
+             $('.chosen-select').chosen({search_contains: true});
+            $("#BienesdeusoLocalidadeId_chosen").css('width', 'auto');
+            $("#BienesdeusoModeloId_chosen").css('width', 'auto');
+        reloadInputDates();
         },
         error:function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(errorThrown);
