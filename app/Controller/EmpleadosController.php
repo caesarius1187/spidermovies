@@ -638,7 +638,7 @@ class EmpleadosController extends AppController {
         $this->set('empleado',$empleado);
         $this->set(compact('empid','periodo'));
         $this->autoRender=false;
-        $this->layout = 'ajax';
+       // $this->layout = 'ajax';
         $this->render('papeldetrabajolibrosueldo');
     }
     public function papeldetrabajorecibosueldo($empid=null,$periodo=null,$tipoliquidacion=null){

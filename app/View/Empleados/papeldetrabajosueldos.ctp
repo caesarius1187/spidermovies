@@ -26,16 +26,16 @@ if(count($empleado)==0){
         )
      );
     ?>
-    <div id="sueldoContent" style="">
+    <div id="sueldoContent" style="width:100%; text-align:center">
         <table class="tbl_border tbl_sueldo" style="width:100%" cellspacing="0" cellpadding="0" id="pdtsueldo">
             <thead>
                 <tr>
                     <td colspan="7" >
-                        <span class="spanempleado" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>">
-                        <?php
-                            echo $empleado['Empleado']['nombre'];
-                        ?>
-                        </span>
+                        <div id="divEmpleado_<?php echo $empleado['Empleado']['id']?>" class="divempleado" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>" title='<?php echo $empleado['Empleado']['nombre']; ?>'>
+                            <span>
+                            <?php echo $empleado['Empleado']['nombre']; ?>
+                            </span>
+                        </div>
                     </td>
 <!--                    <td style="text-align: right;" rowspan="2">-->
 <!--                        <div class="fab blue">-->
@@ -53,11 +53,13 @@ if(count($empleado)==0){
                 </tr>
                 <tr>
                     <td colspan="7">
-                       <span>
-                        <?php
-                        echo "Convenio: ".$empleado['Conveniocolectivotrabajo']['nombre'];
-                        ?>
-                       </span>
+                        <div id="divConvenio_<?php echo $empleado['Empleado']['id']?>" class="divempleado" title='Convenio: <?php echo $empleado['Conveniocolectivotrabajo']['nombre']; ?>'>
+                           <span>
+                            <?php
+                            echo "Convenio: ".$empleado['Conveniocolectivotrabajo']['nombre'];
+                            ?>
+                           </span>
+                       </div>
                     </td>
                 </tr>
                 <tr>
@@ -350,7 +352,7 @@ if(count($empleado)==0){
                             $classInputValor .= " aplicableATodos";
                             $inputClass = "input".$conceptoobligatorio['Concepto']['codigo'];
                         }?>
-                        <td width="80px" class="tdvalor">
+                        <td width="80px" class="tdvalor" style='height:30px'>
                             <?php
                             $funcionaaplicar="";
                             if($conceptoobligatorio['calculado']&&$aplicafuncion){
@@ -411,6 +413,7 @@ if(count($empleado)==0){
                                     'class'=>$classInputValor,
                                     'inputclass' => $inputClass,
                                     'valdata-codigo' => $conceptoobligatorio['Concepto']['codigo'],
+                                    'style' => 'padding:0px'
                                     ));
                             }
                             ?>

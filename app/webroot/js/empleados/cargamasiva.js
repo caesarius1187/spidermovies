@@ -30,6 +30,7 @@ $(document).ready(function() {
             }
         };
     });
+    /*
     $("#buscarempleado").keyup(function( event ){
         $(".parafiltrarempleados").each(function () {
            var valorparafiltrar =  $(this).attr('valorparafiltrar');
@@ -41,42 +42,135 @@ $(document).ready(function() {
             }
         });
     });
+    */
+    $("#tipoliquidacion").val('0');
+    $("#ddlEmpleados").val('0');
+    $("#divTabEmpleados").removeClass('cliente_view_tab').addClass('cliente_view_tab_active'); 
+    $('#form_empleados').hide();   
 });
-function cargarTodosLosSueldos(convenio){
+
+function cargarTodosLosSueldos(convenio, pagina){
     var liquidacion = $("#tipoliquidacion").val();
     $("#divSueldoForm").html("");
     $("#divSueldoForm").css('width','5000px');
+    //$("#divSueldoForm").css('width','100%');
 
-    empleado1=0;
-    var empleados = JSON.parse($("#arrayEmpleados").val());
+    empleado1=0;    
+    var aEmpleados = ($("#hdnConvenioEmpleados_"+convenio+"_"+pagina).val()).split(',');
+    var  deferredCollection = [];    
+    var Pag = parseInt(pagina);
+    var CantRegistros =  Pag * 5;
+    var indice = 0;
+    
+    for (var i = CantRegistros - 5; i < CantRegistros; i++)
+    {
+        var empid = aEmpleados[i];        
+        if (empid != undefined && empid != "")
+        {            
+            var cliid = $('#cliid').val();
+            var periodo = $('#periodo').val();                
+            deferredCollection.push(cargarSueldoEmpleado(cliid,periodo,empid,liquidacion,indice,convenio));
+            if(empleado1==0){
+                empleado1=empid;
+           }
+           indice++;       
+                       
+        }        
+    }
+}
+function SeleccionarTab (sTabActive)
+{
+    $("#divTabEmpleados").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
+    $("#divTabLibrosSueldos").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
+    $("#divTabRecibosSueldo").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
+    $("#divSueldoForm").html("");
+    switch(sTabActive)
+    {
+        case '1':
+            $('#divTabEmpleados').removeClass('cliente_view_tab').addClass('cliente_view_tab_active');    
+            $('#form_empleados').hide();
+            $('#form_FuncionImprimir').show();
+        break;    
+        case '2':
+            $('#divTabLibrosSueldos').removeClass('cliente_view_tab').addClass('cliente_view_tab_active');    
+            $('#form_empleados').show();
+            $('#form_FuncionImprimir').hide();            
+            $("#ddlTipoLiquidacionReportes").val('0');
+        break;    
+        case '3':
+            $('#divTabRecibosSueldo').removeClass('cliente_view_tab').addClass('cliente_view_tab_active');    
+            $('#form_empleados').show();
+            $('#form_FuncionImprimir').hide();            
+            $("#ddlTipoLiquidacionReportes").val('0');
+        break;    
+    }
+    
+}
+function cargarReporte()
+{
+    if ($('#divTabLibrosSueldos').hasClass('cliente_view_tab_active'))
+        cargarTodosLosLibros();
+    else if ($('#divTabRecibosSueldo').hasClass('cliente_view_tab_active'))
+            cargarTodosLosRecibos();
+}
+function cargarPaginasPorConvenio (oObj)
+{   
+    var sLisquidacionSeleccionada = oObj.value;
+    $("#divSueldoForm").html('');
+    if (sLisquidacionSeleccionada == '0')
+    {
+        $("div[id^='divPaginasConvenio_']").each(function() {
+            $(this).html('');
+        });        
+        return;
+    }
 
-    var  deferredCollection = [];
-    jQuery.each(empleados, function(name, value) {
-        if(name==convenio){
-            value.forEach(function (valor, indice, array) {
-                var cliid = $('#cliid').val();
-                var periodo = $('#periodo').val();
-                deferredCollection.push(cargarSueldoEmpleado(cliid,periodo,valor,liquidacion,indice));
-                if(empleado1==0){
-                    empleado1=valor;
+    var sConvenioEmpleadoLiquidacion = $("#hdnConvEmp_"+sLisquidacionSeleccionada).val();    
+    var aConvenioEmpleadoLiquidacion = sConvenioEmpleadoLiquidacion.split(',');
+    var sConvenioId = '';     
+    var sConvenioNombre = '';   
+    $("#form_FuncionImprimir").find("input[id^='hdnConvenioNombre_']").each(function() {         
+         sConvenioId = ($(this).attr('id')).split('_')[1];
+         $("#divPaginasConvenio_"+sConvenioId).html('');
+         sConvenioNombre = ($(this).val()).toUpperCase();
+         if (sConvenioEmpleadoLiquidacion.indexOf(','+sConvenioId+'_') > -1)
+         {
+            var iCantPorConvenio = 0;
+            var sEmpleadosIds = '';
+            var sHtmlPag = '';            
+            for (var i=0; i < aConvenioEmpleadoLiquidacion.length; i++)
+            {
+                if (sConvenioId == aConvenioEmpleadoLiquidacion[i].split('_')[0])//aConvenioEmpleadoLiquidacion[i].split('_')[0]: ConvenioId
+                {
+                    iCantPorConvenio = iCantPorConvenio + 1;
+                    sEmpleadosIds = sEmpleadosIds + aConvenioEmpleadoLiquidacion[i].split('_')[1] +','; //aConvenioEmpleadoLiquidacion[i].split('_')[1]: EmpleadoId
                 }
-            });
-        }
-    });
+            }
+
+            if (iCantPorConvenio > 0)
+            {
+                var iCantPaginas = Math.ceil(iCantPorConvenio/5);
+                sHtmlPag = "<span>" + sConvenioNombre + "</span></br>";
+                sHtmlPag += "<span>Paginas: </span>";
+                for (var j=1; j <= iCantPaginas; j++)
+                {                
+                    sHtmlPag += "<button class='btn_realizar_tarea' style='width:40px; margin:2px' onclick='cargarTodosLosSueldos("+sConvenioId+","+j+");'>"+j+"</button>";
+                    sHtmlPag += "<input type='hidden' id='hdnConvenioEmpleados_"+sConvenioId+"_"+j+"' value='"+sEmpleadosIds+"' />"
+                }
+                $("#divPaginasConvenio_"+sConvenioId).html(sHtmlPag);
+            }
+         }
+     });   
 }
 function guardarTodosLosSueldos(){
     var liquidacion = $("#tipoliquidacion").val();
-    // $("#divSueldoForm").html("");
-    var empleados = JSON.parse($("#arrayEmpleados").val());
-
     var  deferredCollection = [];
-    jQuery.each(empleados, function(name, value) {
-        value.forEach(function (valor, indice, array) {
-            if($('#ValorreciboPapeldetrabajosueldosForm'+valor).length>0){
-                deferredCollection.push($('#ValorreciboPapeldetrabajosueldosForm'+valor).submit());
-            }
-        });
-    });
+    $("div[id^='divEmpleado_']").each(function() {        
+        var sEmpleadoId = ($(this).attr('id')).split('_')[1];        
+        if($('#ValorreciboPapeldetrabajosueldosForm'+sEmpleadoId).length>0){
+            deferredCollection.push($('#ValorreciboPapeldetrabajosueldosForm'+sEmpleadoId).submit());
+        }
+    });    
 }
 function showHideEmpleadoOnClick(){
     $(".snapempleado").click(function(){
@@ -131,31 +225,39 @@ function showHideColumnsEmpleado(empid){
         }
     });
 }
-function cargarunsueldoempleado(clienteid,periodo,empid,liquidacion,indice){
-    $("#divSueldoForm").html("");
-    $("#divSueldoForm").css('width','auto');
-    empleado1=empid;
-    cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice);
+function ddlCargarunsueldoempleado(oObj)
+{    
+    if (oObj.value != "0")
+    {        
+        var liquidacion = $("#tipoliquidacion").val();    
+        if (liquidacion != '0')
+        {
+            var aEmp = (oObj.value).split("_");
+            var EmpId = aEmp[0];
+            var CliId = aEmp[1];
+            var periodo = $("#periododefault").val();            
+            var indice = 0;
+            var convenioId = "";
+            $("#divSueldoForm").html("");
+            $("#divSueldoForm").css('width','auto');
+            empleado1=EmpId;
+            cargarSueldoEmpleado(CliId,periodo,EmpId,liquidacion,indice,convenioId);
+        }else{
+            alert('Seleccione tipo de liquidacion');
+            $("#ddlEmpleados").val('0');
+        }            
+    }else{
+        alert('Seleccione Empleado');
+    }
 }
-function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice){
+function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice,convenioId){
     var liquidacion = $("#tipoliquidacion").val();
     var data ="";
     $.ajax({
         type: "post",  // Request method: post, get
         url: serverLayoutURL+"/empleados/papeldetrabajosueldos/"+clienteid+"/"+periodo+"/"+empid+"/"+liquidacion, // URL to request
         data: data,  // post data
-        success: function(response) {
-            var empleados = JSON.parse($("#arrayEmpleados").val());
-
-            $(".btn_empleados_liq ").each(function(){
-                $(this).removeClass("btn_empleados_selected");
-            });
-            $(".btn_empleados").each(function(){
-                $(this).removeClass("btn_empleados_selected");
-            });
-
-            $("#buttonEmpleado"+empid).addClass("btn_empleados_selected");
-
+        success: function(response) {            
             if(indice==0){
                 $("#divSueldoForm").prepend(
                     $("<div>")
@@ -179,11 +281,13 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice){
                         })
                     )
                 );
+
                 $('#ValorreciboPapeldetrabajosueldosForm'+empid).find('.aplicableATodos').each(function(){
                     //$(this).css('background','blue');
                     var myselect = $(this).attr('id');
                     var span = $('<span />')
-                        .attr('class', 'tooltiptext')
+                        .attr('class', 'tooltiptext') 
+                        //.attr('style', 'padding: 0px')                         
                         .html(
                             $('<input />',{
                                 'type':'button',
@@ -197,7 +301,12 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice){
                             span
                         );
                 });
-            }else if(indice==empleados.length-1) {
+
+                $("#divEmpleado_"+empid).removeClass("divempleado");
+                $("#divConvenio_"+empid).removeClass("divempleado");
+                
+            }else if(indice==4) { //if(indice==empleados.length-1) {  
+                //indice==4 Maximo valor, ya que son 5 por pagina.
                 $("#divSueldoForm").append(
                     $("<div>")
                         .append(response)
@@ -244,24 +353,23 @@ function aplicarATodos(empid,miinput){
 
 }
 var tablaSueldoCalx=[];
-function ocultarFunciones(){
-    var empleados = JSON.parse($("#arrayEmpleados").val());
-    var  deferredCollection = [];
-    jQuery.each(empleados, function(name, value) {
-        value.forEach(function (valor, indice, array) {
-            if(indice==0)
-                deferredCollection.push(ocultarFuncinesDeUnFormulario(valor));
-        });
-    });
-
+function ocultarFunciones(){    
+    var  deferredCollection = [];    
+    $("div[id^='divEmpleado_']").each(function() {        
+        var sEmpleadoId = ($(this).attr('id')).split('_')[1];
+        var indice = $("#indiceCargaEmpleado"+sEmpleadoId).val();        
+        if(indice==0)        
+        {            
+            deferredCollection.push(ocultarFuncinesDeUnFormulario(sEmpleadoId));
+            return;
+        }
+    });  
 }
-
 function ocultarFuncinesDeUnFormulario(empid){
     if(ajaxAbierto){
        return false;
     }
-
-    console.log("inicio de Ocultar: "+empid);
+    //console.log("inicio de Ocultar: "+empid);
     var empidFuncion = 0;
     $("#ValorreciboPapeldetrabajosueldosForm"+empid+" .funcionAAplicar").each(function() {
         empidFuncion++;
@@ -283,12 +391,14 @@ function ocultarFuncinesDeUnFormulario(empid){
             if(dataCodigo.charAt(0)=='O') {
                  // $mysheet.getCell(dataCodigo).calculate();
                 var myCell = $mysheet.getCell(dataCodigo);
+                /*
                 console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormat() + "'");
                 console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormattedValue() + "'");
                 console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormula() + "'");
                 console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.evaluateFormula() + "'");
                 console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getValue() + "'");
                 console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.renderComputedValue() + "'");
+                */
             }
 
             if(($mysheet.getCellValue(dataCodigo)*1)!=0){
@@ -383,14 +493,20 @@ function activarCalXOnSueldos(empid){
             type: 'POST',
             url: formUrl,
             data: formData,
-            success: function(data,textStatus,xhr){
+            success: function(data,textStatus,xhr){                
                 callAlertPopint("Sueldo guardado, los totales se han recalculado.");
-                var empleados = JSON.parse($("#arrayEmpleados").val());
+                //var empleados = JSON.parse($("#arrayEmpleados").val());
                 var indice = $("#indiceCargaEmpleado"+empid).val();
                 //de este formulario borrar el div mas cercano con clase divsueldomasivo
                 $('#ValorreciboPapeldetrabajosueldosForm'+empid).closest('div.divsueldomasivo').remove();
 
-                $("#buttonEmpleado"+empid).addClass("btn_empleados_liq");
+                //Update DDL Empleados                
+                var cli_Id = $("#cliid").val();
+                $("#ddlEmpleados").val(empid+"_"+cli_Id);
+                var selectedOpts = $('#ddlEmpleados option:selected');                
+                $('#ddlEmpleados').append($('<optgroup label="Liquidados Recientemente">')).append($(selectedOpts).clone());
+                $(selectedOpts).remove();
+
                 if(indice==0){
                     $("#divSueldoForm").prepend(
                         $("<div>")
@@ -415,7 +531,7 @@ function activarCalXOnSueldos(empid){
                                 span
                             );
                     });
-                }else if(indice==empleados.length-1) {
+                }else if(indice==4) { //if(indice==empleados.length-1) {
                     $("#divSueldoForm").append(
                         $("<div>")
                             .append(data)
@@ -435,7 +551,6 @@ function activarCalXOnSueldos(empid){
                                 .addClass('divsueldomasivo')
                         );
                     }
-
                 }
                 $("#indiceCargaEmpleado"+empid).val(indice);
 
@@ -457,19 +572,21 @@ function activarCalXOnSueldos(empid){
     });
 }
 
-function cargarTodosLosRecibos(){
-
+function cargarTodosLosRecibos(){    
     $("#divSueldoForm").html("");
     $("#divSueldoForm").css('width','auto');
-    empleado1=0;
-    var empleados = JSON.parse($("#arrayEmpleados").val());
-    var liquidacion = numeroliquidacion[$("#tipoliquidacion").val()];
-    var periodo = $('#periodo').val();
-    jQuery.each(empleados, function(name, value) {
-        value.forEach(function (valor, indice, array) {
-            cargarUnReciboSueldo(valor,periodo,liquidacion);
+    var liquidacion = numeroliquidacion[$("#ddlTipoLiquidacionReportes").val()];
+    if (liquidacion != undefined && liquidacion != '0')
+    {
+        empleado1=0;
+        var empleados = JSON.parse($("#arrayEmpleados").val());    
+        var periodo = $('#periodo').val();
+        jQuery.each(empleados, function(name, value) {
+            value.forEach(function (valor, indice, array) {
+                cargarUnReciboSueldo(valor,periodo,liquidacion);
+            });
         });
-    });
+    }
 }
 function cargarUnReciboSueldo(empid,periodo,liquidacion){
     var data ="";
@@ -517,19 +634,22 @@ function cargarUnReciboSueldo(empid,periodo,liquidacion){
     return false;
 }
 
-function cargarTodosLosLibros(){
+function cargarTodosLosLibros(){    
     $("#divSueldoForm").html("");
     $("#divSueldoForm").css('width','auto');
-
-    empleado1=0;
-    var empleados = JSON.parse($("#arrayEmpleados").val());
-    var liquidacion = numeroliquidacion[$("#tipoliquidacion").val()];
-    var periodo = $('#periodo').val();
-    jQuery.each(empleados, function(name, value) {
-        value.forEach(function (valor, indice, array) {
-            cargarUnLibroSueldo(valor,periodo,liquidacion,indice);
+    var liquidacion = numeroliquidacion[$("#ddlTipoLiquidacionReportes").val()];
+    if (liquidacion != undefined && liquidacion != '0')
+    {
+        empleado1=0;
+        var empleados = JSON.parse($("#arrayEmpleados").val());
+        //var aEmpleados = ($("#hdnConvenioEmpleados_"+convenio+"_"+pagina).val()).split(',');    
+        var periodo = $('#periodo').val();
+        jQuery.each(empleados, function(name, value) {
+            value.forEach(function (valor, indice, array) {
+                cargarUnLibroSueldo(valor,periodo,liquidacion,indice);
+            });
         });
-    });
+    }
 }
 function cargarUnLibroSueldo(empid,periodo,liquidacion,indice){
     var data ="";
@@ -558,8 +678,8 @@ function cargarUnLibroSueldo(empid,periodo,liquidacion,indice){
             });
         },
         error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
-            return false;
+            alert(textStatus + " : " + errorThrown);
+            //return false;
         }
     });
     return false;
