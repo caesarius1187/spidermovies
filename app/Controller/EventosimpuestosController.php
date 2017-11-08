@@ -474,137 +474,135 @@ class EventosimpuestosController extends AppController {
 		$this->render('getpapelestrabajo');
 	}
 	public function getapagar($periodo=null,$impcli=null,$cliid=null){
-		$this->loadModel('Impcli');
-		$this->loadModel('Partido');
-		$this->loadModel('Localidade');
-		$this->loadModel('Deposito');
-		$this->loadModel('Cuentascliente');
-		$this->loadModel('Asiento');
-		$this->loadModel('Cuenta');
-		$this->loadModel('Cliente');
-		//4 formas de pagar impuestos Provincia, Municipio, Item , unico
-		//Elementos del Fomulario de Pagar Papeles de Trabajo ya generados
-		$options = array(
-			'contain'=>[
-				'Impuesto'=>[
-					'Asientoestandare'=>[
-						'conditions'=>[
-							'tipoasiento'=>'apagar'
-						],
-						'Cuenta'=>[
-							'Cuentascliente'=>[
-								'conditions'=>[
-									'Cuentascliente.cliente_id'=>$cliid
-								]
-							]
-						]
-					],
-				],
-			],
-			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcli)
-		);
-		$myImpCli = $this->Impcli->find('first', $options);
-		$secrearoncuentas = false;
-		foreach ($myImpCli['Impuesto']['Asientoestandare'] as $asientoestandar) {
-			if(!isset($asientoestandar['Cuenta']['Cuentascliente'])){
-			}
-			if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
-				$this->Cuentascliente->create();
-				$this->Cuentascliente->set('cliente_id',$cliid);
-				$this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
-				$this->Cuentascliente->set('nombre',$asientoestandar['Cuenta']['nombre']);
-				$this->Cuentascliente->save();
-				$secrearoncuentas=true;
-			}
-		}
-		if($secrearoncuentas){
-			$myImpCli = $this->Impcli->find('first', $options);
-		}
-		$options = array(
-			'conditions' => array(
-				'Eventosimpuesto.impcli_id'=> $impcli,
-				'Eventosimpuesto.periodo'=>$periodo
-				)
-			);
-		$eventosimpuestos = $this->Eventosimpuesto->find('all', $options);
-		$this->set('eventosimpuestos',$eventosimpuestos);
-		$this->set('partidos',$this->Partido->find('list'));
-		$this->set('localidades',$this->Localidade->find('list'));
-		$this->set('impuesto',$myImpCli["Impuesto"]);
-		$this->set('clienteid',$myImpCli["Impcli"]["cliente_id"]);
-		$this->set('impcliid',$myImpCli["Impcli"]["id"]);
-		$this->set('impclinombre',$myImpCli["Impuesto"]["nombre"]);
-		$this->set('periodo',$periodo);
-		$this->set('cliid', $myImpCli["Impcli"]["cliente_id"]);
+            $this->loadModel('Impcli');
+            $this->loadModel('Partido');
+            $this->loadModel('Localidade');
+            $this->loadModel('Deposito');
+            $this->loadModel('Cuentascliente');
+            $this->loadModel('Asiento');
+            $this->loadModel('Cuenta');
+            $this->loadModel('Cliente');
+            //4 formas de pagar impuestos Provincia, Municipio, Item , unico
+            //Elementos del Fomulario de Pagar Papeles de Trabajo ya generados
+            $options = array(
+                    'contain'=>[
+                            'Impuesto'=>[
+                                    'Asientoestandare'=>[
+                                            'conditions'=>[
+                                                    'tipoasiento'=>'apagar'
+                                            ],
+                                            'Cuenta'=>[
+                                                    'Cuentascliente'=>[
+                                                            'conditions'=>[
+                                                                    'Cuentascliente.cliente_id'=>$cliid
+                                                            ]
+                                                    ]
+                                            ]
+                                    ],
+                            ],
+                    ],
+                    'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcli)
+            );
+            $myImpCli = $this->Impcli->find('first', $options);
+            $secrearoncuentas = false;
+            foreach ($myImpCli['Impuesto']['Asientoestandare'] as $asientoestandar) {
+                    if(!isset($asientoestandar['Cuenta']['Cuentascliente'])){
+                    }
+                    if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
+                            $this->Cuentascliente->create();
+                            $this->Cuentascliente->set('cliente_id',$cliid);
+                            $this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
+                            $this->Cuentascliente->set('nombre',$asientoestandar['Cuenta']['nombre']);
+                            $this->Cuentascliente->save();
+                            $secrearoncuentas=true;
+                    }
+            }
+            if($secrearoncuentas){
+                    $myImpCli = $this->Impcli->find('first', $options);
+            }
+            $options = array(
+                    'conditions' => array(
+                            'Eventosimpuesto.impcli_id'=> $impcli,
+                            'Eventosimpuesto.periodo'=>$periodo
+                            )
+                    );
+            $eventosimpuestos = $this->Eventosimpuesto->find('all', $options);
+            $this->set('eventosimpuestos',$eventosimpuestos);
+            $this->set('partidos',$this->Partido->find('list'));
+            $this->set('localidades',$this->Localidade->find('list'));
+            $this->set('impuesto',$myImpCli["Impuesto"]);
+            $this->set('clienteid',$myImpCli["Impcli"]["cliente_id"]);
+            $this->set('impcliid',$myImpCli["Impcli"]["id"]);
+            $this->set('impclinombre',$myImpCli["Impuesto"]["nombre"]);
+            $this->set('periodo',$periodo);
+            $this->set('cliid', $myImpCli["Impcli"]["cliente_id"]);
 
 
-		/*ACA empezamos todas las consultas que necesitamos para hacer la contabilidad*/
-		/*vamos a usar la cuenta 110101002 Caja Efectivo si tiene actividad en 3ra pero si no
-		vamos a usar 130113001 */
-		$tiene3ra = false;
-        $pemes = substr($periodo, 0, 2);
-        $peanio = substr($periodo, 3);
-        $esMayorQueBaja = array(
-            //HASTA es mayor que el periodo
-            'OR'=>array(
-                'Actividadcliente.baja'=>null,
-                'SUBSTRING(Actividadcliente.baja,4,7)*1 < '.$peanio.'*1',
-                'AND'=>array(
-                    'SUBSTRING(Actividadcliente.baja,4,7)*1 <= '.$peanio.'*1',
-                    'SUBSTRING(Actividadcliente.baja,1,2) <= '.$pemes.'*1'
+            /*ACA empezamos todas las consultas que necesitamos para hacer la contabilidad*/
+            /*vamos a usar la cuenta 110101002 Caja Efectivo si tiene actividad en 3ra pero si no
+            vamos a usar 130113001 */
+            $pemes = substr($periodo, 0, 2);
+            $peanio = substr($periodo, 3);
+            $esMayorQueBaja = array(
+                //HASTA es mayor que el periodo
+                'OR'=>array(
+                    'Actividadcliente.baja'=>null,
+                    'SUBSTRING(Actividadcliente.baja,4,7)*1 < '.$peanio.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Actividadcliente.baja,4,7)*1 <= '.$peanio.'*1',
+                        'SUBSTRING(Actividadcliente.baja,1,2) <= '.$pemes.'*1'
+                    ),
+                )
+            );
+            $options = array(
+                'contain'=>[
+                    'Actividadcliente'=>[
+                        'Cuentasganancia'=>[],
+                        'conditions'=>$esMayorQueBaja
+                    ]
+                ],
+                'conditions' => array(
+                    'Cliente.' . $this->Cliente->primaryKey => $cliid,
                 ),
-            )
-        );
-        $options = array(
-            'contain'=>[
-                'Actividadcliente'=>[
-                    'Cuentasganancia'=>[],
-                    'conditions'=>$esMayorQueBaja
-                ]
-            ],
-            'conditions' => array(
-                'Cliente.' . $this->Cliente->primaryKey => $cliid,
-            ),
-        );
-        $cliente = $this->Cliente->find('first', $options);
-
-        foreach ($cliente['Actividadcliente'] as $actividadcliente){
-            foreach ($actividadcliente['Cuentasganancia'] as $cuentasganancia){
-                if( $cuentasganancia['categoria'] = 'terceracateg'){
-                    $tiene3ra = true;
+            );
+            $cliente = $this->Cliente->find('first', $options);
+            $tiene3ra = false;
+            foreach ($cliente['Actividadcliente'] as $actividadcliente){
+                foreach ($actividadcliente['Cuentasganancia'] as $cuentasganancia){
+                    if( $cuentasganancia['categoria'] == 'terceracateg'){
+                        $tiene3ra = true;
+                    }
                 }
             }
-        }
-
-		if($tiene3ra){
-			$cuentasDeAsientoPago=[
-				'5',/*110101002 Caja Efectivo*/
-			];
-            switch ($myImpCli["Impuesto"]["organismo"]){
-                case 'afip':
-                    $cuentasDeAsientoPago[]='1575'/*210701001 Plan de Pagos AFIP N°*/;
-                    $cuentasDeAsientoPago[]='2523'/*505040101 Intereses Generales*/;
-                    break;
-                case 'dgr':
-                    $cuentasDeAsientoPago[]='1597'/*210702001 Plan de Pagos DGR N°*/;
-                    $cuentasDeAsientoPago[]='2526'/*505040201 Intereses Generales*/;
-                    break;
-                case 'dgrm':
-                    $cuentasDeAsientoPago[]='1604'/*210703001 Planes de Pago DGRM°*/;
-                    $cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
-                    break;
-                case 'otros':
-                    break;
-                case 'sindicato':
-                	$cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
-                    break;
-                case 'banco':
-                    break;
-            }
-		}else{
-			$cuentasDeAsientoPago=[
-				'1069',/*130113001 Dinero en Efectivo*/
-			];
+            if($tiene3ra){
+                $cuentasDeAsientoPago=[
+                        '5',/*110101002 Caja Efectivo*/
+                ];
+                switch ($myImpCli["Impuesto"]["organismo"]){
+                    case 'afip':
+                        $cuentasDeAsientoPago[]='1575'/*210701001 Plan de Pagos AFIP N°*/;
+                        $cuentasDeAsientoPago[]='2523'/*505040101 Intereses Generales*/;
+                        break;
+                    case 'dgr':
+                        $cuentasDeAsientoPago[]='1597'/*210702001 Plan de Pagos DGR N°*/;
+                        $cuentasDeAsientoPago[]='2526'/*505040201 Intereses Generales*/;
+                        break;
+                    case 'dgrm':
+                        $cuentasDeAsientoPago[]='1604'/*210703001 Planes de Pago DGRM°*/;
+                        $cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
+                        break;
+                    case 'otros':
+                        break;
+                    case 'sindicato':
+                            $cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
+                        break;
+                    case 'banco':
+                        break;
+                }
+            }else{
+                $cuentasDeAsientoPago=[
+                        '1069',/*130113001 Dinero en Efectivo*/
+                ];
             switch ($myImpCli["Impuesto"]["organismo"]){
                 case 'afip':
                     $cuentasDeAsientoPago[]='3499'/*230102101 Plan de Pagos AFIP N°*/;

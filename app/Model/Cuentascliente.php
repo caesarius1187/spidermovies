@@ -120,6 +120,41 @@ class Cuentascliente extends AppModel {
 			'exclusive' => '',
 			'finderQuery' => '',
 			'counterQuery' => ''
-		)
+		),
+		'Cuentaclientevalororigen' => array(
+			'className' => 'Bienesdeuso',
+			'foreignKey' => 'cuentaclientevalororigen_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+		'Cuentaclienteactualizacion' => array(
+			'className' => 'Bienesdeuso',
+			'foreignKey' => 'cuentaclienteactualizacion_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+		'Cuentaclienteterreno' => array(
+			'className' => 'Bienesdeuso',
+			'foreignKey' => 'cuentaclienteterreno_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+		'Cuentaclienteedificacion' => array(
+			'className' => 'Bienesdeuso',
+			'foreignKey' => 'cuentaclienteedificacion_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+		'Cuentaclientemejora' => array(
+			'className' => 'Bienesdeuso',
+			'foreignKey' => 'cuentaclientemejora_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
 	);
 }

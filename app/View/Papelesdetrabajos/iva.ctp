@@ -2191,49 +2191,50 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             if(count($cuentascliente[0])>0){
                 foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
                     $TotalOtrosConceptos['mostrar'] = true;
+                    $subsaldo = $movimientosbancario['debito']-$movimientosbancario['credito'];
                     $CreditoFiscalOtrosConceptosTitle.="Se agrego el Mov Bancario N° "
                         . $movimientosbancario['ordencarga']."-"
                         .$movimientosbancario['concepto']." $"
-                        .$movimientosbancario['debito']."
+                        .($subsaldo)."
                     ";
                     if($movimientosbancario['alicuota']=='0'){
-    //                $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']*1.0;
-    //                $TotalOtrosConceptos['Neto']['0'] += $movimientosbancario['debito']*1.0;
+    //                $TotalOtrosConceptos['Neto']['total'] += $subsaldo*1.0;
+    //                $TotalOtrosConceptos['Neto']['0'] += $subsaldo*1.0;
                     }elseif ($movimientosbancario['alicuota']=='2.5'){
-                        $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.025;
-                        $TotalOtrosConceptos['Neto']['2.5'] += $movimientosbancario['debito']/0.025;
+                        $TotalOtrosConceptos['Neto']['total'] += $subsaldo/0.025;
+                        $TotalOtrosConceptos['Neto']['2.5'] += $subsaldo/0.025;
                     }elseif ($movimientosbancario['alicuota']=='5'){
-                        $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.05;
-                        $TotalOtrosConceptos['Neto']['50'] += $movimientosbancario['debito']/0.05;
+                        $TotalOtrosConceptos['Neto']['total'] += $subsaldo/0.05;
+                        $TotalOtrosConceptos['Neto']['50'] += $subsaldo/0.05;
                     }elseif ($movimientosbancario['alicuota']=='10.5'){
-                        $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.105;
-                        $TotalOtrosConceptos['Neto']['10.5'] += $movimientosbancario['debito']/0.105;
+                        $TotalOtrosConceptos['Neto']['total'] += $subsaldo/0.105;
+                        $TotalOtrosConceptos['Neto']['10.5'] += $subsaldo/0.105;
                     }elseif ($movimientosbancario['alicuota']=='21'){
-                        $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.21;
-                        $TotalOtrosConceptos['Neto']['21'] += $movimientosbancario['debito']/0.21;
+                        $TotalOtrosConceptos['Neto']['total'] += $subsaldo/0.21;
+                        $TotalOtrosConceptos['Neto']['21'] += $subsaldo/0.21;
                     }elseif ($movimientosbancario['alicuota']=='27'){
-                        $TotalOtrosConceptos['Neto']['total'] += $movimientosbancario['debito']/0.27;
-                        $TotalOtrosConceptos['Neto']['27'] += $movimientosbancario['debito']/0.27;
+                        $TotalOtrosConceptos['Neto']['total'] += $subsaldo/0.27;
+                        $TotalOtrosConceptos['Neto']['27'] += $subsaldo/0.27;
                     }
 
                     if($movimientosbancario['alicuota']=='0'){
-    //                $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito']*0;
-    //                $TotalOtrosConceptos['Directo']['0'] += $movimientosbancario['debito'];
+    //                $TotalOtrosConceptos['Directo']['total'] += $subsaldo*0;
+    //                $TotalOtrosConceptos['Directo']['0'] += $subsaldo;
                     }elseif ($movimientosbancario['alicuota']=='2.5'){
-                        $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
-                        $TotalOtrosConceptos['Directo']['2.5'] += $movimientosbancario['debito'];
+                        $TotalOtrosConceptos['Directo']['total'] += $subsaldo;
+                        $TotalOtrosConceptos['Directo']['2.5'] += $subsaldo;
                     }elseif ($movimientosbancario['alicuota']=='5'){
-                        $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
-                        $TotalOtrosConceptos['Directo']['50'] += $movimientosbancario['debito'];
+                        $TotalOtrosConceptos['Directo']['total'] += $subsaldo;
+                        $TotalOtrosConceptos['Directo']['50'] += $subsaldo;
                     }elseif ($movimientosbancario['alicuota']=='10.5'){
-                        $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
-                        $TotalOtrosConceptos['Directo']['10.5'] += $movimientosbancario['debito'];
+                        $TotalOtrosConceptos['Directo']['total'] += $subsaldo;
+                        $TotalOtrosConceptos['Directo']['10.5'] += $subsaldo;
                     }elseif ($movimientosbancario['alicuota']=='21'){
-                        $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
-                        $TotalOtrosConceptos['Directo']['21'] += $movimientosbancario['debito'];
+                        $TotalOtrosConceptos['Directo']['total'] += $subsaldo;
+                        $TotalOtrosConceptos['Directo']['21'] += $subsaldo;
                     }elseif ($movimientosbancario['alicuota']=='27'){
-                        $TotalOtrosConceptos['Directo']['total'] += $movimientosbancario['debito'];
-                        $TotalOtrosConceptos['Directo']['27'] += $movimientosbancario['debito'];
+                        $TotalOtrosConceptos['Directo']['total'] += $subsaldo;
+                        $TotalOtrosConceptos['Directo']['27'] += $subsaldo;
                     }
                 }
             }

@@ -13,27 +13,27 @@ class Bienesdeuso extends AppModel {
 
 	var $virtualFields = array(
 		'codname' => "CONCAT(
-		IFNULL(Bienesdeuso.tipo,''), 
+		IFNULL(tipo,''), 
 		' ', 
-		IFNULL(Bienesdeuso.patente,''), 
+		IFNULL(patente,''), 
 		' ', 
-		IFNULL(Bienesdeuso.aniofabricacion,''), 
+		IFNULL(aniofabricacion,''), 
 		' ', 
-		IFNULL(Bienesdeuso.tipoinmueble,''), 
+		IFNULL(tipoinmueble,''), 
 		' ', 
-		IFNULL(Bienesdeuso.marca,''), 
+		IFNULL(marca,''), 
 		' ', 
-		IFNULL(Bienesdeuso.modelo, ''), 
+		IFNULL(modelo, ''), 
 		' ', 
-		IFNULL(Bienesdeuso.calle, ''), 
+		IFNULL(calle, ''), 
 		' ', 
-		IFNULL(Bienesdeuso.numero, ''), 
+		IFNULL(numero, ''), 
 		' ', 
-		IFNULL(Bienesdeuso.nombre,''), 
+		IFNULL(nombre,''), 
 		' ', 
-		IFNULL(Bienesdeuso.matricula,''), 
+		IFNULL(matricula,''), 
 		' ', 
-		IFNULL(Bienesdeuso.fechaadquisicion,'')
+		IFNULL(fechaadquisicion,'')
 		)"
 	);
 

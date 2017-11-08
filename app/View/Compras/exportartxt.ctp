@@ -200,20 +200,21 @@
                     $lineaCompra .= str_pad($identificacionnumero, 20, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad($nombreamostrar, 30, " ", STR_PAD_RIGHT);
                     $neto = 0;
+                    $subsaldo = $movimientosbancario['debito']-$movimientosbancario['credito'];
                     if ($movimientosbancario['alicuota'] == '0') {
 
                     } elseif ($movimientosbancario['alicuota'] == '2.5') {
-                        $neto = $movimientosbancario['debito'] / 0.025;
+                        $neto = $subsaldo / 0.025;
                     } elseif ($movimientosbancario['alicuota'] == '5') {
-                        $neto = $movimientosbancario['debito'] / 0.05;
+                        $neto = $subsaldo / 0.05;
                     } elseif ($movimientosbancario['alicuota'] == '10.5') {
-                        $neto = $movimientosbancario['debito'] / 0.105;
+                        $neto = $subsaldo / 0.105;
                     } elseif ($movimientosbancario['alicuota'] == '21') {
-                        $neto = $movimientosbancario['debito'] / 0.21;
+                        $neto = $subsaldo / 0.21;
                     } elseif ($movimientosbancario['alicuota'] == '27') {
-                        $neto = $movimientosbancario['debito'] / 0.27;
+                        $neto = $subsaldo / 0.27;
                     }
-                    $lineaCompra .= str_pad(number_format($neto * 1 + $movimientosbancario['debito'] * 1, 2, "", ""), 15, "0", STR_PAD_LEFT);
+                    $lineaCompra .= str_pad(number_format($neto * 1 + $subsaldo * 1, 2, "", ""), 15, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad(number_format(0, 2, "", ""), 15, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad(number_format(0, 2, "", ""), 15, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad(number_format(0, 2, "", ""), 15, "0", STR_PAD_LEFT);
@@ -304,18 +305,19 @@
                     $lineaAlicuota .= str_pad($identificacionnumero, 20, "0", STR_PAD_LEFT);
                     $neto = 0;
                     $codigoAlicuota = "0001";
+                    $subsaldo = $movimientosbancario['debito']-$movimientosbancario['credito'];
                     if ($movimientosbancario['alicuota'] == '0') {
 
                     } elseif ($movimientosbancario['alicuota'] == '2.5') {
-                        $neto = $movimientosbancario['debito'] / 0.025;
+                        $neto = $subsaldo / 0.025;
                     } elseif ($movimientosbancario['alicuota'] == '5') {
-                        $neto = $movimientosbancario['debito'] / 0.05;
+                        $neto = $subsaldo / 0.05;
                     } elseif ($movimientosbancario['alicuota'] == '10.5') {
-                        $neto = $movimientosbancario['debito'] / 0.105;
+                        $neto = $subsaldo / 0.105;
                     } elseif ($movimientosbancario['alicuota'] == '21') {
-                        $neto = $movimientosbancario['debito'] / 0.21;
+                        $neto = $subsaldo / 0.21;
                     } elseif ($movimientosbancario['alicuota'] == '27') {
-                        $neto = $movimientosbancario['debito'] / 0.27;
+                        $neto = $subsaldo / 0.27;
                     }
                     $lineaAlicuota .= str_pad(number_format($neto, 2, "", ""), 15, "0", STR_PAD_LEFT);
 //            $lineAlicuota['alicuotaiva'] = substr($line, 65, 4);
@@ -326,7 +328,7 @@
                         }
                     }
                     $lineaAlicuota .= str_pad($alicCodigoAMostrar, 4, "0", STR_PAD_LEFT);
-                    $lineaAlicuota .= str_pad(number_format($movimientosbancario['debito'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+                    $lineaAlicuota .= str_pad(number_format($subsaldo, 2, "", ""), 15, "0", STR_PAD_LEFT);
                     echo $lineaAlicuota."</br>";
                 }
             }

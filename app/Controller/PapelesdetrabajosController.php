@@ -305,17 +305,53 @@ class PapelesdetrabajosController extends AppController {
 		$pemes = substr($periodo, 0, 2);
 		$peanio = substr($periodo, 3);
 
+		$optionmiCliente = [
+			'contain' => [
+			],
+			'conditions' => ['Cliente.id'=>$clienteid]
+		];
+		$micliente = $this->Cliente->find('first',$optionmiCliente);
+		$fechadeconsulta = date('Y-m-t',strtotime("01-".$pemes."-".$peanio));
 
-		$fechaFinConsulta  = date('Y',strtotime("01-".$pemes."-".$peanio));
-		$fechadeconsulta = date('Y',strtotime("01-".$pemes."-".$peanio." -1 Year"));
-		$fechaInicioConsulta = $fechadeconsulta;
-		$fechaFinConsulta = $fechaFinConsulta;
+		if(!isset($micliente['Cliente']['fchcorteejerciciofiscal'])||is_null($micliente['Cliente']['fchcorteejerciciofiscal'])||$micliente['Cliente']['fchcorteejerciciofiscal']==""){
+                    $this->Session->setFlash(__('No se ha configurado fecha decorte de ejercicio fiscal para este
+                     ccontribuyente .'));
+                    $fechadecorteAñoActual = date('Y-m-d',strtotime("01-01-".$peanio));
+		}else{
+                    $fechadecorteAñoActual = date('Y-m-d',strtotime($micliente['Cliente']['fchcorteejerciciofiscal']."-".$peanio));
+		}
+		$fechaInicioConsulta = "";
+		$fechaInicioPeriodoAnterior = "";
+		//$fechaFinConsulta = "";
+		if($fechadeconsulta<=$fechadecorteAñoActual){
+                    $fechaInicioConsulta =  date('Y-m-d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+                    $fechaInicioPeriodoAnterior =  date('Y-m-d',strtotime($fechadecorteAñoActual." - 2 Years + 1 days"));
+                    //$fechaFinConsulta =  $fechadecorteAñoActual;
+		}else {
+                    $fechaInicioConsulta = date('Y-m-d', strtotime($fechadecorteAñoActual . " + 1 days"));;
+                    $fechaInicioPeriodoAnterior =  date('Y-m-d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+                    //$fechaFinConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 Years"));
+		}
+		//la fecha fin consulta es esta por que solo vamos a ver hasta el ultimo dia del periodo que estamos
+		// consultando
+                $fechaFinConsulta =  date('Y-m-t',strtotime($fechadeconsulta));
+   
+                
+		//$fechaFinConsulta  = date('Y',strtotime("01-".$pemes."-".$peanio));
+		//$fechadeconsulta = date('Y',strtotime("01-".$pemes."-".$peanio." -1 Year"));                                                
+		//$fechaInicioConsulta = $fechadeconsulta;
+		//$fechaFinConsulta = $fechaFinConsulta;
 		$this->set('fechaInicioConsulta',$fechaInicioConsulta);
 		$this->set('fechaFinConsulta',$fechaFinConsulta);
 
 		$optionCliente = [
 			'contain' => [
 				'Cuentascliente'=>[
+                                        'Cuentaclientevalororigen',
+                                        'Cuentaclienteactualizacion',
+                                        'Cuentaclienteterreno',
+                                        'Cuentaclienteedificacion',
+                                        'Cuentaclientemejora',
 					'Cuenta',
 					'Movimiento'=>[
 						'Asiento'=>[
@@ -325,8 +361,8 @@ class PapelesdetrabajosController extends AppController {
 							"Movimiento.asiento_id IN (
 								SELECT id FROM asientos as Asiento 
 								WHERE Asiento.cliente_id = ".$clienteid."
-								AND   YEAR ( Asiento.fecha ) >= '".$fechadeconsulta."'
-								AND   YEAR ( Asiento.fecha ) <= '".$fechaFinConsulta."'
+								AND    Asiento.fecha  >= '".$fechaInicioPeriodoAnterior."'
+								AND    Asiento.fecha  <= '".$fechaFinConsulta."'
 							)"
 						]
 					],

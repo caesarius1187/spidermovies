@@ -64,23 +64,6 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
               'label' => false,
               'empty' => 'Filtrar por cliente'
           ));
-
-//        echo $this->Form->input('filtrodesolicitar', array(
-//          //'multiple' => 'multiple',
-//          'type' => 'select',
-//          'class'=>'chosen-select filtroAvance',
-//          'label' => false,
-//          'empty' => 'Filtrar por elementos a solicitar',
-//          'options'=> array(
-//            'banco'=>'Bancos',
-//            'tarjetadecredito'=>'Tarj. de Credito',
-//            'descargawebafip'=>'Descarga Web AFIP',
-//            'libroivaventas'=>'Libro IVA Ventas',
-//            'fcluz'=>'Fc. de Luz',
-//            'sueldos'=>'Novedades Sueldos',
-//            'librounico'=>'Libro Unico',
-//            )
-//        ));
         echo $this->Form->input('filtrodeimpuestos', array(
           //'multiple' => 'multiple',
           'type' => 'select',
@@ -226,6 +209,18 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                     <?php
                     if($cliente['impuestosactivos']['contabiliza']){
                         $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
+                        //si es cliente del estudio 2(Manjon) o 16(Alejandro Farah) vamos a permitir ver balance hasta la fecha
+                         if($cliente['Grupocliente']['estudio_id']=='2'||$cliente['Grupocliente']['estudio_id']=='16'){
+                            echo $this->Form->button(
+                                'Estados Contables',
+                                array(
+                                    'class'=>"buttonImpcliRealizado progress-button state-loading",
+                                    'onClick'=>"abrirestadoscontables(".$paramsPrepPapeles.")",
+                                    'style'=>'color:#1e88e5',
+                                    'id'=>'buttonPlanDeCuenta'.$cliente['Cliente']['id'],
+                                ),
+                                array());
+                         }
                         echo $this->Form->button(
                             'Sumas y Saldos',
                             array(

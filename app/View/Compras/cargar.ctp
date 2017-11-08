@@ -528,21 +528,25 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                               </td><!--11-->
                               <?php
                               $neto = 0;
+                              $subsaldo= $movimientosbancario['debito']-$movimientosbancario['credito'];
                               if ($movimientosbancario['alicuota'] == '0') {
 
                               } elseif ($movimientosbancario['alicuota'] == '2.5') {
-                                  $neto = $movimientosbancario['debito'] / 0.025;
+                                  $neto = $subsaldo / 0.025;
                               } elseif ($movimientosbancario['alicuota'] == '5') {
-                                  $neto = $movimientosbancario['debito'] / 0.05;
+                                  $neto = $subsaldo / 0.05;
                               } elseif ($movimientosbancario['alicuota'] == '10.5') {
-                                  $neto = $movimientosbancario['debito'] / 0.105;
+                                  $neto = $subsaldo / 0.105;
                               } elseif ($movimientosbancario['alicuota'] == '21') {
-                                  $neto = $movimientosbancario['debito'] / 0.21;
+                                  $neto = $subsaldo / 0.21;
                               } elseif ($movimientosbancario['alicuota'] == '27') {
-                                  $neto = $movimientosbancario['debito'] / 0.27;
+                                  $neto = $subsaldo / 0.27;
                               } ?>
                               <td class="<?php echo $tdClass ?>"><p id="nosuma"><?php echo number_format($neto, 2, ",", ".") ?></p></td><!--12-->
-                              <td class="<?php echo $tdClass ?>"><p id="nosuma"><?php echo number_format($movimientosbancario['debito'], 2, ",", ".") ?></p></td><!--13-->
+                              <?php
+                                
+                              ?>
+                              <td class="<?php echo $tdClass ?>"><p id="nosuma"><?php echo number_format($subsaldo, 2, ",", ".") ?></p></td><!--13-->
                               <td class="<?php echo $tdClass ?>">0,00</td><!--14-->
                               <td class="<?php echo $tdClass ?>">0,00</td><!--15-->
                               <td class="<?php echo $tdClass ?>">0,00</td><!--16-->
@@ -552,15 +556,15 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                               <td class="<?php echo $tdClass ?>">0,00</td><!--20-->
                               <td class="<?php echo $tdClass ?>">
                                   <p id="nosuma">
-                                      <?php echo number_format($neto * 1 + $movimientosbancario['debito'] * 1, 2, ",", ".") ?>
+                                      <?php echo number_format($neto * 1 + $subsaldo * 1, 2, ",", ".") ?>
                                   </p>
                               </td><!--22-->
                               <td class="<?php echo $tdClass ?>">0,00</td><!--21-->
                               <td><?php
                                   $mensajeAlerta = "Esta compra se importo desde Movimientos bancarios ";
                                   $movNeto+=$neto;
-                                  $movIVA+=$movimientosbancario['debito'];
-                                  $movTotal+=$neto * 1 + $movimientosbancario['debito'];
+                                  $movIVA+=$subsaldo;
+                                  $movTotal+=$neto * 1 + $subsaldo;
                                   echo $this->HTML->image('ii.png', array('style' => 'width:15px;height:15px', 'title' => $mensajeAlerta));
                                   ?>
                               </td>

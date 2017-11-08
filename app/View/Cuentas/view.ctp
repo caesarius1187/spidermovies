@@ -70,7 +70,7 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
 
                     $("#divPlanCuentasStandard").animate({
                         scrollTop: position
-                    }, 800, 'swing');
+                    }, 200 ,'swing');
 
 //					window.scrollTo(0, position);
 				}

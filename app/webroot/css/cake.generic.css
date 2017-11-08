@@ -2696,7 +2696,19 @@ transition: all 0.4s ease-in-out;
 .tbl_border td, th{
 	border: 1px solid #000;
 }
-
+.tblEstadoContable{
+    border-collapse: collapse;
+}
+.tblEstadoContable th{
+    font-size: 14px;
+    font-weight: bold;
+    border-collapse: collapse;
+}
+.tblEstadoContable td{
+    font-size: 12px;
+    font-weight: normal;
+    border-collapse: collapse;
+}
 .tbl_tareaimp img{
 	cursor: pointer;
 }

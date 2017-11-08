@@ -346,7 +346,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //Remuneracion Total
                 if (
                 in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('27'/*Total Remunerativos C/D*/,'109'/*Total Remunerativos C/D*/), true )
+                    array('27'/*Total Remunerativos C/D*/,'109'/*Total Remunerativos S/D*/,'108'/*Total Rem. S/D Indemnizatorios*/), true )
                 ){
                     $remtotal += $valorrecibo['valor'];
                 }

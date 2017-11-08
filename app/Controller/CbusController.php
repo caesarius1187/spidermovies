@@ -112,7 +112,7 @@ class CbusController extends AppController {
                 }
             }
             /*Aparte de dar de alta la cuentacliente del banco tenemos que dar de alta las cuentascliente
-                   a las que se va a relacionar los movimientos de estas cuentas*/
+                   a las que se va a relacionar los movimientos de estas cuentas. Esto no esta especificamente relacionado al CBU sino a los MOV Banc*/
             $cuentasDeMovimientoBancario = $this->Cuenta->cuentasDeMovimientoBancarioAActivar;
             foreach ($cuentasDeMovimientoBancario as $cuentaMovimientoB){
                 $conditionsCuentasclienteMovBan = array(

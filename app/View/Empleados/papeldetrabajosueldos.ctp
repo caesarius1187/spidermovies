@@ -278,6 +278,7 @@ if(count($empleado)==0){
                                             }
                                         }
                                     break;
+                                
                                 case 117:/*Aporte Adicional OS O3*/
                                     /* si es construccion no aplica en el SAC*/
                                     if($empleado['Conveniocolectivotrabajo']['id']==5/*Es Construcción Quincenal?*/){
@@ -357,6 +358,15 @@ if(count($empleado)==0){
                                         }
                                     }
                                     break;
+                                 case 177:/*Dia del Gremio no remunerativo*/
+                                        /* Solo SEC tiene esto y se tiene que activar solo si estamos en Septiembre*/
+                                        if($empleado['Conveniocolectivotrabajo']['Impuesto']['id']==11/*Es SEC?*/){
+                                            $pemes = substr($periodo, 0, 2);
+                                            if($pemes!='09'){
+                                                $aplicafuncion=false;
+                                            }
+                                        }
+                                    break;        
                                 /*case 36:/*Cuota Sindical aca estabamos guardando la cuota sindical extra en el empleado pero
                                 debe ser la misma para todos dependiendo del convenio
                                     $conceptoobligatorio['nombre'] = $empleado['Empleado']['cuotasindical'];

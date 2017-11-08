@@ -33,41 +33,6 @@ $(document).ready(function() {
     }
     window.onbeforeprint = beforePrint;
     window.onafterprint = afterPrint;
-    // $("#tblsys tr").each(function(){
-    //     if($(this).hasClass('trclickeable')){
-    //         $(this).dblclick(function () {
-    //             //vamos a preguntar si es visible el Div que tenemos que mostrar para no recibir el click si no se tiene el foco
-    //             var cuecliid = $(this).attr('cuecliid');
-    //             var cliid = $("#cliid").val();
-    //             var periodo = $("#periodo").val();
-    //             var data = "";
-    //             $.ajax({
-    //                 type: "post",  // Request method: post, get
-    //                 url: serverLayoutURL+"/asientos/index/"+cliid+"/"+periodo+"/"+cuecliid, // URL to request
-    //                 data: data,  // post data
-    //                 success: function(response) {
-    //
-    //                     $('#myModal').on('show.bs.modal', function() {
-    //                         if ($('#myModal').is(":visible")){
-    //                             return;
-    //                         }
-    //                         $('#myModal').find('.modal-title').html('Asientos de la cuenta');
-    //                         $('#myModal').find('.modal-body').html(response);
-    //                         // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
-    //                     });
-    //                     $('#myModal').modal('show');
-    //                     $("#tblListaMovimientos").DataTable();
-    //                     $("#myModal #cargarAsiento").hide();
-    //                     $("#tblAsientos").DataTable();
-    //                     $('.my-div').css('height', window.innerHeight);
-    //                 },
-    //                 error:function (XMLHttpRequest, textStatus, errorThrown) {
-    //                     alert(textStatus);
-    //                 }
-    //             });
-    //         });
-    //     }
-    // });
     var tblsys = $('#tblsys').dataTable().api();
     CambiarTab("sumasysaldos");
 });
@@ -76,6 +41,13 @@ function CambiarTab(sTab)	{
     $("#tabEstadoDeResultados").attr("class", "cliente_view_tab");
     $("#tabNotas").attr("class", "cliente_view_tab");
     $("#tabAnexos").attr("class", "cliente_view_tab");
+    $("#tabEvolucionPatrimonioNeto").attr("class", "cliente_view_tab");
+    $("#tabFlujoEfectivo").attr("class", "cliente_view_tab");
+    $("#tabNotaFlujoEfectivo").attr("class", "cliente_view_tab");
+    $("#tabEvolucionSitacionPatrimonial").attr("class", "cliente_view_tab");
+    $("#tabEvolucionNotasSitacionPatrimonial").attr("class", "cliente_view_tab");
+    $("#tabEvolucionAnexoIBienesdeUso").attr("class", "cliente_view_tab");
+
 
     if(sTab == "sumasysaldos")
     {
@@ -84,6 +56,13 @@ function CambiarTab(sTab)	{
         $("#divContenedorNotas").hide();
         $("#divContenedorAnexos").hide();
         $("#divContenedorEstadosResultados").hide();
+        $("#divContenedorEvolucionPatrimonioNeto").hide();
+        $("#divContenedorFlujoEfectivo").hide();
+        $("#divContenedorNotaFlujoEfectivo").hide();
+        $("#divContenedorSituacionPatrimonial").hide();
+        $("#divContenedorNotaSituacionPatrimonial").hide();
+        $("#divContenedorAnexoIBienesdeUso").hide();
+
     }
     if(sTab == "estadoderesultado")
     {
@@ -92,6 +71,12 @@ function CambiarTab(sTab)	{
         $("#divContenedorNotas").hide();
         $("#divContenedorAnexos").hide();
         $("#divContenedorEstadosResultados").show();
+        $("#divContenedorEvolucionPatrimonioNeto").hide();
+        $("#divContenedorFlujoEfectivo").hide();
+        $("#divContenedorNotaFlujoEfectivo").hide();
+        $("#divContenedorSituacionPatrimonial").hide();
+        $("#divContenedorNotaSituacionPatrimonial").hide();
+        $("#divContenedorAnexoIBienesdeUso").hide();
     }
     if (sTab == "notas")
     {
@@ -101,6 +86,12 @@ function CambiarTab(sTab)	{
         $("#divContenedorNotas").show();
         $("#divContenedorAnexos").hide();
         $("#divContenedorEstadosResultados").hide();
+        $("#divContenedorEvolucionPatrimonioNeto").hide();
+        $("#divContenedorFlujoEfectivo").hide();
+        $("#divContenedorNotaFlujoEfectivo").hide();
+        $("#divContenedorSituacionPatrimonial").hide();
+        $("#divContenedorNotaSituacionPatrimonial").hide();
+        $("#divContenedorAnexoIBienesdeUso").hide();
     }
     if (sTab == "anexos")
     {
@@ -110,6 +101,98 @@ function CambiarTab(sTab)	{
         $("#divContenedorNotas").hide();
         $("#divContenedorAnexos").show();
         $("#divContenedorEstadosResultados").hide();
+        $("#divContenedorEvolucionPatrimonioNeto").hide();
+        $("#divContenedorFlujoEfectivo").hide();
+        $("#divContenedorNotaFlujoEfectivo").hide();
+        $("#divContenedorSituacionPatrimonial").hide();
+        $("#divContenedorNotaSituacionPatrimonial").hide();
+        $("#divContenedorAnexoIBienesdeUso").hide();
+    }
+    if (sTab == "patrimonioneto")
+    {
+
+        $("#tabEvolucionPatrimonioNeto").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divContenedorNotas").hide();
+        $("#divContenedorAnexos").hide();
+        $("#divContenedorEstadosResultados").hide();
+        $("#divContenedorEvolucionPatrimonioNeto").show();
+        $("#divContenedorFlujoEfectivo").hide();
+        $("#divContenedorNotaFlujoEfectivo").hide();
+        $("#divContenedorSituacionPatrimonial").hide();
+        $("#divContenedorNotaSituacionPatrimonial").hide();
+        $("#divContenedorAnexoIBienesdeUso").hide();
+    }
+    if (sTab == "flujoefectivo")
+    {
+
+        $("#tabFlujoEfectivo").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divContenedorNotas").hide();
+        $("#divContenedorAnexos").hide();
+        $("#divContenedorEstadosResultados").hide();
+        $("#divContenedorEvolucionPatrimonioNeto").hide();
+        $("#divContenedorFlujoEfectivo").show();
+        $("#divContenedorNotaFlujoEfectivo").hide();
+        $("#divContenedorSituacionPatrimonial").hide();
+        $("#divContenedorNotaSituacionPatrimonial").hide();
+        $("#divContenedorAnexoIBienesdeUso").hide();
+    }
+    if (sTab == "notaflujoefectivo")
+    {
+        $("#tabNotaFlujoEfectivo").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divContenedorNotas").hide();
+        $("#divContenedorAnexos").hide();
+        $("#divContenedorEstadosResultados").hide();
+        $("#divContenedorEvolucionPatrimonioNeto").hide();
+        $("#divContenedorFlujoEfectivo").hide();
+        $("#divContenedorNotaFlujoEfectivo").show();
+        $("#divContenedorSituacionPatrimonial").hide();
+        $("#divContenedorNotaSituacionPatrimonial").hide();
+        $("#divContenedorAnexoIBienesdeUso").hide();
+    }
+    if (sTab == "situacionpatrimonial")
+    {
+        $("#tabEvolucionSitacionPatrimonial").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divContenedorNotas").hide();
+        $("#divContenedorAnexos").hide();
+        $("#divContenedorEstadosResultados").hide();
+        $("#divContenedorEvolucionPatrimonioNeto").hide();
+        $("#divContenedorFlujoEfectivo").hide();
+        $("#divContenedorNotaFlujoEfectivo").hide();
+        $("#divContenedorSituacionPatrimonial").show();
+        $("#divContenedorNotaSituacionPatrimonial").hide();
+        $("#divContenedorAnexoIBienesdeUso").hide();
+    }
+    if (sTab == "notassituacionpatrimonial")
+    {
+        $("#tabEvolucionNotasSitacionPatrimonial").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divContenedorNotas").hide();
+        $("#divContenedorAnexos").hide();
+        $("#divContenedorEstadosResultados").hide();
+        $("#divContenedorEvolucionPatrimonioNeto").hide();
+        $("#divContenedorFlujoEfectivo").hide();
+        $("#divContenedorNotaFlujoEfectivo").hide();
+        $("#divContenedorSituacionPatrimonial").hide();
+        $("#divContenedorNotaSituacionPatrimonial").show();
+        $("#divContenedorAnexoIBienesdeUso").hide();
+    }
+    if (sTab == "anexoibienesdeuso")
+    {
+        $("#tabEvolucionAnexoIBienesdeUso").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divContenedorNotas").hide();
+        $("#divContenedorAnexos").hide();
+        $("#divContenedorEstadosResultados").hide();
+        $("#divContenedorEvolucionPatrimonioNeto").hide();
+        $("#divContenedorFlujoEfectivo").hide();
+        $("#divContenedorNotaFlujoEfectivo").hide();
+        $("#divContenedorSituacionPatrimonial").hide();
+        $("#divContenedorNotaSituacionPatrimonial").hide();
+        $("#divContenedorAnexoIBienesdeUso").show();
     }
 }
 function imprimir(){

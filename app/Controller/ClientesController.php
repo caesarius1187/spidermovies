@@ -33,320 +33,320 @@ class ClientesController extends AppController {
 		$this->redirect(array('action' => 'view'));	
 	}
 	public function avance() {
-		$this->Components->unload('DebugKit.Toolbar');
+            $this->Components->unload('DebugKit.Toolbar');
 
-		$this->loadModel('Impcli');
-		$this->loadModel('Tareasxclientesxestudio');
-		$this->loadModel('Tareascliente');
-		$this->loadModel('Tareasimpuesto');
-		$this->loadModel('Grupocliente');
-		$this->loadModel('Periodosactivo');
-		$this->loadModel('Impuesto');
-		$pemes="";
-		$peanio="";
-		$selectby="";
-		
-		//Como Buscar los clientes
-		$conditionsClientesAvance = array();
-		$condicionDeSolicitarParaCliente = array();	
-		if (isset($this->request->data['clientes']['periodomes'])) {
-            $pemes = $this->request->data['clientes']['periodomes'];
-            $peanio = $this->request->data['clientes']['periodoanio'];
-//            $filtrodesolicitar = $this->request->data['clientes']['filtrodesolicitar'];
-            $selectby = $this->request->data['clientes']['selectby'];
-            $this->set('periodomes', $pemes);
-            $this->set('periodoanio', $peanio);
-            //A: Es menor que periodo Hasta
-            $esMenorQueHasta = array(
-                //HASTA es mayor que el periodo
-                'OR' => array(
-                    'SUBSTRING(Periodosactivo.hasta,4,7)*1 > ' . $peanio . '*1',
-                    'AND' => array(
-                        'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= ' . $peanio . '*1',
-                        'SUBSTRING(Periodosactivo.hasta,1,2) >= ' . $pemes . '*1'
-                    ),
-                )
-            );
-            //B: Es mayor que periodo Desde
-            $esMayorQueDesde = array(
-                'OR' => array(
-                    'SUBSTRING(Periodosactivo.desde,4,7)*1 < ' . $peanio . '*1',
-                    'AND' => array(
-                        'SUBSTRING(Periodosactivo.desde,4,7)*1 <= ' . $peanio . '*1',
-                        'SUBSTRING(Periodosactivo.desde,1,2) <= ' . $pemes . '*1'
-                    ),
-                )
-            );
-            $periodoNull = array(
-                'OR' => array(
-                    array('Periodosactivo.hasta' => null),
-                    array('Periodosactivo.hasta' => ""),
-                )
-            );
-            //C: Tiene Periodo Hasta 0 NULL
-            $conditionsImpCliHabilitados = array(
-                //El periodo esta dentro de un desde hasta
-                'AND' => array(
-                    $esMayorQueDesde,
+            $this->loadModel('Impcli');
+            $this->loadModel('Tareasxclientesxestudio');
+            $this->loadModel('Tareascliente');
+            $this->loadModel('Tareasimpuesto');
+            $this->loadModel('Grupocliente');
+            $this->loadModel('Periodosactivo');
+            $this->loadModel('Impuesto');
+            $pemes="";
+            $peanio="";
+            $selectby="";
+
+            //Como Buscar los clientes
+            $conditionsClientesAvance = array();
+            $condicionDeSolicitarParaCliente = array();	
+            if (isset($this->request->data['clientes']['periodomes'])) {
+                $pemes = $this->request->data['clientes']['periodomes'];
+                $peanio = $this->request->data['clientes']['periodoanio'];
+    //            $filtrodesolicitar = $this->request->data['clientes']['filtrodesolicitar'];
+                $selectby = $this->request->data['clientes']['selectby'];
+                $this->set('periodomes', $pemes);
+                $this->set('periodoanio', $peanio);
+                //A: Es menor que periodo Hasta
+                $esMenorQueHasta = array(
+                    //HASTA es mayor que el periodo
                     'OR' => array(
-                        $esMenorQueHasta,
-                        $periodoNull
+                        'SUBSTRING(Periodosactivo.hasta,4,7)*1 > ' . $peanio . '*1',
+                        'AND' => array(
+                            'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= ' . $peanio . '*1',
+                            'SUBSTRING(Periodosactivo.hasta,1,2) >= ' . $pemes . '*1'
+                        ),
                     )
-                )
-            );
-            $aplicafiltro = false;
-            if ($selectby == 'clientes') {
-                $conditionsClientesAvance = array(
-                    'Cliente.id' => $this->request->data['clientes']['lclis'],
-                    'Cliente.estado' => 'habilitado',
-                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
-                    'Grupocliente.estado' => 'habilitado',
                 );
-            } else if ($selectby == 'grupos') {
-                $conditionsClientesAvance = array(
-                    'Cliente.grupocliente_id' => $this->request->data['clientes']['gclis'],
-                    'Cliente.estado' => 'habilitado',
-                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
-                    'Grupocliente.estado' => 'habilitado',
+                //B: Es mayor que periodo Desde
+                $esMayorQueDesde = array(
+                    'OR' => array(
+                        'SUBSTRING(Periodosactivo.desde,4,7)*1 < ' . $peanio . '*1',
+                        'AND' => array(
+                            'SUBSTRING(Periodosactivo.desde,4,7)*1 <= ' . $peanio . '*1',
+                            'SUBSTRING(Periodosactivo.desde,1,2) <= ' . $pemes . '*1'
+                        ),
+                    )
                 );
-            } else if ($selectby == 'impuestos') {
-                $conditionsClientesAvance = array(
-                    'Cliente.estado' => 'habilitado',
-                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
-                    'Grupocliente.estado' => 'habilitado',
+                $periodoNull = array(
+                    'OR' => array(
+                        array('Periodosactivo.hasta' => null),
+                        array('Periodosactivo.hasta' => ""),
+                    )
                 );
-                $conditionsImpCliHabilitadosImpuestos = array(
+                //C: Tiene Periodo Hasta 0 NULL
+                $conditionsImpCliHabilitados = array(
                     //El periodo esta dentro de un desde hasta
                     'AND' => array(
-                        'Periodosactivo.impcli_id = Impcli.id',
                         $esMayorQueDesde,
                         'OR' => array(
                             $esMenorQueHasta,
                             $periodoNull
                         )
                     )
-
                 );
-                $clienteImpuestosOptions = array(
-                    'contain' => array(),
-                    'conditions' => array(
-                        'Impcli.impuesto_id' => $this->request->data['clientes']['filtrodeimpuestos']
-                    ),
-                    'fields' => array('Impcli.cliente_id'),
-                    'joins' => array(
-                        array('table' => 'periodosactivos',
-                            'alias' => 'Periodosactivo',
-                            'type' => 'inner',
-                            'conditions' => array(
-                                $conditionsImpCliHabilitadosImpuestos
+                $aplicafiltro = false;
+                if ($selectby == 'clientes') {
+                    $conditionsClientesAvance = array(
+                        'Cliente.id' => $this->request->data['clientes']['lclis'],
+                        'Cliente.estado' => 'habilitado',
+                        'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                        'Grupocliente.estado' => 'habilitado',
+                    );
+                } else if ($selectby == 'grupos') {
+                    $conditionsClientesAvance = array(
+                        'Cliente.grupocliente_id' => $this->request->data['clientes']['gclis'],
+                        'Cliente.estado' => 'habilitado',
+                        'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                        'Grupocliente.estado' => 'habilitado',
+                    );
+                } else if ($selectby == 'impuestos') {
+                    $conditionsClientesAvance = array(
+                        'Cliente.estado' => 'habilitado',
+                        'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                        'Grupocliente.estado' => 'habilitado',
+                    );
+                    $conditionsImpCliHabilitadosImpuestos = array(
+                        //El periodo esta dentro de un desde hasta
+                        'AND' => array(
+                            'Periodosactivo.impcli_id = Impcli.id',
+                            $esMayorQueDesde,
+                            'OR' => array(
+                                $esMenorQueHasta,
+                                $periodoNull
                             )
-                        ),
-                    )
-                );
-                $condicionDeSolicitarParaCliente = $this->Impcli->find('list', $clienteImpuestosOptions);
-                $aplicafiltro = true;
-            } else if ($selectby == 'solicitar') {
-                //Aca vamos a compretar el array $condicionDeSolicitarParaCliente que especifica los clientes que cumplen con las condiciones
-                //necesarias para superar el filtro seleccionado
-                $conditionsClientesAvance = array(
-                    'Cliente.estado' => 'habilitado',
-                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
-                    'Grupocliente.estado' => 'habilitado',
-                );
-                $aplicafiltro = true;
-            } else {
-                $conditionsClientesAvance = array(
-                    'Cliente.estado' => 'habilitado',
-                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
-                    'Grupocliente.estado' => 'habilitado',
-                );
-            }
-            if ($aplicafiltro) {
-                $conditionsClientesAvance['Cliente.id'] = $condicionDeSolicitarParaCliente;
-            }
-            $this->set('condicionDeSolicitarParaCliente', $condicionDeSolicitarParaCliente);
-            $this->set('conditionsClientesAvance', $conditionsClientesAvance);
+                        )
 
-            $this->Paginator->settings = array(
-                'contain' => array(
-					'Actividadcliente'=>array(
-						'Cuentasganancia'
-					),
-                    'Grupocliente' => array(
-                        'fields' => array('id', 'nombre'),
-                    ),
-                    'Eventoscliente' => array(
+                    );
+                    $clienteImpuestosOptions = array(
+                        'contain' => array(),
                         'conditions' => array(
-                            'Eventoscliente.periodo =' => $pemes . '-' . $peanio
+                            'Impcli.impuesto_id' => $this->request->data['clientes']['filtrodeimpuestos']
                         ),
-                        'fields' => array(
-                            'id', 'periodo', 'cliente_id',
-                            'ventascargadas', 'comprascargadas', 'pagosacuentacarados', 'novedadescargadas',
-                            'bancoscargados', 'honorarioscargador', 'reciboscargados',
-                            'tarea1', 'tarea3', 'tarea4', 'tarea14', 'banco',
-                            'tarjetadecredito', 'fcventa', 'descargawebafip', 'fccompra', 'libroivaventas',
-                            'fcluz', 'sueldos', 'librounico'),
-                    ),
-                    'Honorario' => array(
-                        'conditions' => array(
-                            'Honorario.periodo =' => $pemes . '-' . $peanio
+                        'fields' => array('Impcli.cliente_id'),
+                        'joins' => array(
+                            array('table' => 'periodosactivos',
+                                'alias' => 'Periodosactivo',
+                                'type' => 'inner',
+                                'conditions' => array(
+                                    $conditionsImpCliHabilitadosImpuestos
+                                )
+                            ),
+                        )
+                    );
+                    $condicionDeSolicitarParaCliente = $this->Impcli->find('list', $clienteImpuestosOptions);
+                    $aplicafiltro = true;
+                } else if ($selectby == 'solicitar') {
+                    //Aca vamos a compretar el array $condicionDeSolicitarParaCliente que especifica los clientes que cumplen con las condiciones
+                    //necesarias para superar el filtro seleccionado
+                    $conditionsClientesAvance = array(
+                        'Cliente.estado' => 'habilitado',
+                        'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                        'Grupocliente.estado' => 'habilitado',
+                    );
+                    $aplicafiltro = true;
+                } else {
+                    $conditionsClientesAvance = array(
+                        'Cliente.estado' => 'habilitado',
+                        'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                        'Grupocliente.estado' => 'habilitado',
+                    );
+                }
+                if ($aplicafiltro) {
+                    $conditionsClientesAvance['Cliente.id'] = $condicionDeSolicitarParaCliente;
+                }
+                $this->set('condicionDeSolicitarParaCliente', $condicionDeSolicitarParaCliente);
+                $this->set('conditionsClientesAvance', $conditionsClientesAvance);
+
+                $this->Paginator->settings = array(
+                    'contain' => array(
+                                            'Actividadcliente'=>array(
+                                                    'Cuentasganancia'
+                                            ),
+                        'Grupocliente' => array(
+                            'fields' => array('id', 'nombre','estudio_id'),
                         ),
-                        'fields' => array('id', 'cliente_id', 'monto', 'fecha', 'periodo', 'estado', 'descripcion'),
-                    ),
-                    'Puntosdeventa' => array(
-                        'fields' => array('id', 'cliente_id', 'sistemafacturacion', 'nombre'),
-                    ),
-                    'Impcli' => [
-                        'Cbu' => [
-                            'Asiento'=>[
-                                'fields'=>['id'],
-                                'conditions'=>[
-                                    'Asiento.periodo'=>$pemes.'-'.$peanio,
-                                    'Asiento.tipoasiento'=>[
-                                        'bancosretiros','bancos'
+                        'Eventoscliente' => array(
+                            'conditions' => array(
+                                'Eventoscliente.periodo =' => $pemes . '-' . $peanio
+                            ),
+                            'fields' => array(
+                                'id', 'periodo', 'cliente_id',
+                                'ventascargadas', 'comprascargadas', 'pagosacuentacarados', 'novedadescargadas',
+                                'bancoscargados', 'honorarioscargador', 'reciboscargados',
+                                'tarea1', 'tarea3', 'tarea4', 'tarea14', 'banco',
+                                'tarjetadecredito', 'fcventa', 'descargawebafip', 'fccompra', 'libroivaventas',
+                                'fcluz', 'sueldos', 'librounico'),
+                        ),
+                        'Honorario' => array(
+                            'conditions' => array(
+                                'Honorario.periodo =' => $pemes . '-' . $peanio
+                            ),
+                            'fields' => array('id', 'cliente_id', 'monto', 'fecha', 'periodo', 'estado', 'descripcion'),
+                        ),
+                        'Puntosdeventa' => array(
+                            'fields' => array('id', 'cliente_id', 'sistemafacturacion', 'nombre'),
+                        ),
+                        'Impcli' => [
+                            'Cbu' => [
+                                'Asiento'=>[
+                                    'fields'=>['id'],
+                                    'conditions'=>[
+                                        'Asiento.periodo'=>$pemes.'-'.$peanio,
+                                        'Asiento.tipoasiento'=>[
+                                            'bancosretiros','bancos'
+                                        ]
                                     ]
                                 ]
-                            ]
+                            ],
+                            'Impuesto' => array(
+                                'fields' => array('id', 'nombre', 'abreviacion', 'orden', 'organismo', 'tipo'),
+                                'conditions' => array(),
+                            ),
+                            'Eventosimpuesto' => array(
+                                'fields' => array('id', 'item', 'partido_id', 'localidade_id', 'periodo', 'montovto', 'monc', 'impcli_id', 'tarea5', 'tarea13'),
+                                'conditions' => array('Eventosimpuesto.periodo' => $pemes . '-' . $peanio)
+                            ),
+                            'Periodosactivo' => array(
+                                'conditions' => $conditionsImpCliHabilitados,
+                            ),
+                            'Conceptosrestante' => [
+                                'conditions' => [
+                                    'Conceptosrestante.conceptostipo_id' => 1,/*solo vamos a traer los saldos a favor para que el
+                                                             IVA puedan sumar su SLD*/
+                                    'Conceptosrestante.periodo' => $pemes . '-' . $peanio
+                                ]
+                            ],
+                            'fields' => array('Impcli.id', 'Impcli.cliente_id', 'Impcli.impuesto_id'),
                         ],
-                        'Impuesto' => array(
-                            'fields' => array('id', 'nombre', 'abreviacion', 'orden', 'organismo', 'tipo'),
-                            'conditions' => array(),
-                        ),
-                        'Eventosimpuesto' => array(
-                            'fields' => array('id', 'item', 'partido_id', 'localidade_id', 'periodo', 'montovto', 'monc', 'impcli_id', 'tarea5', 'tarea13'),
-                            'conditions' => array('Eventosimpuesto.periodo' => $pemes . '-' . $peanio)
-                        ),
-                        'Periodosactivo' => array(
-                            'conditions' => $conditionsImpCliHabilitados,
-                        ),
-                        'Conceptosrestante' => [
-                            'conditions' => [
-                                'Conceptosrestante.conceptostipo_id' => 1,/*solo vamos a traer los saldos a favor para que el
-							 IVA puedan sumar su SLD*/
-                                'Conceptosrestante.periodo' => $pemes . '-' . $peanio
+                                            'Asiento'=>[
+                            'fields'=>['id','tipoasiento'],
+                            'conditions'=>[
+                                'Asiento.tipoasiento'=>[
+                                    'compras','ventas','retencionessufridas','retencionesrealizadas'
+                                ]
                             ]
-                        ],
-                        'fields' => array('Impcli.id', 'Impcli.cliente_id', 'Impcli.impuesto_id'),
-                    ],
-					'Asiento'=>[
-                        'fields'=>['id','tipoasiento'],
-                        'conditions'=>[
-                            'Asiento.tipoasiento'=>[
-                                'compras','ventas','retencionessufridas','retencionesrealizadas'
-                            ]
-                        ]
-					]
-                ),
-                'conditions' => $conditionsClientesAvance,
-                'limit' => 25,
-                'fields' => array('Cliente.id', 'Cliente.nombre', 'Cliente.grupocliente_id', 'Cliente.honorario'
-                , 'Cliente.fchcorteejerciciofiscal', 'Cliente.tipopersona'),
-                'order' => array(),
-            );
-            $posicion = 0;
-            $clientes3 = $this->Paginator->paginate('Cliente');
-            foreach ($clientes3 as $micliente) {
-                $impuestosActivos= [];
-                $impuestosActivos= $this->Cliente->impuestosActivados($micliente['Cliente']['id'],$pemes . '-' . $peanio);
-                $micliente['impuestosactivos']=$impuestosActivos;
+                                            ]
+                    ),
+                    'conditions' => $conditionsClientesAvance,
+                    'limit' => 25,
+                    'fields' => array('Cliente.id', 'Cliente.nombre', 'Cliente.grupocliente_id', 'Cliente.honorario'
+                    , 'Cliente.fchcorteejerciciofiscal', 'Cliente.tipopersona'),
+                    'order' => array(),
+                );
+                $posicion = 0;
+                $clientes3 = $this->Paginator->paginate('Cliente');
+                foreach ($clientes3 as $micliente) {
+                    $impuestosActivos= [];
+                    $impuestosActivos= $this->Cliente->impuestosActivados($micliente['Cliente']['id'],$pemes . '-' . $peanio);
+                    $micliente['impuestosactivos']=$impuestosActivos;
 
-                $clientes3[$posicion]=$micliente;
-                $posicion++;
-            }
-//			foreach ($clientes3 as $micliente) {
-//				/*Vamos a hacer los controles para saber que elementos mostrar dentro de la tarea "Solicitar"
-//					Comprobantes de Compras
-//					Libros IVA Ventas
-//					Comprobantes de Ventas
-//					Descargar Ventas Web AFIP
-//					Resumenes Bancarios
-//					Tarjetas de Credito
-//					Factura de Luz
-//					Novedades
-//					Libros Unicos.
-//				Hay que mejorar estas consultas por que no estan distinguiendo entre diferentes domicilios
-//				*/
-//				/*variables*/
-//					$cargaFacturaCompras=1;//Siempre se cargan facturas de compras
-//					$cargaFacturaVentas=1;//Siempre se cargan facturas de ventas
-//					$cargaLibroIVAVentas=0;
-//					//Se carga libro IVA ventas cuando un punto de venta que sea "Controlador Fiscal", "RECE para aplicativo y web services"
-//					$cargaVentasWeb=0;
-//					//Se carga libro IVA ventas cuando un punto de venta que sea "Factura en Linea"
-//					$cargaTarjetasCredito=0;
-//					//si tiene puntos de venta en linea no se piden tarjetas de credito
-//					$cargaFacturaLuz=0;
-//					//se cargan facturas de luz si se tiene activado Monotributo
-//					$cargaNovedades=0;
-//					//se cargan novedades si se tiene activado SUSS
-//					$cargaLibroUnico=0;
-//					//se cargan Libro Unico si se tiene activado SUSS
-//					$cargaBanco=0;
-//					//se cargan bancos si hay algun impuesto del tipo banco activo
-//				if(count($micliente['Puntosdeventa'])!=0){
-//					$cargaTarjetasCredito=1;
-//				}
-//				foreach ($micliente['Puntosdeventa'] as $puntosdeventa) {
-//					switch ($puntosdeventa['sistemafacturacion']) {
-//						case 'Controlador Fiscal':
-//						case 'RECE':
-//							$cargaLibroIVAVentas=1;
-//							break;
-//						case 'Factura en Linea':
-//							$cargaVentasWeb=1;
-//							$cargaTarjetasCredito=0;
-//							break;
-//					}
-//				}
-//				$impclipos=0;
-//				foreach ($micliente['Impcli'] as $impcli) {
-//					if(count($impcli['Periodosactivo'])!=0){
-//						if($impcli['Impuesto']['organismo']=='banco'){
-//							$cargaBanco=1;
-//						}
-//						if($impcli['Impuesto']['id']==4/*Monotributo*/){
-//							$cargaFacturaLuz=1;
-//						}
-//						if($impcli['Impuesto']['id']==10/*SUSS*/){
-//							$cargaBanco=1;
-//							$cargaNovedades=1;
-//							$cargaLibroUnico=1;
-//						}
-//						$impclipos++;
-//					}else{
-//						array_splice($micliente['Impcli'], $impclipos, 1);
-//					}
-//				}
-//				$micliente['Cliente']['cargaFacturaCompras']=$cargaFacturaCompras;
-//				$micliente['Cliente']['cargaFacturaVentas']=$cargaFacturaVentas;
-//				$micliente['Cliente']['cargaLibroIVAVentas']=$cargaLibroIVAVentas;
-//				$micliente['Cliente']['cargaVentasWeb']=$cargaVentasWeb;
-//				$micliente['Cliente']['cargaTarjetasCredito']=$cargaTarjetasCredito;
-//				$micliente['Cliente']['cargaFacturaLuz']=$cargaFacturaLuz;
-//				$micliente['Cliente']['cargaNovedades']=$cargaNovedades;
-//				$micliente['Cliente']['cargaLibroUnico']=$cargaLibroUnico;
-//				$micliente['Cliente']['cargaBanco']=$cargaBanco;
-//
-//				$clientes3[$posicion]=$micliente;
-//				$posicion++;
-//			}
+                    $clientes3[$posicion]=$micliente;
+                    $posicion++;
+                }
+    //			foreach ($clientes3 as $micliente) {
+    //				/*Vamos a hacer los controles para saber que elementos mostrar dentro de la tarea "Solicitar"
+    //					Comprobantes de Compras
+    //					Libros IVA Ventas
+    //					Comprobantes de Ventas
+    //					Descargar Ventas Web AFIP
+    //					Resumenes Bancarios
+    //					Tarjetas de Credito
+    //					Factura de Luz
+    //					Novedades
+    //					Libros Unicos.
+    //				Hay que mejorar estas consultas por que no estan distinguiendo entre diferentes domicilios
+    //				*/
+    //				/*variables*/
+    //					$cargaFacturaCompras=1;//Siempre se cargan facturas de compras
+    //					$cargaFacturaVentas=1;//Siempre se cargan facturas de ventas
+    //					$cargaLibroIVAVentas=0;
+    //					//Se carga libro IVA ventas cuando un punto de venta que sea "Controlador Fiscal", "RECE para aplicativo y web services"
+    //					$cargaVentasWeb=0;
+    //					//Se carga libro IVA ventas cuando un punto de venta que sea "Factura en Linea"
+    //					$cargaTarjetasCredito=0;
+    //					//si tiene puntos de venta en linea no se piden tarjetas de credito
+    //					$cargaFacturaLuz=0;
+    //					//se cargan facturas de luz si se tiene activado Monotributo
+    //					$cargaNovedades=0;
+    //					//se cargan novedades si se tiene activado SUSS
+    //					$cargaLibroUnico=0;
+    //					//se cargan Libro Unico si se tiene activado SUSS
+    //					$cargaBanco=0;
+    //					//se cargan bancos si hay algun impuesto del tipo banco activo
+    //				if(count($micliente['Puntosdeventa'])!=0){
+    //					$cargaTarjetasCredito=1;
+    //				}
+    //				foreach ($micliente['Puntosdeventa'] as $puntosdeventa) {
+    //					switch ($puntosdeventa['sistemafacturacion']) {
+    //						case 'Controlador Fiscal':
+    //						case 'RECE':
+    //							$cargaLibroIVAVentas=1;
+    //							break;
+    //						case 'Factura en Linea':
+    //							$cargaVentasWeb=1;
+    //							$cargaTarjetasCredito=0;
+    //							break;
+    //					}
+    //				}
+    //				$impclipos=0;
+    //				foreach ($micliente['Impcli'] as $impcli) {
+    //					if(count($impcli['Periodosactivo'])!=0){
+    //						if($impcli['Impuesto']['organismo']=='banco'){
+    //							$cargaBanco=1;
+    //						}
+    //						if($impcli['Impuesto']['id']==4/*Monotributo*/){
+    //							$cargaFacturaLuz=1;
+    //						}
+    //						if($impcli['Impuesto']['id']==10/*SUSS*/){
+    //							$cargaBanco=1;
+    //							$cargaNovedades=1;
+    //							$cargaLibroUnico=1;
+    //						}
+    //						$impclipos++;
+    //					}else{
+    //						array_splice($micliente['Impcli'], $impclipos, 1);
+    //					}
+    //				}
+    //				$micliente['Cliente']['cargaFacturaCompras']=$cargaFacturaCompras;
+    //				$micliente['Cliente']['cargaFacturaVentas']=$cargaFacturaVentas;
+    //				$micliente['Cliente']['cargaLibroIVAVentas']=$cargaLibroIVAVentas;
+    //				$micliente['Cliente']['cargaVentasWeb']=$cargaVentasWeb;
+    //				$micliente['Cliente']['cargaTarjetasCredito']=$cargaTarjetasCredito;
+    //				$micliente['Cliente']['cargaFacturaLuz']=$cargaFacturaLuz;
+    //				$micliente['Cliente']['cargaNovedades']=$cargaNovedades;
+    //				$micliente['Cliente']['cargaLibroUnico']=$cargaLibroUnico;
+    //				$micliente['Cliente']['cargaBanco']=$cargaBanco;
+    //
+    //				$clientes3[$posicion]=$micliente;
+    //				$posicion++;
+    //			}
 
-			//Aca vamos a ordenar los ImpClis del los clientes en funcion de los vencimientos de los Eventos Impuestos
-			foreach ($clientes3 as $mc => $micliente) {
-				for ($i=0;$i<count($micliente['Impcli'])-1;$i++){
-					for ($j=$i;$j<count($micliente['Impcli']);$j++) {
-						$burbuja = $micliente['Impcli'][$i]['Impuesto']['orden']*1;
-						$aux = $micliente['Impcli'][$j]['Impuesto']['orden']*1;
-						if($burbuja>$aux){
-							$myaux=$micliente['Impcli'][$i];
-							$micliente['Impcli'][$i]=$micliente['Impcli'][$j];
-							$micliente['Impcli'][$j]=$myaux;
-						}
-					}
-				}
-				$clientes3[$mc]=$micliente;
-			}
-            $this->set('clientes', $clientes3);
+                            //Aca vamos a ordenar los ImpClis del los clientes en funcion de los vencimientos de los Eventos Impuestos
+                            foreach ($clientes3 as $mc => $micliente) {
+                                    for ($i=0;$i<count($micliente['Impcli'])-1;$i++){
+                                            for ($j=$i;$j<count($micliente['Impcli']);$j++) {
+                                                    $burbuja = $micliente['Impcli'][$i]['Impuesto']['orden']*1;
+                                                    $aux = $micliente['Impcli'][$j]['Impuesto']['orden']*1;
+                                                    if($burbuja>$aux){
+                                                            $myaux=$micliente['Impcli'][$i];
+                                                            $micliente['Impcli'][$i]=$micliente['Impcli'][$j];
+                                                            $micliente['Impcli'][$j]=$myaux;
+                                                    }
+                                            }
+                                    }
+                                    $clientes3[$mc]=$micliente;
+                            }
+                $this->set('clientes', $clientes3);
 
 			$this->Tareasxclientesxestudio->recursive = 0;
 			$tareascliente = $this->Tareasxclientesxestudio->find('all',[
@@ -1182,46 +1182,46 @@ class ClientesController extends AppController {
 							            	 'Eventosimpuesto.periodo' => $pemes."-".$peanio
 							            ),
 					        	  ),
-                                 'Conceptosrestante'=>array(
-									 /*Esto deberiamos llevar solo por que el IVA tiene Saldo A Favor como
-									 Saldo de Libre Disponibilidad y hay que sumarlo en el impuesto*/
-                                     'conditions'=>array(
-                                         'Conceptosrestante.periodo' => $pemes."-".$peanio,
-                                         'Conceptosrestante.conceptostipo_id' => 1
-                                     )
-                                 ),
-                                'Periodosactivo'=>array(
-                                    'conditions'=>$conditionsImpCliHabilitados,
-                                ),
-                                'conditions'=>array(
-                                    'Impcli.impuesto_id NOT IN (
-                                    		SELECT id 
-                                    		FROM impuestos 
-                                    		WHERE impuestos.organismo = "banco"
-                                    		OR impuestos.tipo = "informativo"
-                                    		)'
-                                )
-					       	),
-					       	'Plandepago'=>array(
-				   				'conditions' => array(
-						            	 'Plandepago.periodo' => $pemes."-".$peanio
-						            ),
-				   				),
-					       	'order' => array('Cliente.nombre'),
-					       	'conditions'=>array(
-//                                'Cliente.estado' => 'habilitado',
-                                'OR'=>array(
-				            		array('Cliente.fchfincliente'=>null),
-				            		array('Cliente.fchfincliente'=>""),												            		
-					       			'OR'=>array(
-					            		'SUBSTRING(Cliente.fchfincliente,4,7)*1 > '.$peanio.'*1',
-					            		'AND'=>array(
-					            			'SUBSTRING(Cliente.fchfincliente,4,7)*1 >= '.$peanio.'*1',
-					            			'SUBSTRING(Cliente.fchfincliente,1,2) >= '.$pemes.'*1'
-					            			),
-					            		),
-					       			)
-					       		),
+                                                        'Conceptosrestante'=>array(
+                                                                                                /*Esto deberiamos llevar solo por que el IVA tiene Saldo A Favor como
+                                                                                                Saldo de Libre Disponibilidad y hay que sumarlo en el impuesto*/
+                                                            'conditions'=>array(
+                                                                'Conceptosrestante.periodo' => $pemes."-".$peanio,
+                                                                'Conceptosrestante.conceptostipo_id' => 1
+                                                            )
+                                                        ),
+                                                       'Periodosactivo'=>array(
+                                                           'conditions'=>$conditionsImpCliHabilitados,
+                                                       ),
+                                                       'conditions'=>array(
+                                                           'Impcli.impuesto_id NOT IN (
+                                                                       SELECT id 
+                                                                       FROM impuestos 
+                                                                       WHERE impuestos.organismo = "banco"
+                                                                       OR impuestos.tipo = "informativo"
+                                                                       )'
+                                                       )
+                                                                       ),
+                                                                       'Plandepago'=>array(
+                                                                                       'conditions' => array(
+                                                                                        'Plandepago.periodo' => $pemes."-".$peanio
+                                                                                   ),
+                                                                                       ),
+                                                                       'order' => array('Cliente.nombre'),
+                                                                       'conditions'=>array(
+                       //                                'Cliente.estado' => 'habilitado',
+                                                       'OR'=>array(
+                                                                               array('Cliente.fchfincliente'=>null),
+                                                                               array('Cliente.fchfincliente'=>""),												            		
+                                                                                       'OR'=>array(
+                                                                                       'SUBSTRING(Cliente.fchfincliente,4,7)*1 > '.$peanio.'*1',
+                                                                                       'AND'=>array(
+                                                                                               'SUBSTRING(Cliente.fchfincliente,4,7)*1 >= '.$peanio.'*1',
+                                                                                               'SUBSTRING(Cliente.fchfincliente,1,2) >= '.$pemes.'*1'
+                                                                                               ),
+                                                                                       ),
+                                                                                       )
+                                                                               ),
 			   			),			   				
 				   		
 				   	),
@@ -1246,39 +1246,6 @@ class ClientesController extends AppController {
 							            		),
 						            ),
 				   			),
-//				   			'Venta'=>array(
-//				   				'conditions' => array(
-//						            	 'OR'=>array(
-//							            		'SUBSTRING(Venta.periodo,4,7)*1 < '.$peanio.'*1',
-//							            		'AND'=>array(
-//							            			'SUBSTRING(Venta.periodo,4,7)*1 <= '.$peanio.'*1',
-//							            			'SUBSTRING(Venta.periodo,1,2) < '.$pemes.'*1'
-//							            			),
-//							            		),
-//						            ),
-//				   			),
-//				   			'Compra'=>array(
-//				   				'conditions' => array(
-//						            	 'OR'=>array(
-//							            		'SUBSTRING(Compra.periodo,4,7)*1 < '.$peanio.'*1',
-//							            		'AND'=>array(
-//							            			'SUBSTRING(Compra.periodo,4,7)*1 <= '.$peanio.'*1',
-//							            			'SUBSTRING(Compra.periodo,1,2) < '.$pemes.'*1'
-//							            			),
-//							            		),
-//						            ),
-//				   			),
-//				   			'Sueldo'=>array(
-//				   				'conditions' => array(
-//						            	 'OR'=>array(
-//							            		'SUBSTRING(Sueldo.periodo,4,7)*1 < '.$peanio.'*1',
-//							            		'AND'=>array(
-//							            			'SUBSTRING(Sueldo.periodo,4,7)*1 <= '.$peanio.'*1',
-//							            			'SUBSTRING(Sueldo.periodo,1,2) < '.$pemes.'*1'
-//							            			),
-//							            		),
-//						            ),
-//				   			),
 					   		'Honorario'=>array(
 					   				'conditions' => array(
 					   						'OR'=>array(

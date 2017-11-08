@@ -766,6 +766,9 @@ $(document).ready(function() {
       return false;
   }
 /* 19 Tarea Contabilizar*/
+    function abrirestadoscontables(clienteid,periodo){
+        var win = window.open(serverLayoutURL+'/papelesdetrabajos/estadoderesultado/'+clienteid+'/'+periodo , '_blank');
+    }
     function abrirsumasysaldos(clienteid,periodo){
         var win = window.open(serverLayoutURL+'/cuentasclientes/informesumaysaldo/'+clienteid+'/'+periodo , '_blank');
     }
