@@ -31,11 +31,19 @@ if(count($empleado)==0){
             <thead>
                 <tr>
                     <td colspan="7" >
+<<<<<<< HEAD
+                        <span class="spanempleado shown" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>">
+                        <?php
+                            echo $empleado['Empleado']['nombre'];
+                        ?>
+                        </span>
+=======
                         <div id="divEmpleado_<?php echo $empleado['Empleado']['id']?>" class="divempleado" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>" title='<?php echo $empleado['Empleado']['nombre']; ?>'>
                             <span>
                             <?php echo $empleado['Empleado']['nombre']; ?>
                             </span>
                         </div>
+>>>>>>> feature/paginacion_empleados
                     </td>
 <!--                    <td style="text-align: right;" rowspan="2">-->
 <!--                        <div class="fab blue">-->

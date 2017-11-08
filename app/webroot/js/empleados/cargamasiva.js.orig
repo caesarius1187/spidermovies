@@ -410,6 +410,7 @@ function ocultarFuncinesDeUnFormulario(empid){
             }
             if(dataCodigo.charAt(0)=='O') {
                  // $mysheet.getCell(dataCodigo).calculate();
+<<<<<<< HEAD
                 // var myCell = $mysheet.getCell(dataCodigo);
                 // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormat() + "'");
                 // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormattedValue() + "'");
@@ -417,6 +418,17 @@ function ocultarFuncinesDeUnFormulario(empid){
                 // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.evaluateFormula() + "'");
                 // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getValue() + "'");
                 // console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.renderComputedValue() + "'");
+=======
+                var myCell = $mysheet.getCell(dataCodigo);
+                /*
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormat() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormattedValue() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getFormula() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.evaluateFormula() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.getValue() + "'");
+                console.log(empid+"-"+empidFuncion+"-"+dataCodigo+ " = '" + myCell.renderComputedValue() + "'");
+                */
+>>>>>>> feature/paginacion_empleados
             }
 
             if(($mysheet.getCellValue(dataCodigo)*1)!=0){

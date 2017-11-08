@@ -824,6 +824,7 @@ p.error em {
 	float: left;
 	max-width: 885px;
 	overflow-x: inherit;
+	/*min-width: 200px;*/
 }
 .tdformula{
 	width: 275px;
@@ -2901,4 +2902,10 @@ div.index_pdt{
 	background-color:#fff;
 	height:1px;
 	width:100%;
+}
+.divempleado {
+	overflow:hidden;
+	white-space:nowrap; 
+	text-overflow:ellipsis;
+	width:150px; 
 }

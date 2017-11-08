@@ -43,7 +43,7 @@ echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cli
                 }
                 $arrayConvenios[$empleadolista['conveniocolectivotrabajo_id']]=$this->Form->button(
                     $empleadolista['Conveniocolectivotrabajo']['nombre'],
-                    array(
+                    array(                        
                         'class'=>'btn_empleados',
                         'onClick'=>"cargarTodosLosSueldos(".$empleadolista['conveniocolectivotrabajo_id'].");",
                         'id'=>'buttonConvenio'.$empleadolista['conveniocolectivotrabajo_id'],

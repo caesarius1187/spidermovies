@@ -26,16 +26,16 @@ if(count($empleado)==0){
         )
      );
     ?>
-    <div id="sueldoContent" style="width:100%; text-align:center">
+    <div id="sueldoContent" style="">
         <table class="tbl_border tbl_sueldo" style="width:100%" cellspacing="0" cellpadding="0" id="pdtsueldo">
             <thead>
                 <tr>
                     <td colspan="7" >
-                        <div id="divEmpleado_<?php echo $empleado['Empleado']['id']?>" class="divempleado" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>" title='<?php echo $empleado['Empleado']['nombre']; ?>'>
-                            <span>
-                            <?php echo $empleado['Empleado']['nombre']; ?>
-                            </span>
-                        </div>
+                        <span class="spanempleado" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>">
+                        <?php
+                            echo $empleado['Empleado']['nombre'];
+                        ?>
+                        </span>
                     </td>
 <!--                    <td style="text-align: right;" rowspan="2">-->
 <!--                        <div class="fab blue">-->
@@ -53,13 +53,11 @@ if(count($empleado)==0){
                 </tr>
                 <tr>
                     <td colspan="7">
-                        <div id="divConvenio_<?php echo $empleado['Empleado']['id']?>" class="divempleado" title='Convenio: <?php echo $empleado['Conveniocolectivotrabajo']['nombre']; ?>'>
-                           <span>
-                            <?php
-                            echo "Convenio: ".$empleado['Conveniocolectivotrabajo']['nombre'];
-                            ?>
-                           </span>
-                       </div>
+                       <span>
+                        <?php
+                        echo "Convenio: ".$empleado['Conveniocolectivotrabajo']['nombre'];
+                        ?>
+                       </span>
                     </td>
                 </tr>
                 <tr>
@@ -271,16 +269,14 @@ if(count($empleado)==0){
                                             $valor = $empleado['Cargo']['sueldosereno']*1;
                                         }
                                     break;
-                                case 75:/*Dia del Gremio*/
-                                        /* Solo SEC tiene esto y se tiene que activar solo si estamos en Septiembre*/
-                                        if($empleado['Conveniocolectivotrabajo']['Impuesto']['id']==11/*Es SEC?*/){
-                                            $pemes = substr($periodo, 0, 2);
-                                            if($pemes!='09'){
-                                                $aplicafuncion=false;
-                                            }
+                                case 126:/*Acuerdos Remunerativos*/
+                                        /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
+                                        tiene un Acuerdos Remunerativos cargado*/
+                                        if(isset($empleado['Cargo']['acuerdoremunerativo'])&&$empleado['Cargo']['acuerdoremunerativo']*1!=0){
+                                            $valor = $empleado['Cargo']['acuerdoremunerativo']*1;
                                         }
                                     break;
-                                
+
                                 case 117:/*Aporte Adicional OS O3*/
                                     /* si es construccion no aplica en el SAC*/
                                     if($empleado['Conveniocolectivotrabajo']['id']==5/*Es Construcción Quincenal?*/){
@@ -290,20 +286,6 @@ if(count($empleado)==0){
                                         }
                                     }
                                     break;
-                                case 123:/*Contribucion Tarea Diff*/
-                                        /* si es UOCRA tenemos que poner que es un 5%*/
-                                         if($empleado['Conveniocolectivotrabajo']['Impuesto']['id']==41/*Es UOCRA?*/){
-                                            $valor = 5;
-                                        }
-                                    break;
-                                case 126:/*Acuerdos Remunerativos*/
-                                        /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
-                                        tiene un Acuerdos Remunerativos cargado*/
-                                        if(isset($empleado['Cargo']['acuerdoremunerativo'])&&$empleado['Cargo']['acuerdoremunerativo']*1!=0){
-                                            $valor = $empleado['Cargo']['acuerdoremunerativo']*1;
-                                        }
-                                    break;
-
                                 case 134:/*cuota sindical extra 4*/
                                     /*si el impcli al que pertenece el convenio es SEC entonces vamos a preguntar si
                                     tiene activado el "pago del seguro de vida obligatorio*/
@@ -344,31 +326,6 @@ if(count($empleado)==0){
                                     tiene un Acuerdos Remunerativos cargado*/
                                     $valor = 1;
                                     break;
-                                case 175:/*Asignacion Rem 1er Quincena*/
-                                    if($numeroliquidacion == 1) {
-                                        //Estamos en la primer quincena
-                                        if (isset($empleado['Cargo']['remprimerquincena']) && $empleado['Cargo']['remprimerquincena'] * 1 != 0) {
-                                            $valor = $empleado['Cargo']['remprimerquincena'] * 1;
-                                        }
-                                    }
-                                    break;
-                                case 176:/*Asignacion Rem 2da Quincena*/
-                                    if($numeroliquidacion == 2) {
-                                        //Estamos en la segunda quincena
-                                        if (isset($empleado['Cargo']['remsegundaquincena']) && $empleado['Cargo']['remsegundaquincena'] * 1 != 0) {
-                                            $valor = $empleado['Cargo']['remsegundaquincena'] * 1;
-                                        }
-                                    }
-                                    break;
-                                 case 177:/*Dia del Gremio no remunerativo*/
-                                        /* Solo SEC tiene esto y se tiene que activar solo si estamos en Septiembre*/
-                                        if($empleado['Conveniocolectivotrabajo']['Impuesto']['id']==11/*Es SEC?*/){
-                                            $pemes = substr($periodo, 0, 2);
-                                            if($pemes!='09'){
-                                                $aplicafuncion=false;
-                                            }
-                                        }
-                                    break;        
                                 /*case 36:/*Cuota Sindical aca estabamos guardando la cuota sindical extra en el empleado pero
                                 debe ser la misma para todos dependiendo del convenio
                                     $conceptoobligatorio['nombre'] = $empleado['Empleado']['cuotasindical'];
@@ -393,7 +350,7 @@ if(count($empleado)==0){
                             $classInputValor .= " aplicableATodos";
                             $inputClass = "input".$conceptoobligatorio['Concepto']['codigo'];
                         }?>
-                        <td width="80px" class="tdvalor" style='height:30px'>
+                        <td width="80px" class="tdvalor">
                             <?php
                             $funcionaaplicar="";
                             if($conceptoobligatorio['calculado']&&$aplicafuncion){
@@ -454,7 +411,6 @@ if(count($empleado)==0){
                                     'class'=>$classInputValor,
                                     'inputclass' => $inputClass,
                                     'valdata-codigo' => $conceptoobligatorio['Concepto']['codigo'],
-                                    'style' => 'padding:0px'
                                     ));
                             }
                             ?>
