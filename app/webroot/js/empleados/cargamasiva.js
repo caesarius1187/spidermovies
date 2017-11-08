@@ -175,7 +175,7 @@ function guardarTodosLosSueldos(){
 function showHideEmpleadoOnClick(){
     $(".snapempleado").click(function(){
         var empid = $(this).attr('data-identificacion');
-        if($(this).hasClass("shown")){
+        if(!$(this).hasClass("shown")){
             showHideColumnsEmpleado(empid);
             $(this).addClass('shown');
         }else{
@@ -185,7 +185,7 @@ function showHideEmpleadoOnClick(){
     });
 }
 function showHideColumnsEmpleado(empid){
-    var empleado = $( "span[data-identificacion="+empid+"]" );
+    var empleado = $( "div[data-identificacion="+empid+"]" );
     var show = false;
     if($(empleado).hasClass("shown")){
         show = false;

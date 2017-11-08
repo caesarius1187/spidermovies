@@ -31,7 +31,7 @@ if(count($empleado)==0){
             <thead>
                 <tr>
                     <td colspan="7" >
-                        <div id="divEmpleado_<?php echo $empleado['Empleado']['id']?>" class="divempleado" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>" title='<?php echo $empleado['Empleado']['nombre']; ?>'>
+                        <div id="divEmpleado_<?php echo $empleado['Empleado']['id']?>" class="divempleado snapempleado shown" onclick="showHideColumnsEmpleado('<?php echo $empleado['Empleado']['id']?>')" data-identificacion="<?php echo $empleado['Empleado']['id']?>" title='<?php echo $empleado['Empleado']['nombre']; ?>' style='margin:0px'>
                             <span>
                             <?php echo $empleado['Empleado']['nombre']; ?>
                             </span>
@@ -53,7 +53,7 @@ if(count($empleado)==0){
                 </tr>
                 <tr>
                     <td colspan="7">
-                        <div id="divConvenio_<?php echo $empleado['Empleado']['id']?>" class="divempleado" title='Convenio: <?php echo $empleado['Conveniocolectivotrabajo']['nombre']; ?>'>
+                        <div id="divConvenio_<?php echo $empleado['Empleado']['id']?>" class="divempleado" title='Convenio: <?php echo $empleado['Conveniocolectivotrabajo']['nombre']; ?>' style='margin:0px'>
                            <span>
                             <?php
                             echo "Convenio: ".$empleado['Conveniocolectivotrabajo']['nombre'];
@@ -69,7 +69,7 @@ if(count($empleado)==0){
                     <td class="tdconcepto" style="width:100px;">
 
                     </td>
-                    <td width="80px" class="tdvalor">
+                    <td width="150px" class="tdvalor">
                         Valor
                     </td>
                     <td width="15px" class="tdcodigo">

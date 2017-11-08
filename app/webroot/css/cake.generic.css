@@ -2752,20 +2752,11 @@ transition: all 0.4s ease-in-out;
 	height: 20px;
 	font-size: 13px;
 }
-.tbl_sueldo td span {
-	display: inline-block;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	/* width: 100%; */
-	max-width: 70px;
-	height: 36px;
-	font-size: 11px;
-}
 .tbl_sueldo td span:hover {
 	cursor: pointer;
 }
 .tbl_sueldo td .tooltip input {
-	width:70px;
+	width: 150px;
 }
 
 .btn_exit{
