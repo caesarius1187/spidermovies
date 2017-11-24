@@ -605,11 +605,13 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                         $title="Cuota vigente a julio 2017 (14948.87*0.005)= 74.74
 +
 Salarizacion del aumento del 12% aplicable desde julio 2017 (1494.89*0.005) = 7.48
-Total = 82.22";
++
+Salarizacion del aumento del 12% aplicable desde noviembre 2017 (1494.89*0.005) = 7.48
+Total = 89.69";
                                         echo "<td title='".$title."'>";
-                                        echo (14948.87*0.005)+(1494.89*0.005);
-                                        $totalContribucion += (14948.87*0.005)+(1494.89*0.005);
-                                        $apagarcontribuciones +=(14948.87*0.005)+(1494.89*0.005);
+                                        echo (14948.87*0.005)+(1494.89*0.005)+(1494.89*0.005);
+                                        $totalContribucion += (14948.87*0.005)+(1494.89*0.005)+(1494.89*0.005);
+                                        $apagarcontribuciones +=(14948.87*0.005)+(1494.89*0.005)+(1494.89*0.005);
                                         echo "</td>";
                                     }else{
                                         $title="No paga INACAP por que no es de Comercio";

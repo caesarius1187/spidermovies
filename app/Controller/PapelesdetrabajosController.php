@@ -26,9 +26,9 @@ class PapelesdetrabajosController extends AppController {
 		$this->loadModel('Cliente');
 		$this->loadModel('Venta');
 		$this->loadModel('Actividadcliente');
-        $this->loadModel('Conceptosrestante');
-        $this->loadModel('Compra');
-        $this->loadModel('Cuenta');
+                $this->loadModel('Conceptosrestante');
+                $this->loadModel('Compra');
+                $this->loadModel('Cuenta');
 		$this->loadModel('Cuentascliente');
 		$this->loadModel('Tipogasto');
 		//$this->Archivo->recursive = 0;
@@ -347,34 +347,70 @@ class PapelesdetrabajosController extends AppController {
 		$optionCliente = [
 			'contain' => [
 				'Cuentascliente'=>[
-                                        'Cuentaclientevalororigen',
-                                        'Cuentaclienteactualizacion',
-                                        'Cuentaclienteterreno',
-                                        'Cuentaclienteedificacion',
-                                        'Cuentaclientemejora',
-					'Cuenta',
-					'Movimiento'=>[
-						'Asiento'=>[
-							'fields'=>['id','fecha','tipoasiento']
-						],
-						'conditions'=>[
-							"Movimiento.asiento_id IN (
-								SELECT id FROM asientos as Asiento 
-								WHERE Asiento.cliente_id = ".$clienteid."
-								AND    Asiento.fecha  >= '".$fechaInicioPeriodoAnterior."'
-								AND    Asiento.fecha  <= '".$fechaFinConsulta."'
-							)"
-						]
-					],
-					'conditions'=>[
+                                    'Cuentaclientevalororigen',
+                                    'Cuentaclienteactualizacion',
+                                    'Cuentaclienteterreno',
+                                    'Cuentaclienteedificacion',
+                                    'Cuentaclientemejora',
+                                    'Cuenta',
+                                    'Movimiento'=>[
+                                            'Asiento'=>[
+                                                    'fields'=>['id','fecha','tipoasiento']
+                                            ],
+                                            'conditions'=>[
+                                                    "Movimiento.asiento_id IN (
+                                                            SELECT id FROM asientos as Asiento 
+                                                            WHERE Asiento.cliente_id = ".$clienteid."
+                                                            AND    Asiento.fecha  >= '".$fechaInicioPeriodoAnterior."'
+                                                            AND    Asiento.fecha  <= '".$fechaFinConsulta."'
+                                                    )"
+                                            ]
+                                    ],
+                                    'conditions'=>[
 
-					]
+                                    ],
+                                    'order'=>[
+                                        'Cuenta.numero'
+                                    ]
 				],
 			],
 			'conditions' => ['Cliente.id'=>$clienteid]
 		];
 		$cliente = $this->Cliente->find('first',$optionCliente);
-		$this->set('cliente',$cliente);
+                $optionCliente = [
+			'contain' => [
+				'Cuentascliente'=>[
+                                    'Cuentaclientevalororigen',
+                                    'Cuentaclienteactualizacion',
+                                    'Cuentaclienteterreno',
+                                    'Cuentaclienteedificacion',
+                                    'Cuentaclientemejora',
+                                    'Cuenta',
+                                    'Movimiento'=>[
+                                            'Asiento'=>[
+                                                    'fields'=>['id','fecha','tipoasiento']
+                                            ],
+                                            'conditions'=>[
+                                                    "Movimiento.asiento_id IN (
+                                                            SELECT id FROM asientos as Asiento 
+                                                            WHERE Asiento.cliente_id = ".$clienteid."
+                                                            AND    Asiento.fecha  >= '".$fechaInicioPeriodoAnterior."'
+                                                            AND    Asiento.fecha  <= '".$fechaFinConsulta."'
+                                                    )"
+                                            ]
+                                    ],
+                                    'conditions'=>[
+
+                                    ],
+                                    'order'=>[
+                                        'Cuenta.numero'
+                                    ]
+				],
+			],
+			'conditions' => ['Cliente.id'=>$clienteid]
+		];
+		$cuentascliente = $this->Cliente->find('first',$optionCliente);
+		$this->set('cuentascliente',$cliente);
 		$this->set('periodo',$periodo);
 	}
 }

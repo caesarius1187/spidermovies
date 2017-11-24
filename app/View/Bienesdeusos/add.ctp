@@ -375,8 +375,8 @@
          if(isset($this->request->data['Bienesdeuso'])&&!in_array($this->request->data['Bienesdeuso']['valororiginal'],[0,null,""])){
             $valororiginal = $this->request->data['Bienesdeuso']['valororiginal'];
          }else{
-            if(isset($compra['Compra']['total'])){
-                $valororiginal = $compra['Compra']['total'];
+            if(isset($compra['Compra']['neto'])){
+                $valororiginal = $compra['Compra']['neto'];
              }
          }
          

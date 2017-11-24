@@ -332,7 +332,16 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                     echo $this->Form->input('Asiento.0.tipoasiento',
                         [
                             'type'=>"select",
-                            'options'=>['Devengamiento'=>'Devengamiento','Registro'=>'Registro','Apertura'=>'Apertura','Refundacion'=>'Refundacion','Cierre'=>'Cierre'],
+                            'options'=>[
+                                'Devengamiento'=>'Devengamiento',
+                                'Registro'=>'Registro',
+                                'Apertura'=>'Apertura',
+                                'Refundacion'=>'Refundacion',
+                                'Cierre'=>'Cierre',
+                                'Devengamiento'=>'Devengamiento',                                                            
+                                'Distribucion de dividendos'=>'Distribucion de dividendos',
+                                'Absorcion de perdida acumulada'=>'Absorcion de perdida acumulada'
+                                ],
                             'style'=>"width:auto",
                             'label'=>'Tipo']);
                     echo "</br>";

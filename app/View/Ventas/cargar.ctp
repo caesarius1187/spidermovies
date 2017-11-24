@@ -22,14 +22,15 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));
 echo $this->Html->script('ventas/cargar',array('inline'=>false));
 //Vamos a guardar las variables de configuracion del cliente para consultarlas a todas de las misma manera
 /*AFIP*/
-$tieneMonotributo=$cliente["Cliente"]['tieneMonotributo'];
-$tieneIVA=$cliente["Cliente"]['tieneIVA'];
-$tieneIVAPercepciones=$cliente["Cliente"]['tieneIVAPercepciones'];
-$tieneImpuestoInterno=$cliente["Cliente"]['tieneImpuestoInterno'];
+$tieneMonotributo=$cliente["Cliente"]['impuestosactivos']['monotributo'];
+$tieneIVA=$cliente["Cliente"]['impuestosactivos']['iva'];
+$tieneIVAPercepciones=$cliente["Cliente"]['impuestosactivos']['ivapercepciones'];
+$tieneImpuestoInterno=$cliente["Cliente"]['impuestosactivos']['impuestointerno'];
 /*DGR*/
-$tieneAgenteDePercepcionIIBB=$cliente["Cliente"]['tieneAgenteDePercepcionIIBB'];
+$tieneAgenteDePercepcionIIBB=$cliente["Cliente"]['impuestosactivos']['agenteDePercepcionIIBB'];
 /*DGRM*/
-$tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['tieneAgenteDePercepcionActividadesVarias'];
+$tieneAgenteDePercepcionActividadesVarias=$cliente["Cliente"]['impuestosactivos']['agenteDePercepcionActividadesVarias'];
+$contabiliza=$cliente["Cliente"]['impuestosactivos']['contabiliza'];
 echo $this->Form->input('cliid',array('default'=>$cliente["Cliente"]['id'],'type'=>'hidden'));
 $fchcumpleanosconstitucion = date('d-m-Y',strtotime($cliente["Cliente"]['fchcumpleanosconstitucion']));
 echo $this->Form->input('fchcumpleanosconstitucion',array('default'=>$fchcumpleanosconstitucion,'type'=>'hidden'));
@@ -161,6 +162,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
             //Vamos a enviar la situacion del cliente para no recalcularla en el controlador cada ves que guardemos una venta
             /*AFIP*/
             echo $this->Form->input('tieneMonotributo',array('value'=>$tieneMonotributo,'type'=>'hidden'));
+            echo $this->Form->input('contabiliza',array('value'=>$contabiliza,'type'=>'hidden'));
             echo $this->Form->input('tieneIVA',array('value'=>$tieneIVA,'type'=>'hidden'));
             echo $this->Form->input('tieneIVAPercepciones',array('value'=>$tieneIVAPercepciones,'type'=>'hidden'));
             echo $this->Form->input('tieneImpuestoInterno',array('value'=>$tieneImpuestoInterno,'type'=>'hidden'));
@@ -277,7 +279,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                       ]
                   ]);
                   $display="content;";
-                  if($tieneMonotributo=='1'){
+                  if($contabiliza!=1){
                       $display="none;";
                   }
                   echo $this->Form->input('jsonalltiposingresosbiendeuso',array(

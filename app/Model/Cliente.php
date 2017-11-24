@@ -378,6 +378,11 @@ class Cliente extends AppModel {
         $impuestosactivos['tieneEmpleados'] = false;
         $impuestosactivos['ganancias'] = false;
         $impuestosactivos['monotributo'] = false;
+        $impuestosactivos['iva'] = false;
+        $impuestosactivos['ivapercepciones'] = false;
+        $impuestosactivos['impuestointerno'] = false;
+        $impuestosactivos['agenteDePercepcionIIBB'] = false;
+        $impuestosactivos['agenteDePercepcionActividadesVarias'] = false;
         foreach ($cliente['Impcli'] as $impcli) {
             if(Count($impcli['Periodosactivo'])!=0){
                 if( $impcli['Impuesto']['organismo']=='banco'){
@@ -387,11 +392,26 @@ class Cliente extends AppModel {
                 if( in_array($impcli['Impuesto']['id'], ['19','5','28','160'])){
                     $impuestosactivos['contabiliza']=true;
                 }
-				if( in_array($impcli['Impuesto']['id'], ['5','28','160'])){
+                if( in_array($impcli['Impuesto']['id'], ['5','28','160'])){
                     $impuestosactivos['ganancias']=true;
                 }
-				if( in_array($impcli['Impuesto']['id'], ['4'])){
+                if( in_array($impcli['Impuesto']['id'], ['4'])){
                     $impuestosactivos['monotributo']=true;
+                }
+                if( in_array($impcli['Impuesto']['id'], ['19'])){
+                    $impuestosactivos['iva']=true;
+                }
+                if( in_array($impcli['Impuesto']['id'], ['184'])){
+                    $impuestosactivos['ivapercepciones']=true;
+                }
+                if( in_array($impcli['Impuesto']['id'], ['185'])){
+                    $impuestosactivos['impuestointerno']=true;
+                }
+                if( in_array($impcli['Impuesto']['id'], ['173'])){
+                    $impuestosactivos['agenteDePercepcionIIBB']=true;
+                }
+                if( in_array($impcli['Impuesto']['id'], ['186'])){
+                    $impuestosactivos['agenteDePercepcionActividadesVarias']=true;
                 }
             }else{
                 $impuestosactivos[$impcli['impuesto_id']]=false;

@@ -387,179 +387,171 @@ class ImpclisController extends AppController {
 		$this->layout = 'ajax';
 		$this->render('serializejson');
 	}
-	public function papeldetrabajoconveniomultilateral($impcliid=null,$periodo=null) {
-		ini_set('memory_limit', '2560M');
-		$this->loadModel('Actividadcliente');
-		$this->loadModel('Conceptosrestante');
-		$this->loadModel('Cuenta');
-		$this->loadModel('Eventosimpuesto');
-		$this->loadModel('Cliente');
-		$this->loadModel('Cuentascliente');
-		$this->loadModel('Tipogasto');
-		$this->set('periodo',$periodo);
-		$this->set('impcliid',$impcliid);
+    public function papeldetrabajoconveniomultilateral($impcliid=null,$periodo=null) {
+        ini_set('memory_limit', '2560M');
+        $this->loadModel('Actividadcliente');
+        $this->loadModel('Conceptosrestante');
+        $this->loadModel('Cuenta');
+        $this->loadModel('Eventosimpuesto');
+        $this->loadModel('Cliente');
+        $this->loadModel('Cuentascliente');
+        $this->loadModel('Tipogasto');
+        $this->set('periodo',$periodo);
+        $this->set('impcliid',$impcliid);
         $cuentasdeActEconomicas = $this->Cuenta->cuentasdeActEconomicas;
         $optionsImplci = array(
-			'contain'=>array(
+            'contain'=>array(
                 'Impuesto'=>[
                     'Asientoestandare'=>[
-						'conditions'=>[
-							'tipoasiento'=>'impuestos'
-						],
-						'Cuenta'
-					],
+                        'conditions'=>[
+                            'tipoasiento'=>'impuestos'
+                        ],
+                        'Cuenta'
+                    ],
                 ],
-				'Cliente'=>[
-					'Grupocliente'=>[],
-					'Cuentascliente'=>[
-						'Cuenta',
-						'conditions'=>[
-							'Cuentascliente.cuenta_id' => $cuentasdeActEconomicas,
-						]
-					]
-				],
-				'Asiento'=>[
-					'Movimiento'=>['Cuentascliente'],
-					'conditions'=>['periodo'=>$periodo]
-				],
-				/*'Impcliprovincia'=>array(
-					'fields'=>["*", "MAX( periodo)"],					
-					'conditions'=>[
-								'//*el periodo es menor o igual que el que se esta evaluando
-								CONCAT( SUBSTRING(`Impcliprovincia`.periodo ,4,7),SUBSTRING(`Impcliprovincia`.periodo ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2)) 
-								and impcli_id = ('.$impcliid.') ',
-								'group'=>['`Impcliprovincia`.`partido_id`'],
-						],
-					'Partido',										
-					),*/
-				),
-			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
+                'Cliente'=>[
+                    'Grupocliente'=>[],
+                    'Cuentascliente'=>[
+                        'Cuenta',
+                        'conditions'=>[
+                            'Cuentascliente.cuenta_id' => $cuentasdeActEconomicas,
+                        ]
+                    ]
+                ],
+                'Asiento'=>[
+                    'Movimiento'=>['Cuentascliente'],
+                    'conditions'=>['periodo'=>$periodo]
+                ],
+                /*'Impcliprovincia'=>array(
+                        'fields'=>["*", "MAX( periodo)"],					
+                        'conditions'=>[
+                                                '//*el periodo es menor o igual que el que se esta evaluando
+                                                CONCAT( SUBSTRING(`Impcliprovincia`.periodo ,4,7),SUBSTRING(`Impcliprovincia`.periodo ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2)) 
+                                                and impcli_id = ('.$impcliid.') ',
+                                                'group'=>['`Impcliprovincia`.`partido_id`'],
+                                ],
+                        'Partido',										
+                        ),*/
+                ),
+            'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
         );
-		$impcli = $this->Impcli->find('first',$optionsImplci);
-		$impcliprovinciasoptions = [
-			'contain'=>['Partido',],
-			//'fields'=>["*"],					
-			'conditions'=>[
-				'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
-				'impcli_id' => $impcliid,
-			],		
-			'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']							
-		]; 
-		$impcliprovincias = $this->Impcli->Impcliprovincia->find('all',$impcliprovinciasoptions);		
-		$impcliprovinciasnorepetidas = [];
-		//no se pudo hacer la consulta para que traiga los resultados que debia, asi que vamos a borrar los repetidos
-		//y dejar el maximo para cada jurisdiccion y nada mas
-		foreach ($impcliprovincias as $icp => $impcliprovincia) {
-			if(in_array($impcliprovincia['Impcliprovincia']['partido_id'], $impcliprovinciasnorepetidas)){
-				 unset($impcliprovincias[$icp]);
-			}else{
-				 $impcliprovinciasnorepetidas[] = $impcliprovincia['Impcliprovincia']['partido_id'];
-			}
-		}
-
-
-		$this->set('impcli',$impcli);
-		$this->set('impcliprovincias',$impcliprovincias);
+        $impcli = $this->Impcli->find('first',$optionsImplci);
+        $impcliprovinciasoptions = [
+            'contain'=>['Partido',],
+            //'fields'=>["*"],					
+            'conditions'=>[
+                    'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
+                    'impcli_id' => $impcliid,
+            ],		
+            'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']							
+        ]; 
+        $impcliprovincias = $this->Impcli->Impcliprovincia->find('all',$impcliprovinciasoptions);		
+        $impcliprovinciasnorepetidas = [];
+        //no se pudo hacer la consulta para que traiga los resultados que debia, asi que vamos a borrar los repetidos
+        //y dejar el maximo para cada jurisdiccion y nada mas
+        foreach ($impcliprovincias as $icp => $impcliprovincia) {
+            if(in_array($impcliprovincia['Impcliprovincia']['partido_id'], $impcliprovinciasnorepetidas)){
+                unset($impcliprovincias[$icp]);
+            }else{
+                $impcliprovinciasnorepetidas[] = $impcliprovincia['Impcliprovincia']['partido_id'];
+            }
+        }
+        $this->set('impcli',$impcli);
+        $this->set('impcliprovincias',$impcliprovincias);
         $pemes = substr($periodo, 0, 2);
         $peanio = substr($periodo, 3);
-		$bajaesMayorQuePeriodo = array(
-			'OR'=>array(
-				'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
-				'AND'=>array(
-					'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
-					'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
-				),
-			)
-		);
+        $bajaesMayorQuePeriodo = array(
+            'OR'=>array(
+                'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+                    'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+                ),
+            )
+        );
         $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
-		$conditionsActividades = [
-			'contain'=>[
-				'Actividade'=>[
-					'conditions'=>[
+        $conditionsActividades = [
+            'contain'=>[
+                'Actividade'=>[
+                    'conditions'=>[],
+                    'Alicuota'=>[],
+                ],
+                'Encuadrealicuota'=>[],
+                'Venta'=>[
+                        'Localidade'=>[
+                                'Partido'
+                                ],
+                        'Comprobante',
+                        'conditions'=>[
+                                'Venta.periodo'=>$periodo,
+                                    'Venta.tipogasto_id NOT IN '=>$ingresosBienDeUso
+                            ]
+                        ],
+                'Compra'=>[
+                    'Localidade'=>[
+                        'Partido'
+                    ],
+                    'conditions'=>[
+                        'Compra.periodo'=>$periodo
+                    ]
+                ],
+            ],
+            'conditions' => [
+                'Actividadcliente.cliente_id'=>$impcli['Cliente']['id'],
+                //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+                'OR'=>[
+                    $bajaesMayorQuePeriodo,
+                    'Actividadcliente.baja = ""',
+                    'Actividadcliente.baja = "0000-00-00"',
+                    'Actividadcliente.baja is null' ,
+                ]
+            ],
+        ];
+        $actividadclientes = $this->Actividadcliente->find('all',$conditionsActividades);
+        $this->set('actividadclientes',$actividadclientes);
+        /*aca le vamos a sacar un mes al periodo para que los conceptos restantes que traigamos sean del periodo anterior*/
+        $conditionsConceptosrestantes=[
+            'contain'=>[
+                'Localidade',
+                'Partido',
+            ],
+            'conditions'=>[
+                'Conceptosrestante.periodo'=>$periodo,
+                'Conceptosrestante.impcli_id'=>$impcliid,
+            ]
+        ];
+        $conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
+        $this->set('conceptosrestantes',$conceptosrestantes);
+        /*Datos Para el DIV de control de carga de impcliprovincias previas*/
+        //aca vamos a controlar que las provincias que esten activadas en este impuesto sean las mismas que las provincias donde se han cargado ventas y compras
+        $provinciasActivadas = array();
+        $provinciasVentas = array();
+        $provinciasVentasDiff = array();
+        $provinciasCompras = array();
+        $provinciasComprasDiff = array();
+        foreach ($impcliprovincias as $key => $impcliprovincia) {
+                if(!array_key_exists($impcliprovincia['Impcliprovincia']['partido_id'], $provinciasActivadas)){
+                $provinciasActivadas[$impcliprovincia['Impcliprovincia']['partido_id']]=$impcliprovincia['Partido']['nombre'];
+            }
+        }
+        foreach ($actividadclientes as $key => $actividadcliente) {
+            foreach ($actividadcliente['Venta'] as $key => $venta) {
+                if(!array_key_exists($venta['Localidade']['partido_id'], $provinciasVentas)){
+                    $provinciasVentas[$venta['Localidade']['partido_id']]=$venta['Localidade']['Partido']['nombre'];
+                }
+            }
+            foreach ($actividadcliente['Compra'] as $key => $compra) {
+                if(!array_key_exists($compra['Localidade']['partido_id'], $provinciasCompras)){
+                    $provinciasCompras[$compra['Localidade']['partido_id']]=$compra['Localidade']['Partido']['nombre'];
+                }
+            }
+        }
+        // ya tenemos los array donde estan las provincias activadas, las de las compras y las de las ventas hay que compararlas y generar alertas para que
+        // el informe controle y no te deje avanzar hasta que el array de compras y de ventas este vacio
+        $provinciasVentasDiff = array_diff($provinciasVentas,$provinciasActivadas);
+        $provinciasComprasDiff = array_diff($provinciasCompras,$provinciasActivadas);
 
-					],
-					'Alicuota'=>[
-						],
-					],
-				'Encuadrealicuota'=>[
-					],
-				'Venta'=>[
-					'Localidade'=>[
-						'Partido'
-						],
-					'Comprobante',
-					'conditions'=>[
-						'Venta.periodo'=>$periodo,
-                        'Venta.tipogasto_id NOT IN '=>$ingresosBienDeUso
-						]
-					],
-				'Compra'=>[
-						'Localidade'=>[
-								'Partido'
-							],
-						'conditions'=>[
-							'Compra.periodo'=>$periodo
-							]
-						],
-			],
-			'conditions' => [
-				'Actividadcliente.cliente_id'=>$impcli['Cliente']['id'],
-				//traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
-				'OR'=>[
-						$bajaesMayorQuePeriodo,
-						'Actividadcliente.baja = ""',
-						'Actividadcliente.baja = "0000-00-00"',
-						'Actividadcliente.baja is null' ,
-					]
-				],
-		];
-		$actividadclientes = $this->Actividadcliente->find('all',$conditionsActividades);
-		$this->set('actividadclientes',$actividadclientes);
-		/*aca le vamos a sacar un mes al periodo para que los conceptos restantes que traigamos sean del periodo
-		 anterior*/
-		$conditionsConceptosrestantes=[
-			'contain'=>[
-				'Localidade',
-				'Partido',
-			],
-			'conditions'=>[
-				'Conceptosrestante.periodo'=>$periodo,
-				'Conceptosrestante.impcli_id'=>$impcliid,
-			]
-		];
-		$conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
-		$this->set('conceptosrestantes',$conceptosrestantes);
-
-		/*Datos Para el DIV de control de carga de impcliprovincias previas*/
-		//aca vamos a controlar que las provincias que esten activadas en este impuesto sean las mismas que las provincias donde se han cargado ventas y compras
-		$provinciasActivadas = array();
-		$provinciasVentas = array();
-		$provinciasVentasDiff = array();
-		$provinciasCompras = array();
-		$provinciasComprasDiff = array();
-		foreach ($impcliprovincias as $key => $impcliprovincia) {
-			if(!array_key_exists($impcliprovincia['Impcliprovincia']['partido_id'], $provinciasActivadas)){
-		        $provinciasActivadas[$impcliprovincia['Impcliprovincia']['partido_id']]=$impcliprovincia['Partido']['nombre'];
-		    }
-		}
-		foreach ($actividadclientes as $key => $actividadcliente) {
-			foreach ($actividadcliente['Venta'] as $key => $venta) {
-				if(!array_key_exists($venta['Localidade']['partido_id'], $provinciasVentas)){
-					 $provinciasVentas[$venta['Localidade']['partido_id']]=$venta['Localidade']['Partido']['nombre'];
-			    }
-			}
-			foreach ($actividadcliente['Compra'] as $key => $compra) {
-				if(!array_key_exists($compra['Localidade']['partido_id'], $provinciasCompras)){
-					 $provinciasCompras[$compra['Localidade']['partido_id']]=$compra['Localidade']['Partido']['nombre'];
-			    }
-			}
-		}
-		// ya tenemos los array donde estan las provincias activadas, las de las compras y las de las ventas hay que compararlas y generar alertas para que
-		// el informe controle y no te deje avanzar hasta que el array de compras y de ventas este vacio
-		$provinciasVentasDiff = array_diff($provinciasVentas,$provinciasActivadas);
-		$provinciasComprasDiff = array_diff($provinciasCompras,$provinciasActivadas);
-
-		//Aca vamos a listar los eventosimpuestos generados por provincia en el año del periodo, para compararlos con el minimo
+        //Aca vamos a listar los eventosimpuestos generados por provincia en el año del periodo, para compararlos con el minimo
         $conditionsEventosimpuestos = [
             'contain'=>[],
             'fields'=>['Eventosimpuesto.partido_id','SUM(montovto) as montovto'],
@@ -572,12 +564,10 @@ class ImpclisController extends AppController {
                 ),
             ]
         ];
-		$eventosimpuestos = $this->Eventosimpuesto->find('all',$conditionsEventosimpuestos);
-        $this->set(compact('provinciasActivadas','provinciasVentas','provinciasCompras',
-            'provinciasVentasDiff','provinciasComprasDiff','eventosimpuestos'));
-
-		$impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
-		$this->set(compact('impuestosactivos'));
+        $eventosimpuestos = $this->Eventosimpuesto->find('all',$conditionsEventosimpuestos);
+        $this->set(compact('provinciasActivadas','provinciasVentas','provinciasCompras','provinciasVentasDiff','provinciasComprasDiff','eventosimpuestos'));
+        $impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
+        $this->set(compact('impuestosactivos'));
         $cuentascliente=[];
         if($impcli['Impcli']['impuesto_id']=='21'){
             //si es actividades economicas tengo que envias los movimientos bancarios que esten en la cuenta
@@ -600,459 +590,459 @@ class ImpclisController extends AppController {
         }
         $this->set(compact('cuentascliente'));
     }
-	public function papeldetrabajoactividadesvarias($impcliid=null,$periodo=null) {
-		ini_set('memory_limit', '2560M');
-		$this->loadModel('Actividadcliente');
-		$this->loadModel('Cuenta');
-		$this->loadModel('Cliente');
-		$this->loadModel('Tipogasto');
-		$this->set('periodo',$periodo);
-		$this->set('impcliid',$impcliid);
-        $cuentasdeActVarias = $this->Cuenta->cuentasdeActVarias;
+    public function papeldetrabajoactividadesvarias($impcliid=null,$periodo=null) {
+            ini_set('memory_limit', '2560M');
+            $this->loadModel('Actividadcliente');
+            $this->loadModel('Cuenta');
+            $this->loadModel('Cliente');
+            $this->loadModel('Tipogasto');
+            $this->set('periodo',$periodo);
+            $this->set('impcliid',$impcliid);
+    $cuentasdeActVarias = $this->Cuenta->cuentasdeActVarias;
 
-		$options = [
-			'contain'=>[
-                'Impuesto'=>[
-                    'Asientoestandare'=>[
-						'conditions'=>[
-							'tipoasiento'=>'impuestos'
-						],
-						'Cuenta'
-					],
-                ],
-				'Cliente'=>[
-                    'Cuentascliente'=>[
-                        'Cuenta',
-                        'conditions'=>[
-                            'Cuentascliente.cuenta_id' => $cuentasdeActVarias,
-                        ]
-                    ]
-                ],
-				'Asiento'=>[
-					'Movimiento'=>['Cuentascliente'],
-					'conditions'=>['periodo'=>$periodo]
-				],
-				/*'Impcliprovincia'=>[
-					'Localidade'=>[
-						'Partido'
-						],
-					'conditions'=>[
-						'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
-							'impcli_id' => $impcliid,
-						],
-						'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']				
-					],
-				],*/
+            $options = [
+                    'contain'=>[
+            'Impuesto'=>[
+                'Asientoestandare'=>[
+                                            'conditions'=>[
+                                                    'tipoasiento'=>'impuestos'
+                                            ],
+                                            'Cuenta'
+                                    ],
             ],
-			'conditions' => ['Impcli.' . $this->Impcli->primaryKey => $impcliid]
-        ];
-		$impcli = $this->Impcli->find('first', $options);
-		$this->set('impcli',$impcli);
+                            'Cliente'=>[
+                'Cuentascliente'=>[
+                    'Cuenta',
+                    'conditions'=>[
+                        'Cuentascliente.cuenta_id' => $cuentasdeActVarias,
+                    ]
+                ]
+            ],
+                            'Asiento'=>[
+                                    'Movimiento'=>['Cuentascliente'],
+                                    'conditions'=>['periodo'=>$periodo]
+                            ],
+                            /*'Impcliprovincia'=>[
+                                    'Localidade'=>[
+                                            'Partido'
+                                            ],
+                                    'conditions'=>[
+                                            'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
+                                                    'impcli_id' => $impcliid,
+                                            ],
+                                            'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']				
+                                    ],
+                            ],*/
+        ],
+                    'conditions' => ['Impcli.' . $this->Impcli->primaryKey => $impcliid]
+    ];
+            $impcli = $this->Impcli->find('first', $options);
+            $this->set('impcli',$impcli);
 
-		$impcliprovinciasoptions = [
-			'contain'=>[
-				'Localidade'=>[
-					'Partido'
-				],
-			],
-			//'fields'=>["*"],					
-			'conditions'=>[
-				'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
-				'impcli_id' => $impcliid,
-			],		
-			'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']							
-		]; 
-		$impcliprovincias = $this->Impcli->Impcliprovincia->find('all',$impcliprovinciasoptions);		
-		$impcliprovinciasnorepetidas = [];
-		//no se pudo hacer la consulta para que traiga los resultados que debia, asi que vamos a borrar los repetidos
-		//y dejar el maximo para cada jurisdiccion y nada mas
-		foreach ($impcliprovincias as $icp => $impcliprovincia) {
-			if(in_array($impcliprovincia['Impcliprovincia']['localidade_id'], $impcliprovinciasnorepetidas)){
-				 unset($impcliprovincias[$icp]);
-			}else{
-				 $impcliprovinciasnorepetidas[] = $impcliprovincia['Impcliprovincia']['localidade_id'];
-			}
-		}
-		$this->set('impcliprovincias',$impcliprovincias);
+            $impcliprovinciasoptions = [
+                    'contain'=>[
+                            'Localidade'=>[
+                                    'Partido'
+                            ],
+                    ],
+                    //'fields'=>["*"],					
+                    'conditions'=>[
+                            'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
+                            'impcli_id' => $impcliid,
+                    ],		
+                    'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']							
+            ]; 
+            $impcliprovincias = $this->Impcli->Impcliprovincia->find('all',$impcliprovinciasoptions);		
+            $impcliprovinciasnorepetidas = [];
+            //no se pudo hacer la consulta para que traiga los resultados que debia, asi que vamos a borrar los repetidos
+            //y dejar el maximo para cada jurisdiccion y nada mas
+            foreach ($impcliprovincias as $icp => $impcliprovincia) {
+                    if(in_array($impcliprovincia['Impcliprovincia']['localidade_id'], $impcliprovinciasnorepetidas)){
+                             unset($impcliprovincias[$icp]);
+                    }else{
+                             $impcliprovinciasnorepetidas[] = $impcliprovincia['Impcliprovincia']['localidade_id'];
+                    }
+            }
+            $this->set('impcliprovincias',$impcliprovincias);
 
-		//vamos a buscar las actividades y las vamos a traer con las ventas
-		$pemes = substr($periodo, 0, 2);
-		$peanio = substr($periodo, 3);
-		$bajaesMayorQuePeriodo = array(
-			'OR'=>array(
-				'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
-				'AND'=>array(
-					'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
-					'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
-				),
-			)
-		);
-        $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
-        $conditionsActividades = array(
-			'contain'=>array(
-				'Actividade'=>array(
-					'Alicuota'=>array(
-						),	
-					),
-				'Basesprorrateada'=>array(
-					'Impcliprovincia'=>array(
-						'Partido'
-						),
-					'conditions'=>array(
-						'Basesprorrateada.periodo'=>$periodo
-						)
-					),
-				'Encuadrealicuota'=>array(//esto se puede mejorar trayendo solo los encuadresalicuotas que sean de las localidades que estan en impcliprovincia
-					),
-				'Venta'=>array(
-					'Localidade'=>array(
-						'Partido'
-						),
-					'Comprobante',
-					'conditions'=>array(
-						'Venta.periodo'=>$periodo,
-						'Venta.tipogasto_id NOT IN '=>$ingresosBienDeUso
-                        )
-					),
-				'Compra'=>array(
-					'Localidade'=>array(
-						'Partido'
-						),
-					'conditions'=>array(
-						'Compra.periodo'=>$periodo
-						)
-					),
-				'Cliente'=>array(					
-					'Impcli'=>array(
-						'Conceptosrestante'=>array(
-							'conditions'=>array(
-								'Conceptosrestante.periodo'=>$periodo,
-								)	
-							),
-						'conditions'=>array(
-							'Impcli.impuesto_id'=>6/*Actividades Varias*/,
-							)
-					),						
-					'fields'=>array('Cliente.id','Cliente.nombre','Cliente.cuitcontribullente'),
-				),
-			),
-			'conditions' => array(
-				'Actividadcliente.cliente_id'=>$impcli['Cliente']['id'],
-				//traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
-				'OR'=>[
-					$bajaesMayorQuePeriodo,
-					'Actividadcliente.baja = ""',
-					'Actividadcliente.baja = "0000-00-00"',
-					'Actividadcliente.baja is null' ,
-				]
-			),
-		);
-		$actividadclientes = $this->Actividadcliente->find('all',$conditionsActividades);
-		$this->set('actividadclientes',$actividadclientes);
-		//aca vamos a controlar que las provincias que esten activadas en este impuesto sean las mismas que las provincias donde se han cargado ventas y compras
-		$provinciasActivadas = array();
-		$provinciasVentas = array();
-		$provinciasVentasDiff = array();
-		$provinciasCompras = array();
-		$provinciasComprasDiff = array();
-		foreach ($impcliprovincias as $key => $impcliprovincia) {
-			if(!array_key_exists($impcliprovincia['Impcliprovincia']['localidade_id'], $provinciasActivadas)){
-		        $provinciasActivadas[$impcliprovincia['Impcliprovincia']['localidade_id']]=$impcliprovincia['Localidade']['Partido']['nombre']."-".$impcliprovincia['Localidade']['nombre'];
-		    }
-		}
-		foreach ($actividadclientes as $key => $actividadcliente) {
-			foreach ($actividadcliente['Venta'] as $key => $venta) {
-				if(!array_key_exists($venta['Localidade']['id'], $provinciasVentas)){
-				 	$provinciasVentas[$venta['Localidade']['id']]=$venta['Localidade']['Partido']['nombre']."-".$venta['Localidade']['nombre'];
-			    }
-			}
-			foreach ($actividadcliente['Compra'] as $key => $compra) {
-				if(!array_key_exists($compra['Localidade']['id'], $provinciasCompras)){
-				 	$provinciasCompras[$compra['Localidade']['id']]=
-                        $compra['Localidade']['Partido']['nombre']."-".
-						$compra['Localidade']['nombre'];
-			    }
-			}
-		}
-		// ya tenemos los array donde estan las provincias activadas, las de las compras y las de las ventas hay que compararlas y generar alertas para que
-		// el informe controle y no te deje avanzar hasta que el array de compras y de ventas este vacio
-		$provinciasVentasDiff = array_diff($provinciasVentas,$provinciasActivadas);
-		//Las compras no deben bloquear el calculod e este papel de trabajo;
-		$provinciasComprasDiff = []; // array_diff($provinciasCompras,$provinciasActivadas);
-		$this->set(compact('provinciasActivadas','provinciasVentas','provinciasCompras','provinciasVentasDiff','provinciasComprasDiff'));
+            //vamos a buscar las actividades y las vamos a traer con las ventas
+            $pemes = substr($periodo, 0, 2);
+            $peanio = substr($periodo, 3);
+            $bajaesMayorQuePeriodo = array(
+                    'OR'=>array(
+                            'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+                            'AND'=>array(
+                                    'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+                                    'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+                            ),
+                    )
+            );
+    $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
+    $conditionsActividades = array(
+                    'contain'=>array(
+                            'Actividade'=>array(
+                                    'Alicuota'=>array(
+                                            ),	
+                                    ),
+                            'Basesprorrateada'=>array(
+                                    'Impcliprovincia'=>array(
+                                            'Partido'
+                                            ),
+                                    'conditions'=>array(
+                                            'Basesprorrateada.periodo'=>$periodo
+                                            )
+                                    ),
+                            'Encuadrealicuota'=>array(//esto se puede mejorar trayendo solo los encuadresalicuotas que sean de las localidades que estan en impcliprovincia
+                                    ),
+                            'Venta'=>array(
+                                    'Localidade'=>array(
+                                            'Partido'
+                                            ),
+                                    'Comprobante',
+                                    'conditions'=>array(
+                                            'Venta.periodo'=>$periodo,
+                                            'Venta.tipogasto_id NOT IN '=>$ingresosBienDeUso
+                    )
+                                    ),
+                            'Compra'=>array(
+                                    'Localidade'=>array(
+                                            'Partido'
+                                            ),
+                                    'conditions'=>array(
+                                            'Compra.periodo'=>$periodo
+                                            )
+                                    ),
+                            'Cliente'=>array(					
+                                    'Impcli'=>array(
+                                            'Conceptosrestante'=>array(
+                                                    'conditions'=>array(
+                                                            'Conceptosrestante.periodo'=>$periodo,
+                                                            )	
+                                                    ),
+                                            'conditions'=>array(
+                                                    'Impcli.impuesto_id'=>6/*Actividades Varias*/,
+                                                    )
+                                    ),						
+                                    'fields'=>array('Cliente.id','Cliente.nombre','Cliente.cuitcontribullente'),
+                            ),
+                    ),
+                    'conditions' => array(
+                            'Actividadcliente.cliente_id'=>$impcli['Cliente']['id'],
+                            //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+                            'OR'=>[
+                                    $bajaesMayorQuePeriodo,
+                                    'Actividadcliente.baja = ""',
+                                    'Actividadcliente.baja = "0000-00-00"',
+                                    'Actividadcliente.baja is null' ,
+                            ]
+                    ),
+            );
+            $actividadclientes = $this->Actividadcliente->find('all',$conditionsActividades);
+            $this->set('actividadclientes',$actividadclientes);
+            //aca vamos a controlar que las provincias que esten activadas en este impuesto sean las mismas que las provincias donde se han cargado ventas y compras
+            $provinciasActivadas = array();
+            $provinciasVentas = array();
+            $provinciasVentasDiff = array();
+            $provinciasCompras = array();
+            $provinciasComprasDiff = array();
+            foreach ($impcliprovincias as $key => $impcliprovincia) {
+                    if(!array_key_exists($impcliprovincia['Impcliprovincia']['localidade_id'], $provinciasActivadas)){
+                    $provinciasActivadas[$impcliprovincia['Impcliprovincia']['localidade_id']]=$impcliprovincia['Localidade']['Partido']['nombre']."-".$impcliprovincia['Localidade']['nombre'];
+                }
+            }
+            foreach ($actividadclientes as $key => $actividadcliente) {
+                    foreach ($actividadcliente['Venta'] as $key => $venta) {
+                            if(!array_key_exists($venta['Localidade']['id'], $provinciasVentas)){
+                                    $provinciasVentas[$venta['Localidade']['id']]=$venta['Localidade']['Partido']['nombre']."-".$venta['Localidade']['nombre'];
+                        }
+                    }
+                    foreach ($actividadcliente['Compra'] as $key => $compra) {
+                            if(!array_key_exists($compra['Localidade']['id'], $provinciasCompras)){
+                                    $provinciasCompras[$compra['Localidade']['id']]=
+                    $compra['Localidade']['Partido']['nombre']."-".
+                                            $compra['Localidade']['nombre'];
+                        }
+                    }
+            }
+            // ya tenemos los array donde estan las provincias activadas, las de las compras y las de las ventas hay que compararlas y generar alertas para que
+            // el informe controle y no te deje avanzar hasta que el array de compras y de ventas este vacio
+            $provinciasVentasDiff = array_diff($provinciasVentas,$provinciasActivadas);
+            //Las compras no deben bloquear el calculod e este papel de trabajo;
+            $provinciasComprasDiff = []; // array_diff($provinciasCompras,$provinciasActivadas);
+            $this->set(compact('provinciasActivadas','provinciasVentas','provinciasCompras','provinciasVentasDiff','provinciasComprasDiff'));
 
-		$impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
-		$this->set(compact('impuestosactivos'));
-	}
-	public function papeldetrabajomonotributo($impcliid=null,$periodo=null){
-		ini_set('memory_limit', '2560M');
-		$this->loadModel('Venta');
-		$this->loadModel('Compra');
-		$this->loadModel('Domicilio');
-		$this->loadModel('Categoriamonotributo');
-		$this->loadModel('Actividadcliente');
+            $impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
+            $this->set(compact('impuestosactivos'));
+    }
+    public function papeldetrabajomonotributo($impcliid=null,$periodo=null){
+        ini_set('memory_limit', '2560M');
+        $this->loadModel('Venta');
+        $this->loadModel('Compra');
+        $this->loadModel('Domicilio');
+        $this->loadModel('Categoriamonotributo');
+        $this->loadModel('Actividadcliente');
         $this->loadModel('Puntosdeventa');
         $this->loadModel('Comprobante');
         $this->loadModel('Cliente');
 
-		$strDatePeriodo='01-'.$periodo;
-		$mesPeriodo = date('m',strtotime($strDatePeriodo));
-		$añoPeriodo = date('Y',strtotime($strDatePeriodo));
-		$date = strtotime('2012-05-01 -4 months');
-		//primero hay que ver en que cuatrimestre estamos ese va a ser nuestro 3 cuatrimestre, tengo que calcular los 2 anteriores y determinar cual es el periodo en el que va a comenzar el año
-		$mesinicioDelAño = '01';
-		$añoinicioDelAño = $añoPeriodo;
+        $strDatePeriodo='01-'.$periodo;
+        $mesPeriodo = date('m',strtotime($strDatePeriodo));
+        $añoPeriodo = date('Y',strtotime($strDatePeriodo));
+        $date = strtotime('2012-05-01 -4 months');
+        //primero hay que ver en que cuatrimestre estamos ese va a ser nuestro 3 cuatrimestre, tengo que calcular los 2 anteriores y determinar cual es el periodo en el que va a comenzar el año
+        $mesinicioDelAño = '01';
+        $añoinicioDelAño = $añoPeriodo;
         $mesParaProximaRecategorizacion= 1;
         $mesinicioDelCuatrimestre= '01';
-		$showBtnChangeRecategorizacion = false;
-		switch ($mesPeriodo) {
-			case '01':
-				$mesParaProximaRecategorizacion= 4;
-                $mesinicioDelCuatrimestre = '01';
-				$mesinicioDelAño= '05';
-				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-				break;
-			case '02':
-				$mesParaProximaRecategorizacion= 3;
-                $mesinicioDelCuatrimestre = '01';
-                $mesinicioDelAño= '05';
-				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-				break;
-			case '03':
-				$mesParaProximaRecategorizacion= 2;
-                $mesinicioDelCuatrimestre = '01';
-                $mesinicioDelAño= '05';
-				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-				break;
-			case '04':/*Abril*/
-				$mesParaProximaRecategorizacion= 1;
-                $mesinicioDelCuatrimestre = '01';
-                $mesinicioDelAño= '05';
-				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-				$showBtnChangeRecategorizacion = true;
-				break;
-			case '05':
-				$mesParaProximaRecategorizacion= 4;
-                $mesinicioDelCuatrimestre = '05';
-                $mesinicioDelAño= '09';
-				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-				break;
-			case '06':
-				$mesParaProximaRecategorizacion= 3;
-                $mesinicioDelCuatrimestre = '05';
-                $mesinicioDelAño= '09';
-				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-				break;
-			case '07':
-				$mesParaProximaRecategorizacion= 2;
-                $mesinicioDelCuatrimestre = '05';
-                $mesinicioDelAño= '09';
-				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-				break;
-			case '08':/*Agosto*/
-				$mesParaProximaRecategorizacion= 1;
-                $mesinicioDelCuatrimestre = '05';
-                $mesinicioDelAño= '09';
-				$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-				$showBtnChangeRecategorizacion = true;
-				break;
-			case '09':
-				$mesParaProximaRecategorizacion= 4;
-                $mesinicioDelCuatrimestre = '09';
-                $mesinicioDelAño= '01';
-				break;
-			case '10':
-				$mesParaProximaRecategorizacion= 3;
-                $mesinicioDelCuatrimestre = '09';
-                $mesinicioDelAño= '01';
-				break;
-			case '11':
-				$mesParaProximaRecategorizacion= 2;
-                $mesinicioDelCuatrimestre = '09';
-                $mesinicioDelAño= '01';
-				break;
-			case '12':/*Diciembre*/
-				$mesParaProximaRecategorizacion= 1;
-                $mesinicioDelCuatrimestre = '09';
-				$mesinicioDelAño= '01';
-				$showBtnChangeRecategorizacion = true;
-				break;
-			default:
-				# code...
-				break;
-		}
-		$periodoDeInicio = '01-'.$mesinicioDelAño.'-'.$añoinicioDelAño;
-		$mesFinDelAño="";
-		$añoFINDelAño="";
-		$mesFinDelAño = date('m',strtotime($periodoDeInicio.' +12 months'));
-		$añoFINDelAño = date('Y',strtotime($periodoDeInicio.' +12 months'));
-		$periodoDeFIN = date('d-m-Y',strtotime($periodoDeInicio.' +12 months'));
-		$this->set(compact('periodoDeInicio','periodoDeFIN','mesParaProximaRecategorizacion','showBtnChangeRecategorizacion'));
+        $showBtnChangeRecategorizacion = false;
+        switch ($mesPeriodo) {
+                case '01':
+                        $mesParaProximaRecategorizacion= 4;
+        $mesinicioDelCuatrimestre = '01';
+                        $mesinicioDelAño= '05';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        break;
+                case '02':
+                        $mesParaProximaRecategorizacion= 3;
+        $mesinicioDelCuatrimestre = '01';
+        $mesinicioDelAño= '05';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        break;
+                case '03':
+                        $mesParaProximaRecategorizacion= 2;
+        $mesinicioDelCuatrimestre = '01';
+        $mesinicioDelAño= '05';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        break;
+                case '04':/*Abril*/
+                        $mesParaProximaRecategorizacion= 1;
+        $mesinicioDelCuatrimestre = '01';
+        $mesinicioDelAño= '05';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        $showBtnChangeRecategorizacion = true;
+                        break;
+                case '05':
+                        $mesParaProximaRecategorizacion= 4;
+        $mesinicioDelCuatrimestre = '05';
+        $mesinicioDelAño= '09';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        break;
+                case '06':
+                        $mesParaProximaRecategorizacion= 3;
+        $mesinicioDelCuatrimestre = '05';
+        $mesinicioDelAño= '09';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        break;
+                case '07':
+                        $mesParaProximaRecategorizacion= 2;
+        $mesinicioDelCuatrimestre = '05';
+        $mesinicioDelAño= '09';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        break;
+                case '08':/*Agosto*/
+                        $mesParaProximaRecategorizacion= 1;
+        $mesinicioDelCuatrimestre = '05';
+        $mesinicioDelAño= '09';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        $showBtnChangeRecategorizacion = true;
+                        break;
+                case '09':
+                        $mesParaProximaRecategorizacion= 4;
+        $mesinicioDelCuatrimestre = '09';
+        $mesinicioDelAño= '01';
+                        break;
+                case '10':
+                        $mesParaProximaRecategorizacion= 3;
+        $mesinicioDelCuatrimestre = '09';
+        $mesinicioDelAño= '01';
+                        break;
+                case '11':
+                        $mesParaProximaRecategorizacion= 2;
+        $mesinicioDelCuatrimestre = '09';
+        $mesinicioDelAño= '01';
+                        break;
+                case '12':/*Diciembre*/
+                        $mesParaProximaRecategorizacion= 1;
+        $mesinicioDelCuatrimestre = '09';
+                        $mesinicioDelAño= '01';
+                        $showBtnChangeRecategorizacion = true;
+                        break;
+                default:
+                        # code...
+                        break;
+        }
+        $periodoDeInicio = '01-'.$mesinicioDelAño.'-'.$añoinicioDelAño;
+        $mesFinDelAño="";
+        $añoFINDelAño="";
+        $mesFinDelAño = date('m',strtotime($periodoDeInicio.' +12 months'));
+        $añoFINDelAño = date('Y',strtotime($periodoDeInicio.' +12 months'));
+        $periodoDeFIN = date('d-m-Y',strtotime($periodoDeInicio.' +12 months'));
+        $this->set(compact('periodoDeInicio','periodoDeFIN','mesParaProximaRecategorizacion','showBtnChangeRecategorizacion'));
 
-		$options = array(
-			'contain'=>[
-				'Impuesto'=>[
-					'Asientoestandare'=>[
-						'conditions'=>[
-							'tipoasiento'=>'impuestos'
-						],
-						'Cuenta'
-					]
-				],
-				'Cliente'=>[
-					'Cuentascliente'
-				],
-				'Asiento'=>[
-					'Movimiento'=>[
-						'Cuentascliente'
-					],
-					'conditions'=>[
-						'periodo'=>$periodo,
-						'tipoasiento'=>'impuestos'
-					]
-				],
-			],
-			'conditions' => array(
-				'Impcli.' . $this->Impcli->primaryKey => $impcliid
-			)
-		);
-		$myImpcli = $this->Impcli->find('first', $options);
-		$this->set('impcli',$myImpcli);
-		$esMayorQuePeriodoInicio = array(
-				//Periodo FIN es mayor que el periodo
-            	'OR'=>array(
-            		'SUBSTRING(Venta.periodo,4,7)*1 > '.$añoinicioDelAño.'*1',
-            		'AND'=>array(
-            			'SUBSTRING(Venta.periodo,4,7)*1 >= '.$añoinicioDelAño.'*1',
-            			'SUBSTRING(Venta.periodo,1,2) >= '.$mesinicioDelAño.'*1'
-            			),												            		
-            		)
-            	);
-		//B: Es mayor que periodo Desde
-		$esMenorQuePeriodoFIN = array(
-			'OR'=>array(
-	    		'SUBSTRING(Venta.periodo,4,7)*1 < '.$añoFINDelAño.'*1',
-	    		'AND'=>array(
-	    			'SUBSTRING(Venta.periodo,4,7)*1 <= '.$añoFINDelAño.'*1',
-	    			'SUBSTRING(Venta.periodo,1,2) <= '.$mesFinDelAño.'*1'
-	    			),												            		
-	    		)
-		);
-		$esMenorQuePeriodoFINConsulta = array(
-			'OR'=>array(
-	    		'SUBSTRING(Venta.periodo,4,7)*1 < '.$añoPeriodo.'*1',
-	    		'AND'=>array(
-	    			'SUBSTRING(Venta.periodo,4,7)*1 <= '.$añoPeriodo.'*1',
-	    			'SUBSTRING(Venta.periodo,1,2) <= '.$mesPeriodo.'*1'
-	    			),												            		
-	    		)
-		);
-		$esMayorQuePeriodoInicioCompra = array(
-				//Periodo FIN es mayor que el periodo
-            	'OR'=>array(
-            		'SUBSTRING(Compra.periodo,4,7)*1 > '.$añoinicioDelAño.'*1',
-            		'AND'=>array(
-            			'SUBSTRING(Compra.periodo,4,7)*1 >= '.$añoinicioDelAño.'*1',
-            			'SUBSTRING(Compra.periodo,1,2) >= '.$mesinicioDelAño.'*1'
-            			),												            		
-            		)
-            	);
-		//B: Es mayor que periodo Desde
-		$esMenorQuePeriodoFINCompra = array(
-			'OR'=>array(
-	    		'SUBSTRING(Compra.periodo,4,7)*1 < '.$añoFINDelAño.'*1',
-	    		'AND'=>array(
-	    			'SUBSTRING(Compra.periodo,4,7)*1 <= '.$añoFINDelAño.'*1',
-	    			'SUBSTRING(Compra.periodo,1,2) <= '.$mesFinDelAño.'*1'
-	    			),												            		
-	    		)
-		);
-		$esMenorQuePeriodoFINCompraConsulta = array(
-			'OR'=>array(
-	    		'SUBSTRING(Compra.periodo,4,7)*1 < '.$añoPeriodo.'*1',
-	    		'AND'=>array(
-	    			'SUBSTRING(Compra.periodo,4,7)*1 <= '.$añoPeriodo.'*1',
-	    			'SUBSTRING(Compra.periodo,1,2) <= '.$mesPeriodo.'*1'
-	    			),												            		
-	    		)
-		);
-		$ventas = $this->Venta->find('all',array(
-									'fields' => array('SUM(Venta.neto) AS neto','SUM(Venta.total) AS total','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Comprobante.tipo','Venta.actividadcliente_id'),
-									'contain'=>array(
-										'Comprobante',
-										'Actividadcliente',	
-										),								
-									'conditions'=>array(
-										'Venta.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
-								 		'AND'=>array(
-									 				$esMayorQuePeriodoInicio,
-									 				$esMenorQuePeriodoFIN,
-									 				$esMenorQuePeriodoFINConsulta
-									 			)
-									 		),
-								 	'group'=>array(
-									 	'Venta.periodo','Venta.comprobante_id','Venta.actividadcliente_id'
-									 	)
-							 		));
-		$optionActividad=array(
-			'contain' => array('Actividade'),
-			'conditions'=>array(
-					"Actividadcliente.cliente_id" => $myImpcli['Impcli']['cliente_id'],
-				),
-		);
-		$actividadclientes = $this->Actividadcliente->find('all',$optionActividad);
-		$compras = $this->Compra->find('all',array(
-									'fields' => array('SUM(Compra.total) AS total','SUM(Compra.kw) AS kw','SUM(Compra.superficie) AS superficie','Compra.periodo','Compra.imputacion','Compra.tipogasto_id'),
-									'conditions'=>array(
-										'Compra.tipogasto_id'=> array(19/*Factura de Luz*/,21/*Alquileres*/) ,
-										'Compra.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
-								 		'AND'=>array(
-									 				$esMayorQuePeriodoInicioCompra,
-									 				$esMenorQuePeriodoFINCompra,
-									 				$esMenorQuePeriodoFINCompraConsulta 
-									 			)
-									 		),
-								 	'group'=>array(
-									 	'Compra.periodo','Compra.tipogasto_id'
-									 	)
-							 		));
-		$domicilios = $this->Domicilio->find('all',array(
-								'fields' => array('SUM(Domicilio.superficie) AS superficie'),
-								'conditions'=>array(
-									'Domicilio.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
-									),
-							 	'group'=>array(
-								 	'Domicilio.cliente_id'
-								 	)
-								));
-		$strDatePeriodo = '28-'.$periodo;
+        $options = array(
+                'contain'=>[
+                        'Impuesto'=>[
+                                'Asientoestandare'=>[
+                                        'conditions'=>[
+                                                'tipoasiento'=>'impuestos'
+                                        ],
+                                        'Cuenta'
+                                ]
+                        ],
+                        'Cliente'=>[
+                                'Cuentascliente'
+                        ],
+                        'Asiento'=>[
+                                'Movimiento'=>[
+                                        'Cuentascliente'
+                                ],
+                                'conditions'=>[
+                                        'periodo'=>$periodo,
+                                        'tipoasiento'=>'impuestos'
+                                ]
+                        ],
+                ],
+                'conditions' => array(
+                        'Impcli.' . $this->Impcli->primaryKey => $impcliid
+                )
+        );
+        $myImpcli = $this->Impcli->find('first', $options);
+        $this->set('impcli',$myImpcli);
+        $esMayorQuePeriodoInicio = array(
+                        //Periodo FIN es mayor que el periodo
+        'OR'=>array(
+                'SUBSTRING(Venta.periodo,4,7)*1 > '.$añoinicioDelAño.'*1',
+                'AND'=>array(
+                        'SUBSTRING(Venta.periodo,4,7)*1 >= '.$añoinicioDelAño.'*1',
+                        'SUBSTRING(Venta.periodo,1,2) >= '.$mesinicioDelAño.'*1'
+                        ),												            		
+                )
+        );
+        //B: Es mayor que periodo Desde
+        $esMenorQuePeriodoFIN = array(
+                'OR'=>array(
+                'SUBSTRING(Venta.periodo,4,7)*1 < '.$añoFINDelAño.'*1',
+                'AND'=>array(
+                        'SUBSTRING(Venta.periodo,4,7)*1 <= '.$añoFINDelAño.'*1',
+                        'SUBSTRING(Venta.periodo,1,2) <= '.$mesFinDelAño.'*1'
+                        ),												            		
+                )
+        );
+        $esMenorQuePeriodoFINConsulta = array(
+                'OR'=>array(
+                'SUBSTRING(Venta.periodo,4,7)*1 < '.$añoPeriodo.'*1',
+                'AND'=>array(
+                        'SUBSTRING(Venta.periodo,4,7)*1 <= '.$añoPeriodo.'*1',
+                        'SUBSTRING(Venta.periodo,1,2) <= '.$mesPeriodo.'*1'
+                        ),												            		
+                )
+        );
+        $esMayorQuePeriodoInicioCompra = array(
+                        //Periodo FIN es mayor que el periodo
+        'OR'=>array(
+                'SUBSTRING(Compra.periodo,4,7)*1 > '.$añoinicioDelAño.'*1',
+                'AND'=>array(
+                        'SUBSTRING(Compra.periodo,4,7)*1 >= '.$añoinicioDelAño.'*1',
+                        'SUBSTRING(Compra.periodo,1,2) >= '.$mesinicioDelAño.'*1'
+                        ),												            		
+                )
+        );
+        //B: Es mayor que periodo Desde
+        $esMenorQuePeriodoFINCompra = array(
+                'OR'=>array(
+                'SUBSTRING(Compra.periodo,4,7)*1 < '.$añoFINDelAño.'*1',
+                'AND'=>array(
+                        'SUBSTRING(Compra.periodo,4,7)*1 <= '.$añoFINDelAño.'*1',
+                        'SUBSTRING(Compra.periodo,1,2) <= '.$mesFinDelAño.'*1'
+                        ),												            		
+                )
+        );
+        $esMenorQuePeriodoFINCompraConsulta = array(
+                'OR'=>array(
+                'SUBSTRING(Compra.periodo,4,7)*1 < '.$añoPeriodo.'*1',
+                'AND'=>array(
+                        'SUBSTRING(Compra.periodo,4,7)*1 <= '.$añoPeriodo.'*1',
+                        'SUBSTRING(Compra.periodo,1,2) <= '.$mesPeriodo.'*1'
+                        ),												            		
+                )
+        );
+        $ventas = $this->Venta->find('all',array(
+                                                                'fields' => array('SUM(Venta.neto) AS neto','SUM(Venta.total) AS total','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Comprobante.tipo','Venta.actividadcliente_id'),
+                                                                'contain'=>array(
+                                                                        'Comprobante',
+                                                                        'Actividadcliente',	
+                                                                        ),								
+                                                                'conditions'=>array(
+                                                                        'Venta.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+                                                                        'AND'=>array(
+                                                                                                $esMayorQuePeriodoInicio,
+                                                                                                $esMenorQuePeriodoFIN,
+                                                                                                $esMenorQuePeriodoFINConsulta
+                                                                                        )
+                                                                                ),
+                                                                'group'=>array(
+                                                                        'Venta.periodo','Venta.comprobante_id','Venta.actividadcliente_id'
+                                                                        )
+                                                                ));
+        $optionActividad=array(
+                'contain' => array('Actividade'),
+                'conditions'=>array(
+                                "Actividadcliente.cliente_id" => $myImpcli['Impcli']['cliente_id'],
+                        ),
+        );
+        $actividadclientes = $this->Actividadcliente->find('all',$optionActividad);
+        $compras = $this->Compra->find('all',array(
+                                                                'fields' => array('SUM(Compra.total) AS total','SUM(Compra.kw) AS kw','SUM(Compra.superficie) AS superficie','Compra.periodo','Compra.imputacion','Compra.tipogasto_id'),
+                                                                'conditions'=>array(
+                                                                        'Compra.tipogasto_id'=> array(19/*Factura de Luz*/,21/*Alquileres*/) ,
+                                                                        'Compra.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+                                                                        'AND'=>array(
+                                                                                                $esMayorQuePeriodoInicioCompra,
+                                                                                                $esMenorQuePeriodoFINCompra,
+                                                                                                $esMenorQuePeriodoFINCompraConsulta 
+                                                                                        )
+                                                                                ),
+                                                                'group'=>array(
+                                                                        'Compra.periodo','Compra.tipogasto_id'
+                                                                        )
+                                                                ));
+        $domicilios = $this->Domicilio->find('all',array(
+                                                        'fields' => array('SUM(Domicilio.superficie) AS superficie'),
+                                                        'conditions'=>array(
+                                                                'Domicilio.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+                                                                ),
+                                                        'group'=>array(
+                                                                'Domicilio.cliente_id'
+                                                                )
+                                                        ));
+        $strDatePeriodo = '28-'.$periodo;
 
-		$optionsCategoriaMax=array(
-			'fields'=>array('MAX(Categoriamonotributo.vigenciadesde) AS vigenciadesde'),
-			'conditions'=>array(
-					"Categoriamonotributo.vigenciadesde <= '".date('Y-m-D',strtotime($strDatePeriodo))."'",
-				),
-			);
-		$maxcategory=$this->Categoriamonotributo->find('first',$optionsCategoriaMax);
-		$this->set('maxcategory',$maxcategory);
+        $optionsCategoriaMax=array(
+                'fields'=>array('MAX(Categoriamonotributo.vigenciadesde) AS vigenciadesde'),
+                'conditions'=>array(
+                                "Categoriamonotributo.vigenciadesde <= '".date('Y-m-D',strtotime($strDatePeriodo))."'",
+                        ),
+                );
+        $maxcategory=$this->Categoriamonotributo->find('first',$optionsCategoriaMax);
+        $this->set('maxcategory',$maxcategory);
 
-		$optionsCategoria=array(
-			'conditions'=>array(
-					'Categoriamonotributo.vigenciadesde'=>$maxcategory[0]['vigenciadesde']
-				),
-			'order'=>array('Categoriamonotributo.orden')
-			);
-		$categoriamonotributos = $this->Categoriamonotributo->find('all',$optionsCategoria);
-		$this->set(compact('impcliid','periodo','periodoDeInicio','ventas','compras','domicilios'
-			,'categoriamonotributos','actividadclientes'));
+        $optionsCategoria=array(
+                'conditions'=>array(
+                                'Categoriamonotributo.vigenciadesde'=>$maxcategory[0]['vigenciadesde']
+                        ),
+                'order'=>array('Categoriamonotributo.orden')
+                );
+        $categoriamonotributos = $this->Categoriamonotributo->find('all',$optionsCategoria);
+        $this->set(compact('impcliid','periodo','periodoDeInicio','ventas','compras','domicilios'
+                ,'categoriamonotributos','actividadclientes'));
 
-		$impuestosactivos = $this->Cliente->impuestosActivados($myImpcli['Impcli']['cliente_id'],$periodo);
-		$this->set(compact('impuestosactivos'));
+        $impuestosactivos = $this->Cliente->impuestosActivados($myImpcli['Impcli']['cliente_id'],$periodo);
+        $this->set(compact('impuestosactivos'));
 
     }
     public function papeldetrabajoddjj($periodo=null,$impcliid=null){
-		ini_set('memory_limit', '2560M');
-		$this->loadModel('Venta');
+        ini_set('memory_limit', '2560M');
+        $this->loadModel('Venta');
         $this->loadModel('Compra');
         $this->loadModel('Actividadcliente');
         $this->loadModel('Puntosdeventa');

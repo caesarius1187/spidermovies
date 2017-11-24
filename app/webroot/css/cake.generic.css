@@ -178,22 +178,29 @@ div.actions h3 {
 	.aimprimir{
 		width: 100%;
 	}
+        div.divFooter {
+            display: none;
+        }
 }
 @media print {
 	/*.pagebreak { page-break-before: always; }*/
 	.aimprimir{
-		width: 500px;
-		font-size: 8px;
+            width: 500px;
+            font-size: 8px;
 	}
 	div {
-		float: none !important;
+            float: none !important;
 	}
 	.divToLeft{
-		float: left !important;
+            float: left !important;
 	}
 	.divToRight{
-		float: right !important;
+            float: right !important;
 	}
+        div.divFooter {
+            position: fixed;
+            bottom: 0;
+        }
 }
 
 /** Tables **/
@@ -2697,8 +2704,24 @@ transition: all 0.4s ease-in-out;
 .tbl_border td, th{
 	border: 1px solid #000;
 }
+.tbl_verticalborder td, th{
+	border-left: 1px solid #000;
+        border-right: 1px solid #000;
+}
+.tdnoborder{
+	border: 0px solid #000;
+}
+.tdborder{
+	border: 1px solid #000;
+}
+.trTitle{
+	background-color: #E4E4E4;
+}
 .tblEstadoContable{
     border-collapse: collapse;
+}
+.tblBiendeUso td{
+    width: 60px;
 }
 .tblEstadoContable th{
     font-size: 14px;
@@ -2710,6 +2733,41 @@ transition: all 0.4s ease-in-out;
     font-weight: normal;
     border-collapse: collapse;
 }
+.tblBiendeUso th{
+  border: 1px solid #000;
+  position: relative;
+  /*padding: 10px;*/
+  font-size: 10px;
+}
+.tblBiendeUso td{
+  border: 1px solid #000;
+  position: relative;
+  /*padding: 10px;*/
+  font-size: 10px;
+}
+.tblEEPN tr td {
+  border: 1px solid #000;
+  position: relative;
+  /*padding: 10px;*/
+  font-size: 10px;
+}
+.tblEEPN th {
+  border: 1px solid #000;
+  position: relative;
+  /*padding: 10px;*/
+  font-size: 10px;
+}
+
+.tblEEPN th span {
+  transform-origin: 0 50%;
+  transform: rotate(-90deg); 
+  white-space: nowrap; 
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+}
+
 .tbl_tareaimp img{
 	cursor: pointer;
 }

@@ -1,25 +1,51 @@
 /**
  * Created by caesarius on 04/01/2017.
  */
-$(document).ready(function() {
+$(document).ready(function() {    
     $( "#clickExcel" ).click(function() {
-        $("#tblsys").table2excel({
-            // exclude CSS class
-            exclude: ".noExl",
-            name: "Conveniomultilateral",
-            filename:$('#clientenombre').val()+"-"+ $('#periodo').val()+"-"+"IVA"
-        });
+        showAllDivs();
+        var table2excel = new Table2Excel();
+        table2excel.export(document.querySelectorAll(".toExcelTable"));
+        CambiarTab("sumasysaldos");
     });
     var beforePrint = function() {
         $('#header').hide();
-        $('button').hide();
-        $('a').hide();
+        $('#headerCliente').hide();
+        $('#divTabs').hide();
+        showAllDivs();
+        tblsys.destroy();
+        $("#tableEvolucionPatrimonioNeto").css('font-size','10px');
+        $("#tableEvolucionPatrimonioNeto").css('transform','rotate(270deg)');
+        $("#tableEvolucionPatrimonioNeto").css('margin-left',' -100px');
+        $("#tableEvolucionPatrimonioNeto").css('margin-top','200px');
+        $("#tableEvolucionPatrimonioNeto").css('width','900px');
+        
+        $("#divContenedorEvolucionPatrimonioNeto").css('height','950px')
 
+        $("#tblanexoIBienesdeuso").css('font-size','10px');
+        $("#tblanexoIBienesdeuso").css('transform','rotate(270deg)');
+        $("#tblanexoIBienesdeuso").css('margin-left',' -250px');
+        $("#tblanexoIBienesdeuso").css('margin-top','280px');
+        $("#tblanexoIBienesdeuso").css('width','900px');
+
+        $("#divContenedorAnexoIBienesdeUso").css('height','950px')
     };
+
     var afterPrint = function() {
-        $('#header').show();
+        /*$('#header').show();
         $('button').show();
         $('a').show();
+        $('#divTabs').show();
+        CambiarTab("sumasysaldos");
+        tblsys = $('#tblsys').dataTable({
+        aLengthMenu: [
+            [25, 50, 100, 200, -1],
+            [25, 50, 100, 200, "All"]
+        ],
+        iDisplayLength: -1
+        }).api();
+        $("#tableEvolucionPatrimonioNeto").css('transform:rotate(0deg);');*/
+
     };
     if (window.matchMedia) {
         var mediaQueryList = window.matchMedia('print');
@@ -33,9 +59,40 @@ $(document).ready(function() {
     }
     window.onbeforeprint = beforePrint;
     window.onafterprint = afterPrint;
-    var tblsys = $('#tblsys').dataTable().api();
+    var tblsys = $('#tblsys').dataTable({
+        aLengthMenu: [
+        [25, 50, 100, 200, -1],
+        [25, 50, 100, 200, "All"]
+    ],
+    iDisplayLength: -1
+    }).api();
+    CambiarTab("patrimonioneto");
+    ajustarheadeepn();
     CambiarTab("sumasysaldos");
+   
 });
+function ajustarheadeepn() {
+        var header_height = 0;
+        $('.tblEEPN th').css('font-size','8');
+        $('.tblEEPN th span').each(function() {
+            if ($(this).outerWidth() > header_height) {
+                header_height = $(this).outerWidth();
+            }
+        });
+        $('.tblEEPN th').height(header_height);
+    };
+function showAllDivs(){
+    $("#divContenedorBSyS").show();
+    $("#divContenedorNotas").show();
+    $("#divContenedorAnexos").show();
+    $("#divContenedorEstadosResultados").show();
+    $("#divContenedorEvolucionPatrimonioNeto").show();
+    $("#divContenedorFlujoEfectivo").show();
+    $("#divContenedorNotaFlujoEfectivo").show();
+    $("#divContenedorSituacionPatrimonial").show();
+    $("#divContenedorNotaSituacionPatrimonial").show();
+    $("#divContenedorAnexoIBienesdeUso").show();
+}
 function CambiarTab(sTab)	{
     $("#tabSumasYSaldos").attr("class", "cliente_view_tab");
     $("#tabEstadoDeResultados").attr("class", "cliente_view_tab");
@@ -196,5 +253,11 @@ function CambiarTab(sTab)	{
     }
 }
 function imprimir(){
-    window.print();
+    showAllDivs();
+    setTimeout(
+    function() 
+    {
+       window.print();
+    }, 5000);
+   
 }

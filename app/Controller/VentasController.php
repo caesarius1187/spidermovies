@@ -422,7 +422,7 @@ class VentasController extends AppController {
 			
 			}
 		}
-	public function edit($id ,$tieneMonotributo = null,$tieneIVAPercepciones = null,$tieneImpuestoInterno = null,$tieneIVA = null,$tieneAgenteDePercepcionIIBB = null,$tieneAgenteDePercepcionActividadesVarias = null) {
+	public function edit($id) {
 		$this->loadModel('Subcliente');
 		$this->loadModel('Localidade');
 		$this->loadModel('Partido');
@@ -554,12 +554,14 @@ class VentasController extends AppController {
 			$mostrarForm=false;			
 			
 		}else{
-			$this->set('tieneMonotributo', $tieneMonotributo);
-			$this->set('tieneIVAPercepciones', $tieneIVAPercepciones);
-			$this->set('tieneImpuestoInterno', $tieneImpuestoInterno);
-			$this->set('tieneAgenteDePercepcionActividadesVarias', $tieneAgenteDePercepcionActividadesVarias);
-			$this->set('tieneIVA', $tieneIVA);
-			$this->set('tieneAgenteDePercepcionIIBB', $tieneAgenteDePercepcionIIBB);
+                    $options = array(
+                            'contain'=>array( ),
+                            'conditions' => array('Venta.' . $this->Venta->primaryKey => $id)
+                            );
+                    $venta = $this->Venta->find('first', $options);
+                        
+                    $impuestosActivos= $this->Cliente->impuestosActivados($venta['Venta']['cliente_id'],$venta['Venta']['periodo']);
+                    $this->set(compact('impuestosActivos'));
 		}
 		$this->set('mostrarForm',$mostrarForm);	
 		$options = array(
@@ -713,72 +715,10 @@ class VentasController extends AppController {
 				),
 			)
 		);
-		/*AFIP*/
-		$tieneMonotributo=False;
-		$tieneIVA=False;
-		$tieneIVAPercepciones=False;
-		$tieneImpuestoInterno=False;
-		/*DGR*/
-		$tieneAgenteDePercepcionIIBB=False;
-		/*DGRM*/
-		$tieneAgenteDePercepcionActividadesVarias=False;
-		foreach ($cliente['Impcli'] as $impcli) {
-			/*AFIP*/
-			if($impcli['impuesto_id']==4/*Monotributo*/){
-				//Tiene Monotributo asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que es un Monotributista Activo en este periodo
-					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
-					$tieneMonotributo=True;
-					$tieneIVA=False;
-				}
-			}
-			if($impcli['impuesto_id']==19/*IVA*/){
-				//Tiene IVA asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que es un Responsable Inscripto Activo en este periodo
-					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
-					$tieneMonotributo=False;
-					$tieneIVA=True;
-				}
-			}
-			if($impcli['impuesto_id']==184/*IVA Percepciones*/){
-				//Tiene IVA Percepciones asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que tiene IVA Percepciones Activo en este periodo
-					$tieneIVAPercepciones=True;
-				}
-			}
-			if($impcli['impuesto_id']==185/*Impuesto Interno*/){
-				//Tiene Impuesto Interno asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que tiene Impuesto Interno Activo en este periodo
-					$tieneImpuestoInterno=True;
-				}
-			}
-			/*DGR*/
-			if($impcli['impuesto_id']==173/*Agente de Percepcion IIBB*/){
-				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que tiene Agente de Percepcion IIBB Activo en este periodo
-					$tieneAgenteDePercepcionIIBB=True;
-				}
-			}
-			/*DGRM*/
-			if($impcli['impuesto_id']==186/*Agente de Percepcion de Actividades Varias*/){
-				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que tiene Agente de Percepcion de Actividades Varias Activo en este periodo
-					$tieneAgenteDePercepcionActividadesVarias=True;
-				}
-			}
-		}
-		$cliente['Cliente']['tieneMonotributo'] = $tieneMonotributo;
-		$cliente['Cliente']['tieneIVA'] = $tieneIVA;
-		$cliente['Cliente']['tieneIVAPercepciones'] = $tieneIVAPercepciones;
-		$cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;
-		$cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;
-		$cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;
+		                
+                $impuestosActivos= $this->Cliente->impuestosActivados($cliente['Cliente']['id'],$pemes . '-' . $peanio);
+                $cliente['Cliente']['impuestosactivos']=$impuestosActivos;
+                
 		$this->set(compact('cliente'));
 
 		$optionspuntosdeventa = array(
@@ -825,7 +765,7 @@ class VentasController extends AppController {
 		//si es monotributista solo debe poder hacer facturas tipo C
 		//sino mandar A y B
 		$optionsComprobantes=array();
-		if($tieneMonotributo){
+		if($impuestosActivos['monotributo']){
 			$optionsComprobantes=array('conditions'=>array('Comprobante.tipo'=>'C'));
 		}else{
 			$optionsComprobantes=array('conditions'=>array('Comprobante.tipo'=>array('A','B')));

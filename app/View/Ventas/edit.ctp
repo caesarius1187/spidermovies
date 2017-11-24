@@ -164,7 +164,7 @@ if(!$mostrarForm) { ?>
           ]
       ]);
       $display="content;";
-      if(filter_var($tieneMonotributo, FILTER_VALIDATE_BOOLEAN)){
+      if(!filter_var($impuestosActivos['contabiliza'], FILTER_VALIDATE_BOOLEAN)){
           $display="none;";
       }
       echo $this->Form->input('tipogasto_id',array(
@@ -179,7 +179,7 @@ if(!$mostrarForm) { ?>
         'class'=>"chosen-select",
         'style'=>'width:130px' 
         ));    
-      if(!filter_var($tieneMonotributo, FILTER_VALIDATE_BOOLEAN)){ 
+      if(!filter_var($impuestosActivos['monotributo'], FILTER_VALIDATE_BOOLEAN)){ 
 
           echo $this->Form->input('alicuota',array(
             'label'=>'Alicuota',
@@ -213,25 +213,25 @@ if(!$mostrarForm) { ?>
                'type'=>'hidden'
              ));    
       }   
-      if(filter_var($tieneIVAPercepciones, FILTER_VALIDATE_BOOLEAN)){
+      if(filter_var($impuestosActivos['ivapercepciones'], FILTER_VALIDATE_BOOLEAN)){
           echo $this->Form->input('ivapercep',array(
             'label'=>'IVA Percep.',
           'style'=>'max-width: 70px;' 
            ));    
       }
-      if(filter_var($tieneAgenteDePercepcionIIBB, FILTER_VALIDATE_BOOLEAN)){
+      if(filter_var($impuestosActivos['agenteDePercepcionIIBB'], FILTER_VALIDATE_BOOLEAN)){
           echo $this->Form->input('iibbpercep',array(
             'label'=>'IIBB Percep.',
             'style'=>'max-width: 70px;' 
              ));    
       }
-      if(filter_var($tieneAgenteDePercepcionActividadesVarias, FILTER_VALIDATE_BOOLEAN)){
+      if(filter_var($impuestosActivos['agenteDePercepcionActividadesVarias'], FILTER_VALIDATE_BOOLEAN)){
           echo $this->Form->input('actvspercep',array(
             'label'=>'Act.Vs. Persep.',
             'style'=>'max-width: 70px;' 
              ));
       }
-      if(filter_var($tieneImpuestoInterno, FILTER_VALIDATE_BOOLEAN)){
+      if(filter_var($impuestosActivos['impuestointerno'], FILTER_VALIDATE_BOOLEAN)){
           echo $this->Form->input('impinternos',array(
             'label'=>'Imp. Internos',
             'style'=>'max-width: 70px;' 
@@ -239,15 +239,15 @@ if(!$mostrarForm) { ?>
       }    
       /*AFIP*/
       echo $this->Form->input('periodo',array('type'=>'hidden'));
-      echo $this->Form->input('tieneMonotributo',array('value'=>$tieneMonotributo,'type'=>'hidden'));
-      echo $this->Form->input('tieneIVA',array('value'=>$tieneIVA,'type'=>'hidden'));
-      echo $this->Form->input('tieneIVAPercepciones',array('value'=>$tieneIVAPercepciones,'type'=>'hidden'));
-      echo $this->Form->input('tieneImpuestoInterno',array('value'=>$tieneImpuestoInterno,'type'=>'hidden'));
+      echo $this->Form->input('tieneMonotributo',array('value'=>$impuestosActivos['monotributo'],'type'=>'hidden'));
+      echo $this->Form->input('tieneIVA',array('value'=>$impuestosActivos['iva'],'type'=>'hidden'));
+      echo $this->Form->input('tieneIVAPercepciones',array('value'=>$impuestosActivos['ivapercepciones'],'type'=>'hidden'));
+      echo $this->Form->input('tieneImpuestoInterno',array('value'=>$impuestosActivos['impuestointerno'],'type'=>'hidden'));
       /*DGR*/
-      echo $this->Form->input('tieneAgenteDePercepcionIIBB',array('value'=>$tieneAgenteDePercepcionIIBB,'type'=>'hidden'));
+      echo $this->Form->input('tieneAgenteDePercepcionIIBB',array('value'=>$impuestosActivos['agenteDePercepcionIIBB'],'type'=>'hidden'));
       /*DGRM*/
-      echo $this->Form->input('tieneAgenteDePercepcionActividadesVarias',array('value'=>$tieneAgenteDePercepcionActividadesVarias,'type'=>'hidden'));
-      if(!filter_var($tieneMonotributo, FILTER_VALIDATE_BOOLEAN)) {
+      echo $this->Form->input('tieneAgenteDePercepcionActividadesVarias',array('value'=>$impuestosActivos['agenteDePercepcionActividadesVarias'],'type'=>'hidden'));
+      if(!filter_var($impuestosActivos['monotributo'], FILTER_VALIDATE_BOOLEAN)) {
           echo $this->Form->input('nogravados', array(
               'label' => 'No Gravados',
               'style' => 'max-width: 70px;'

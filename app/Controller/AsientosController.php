@@ -603,6 +603,7 @@ class AsientosController extends AppController {
         $options = array(
             'contain'=>[
                 'Actividadcliente'=>[
+                    'Actividade',
                     'Cuentasganancia'=>['Cuentascliente'],
                 ]
             ],
@@ -617,6 +618,7 @@ class AsientosController extends AppController {
         $pagaCategoria = [];
         $cuentaclienteaseleccionar=[];
         $tieneGananciasConfigurado = 1;
+        $ActividadesGeneros = [];
         foreach ($cliente['Actividadcliente'] as $actividadcliente){
             if(count($actividadcliente['Cuentasganancia'])>0){
                 $categoriaActividad = $actividadcliente['Cuentasganancia'][0]['categoria'];
@@ -627,6 +629,7 @@ class AsientosController extends AppController {
             }else{
                 $tieneGananciasConfigurado *= 0;
             }
+            $ActividadesGeneros[$actividadcliente['actividade_id']] = [$actividadcliente['Actividade']['generomonotributo']];
         }
         if($tieneGananciasConfigurado==0){
             if($this->request->is('ajax')){
@@ -752,7 +755,9 @@ class AsientosController extends AppController {
         $conditionsCompraGravada = [
             'contain'=>[
                 'Actividadcliente'=>[
-                    'Cuentasganancia'=>['Cuentascliente']
+                    //'Actividade',
+                    'Cuentasganancia'=>['Cuentascliente'],
+                    'fields'=>['id','actividade_id']
                 ],
             ],
             'fields'=>[
@@ -770,7 +775,7 @@ class AsientosController extends AppController {
         ];
         $comprasgravadas = $this->Compra->find('all',$conditionsCompraGravada);
         $this->set(compact('cliid','cliente','periodo','pagaCategoria','asientoestandares','cuentasclientes','asientoyacargado',
-            'comprasgravadas','comprasbiendeuso'));
+            'comprasgravadas','comprasbiendeuso','ActividadesGeneros'));
 
         if($this->request->is('ajax')){
             $this->layout = 'ajax';

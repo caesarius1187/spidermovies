@@ -274,7 +274,48 @@ if(isset($error)){ ?>
                     $debe = $cuentasegunda;
                     break;
             /*Casos Tercera Empresas Categoria*/
-            case '2222'/*501000001 Compras*/:
+            //case '2222'/*501000001 Compras*/:
+            case '357'/*110500012 Mercaderías XX Compras*/:            
+            case '3726'/*110506012 MP y Materiales XX Compras*/:
+                //Tengo que cambiar esta cuenta por que hay que mandar a mercaderia o a materia prima segun la actividad de la compra
+                       //Si esta cuenta aparece es por que estoy pagando 2da categoria
+                //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
+                $cuentatercera=0;
+                //Cargar la compra neto + no gravado + exento
+                $cuentasTipoGastos=[
+                    '357'=>['1'],/*Mercaderia-Insumos*/                    
+                    '3726'=>['1'],/*Mercaderia-Insumos*/
+                ];
+                $cuentasTipoActividad=[
+                    '357'=>['ventamuebles'],/*Mercaderia-Insumos*/                    
+                    '3726'=>['locacionservicio'],/*Mercaderia-Insumos*/
+                ];
+
+                foreach ($comprasgravadas as $comprasgravada) {
+                    $suma = 1;
+                    $categoriaDeLaCompra = $comprasgravada['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                    if("compra".$categoriaDeLaCompra!='compraterceracateg'){
+                        continue;
+                    }
+                    //Debugger::dump($comprasgravada['Actividadcliente']);
+                    //Debugger::dump($ActividadesGeneros);
+                    $genero = $ActividadesGeneros[$comprasgravada['Actividadcliente']['actividade_id']];                    
+                    if(!in_array($genero[0],$cuentasTipoActividad[$asientoestandar['Cuenta']['id']])){
+                        continue;
+                    }
+                    if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
+                        continue;
+                    }
+                    if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                        continue;
+                    }
+                    if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                        $suma=-1;
+                    }
+                    $cuentatercera+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
+                }
+                $debe = $cuentatercera;
+                break;
             case '2286'/*504010001 Combus, Lubric y FM*/:
             case '2288'/*504020001 Luz, Gas, Tel. y Otros*/:
             case '2290'/*504030001 Alquileres y Expensas*/:
@@ -292,14 +333,13 @@ if(isset($error)){ ?>
                 $cuentatercera=0;
                 //Cargar la compra neto + no gravado + exento
                 $cuentasTipoGastos=[
-                    '2222'=>['1'],/*Mercaderia-Insumos*/
+                    //'2222'=>['1'],/*Mercaderia-Insumos*/
                     '2286'=>['2'],/*Combustibles, Lubric y FM*/
-                    '2288'=>['3','19','20','21'],/*Servicios Publicos*/
+                    '2288'=>['3','19','20'],/*Servicios Publicos*/
                     /*Luz*/
                     /*Agua*/
                     /*Alquiler*/
-                    /*Bien de uso*/
-                    '2290'=>['4'],/*Expensas*/
+                    '2290'=>['21','4'],/*Expensas*/
                     '2305'=>['5'],/*Traslados*/
                     '2307'=>['6'],/*Seguros*/
                     '2309'=>['7'],/*Gastos de Cortesia y Homenaje*/

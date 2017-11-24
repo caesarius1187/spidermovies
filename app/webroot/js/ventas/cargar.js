@@ -492,13 +492,16 @@ $(document).ready(function() {
 });
     function hidecolumnstablaventas() {
         var tieneMonotributo = $("#saveVentasForm #VentaTieneMonotributo").val();
+        var contabiliza = $("#saveVentasForm #VentaContabiliza").val();
         var tieneIVA = $("#saveVentasForm #VentaTieneIVA").val();
         var tieneIVAPercepciones = $("#saveVentasForm #VentaTieneIVAPercepciones").val();
         var tieneImpuestoInterno = $("#saveVentasForm #VentaTieneImpuestoInterno").val();
         var tieneAgenteDePercepcionActividadesVarias = $("#saveVentasForm #VentaTieneAgenteDePercepcionActividadesVarias").val();
         var tieneAgenteDePercepcionIIBB = $("#saveVentasForm #VentaTieneAgenteDePercepcionIIBB").val();
-        if(tieneMonotributo){
+        if(!contabiliza){
             hidecolumn(tblTablaVentas,6,false);//tipoingreso*/
+        }
+        if(tieneMonotributo){
             // hidecolumn(tblTablaVentas,8,false);//Debito*/
             hidecolumn(tblTablaVentas,8,false);//Alicuota*/
             hidecolumn(tblTablaVentas,9,false);//Neto*/
