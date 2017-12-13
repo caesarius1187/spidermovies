@@ -3463,7 +3463,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 $TotalSaldoImpuestoAFavorAFIP = 0;
                 $TotalSaldoImpuestoAFavorAFIP = $TotalSaldoTecnicoAPagarPeriodo - $TotalPagosACuenta - $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnterior  ;
                 ?>
-            <table style="margin-top: 60px">
+                <table style="margin-top: 60px;" class="toExcelTable tbl_border tblEstadoContable splitForPrint" >
                 <tr style='background-color:#f0f0f0'>
                     <td>Descripción</td>
                     <td style="width:180px">Valor</td>

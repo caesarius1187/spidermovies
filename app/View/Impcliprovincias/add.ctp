@@ -197,7 +197,7 @@ if($mostrarLista&&!isset($error)){ ?>
                                  <?php echo $this->Html->image('delete.png', array('alt' => 'open','title' => 'Eliminar','class'=>'imgedit'));?>
                             </a>
 							<a href="#"  onclick="editImpcliProvincia('<?php echo $impcliprovincia['Impcliprovincia']['id']?>','<?php echo $impcliprovincia['Impcliprovincia']['impcli_id']?>')" class="button_view">
-								<?php echo $this->Html->image('edit.png', array('alt' => 'open','title' => 'Eliminar','class'=>'imgedit'));?>
+								<?php echo $this->Html->image('edit.png', array('alt' => 'open','title' => 'Editar','class'=>'imgedit'));?>
 							</a>
                     	</td>
          			</tr>            

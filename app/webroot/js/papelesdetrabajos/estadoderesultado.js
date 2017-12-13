@@ -2,6 +2,7 @@
  * Created by caesarius on 04/01/2017.
  */
 $(document).ready(function() {    
+    
     $( "#clickExcel" ).click(function() {
         showAllDivs();
         var table2excel = new Table2Excel();
@@ -13,39 +14,49 @@ $(document).ready(function() {
         $('#headerCliente').hide();
         $('#divTabs').hide();
         showAllDivs();
-        tblsys.destroy();
-        $("#tableEvolucionPatrimonioNeto").css('font-size','10px');
+        //tblsys.destroy();
+        //$("#tableEvolucionPatrimonioNeto").css('font-size','11px');
         $("#tableEvolucionPatrimonioNeto").css('transform','rotate(270deg)');
-        $("#tableEvolucionPatrimonioNeto").css('margin-left',' -100px');
-        $("#tableEvolucionPatrimonioNeto").css('margin-top','200px');
+        $("#tableEvolucionPatrimonioNeto").css('margin-left',' -250px');
+        $("#tableEvolucionPatrimonioNeto").css('margin-top','250px');
         $("#tableEvolucionPatrimonioNeto").css('width','900px');
         
-        $("#divContenedorEvolucionPatrimonioNeto").css('height','950px')
+        //$("#divContenedorEvolucionPatrimonioNeto").css('height','100px')
 
-        $("#tblanexoIBienesdeuso").css('font-size','10px');
+        //$("#tblanexoIBienesdeuso").css('font-size','11px');
         $("#tblanexoIBienesdeuso").css('transform','rotate(270deg)');
-        $("#tblanexoIBienesdeuso").css('margin-left',' -250px');
-        $("#tblanexoIBienesdeuso").css('margin-top','280px');
+        $("#tblanexoIBienesdeuso").css('margin-left',' -350px');
+        $("#tblanexoIBienesdeuso").css('margin-top','430px');
         $("#tblanexoIBienesdeuso").css('width','900px');
+        //$("#divContenedorAnexoIBienesdeUso").css('height','1050px')
 
-        $("#divContenedorAnexoIBienesdeUso").css('height','950px')
-    };
+        $("#tblEstadoSituacionPatrimonial").css('transform','rotate(270deg)');
+        $("#tblEstadoSituacionPatrimonial").css('margin-left',' -250px');
+        $("#tblEstadoSituacionPatrimonial").css('margin-top','330px');
+        $("#tblEstadoSituacionPatrimonial").css('width','900px');
 
+          
+        $(".index").each(
+                function(){
+                    var cssObj = {
+                        'border' : '0px',
+                        'box-shadow' :'0px 0px 0px 0px #262626',
+                      }
+                    $(this).css(cssObj);
+                }
+        );
+        $("#content").css('background' , '#fff');
+           
+        };
     var afterPrint = function() {
-        /*$('#header').show();
+        $('#header').show();
         $('button').show();
         $('a').show();
         $('#divTabs').show();
+        $('#headerCliente').show();
         CambiarTab("sumasysaldos");
-        tblsys = $('#tblsys').dataTable({
-        aLengthMenu: [
-            [25, 50, 100, 200, -1],
-            [25, 50, 100, 200, "All"]
-        ],
-        iDisplayLength: -1
-        }).api();
-        $("#tableEvolucionPatrimonioNeto").css('transform:rotate(0deg);');*/
-
+        //tblsys.recreate();
+        ;
     };
     if (window.matchMedia) {
         var mediaQueryList = window.matchMedia('print');
@@ -59,13 +70,13 @@ $(document).ready(function() {
     }
     window.onbeforeprint = beforePrint;
     window.onafterprint = afterPrint;
-    var tblsys = $('#tblsys').dataTable({
+    /*var tblsys = $('#tblsys').dataTable({
         aLengthMenu: [
         [25, 50, 100, 200, -1],
         [25, 50, 100, 200, "All"]
     ],
     iDisplayLength: -1
-    }).api();
+    }).api();*/
     CambiarTab("patrimonioneto");
     ajustarheadeepn();
     CambiarTab("sumasysaldos");
@@ -258,6 +269,6 @@ function imprimir(){
     function() 
     {
        window.print();
-    }, 5000);
+    }, 3000);
    
 }

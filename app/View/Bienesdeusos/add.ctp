@@ -9,12 +9,10 @@
 		echo $this->Form->input('compra_id',[
 			'class'=>'all',
 			'type'=>'hidden',
-			'value'=>isset($compra['Compra']['id'])?$compra['Compra']['id']:0,
 		]);
          echo $this->Form->input('venta_id',[
             'type'=>'hidden',
             'label'=>'Venta relacionada',
-            'value'=>isset($venta['Venta']['id'])?$venta['Venta']['id']:0,
         ]);
         echo $this->Form->input('cliente_id',[
 			'class'=>'all',
@@ -479,6 +477,12 @@
 	<div class="index">
 		<h3>Ganancias Persona Fisica</h3>
 		<?php
+                echo $this->Form->input('biendeusopersonal',[
+			'class'=>'all',
+                        'type'=>'checkbox',
+                        'label'=>'Bien de uso personal',
+                        'title'=>'Señalar si este bien sera de uso personal o estará afectado por alguna actividad'
+		]);
 		echo $this->Form->input('bienafectadoatercera',[
 			'class'=>'inmuebleFNE automotor naves aeronaves bienesmueblesregistrables otrosbienes',
 			'label'=>'Bien afectado a la 3ra categoria',

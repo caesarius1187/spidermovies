@@ -1,9 +1,10 @@
 <?php
 $tdClass = "provedore";
 if(!$showform) { ?>
-    <td class="<?php echo $tdClass?>"><?php echo $this->data['Provedore']["cuit"]?></td>
+    
     <td class="<?php echo $tdClass?>"><?php echo $this->data['Provedore']["dni"]?></td>
     <td class="<?php echo $tdClass?>"><?php echo $this->data['Provedore']["nombre"]?></td>
+    <td class="<?php echo $tdClass?>"><?php echo $this->data['Provedore']["cuit"]?></td>    
     <td class="<?php echo $tdClass?>">
         <a href="#"  onclick="loadFormProvedore(<?php echo $this->data['Provedore']["id"]; ?>)" class="button_view">
          <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
@@ -37,10 +38,7 @@ if(!$showform) { ?>
          ?> 
         <table class="tableProvedoreEditForm">
             <tr>             
-                <td><?php                   
-                    echo $this->Form->input('cuit',array('label'=>'' ,'maxlength'=>'11'));
-                    ?>
-                </td>
+                
                 <td><?php                   
                     echo $this->Form->input('dni',
                         array(
@@ -54,7 +52,10 @@ if(!$showform) { ?>
                     echo $this->Form->input('nombre',array('label'=>'' ));    
                     ?>
                 </td>
-                
+                <td><?php                   
+                    echo $this->Form->input('cuit',array('label'=>'' ,'maxlength'=>'11'));
+                    ?>
+                </td>
                 <td> 
                     <?php echo $this->Form->end(__('aceptar'),array('div'=>false)); ?>   
                     <a href="#" class="btn_cancelar" onClick="hideFormModProvedore('<?php echo $this->data['Provedore']['id'];?>')" style="float: left;width: 45px;margin: 0;">X</a>

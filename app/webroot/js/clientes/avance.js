@@ -281,6 +281,9 @@ $(document).ready(function() {
     function verPapelDeTrabajoCasasParticulares(periodo,cliid){
         var win = window.open(serverLayoutURL+'/impclis/papeldetrabajocasasparticulares/'+cliid+'/'+periodo , '_blank');
     }
+    function verPapelDeTrabajoGanancias(periodo,cliid){
+        var win = window.open(serverLayoutURL+'/papelesdetrabajos/ganancias/'+cliid+'/'+periodo , '_blank');
+    }
     function verCuentasDepuradas(cliid,periodo){
         var win = window.open(serverLayoutURL+'/controles/cuentasdepuradas/'+cliid+'/'+periodo , '_blank');
     }

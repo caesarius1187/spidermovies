@@ -754,12 +754,11 @@ if(isset($error)){ ?>
                         '2820'=>['Bien mueble registrable'],
                         '3787'=>['Otros bienes'],
                     ];
-                    foreach ($ventasbiendeuso as $ventabiendeuso) {
-                        $suma = 1;
-                        $categoriaDeLaVenta = $ventabiendeuso['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        if("costo".$categoriaDeLaVenta=='costoterceracateg'){
+                    foreach ($ventasbiendeuso as $ventabiendeuso) {                        
+                       $bienusopersonal = $ventabiendeuso['Bienesdeuso'][0]['bienusopersonal']*1;
+                        if($bienusopersonal!=1){
                             continue;
-                        }
+                        }                        
                         $suma = 1;
                         if($ventasgravada['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
                             $suma=-1;
@@ -767,9 +766,14 @@ if(isset($error)){ ?>
                         if(!in_array($ventabiendeuso['Bienesdeuso'][0]['tipo'],$cuentasTipoBdu[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                       $cuentaprimera+=$ventabiendeuso['Venta']['total']*$suma;
+                        $cuentaprimera+=$ventabiendeuso['Bienesdeuso'][0]['valororiginal'];
+                        $cuentaprimera-=$ventabiendeuso['Bienesdeuso'][0]['amortizacionacumulada'];
                     }
-                    $debe = $cuentaprimera*-1;
+                    if($cuentaprimera>=0){
+                        $debe = $cuentaprimera;
+                    }else{
+                        $haber = $cuentaprimera*-1;
+                    }
                 break;
                 //Debe Amortizacion del Periodo (los q no son 3ra no tienen amortizacion acumulada)
                 //todo: separar esto POR BIEN EN EL PAIS/EXTERIOR
@@ -803,8 +807,8 @@ if(isset($error)){ ?>
                     ];
                     foreach ($ventasbiendeuso as $ventabiendeuso) {
                         $suma = 1;
-                        $categoriaDeLaVenta = $ventabiendeuso['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        if("costo".$categoriaDeLaVenta=='costoterceracateg'){
+                        $bienusopersonal = $ventabiendeuso['Bienesdeuso'][0]['bienusopersonal']*1;
+                        if($bienusopersonal!=1){
                             continue;
                         }
                         if(!in_array($ventabiendeuso['Bienesdeuso'][0]['tipo'],$cuentasTipoBdu[$asientoestandar['Cuenta']['id']])){
@@ -851,16 +855,22 @@ if(isset($error)){ ?>
                     foreach ($ventasbiendeuso as $ventabiendeuso) {
                         $categoriaDeLaVenta = $ventabiendeuso['Actividadcliente']['Cuentasganancia'][0]['categoria'];
 
-                        if("costo".$categoriaDeLaVenta!='costoterceracateg'){
+                        $bienusopersonal = $ventabiendeuso['Bienesdeuso'][0]['bienusopersonal']*1;
+                        if($bienusopersonal==1){
                             continue;
                         }
                         if(!in_array($ventabiendeuso['Bienesdeuso'][0]['tipo'],$cuentasTipoBdu[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        
-                       $cuentaprimera+=$ventabiendeuso['Venta']['neto'];
+                        //esto es la diferencia entre el valor original del activo menos  la amortizacion
+                       $cuentaprimera+=$ventabiendeuso['Bienesdeuso'][0]['valororiginal'];
+                       $cuentaprimera-=$ventabiendeuso['Bienesdeuso'][0]['amortizacionacumulada'];
                     }
-                    $debe = $cuentaprimera;
+                    if($cuentaprimera>=0){
+                        $debe = $cuentaprimera;
+                    }else{
+                        $haber = $cuentaprimera*-1;
+                    }
                 break;
                 //Haber Amortizacion Acumulada
                 case '773'/*503017001 Inmueble*/:
@@ -883,8 +893,8 @@ if(isset($error)){ ?>
                     ];
                     foreach ($ventasbiendeuso as $ventabiendeuso) {
                         $suma = 1;
-                        $categoriaDeLaVenta = $ventabiendeuso['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        if("costo".$categoriaDeLaVenta!='costoterceracateg'){
+                        $bienusopersonal = $ventabiendeuso['Bienesdeuso'][0]['bienusopersonal']*1;
+                        if($bienusopersonal==1){
                             continue;
                         }
                         if(!in_array($ventabiendeuso['Bienesdeuso'][0]['tipo'],$cuentasTipoBdu[$asientoestandar['Cuenta']['id']])){
@@ -925,6 +935,13 @@ if(isset($error)){ ?>
                 case 'Otros bienes de uso Muebles':
                 case 'Otros bienes de uso Maquinas':
                 case 'Otros bienes de uso Activos Biologicos':
+                //NO empresa
+                case 'Inmuebles':
+                case 'Automotor':
+                case 'Naves, Yates y similares':
+                case 'Aeronave':
+                case 'Bien mueble registrable':
+                case 'Otros bienes':
                     if(count($ventabiendeuso['Bienesdeuso'][0]['Cuentaclientevalororigen'])>0){
                         $cuentaclienteid = $ventabiendeuso['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                          $movid=0;
@@ -943,7 +960,8 @@ if(isset($error)){ ?>
                                 }
                             }
                         }
-                        $costoVenta = $ventabiendeuso['Venta']['neto'];
+                        $costoVenta = $ventabiendeuso['Bienesdeuso'][0]['valororiginal'];
+                        Debugger::dump($costoVenta);
                             //tengo que saber desde hace cuantos periodos estamos amortizando
                             //Periodo que estoy consultando  -  periodo de compra del bien de uso 
                             /*$pemes = substr($periodo, 0, 2);
@@ -962,60 +980,7 @@ if(isset($error)){ ?>
                         $amortizacion = $ventabiendeuso['Bienesdeuso'][0]['amortizacionacumulada'];
                        
                         $debe = 0;
-                        $haber = $costoVenta + $amortizacion;
-
-                        showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid,1);
-                        $i++;
-                        $totalDebe += $debe;
-                        $totalHaber += $haber;
-                    }
-                    break;
-                    
-                //NO empresa
-                case 'Inmuebles':
-                case 'Automotor':
-                case 'Naves, Yates y similares':
-                case 'Aeronave':
-                case 'Bien mueble registrable':
-                case 'Otros bienes':
-                     if(count($ventabiendeuso['Bienesdeuso'][0]['Cuentaclientevalororigen'])>0){
-                        $cuentaclienteid = $ventabiendeuso['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
-                         $movid=0;
-                         if(isset($asientoyacargadocosto['Movimiento'])) {
-                            foreach ($asientoyacargadocosto['Movimiento'] as $kMov => $movimiento){
-                                if(!isset($asientoyacargadocosto['Movimiento'][$kMov]['cargado'])) {
-                                    $asientoyacargadocosto['Movimiento'][$kMov]['cargado'] = false;
-                                }
-                                if($cuentaclienteid==$movimiento['cuentascliente_id']){
-                                    $key=$kMov;
-                                    $movid=$movimiento['id'];
-                                    $asiento_id=$movimiento['asiento_id'];
-                                    $debe=$movimiento['debe'];
-                                    $haber=$movimiento['haber'];
-                                    $asientoyacargadocosto['Movimiento'][$kMov]['cargado']=true;
-                                }
-                            }
-                        }
-                        $costoVenta = $ventabiendeuso['Venta']['neto'];
-                            //tengo que saber desde hace cuantos periodos estamos amortizando
-                            //Periodo que estoy consultando  -  periodo de compra del bien de uso 
-                            /*$pemes = substr($periodo, 0, 2);
-                            $peanio = substr($periodo, 3);
-                            $fechadeconsulta = new DateTime("01-".$pemes."-".$peanio);
-                            if(!isset($ventabiendeuso['Bienesdeuso'][0]['periodo'])||is_null($ventabiendeuso['Bienesdeuso'][0]['periodo'])||$ventabiendeuso['Bienesdeuso'][0]['periodo']==""){
-                                //error aca
-                                $fechacomprabiendeuso = new DateTime("01-01-1990");
-                            }else{
-                                $fechacomprabiendeuso = new DateTime("01-".$ventabiendeuso['Bienesdeuso'][0]['periodo']);
-                            }
-                            $diff = $fechadeconsulta->diff($fechacomprabiendeuso);
-                            $añosAmortizados =  $diff->y +1;                                                                
-                        $amortizacion = 0;
-                        $amortizacion +=$ventabiendeuso['Bienesdeuso'][0]['importeamorteizaciondelperiodo']*($añosAmortizados);
-                        $amortizacion +=$ventabiendeuso['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo']*($añosAmortizados);*/
-                        $amortizacion = $ventabiendeuso['Bienesdeuso'][0]['amortizacionacumulada'];
-                        $debe = 0;
-                        $haber = $costoVenta - $amortizacion;
+                        $haber = $costoVenta /*+ $amortizacion*/;
 
                         showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid,1);
                         $i++;

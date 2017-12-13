@@ -114,7 +114,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
           <?php
           $HayImpuestosHabilitados = false;
           //Aqui se pinta la caja que identifica a que impuesto pertenece cada row.
-          foreach ($cliente["Impcli"] as $impcli){  
+        foreach ($cliente["Impcli"] as $impcli){  
               if(Count($impcli['Periodosactivo'])!=0&&($impcli['Impuesto']['organismo']!='banco')){
                 $HayImpuestosHabilitados = true;
               }  
@@ -210,7 +210,9 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                     if($cliente['impuestosactivos']['contabiliza']){
                         $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
                         //si es cliente del estudio 2(Manjon) o 16(Alejandro Farah) vamos a permitir ver balance hasta la fecha
-                         if($cliente['Grupocliente']['estudio_id']=='2'||$cliente['Grupocliente']['estudio_id']=='16'){
+                         if(in_array($cliente['Grupocliente']['estudio_id'],['2','16','5'])&&($cliente['Cliente']['tipopersona']=='juridica')){
+//            $esPersonaJuridica=true;
+//        })){
                             echo $this->Form->button(
                                 'Estados Contables',
                                 array(
@@ -1036,6 +1038,9 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
             break;
         case 37/*Casas Particulares*/:
             $onclick = 'verPapelDeTrabajoCasasParticulares('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
+            break;
+        case 160/*Ganancias PF*/:
+            $onclick = 'verPapelDeTrabajoGanancias('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
             break;
         default:
             if($impcli['Impuesto']['organismo']=='sindicato'){

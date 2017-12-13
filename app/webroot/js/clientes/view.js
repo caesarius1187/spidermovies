@@ -1453,6 +1453,74 @@ function loadFormImpuestoCuentasganancias(cliid){
         });
     });
 }
+function loadFormImpuestoDeducciones(impcliid){
+    jQuery(document).ready(function($) {
+        var data ="";
+        $.ajax({
+            type: "get",  // Request method: post, get
+            url: serverLayoutURL+"/deducciones/add/"+impcliid,
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $("#form_impcli_dgrm_provincia").html(response);
+                $('.chosen-select').chosen({search_contains:true});
+                location.href='#nuevo_IMPProv';
+                $("#DeduccioneTipo").on('change', function () {
+                    if($(this).val()=='general'){
+                        $(".personal").parent().hide();
+                        $(".general").parent().show();
+                    }
+                    if($(this).val()=='personal'){
+                       $("#DeduccioneClase").trigger('change');
+                    }
+                });
+                 $("#DeduccioneClase").on('change', function () {                    
+                        $(".general").parent().hide();
+                        $(".personal").parent().hide();
+                        switch ($('#DeduccioneClase').val()) {
+                            case 'Deduccion especial':
+                                $(".deduccionespecial").parent().show();
+                                break;
+                            case 'Conyuge':
+                                $(".conyuge").parent().show();
+                                break;
+                            case 'Hijos':
+                                 $(".hijo").parent().show();
+                                break;
+                            case 'Otras Cargas':
+                                 $(".otrascargas").parent().show();
+                                break;                       
+                        }
+                 });
+                $('#DeduccioneClase').filterGroups({groupSelector: '#DeduccioneTipo', });
+                $('#DeduccioneAddForm').submit(function(){
+                        //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                                type: 'POST',
+                                url: formUrl,
+                                data: formData,
+                                success: function(data,textStatus,xhr){
+                                    $('#myModal').modal('hide');   
+                                    callAlertPopint("Deduccion Agregada");                                       
+                                },
+                                error: function(xhr,textStatus,error){
+                                        callAlertPopint("Deposito NO Modificado. Intente de nuevo mas Tarde");
+                                }
+                        });
+                        return false;
+                });
+                reloadDatePickers();
+                 $("#DeduccioneTipo").parent().hide();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                callAlertPopint(textStatus);
+            }
+        });
+    });
+}
 
 function loadFormImpuesto(impcliid,cliid){
 	jQuery(document).ready(function($) {
@@ -1496,19 +1564,65 @@ function loadFormImpuesto(impcliid,cliid){
 		});
 	});
 }
-function deleteImpcliProvincia(impcliprovinciaid){
+
+function editImpcliProvincia(impcliprovinciaid,impcliid){
     jQuery(document).ready(function($) {
-        var r = confirm("Esta seguro que desea eliminar esta provincia?.");
+        $.ajax({
+            type: "GET",  // Request method: post, get
+            url: serverLayoutURL+"/impcliprovincias/edit/"+impcliprovinciaid+"/"+impcliid, // URL to request
+            data: "",  // post data
+            success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Modificar Localidad/Provincia');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                $('#ImpcliprovinciaEditForm').submit(function(){
+                    //serialize form data
+                    var formData = $(this).serialize();
+                    //get form action
+                    var formUrl = $(this).attr('action');
+                    $.ajax({
+                        type: 'POST',
+                        url: formUrl,
+                        data: formData,
+                        success: function(data,textStatus,xhr){
+                            location.href='#close';
+                            var respuesta = jQuery.parseJSON(data);
+                            $('#myModal').modal('hide');
+                            callAlertPopint(respuesta.respuesta);
+                        },
+                        error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                            location.href='#close';
+                        }
+                    });
+                    return false;
+                });
+                reloadDatePickers();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus);
+                alert(XMLHttpRequest);
+                alert(errorThrown);
+            }
+        });
+    });
+}
+function deleteDeduccion(dedid){
+    jQuery(document).ready(function($) {
+        var r = confirm("Esta seguro que desea eliminar esta deduccion?.");
         if (r == true) {
             $.ajax({
                 type: "post",  // Request method: post, get
-                url: serverLayoutURL+"/impcliprovincias/delete/"+impcliprovinciaid, // URL to request
+                url: serverLayoutURL+"/deducciones/delete/"+dedid, // URL to request
                 data: "",  // post data
                 success: function(response) {
                     var midata = jQuery.parseJSON(response);
                     $('#myModal').modal('hide');
                     callAlertPopint(midata.respuesta);
-                    $('#rowImpcliProvincia'+impcliprovinciaid).hide();
+                    $('#rowDeduccion'+dedid).hide();
                 },
                 error:function (XMLHttpRequest, textStatus, errorThrown) {
                     alert(textStatus);
@@ -1518,7 +1632,7 @@ function deleteImpcliProvincia(impcliprovinciaid){
             });
 
         } else {
-            txt = "No se a eliminado el impuesto";
+            txt = "No se a eliminado la deduccion";
         }
     });
 }
@@ -1696,16 +1810,16 @@ function catchFormAndSaveResult(impForm,impTable,impAlta){
 						location.hash ="#x";
 						callAlertPopint(mirespuesta.respuesta);
 					}else if(mirespuesta.accion == 'editar'){
-						location.hash ="#x";
-						callAlertPopint("Impuesto relacionado con exito.Periodo activo creado.");
-						$("#rowImpcli"+mirespuesta.impid).replaceWith(mirespuesta.impclirow);
-						$("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
-                        $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
+                                            location.hash ="#x";
+                                            callAlertPopint("Impuesto relacionado con exito.Periodo activo creado.");
+                                            $("#rowImpcli"+mirespuesta.impid).replaceWith(mirespuesta.impclirow);
+                                            $("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
+                                            $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
 					}else{
-						$("#"+impTable).append(mirespuesta.impclirow);
-						$("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
-                        $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
-                        location.hash ="#x";
+                                            $("#"+impTable).append(mirespuesta.impclirow);
+                                            $("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
+                                            $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
+                                            location.hash ="#x";
 					}
 				},
 				error: function(xhr,textStatus,error){

@@ -15,7 +15,7 @@ class AsientosController extends AppController {
     //este array es el que se va a usar para relacionar las cuentas con los impuestos
     //no se si tendriamos que guardarlo en una tabla pero por ahora va a servir
 
-	public $components = array('Paginator');
+    public $components = array('Paginator');
     public function index($ClienteId = null,$periodo = null ,$cuentacliente = null)
     {
         $this->loadModel('Movimiento');
@@ -264,7 +264,7 @@ class AsientosController extends AppController {
         $this->render('serializejson');
         return;
     }
-	public function contabilizarimpuesto($impcliid = null, $periodo = null){
+    public function contabilizarimpuesto($impcliid = null, $periodo = null){
         $this->loadModel('Impcli');
         $this->loadModel('Cuentascliente');
         $options = array(
@@ -380,7 +380,6 @@ class AsientosController extends AppController {
             if(count($actividadcliente['Cuentasganancia'])>0){
                 $categoriaActividad = $actividadcliente['Cuentasganancia'][0]['categoria'];
                 $tiposDeAsientos[]=$categoriaActividad;
-                $tiposDeAsientosCosto[]= "costo".$categoriaActividad;
                 $pagaCategoria[] = $categoriaActividad;
         //                if(!in_array($categoriaActividad,array('terceracateg45','cuartacateg'), true )){
         //                    if(!in_array($categoriaActividad,$tiposDeAsientos)){
@@ -428,6 +427,17 @@ class AsientosController extends AppController {
         ];
         $ventasbiendeuso = $this->Venta->find('all',$optionVentas);
         foreach ($ventasbiendeuso as $venta){
+            //aca vamos a recorrer las ventas entonces vamos a ver si hay algun bien de uso de uso personal
+            //para agregar el tipo de asiento "bien de uso personal"
+            
+            if(isset($venta['Bienesdeuso'][0])){
+                    if($venta['Bienesdeuso'][0]['bienusopersonal']){
+                        $tiposDeAsientosCosto[]= "costoprimeracateg";
+                    }else{
+                        $tiposDeAsientosCosto[]= "costoprimeracateg";
+                    }
+            }
+                
             if(count($venta['Bienesdeuso'])==0){
                 if($this->request->is('ajax')){
                     $this->layout = 'ajax';
@@ -461,12 +471,12 @@ class AsientosController extends AppController {
             if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
                 //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
                 //Pero solo si es de la 1ra , 2da o 3ra categoria        
-                    $this->Cuentascliente->create();
-                    $this->Cuentascliente->set('cliente_id',$cliid);
-                    $this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
-                    $this->Cuentascliente->set('nombre',$asientoestandar['Cuenta']['nombre']);
-                    $this->Cuentascliente->save();
-                    $secrearoncuentas=true;
+                $this->Cuentascliente->create();
+                $this->Cuentascliente->set('cliente_id',$cliid);
+                $this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
+                $this->Cuentascliente->set('nombre',$asientoestandar['Cuenta']['nombre']);
+                $this->Cuentascliente->save();
+                $secrearoncuentas=true;
             }
         }
         //ahora ya estamos seguros de que las cuentas clientes existen

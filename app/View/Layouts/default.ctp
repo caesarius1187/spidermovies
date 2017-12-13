@@ -25,11 +25,12 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 			    array('type' => 'icon')
 			);
 		echo $this->Html->script('jquery');
-		echo $this->Html->script('jquery.dataTables');
+		echo $this->Html->script('datatables.min');
 		echo $this->Html->script('floatHead/dist/jquery.floatThead');
 		echo $this->Html->script('menu');
 		echo $this->Html->script('chosen.jquery');
 		echo $this->Html->css('cake.generic');
+		echo $this->Html->css('datatables.min');
 		echo $this->Html->css('demo_table');
 		echo $this->Html->css('md_buttons');
 		echo $this->Html->css('popin');
@@ -69,7 +70,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 			checkPendingRequest();
 		});
 		$( document ).ajaxError(function( event, request, settings ) {
-			callAlertPopint("La sesion ha finalizado. Por favor inicie sesion en otra pestaña y continue.");
+			callAlertPopint("La sesion ha finalizado. Por favor inicie sesion en otra pesta�a y continue.");
 		});
 		$('#ui-datepicker-div').hide();
 		function checkPendingRequest() {

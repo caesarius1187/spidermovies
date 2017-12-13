@@ -640,6 +640,11 @@ if($mostrarView){?>
                                         <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'imgedit'));?>
                                     </a>
                                 <?php }
+                                if($impcli['impuesto_id']==160/*Ganancias Personas Físicas*/){?>
+                                    <a href="#"  onclick="loadFormImpuestoDeducciones(<?php echo$impcli['id']; ?>)" class="button_view">
+                                        <?php echo $this->Html->image('deduccion.jpg', array('alt' => 'open','class'=>'imgedit'));?>
+                                    </a>
+                                <?php }
                                 ?>
                             </td>
                         </tr>

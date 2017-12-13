@@ -156,5 +156,12 @@ class Cuentascliente extends AppModel {
 			'fields' => '',
 			'order' => ''
 		),
+		'Cbu' => array(
+			'className' => 'Cbu',
+			'foreignKey' => 'cuentascliente_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
 	);
 }

@@ -165,6 +165,19 @@ class Impcli extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
+		'Deduccione' => array(
+			'className' => 'Deduccione',
+			'foreignKey' => 'impcli_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
 		
 	);
 
