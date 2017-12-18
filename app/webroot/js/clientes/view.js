@@ -1522,6 +1522,77 @@ function loadFormImpuestoDeducciones(impcliid){
     });
 }
 
+function loadFormImpuestoQuebrantos(impcliid){
+    jQuery(document).ready(function($) {
+        var data ="";
+        $.ajax({
+            type: "get",  // Request method: post, get
+            url: serverLayoutURL+"/quebrantos/add/"+impcliid,
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Modificar Localidad/Provincia');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                
+                $('.chosen-select').chosen({search_contains:true});
+                $("#Quebranto0Periodogeneral").on('change', function() {
+                    $(".periodoaplicacion").each(function(){
+                        $(this).val($("#Quebranto0Periodogeneral").val());
+                    });    
+                    var strDatePeriodoOrig = '01-'+$("#Quebranto0Periodogeneral").val();
+                    var parts = strDatePeriodoOrig.split("-");
+                    var dt = new Date(parts[2], parts[1] , parts[0]);                            
+                    dt.setMonth(dt.getMonth() - 1);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig0 = $.datepicker.formatDate('mm-yy', dt);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig1 = $.datepicker.formatDate('mm-yy', dt);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig2 = $.datepicker.formatDate('mm-yy', dt);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig3 = $.datepicker.formatDate('mm-yy', dt);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig4 = $.datepicker.formatDate('mm-yy', dt);
+                    $("#Quebranto0Periodogenerado").val(datePeriodoOrig0);
+                    $("#Quebranto1Periodogenerado").val(datePeriodoOrig1);
+                    $("#Quebranto2Periodogenerado").val(datePeriodoOrig2);
+                    $("#Quebranto3Periodogenerado").val(datePeriodoOrig3);
+                    $("#Quebranto4Periodogenerado").val(datePeriodoOrig4);
+                });
+                
+                $('#QuebrantoAddForm').submit(function(){
+                        //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                                type: 'POST',
+                                url: formUrl,
+                                data: formData,
+                                success: function(data,textStatus,xhr){
+                                     var respuesta = jQuery.parseJSON(data);
+                                    $('#myModal').modal('hide');
+                                    callAlertPopint(respuesta.respuesta);                                  
+                                },
+                                error: function(xhr,textStatus,error){
+                                        callAlertPopint("Deposito NO Modificado. Intente de nuevo mas Tarde");
+                                }
+                        });
+                        return false;
+                });
+                reloadDatePickers();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                callAlertPopint(textStatus);
+            }
+        });
+    });
+}
+
 function loadFormImpuesto(impcliid,cliid){
 	jQuery(document).ready(function($) {
 		var data ="";
@@ -1633,6 +1704,32 @@ function deleteDeduccion(dedid){
 
         } else {
             txt = "No se a eliminado la deduccion";
+        }
+    });
+}
+function deleteQuebranto(queid){
+    jQuery(document).ready(function($) {
+        var r = confirm("Esta seguro que desea eliminar este quebranto?.");
+        if (r == true) {
+            $.ajax({
+                type: "post",  // Request method: post, get
+                url: serverLayoutURL+"/quebrantos/delete/"+queid, // URL to request
+                data: "",  // post data
+                success: function(response) {
+                    var midata = jQuery.parseJSON(response);
+                    $('#myModal').modal('hide');
+                    callAlertPopint(midata.respuesta);
+                    $('#rowQuebranto'+queid).hide();
+                },
+                error:function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(textStatus);
+                    alert(XMLHttpRequest);
+                    alert(errorThrown);
+                }
+            });
+
+        } else {
+            txt = "No se a eliminado el quebranto";
         }
     });
 }

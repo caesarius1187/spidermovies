@@ -1,4 +1,4 @@
-<?php echo $this->Html->script('jquery-ui',array('inline'=>false));?>
+<?php echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));?>
 <?php echo $this->Html->script('plandepagos/index',array('inline'=>false));?>
 <div class="plandepagos index">
 	<h2><?php echo __('Planes de pago'); ?></h2>
@@ -107,42 +107,42 @@
 	</div>
 	<div class="planpagos_dt">
 		<table cellpadding="0" cellspacing="0" id="TablaListaPlanesDePago">
-			<thead>
-				<tr>
-						<th>Cliente</th>
-						<th>Plan</th>
-						<th>Item</th>
-						<th>CBU</th>
-						<th>Periodo</th>
-						<th>Vencimiento</th>
-						<th>Cuota</th>
-						<th>Realizado</th>
-						<th>Pagado</th>
-						<th class="actions"><?php echo __('Actions'); ?></th>
-				</tr>
-			</thead>
-			<tbody>
-				<?php foreach ($plandepagos as $plandepago): ?>
-				<tr>
-					<td>
-						<?php echo $this->Html->link($plandepago['Cliente']['nombre'], array('controller' => 'clientes', 'action' => 'view', $plandepago['Cliente']['id'])); ?>
-					</td>
-					<td><?php echo h($plandepago['Plandepago']['plan']); ?>&nbsp;</td>
-					<td><?php echo h($plandepago['Plandepago']['item']); ?>&nbsp;</td>
-					<td><?php echo h($plandepago['Plandepago']['cbu']); ?>&nbsp;</td>
-					<td><?php echo h($plandepago['Plandepago']['periodo']); ?>&nbsp;</td>
-					<td><?php echo h(date('d-m-Y',strtotime($plandepago['Plandepago']['fchvto']))); ?>&nbsp;</td>
-					<td><?php echo h($plandepago['Plandepago']['montovto']); ?>&nbsp;</td>
-					<td><?php echo h(date('d-m-Y',strtotime($plandepago['Plandepago']['fchrealizado']))); ?>&nbsp;</td>
-					<td><?php echo h($plandepago['Plandepago']['montorealizado']); ?>&nbsp;</td>
-					<td class="actions">
-						<a href="#" onClick='pagarPlandePago(<?php echo $plandepago['Plandepago']['id'];?>)'>Pagar</a>
-						<?php
-						 echo $this->Form->postLink(__('Eliminar'), array('action' => 'delete', $plandepago['Plandepago']['id']), null, __('Are you sure you want to delete # %s?', $plandepago['Plandepago']['id'])); ?>
-					</td>
-				</tr>
-				<?php endforeach; ?>
-			</tbody>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Plan</th>
+                            <th>Item</th>
+                            <th>CBU</th>
+                            <th>Periodo</th>
+                            <th>Vencimiento</th>
+                            <th>Cuota</th>
+                            <th>Realizado</th>
+                            <th>Pagado</th>
+                            <th class="actions"><?php echo __('Actions'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($plandepagos as $plandepago): ?>
+                        <tr>
+                            <td>
+                                    <?php echo $this->Html->link($plandepago['Cliente']['nombre'], array('controller' => 'clientes', 'action' => 'view', $plandepago['Cliente']['id'])); ?>
+                            </td>
+                            <td><?php echo h($plandepago['Plandepago']['plan']); ?>&nbsp;</td>
+                            <td><?php echo h($plandepago['Plandepago']['item']); ?>&nbsp;</td>
+                            <td><?php echo h($plandepago['Plandepago']['cbu']); ?>&nbsp;</td>
+                            <td><?php echo h($plandepago['Plandepago']['periodo']); ?>&nbsp;</td>
+                            <td><?php echo h(date('d-m-Y',strtotime($plandepago['Plandepago']['fchvto']))); ?>&nbsp;</td>
+                            <td><?php echo h($plandepago['Plandepago']['montovto']); ?>&nbsp;</td>
+                            <td><?php echo h(date('d-m-Y',strtotime($plandepago['Plandepago']['fchrealizado']))); ?>&nbsp;</td>
+                            <td><?php echo h($plandepago['Plandepago']['montorealizado']); ?>&nbsp;</td>
+                            <td class="actions">
+                                    <a href="#" onClick='pagarPlandePago(<?php echo $plandepago['Plandepago']['id'];?>)'>Pagar</a>
+                                    <?php
+                                     echo $this->Form->postLink(__('Eliminar'), array('action' => 'delete', $plandepago['Plandepago']['id']), null, __('Are you sure you want to delete # %s?', $plandepago['Plandepago']['id'])); ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
 		</table>
 	</diV>
 </div>

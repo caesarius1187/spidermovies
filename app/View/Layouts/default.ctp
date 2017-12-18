@@ -25,7 +25,8 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 			    array('type' => 'icon')
 			);
 		echo $this->Html->script('jquery');
-		echo $this->Html->script('datatables.min');
+		echo $this->Html->script('jquery-ui');
+		echo $this->Html->script('jquery.dataTables.js');
 		echo $this->Html->script('floatHead/dist/jquery.floatThead');
 		echo $this->Html->script('menu');
 		echo $this->Html->script('chosen.jquery');

@@ -197,6 +197,28 @@ if(isset($error)){ ?>
                 }
                 $haber = $cuenta110499001;
                 break;
+            case '3563'/*110499001 Proveedor "XXX" */:
+                $cuenta110499001 = 0;
+                //Cargar la compra ivapercep
+                foreach ($comprasgravadas as $comprasgravada) {
+                    if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
+                        continue;
+                    }
+                    $suma = 1;
+                    if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                        $suma=-1;
+                    }
+                    $cuenta110499001+=$comprasgravada[0]['total']*$suma;
+                }
+                foreach ($comprasbiendeuso as $comprasbdu) {
+                    $suma = 1;
+                    if($comprasbdu['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                        $suma=-1;
+                    }
+                    $cuenta110499001+=$comprasbdu['Compra']['total']*$suma;
+                }
+                $haber = $cuenta110499001;
+                break;
             /*Casos Primera Categoria*/
             case '3490'/*510001001 Gastos Reales*/:
                 //Si esta cuenta aparece es por que estoy pagando 1da categoria
@@ -631,7 +653,7 @@ if(isset($error)){ ?>
                 $debe = $movimiento['debe'];
                 $haber = $movimiento['haber'];
                 $cuentaclienteid = $movimiento['cuentascliente_id'];
-                showMovimiento($debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
+                showMovimiento($this,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid);
                 $i++;
                 $totalDebe += $debe;
                 $totalHaber += $haber;
@@ -678,6 +700,7 @@ if(isset($error)){ ?>
 </div>
 <?php
 function showMovimiento($context,$debe,$haber,$movid,$i,$asiento_id,$cuentaclienteid){
+    
     if((($debe*1) != 0) || (($haber*1) != 0)||($movid!= 0)) {
         echo $context->Form->input('Asiento.0.Movimiento.' . $i . '.id', ['default' => $movid]);
         echo $context->Form->input('Asiento.0.Movimiento.' . $i . '.asiento_id', ['default' => $asiento_id, 'type' => 'hidden']);

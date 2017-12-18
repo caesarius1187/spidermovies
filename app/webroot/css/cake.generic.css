@@ -208,7 +208,7 @@ div.actions h3 {
             font-size: 9px;
             
         }    
-        #content {
+        #contentToPrint {
             position:relative;
             display:table;
             table-layout:fixed;

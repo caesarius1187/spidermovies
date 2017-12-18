@@ -11,33 +11,252 @@
         <td colspan=3>
             <div class="div_view">
                 <?php
-                echo $this->Form->input('Quebranto.id',array('type'=>'hidden'));
-                echo  $this->Form->input('Quebranto.cliente_id',array('type'=>'hidden','value'=>$impcliid));
+                                
+                echo $this->Form->input('Quebranto.0.periodogeneral', array(
+                    'class'=>'datepicker-month-year', 
+                    'type'=>'text',
+                    'value'=>"",
+                    'label'=>'Periodo de aplicacion',                                    
+                    'title'=>'Periodo en el que se va a usar este quebranto',                                    
+                    'readonly'=>'readonly'
+                    )
+                );
+               
+            ?>
+            </div>
+	</td>
+    </tr>
+    <tr>
+        <td colspan=3>
+            <div class="div_view">
+                <?php
+                echo $this->Form->input('Quebranto.0.id',array('type'=>'hidden'));
+                echo  $this->Form->input('Quebranto.0.impcli_id',array('type'=>'hidden','value'=>$impcliid));
                 $optiontipoDeduccion=[
                   // 'general'=>'general',
                    'personal'=>'personal'
                 ];
                 
-                echo $this->Form->input('Deduccione.periodo', array(
-                    'class'=>'datepicker', 
+                echo $this->Form->input('Quebranto.0.periodo', array(
+                    'class'=>'datepicker-month-year periodoaplicacion', 
                     'type'=>'text',
                     'value'=>"",
-                    'label'=>'Periodo de aplicacion del quebranto',                                    
+                    'label'=>'Periodo de aplicacion',                                    
+                    'title'=>'Periodo en el que se va a usar este quebranto',                                    
                     'readonly'=>'readonly'
                     )
                 );
-                echo $this->Form->input('Deduccione.anio', array(
-                    'class'=>'datepicker', 
+                echo $this->Form->input('Quebranto.0.periodogenerado', array(
+                    'class'=>'datepicker-month-year', 
                     'type'=>'text',
                     'value'=>"",
-                    'label'=>'Periodo de generacion del quebranto',                                    
+                    'label'=>'Periodo de generacion',                                    
+                    'title'=>'Periodo en el que se genero el quebranto',                                    
                     'readonly'=>'readonly'
                     )
                 );
-                echo $this->Form->input('Quebranto.monto', array(
+                echo $this->Form->input('Quebranto.0.monto', array(
+                    'title'=>'Monto original',                                                        
                     )
                 );
-                echo $this->Form->input('Quebranto.saldo', array(
+                echo $this->Form->input('Quebranto.0.usado', array(
+                    'title'=>'Cantidad usada en este periodo',
+                    )
+                );
+                echo $this->Form->input('Quebranto.0.saldo', array(
+                    'title'=>'Saldo a utilizar en periodos restantes',                                                        
+                    )
+                );
+            ?>
+            </div>
+	</td>
+    </tr>
+     <tr>
+        <td colspan=3>
+            <div class="div_view">
+                <?php
+                echo $this->Form->input('Quebranto.1.id',array('type'=>'hidden'));
+                echo  $this->Form->input('Quebranto.1.impcli_id',array('type'=>'hidden','value'=>$impcliid));
+                $optiontipoDeduccion=[
+                  // 'general'=>'general',
+                   'personal'=>'personal'
+                ];
+                
+                echo $this->Form->input('Quebranto.1.periodo', array(
+                    'class'=>'datepicker-month-year periodoaplicacion', 
+                    'type'=>'text',
+                    'value'=>"",
+                    'label'=>false,                                    
+                    'title'=>'Periodo en el que se va a usar este quebranto',                                    
+                    'readonly'=>'readonly'
+                    )
+                );
+                echo $this->Form->input('Quebranto.1.periodogenerado', array(
+                    'class'=>'datepicker-month-year', 
+                    'type'=>'text',
+                    'value'=>"",
+                    'label'=>false,                                     
+                    'title'=>'Periodo en el que se genero el quebranto',                                    
+                    'readonly'=>'readonly'
+                    )
+                );
+                echo $this->Form->input('Quebranto.1.monto', array(
+                    'title'=>'Monto original',          
+                    'label'=>false,          
+                    )
+                );
+                echo $this->Form->input('Quebranto.1.usado', array(
+                    'title'=>'Cantidad usada en este periodo',
+                    'label'=>false,          
+                    )
+                );
+                echo $this->Form->input('Quebranto.1.saldo', array(
+                    'title'=>'Saldo a utilizar en periodos restantes',    
+                    'label'=>false,          
+                    )
+                );
+            ?>
+            </div>
+	</td>
+    </tr>
+     <tr>
+        <td colspan=3>
+            <div class="div_view">
+                <?php
+                echo $this->Form->input('Quebranto.2.id',array('type'=>'hidden'));
+                echo  $this->Form->input('Quebranto.2.impcli_id',array('type'=>'hidden','value'=>$impcliid));
+                $optiontipoDeduccion=[
+                  // 'general'=>'general',
+                   'personal'=>'personal'
+                ];
+                
+                echo $this->Form->input('Quebranto.2.periodo', array(
+                    'class'=>'datepicker-month-year periodoaplicacion', 
+                    'type'=>'text',
+                    'value'=>"",
+                    'label'=>false,                                    
+                    'title'=>'Periodo en el que se va a usar este quebranto',                                    
+                    'readonly'=>'readonly'
+                    )
+                );
+                echo $this->Form->input('Quebranto.2.periodogenerado', array(
+                    'class'=>'datepicker-month-year', 
+                    'type'=>'text',
+                    'value'=>"",
+                    'label'=>false,                                     
+                    'title'=>'Periodo en el que se genero el quebranto',                                    
+                    'readonly'=>'readonly'
+                    )
+                );
+                echo $this->Form->input('Quebranto.2.monto', array(
+                    'title'=>'Monto original',             
+                    'label'=>false,          
+                    )
+                );
+                echo $this->Form->input('Quebranto.2.usado', array(
+                    'title'=>'Cantidad usada en este periodo',
+                    'label'=>false,          
+                    )
+                );
+                echo $this->Form->input('Quebranto.2.saldo', array(
+                    'title'=>'Saldo a utilizar en periodos restantes',     
+                    'label'=>false,          
+                    )
+                );
+            ?>
+            </div>
+	</td>
+    </tr>
+     <tr>
+        <td colspan=3>
+            <div class="div_view">
+                <?php
+                echo $this->Form->input('Quebranto.3.id',array('type'=>'hidden'));
+                echo  $this->Form->input('Quebranto.3.impcli_id',array('type'=>'hidden','value'=>$impcliid));
+                $optiontipoDeduccion=[
+                  // 'general'=>'general',
+                   'personal'=>'personal'
+                ];
+                
+                echo $this->Form->input('Quebranto.3.periodo', array(
+                    'class'=>'datepicker-month-year periodoaplicacion', 
+                    'type'=>'text',
+                    'value'=>"",
+                    'label'=>false,                                    
+                    'title'=>'Periodo en el que se va a usar este quebranto',                                    
+                    'readonly'=>'readonly'
+                    )
+                );
+                echo $this->Form->input('Quebranto.3.periodogenerado', array(
+                    'class'=>'datepicker-month-year', 
+                    'type'=>'text',
+                    'value'=>"",
+                    'label'=>false,                                     
+                    'title'=>'Periodo en el que se genero el quebranto',                                    
+                    'readonly'=>'readonly'
+                    )
+                );
+                echo $this->Form->input('Quebranto.3.monto', array(
+                    'title'=>'Monto original',                    
+                    'label'=>false,          
+                    )
+                );
+                echo $this->Form->input('Quebranto.3.usado', array(
+                    'title'=>'Cantidad usada en este periodo',
+                    'label'=>false,          
+                    )
+                );
+                echo $this->Form->input('Quebranto.3.saldo', array(
+                    'title'=>'Saldo a utilizar en periodos restantes',   
+                    'label'=>false,          
+                    )
+                );
+            ?>
+            </div>
+	</td>
+    </tr>
+     <tr>
+        <td colspan=3>
+            <div class="div_view">
+                <?php
+                echo $this->Form->input('Quebranto.4.id',array('type'=>'hidden'));
+                echo  $this->Form->input('Quebranto.4.impcli_id',array('type'=>'hidden','value'=>$impcliid));
+                $optiontipoDeduccion=[
+                  // 'general'=>'general',
+                   'personal'=>'personal'
+                ];
+                
+                echo $this->Form->input('Quebranto.4.periodo', array(
+                    'class'=>'datepicker-month-year periodoaplicacion', 
+                    'type'=>'text',
+                    'value'=>"",
+                    'label'=>false,                                    
+                    'title'=>'Periodo en el que se va a usar este quebranto',                                    
+                    'readonly'=>'readonly'
+                    )
+                );
+                echo $this->Form->input('Quebranto.4.periodogenerado', array(
+                    'class'=>'datepicker-month-year', 
+                    'type'=>'text',
+                    'value'=>"",
+                    'label'=>false,                                     
+                    'title'=>'Periodo en el que se genero el quebranto',                                    
+                    'readonly'=>'readonly'
+                    )
+                );
+                echo $this->Form->input('Quebranto.4.monto', array(
+                    'title'=>'Monto original',             
+                    'label'=>false,          
+                    )
+                );
+                echo $this->Form->input('Quebranto.4.usado', array(
+                    'title'=>'Cantidad usada en este periodo',
+                    'label'=>false,          
+                    )
+                );
+                echo $this->Form->input('Quebranto.4.saldo', array(
+                    'title'=>'Saldo a utilizar en periodos restantes',   
+                    'label'=>false,          
                     )
                 );
             ?>
@@ -60,21 +279,23 @@
 if(!isset($error)){ ?>
     <table cellpadding="0" cellspacing="0" border="0">
         <thead>
-            <td>Clase</td>
-            <td>Descripcion</td>
-            <td>Acciones</td>
+            <td>Periodo</td>
+            <td>Periodo Origen</td>
+            <td>Monto</td>
+            <td>Saldo</td>
+            <td>Usado</td>
         </thead>
         <tbody>
             <?php
-            foreach ($deducciones as $deduccion) { ?>
-                <tr id="#rowDeduccion<?php echo $deduccion['Deduccione']['id']; ?>">  
-                        <td><?php echo $deduccion['Deduccione']['clase'];?></td>
-                        <td><?php echo $deduccion['Deduccione']['nombre']
-                                ." ".$deduccion['Deduccione']['cuit']
-                                ." ".$deduccion['Deduccione']['documento']
-                                ?></td>
+            foreach ($quebrantos as $quebranto) { ?>
+                <tr id="#rowDeduccion<?php echo $quebranto['Quebranto']['id']; ?>">  
+                        <td><?php echo $quebranto['Quebranto']['periodo'];?></td>
+                        <td><?php echo $quebranto['Quebranto']['periodogenerado'];?></td>
+                        <td><?php echo $quebranto['Quebranto']['monto'];?></td>
+                        <td><?php echo $quebranto['Quebranto']['usado'];?></td>
+                        <td><?php echo $quebranto['Quebranto']['saldo'];?></td>
                         <td>
-                            <a href="#"  onclick="deleteDeduccion(<?php echo $deduccion['Deduccione']['id']; ?>)" class="button_view"> 
+                            <a href="#"  onclick="deleteQuebranto(<?php echo $quebranto['Quebranto']['id']; ?>)" class="button_view"> 
                                 <?php echo $this->Html->image('delete.png', array('alt' => 'open','title' => 'Eliminar','class'=>'imgedit'));?>
                             </a>
                         </td>

@@ -4,19 +4,24 @@
 $(document).ready(function() {    
     
     $( "#clickExcel" ).click(function() {
-        showAllDivs();
-        var table2excel = new Table2Excel();
-        table2excel.export(document.querySelectorAll(".toExcelTable"));
-        CambiarTab("sumasysaldos");
+        //showAllDivs();
+        setTimeout(
+        function() 
+        {
+           var table2excel = new Table2Excel();
+            table2excel.export(document.querySelectorAll(".toExcelTable"));
+            //CambiarTab("sumasysaldos");
+        }, 2000);
+        
     });
     var beforePrint = function() {
         $('#header').hide();
         $('#headerCliente').hide();
         $('#divTabs').hide();
-        showAllDivs();
+        //showAllDivs();
         //tblsys.destroy();
         //$("#tableEvolucionPatrimonioNeto").css('font-size','11px');
-        $("#tableEvolucionPatrimonioNeto").css('transform','rotate(270deg)');
+        /*$("#tableEvolucionPatrimonioNeto").css('transform','rotate(270deg)');
         $("#tableEvolucionPatrimonioNeto").css('margin-left',' -250px');
         $("#tableEvolucionPatrimonioNeto").css('margin-top','250px');
         $("#tableEvolucionPatrimonioNeto").css('width','900px');
@@ -34,7 +39,7 @@ $(document).ready(function() {
         $("#tblEstadoSituacionPatrimonial").css('margin-left',' -250px');
         $("#tblEstadoSituacionPatrimonial").css('margin-top','330px');
         $("#tblEstadoSituacionPatrimonial").css('width','900px');
-
+            */
           
         $(".index").each(
                 function(){
@@ -54,7 +59,7 @@ $(document).ready(function() {
         $('a').show();
         $('#divTabs').show();
         $('#headerCliente').show();
-        CambiarTab("sumasysaldos");
+        C/ambiarTab("sumasysaldos");
         //tblsys.recreate();
         ;
     };
@@ -264,11 +269,5 @@ function CambiarTab(sTab)	{
     }
 }
 function imprimir(){
-    showAllDivs();
-    setTimeout(
-    function() 
-    {
        window.print();
-    }, 3000);
-   
-}
+       }

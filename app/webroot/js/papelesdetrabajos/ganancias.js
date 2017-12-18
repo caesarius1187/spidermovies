@@ -91,6 +91,7 @@ function showAllDivs(){
     $("#divDeduccionesPersonales").show();
     $("#divDeterminacionGPF").show();
     $("#divJustificacionVarPat").show();
+    $("#divQuebrantos").show();
 }
 function CambiarTab(sTab)	{
     $("#tabSumasYSaldos").attr("class", "cliente_view_tab");
@@ -101,6 +102,7 @@ function CambiarTab(sTab)	{
     $("#tabCuartaABCCategoria").attr("class", "cliente_view_tab");
     $("#tabCuartaDEFCategoria").attr("class", "cliente_view_tab");
     $("#tabJustVarPat").attr("class", "cliente_view_tab");
+    $("#tabQuebranto").attr("class", "cliente_view_tab");
 
     if(sTab == "sumasysaldos")
     {
@@ -113,6 +115,7 @@ function CambiarTab(sTab)	{
 	    $("#divDeduccionesPersonales").hide();
 	    $("#divDeterminacionGPF").hide();
 	    $("#divJustificacionVarPat").hide();        
+	    $("#divQuebrantos").hide();        
     }
     if(sTab == "primeracategoria")
     {
@@ -125,6 +128,7 @@ function CambiarTab(sTab)	{
 	    $("#divDeduccionesPersonales").hide();
 	    $("#divDeterminacionGPF").hide();
             $("#divJustificacionVarPat").hide();
+            $("#divQuebrantos").hide();        
     }
     if (sTab == "patrimoniotercera")
     {
@@ -138,6 +142,7 @@ function CambiarTab(sTab)	{
 	    $("#divDeduccionesPersonales").hide();
 	    $("#divDeterminacionGPF").hide();
             $("#divJustificacionVarPat").hide();
+            $("#divQuebrantos").hide();        
     }
     if (sTab == "tercerarestocategoria")
     {
@@ -151,6 +156,7 @@ function CambiarTab(sTab)	{
 	    $("#divDeduccionesPersonales").hide();
 	    $("#divDeterminacionGPF").hide();
             $("#divJustificacionVarPat").hide();
+            $("#divQuebrantos").hide();        
     }
     if (sTab == "terceracategoria")
     {
@@ -164,6 +170,7 @@ function CambiarTab(sTab)	{
 	    $("#divDeduccionesPersonales").hide();
 	    $("#divDeterminacionGPF").hide();
             $("#divJustificacionVarPat").hide();
+            $("#divQuebrantos").hide();        
     }
     if (sTab == "cuartaabccategoria")
     {
@@ -177,6 +184,7 @@ function CambiarTab(sTab)	{
 	    $("#divDeduccionesPersonales").show();
 	    $("#divDeterminacionGPF").hide();
             $("#divJustificacionVarPat").hide();
+            $("#divQuebrantos").hide();        
     }
     if (sTab == "cuartadefcategoria")
     {
@@ -189,6 +197,7 @@ function CambiarTab(sTab)	{
 	    $("#divDeduccionesPersonales").hide();
             $("#divJustificacionVarPat").hide();
 	    $("#divDeterminacionGPF").show();
+            $("#divQuebrantos").hide();        
     }   
     if (sTab == "justificacionvarpat")
     {
@@ -201,6 +210,20 @@ function CambiarTab(sTab)	{
 	    $("#divDeduccionesPersonales").hide();
             $("#divJustificacionVarPat").show();
 	    $("#divDeterminacionGPF").hide();
+            $("#divQuebrantos").hide();        
+    }   
+    if (sTab == "quebrantos")
+    {
+        $("#tabQuebranto").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divPrimeraCategoria").hide();
+	    $("#divPatrimonioTercera").hide();
+	    $("#divPatrimonio").hide();
+	    $("#divDeduccionesGenerales").hide();
+	    $("#divDeduccionesPersonales").hide();
+            $("#divJustificacionVarPat").hide();
+	    $("#divDeterminacionGPF").hide();
+            $("#divQuebrantos").show();        
     }   
 }
 function imprimir(){
@@ -283,4 +306,99 @@ function catchAsientoDeduccionGeneral(){
 
             return false;
     });
+}
+
+function loadFormImpuestoQuebrantos(impcliid,periodo){
+    jQuery(document).ready(function($) {
+        var data ="";
+        $.ajax({
+            type: "get",  // Request method: post, get
+            url: serverLayoutURL+"/quebrantos/edit/"+impcliid+"/"+periodo,
+            // URL to request
+            data: data,  // post data
+            success: function(response) {
+                $('#myModal').on('show.bs.modal', function() {
+                    $('#myModal').find('.modal-title').html('Modificar Quebrantos Guardados');
+                    $('#myModal').find('.modal-body').html(response);
+                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                });
+                $('#myModal').modal('show');
+                
+                $('.chosen-select').chosen({search_contains:true});
+                $("#Quebranto0Periodogeneral").on('change', function() {
+                    $(".periodoaplicacion").each(function(){
+                        $(this).val($("#Quebranto0Periodogeneral").val());
+                    });    
+                    var strDatePeriodoOrig = '01-'+$("#Quebranto0Periodogeneral").val();
+                    var parts = strDatePeriodoOrig.split("-");
+                    var dt = new Date(parts[2], parts[1] , parts[0]);                            
+                    dt.setMonth(dt.getMonth() - 1);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig0 = $.datepicker.formatDate('mm-yy', dt);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig1 = $.datepicker.formatDate('mm-yy', dt);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig2 = $.datepicker.formatDate('mm-yy', dt);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig3 = $.datepicker.formatDate('mm-yy', dt);
+                    dt.setMonth(dt.getMonth() - 12);
+                    var datePeriodoOrig4 = $.datepicker.formatDate('mm-yy', dt);
+                    $("#Quebranto0Periodogenerado").val(datePeriodoOrig0);
+                    $("#Quebranto1Periodogenerado").val(datePeriodoOrig1);
+                    $("#Quebranto2Periodogenerado").val(datePeriodoOrig2);
+                    $("#Quebranto3Periodogenerado").val(datePeriodoOrig3);
+                    $("#Quebranto4Periodogenerado").val(datePeriodoOrig4);
+                });
+                
+                $('#QuebrantoEditForm').submit(function(){
+                        //serialize form data
+                        var formData = $(this).serialize();
+                        //get form action
+                        var formUrl = $(this).attr('action');
+                        $.ajax({
+                                type: 'POST',
+                                url: formUrl,
+                                data: formData,
+                                success: function(data,textStatus,xhr){                                    
+                                    $('#myModal').modal('hide');
+                                    location.reload();                           
+                                },
+                                error: function(xhr,textStatus,error){
+                                        callAlertPopint("Deposito NO Modificado. Intente de nuevo mas Tarde");
+                                }
+                        });
+                        return false;
+                });
+                reloadDatePickers();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                callAlertPopint(textStatus);
+            }
+        });
+    });
+}
+function reloadDatePickers(){
+	jQuery(document).ready(function($) {
+		$( "input.datepicker" ).datepicker({
+						            yearRange: "-100:+50",
+						            changeMonth: true,
+						            changeYear: true,
+						            constrainInput: false,
+						            dateFormat: 'dd-mm-yy',
+						        });	
+		$( "input.datepicker-day-month" ).datepicker({
+						            yearRange: "-100:+50",
+						            changeMonth: true,
+						            changeYear: false,
+						            constrainInput: false,
+						            dateFormat: 'dd-mm',
+						        });	
+		$( "input.datepicker-month-year" ).datepicker({
+						            yearRange: "-100:+50",
+						            changeMonth: true,
+						            changeYear: true,
+						            constrainInput: false,
+						            dateFormat: 'mm-yy',
+						        });	
+ 	});		
 }

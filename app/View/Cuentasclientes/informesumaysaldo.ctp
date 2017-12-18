@@ -191,6 +191,7 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
             //Naranja saldo fuera de contexto
             $charinicial = substr($cuentascliente['Cuenta']['numero'], 0, 1);
             $colorTR = "";
+            $saldoCalculado= round($saldoCalculado, 2);
             switch ($charinicial){
                 case "1":
                 case "3":

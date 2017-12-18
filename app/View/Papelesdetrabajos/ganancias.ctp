@@ -87,6 +87,15 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
     <div id="tabJustVarPat" class="cliente_view_tab" onclick="CambiarTab('justificacionvarpat');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Just. Var. Pat.</label>
     </div>
+    <div id="tabQuebranto" class="cliente_view_tab" onclick="CambiarTab('quebrantos');" style="width:14%;">
+        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Quebrantos</label>
+    </div>
+    <div id="tabAjuste" class="cliente_view_tab" onclick="CambiarTab('ajustes');" style="width:14%;">
+        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Ajustes Contables</label>
+    </div>
+    <div id="tabAsiento" class="cliente_view_tab" onclick="CambiarTab('asiento');" style="width:14%;">
+        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Asiento</label>
+    </div>
 </div>
 <div class="index estadocontable" id="divContenedorBSyS" >
     <?php
@@ -164,6 +173,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
             //Naranja saldo fuera de contexto
             $charinicial = substr($cuentascliente['Cuenta']['numero'], 0, 1);
             $colorTR = "";
+            $saldoCalculado = round($saldoCalculado, 2);
             switch ($charinicial){
                 case "1":
                     if($saldoCalculado>=0){
@@ -715,6 +725,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
     </table>
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
+
 <?php
 //ACA vamos a calcular los valores de la Ganancia de la Determinacion de GPF 
 //para poder calcular los topes de ganancias
@@ -751,31 +762,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $gastosGravadosTotal = $egresosGravados['primera']+$egresosGravados['segunda']+$egresosGravados['tercera']+$egresosGravados['cuarta'];
             $resultadoNetoTotal=$resultadoneto['primera']+$resultadoneto['segunda']+$resultadoneto['tercera']+$resultadoneto['cuarta'];
             $resultadoImpositivo=$resultadoNetoTotal;
-            $resultadoFinal=$resultadoImpositivo;
             
-            //Datos auxiliares para calculo tope deduccion especial
-            $integracion4ta = 0;
-            if($resultadoFinal>=($resultadoneto['cuarta']+$totalGastos3raEmpresa['resultadoneto'])){
-                $integracion4ta=$resultadoneto['cuarta'];
-            }else{
-                if($resultadoFinal>=$resultadoneto['cuarta']){
-                    $integracion4ta=$resultadoneto['cuarta'];
-                }else{
-                    $integracion4ta=$resultadoFinal;
-                }
-            }
-            
-            $integracion3raEmp = 0;
-            if(($resultadoFinal-$integracion4ta)<=0){
-                $integracion3raEmp = 0;
-            }else{
-                if(($resultadoFinal-$integracion4ta-$totalGastos3raEmpresa['resultadoneto'])<=0){
-                    $integracion3raEmp=$resultadoFinal-$integracion4ta;
-                }else{
-                    $integracion3raEmp=$totalGastos3raEmpresa['resultadoneto'];
-                }
-            }
-            $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($resultadoFinal>0?1:0);
+           
 ?>
 <?php
             $montoActualGanancias = 42318; //minimo no imponible
@@ -783,6 +771,103 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $montoActualHijo = 19889;
             $montoActualOtrasCargas = 19889;
 ?>
+<div class="index estadocontable" id="divQuebrantos" >
+    <a href="#"  onclick="loadFormImpuestoQuebrantos(<?php echo $cliente['Impcli'][0]['id']; ?>,'<?php echo $periodo; ?>')" class="button_view">
+        <?php echo $this->Html->image('quebranto.png', array('alt' => 'quebranto','class'=>'imgedit'));?>
+    </a>
+    <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
+        <thead>
+            <tr>
+                <td>
+                    Contribuyente <?php echo $cliente["Cliente"]['nombre'] ?>
+                </td>
+                <td>
+                    Año Fiscal <?php echo $periodoActual ?>
+                </td>               
+                <td>
+                    Quebrantos
+                </td>               
+            </tr>
+        </thead>
+        <tbody>    
+            <tr class="trTitle">
+                <th colspan="4">Quebrantos</th>
+            </tr>
+            <tr class="trTitle">
+                <th colspan="1">A&ntilde;o Fiscal</th>
+                <th colspan="1">Quebranto</th>
+                <th colspan="1">Importe computable</th>
+                <th colspan="1">Importe trasladable</th>
+            </tr>
+            <?php
+            $resultadoNetoTotal;
+            $QuebrantoComputable = $resultadoNetoTotal>0?$resultadoNetoTotal:0;
+            $totalcomputado=0;
+            $totalquebranto=0;
+            $totaltrasladable=0;
+            foreach ($cliente['Impcli'][0]['Quebranto'] as $kque => $quebranto) {
+                ?>
+                <tr>
+                    <td><?php echo $quebranto['periodogenerado'];?></td>
+                    <td><?php echo number_format($quebranto['monto'], 2, ".", "");?></td>
+                    <?php
+                    $title="";
+                    $titleTrasladable="";
+                    $styletd="";
+                    $styletdtrasladable="";
+                        if($QuebrantoComputable>=$quebranto['monto']){
+                           
+                            if($quebranto['usado']==$quebranto['monto']){
+                                $title="Se puede computar $".$QuebrantoComputable." todavia, asi que se incluyo todo el quebranto en el ejercicio";
+                                 $QuebrantoComputable-=$quebranto['monto'];
+                                 
+                            }else{
+                                $title="Se puede computar ".($quebranto['monto']-$quebranto['usado'])." todavia, por favor corrija aumentando en este monto el quebranto computado";
+                                $styletd="background-color: #E6B800";
+                                $QuebrantoComputable-=$quebranto['usado'];
+                            }
+                        }else{
+                            if($quebranto['usado']>$QuebrantoComputable){
+                                $title="Solo se puede computar ".$QuebrantoComputable." en este periodo por favor corrija";
+                                $styletd="background-color: #E6B800";
+                                $QuebrantoComputable=0;
+                            }else{
+                                $title="Se puede computar ".($quebranto['monto']-$quebranto['usado'])." todavia, por favor corrija aumentando en este monto el quebranto computado";
+                                $styletd="background-color: #E6B800";
+                                $QuebrantoComputable-=$quebranto['usado'];
+                            }
+                             
+                        }
+                    ?>
+                    <td title="<?php echo $title?>" style="<?php echo $styletd;?>"><?php  echo  number_format($quebranto['usado'], 2, ".", "");?></td>
+                       
+                        
+                        <?php
+                        if(($quebranto['monto']-$quebranto['usado'])!=$quebranto['saldo']){
+                            $titleTrasladable="Este importe trasladable deberia ser ".$quebranto['monto']-$quebranto['usado'];
+                            $styletdtrasladable="background-color: #E6B800";
+                        }else{
+                            
+                        }                        
+                        ?>
+                    <td title="<?php echo $titleTrasladable?>" style="<?php echo $styletdtrasladable;?>"><?php echo number_format($quebranto['saldo'], 2, ".", "");?></td>
+                </tr>
+                <?php
+                $totalcomputado+=$quebranto['usado'];
+                $totalquebranto+=$quebranto['monto'];
+                $totaltrasladable+=$quebranto['saldo'];
+            }
+            ?>
+            <tr class="trTitle">
+                <th colspan="1"></th>
+                <th colspan="1"><?php echo number_format($totalquebranto, 2, ".", "");?></th>
+                <th colspan="1"><?php echo number_format($totalcomputado, 2, ".", "");?></th>
+                <th colspan="1"><?php echo number_format($totaltrasladable, 2, ".", "");?></th>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divDeduccionesGenerales" >
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
@@ -1129,6 +1214,33 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
     </table>
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
+<?php 
+    $resultadoFinal=$resultadoImpositivo-$totalcomputado;
+
+ //Datos auxiliares para calculo tope deduccion especial
+$integracion4ta = 0;
+if($resultadoFinal>=($resultadoneto['cuarta']+$totalGastos3raEmpresa['resultadoneto'])){
+    $integracion4ta=$resultadoneto['cuarta'];
+}else{
+    if($resultadoFinal>=$resultadoneto['cuarta']){
+        $integracion4ta=$resultadoneto['cuarta'];
+    }else{
+        $integracion4ta=$resultadoFinal;
+    }
+}
+
+$integracion3raEmp = 0;
+if(($resultadoFinal-$integracion4ta)<=0){
+    $integracion3raEmp = 0;
+}else{
+    if(($resultadoFinal-$integracion4ta-$totalGastos3raEmpresa['resultadoneto'])<=0){
+        $integracion3raEmp=$resultadoFinal-$integracion4ta;
+    }else{
+        $integracion3raEmp=$totalGastos3raEmpresa['resultadoneto'];
+    }
+}
+$integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($resultadoFinal>0?1:0);
+?>
 <div class="index estadocontable" id="divDeduccionesPersonales" >
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
@@ -1529,17 +1641,18 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 <td>Resultado Impositivo</td>
                 <td><?php 
                 
-                echo number_format($resultadoNetoTotal, 2, ",", ".")?></td>
+                echo number_format($resultadoImpositivo, 2, ",", ".")?></td>
             </tr>
             <tr>
                 <td></td>
                 <td>Quebrantos de ejercicios anteriores, computables</td>
-                <td><?php echo number_format(0, 2, ",", ".")?></td>
+                <td><?php echo number_format($totalcomputado, 2, ",", ".")?></td>
             </tr>
             <tr>
                 <td></td>
                 <td>Resultado Final</td>
-                <td><?php echo number_format($resultadoNetoTotal, 2, ",", ".")?></td>
+                <td><?php                 
+                echo number_format($resultadoFinal, 2, ",", ".")?></td>
             </tr>
             <tr>
                 <td></td>
@@ -1884,6 +1997,116 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
         </tbody>
     </table>
 </div>
+<div class="index estadocontable" id="divAjustes" >    
+    <div>
+        <?php
+        $tiposAjuste=[
+            'Ajustes Resultado de Fuente Argentina - Aumentan utilidad o disminuyen pérdida'=>'Ajustes Resultado de Fuente Argentina - Aumentan utilidad o disminuyen pérdida',
+            'Ajustes Resultado de Fuente Argentina - Dismunuyen utilidad o aumentan perdida'=>'Ajustes Resultado de Fuente Argentina - Dismunuyen utilidad o aumentan perdida'
+            ];
+        $conceptosAjuste=[
+        	'01'=>'Gastos de Mantenimiento y funcionamiento de  automóviles no deducibles',
+			'02'=>'Gastos no deducibles',
+			'03'=>'Ases. Técnico del exterior',
+			'04'=>'Honorarios directores',
+			'05'=>'Rvas. Matemáticas y similares en Compañía de Seguros',
+			'06'=>'Dif. de Cambio en exceso',
+			'07'=>'Inv. de Capital o mejoras permanentes',
+			'08'=>'Ajuste por precio de transferencia',
+			'09'=>'Impuesto a las ganancias',
+			'10'=>'Aj. Disminuyen Queb. por Ventas de Acciones',
+			'11'=>'Ajustes que incrementan Utilidades por Venta de Acciones',
+			'12'=>'Aj. Que disminuyen Queb. Por Instrum. Finan. Derivados      ',
+			'13'=>'Aj. Incrementan utilidades por Instrum. Finan. Derivados',
+			'14'=>'Intereses',
+			'15'=>'Resutados por exposición a la inflación (REI)',
+			'16'=>'Pérdidas extraordinarias',
+			'17'=>'Otros ajustes',
+			'18'=>'Ajuste NIIF',
+			'Total Amortizaciones y Castigos en exceso'=>[			
+				'19'=>'Bienes Muebles',
+				'20'=>'Bienes Inmuebles',
+				'21'=>'Bienes Intangibles',
+				'22'=>'Bienes que no revisten el carácter de bienes de cambio',
+				'23'=>'Otros (Amortizaciones y Castigos en exceso)',
+			],
+			'Total Ajustes por diferencia de valuación'=>[
+				'24'=>'Leasing Financiero',
+				'25'=>'Acciones',
+				'26'=>'Títulos Públicos',
+				'27'=>'Fondo Común de Inversión',
+				'28'=>'Bines de Cambio',
+				'29'=>'Otros Ajustes por diferencias de valuación',
+			],
+			'Total Provisiones, Previsiones y reservas no deducibles o deducidas en exceso'=>[
+				'30'=>'Incobrables',
+				'31'=>'Bienes de Cambio (Provis.)',
+				'32'=>'Inversiones ',
+				'33'=>'Otras Previsiones',
+				'34'=>'Provisiones y reservas no deducibles o deducidas en exceso',
+				'35'=>'Total Previsiones no deducibles o deducibles en exceso',
+			],
+			'Devoluciones al Aporte a Sociedades de Garantía Recíproca deducido'=>[
+				'36'=>'Importe',
+			],
+			'37'=>'Ajustes que aumentan Quebrantos por Instrumentos Financieros Derivados',
+			'38'=>'Ajustes que disminuyen Utilidades por Instrumentos Financieros Derivados',
+			'39'=>'Agustes que aumentan Quebrantos por Venta de Acciones',
+			'40'=>'Ajustes que disminuyen Utilidades por Ventas de Acciones',
+			'41'=>'Ajustes correlativos por precio de transferencia',
+			'42'=>'Deducción de Gastos Art. 12 Ley 24196',
+			'43'=>'Rentas exentas o no gravadas',
+			'44'=>'Resultado por exposición a la inflación',
+			'45'=>'Reservas matemáticas y similares en Compañía de Seguros',
+			'46'=>'Pérdidas extraordinarias',
+			'47'=>'Honorarios directores',
+			'48'=>'Otros ajustes',
+			'49'=>'Ajuste NIIF',
+			'50'=>'Monto del aporte',
+			'51'=>'Bienes Muebles',
+			'52'=>'Bienes Muebles Amortización Acelerada',
+			'53'=>'Bienes que no revisten el carácter de Bienes de Cambio',
+			'54'=>'Bienes Inmateriales',
+			'55'=>'Bienes Inmateriales Amortización Acelerada',
+			'56'=>'Otros (Amortizaciones y Castigos por defecto)',
+			'57'=>'Bienes Inmuebles',
+			'58'=>'Bienes Inmuebles Amortización Acelerada',
+			'59'=>'% de amortización utilizados por ley 24196',
+			'60'=>'Leasing Financiero',
+			'61'=>'Títulos Públicos',
+			'62'=>'Fondo Común de Inversión',
+			'63'=>'Bienes de Cambio',
+			'64'=>'Otros Ajustes por diferencias de valuación',
+			'65'=>'Importe del aporte'
+        ];
+        echo $this->Form->create('Ajustescontable',['class'=>'formTareaCarga formAsiento','action'=>'add','style'=>' min-width: max-content;']);
+        echo $this->Form->input('Ajustescontable.id',['default'=>$id]);
+        echo $this->Form->input('Ajustescontable.periodo',['default'=>$periodoActual]);
+        echo $this->Form->input('Ajustescontable.tipo',['options'=>$tiposAjuste]);
+        echo $this->Form->input('Ajustescontable.concepto',['options'=>$conceptosAjuste]);
+        echo $this->Form->end(__('Guardar')); ?>
+        ?>
+    </div>
+    <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
+        <thead>
+            <tr>
+                <td>
+                    Contribuyente <?php echo $cliente["Cliente"]['nombre'] ?>
+                </td>
+                <td>
+                    Año Fiscal <?php echo $periodoActual ?>
+                </td>               
+                <td>
+                    Ajustes Contables
+                </td>               
+            </tr>
+        </thead>
+        <tbody>    
+            
+        </tbody>
+    </table>
+</div>
+<div  style="width:100%;height: 1px; page-break-before:always"></div>
 <?php
 function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nombreNota,$fechaInicioConsulta,$fechaFinConsulta,&$total){
     $mostrarTotal = false;
@@ -2878,7 +3101,27 @@ function mostrarDeduccionGeneral($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
     
     }
     return $totalNota;
-}
-
+}?>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" style="width:90%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<!--                    <span aria-hidden="true">&times;</span>-->
+                </button>
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <p>One fine body&hellip;</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 
 

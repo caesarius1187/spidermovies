@@ -46,22 +46,32 @@ class QuebrantosController extends AppController {
  *
  * @return void
  */
-	public function add() {
-		if ($this->request->is('post')) {
-			$this->Quebranto->create();
-			if ($this->Quebranto->save($this->request->data)) {
-				$id = $this->Quebranto->getLastInsertID();
-				$options = array('conditions' => array('Quebranto.' . $this->Quebranto->primaryKey => $id));
-				$this->set('persona', $this->Quebranto->find('first', $options));
-			} else {
-				$this->set('respuesta','El Quebranto no ha sido Guardado. Por favor intente de nuevo mas tarde.');	
-			}
-		}
-                $optionQuebrantos=[];
-                $this->set('quebrantos', $this->Quebranto->find('all',$optionQuebrantos));
+	public function add($impcliid,$periodo=null) {
+            if ($this->request->is('post')) {
+                if ($this->Quebranto->saveAll($this->request->data['Quebranto'])) {
+                    $data['respuesta'] = 'El Quebranto ha sido Guardado.';
+                    $data['error'] = 0;
+                } else {
+                    $data['respuesta'] = 'ERROR: El Quebranto no ha sido Guardado. Por favor intente de nuevo mas tarde';
+                    $data['error'] = 1;
+                }
+                $this->set('data', $data);
+            }
+            $optionQuebrantos=[
+                'contain'=>[],
+                'conditions'=>[
+                    'Quebranto.impcli_id'=>$impcliid
+                ]
+            ];
+            if($periodo!=null){
+                $peanio = substr($periodo, 3);
+                $optionQuebrantos['conditions'][]=['SUBSTRING(Quebranto.periodo,4,7)'=>$peanio];
+            }
+            $this->set('quebrantos', $this->Quebranto->find('all',$optionQuebrantos));
+            $this->set('impcliid', $impcliid);
 
-		$this->layout = 'ajax';
-		$this->render('add');	
+            $this->layout = 'ajax';
+            $this->render('add');	
 	}
 
 /**
@@ -71,26 +81,31 @@ class QuebrantosController extends AppController {
  * @param string $id
  * @return void
  */
-	public function edit($id = null) {
-		if (!$this->Quebranto->exists($id)) {
-			throw new NotFoundException(__('Invalid quebranto'));
-		}
-		if ($this->request->is('post')) {
-			if ($this->Quebranto->save($this->request->data)) {
-				$options = array('conditions' => array('Quebranto.' . $this->Quebranto->primaryKey => $id));
-				$this->set('persona', $this->Quebranto->find('first', $options));
-			} else {
-				$this->set('respuesta','La Persona Relacionada no ha sido Guardada. Por favor intente de nuevo mas tarde.');	
-			}
-		} else {
-			$options = array('conditions' => array('Quebranto.' . $this->Quebranto->primaryKey => $id));
-			$this->request->data = $this->Quebranto->find('first', $options);
-		}
-		$clientes = $this->Quebranto->Cliente->find('list');
-		$this->set(compact('clientes'));
+	public function edit($impcliid,$periodo) {
+            if ($this->request->is('post')) {
+                if ($this->Quebranto->saveAll($this->request->data['Quebranto'])) {
+                    $data['respuesta'] = 'El Quebranto ha sido Guardado.';
+                    $data['error'] = 0;
+                } else {
+                    $data['respuesta'] = 'ERROR: El Quebranto no ha sido Guardado. Por favor intente de nuevo mas tarde';
+                    $data['error'] = 1;
+                }
+                $this->set('data', $data);
+            }
+            $peanio = substr($periodo, 3);
+            $optionQuebrantos=[
+                'contain'=>[],
+                'conditions'=>[
+                    'Quebranto.impcli_id'=>$impcliid,
+                    'SUBSTRING(Quebranto.periodo,4,7)'=>$peanio
+                ]
+            ];
+            $this->set('quebrantos', $this->Quebranto->find('all',$optionQuebrantos));
+            $this->set('impcliid', $impcliid);
+            $this->set('periodo', $periodo);
 
-		$this->layout = 'ajax';
-		$this->render('add');
+            $this->layout = 'ajax';
+            $this->render('edit');	
 	}
 	public function editajax(
 				$id=null,$cliid = null) {
@@ -119,19 +134,19 @@ class QuebrantosController extends AppController {
  * @param string $id
  * @return void
  */
-	public function delete($id = null, $cliid=null) {
-		$this->Quebranto->id = $id;
-		if (!$this->Quebranto->exists()) {
-			throw new NotFoundException(__('Invalid quebranto'));
-		}
-		$this->request->onlyAllow('post', 'delete');
-		if ($this->Quebranto->delete()) {
-			$this->Session->setFlash(__('La persona relacionada ha sido eliminada'));
-		} else {
-			$this->Session->setFlash(__('La persona relacionada NO ha sido eliminada. Por favor intentelo mas tarde'));
-		}
-		return $this->redirect(array(
-			'controller'=>'clientes',
-			'action' => 'view',
-			$cliid));
-	}}
+    public function delete($id = null, $cliid=null) {
+        $this->Quebranto->id = $id;
+        if (!$this->Quebranto->exists()) {
+                throw new NotFoundException(__('Quebranto Invalida'));
+        }
+
+        $this->request->onlyAllow('post', 'delete');
+        if ($this->Quebranto->delete()) {			
+            $data['respuesta']='La Quebranto del impuesto ha sido eliminada. ';			
+        } else {
+            $data['respuesta']='La Quebranto del impuesto NO ha sido eliminado. Por favor intente de nuevo';
+        }
+        $this->set('data',$data);
+        $this->layout = 'ajax';
+        $this->render('serializejson');
+    }}

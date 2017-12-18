@@ -642,8 +642,11 @@ if($mostrarView){?>
                                 <?php }
                                 if($impcli['impuesto_id']==160/*Ganancias Personas Físicas*/){?>
                                     <a href="#"  onclick="loadFormImpuestoDeducciones(<?php echo$impcli['id']; ?>)" class="button_view">
-                                        <?php echo $this->Html->image('deduccion.jpg', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('deduccion.jpg', array('alt' => 'deduccion','class'=>'imgedit'));?>
                                     </a>
+                                    <!--<a href="#"  onclick="loadFormImpuestoQuebrantos(<?php echo$impcli['id']; ?>)" class="button_view">
+                                        <?php echo $this->Html->image('quebranto.png', array('alt' => 'quebranto','class'=>'imgedit'));?>
+                                    </a>-->
                                 <?php }
                                 ?>
                             </td>

@@ -413,6 +413,14 @@ class PapelesdetrabajosController extends AppController {
                     ],
                     'Impcli'=>[
                         'Deduccione',
+                        'Quebranto'=>[
+                            'conditions'=>[
+                                'SUBSTRING(Quebranto.periodo,4,7)'=>$peanio
+                            ],
+                            'order'=>[
+                                'SUBSTRING(Quebranto.periodogenerado,4,7) ASC'
+                            ]
+                        ],
                         'conditions'=>[
                             'Impcli.impuesto_id'=>160
                         ]
