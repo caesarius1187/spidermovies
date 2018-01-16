@@ -29,16 +29,29 @@ class Bienesdeuso extends AppModel {
 		' ', 
 		IFNULL(numero, ''), 
 		' ', 
-		IFNULL(nombre,''), 
-		' ', 
 		IFNULL(matricula,''), 
 		' ', 
 		IFNULL(fechaadquisicion,'')
 		)"
 	);
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
+        public $hasMany = array(
+		'Amortizacione' => array(
+			'className' => 'Amortizacione',
+			'foreignKey' => 'bienesdeuso_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		)
+	);        
+/*' ', 	//The Associations below have been created with all possible keys, those that are not needed can be removed
+        
 /**
  * belongsTo associations
  *

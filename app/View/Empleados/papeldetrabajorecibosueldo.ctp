@@ -49,11 +49,11 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                             if($valorrecibo['Cctxconcepto']['Concepto']['id']=='95'){
                                 //calculo de la cantidad para Acuerdo Remunerativo
                                 $cantidad=
-                                    $valores[12]['valor']/*Días Trabajados u Horas */
-                                    +$valores[13]['valor']/*Vacaciones*/
-                                    +$valores[55]['valor']/*Inasistencias Pagas*/
-                                    -$valores[135]['valor']/*Suspensiones*/
-                                    -$valores[56]['valor']/*Inasistencias Descontadas*/;
+                                    isset($valores[12]['valor'])?$valores[12]['valor']:0/*Días Trabajados u Horas */
+                                    +isset($valores[13]['valor'])?$valores[13]['valor']:0/*Vacaciones*/
+                                    +isset($valores[55]['valor'])?$valores[55]['valor']:0/*Inasistencias Pagas*/
+                                    -isset($valores[135]['valor'])?$valores[135]['valor']:0/*Suspensiones*/
+                                    -isset($valores[56]['valor'])?$valores[56]['valor']:0/*Inasistencias Descontadas*/;
                                 //todo restarle los conceptos tipo DATOS que restan
                             }
                             $valores[$conceptoid]['cantidad']=$cantidad;
@@ -112,7 +112,7 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                                 <b> Empleado: </b>Legajo <?php echo $empleado['Empleado']['legajo'] ?>
                                 <b>Apellido y nombre: </b> <?php echo $empleado['Empleado']['nombre'] ?>
                                 <b>CUIL: </b><?php echo $empleado['Empleado']['cuit']; ?>
-                                <b>Fecha de ingreso: </b> <?php echo date('d/m/Y',strtotime($empleado['Empleado']['fechaalta'])); ?>
+                                <b>Fecha de ingreso: </b> <?php echo date('d/m/Y',strtotime($empleado['Empleado']['fechaingreso'])); ?>
                                 <b>O.S.: </b> <?php echo $valores['33']['concepto']; ?>
                                 <b>Condición: </b> <?php echo $empleado['Empleado']['codigoafip']; ?>
                                 <b>Banco: </b> <p id="pbancoempleado" style="display: inline;"></p>
@@ -202,20 +202,28 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                                             <?php
                                             break;
                                         case 'NO REMUNERATIVOS':
+                                            $suma = 1;
+                                            if($valor['resta']*1==1){
+                                                $suma = -1;
+                                            }//hacerlo para totales tmb
                                             ?>
                                             <td class="tdWithLeftRightBorder tdWithNumber" ></td>
                                             <td class="tdWithLeftRightBorder tdWithNumber" >
-                                                <?php echo number_format($valor['valor'], 2, ",", "."); ?>
+                                                <?php echo number_format($valor['valor']*$suma, 2, ",", "."); ?>
                                             </td>
                                             <td class="tdWithLeftRightBorder tdWithNumber" ></td>
                                             <?php
                                             break;
                                         case 'APORTES':
+                                            $suma = 1;
+                                            if($valor['resta']*1==1){
+                                                $suma = -1;
+                                            }//hacerlo para totales tmb
                                             ?>
                                             <td class="tdWithLeftRightBorder tdWithNumber" ></td>
                                             <td class="tdWithLeftRightBorder tdWithNumber" ></td>
                                             <td class="tdWithLeftRightBorder tdWithNumber" >
-                                            <?php echo number_format($valor['valor'], 2, ",", "."); ?>
+                                            <?php echo number_format($valor['valor']*$suma, 2, ",", "."); ?>
                                             </td>
                                             <?php
                                             break;

@@ -35,6 +35,8 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 	<div style="width:25%; float: left;padding-top:10px">
 		Periodo: <?php echo $periodo;
 		echo $this->Form->input('periododefault',['type'=>'hidden','value'=>$periodo]);
+                $peanio = substr($periodo, 3);
+		echo $this->Form->input('peranio',['type'=>'hidden','value'=>$peanio]);
 		echo $this->Form->input('isajaxrequest',['type'=>'hidden','value'=>$isajaxrequest])?>
 	</div>
 </div>
@@ -159,6 +161,15 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 							'onClick' => 'editarMovimientos('.$asiento['Asiento']['id'].')'
 						)
 					);
+					echo $this->Html->image(
+						'ic_delete_black_24dp.png',
+						array(
+							'alt' => 'edit',
+							'class'=>'imgedit',
+							'style'=>'color:red;float:left;margin-top:10px',
+							'onClick' => 'eliminarAsiento('.$asiento['Asiento']['id'].')'
+						)
+					);
 					?>
 				</td>
 			</tr>
@@ -263,7 +274,7 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
 								'required'=>"required",
 								'style'=>"width:300px"]);
 						echo $this->Form->input('Asiento.0.fecha',
-							['value'=>"",'class'=>"datepicker",
+							['value'=>"",'class'=>"datepickerOneYear",
 								'required'=>"required",
 								'readonly'=>"readonly",
 								'style'=>"width:120px"]);
@@ -277,7 +288,8 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                                                                     'Refundacion'=>'Refundacion',
                                                                     'Cierre'=>'Cierre',
                                                                     'Distribucion de dividendos'=>'Distribucion de dividendos',
-                                                                    'Absorcion de perdida acumulada'=>'Absorcion de perdida acumulada'
+                                                                    'Absorcion de perdida acumulada'=>'Absorcion de perdida acumulada',
+                                                                    'costoscompra'=>'Costos Compra',      
                                                                     ],
 								'style'=>"width:auto",
 								'label'=>'Tipo']);

@@ -189,6 +189,19 @@ class Impcli extends AppModel {
 			'offset' => '',
 			'exclusive' => '',
 			'finderQuery' => '',
+			'counterQuery' => ''		
+		),
+		'Ajustescontable' => array(
+			'className' => 'Ajustescontable',
+			'foreignKey' => 'impcli_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
 			'counterQuery' => ''
 		),
 		

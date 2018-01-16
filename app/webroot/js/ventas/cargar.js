@@ -454,7 +454,6 @@ $(document).ready(function() {
                 },
                 error: function(xhr,textStatus,error){
                     callAlertPopint(textStatus);
-
                 }
             });
             return false;
@@ -646,7 +645,7 @@ $(document).ready(function() {
                 //Calcular TOTAl
                 neto = $("#"+formulario+" #VentaNeto").val();
                 iva=neto*(alicuota/100);
-
+                iva=iva.toFixed(2);
                 total+=neto * 1;
                 total+=iva * 1;
 
@@ -696,10 +695,12 @@ $(document).ready(function() {
                   agenteDePercepcionIIBB = $("#"+formulario+" #VentaIibbpercep").val() * 1;
                   neto-= agenteDePercepcionIIBB * 1;
                 }
-                neto-= noGravados * 1;
-                neto-= excentos * 1;
+                neto -= noGravados * 1;
+                neto -= excentos * 1;
                 iva = neto/((alicuota/100)+1)*(alicuota/100);
+                iva = iva.toFixed(2);
                 neto = neto/((alicuota/100)+1);
+                neto = neto.toFixed(2);
                 $("#"+formulario+" #VentaNeto").val(neto);
                 $("#"+formulario+" #VentaIva").val(iva);
               }

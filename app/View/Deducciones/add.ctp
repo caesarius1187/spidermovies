@@ -26,6 +26,7 @@
                 $optionsDeduccionesGanancias=[
                     'personal'=>[
                         'Deduccion especial'=>'Deduccion especial',
+                        'Deduccion incrementada'=>'Deduccion incrementada',
                         'Conyuge' =>'Conyuge',
                         'Hijos'=>'Hijos',
                         'Otras Cargas'=>'Otras Cargas'
@@ -107,7 +108,7 @@
                     'class'=>'datepicker personal hijo conyuge otrascargas', 
                     'type'=>'text',
                     'value'=>"",
-                    'label'=>'Fecha de Nac. o de Constituci&oacute;n',                                    
+                    'label'=>'Desde',                                    
                     'readonly'=>'readonly'
                     )
                 );
@@ -115,7 +116,7 @@
                     'class'=>'datepicker personal hijo conyuge otrascargas', 
                     'type'=>'text',
                     'value'=>"",
-                    'label'=>'Fecha de Nac. o de Constituci&oacute;n',                                    
+                    'label'=>'Hasta',                                    
                     'readonly'=>'readonly'
                     )
                 );

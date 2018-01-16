@@ -100,19 +100,19 @@ if(isset($error)){ ?>
                     '3740'=>['Otros bienes'],
                 ];
                 $titleCuenta = "";
-                foreach ($comprasbiendeuso as $compra) {
-                    $categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                foreach ($bienesdeusos as $bienesdeuso) {
+                    //$categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
                     //si el bien de uso tiene la compra != null o 0 o "" entonces ya se vendio no se debe amortizar.
-                    if(!in_array($compra['Bienesdeuso'][0]['venta_id'],['',0,null])){
+                    if(!in_array($bienesdeuso['Bienesdeuso']['venta_id'],['',0,null])){
                         continue;
                     }
-                    if("amortizacion".$categoriaDeLaCompra!='amortizacionprimeracateg'){
+                    /*if("amortizacion".$categoriaDeLaCompra!='amortizacionprimeracateg'){
+                        continue;
+                    }*/
+                    if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                         continue;
                     }
-                    if(!in_array($compra['Bienesdeuso'][0]['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
-                        continue;
-                    }
-                    $cuentaprimera+=$compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo']+$compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo'];
+                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
                 }
                 $debe = $cuentaprimera;
                  $title = "";
@@ -138,18 +138,18 @@ if(isset($error)){ ?>
                     '3235'=>['Otros bienes'],
                 ];
 
-                foreach ($comprasbiendeuso as $compra) {
-                    $categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                     if(!in_array($compra['Bienesdeuso'][0]['venta_id'],['',0,null])){
+                foreach ($bienesdeusos as $bienesdeuso) {
+                    //$categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                     if(!in_array($bienesdeuso['Bienesdeuso']['venta_id'],['',0,null])){
                         continue;
                     }
-                    if("amortizacion".$categoriaDeLaCompra=='amortizacionterceracateg'){
+                    /*if("amortizacion".$categoriaDeLaCompra=='amortizacionterceracateg'){
+                        continue;
+                    }*/
+                    if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                         continue;
                     }
-                    if(!in_array($compra['Bienesdeuso'][0]['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
-                        continue;
-                    }
-                    $cuentaprimera+=$compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo']+$compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo'];
+                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
                 }
                 $debe = $cuentaprimera;
                 break;
@@ -176,18 +176,18 @@ if(isset($error)){ ?>
                     '3753'=>['Otros bienes'],
                 ];
 
-                foreach ($comprasbiendeuso as $compra) {
-                    $categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                     if(!in_array($compra['Bienesdeuso'][0]['venta_id'],['',0,null])){
+                foreach ($bienesdeusos as $bienesdeuso) {
+                   // $categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                     if(!in_array($bienesdeuso['Bienesdeuso']['venta_id'],['',0,null])){
                         continue;
                     }
-                    if("amortizacion".$categoriaDeLaCompra!='amortizacionsegundacateg'){
+                    /*if("amortizacion".$categoriaDeLaCompra!='amortizacionsegundacateg'){
+                        continue;
+                    }*/
+                    if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                         continue;
                     }
-                    if(!in_array($compra['Bienesdeuso'][0]['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
-                        continue;
-                    }
-                    $cuentaprimera+=$compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo']+$compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo'];
+                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
                 }
                 $debe = $cuentaprimera;
                 break;
@@ -214,18 +214,18 @@ if(isset($error)){ ?>
                     '3765'=>['Otros bienes'],
                 ];
 
-                foreach ($comprasbiendeuso as $compra) {
-                    $categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                     if(!in_array($compra['Bienesdeuso'][0]['venta_id'],['',0,null])){
+                foreach ($bienesdeusos as $bienesdeuso) {
+                    //$categoriaDeLaCompra = $bienesdeuso['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                     if(!in_array($bienesdeuso['Bienesdeuso']['venta_id'],['',0,null])){
                         continue;
                     }
-                    if("amortizacion".$categoriaDeLaCompra!='amortizacionterceracateg45'){
+                    /*if("amortizacion".$categoriaDeLaCompra!='amortizacionterceracateg45'){
+                        continue;
+                    }*/
+                    if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                         continue;
                     }
-                    if(!in_array($compra['Bienesdeuso'][0]['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
-                        continue;
-                    }
-                    $cuentaprimera+=$compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo']+$compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo'];
+                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
                 }
                 $debe = $cuentaprimera;
                 break;
@@ -251,18 +251,18 @@ if(isset($error)){ ?>
                         '3777'=>['Otros bienes'],
                     ];
 
-                    foreach ($comprasbiendeuso as $compra) {
-                        $categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        if(!in_array($compra['Bienesdeuso'][0]['venta_id'],['',0,null])){
+                    foreach ($bienesdeusos as $bienesdeuso) {
+                        //$categoriaDeLaCompra = $bienesdeuso['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                        if(!in_array($bienesdeuso['Bienesdeuso']['venta_id'],['',0,null])){
                             continue;
                         }
-                        if("amortizacion".$categoriaDeLaCompra!='amortizacioncuartacateg'){
+                        /*if("amortizacion".$categoriaDeLaCompra!='amortizacioncuartacateg'){
+                            continue;
+                        }*/
+                        if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        if(!in_array($compra['Bienesdeuso'][0]['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
-                            continue;
-                        }
-                        $cuentaprimera+=$compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo']+$compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo'];
+                        $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
                     }
                     $debe = $cuentaprimera;
                 break;
@@ -287,18 +287,18 @@ if(isset($error)){ ?>
                         '2303'=>['Otros bienes de uso Activos Biologicos'],
                     ];
 
-                    foreach ($comprasbiendeuso as $compra) {
-                        $categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        if(!in_array($compra['Bienesdeuso'][0]['venta_id'],['',0,null])){
+                    foreach ($bienesdeusos as $bienesdeuso) {
+                        //$categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                        if(!in_array($bienesdeuso['Bienesdeuso']['venta_id'],['',0,null])){
                             continue;
                         }
-                        if("amortizacion".$categoriaDeLaCompra!='amortizacionterceracateg'){
+                        /*if("amortizacion".$categoriaDeLaCompra!='amortizacionterceracateg'){
+                            continue;
+                        }*/
+                        if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        if(!in_array($compra['Bienesdeuso'][0]['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
-                            continue;
-                        }
-                        $cuentaprimera+=$compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo']+$compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo'];
+                        $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
                     }
                     $debe = $cuentaprimera;
                 break;
@@ -323,18 +323,18 @@ if(isset($error)){ ?>
                         '895'=>['Otros bienes de uso Activos Biologicos'],
                     ];
 
-                    foreach ($comprasbiendeuso as $compra) {
-                        $categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
-                        if(!in_array($compra['Bienesdeuso'][0]['venta_id'],['',0,null])){
+                    foreach ($bienesdeusos as $bienesdeuso) {
+                        //$categoriaDeLaCompra = $compra['Actividadcliente']['Cuentasganancia'][0]['categoria'];
+                        if(!in_array($bienesdeuso['Bienesdeuso']['venta_id'],['',0,null])){
                             continue;
                         }
-                        if("amortizacion".$categoriaDeLaCompra!='amortizacionterceracateg'){
+                        /*if("amortizacion".$categoriaDeLaCompra!='amortizacionterceracateg'){
+                            continue;
+                        }*/
+                        if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        if(!in_array($compra['Bienesdeuso'][0]['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
-                            continue;
-                        }
-                        $cuentaprimera+=$compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo']+$compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo'];
+                        $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
                     }
                     $haber = $cuentaprimera;
                 break;
@@ -404,98 +404,98 @@ if(isset($error)){ ?>
             )
         );
     }
-    if(count($comprasbiendeuso)>0){
+    if(count($bienesdeusos)>0){
         ?>
         <div id="modificarBienesdeuso" >
             <h3><?php echo __('Se Amortizaran los Siguientes Bienes de uso'); ?></h3>
             <?php
             echo $this->Form->create('Bienesdeuso',['class'=>'formTareaCarga formAsiento','controller'=>'Bienesdeuso','action'=>'amortizar']);
-            foreach ($comprasbiendeuso as $c => $compra) {
-                if(!in_array($compra['Bienesdeuso'][0]['venta_id'],['',0,null])){
+            foreach ($bienesdeusos as $c => $bienesdeuso) {
+                if(!in_array($bienesdeuso['Bienesdeuso']['venta_id'],['',0,null])){
                     continue;
                 }
                 echo $this->Form->input('Bienesdeuso.'.$c.'.id',[
                     'type'=>'hidden',
-                    'value'=> $compra['Bienesdeuso'][0]['id'],
+                    'value'=> $bienesdeuso['Bienesdeuso']['id'],
                 ]);
-                $descripcionBDU = $compra['Bienesdeuso'][0]['tipo'].": ";
+                $descripcionBDU = $bienesdeuso['Bienesdeuso']['tipo'].": ";
                 //todo separar en case desc Bien de uso
                 //esto seria mas correcto si lo separamos en un case
-                switch ($compra['Bienesdeuso'][0]['tipo']){
+                switch ($bienesdeuso['Bienesdeuso']['tipo']){
                     //Empresa
                     case 'Rodado':
-                        if($compra['Bienesdeuso'][0]['patente']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['patente'];
-                        if($compra['Bienesdeuso'][0]['aniofabricacion']!="")
-                            $descripcionBDU  .= " -".$compra['Bienesdeuso'][0]['aniofabricacion'];
+                        if($bienesdeuso['Bienesdeuso']['patente']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['patente'];
+                        if($bienesdeuso['Bienesdeuso']['aniofabricacion']!="")
+                            $descripcionBDU  .= " -".$bienesdeuso['Bienesdeuso']['aniofabricacion'];
 
                         break;
                     case 'Inmueble':
-                        if($compra['Bienesdeuso'][0]['calle']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['calle'];
-                        if($compra['Bienesdeuso'][0]['numero']!="")
-                            $descripcionBDU  .= " -".$compra['Bienesdeuso'][0]['numero'];
-                        if($compra['Bienesdeuso'][0]['catastro']!="")
-                            $descripcionBDU  .= " -".$compra['Bienesdeuso'][0]['catastro'];
+                        if($bienesdeuso['Bienesdeuso']['calle']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['calle'];
+                        if($bienesdeuso['Bienesdeuso']['numero']!="")
+                            $descripcionBDU  .= " -".$bienesdeuso['Bienesdeuso']['numero'];
+                        if($bienesdeuso['Bienesdeuso']['catastro']!="")
+                            $descripcionBDU  .= " -".$bienesdeuso['Bienesdeuso']['catastro'];
 
                         break;
                     case 'Instalaciones':
-                        if($compra['Bienesdeuso'][0]['descripcion']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['descripcion'];
+                        if($bienesdeuso['Bienesdeuso']['descripcion']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['descripcion'];
 
                         break;
                     case 'Otros bienes de uso Muebles':
-                        if($compra['Bienesdeuso'][0]['descripcion']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['descripcion'];
+                        if($bienesdeuso['Bienesdeuso']['descripcion']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['descripcion'];
 
                         break;
                     case 'Otros bienes de uso Maquinas':
-                        if($compra['Bienesdeuso'][0]['descripcion']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['descripcion'];
+                        if($bienesdeuso['Bienesdeuso']['descripcion']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['descripcion'];
 
                         break;
                     case 'Otros bienes de uso Activos Biologicos':
-                        if($compra['Bienesdeuso'][0]['descripcion']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['descripcion'];
+                        if($bienesdeuso['Bienesdeuso']['descripcion']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['descripcion'];
 
                         break;
                     //NO empresa
                     case 'Inmuebles':
-                        if($compra['Bienesdeuso'][0]['calle']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['calle'];
-                        if($compra['Bienesdeuso'][0]['numero']!="")
-                            $descripcionBDU  .= " -".$compra['Bienesdeuso'][0]['numero'];
-                        if($compra['Bienesdeuso'][0]['catastro']!="")
-                            $descripcionBDU  .= " -".$compra['Bienesdeuso'][0]['catastro'];
+                        if($bienesdeuso['Bienesdeuso']['calle']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['calle'];
+                        if($bienesdeuso['Bienesdeuso']['numero']!="")
+                            $descripcionBDU  .= " -".$bienesdeuso['Bienesdeuso']['numero'];
+                        if($bienesdeuso['Bienesdeuso']['catastro']!="")
+                            $descripcionBDU  .= " -".$bienesdeuso['Bienesdeuso']['catastro'];
                         break;
                     case 'Automotor':
-                        if($compra['Bienesdeuso'][0]['patente']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['patente'];
-                        if($compra['Bienesdeuso'][0]['aniofabricacion']!="")
-                            $descripcionBDU  .= " -".$compra['Bienesdeuso'][0]['aniofabricacion'];
+                        if($bienesdeuso['Bienesdeuso']['patente']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['patente'];
+                        if($bienesdeuso['Bienesdeuso']['aniofabricacion']!="")
+                            $descripcionBDU  .= " -".$bienesdeuso['Bienesdeuso']['aniofabricacion'];
                         break;
                     case 'Naves, Yates y similares':
-                        if($compra['Bienesdeuso'][0]['marca']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['marca'];
-                        if($compra['Bienesdeuso'][0]['modelo']!="")
-                            $descripcionBDU  .= " -".$compra['Bienesdeuso'][0]['modelo'];
+                        if($bienesdeuso['Bienesdeuso']['marca']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['marca'];
+                        if($bienesdeuso['Bienesdeuso']['modelo']!="")
+                            $descripcionBDU  .= " -".$bienesdeuso['Bienesdeuso']['modelo'];
 
                         break;
                     case 'Aeronave':
-                        if($compra['Bienesdeuso'][0]['matricula']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['matricula'];
-                        if($compra['Bienesdeuso'][0]['fechaadquisicion']!="")
-                            $descripcionBDU  .= " -".$compra['Bienesdeuso'][0]['fechaadquisicion'];
+                        if($bienesdeuso['Bienesdeuso']['matricula']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['matricula'];
+                        if($bienesdeuso['Bienesdeuso']['fechaadquisicion']!="")
+                            $descripcionBDU  .= " -".$bienesdeuso['Bienesdeuso']['fechaadquisicion'];
 
                         break;
                     case 'Bien mueble registrable':
-                        if($compra['Bienesdeuso'][0]['descripcion']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['descripcion'];
+                        if($bienesdeuso['Bienesdeuso']['descripcion']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['descripcion'];
 
                         break;
                     case 'Otros bienes':
-                        if($compra['Bienesdeuso'][0]['descripcion']!="")
-                            $descripcionBDU  .= $compra['Bienesdeuso'][0]['descripcion'];                                         
+                        if($bienesdeuso['Bienesdeuso']['descripcion']!="")
+                            $descripcionBDU  .= $bienesdeuso['Bienesdeuso']['descripcion'];                                         
                         break;
                 }                               
                 ?> 
@@ -503,21 +503,21 @@ if(isset($error)){ ?>
                     <legend align= "left" ><?php  echo $this->Form->label("",$descripcionBDU); ?> </legend>
                 <?php
                 echo $this->Form->label("","Amortizacion acumulada actual: "
-                        .number_format($compra['Bienesdeuso'][0]['amortizacionacumulada'], 2, ",", ".")
+                        .number_format($bienesdeuso['Bienesdeuso']['amortizacionacumulada'], 2, ",", ".")
                         ."/ Amortizacion del periodo actual: "
-                        .number_format($compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo'], 2, ",", ".")
+                        .number_format($bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo'], 2, ",", ".")
                         ."/ Amortizacion acelerada del periodo actual: "
-                        .number_format($compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo'], 2, ",", "."),
+                        .number_format($bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'], 2, ",", "."),
                         ['style'=>'font-size: 10px;']
                         );
                         $amortizacionacumulada = 
-                        $compra['Bienesdeuso'][0]['amortizacionacumulada']*1 +
-                        $compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo']*1+
-                        $compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo']*1;
+                        $bienesdeuso['Bienesdeuso']['amortizacionacumulada']*1 +
+                        $bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']*1+
+                        $bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo']*1;
                 echo $this->Form->input('Bienesdeuso.'.$c.'.amortizacionacumulada',[
                     'value'=> number_format($amortizacionacumulada, 2, ".", ""),
                 ]);
-                $amortizaciondelperiodo = $compra['Bienesdeuso'][0]['importeamorteizaciondelperiodo']*1+$compra['Bienesdeuso'][0]['importeamortizacionaceleradadelperiodo']*1;
+                $amortizaciondelperiodo = $bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']*1+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo']*1;
                 echo $this->Form->input('Bienesdeuso.'.$c.'.amortizaciondelperiodo',[
                     'value'=> number_format($amortizaciondelperiodo, 2, ".", ""),
                 ])."</br>";

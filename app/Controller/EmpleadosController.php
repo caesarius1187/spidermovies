@@ -270,138 +270,138 @@ class EmpleadosController extends AppController {
 		$this->set('empleado', $this->Empleado->find('first', $options));
 	}
 	public function papeldetrabajosueldos($cliid=null,$periodo=null ,$empleadoamostrar=null, $tipoliquidacion=null) {
-        $this->loadModel('Impcli');
-		$this->loadModel('Empleado');
-		$this->loadModel('Concepto');
-		$this->loadModel('Cctxconcepto');
-		$this->loadModel('Valorrecibo');
-		$this->loadModel('Cargo');
-		if (isset($this->request->data['Cctxconcepto'])) {
-			$this->loadModel('Cctxconcepto');
-			$this->Cctxconcepto->create();
-			//lo que vamos a guardar aca es un cctXConcepto personalizado
-			//entonces tenemos que buscar el maximo codigo cargado y usar el siguiente
-			$optionsConcepto=array(
-				'fields'=>array(
-					'MAX(SUBSTRING(Concepto.codigo,2)) as codigoMax'
-				),
-				'conditions'=>array(
-					'SUBSTRING(Concepto.codigo,1,1)'=>'P'
-				)
-			);
-			$maxCodigoConcepto= $this->Concepto->find('all',$optionsConcepto);
+            $this->loadModel('Impcli');
+            $this->loadModel('Empleado');
+            $this->loadModel('Concepto');
+            $this->loadModel('Cctxconcepto');
+            $this->loadModel('Valorrecibo');
+            $this->loadModel('Cargo');
+            if (isset($this->request->data['Cctxconcepto'])) {
+                $this->loadModel('Cctxconcepto');
+                $this->Cctxconcepto->create();
+                //lo que vamos a guardar aca es un cctXConcepto personalizado
+                //entonces tenemos que buscar el maximo codigo cargado y usar el siguiente
+                $optionsConcepto=array(
+                        'fields'=>array(
+                                'MAX(SUBSTRING(Concepto.codigo,2)) as codigoMax'
+                        ),
+                        'conditions'=>array(
+                                'SUBSTRING(Concepto.codigo,1,1)'=>'P'
+                        )
+                );
+                $maxCodigoConcepto= $this->Concepto->find('all',$optionsConcepto);
 
-			$optionsCctxconcepto=array(
-				'fields'=>array(
-					'MAX(SUBSTRING(Cctxconcepto.codigopersonalizado,2)) as codigoMax'
-				),
-				'conditions'=>array(
-					'SUBSTRING(Cctxconcepto.codigopersonalizado,1,1)'=>'P'
-				)
-			);
-			$maxCodigoCctXConcepto= $this->Cctxconcepto->find('all',$optionsCctxconcepto);
-			$this->set(compact('maxCodigoConcepto','maxCodigoCctXConcepto'));
-			//Debugger::dump($maxCodigoConcepto);
-			//Debugger::dump($maxCodigoCctXConcepto);
-			$codigoMax = 0;
-			if($maxCodigoConcepto[0][0]['codigoMax']*1>$maxCodigoCctXConcepto[0][0]['codigoMax']*1){
-				$codigoMax = $maxCodigoConcepto[0][0]['codigoMax']+1;
-			}else{
-				$codigoMax = $maxCodigoCctXConcepto[0][0]['codigoMax']+1;
-			}
-			$this->request->data['Cctxconcepto']['codigopersonalizado'] = "P".$codigoMax;
-			if ($this->Cctxconcepto->save($this->request->data['Cctxconcepto'])) {
+                $optionsCctxconcepto=array(
+                        'fields'=>array(
+                                'MAX(SUBSTRING(Cctxconcepto.codigopersonalizado,2)) as codigoMax'
+                        ),
+                        'conditions'=>array(
+                                'SUBSTRING(Cctxconcepto.codigopersonalizado,1,1)'=>'P'
+                        )
+                );
+                $maxCodigoCctXConcepto= $this->Cctxconcepto->find('all',$optionsCctxconcepto);
+                $this->set(compact('maxCodigoConcepto','maxCodigoCctXConcepto'));
+                //Debugger::dump($maxCodigoConcepto);
+                //Debugger::dump($maxCodigoCctXConcepto);
+                $codigoMax = 0;
+                if($maxCodigoConcepto[0][0]['codigoMax']*1>$maxCodigoCctXConcepto[0][0]['codigoMax']*1){
+                        $codigoMax = $maxCodigoConcepto[0][0]['codigoMax']+1;
+                }else{
+                        $codigoMax = $maxCodigoCctXConcepto[0][0]['codigoMax']+1;
+                }
+                $this->request->data['Cctxconcepto']['codigopersonalizado'] = "P".$codigoMax;
+                if ($this->Cctxconcepto->save($this->request->data['Cctxconcepto'])) {
 
-			} else {
-				$this->Session->setFlash(__('Error al guardar el concepto para el convenio por favor intente de nuevo mas tarde.'));
-			}
-		}
-		if (isset($this->request->data['Valorrecibo'])) {
-			$this->loadModel('Valorrecibo');
-			$this->Valorrecibo->create();
-			if ($this->Valorrecibo->saveAll($this->request->data['Valorrecibo'])) {
+                } else {
+                        $this->Session->setFlash(__('Error al guardar el concepto para el convenio por favor intente de nuevo mas tarde.'));
+                }
+            }
+            if (isset($this->request->data['Valorrecibo'])) {
+                $this->loadModel('Valorrecibo');
+                $this->Valorrecibo->create();
+                if ($this->Valorrecibo->saveAll($this->request->data['Valorrecibo'])) {
 
-			} else {
-				$this->Session->setFlash(__('Error al guardar el recibo de sueldo por favor intente de nuevo mas tarde.'));
-			}
-		}
-		$this->set(compact('periodo'));
-		if(!isset($tipoliquidacion)||$tipoliquidacion==null||$tipoliquidacion==""||$tipoliquidacion=="undefined"){
-			$this->Session->setFlash(__('Error 1, No se recibio Tipo de Liquidacion.'));
-			return $this->redirect(array('action' => 'cargamasiva',$empleadoamostrar,$periodo,));
-		}
-		$conditionLiquidacion = [];
-		$numeroliquidacion = 1;
-		switch ($tipoliquidacion){
-			case 'liquidaprimeraquincena':
-				$conditionLiquidacion['Empleado.liquidaprimeraquincena']='1';
-				$numeroliquidacion = 1;
-				break;
-			case 'liquidasegundaquincena':
-				$conditionLiquidacion['Empleado.liquidasegundaquincena']='1';
-				$numeroliquidacion = 2;
-				break;
-			case 'liquidamensual':
-				$conditionLiquidacion['Empleado.liquidamensual']='1';
-				$numeroliquidacion = 3;
-				break;
-			case 'liquidapresupuestoprimera':
-				$conditionLiquidacion['Empleado.liquidapresupuestoprimera']='1';
-				$numeroliquidacion = 4;
-				break;
-			case 'liquidapresupuestosegunda':
-				$conditionLiquidacion['Empleado.liquidapresupuestosegunda']='1';
-				$numeroliquidacion = 5;
-				break;
-			case 'liquidapresupuestomensual':
-				$conditionLiquidacion['Empleado.liquidapresupuestomensual']='1';
-				$numeroliquidacion = 6;
-				break;
-            case 'liquidasac':
-				$conditionLiquidacion['Empleado.liquidasac']='1';
-				$numeroliquidacion = 7;
-				break;
+                } else {
+                        $this->Session->setFlash(__('Error al guardar el recibo de sueldo por favor intente de nuevo mas tarde.'));
+                }
+            }
+            $this->set(compact('periodo'));
+            if(!isset($tipoliquidacion)||$tipoliquidacion==null||$tipoliquidacion==""||$tipoliquidacion=="undefined"){
+                $this->Session->setFlash(__('Error 1, No se recibio Tipo de Liquidacion.'));
+                return $this->redirect(array('action' => 'cargamasiva',$empleadoamostrar,$periodo,));
+            }
+            $conditionLiquidacion = [];
+            $numeroliquidacion = 1;
+            switch ($tipoliquidacion){
+                case 'liquidaprimeraquincena':
+                        $conditionLiquidacion['Empleado.liquidaprimeraquincena']='1';
+                        $numeroliquidacion = 1;
+                        break;
+                case 'liquidasegundaquincena':
+                        $conditionLiquidacion['Empleado.liquidasegundaquincena']='1';
+                        $numeroliquidacion = 2;
+                        break;
+                case 'liquidamensual':
+                        $conditionLiquidacion['Empleado.liquidamensual']='1';
+                        $numeroliquidacion = 3;
+                        break;
+                case 'liquidapresupuestoprimera':
+                        $conditionLiquidacion['Empleado.liquidapresupuestoprimera']='1';
+                        $numeroliquidacion = 4;
+                        break;
+                case 'liquidapresupuestosegunda':
+                        $conditionLiquidacion['Empleado.liquidapresupuestosegunda']='1';
+                        $numeroliquidacion = 5;
+                        break;
+                case 'liquidapresupuestomensual':
+                        $conditionLiquidacion['Empleado.liquidapresupuestomensual']='1';
+                        $numeroliquidacion = 6;
+                        break;
+                case 'liquidasac':
+                        $conditionLiquidacion['Empleado.liquidasac']='1';
+                        $numeroliquidacion = 7;
+                        break;
 		}
 		$optionsempleados = array(
-			'contain'=>array(
-				'Cargo',
-				'Conveniocolectivotrabajo'=>array(
-					'Cctxconcepto'=>array(
-						'Concepto',
-						'Valorrecibo'=>array(
-							'conditions'=>array(
-								'Valorrecibo.empleado_id'=>$empleadoamostrar,
-								'Valorrecibo.tipoliquidacion'=>$numeroliquidacion,
-								'Valorrecibo.periodo'=>$periodo,
-							)
-						),
-						'conditions'=>array(
-							'OR'=>array(
-								'AND'=>array(
-									'Cctxconcepto.cliente_id' => $cliid,
-									'Cctxconcepto.campopersonalizado' => 1,
-								),
-								'Cctxconcepto.campopersonalizado' => 0,
-							),
-						),
-						'order'=>array('Cctxconcepto.orden'),
-					),
-					'Impuesto'=>[
-						'Impcli'=>[
-							'conditions'=>[
-								'Impcli.cliente_id'=>$cliid
-							]
-						]
-					],
-				),
-			),
-			'conditions' => array(
-				'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
-			)
+                    'contain'=>array(
+                        'Cargo',
+                        'Conveniocolectivotrabajo'=>array(
+                            'Cctxconcepto'=>array(
+                                'Concepto',
+                                'Valorrecibo'=>array(
+                                    'conditions'=>array(
+                                            'Valorrecibo.empleado_id'=>$empleadoamostrar,
+                                            'Valorrecibo.tipoliquidacion'=>$numeroliquidacion,
+                                            'Valorrecibo.periodo'=>$periodo,
+                                    )
+                                ),
+                                'conditions'=>array(
+                                    'OR'=>array(
+                                            'AND'=>array(
+                                                    'Cctxconcepto.cliente_id' => $cliid,
+                                                    'Cctxconcepto.campopersonalizado' => 1,
+                                            ),
+                                            'Cctxconcepto.campopersonalizado' => 0,
+                                    ),
+                                ),
+                                'order'=>array('Cctxconcepto.orden'),
+                            ),
+                            'Impuesto'=>[
+                                'Impcli'=>[
+                                        'conditions'=>[
+                                                'Impcli.cliente_id'=>$cliid
+                                        ]
+                                ]
+                            ],
+                        ),
+                    ),
+                    'conditions' => array(
+                            'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
+                    )
 		);
 		$optionsempleados['conditions']=[
-			'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
-			$conditionLiquidacion,
+                    'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
+                    $conditionLiquidacion,
 		];
 		$empleado = $this->Empleado->find('first', $optionsempleados);
 		/*
@@ -505,24 +505,24 @@ class EmpleadosController extends AppController {
                     }
                 }
             }
-			//ahora vamos a acomodar por cctxconcepto ORDEN
-			for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
-				for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
-					//si son de la misma seccion comparo sino no
-					$seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
-					$seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
-					if($seccionburbuja!=$seccionaux){
-						continue;
-					}
-					$ordenburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['orden'];
-					$ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
-					if($ordenburbuja>$ordenaux){
-						$myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
-						$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
-						$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
-					}
-				}
-			}
+            //ahora vamos a acomodar por cctxconcepto ORDEN
+            for ($i=0;$i<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto'])-1;$i++){
+                for ($j=$i;$j<count($empleado['Conveniocolectivotrabajo']['Cctxconcepto']);$j++) {
+                    //si son de la misma seccion comparo sino no
+                    $seccionburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['Concepto']['seccion'];
+                    $seccionaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['Concepto']['seccion'];
+                    if($seccionburbuja!=$seccionaux){
+                        continue;
+                    }
+                    $ordenburbuja = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]['orden'];
+                    $ordenaux = $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]['orden'];
+                    if($ordenburbuja>$ordenaux){
+                        $myaux=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i];
+                        $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$i]=$empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j];
+                        $empleado['Conveniocolectivotrabajo']['Cctxconcepto'][$j]=$myaux;
+                    }
+                }
+            }
         }
         //Resulta que para calcular el SAC tenemos que buscar de los ultimos 6 meses un par de datos
         //como Total Remunerativos y Total SD Excepto Indemnizatorios, tengo que buscar el maximo de ellos
@@ -534,9 +534,9 @@ class EmpleadosController extends AppController {
             $periodoPrevio[] = date("m-Y",$timePeriodo);
         }
         $optionsValorecibo = array(
-			'contains'=>[
-				'Cctxconcepto'
-			],
+            'contains'=>[
+                    'Cctxconcepto'
+            ],
             'joins'=>[
                 [
                     'table'=>'conceptos',
@@ -554,13 +554,16 @@ class EmpleadosController extends AppController {
             ),
         );
         $valorRecibos = $this->Valorrecibo->find('all', $optionsValorecibo);
+        $remunerativos=[];
+        $noremunerativos=[];
         foreach ($valorRecibos as $valorrecibo) {
             $this->set($valorrecibo);
             if($valorrecibo['Cctxconcepto']['concepto_id']=='27'){
                 //Total Remunerativos
-                if($mayorRemunerativo*1<$valorrecibo['Valorrecibo']['valor']*1){
-                    $mayorRemunerativo=$valorrecibo['Valorrecibo']['valor']*1;
-                }
+                if(!isset($remunerativos[$valorrecibo['Valorrecibo']['periodo']]))
+                    $remunerativos[$valorrecibo['Valorrecibo']['periodo']]=0;
+                $remunerativos[$valorrecibo['Valorrecibo']['periodo']]+=$valorrecibo['Valorrecibo']['valor'];
+               
             }
             if($valorrecibo['Cctxconcepto']['concepto_id']=='103'){
                 //Total No Remunerativos
@@ -569,14 +572,24 @@ class EmpleadosController extends AppController {
                 $datetime2 = date_create('01-'.$valorrecibo['Valorrecibo']['periodo']);
                 $interval = $datetime2->diff($datetime1);
                 if($interval->format('%m months')*1<=3){
-                    if($mayorNORemunerativo<$valorrecibo['Valorrecibo']['valor']*1){
-                        $mayorNORemunerativo=$valorrecibo['Valorrecibo']['valor']*1;
-                    }
+                    if(!isset($noremunerativos[$valorrecibo['Valorrecibo']['periodo']]))
+                        $noremunerativos[$valorrecibo['Valorrecibo']['periodo']]=0;
+                    $noremunerativos[$valorrecibo['Valorrecibo']['periodo']]+=$valorrecibo['Valorrecibo']['valor'];
                 }
             }
         }
-		$this->set(compact('empleado','mayorRemunerativo','mayorNORemunerativo','tipoliquidacion','numeroliquidacion','tieneLiquidacion'));
-		$this->autoRender=false;
+        foreach ($remunerativos as $key => $value) {
+            if($mayorRemunerativo*1<$value*1){                    
+                $mayorRemunerativo=$value*1;
+            }
+        }
+        foreach ($noremunerativos as $key => $value) {
+            if($mayorNORemunerativo*1<$value*1){
+                $mayorNORemunerativo=$value*1;
+            } 
+        }
+        $this->set(compact('empleado','mayorRemunerativo','mayorNORemunerativo','tipoliquidacion','numeroliquidacion','tieneLiquidacion'));
+        $this->autoRender=false;
         if($this->RequestHandler->isAjax()){
             $this->layout = 'ajax';
         }

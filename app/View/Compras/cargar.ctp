@@ -436,6 +436,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                       $compra["actvspercep"] = $compra["actvspercep"]*-1;
                       $compra["impinternos"] = $compra["impinternos"]*-1;
                       $compra["impcombustible"] = $compra["impcombustible"]*-1;
+                      $compra["exentos"] = $compra["exentos"]*-1;
                       $compra["nogravados"] = $compra["nogravados"]*-1;
                       $compra["kw"] = $compra["kw"]*-1;
                   }

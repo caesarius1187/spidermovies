@@ -56,24 +56,36 @@ class ProvedoresController extends AppController {
  * @return void
  */
 	public function add() {
-		$this->autoRender=false; 
-		$data = array();
-		if ($this->request->is('post')) {
-			$this->Provedore->create();
-			if ($this->Provedore->save($this->request->data)) {
-				$data['respuesta']='El Provedor ha sido Guardado..';
-				$id = $this->Provedore->getLastInsertID();
-				$options = array('conditions' => array('Provedore.' . $this->Provedore->primaryKey => $id));
-				$data['provedor']=$this->Provedore->find('first', $options);
-			} else {
-				$data['respuesta']='El Provedor no ha sido Guardado. Por favor intente de nuevo mas tarde';
-			}
-		}else{
-			$data['respuesta']='El Provedore no ha sido Guardado. Por favor intente de nuevo mas tarde';
-		}
-		$this->layout = 'ajax';
-		$this->set('data', $data);
-		$this->render('serializejson');
+            $this->autoRender=false; 
+            $data = array();
+            if ($this->request->is('post')) {
+                //aca vamos a buscar un provedor de este cliente que tenga el mismo cuit 
+                //o el mismo dni
+                
+                $conditions = array(
+                    'Provedore.cuit' => $this->request->data['Provedore']['cuit'],
+                    'Provedore.cliente_id' => $this->request->data['Provedore']['cliente_id']
+                );
+                if ($this->Provedore->hasAny($conditions)){
+                    $data['respuesta']='El Provedor no ha sido Guardado por que '
+                            . 'ya existia previamente. Por favor intente de nuevo con otro provedor';
+                }else{
+                    $this->Provedore->create();
+                    if ($this->Provedore->save($this->request->data)) {
+                        $data['respuesta']='El Provedor ha sido Guardado..';
+                        $id = $this->Provedore->getLastInsertID();
+                        $options = array('conditions' => array('Provedore.' . $this->Provedore->primaryKey => $id));
+                        $data['provedor']=$this->Provedore->find('first', $options);
+                    } else {
+                        $data['respuesta']='El Provedor no ha sido Guardado. Por favor intente de nuevo mas tarde';
+                    }
+                }
+            }else{
+                    $data['respuesta']='El Provedor no ha sido Guardado. Por favor intente de nuevo mas tarde';
+            }
+            $this->layout = 'ajax';
+            $this->set('data', $data);
+            $this->render('serializejson');
 	}
 
 /**

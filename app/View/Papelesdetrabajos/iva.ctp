@@ -3611,7 +3611,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 <tr>
                     <td>Total Retenciones, Percepciones y Pagos a cuenta computables en el periodo neto de restituciones</td>
                     <td style="width:180px">
-                        <span id="spnTotalRetencionesyPercepciones"><?php echo $TotalPagosACuenta>0?number_format($TotalPagosACuenta, 2, ",", "."):0;?></span>
+                        <span id="spnTotalRetencionesyPercepciones"><?php echo number_format($TotalPagosACuenta, 2, ",", ".");?></span>
                         <?php
                         echo $this->Form->input('totalretenciones', array(
                             'type'=>'hidden',

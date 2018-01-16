@@ -423,227 +423,228 @@ class VentasController extends AppController {
 			}
 		}
 	public function edit($id) {
-		$this->loadModel('Subcliente');
-		$this->loadModel('Localidade');
-		$this->loadModel('Partido');
-		$this->loadModel('Actividadcliente');
-		$this->loadModel('Puntosdeventa');
-		$this->loadModel('Comprobante');
-		$this->loadModel('Cliente');
-		$this->loadModel('Tipogasto');
-		if (!$this->Venta->exists($id)) {
-			throw new NotFoundException(__('Venta No Existe'));
-			return;
-		}
-		$mostrarForm=true;
-		$ventaAnterior=false;
-		if(!empty($this->data)){ 
-			$id = $this->request->data['Venta']['id'];
-			//Antes de guardar vamos a revisar que el comprobante o la alicuota cambie y tenemos que controlar que no estemos guardando una venta igual a otra que ya este guardada
-			$options = array(
-				'contain'=>array( ),
-				'conditions' => array('Venta.' . $this->Venta->primaryKey => $id)
-				);
-			$venta = $this->Venta->find('first', $options);
-			
-			if(
-				$venta['Venta']['comprobante_id'] != $this->request->data['Venta']['comprobante_id']||
-				$venta['Venta']['puntosdeventa_id'] != $this->request->data['Venta']['puntosdeventa_id']||
-				$venta['Venta']['numerocomprobante'] != $this->request->data['Venta']['numerocomprobante']
-			)
-			{
-				if($this->request->data['Venta']['tieneMonotributo']){
-	 			//Es Monotributista comprobar solo por numero de comprobante
- 				$optionsVenta = array(
-						'Venta.cliente_id'=>$this->request->data['Venta']['cliente_id'],
-						'Venta.comprobante_id'=>$this->request->data['Venta']['comprobante_id'],
- 						'Venta.puntosdeventa_id'=>$this->request->data['Venta']['puntosdeventa_id'],
- 						'Venta.numerocomprobante'=>$this->request->data['Venta']['numerocomprobante'],
- 					);
-		 		}else{
-		 			//Es Responsable Inscripto comprobar por numero de comprobante y por alicuota
-	 				$optionsVenta = array(
-							'Venta.cliente_id'=>$this->request->data['Venta']['cliente_id'],
-							'Venta.comprobante_id'=>$this->request->data['Venta']['comprobante_id'],
-	 						'Venta.puntosdeventa_id'=>$this->request->data['Venta']['puntosdeventa_id'],
-	 						'Venta.numerocomprobante'=>$this->request->data['Venta']['numerocomprobante'],
-	 						'Venta.alicuota'=>$this->request->data['Venta']['alicuota'],
-	 					);	 			
-		 		}
-				$ventaAnterior = $this->Venta->hasAny($optionsVenta);
-			}
-			if(!$ventaAnterior){
-				$this->request->data['Venta']['fecha'] = $this->request->data['Venta']['ventafecha'.$id];
-				$this->request->data('Venta.fecha',date(
-					'Y-m-d',
-					strtotime(
-						substr($this->request->data['Venta']['periodo'], 3).'-'.
-						substr($this->request->data['Venta']['periodo'], 0,2).'-'.
-						$this->request->data['Venta']['fecha']
-						)
-					)
-				);
-				if ($this->Venta->save($this->request->data)) {
+            $this->loadModel('Subcliente');
+            $this->loadModel('Localidade');
+            $this->loadModel('Partido');
+            $this->loadModel('Actividadcliente');
+            $this->loadModel('Puntosdeventa');
+            $this->loadModel('Comprobante');
+            $this->loadModel('Cliente');
+            $this->loadModel('Tipogasto');
+            if (!$this->Venta->exists($id)) {
+                    throw new NotFoundException(__('Venta No Existe'));
+                    return;
+            }
+            $mostrarForm=true;
+            $ventaAnterior=false;
+            if(!empty($this->data)){ 
+                    $id = $this->request->data['Venta']['id'];
+                    //Antes de guardar vamos a revisar que el comprobante o la alicuota cambie y tenemos que controlar que no estemos guardando una venta igual a otra que ya este guardada
+                    $options = array(
+                            'contain'=>array( ),
+                            'conditions' => array('Venta.' . $this->Venta->primaryKey => $id)
+                            );
+                    $venta = $this->Venta->find('first', $options);
 
-				} else {
+                    if(
+                            $venta['Venta']['comprobante_id'] != $this->request->data['Venta']['comprobante_id']||
+                            $venta['Venta']['puntosdeventa_id'] != $this->request->data['Venta']['puntosdeventa_id']||
+                            $venta['Venta']['numerocomprobante'] != $this->request->data['Venta']['numerocomprobante']
+                    )
+                    {
+                            if($this->request->data['Venta']['tieneMonotributo']){
+                            //Es Monotributista comprobar solo por numero de comprobante
+                            $optionsVenta = array(
+                                            'Venta.cliente_id'=>$this->request->data['Venta']['cliente_id'],
+                                            'Venta.comprobante_id'=>$this->request->data['Venta']['comprobante_id'],
+                                            'Venta.puntosdeventa_id'=>$this->request->data['Venta']['puntosdeventa_id'],
+                                            'Venta.numerocomprobante'=>$this->request->data['Venta']['numerocomprobante'],
+                                    );
+                            }else{
+                                    //Es Responsable Inscripto comprobar por numero de comprobante y por alicuota
+                                    $optionsVenta = array(
+                                                    'Venta.cliente_id'=>$this->request->data['Venta']['cliente_id'],
+                                                    'Venta.comprobante_id'=>$this->request->data['Venta']['comprobante_id'],
+                                                    'Venta.puntosdeventa_id'=>$this->request->data['Venta']['puntosdeventa_id'],
+                                                    'Venta.numerocomprobante'=>$this->request->data['Venta']['numerocomprobante'],
+                                                    'Venta.alicuota'=>$this->request->data['Venta']['alicuota'],
+                                            );	 			
+                            }
+                            $ventaAnterior = $this->Venta->hasAny($optionsVenta);
+                    }
+                    if(!$ventaAnterior){
+                            $this->request->data['Venta']['fecha'] = $this->request->data['Venta']['ventafecha'.$id];
+                            $this->request->data('Venta.fecha',date(
+                                    'Y-m-d',
+                                    strtotime(
+                                            substr($this->request->data['Venta']['periodo'], 3).'-'.
+                                            substr($this->request->data['Venta']['periodo'], 0,2).'-'.
+                                            $this->request->data['Venta']['fecha']
+                                            )
+                                    )
+                            );
+                            if ($this->Venta->save($this->request->data)) {
 
-				}
-				$options = array(
-					'contain'=>array(
-						'Actividadcliente'=>array(
-				   						'Actividade',
-				   					),
-						'Puntosdeventa',
-						'Subcliente',
-						'Localidade'=>array('Partido'),
-						'Comprobante',
-					),
-					'conditions' => array('Venta.' . $this->Venta->primaryKey => $id)
-					);
-				$venta = $this->Venta->find('first', $options);
+                            } else {
+
+                            }
+                            $options = array(
+                                    'contain'=>array(
+                                            'Actividadcliente'=>array(
+                                                                            'Actividade',
+                                                                    ),
+                                            'Puntosdeventa',
+                                            'Subcliente',
+                                            'Localidade'=>array('Partido'),
+                                            'Comprobante',
+                                    ),
+                                    'conditions' => array('Venta.' . $this->Venta->primaryKey => $id)
+                                    );
+                            $venta = $this->Venta->find('first', $options);
 //				$venta['Venta']['tieneMonotributo'] = $this->request->data['Venta']['tieneMonotributo'];
 //				$venta['Venta']['tieneIVAPercepciones'] = $this->request->data['Venta']['tieneIVAPercepciones'];
 //				$venta['Venta']['tieneImpuestoInterno'] = $this->request->data['Venta']['tieneImpuestoInterno'];
 //				$venta['Venta']['tieneAgenteDePercepcionActividadesVarias'] = $this->request->data['Venta']['tieneAgenteDePercepcionActividadesVarias'];
 //				$venta['Venta']['tieneIVA'] = $this->request->data['Venta']['tieneIVA'];
 //				$venta['Venta']['tieneAgenteDePercepcionIIBB'] = $this->request->data['Venta']['tieneAgenteDePercepcionIIBB'];
-				$optionsComprobante = array('contain'=>[],'conditions'=>array('Comprobante.id' => $this->request->data['Venta']['comprobante_id']));
-				$optionsPuntosDeVenta = array('contain'=>[],'conditions'=>array('Puntosdeventa.id' => $this->request->data['Venta']['puntosdeventa_id']));
-				$optionsSubCliente = array('contain'=>[],'conditions'=>array('Subcliente.id'=>$this->request->data['Venta']['subcliente_id']));
-				$optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Venta']['localidade_id']));
-				$optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id']));
-                $optionstipogasto = array(
-					'contain'=>[],
-					'conditions'=>array(
-						'Tipogasto.id'=>$this->request->data['Venta']['tipogasto_id'],
-						'Tipogasto.tipo'=>'ventas'
-					)
-				);
-                $this->request->data['Venta']['fecha'] = date('d',strtotime($this->request->data['Venta']['fecha']));
-				$data = array(
-					"respuesta" => "La Venta ha sido modificada.",
-					"error" => "0",
-					"venta_id" => $this->request->data['Venta']['id'],
-					"venta"=> $this->request->data,
-					"comprobante"=> $this->Comprobante->find('first',$optionsComprobante),
-					"puntosdeventa"=> $this->Puntosdeventa->find('first',$optionsPuntosDeVenta),
-					"subcliente"=> $this->Subcliente->find('first',$optionsSubCliente),
-					"localidade"=> $this->Localidade->find('first',$optionsLocalidade),
-					"actividadcliente"=> $this->Actividadcliente->find('first',$optionsActividadCliente),
-		            "actividadcliente_id"=> $this->request->data['Venta']['actividadcliente_id'],
-                    "tipogasto"=> $this->Tipogasto->find('first',$optionstipogasto),
-                    /*AFIP*/
-					"tieneMonotributo"=> $this->request->data['Venta']['tieneMonotributo'],
-					"tieneIVA"=> $this->request->data['Venta']['tieneIVA'],
-					"tieneIVAPercepciones"=> $this->request->data['Venta']['tieneIVAPercepciones'],
-					"tieneImpuestoInterno"=> $this->request->data['Venta']['tieneImpuestoInterno'],
-					/*DGR*/
-					"tieneAgenteDePercepcionIIBB"=> $this->request->data['Venta']['tieneAgenteDePercepcionIIBB'],
-					/*DGRM*/
-					"tieneAgenteDePercepcionActividadesVarias"=> $this->request->data['Venta']['tieneAgenteDePercepcionActividadesVarias'],
-				);
-				$this->layout = 'ajax';
-				$this->set('data',$data);
-				$this->set('mostrarForm',false);
-				return;
-			}else{
-				$data = array('respuesta'=>'La venta'.$this->request->data['Venta']['numerocomprobante']." ya ha sido registrada en el periodo".$this->request->data['Venta']['periodo'].', por favor cambiar comprobante o alicuota');
-				$this->set('data',$data);
-			}			
-
-			$mostrarForm=false;			
-			
-		}else{
-                    $options = array(
-                            'contain'=>array( ),
-                            'conditions' => array('Venta.' . $this->Venta->primaryKey => $id)
+                            $optionsComprobante = array('contain'=>[],'conditions'=>array('Comprobante.id' => $this->request->data['Venta']['comprobante_id']));
+                            $optionsPuntosDeVenta = array('contain'=>[],'conditions'=>array('Puntosdeventa.id' => $this->request->data['Venta']['puntosdeventa_id']));
+                            $optionsSubCliente = array('contain'=>[],'conditions'=>array('Subcliente.id'=>$this->request->data['Venta']['subcliente_id']));
+                            $optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Venta']['localidade_id']));
+                            $optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id']));
+            $optionstipogasto = array(
+                                    'contain'=>[],
+                                    'conditions'=>array(
+                                            'Tipogasto.id'=>$this->request->data['Venta']['tipogasto_id'],
+                                            'Tipogasto.tipo'=>'ventas'
+                                    )
                             );
-                    $venta = $this->Venta->find('first', $options);
-                        
-                    $impuestosActivos= $this->Cliente->impuestosActivados($venta['Venta']['cliente_id'],$venta['Venta']['periodo']);
-                    $this->set(compact('impuestosActivos'));
-		}
-		$this->set('mostrarForm',$mostrarForm);	
-		$options = array(
-			'contain'=>array(
-				'Actividadcliente'=>array(
-		   						'Actividade',
-		   					),
-				'Puntosdeventa',
-				'Subcliente',
-				'Localidade'=>array('Partido'),
-				'Comprobante',
-				),
-			'conditions' => array(
-				'Venta.' . $this->Venta->primaryKey => $id)
-			);
-		$this->request->data = $this->Venta->find('first', $options);
-		$this->set('venid',$id);
-		
-	   	$conditionspuntosdeventa = array('Puntosdeventa.cliente_id' => $this->request->data['Venta']['cliente_id'],);
-		$puntosdeventas = $this->Puntosdeventa->find('list',array('conditions' =>$conditionspuntosdeventa));	
-		$this->set(compact('puntosdeventas'));
+            $this->request->data['Venta']['fecha'] = date('d',strtotime($this->request->data['Venta']['fecha']));
+                            $data = array(
+                                    "respuesta" => "La Venta ha sido modificada.",
+                                    "error" => "0",
+                                    "venta_id" => $this->request->data['Venta']['id'],
+                                    "venta"=> $this->request->data,
+                                    "comprobante"=> $this->Comprobante->find('first',$optionsComprobante),
+                                    "puntosdeventa"=> $this->Puntosdeventa->find('first',$optionsPuntosDeVenta),
+                                    "subcliente"=> $this->Subcliente->find('first',$optionsSubCliente),
+                                    "localidade"=> $this->Localidade->find('first',$optionsLocalidade),
+                                    "actividadcliente"=> $this->Actividadcliente->find('first',$optionsActividadCliente),
+                        "actividadcliente_id"=> $this->request->data['Venta']['actividadcliente_id'],
+                "tipogasto"=> $this->Tipogasto->find('first',$optionstipogasto),
+                /*AFIP*/
+                                    "tieneMonotributo"=> $this->request->data['Venta']['tieneMonotributo'],
+                                    "tieneIVA"=> $this->request->data['Venta']['tieneIVA'],
+                                    "tieneIVAPercepciones"=> $this->request->data['Venta']['tieneIVAPercepciones'],
+                                    "tieneImpuestoInterno"=> $this->request->data['Venta']['tieneImpuestoInterno'],
+                                    /*DGR*/
+                                    "tieneAgenteDePercepcionIIBB"=> $this->request->data['Venta']['tieneAgenteDePercepcionIIBB'],
+                                    /*DGRM*/
+                                    "tieneAgenteDePercepcionActividadesVarias"=> $this->request->data['Venta']['tieneAgenteDePercepcionActividadesVarias'],
+                            );
+                            $this->layout = 'ajax';
+                            $this->set('data',$data);
+                            $this->set('mostrarForm',false);
+                            return;
+                    }else{
+                            $data = array('respuesta'=>'La venta'.$this->request->data['Venta']['numerocomprobante']." ya ha sido registrada en el periodo".$this->request->data['Venta']['periodo'].', por favor cambiar comprobante o alicuota');
+                            $this->set('data',$data);
+                    }			
 
-		$conditionsSubClientes = array('Subcliente.cliente_id' => $this->request->data['Venta']['cliente_id'],);
-		$subclientes = $this->Subcliente->find('list',array('conditions' =>$conditionsSubClientes));	
-		$this->set(compact('subclientes'));
+                    $mostrarForm=false;			
 
-		$conditionsLocalidades = array(
-			'contain'=>'Partido',
-			'fields'=>array('Localidade.id','Localidade.nombre','Partido.nombre'),
-			'order'=>array('Partido.nombre','Localidade.nombre')
-			);
-		$localidades = $this->Localidade->find('list',$conditionsLocalidades);
-		$this->set('localidades', $localidades);
-		
-		$partidos = $this->Partido->find('list');
-		$this->set('partidos', $partidos);
+            }else{
+                $options = array(
+                        'contain'=>array( ),
+                        'conditions' => array('Venta.' . $this->Venta->primaryKey => $id)
+                        );
+                $venta = $this->Venta->find('first', $options);
 
-		$comprobantes = $this->Comprobante->find('list');
-		$this->set('comprobantes', $comprobantes);
-		
-		$this->set('alicuotas', $this->alicuotas);
+                $impuestosActivos= $this->Cliente->impuestosActivados($venta['Venta']['cliente_id'],$venta['Venta']['periodo']);
+                $this->set(compact('impuestosActivos'));
+            }
+            $this->set('mostrarForm',$mostrarForm);	
+            $options = array(
+                    'contain'=>array(
+                            'Actividadcliente'=>array(
+                                                            'Actividade',
+                                                    ),
+                            'Puntosdeventa',
+                            'Subcliente',
+                            'Localidade'=>array('Partido'),
+                            'Comprobante',
+                            ),
+                    'conditions' => array(
+                            'Venta.' . $this->Venta->primaryKey => $id)
+                    );
+            $this->request->data = $this->Venta->find('first', $options);
+            $this->set('venid',$id);
 
-		$this->set('condicionesiva', $this->condicionesiva);
+            $conditionspuntosdeventa = array('Puntosdeventa.cliente_id' => $this->request->data['Venta']['cliente_id'],);
+            $puntosdeventas = $this->Puntosdeventa->find('list',array('conditions' =>$conditionspuntosdeventa));	
+            $this->set(compact('puntosdeventas'));
 
-		$this->set('tipodebitos', $this->tipodebitos);
-		
-		$clienteActividadList=$this->Actividadcliente->find('list', array(
-												'contain' => array(
-													'Actividade'
-													),
-											   'conditions' => array(
-												                'Actividadcliente.cliente_id' =>  $this->request->data['Venta']['cliente_id'], 
-												            ),
-											   'fields' => array(
-													'Actividadcliente.id','Actividade.nombre'
-														)
-											)
-									);
-        $cliente=$this->Cliente->find('first', array(
-                'contain'=>array(
-                    'Actividadcliente'=>array(
-                        'Actividade',
-                        'Cuentasganancia'
+            $conditionsSubClientes = array('Subcliente.cliente_id' => $this->request->data['Venta']['cliente_id'],);
+            $subclientes = $this->Subcliente->find('list',array('conditions' =>$conditionsSubClientes));	
+            $this->set(compact('subclientes'));
+
+            $conditionsLocalidades = array(
+                    'contain'=>'Partido',
+                    'fields'=>array('Localidade.id','Localidade.nombre','Partido.nombre'),
+                    'order'=>array('Partido.nombre','Localidade.nombre')
+                    );
+            $localidades = $this->Localidade->find('list',$conditionsLocalidades);
+            $this->set('localidades', $localidades);
+
+            $partidos = $this->Partido->find('list');
+            $this->set('partidos', $partidos);
+
+            $comprobantes = $this->Comprobante->find('list');
+            $this->set('comprobantes', $comprobantes);
+
+            $this->set('alicuotas', $this->alicuotas);
+
+            $this->set('condicionesiva', $this->condicionesiva);
+
+            $this->set('tipodebitos', $this->tipodebitos);
+
+            $clienteActividadList=$this->Actividadcliente->find('list', array(
+                            'contain' => array(
+                                    'Actividade',
+
+                            ),
+                            'conditions' => array(
+                                    'Actividadcliente.cliente_id' => $this->request->data['Venta']['cliente_id'],
+                            ),
+                            'fields' => array(
+                                    'Actividadcliente.id','Actividade.nombre','Actividadcliente.descripcion'
+                            )
+                    )
+            );
+            $this->set('actividades', $clienteActividadList);
+            $cliente=$this->Cliente->find('first', array(
+                    'contain'=>array(
+                        'Actividadcliente'=>array(
+                            'Actividade',
+                            'Cuentasganancia'
+                        ),
                     ),
-                ),
-                'conditions' => array(
-                    'id' => $this->request->data['Venta']['cliente_id'],
-                ),
-            )
-        );
-        $this->set('cliente', $cliente);
-        $optionsTipoGastos=array(
-            'conditions'=>array(
-                'Tipogasto.tipo'=>'ventas'),
-            'fields'=>array('id','nombre','categoria'),
-            'contain'=>[],
-        );
-        $tipogastos = $this->Venta->Tipogasto->find('list',$optionsTipoGastos);
-        $this->set('tipogastos', $tipogastos);
-		$this->set('actividades', $clienteActividadList);
-		$this->layout = 'ajax';
-	}
+                    'conditions' => array(
+                        'id' => $this->request->data['Venta']['cliente_id'],
+                    ),
+                )
+            );
+            $this->set('cliente', $cliente);
+            $optionsTipoGastos=array(
+                'conditions'=>array(
+                    'Tipogasto.tipo'=>'ventas'),
+                'fields'=>array('id','nombre','categoria'),
+                'contain'=>[],
+            );
+            $tipogastos = $this->Venta->Tipogasto->find('list',$optionsTipoGastos);
+            $this->set('tipogastos', $tipogastos);
+            $this->layout = 'ajax';
+        }
 	//Esta funcion es la que se abre desde el informe de avance
 	public function cargar($id=null,$periodo=null){
 		// PRIMERO CHEKIAR QUE EL CLIENTE QUE MUESTRA LAS VENTAS SEA PARTE DEL ESTUDIO ACTIVO

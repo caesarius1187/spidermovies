@@ -524,7 +524,7 @@ if(isset($error)){ ?>
                     break;
                 /*Casos Cuarta Categoria*/
                 case '3047'/*605015001 Servicios personales de soc cooperativas*/:
-                case '3054'/*605016002 Profesiones liberales u oficios*/:
+                case '3053'/*605016002 Profesiones liberales u oficios*/:
                 case '3059'/*605017001 Corredores, viajante de comercio y despachante de aduana*/:
                     //Si esta cuenta aparece es por que estoy pagando 3ra Auxiliar comercio categoria
                     //en almenos 1 actividad tengo que buscar las compras de esas actividades y sumar el neto
@@ -532,7 +532,7 @@ if(isset($error)){ ?>
                     //Cargar la compra neto + no gravado + exento
                     $cuentasTipoGastos=[];
                     $cuentasTipoGastos['3047']=['63'];
-                    $cuentasTipoGastos['3054']=['64'];
+                    $cuentasTipoGastos['3053']=['64'];
                     $cuentasTipoGastos['3059']=['65'];
 
                     foreach ($ventasgravadas as $ventasgravada) {
@@ -732,7 +732,7 @@ if(isset($error)){ ?>
             }
             /*Aca vamos a reescribir el debe y el haber si es que corresponde para esta cuenta con este cliente*/
             //Este switch controla todas las cuentas que hay en "ventas" obligadamente
-
+           
             switch ($asientoestandar['Cuenta']['id']){
                 /*Casos No Tercer Categoria*/
                 //DEBE

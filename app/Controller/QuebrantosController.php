@@ -47,6 +47,8 @@ class QuebrantosController extends AppController {
  * @return void
  */
 	public function add($impcliid,$periodo=null) {
+            $this->loadModel('Impcli');
+            $this->loadModel('Quebranto');
             if ($this->request->is('post')) {
                 if ($this->Quebranto->saveAll($this->request->data['Quebranto'])) {
                     $data['respuesta'] = 'El Quebranto ha sido Guardado.';
@@ -57,18 +59,65 @@ class QuebrantosController extends AppController {
                 }
                 $this->set('data', $data);
             }
+            $conditionsImpcli=[
+                                'conditions'=>['Impcli.id'=>$impcliid]
+                            ];
+            $impcli = $this->Impcli->find('first', $conditionsImpcli);
             $optionQuebrantos=[
                 'contain'=>[],
                 'conditions'=>[
                     'Quebranto.impcli_id'=>$impcliid
                 ]
             ];
+            
             if($periodo!=null){
                 $peanio = substr($periodo, 3);
                 $optionQuebrantos['conditions'][]=['SUBSTRING(Quebranto.periodo,4,7)'=>$peanio];
+                $quebrantos = $this->Quebranto->find('all',$optionQuebrantos);
+                $this->set('quebrantos', $quebrantos);
+                if(count($quebrantos)==0){
+                    //no tengo quebrantos entonces creo los primeros 5
+                    $this->Quebranto->create();
+                    $this->Quebranto->set('impcli_id',$impcliid);
+                    $this->Quebranto->set('periodo',$periodo);
+                    $periodogenerado = date('m-Y', strtotime('01-'.$periodo.' -1 Years'));
+                    $this->Quebranto->create();
+                    $this->Quebranto->set('impcli_id',$impcliid);
+                    $this->Quebranto->set('periodo',$periodo);
+                    $this->Quebranto->set('periodogenerado',$periodogenerado);
+                    $this->Quebranto->save();
+                    $this->Quebranto->create();
+                    $this->Quebranto->set('impcli_id',$impcliid);
+                    $this->Quebranto->set('periodo',$periodo);
+                    $periodogenerado = date('m-Y', strtotime('01-'.$periodo.' -2 Years'));
+                    $this->Quebranto->set('periodogenerado',$periodogenerado);
+                    $this->Quebranto->save();
+                    $this->Quebranto->create();
+                    $this->Quebranto->set('impcli_id',$impcliid);
+                    $this->Quebranto->set('periodo',$periodo);
+                    $periodogenerado = date('m-Y', strtotime('01-'.$periodo.' -3 Years'));
+                    $this->Quebranto->set('periodogenerado',$periodogenerado);
+                    $this->Quebranto->save();
+                    $this->Quebranto->create();
+                    $this->Quebranto->set('impcli_id',$impcliid);
+                    $this->Quebranto->set('periodo',$periodo);
+                    $periodogenerado = date('m-Y', strtotime('01-'.$periodo.' -4 Years'));
+                    $this->Quebranto->set('periodogenerado',$periodogenerado);
+                    $this->Quebranto->save();
+                    $this->Quebranto->create();
+                    $this->Quebranto->set('impcli_id',$impcliid);
+                    $this->Quebranto->set('periodo',$periodo);
+                    $periodogenerado = date('m-Y', strtotime('01-'.$periodo.' -5 Years'));
+                    $this->Quebranto->set('periodogenerado',$periodogenerado);
+                    $this->Quebranto->save();
+                    $quebrantos = $this->Quebranto->find('all',$optionQuebrantos);
+                }
             }
-            $this->set('quebrantos', $this->Quebranto->find('all',$optionQuebrantos));
+            
             $this->set('impcliid', $impcliid);
+            if($periodo!=null){
+                $this->set('periodo', $periodo);
+            }
 
             $this->layout = 'ajax';
             $this->render('add');	

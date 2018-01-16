@@ -33,7 +33,7 @@ class UsersController extends AppController {
 	        if ($this->Auth->login()) {
 	            return $this->redirect($this->Auth->redirectUrl());
 	        }
-	        $this->Session->setFlash(__('Nombre de usuario o contrase�a inv�lida.'));
+	        $this->Session->setFlash(__('Nombre de usuario o contrase&ncaron;a inv&aacute;lida.'));
 	    }
 	}
 
@@ -76,7 +76,7 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('Su usuario ha sido registrado.'));
 				return $this->redirect(array('action' => 'index'));
 			} else {
-				$this->Session->setFlash(__('No se pudo registrar, intente m�s tarde.'));
+				$this->Session->setFlash(__('No se pudo registrar, intente m&aacute;s tarde.'));
 			}
 		}
 		$estudios = $this->User->Estudio->find('list');

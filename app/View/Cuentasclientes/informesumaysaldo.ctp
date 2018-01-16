@@ -46,7 +46,9 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
     </div>
     <div style="width:25%; float: left;padding-top:10px">
         Periodo: <?php echo $periodo;
-        echo $this->Form->input('periodo',['type'=>'hidden','value'=>$periodo])?>
+        echo $this->Form->input('periodo',['type'=>'hidden','value'=>$periodo]);
+        $peanio = substr($periodo, 3);
+        echo $this->Form->input('peranio',['type'=>'hidden','value'=>$peanio]);?>
     </div>
     <div style="float:right; width:45%">
         <?php
@@ -170,14 +172,14 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
                     $arrayTotales[$periodoAImputar]['debes']=0;
                     $arrayTotales[$periodoAImputar]['haberes']=0;
                 }
-                $arrayPeriodos[$periodoAImputar]['debes']+=$movimiento['debe'];
-                $arrayPeriodos[$periodoAImputar]['haberes']+=$movimiento['haber'];
-                $debes+= $movimiento['debe'];
-                $haberes+= $movimiento['haber'];
-                $saldoCalculado += $movimiento['debe'];
-                $saldoCalculado -= $movimiento['haber'];
-                $arrayTotales[$periodoAImputar]['debes']+= $movimiento['debe'];
-                $arrayTotales[$periodoAImputar]['haberes']+= $movimiento['haber'];
+                $arrayPeriodos[$periodoAImputar]['debes']+=round($movimiento['debe'], 2);
+                $arrayPeriodos[$periodoAImputar]['haberes']+=round($movimiento['haber'], 2);
+                $debes+= round($movimiento['debe'], 2);
+                $haberes+= round($movimiento['haber'], 2);
+                $saldoCalculado += round($movimiento['debe'], 2);
+                $saldoCalculado -= round($movimiento['haber'], 2);
+                $arrayTotales[$periodoAImputar]['debes']+= round($movimiento['debe'], 2);
+                $arrayTotales[$periodoAImputar]['haberes']+= round($movimiento['haber'], 2);
             }
 
             //Saldos de cuentas esperados
@@ -326,7 +328,7 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                             'required'=>"required",
                             'style'=>"width:300px"]);
                     echo $this->Form->input('Asiento.0.fecha',
-                        ['value'=>"",'class'=>"datepicker",
+                        ['value'=>"",'class'=>"datepickerOneYear",
                             'required'=>"required",
                             'readonly'=>"readonly",
                             'style'=>"width:120px"]);

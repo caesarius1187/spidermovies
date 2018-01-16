@@ -365,9 +365,9 @@ if($mostrarInforme){
         }
     })
 </script>
-        <div id="Formhead" class="clientes informefinancierotributario index" style="margin-bottom:10px; font-family: 'Arial'">
-	<!--<input class="button" type="button" id="btnHiddeForm" onClick="hideForm()" value="Ocultar" style="float:right;"/>-->
-	<?php echo $this->Form->create('compras',array('controller'=>'compras','action' => 'resumen', 'class'=>'formTareaCarga',)); ?>
+<div id="Formhead" class="clientes informefinancierotributario index" style="margin-bottom:10px; font-family: 'Arial'">
+<!--<input class="button" type="button" id="btnHiddeForm" onClick="hideForm()" value="Ocultar" style="float:right;"/>-->
+<?php echo $this->Form->create('compras',array('controller'=>'compras','action' => 'resumen', 'class'=>'formTareaCarga',)); ?>
     <table class="tbl_informefinancierotributario tblInforme">        
         <tr>
             <td>
@@ -486,7 +486,7 @@ if($mostrarInforme){
         $periodoCompra = $compra['Compra']['periodo'];
         $periodoAnioCompra = $compra[0]['anio'];
         $periodoMesCompra = $compra[0]['mes'];
-        if(!isset($ingresosActualesClientes[$periodoCompra])){
+        if(!isset($comprasxPeriodo[$periodoCompra])){
             $comprasxPeriodo[$periodoCompra]['total']=0;
             $comprasxPeriodo[$periodoCompra]['neto']=0;
             $comprasxPeriodo[$periodoCompra]['iva']=0;
@@ -498,7 +498,7 @@ if($mostrarInforme){
             $comprasxPeriodo[$periodoCompra]['nogravados']=0;
             $comprasxPeriodo[$periodoCompra]['excentos']=0;
         }
-        if($compra['Comprobante']["tipodebitoasociado"]=='Restitucion debito fiscal'){
+        if($compra['Comprobante']["tipodebitoasociado"]=='Restitucion de debito fiscal'){
             $comprasxPeriodo[$periodoCompra]['total'] -= $compra[0]['total'];
             $comprasxPeriodo[$periodoCompra]['neto'] -= $compra[0]['neto'];
             $comprasxPeriodo[$periodoCompra]['iva'] -= $compra[0]['iva'];
@@ -596,5 +596,7 @@ if($mostrarInforme){
     </div>
 
     <?php
-}?>
+}
+
+?>
 

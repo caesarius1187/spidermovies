@@ -6,6 +6,7 @@ $(document).ready(function() {
     });
     var nombrecliente = $('#clientenombre').val();
     var periodo = $('#periododefault').val();
+    var peranio = $('#peranio').val();
     reloadInputDates();
     $("#cargarAsiento").click(function(){
         $('#myModalFormAgregarAsiento').on('show.bs.modal', function() {
@@ -108,6 +109,26 @@ $(document).ready(function() {
                 defaultDate: d,
 
             });
+            if( $('#peranio').length>0){
+                 $("input.datepickerOneYear").datepicker({ 
+                    minDate: new Date($('#peranio').val()-1, 12, 31), 
+                    dateFormat: 'dd-mm-yy',
+                    maxDate: new Date($('#peranio').val(), 11, 31),
+                    changeMonth: true,
+                    changeYear: true,
+                    constrainInput: false,
+                    defaultDate: d,
+                 });
+            }else{
+                $( "input.datepicker-dia" ).datepicker({
+                    yearRange: "-1:+1",
+                    changeMonth: false,
+                    changeYear: false,
+                    constrainInput: false,
+                    dateFormat: 'dd',
+                    defaultDate: d,
+                });
+            }
         })(jQuery);
     }
 });
@@ -117,6 +138,23 @@ function agregarMovimiento()
     var sDebe = $("#txtDebe").val();
     var sHaber = $("#txtHaber").val();
     alert(CuentaCliente);
+}
+function eliminarAsiento(asientoID){
+     var data ="";
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/asientos/eliminar/"+asientoID,
+        // URL to request
+        data: data,  // post data
+        success: function(mirespuesta) {
+            var respuesta = JSON.parse(mirespuesta);          
+            callAlertPopint(respuesta.respuesta);
+            location.reload();
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+    });
 }
 function editarMovimientos(asientoID){
     var data ="";
@@ -178,19 +216,62 @@ function editarMovimientos(asientoID){
                     success: function(data,textStatus,xhr){
                         var respuesta = JSON.parse(data);
                         if($('#isajaxrequest').val()==0){
-                            $('#myModalAsientos').modal('hide');
+                            if(respuesta.error==0){
+                                $('#myModalAsientos').modal('hide');
+                                var r = confirm(respuesta.respuesta + "Desea Recargar la pagina?");
+                                if(r){
+                                    location.reload();
+                                }
+                            }else{
+                               var divRespueta = $('<div>')
+                                        .append(
+                                            $('<h4>').html(
+                                               "Error:"
+                                            )
+                                        )
+                                       .append(
+                                            $('<label>').html(
+                                                respuesta.respuesta
+                                            )
+                                        )
+                                        .addClass('index');;
+                                $('#myModalAsientos').find('.modal-body').prepend(divRespueta);
+                                $("#myModalAsientos").scrollTop(0);
+                            }
                         }else{
-                            $('#divEditarAsiento').html("");
+                            
+                            if(respuesta.error==0){
+                                 $('#divEditarAsiento').html("");
+                                var r = confirm(respuesta.respuesta + "<label>Desea Recargar la pagina?</label>");
+                                if(r){
+                                    location.reload();
+                                }
+                            }else{
+                                var divRespueta = $('<div>')
+                                        .append(
+                                            $('<h4>').html(
+                                               "Error:"
+                                            )
+                                        )
+                                        .append(
+                                            $('<label>').html(
+                                                respuesta.respuesta
+                                            )
+                                        ).addClass('index');
+                                $('#divEditarAsiento').prepend(divRespueta);
+                                $("#myModal").scrollTop(0);
+                            }
                         }
-                        $('#myModalAsientos').modal('hide');
-                        callAlertPopint(respuesta.respuesta);
+                        
+                        
+                       
                         //editarMovimientos(asientoID);
                     },
                     error: function(xhr,textStatus,error){
                         if($('#isajaxrequest').val()==0){
                             $('#myModalAsientos').modal('hide');
                         }else{
-                            $('#myModal').modal('hide');
+                            $('#myModal').modal('show');
                         }
                         callAlertPopint(respuesta.error);
                         alert(textStatus);
@@ -226,14 +307,20 @@ function catchFormAsiento(idForm){
                 var respuesta = JSON.parse(data);
                  $('#myModalAsientos').modal('hide');
                  $('#myModalFormAgregarAsiento').modal('hide');
-                 callAlertPopint(respuesta.respuesta);
-                // reiniciarFormAgregarAsiento()
-                location.reload();
+                if(respuesta.error!=0){
+                    callAlertPopint(respuesta.respuesta);
+                    $('#myModalAsientos').modal('show');
+                    $('#myModalFormAgregarAsiento').modal('show');
+                }else{
+                    callAlertPopint(respuesta.respuesta);
+                }
+                 // reiniciarFormAgregarAsiento()
+                 //location.reload();
             },
             error: function(xhr,textStatus,error){
                 $('#myModalAsientos').modal('hide');
                 $('#myModalFormAgregarAsiento').modal('hide');
-                callAlertPopint(respuesta.error);
+                callAlertPopint(error);
                 alert(textStatus);
             }
         });

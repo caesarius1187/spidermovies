@@ -50,12 +50,12 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 			jQuery(document).ready(function($) {
 				$(lblMessagePP).html(message);
 			});	
-			setTimeout(function(){
+			/*setTimeout(function(){
 			  if(location.hash === "#PopupMessage")
 			    {
 			  		location.hash ="#x";
 			    }
-			}, 3000); 
+			}, 3000); */
 		}	
 	jQuery(document).ready(function($) {
 		$(document).load(function () {
@@ -71,7 +71,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 			checkPendingRequest();
 		});
 		$( document ).ajaxError(function( event, request, settings ) {
-			callAlertPopint("La sesion ha finalizado. Por favor inicie sesion en otra pesta�a y continue.");
+			callAlertPopint("La sesion ha finalizado. Por favor inicie sesion en otra pesta&ncaron;a y continue.");
 		});
 		$('#ui-datepicker-div').hide();
 		function checkPendingRequest() {

@@ -226,18 +226,21 @@ function cargarAsiento(){
 	// 210302081
 	// 210302091
 	var totalAportesSindicales=0;
-	var cuentasdeSUSSAportesSindicatos = jQuery.parseJSON($("#cuentasdeSUSSAportesSindicatos").val());
+        if($("#cuentasdeSUSSAportesSindicatos").length>0){
+            var cuentasdeSUSSAportesSindicatos = jQuery.parseJSON($("#cuentasdeSUSSAportesSindicatos").val());
 
-	cuentasdeSUSSAportesSindicatos.forEach(
-		function(item,index){
-			var cuenta = '#cuenta'+item;
-			if($(cuenta).length > 0){
-				var orden = $(cuenta).attr('orden');
-				var aporte = $('#Asiento0Movimiento'+orden+'Haber').val()*1;
-				totalAportesSindicales += aporte;
-			}
-		}
-	);
+            cuentasdeSUSSAportesSindicatos.forEach(
+                    function(item,index){
+                            var cuenta = '#cuenta'+item;
+                            if($(cuenta).length > 0){
+                                    var orden = $(cuenta).attr('orden');
+                                    var aporte = $('#Asiento0Movimiento'+orden+'Haber').val()*1;
+                                    totalAportesSindicales += aporte;
+                            }
+                    }
+            );
+        }
+	
     /*FIN Aportes Sindicales*/
 
     // 210402201	Cooperadora Asistencial a Pagar /*Este concepto debe estar en el pdt de Cooperadora Asistensial*/

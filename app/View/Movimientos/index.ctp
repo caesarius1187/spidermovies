@@ -83,9 +83,16 @@ $asiento = $asientos[0];
                 'otros'=>'Otros',
                 'retencionessufridas'=>'Retenciones Sufridas',
                 'retencionesrealizadas'=>'Retenciones Realizadas',
-            ],
-            'style'=>"width:auto",
-            'label'=>'Tipo',
+	            'amortizacion'=>'Amortizacion',          
+	            'costos'=>'Costos',          
+	            'costoscompra'=>'Costos Compra',          
+	            'Distribucion de dividendos'=>'Distribucion de Dividendos',          
+	            'Absorcion de perdida acumulada'=>'Absorcion de perdida Acumulada',          
+	            'Deduccion General'=>'Deduccion General',          
+	            'Existencia Final'=>'Existencia Final'],          
+            'style'=>"width:auto",          
+            'label'=>'Tipo',          
+            
             'title'=>'No cambiar el tipo de asiento en asientos automaticos por que el sistema intentará crearlos de 
             nuevo cuando se generen en los asientos automaticos'
         ]);
@@ -95,24 +102,24 @@ $asiento = $asientos[0];
 	<table id="tablaModificarAsiento" class="tbl_border" style="border-spacing: 0px;"><?php
 		$totalDebe=0;
 		$totalHaber=0;
-		foreach ($asiento['Movimiento'] as $m => $movimiento){
+		foreach ($asiento['Movimiento'] as $km => $movimiento){
 		?>
-		<tr id="movimientoeditnumero<?php echo $m ?>" >
+		<tr id="movimientoeditnumero<?php echo $km ?>" >
 			<td style="width: 100px"><?php
-				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.id',
+				echo $this->Form->input('Asiento.0.Movimiento.'.$km.'.id',
 					['value'=>$movimiento['id']]);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.cuentascliente_id',
+				echo $this->Form->input('Asiento.0.Movimiento.'.$km.'.cuentascliente_id',
 					[
 						'value'=>$movimiento['cuentascliente_id'],
 						'type'=>'hidden',
 					]);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.fecha',
+				echo $this->Form->input('Asiento.0.Movimiento.'.$km.'.fecha',
 					[
 						'value'=>$movimiento['fecha'],
 						'default'=>date('d-m-Y'),
 						'type'=>'hidden',
 					]);
-				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.cuenta_id',
+				echo $this->Form->input('Asiento.0.Movimiento.'.$km.'.cuenta_id',
 					[
 						'value'=>$movimiento['Cuentascliente']['cuenta_id'],
 						'type'=>'hidden',
@@ -142,21 +149,21 @@ $asiento = $asientos[0];
 				if(($movimiento['debe']*1) != 0 || ($movimiento['haber']*1) != 0){
 					$movimientoConValor = "movimientoConValor";
 				}
-				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.debe',
+				echo $this->Form->input('Asiento.0.Movimiento.'.$km.'.debe',
 					[
 						'value'=> number_format($movimiento['debe'], 2, ".", ""),
 						'style'=>"width:auto",
 						'class'=>"inputDebe ".$movimientoConValor,
 						'label'=>false]);
 				$totalDebe+=number_format($movimiento['debe'], 2,'.','');
-				echo $this->Form->input('Asiento.0.Movimiento.'.$m.'.haber',
+				echo $this->Form->input('Asiento.0.Movimiento.'.$km.'.haber',
 					['value'=>number_format($movimiento['haber'], 2, ".", ""),
 						'class'=>"inputHaber ". $movimientoConValor,
 						'style'=>"width:auto",
 						'label'=>false]);
 				$totalHaber+=number_format($movimiento['haber'], 2, ".", "");
 				echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20'
-				,'onClick'=>"deleteRowMovimientoEdit(".$m.")"));
+				,'onClick'=>"deleteRowMovimientoEdit(".$km.")"));
 
 				?>
 			</td>
@@ -211,7 +218,6 @@ $asiento = $asientos[0];
 	</table>
 	<?php
 	echo $this->Form->end('Modificar');
-	if(isset($m))
-		echo $this->Form->input('topmovimiento',['value'=>$m,'type'=>'hidden']);
+        echo $this->Form->input('topmovimiento',['value'=>isset($km)?$km:0,'type'=>'hidden']);
 	?>
 </div>

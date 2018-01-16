@@ -2464,7 +2464,7 @@ function loadFormBiendeuso(cliid,biendeusoid){
 
                 $('#myModal').modal('show');
 //perzonalizar formulario para tipo de Bien de uso
-                $("#BienesdeusoTipo").on('change', function () {
+                $("#Bienesdeuso0Tipo").on('change', function () {
                     var selectedTipo = $(this).val();
                     var tipoPersona = $("#ClienteTipopersona").val();
                     /*
@@ -2534,15 +2534,15 @@ function loadFormBiendeuso(cliid,biendeusoid){
                             break;
                     }
                 });
-                $("#BienesdeusoTipo").trigger("change");
-                $("#BienesdeusoPorcentajeamortizacion").on('change', function() {
-                    var valororiginal = $("#BienesdeusoValororiginal").val();
-                    var amortizacionperiodo = valororiginal / $("#BienesdeusoPorcentajeamortizacion").val();
-                    if($("#BienesdeusoImporteamorteizaciondelperiodo is:visible")){
-                        $("#BienesdeusoImporteamorteizaciondelperiodo").val(amortizacionperiodo);                                    
+                $("#Bienesdeuso0Tipo").trigger("change");
+                $("#Bienesdeuso0Porcentajeamortizacion").on('change', function() {
+                    var valororiginal = $("#Bienesdeuso0Valororiginal").val();
+                    var amortizacionperiodo = valororiginal / $("#Bienesdeuso0Porcentajeamortizacion").val();
+                    if($("#Bienesdeuso0Importeamorteizaciondelperiodo is:visible")){
+                        $("#Bienesdeuso0Importeamorteizaciondelperiodo").val(amortizacionperiodo);                                    
                     }           
                 });
-                $("#BienesdeusoPorcentajeamortizacion" ).trigger( "change" );
+                $("#Bienesdeuso0Porcentajeamortizacion" ).trigger( "change" );
                 
                 $('#BienesdeusoAddForm').submit(function () {
                     //serialize form data
@@ -2662,8 +2662,8 @@ function loadFormBiendeuso(cliid,biendeusoid){
                     return false;
                 });
                 $('.chosen-select').chosen({search_contains: true});
-                $("#BienesdeusoLocalidadeId_chosen").css('width', 'auto');
-                $("#BienesdeusoModeloId_chosen").css('width', 'auto');
+                $("#Bienesdeuso0LocalidadeId_chosen").css('width', 'auto');
+                $("#Bienesdeuso0ModeloId_chosen").css('width', 'auto');
                 reloadDatePickers();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

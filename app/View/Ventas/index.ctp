@@ -37,7 +37,10 @@
         $labelComprobante = $venta["Comprobante"]['abreviacion']."-".$venta["Puntosdeventa"]['nombre']."-".$venta['Venta']["numerocomprobante"];
         ?>
         <tr id="rowventa<?php echo $venta['Venta']["id"]?>">
-            <td class="<?php echo $tdClass ?> printable"><?php echo date('d',strtotime($venta['Venta']["fecha"]))?></td><!--1-->
+            <td class="<?php echo $tdClass ?> printable">
+                <span style='display: none;'> <?php echo $venta['Venta']["fecha"];?></span>
+                <?php echo date('d',strtotime($venta['Venta']["fecha"]));?>
+            </td><!--1-->
             <td class="<?php echo $tdClass ?> printable" title="<?php echo $titleComprobante; ?>" > <?php echo $labelComprobante; ?> </td><!--2-->
             <td class="<?php echo $tdClass ?> printable" title="<?php echo $venta["Subcliente"]["cuit"]; ?>"><?php echo $venta["Subcliente"]["cuit"]?></td><!--3-->
             <td class="<?php echo $tdClass ?> printable" title="<?php echo $venta["Subcliente"]["nombre"]?>"><?php echo $venta["Subcliente"]["nombre"]?></td><!--4-->

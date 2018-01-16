@@ -140,15 +140,98 @@ class AsientosController extends AppController {
             $this->set('isajaxrequest',0);
         }
     }
+    
+    public function eliminar($asiid = null) {
+        $borreMovimientos = $this->Asiento->Movimiento->deleteAll(['Movimiento.asiento_id' => $asiid], false);
+        $borreAsiento = $this->Asiento->deleteAll(['Asiento.id' => $asiid], false);
+        $respuesta = array('respuesta'=>'');
+        $respuesta['error']=0;
+        if($borreMovimientos&&$borreAsiento){
+            $respuesta['respuesta']="Asiento Eliminado con Exito";
+        }else{
+            $respuesta['respuesta']="Error al tratar de eliminae el asiento. "
+                    . "Por favor intente de nuevo mas tarde";
+            $respuesta['error']=1;
+        }
+        $respuesta['data']=$this->request->data;
+        $this->set('data',$respuesta);
+        $this->autoRender=false;
+        $this->layout = 'ajax';
+        $this->render('serializejson');
+        return;
+    }
     public function add() {
         $this->loadModel('Movimiento');
         $this->loadModel('Cuentascliente');
         $this->loadModel('Cuenta');
+        $this->loadModel('Cliente');
+        $respuesta = array('respuesta'=>'','proceso'=>'');
+        $respuesta['error']=0;
         if ($this->request->is('post')) {
+            //haber la onda es que si esta echo el asiento de ganancias, entonces que no se pueda hacer NINGUN otro asiento
+            $asiento0ano = substr($this->request->data['Asiento'][0]['periodo'], 3);
+             $options = array(
+                'contain'=>[
+                    'Impcli'=>[
+                        'Asiento'=>[
+                            'conditions'=>[
+                                'Asiento.tipoasiento'=>'impuestos',
+                                'SUBSTRING(Asiento.periodo,4,7)'=>$asiento0ano,
+                            ]
+                        ],
+                        'conditions'=>[
+                            'Impcli.impuesto_id'=>[160,5]
+                        ]
+                    ]
+                ],
+                'conditions' => array(
+                    'Cliente.' . $this->Cliente->primaryKey => $this->request->data['Asiento'][0]['cliente_id'],
+                ),
+            );
+            $cliente = $this->Cliente->find('first', $options);
+            if(isset($cliente['Impcli'][0])){
+                if(count($cliente['Impcli'][0]['Asiento'])>0){
+                    //entonces tengo el asiento de este cliente en ganancias NO PUEDO GUARDAR NADA
+                    $respuesta['error']=2;
+                    $respuesta['respuesta'].="Se ha creado el asiento de devengamiento para el impuesto Ganancias, en este periodo, para este cliente.</br>"
+                            ."No se puede guardar mas asientos hasta que elimine el asiento en cuestion.";
+                    $respuesta['data']=$this->request->data;
+                    $this->set('data',$respuesta);
+                    $this->autoRender=false;
+                    $this->layout = 'ajax';
+                    $this->render('serializejson');
+                    return;
+                }
+            }
+           
+            
             $this->Asiento->create();
-            $respuesta = array('respuesta'=>'');
+            
             foreach ($this->request->data['Asiento'] as $a => $asientoAGuardar){
-                //si el numero es 0 vamos a buscar el numero mas alto para editarlo
+                //lo primero que vamos a revisar es que el asiento tenga debe y haber iguales
+                //sino es asi no se guarda nada
+                $totaldebe = 0;
+                $totalhaber = 0;
+                foreach ($this->request->data['Asiento'][$a]['Movimiento'] as $k => $movimiento){
+                        $totaldebe += $movimiento['debe']*1;
+                        $totalhaber += $movimiento['haber']*1;
+                }
+                if((round($totaldebe, 2)-round($totalhaber, 2))!=0){
+                    //Este asiento NO se debe GUARDAR
+                    $respuesta['error']=1;
+                    $respuesta['respuesta'].="El Asiento NO se guardo correctamente. El total de debe y haber no coincide. "
+                            . "Por favor corrijalo e intentelo de nuevo.</br>"
+                            . "Total Debe: ".round($totaldebe, 2)." distinto de Total Haber: ".round($totalhaber, 2)."</br>"
+                            .'La diferencia es '.(round($totaldebe, 2)-round($totalhaber, 2));
+                    $respuesta['data']=$this->request->data;
+                    $this->set('data',$respuesta);
+                    $this->autoRender=false;
+                    $this->layout = 'ajax';
+                    $this->render('serializejson');
+                    return;
+                }
+                
+                //si el numero es 0 vamos a buscar el numero mas alto para editarlo                
                 if($this->request->data['Asiento'][$a]['id']==0){
                     $maxnumeroasiento = $this->Asiento->find('all',[
                             'conditions' => [
@@ -173,12 +256,15 @@ class AsientosController extends AppController {
                 $this->request->data('Asiento.'.$a.'.fecha',date('Y-m-d',strtotime($this->request->data['Asiento'][$a]['fecha'])));
 
                 if ($this->Asiento->save($this->request->data['Asiento'][$a])) {
-                    $respuesta['respuesta'] .= "El Asiento se guardo correctamente.</br>";
+                    $respuesta['respuesta'] .= "El Asiento se guardo correctamente.";
                     $asientoid=0;
                     if($this->request->data['Asiento'][$a]['id']==0){
                         $asientoid = $this->Asiento->getLastInsertID();
                     }else{
                         $asientoid = $this->request->data['Asiento'][$a]['id'];
+                    }
+                    if(!isset($this->request->data['Asiento'][$a]['Movimiento'])){
+                        continue;
                     }
                     foreach ($this->request->data['Asiento'][$a]['Movimiento'] as $k => $movimiento){
                         //si el movimiento tiene haber 0 y debe 0 no se deberia guardar a menos que sea un asiento
@@ -234,6 +320,8 @@ class AsientosController extends AppController {
                                 }
                                 else
                                 {
+                                    
+                                    $respuesta['error']=8;
                                     $respuesta['respuesta'].='Error al guardar cuenta. Por favor intente nuevamente.</br>';
                                 }
                             }
@@ -246,9 +334,9 @@ class AsientosController extends AppController {
                                 $movimientoid = $this->request->data['Asiento'][$a]['Movimiento'][$k]['id'];
                             }
                             $this->request->data['Asiento'][$a]['Movimiento'][$k]['id']=$movimientoid;
-                            $respuesta['respuesta'].= "El Movimiento se guardo correctamente.</br>";
+                            $respuesta['proceso'].= "El Movimiento se guardo correctamente.</br>";
                         } else {
-                            $respuesta['respuesta'].="El Movimiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
+                            $respuesta['proceso'].="El Movimiento NO se guardo correctamente. Por favor intentelo de nuevo.</br>";
                         }
                     }
                 }else {
@@ -267,17 +355,58 @@ class AsientosController extends AppController {
     public function contabilizarimpuesto($impcliid = null, $periodo = null){
         $this->loadModel('Impcli');
         $this->loadModel('Cuentascliente');
+        $this->loadModel('Cuenta');
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+        
+        $esMayorQueBaja = array(
+            //HASTA es mayor que el periodo
+            'OR'=>array(
+                'Actividadcliente.baja'=>null,
+                'SUBSTRING(Actividadcliente.baja,4,7)*1 < '.$peanio.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Actividadcliente.baja,4,7)*1 <= '.$peanio.'*1',
+                    'SUBSTRING(Actividadcliente.baja,1,2) <= '.$pemes.'*1'
+                ),
+            )
+        );
+         
         $options = array(
-            'contain'=>[],
+            'contain'=>[
+                'Cliente'=>[
+                    'Actividadcliente'=>[
+                        'Cuentasganancia'=>[],
+                        'conditions'=>$esMayorQueBaja
+                    ]
+                ]
+            ],
             'conditions' => array(
                 'Impcli.' . $this->Impcli->primaryKey => $impcliid,
             ),
         );
         $myCli = $this->Impcli->find('first', $options);
+        
+        /*INICIO CUENTASPAGO*/
+                     
+        $tiene3ra = false;
+        foreach ($myCli['Cliente']['Actividadcliente'] as $actividadcliente){
+            foreach ($actividadcliente['Cuentasganancia'] as $cuentasganancia){
+                if( $cuentasganancia['categoria'] == 'terceracateg'){
+                    $tiene3ra = true;
+                }
+            }
+        }
+        
+        /*FIN CUENTAS PAGO*/
+        
+        
         $options = array(
             'contain'=>array(
                 'Impuesto'=>[
                     'Asientoestandare'=>[
+                        'conditions'=>[
+                                    'Asientoestandare.tipoasiento'=>'impuestos'
+                                ],
                         'Cuenta'=>[
                             'Cuentascliente'=>[
                                 'conditions'=>[
@@ -290,7 +419,8 @@ class AsientosController extends AppController {
                 'Asiento'=>[
                     'Movimiento',
                     'conditions'=>[
-                        'Asiento.periodo'=>$periodo
+                        'Asiento.periodo'=>$periodo,
+                        'Asiento.tipoasiento'=>'impuestos',
                     ]
                 ]
             ),
@@ -315,6 +445,178 @@ class AsientosController extends AppController {
         if($secrearoncuentas){
             $impcli = $this->Impcli->find('first', $options);
         }
+        $options2 = array(
+            'contain'=>array(
+                'Impuesto'=>[
+                    'Asientoestandare'=>[
+                        'conditions'=>[
+                                    'Asientoestandare.tipoasiento'=>'impuestos2'
+                                ],
+                        'Cuenta'=>[
+                            'Cuentascliente'=>[
+                                'conditions'=>[
+                                    'Cuentascliente.cliente_id'=>$myCli['Impcli']['cliente_id']
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'Asiento'=>[
+                    'Movimiento',
+                    'conditions'=>[
+                        'Asiento.periodo'=>$periodo,
+                        'Asiento.tipoasiento'=>'impuestos2'
+                    ]
+                ]
+            ),
+            'conditions' => array(
+                'Impcli.' . $this->Impcli->primaryKey => $impcliid,
+            ),
+        );
+        $impcli2 = $this->Impcli->find('first', $options2);
+        /*vamos a controlar que el asiento estandar tenga sus cuentas por defecto creadas en cuentacliente*/
+        $secrearoncuentas=false;
+        foreach ($impcli2['Impuesto']['Asientoestandare'] as $asientoestandar) {
+            if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
+                //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
+                $this->Cuentascliente->create();
+                $this->Cuentascliente->set('cliente_id',$myCli['Impcli']['cliente_id']);
+                $this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
+                $this->Cuentascliente->save();
+                $secrearoncuentas=true;
+            }
+        }
+        //ahora ya estamos seguros de que las cuentas clientes existen
+        if($secrearoncuentas){
+            $impcli2 = $this->Impcli->find('first', $options2);
+        }
+        
+        $options = array(
+            'contain'=>array(
+                'Impuesto'=>[
+                    'Asientoestandare'=>[
+                        'conditions'=>[
+                                    'Asientoestandare.tipoasiento'=>'apagar'
+                                ],
+                        'Cuenta'=>[
+                            'Cuentascliente'=>[
+                                'conditions'=>[
+                                    'Cuentascliente.cliente_id'=>$myCli['Impcli']['cliente_id']
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                'Asiento'=>[
+                    'Movimiento',
+                    'conditions'=>[
+                        'Asiento.periodo'=>$periodo,
+                        'Asiento.tipoasiento'=>'pagos'
+                    ]
+                ]
+            ),
+            'conditions' => array(
+                'Impcli.' . $this->Impcli->primaryKey => $impcliid,
+            ),
+        );
+        $impclipago = $this->Impcli->find('first', $options);
+        /*vamos a controlar que el asiento estandar tenga sus cuentas por defecto creadas en cuentacliente*/
+        $secrearoncuentas=false;
+        foreach ($impclipago['Impuesto']['Asientoestandare'] as $asientoestandar) {
+            if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
+                //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
+                $this->Cuentascliente->create();
+                $this->Cuentascliente->set('cliente_id',$myCli['Impcli']['cliente_id']);
+                $this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
+                $this->Cuentascliente->save();
+                $secrearoncuentas=true;
+            }
+        }
+        //ahora ya estamos seguros de que las cuentas clientes existen
+        if($secrearoncuentas){
+            $impclipago = $this->Impcli->find('first', $options);
+        }
+        
+        if($tiene3ra){
+            $cuentasDeAsientoPago=[
+                    '5',/*110101002 Caja Efectivo*/
+            ];
+            switch ($impcli["Impuesto"]["organismo"]){
+                case 'afip':
+                    $cuentasDeAsientoPago[]='1575'/*210701001 Plan de Pagos AFIP N°*/;
+                    $cuentasDeAsientoPago[]='2523'/*505040101 Intereses Generales*/;
+                    break;
+                case 'dgr':
+                    $cuentasDeAsientoPago[]='1597'/*210702001 Plan de Pagos DGR N°*/;
+                    $cuentasDeAsientoPago[]='2526'/*505040201 Intereses Generales*/;
+                    break;
+                case 'dgrm':
+                    $cuentasDeAsientoPago[]='1604'/*210703001 Planes de Pago DGRM°*/;
+                    $cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
+                    break;
+                case 'otros':
+                    break;
+                case 'sindicato':
+                        $cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
+                    break;
+                case 'banco':
+                    break;
+            }
+        }else{
+            $cuentasDeAsientoPago=[
+                    '1069',/*130113001 Dinero en Efectivo*/
+            ];
+            switch ($impcli["Impuesto"]["organismo"]){
+                case 'afip':
+                    $cuentasDeAsientoPago[]='3499'/*230102101 Plan de Pagos AFIP N°*/;
+                    $cuentasDeAsientoPago[]='2523'/*505040101 Intereses Generales*/;
+                    break;
+                case 'dgr':
+                    $cuentasDeAsientoPago[]='3508'/*230102150 Plan de Pagos DGR N°*/;
+                    $cuentasDeAsientoPago[]='2526'/*505040201 Intereses Generales*/;
+                    break;
+                case 'dgrm':
+                    $cuentasDeAsientoPago[]='3518'/*230102201 PPlan de Pagos DGRM N°*/;
+                    $cuentasDeAsientoPago[]='2529'/*505040301 Intereses Generales*/;
+                    break;
+                case 'otros':
+                    break;
+                case 'sindicato':
+                        $cuentasDeAsientoPago[]='2526'/*505040201 Intereses Generales*/;
+                    break;
+                case 'banco':
+                    break;
+            }
+        }
+        //Aca vamos a agregar el plan de pago y la cuenta de intereses segun que Tipo de organismo sea
+        $optionsCuentasclientes = array(
+                'contain'=>[
+                        'Cuentascliente'=>[
+                                'conditions'=>[
+                                        'Cuentascliente.cliente_id'=>$myCli['Impcli']['cliente_id']
+                                ]
+                        ]
+                ],
+                'conditions' => array('Cuenta.id' => $cuentasDeAsientoPago)
+        );
+        $cuentaspagoimpuestos = $this->Cuenta->find('all', $optionsCuentasclientes);
+        $secrearoncuentas = false;
+        foreach ($cuentaspagoimpuestos as $cuentaspagoimpuesto) {
+                if(count($cuentaspagoimpuesto['Cuentascliente'])==0){
+                        $this->Cuentascliente->create();
+                        $this->Cuentascliente->set('cliente_id',$myCli['Impcli']['cliente_id']);
+                        $this->Cuentascliente->set('cuenta_id',$cuentaspagoimpuesto['Cuenta']['id']);
+                        $this->Cuentascliente->set('nombre',$cuentaspagoimpuesto['Cuenta']['nombre']);
+                        $this->Cuentascliente->save();
+                        $secrearoncuentas=true;
+                }
+        }
+        if($secrearoncuentas){
+                $cuentaspagoimpuestos = $this->Cuenta->find('all', $optionsCuentasclientes);
+        }
+        $this->set('cuentaspagoimpuestos', $cuentaspagoimpuestos);
+        
+        
         //ahora vamos a listar las cuentas clientes activadas y pero con el nombre de la cuenta
         $cuentaclienteOptions = [
             'conditions' => [
@@ -332,10 +634,13 @@ class AsientosController extends AppController {
             ],
         ];
         $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
-        $this->set(compact('periodo','impcli','cuentasclientes'));
+        $this->set(compact('periodo','impcli','impcli2','impclipago','cuentasclientes'));
         //el tema es que el asiento automatico siempre va a ser unico para un periodo para un impcli por lo que
         //por estos datos vamos a asegurarnos de que si ya creamos el asiento, estemos editando el mismo, y no
         //creando uno nuevo cada vez que generemos este informe
+        if($this->request->is('ajax')){
+            $this->layout = 'ajax';
+        }
     }
     public function contabilizarventa($cliid = null, $periodo = null){
         $this->loadModel('Cliente');
@@ -625,6 +930,7 @@ class AsientosController extends AppController {
         $cliente = $this->Cliente->find('first', $options);
         $tiposDeAsientos = [];
         $tiposDeAsientos[] = 'compras';
+        $costoCategoria[] = 'costos';
         $pagaCategoria = [];
         $cuentaclienteaseleccionar=[];
         $tieneGananciasConfigurado = 1;
@@ -635,6 +941,7 @@ class AsientosController extends AppController {
                 if(!in_array($categoriaActividad,$tiposDeAsientos)){
                     $tiposDeAsientos[] = "compra".$categoriaActividad;
                     $pagaCategoria[]   = "compra".$categoriaActividad;
+                    $costoCategoria[]   = "costocompra".$categoriaActividad;
                 }
             }else{
                 $tieneGananciasConfigurado *= 0;
@@ -705,6 +1012,23 @@ class AsientosController extends AppController {
             ];
         }
         $asientoestandares = $this->Asientoestandare->find('all', $options);
+        $optionsCosto = array(
+            'contain'=>array(
+                'Cuenta'=>[
+                    'Cuentascliente'=>[
+                        'Cuenta',
+                        'conditions'=>[
+                            'Cuentascliente.cliente_id'=>$cliid
+                        ]
+                    ]
+                ]
+            ),
+            'conditions' => array(
+                'Asientoestandare.tipoasiento'=> $costoCategoria,
+            ),
+        );
+       
+        $asientoestandaresCosto = $this->Asientoestandare->find('all', $optionsCosto);
         /*vamos a controlar que el asiento estandar tenga sus cuentas por defecto creadas en cuentacliente*/
         $secrearoncuentas=false;
         foreach ($asientoestandares as $asientoestandar) {
@@ -721,6 +1045,22 @@ class AsientosController extends AppController {
         //ahora ya estamos seguros de que las cuentas clientes existen
         if($secrearoncuentas){
             $asientoestandares = $this->Asientoestandare->find('all', $options);
+        }
+        $secrearoncuentas=false;
+        foreach ($asientoestandaresCosto as $asientoestandar) {
+            if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
+                //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
+                $this->Cuentascliente->create();
+                $this->Cuentascliente->set('cliente_id',$cliid);
+                $this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
+                $this->Cuentascliente->set('nombre',$asientoestandar['Cuenta']['nombre']);
+                $this->Cuentascliente->save();
+                $secrearoncuentas=true;
+            }
+        }
+        //ahora ya estamos seguros de que las cuentas clientes existen
+        if($secrearoncuentas){
+            $asientoestandaresCosto = $this->Asientoestandare->find('all', $optionsCosto);
         }
         /*Aca vamos a armar la lista de cuentas incluidas en el asiento estandar para traer las cuentas cliente relacionadas
         */
@@ -760,6 +1100,17 @@ class AsientosController extends AppController {
             ),
         );
         $asientoyacargado = $this->Asiento->find('first', $options);
+        $options = array(
+            'contain'=>array(
+                'Movimiento',
+            ),
+            'conditions' => array(
+                'Asiento.tipoasiento'=> 'costoscompra',
+                'Asiento.periodo'=>$periodo,
+                'Asiento.cliente_id'=>$cliid
+            ),
+        );
+        $asientoyacargadoCosto = $this->Asiento->find('first', $options);
 
         //Vamos a agrupar y sumar las compras gravadas y las no gravadas
         $conditionsCompraGravada = [
@@ -784,19 +1135,22 @@ class AsientosController extends AppController {
             ],
         ];
         $comprasgravadas = $this->Compra->find('all',$conditionsCompraGravada);
-        $this->set(compact('cliid','cliente','periodo','pagaCategoria','asientoestandares','cuentasclientes','asientoyacargado',
-            'comprasgravadas','comprasbiendeuso','ActividadesGeneros'));
+        $this->set(compact('cliid','cliente','periodo','pagaCategoria',
+                'asientoestandares','asientoestandaresCosto','cuentasclientes',
+                'asientoyacargado','asientoyacargadoCosto','comprasgravadas',
+                'comprasbiendeuso','ActividadesGeneros'));
 
         if($this->request->is('ajax')){
             $this->layout = 'ajax';
         }
         return;
     }
-     public function contabilizaramortizacion($cliid = null, $periodo = null){
+    public function contabilizaramortizacion($cliid = null, $periodo = null){
         $this->loadModel('Cliente');
         $this->loadModel('Cuentascliente');
         $this->loadModel('Asientoestandare');
         $this->loadModel('Compra');
+        $this->loadModel('Bienesdeuso');
         $options = array(
             'contain'=>[
                 'Actividadcliente'=>[
@@ -863,6 +1217,40 @@ class AsientosController extends AppController {
 
         $optionCompras=[
             'contain'=>[
+                'Cuentaclientevalororigen'=>[
+                    'fields'=>[
+                        ''
+                    ]
+                ],
+                'Cuentaclienteactualizacion'=>[
+                    'fields'=>[
+                        ''
+                    ]
+                ],
+                'Cuentaclienteterreno'=>[
+                    'fields'=>[
+                        ''
+                    ]
+                ],
+                'Cuentaclienteedificacion'=>[
+                    'fields'=>[
+                        ''
+                    ]
+                ],
+                'Cuentaclientemejora'=>[
+                    'fields'=>[
+                        ''
+                    ]
+                ],                
+            ],
+            'conditions'=>[               
+                'Bienesdeuso.cliente_id'=>$cliid,
+            ]
+        ];
+        $bienesdeusos = $this->Bienesdeuso->find('all',$optionCompras);
+        
+        $optionCompras=[
+            'contain'=>[
                 'Actividadcliente'=>[
                     'Cuentasganancia'=>['Cuentascliente']
                 ],
@@ -906,7 +1294,6 @@ class AsientosController extends AppController {
                 if($this->request->is('ajax')){
                     $this->layout = 'ajax';
                 }
-                Debugger::dump($cliente['Actividadcliente'][0]['Cuentasganancia']);
                 $this->set('error','Atencion: 
                    Se cargo la Compra '.$compra['Compra']['puntosdeventa'].'-'.$compra['Compra']['numerocomprobante'].' como Bien de Uso en el periodo '.$compra['Compra']['periodo'].' y no se cargaron los datos del mismo. Por favor completelos y vuelva a
                    intentar Contabilizar.');
@@ -998,7 +1385,7 @@ class AsientosController extends AppController {
         //Vamos a agrupar y sumar las compras gravadas y las no gravadas
        
         $this->set(compact('cliid','cliente','periodo','pagaCategoria','asientoestandares','cuentasclientes','asientoyacargado',
-            'comprasgravadas','comprasbiendeuso'));
+            'comprasgravadas','bienesdeusos'));
 
         if($this->request->is('ajax')){
             $this->layout = 'ajax';
@@ -1198,6 +1585,240 @@ class AsientosController extends AppController {
         $this->set(compact('cliid','cliente','periodo','cuentasclientes','asientosyacargados','cuentaxcuentacliente'));
         $this->layout = 'ajax';
     }
+    
+    public function contabilizarapertura($clienteid = null, $periodo = null){
+        ini_set('memory_limit', '2560M');
+        $this->loadModel('Cliente');
+        $this->loadModel('Movimiento');
+        $this->loadModel('Cuentascliente');
+        $this->loadModel('Asientoestandare');
+
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+
+        $optionmiCliente = [
+                'contain' => [
+                ],
+                'conditions' => ['Cliente.id'=>$clienteid]
+        ];
+        $micliente = $this->Cliente->find('first',$optionmiCliente);
+
+        $fechadeconsulta = date('Y/m/d',strtotime("01-".$pemes."-".$peanio));
+
+        if(!isset($micliente['Cliente']['fchcorteejerciciofiscal'])||is_null($micliente['Cliente']['fchcorteejerciciofiscal'])||$micliente['Cliente']['fchcorteejerciciofiscal']==""){
+                $this->Session->setFlash(__('No se ha configurado fecha decorte de ejercicio fiscal para este contribuyente.'));
+                $fechadecorteAñoActual = date('Y/m/d',strtotime("01-01-".$peanio));
+        }else{
+                $fechadecorteAñoActual = date('Y/m/d',strtotime($micliente['Cliente']['fchcorteejerciciofiscal']."-".$peanio));
+        }
+        $fechaInicioConsulta = "";
+        $anioInicioConsulta = "";
+        $fechaFinConsulta = "";
+        if($fechadeconsulta<$fechadecorteAñoActual){
+                $fechaInicioConsulta =  date('Y/m/d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+                $anioInicioConsulta =  date('Y',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+        }else {
+                $fechaInicioConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 days"));;
+                $anioInicioConsulta = date('Y', strtotime($fechadecorteAñoActual . " + 1 days"));;
+        }
+        //la fecha fin consulta es esta por quesolo vamos a ver hasta el ultimo dia del periodo que estamos
+        // consultando
+        $fechaFinConsulta =  date('Y/m/t',strtotime($fechadeconsulta));
+        $this->set('fechaInicioConsulta',$fechaInicioConsulta);
+        $this->set('fechaFinConsulta',$fechaFinConsulta);
+
+        $optionCliente = [
+                'contain' => [
+                        'Asiento'=>[
+                            'Movimiento'=>[
+                                'Cuentascliente'
+                            ],
+                            'conditions'=>[
+                                'Asiento.tipoasiento'=>'apertura'
+                            ]
+                        ],
+                ],
+                'conditions' => ['Cliente.id'=>$clienteid]
+        ];
+
+        $cliente = $this->Cliente->find('first',$optionCliente);
+        //aca vamos a setiar las cosas que necesitamos para dar de alta un asiento
+        $cuentaclienteOptions = [
+                'conditions' => [
+                        'Cuentascliente.cliente_id'=> $clienteid
+                ],
+                'fields' => [
+                        'Cuentascliente.id',
+                        'Cuentascliente.nombre',
+                        'Cuenta.numero',
+                ],
+                'order'=>['Cuenta.numero'],
+                'joins'=>[
+                        ['table'=>'cuentas',
+                                'alias' => 'Cuenta',
+                                'type'=>'inner',
+                                'conditions'=> [
+                                        'Cuentascliente.cuenta_id = Cuenta.id',
+                                        'Cuenta.tipo'=>'cuenta',
+                                ]
+                        ],
+                ],
+        ];
+
+        $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
+        $this->set('cuentasclientes',$cuentasclientes);
+        $this->set('cliente',$cliente);
+        $this->set('periodo',$periodo);
+                
+        $options = array(
+            'contain'=>array(
+                'Movimiento'=>[
+                    'Cuentascliente'
+                ],
+            ),
+            'conditions' => array(
+                'Asiento.tipoasiento'=> 'Apertura',
+                'SUBSTRING(Asiento.fecha,1,4)'=>$anioInicioConsulta,
+                'Asiento.cliente_id'=>$clienteid
+            ),
+        );
+        $asientoyacargado = $this->Asiento->find('first', $options);
+        $this->set('asientoyacargado',$asientoyacargado);
+        $this->layout = 'ajax';
+
+    }            
+    public function contabilizarexistenciafinal($clienteid = null, $periodo = null){
+        ini_set('memory_limit', '2560M');
+        $this->loadModel('Cliente');
+        $this->loadModel('Movimiento');
+        $this->loadModel('Cuentascliente');
+        $this->loadModel('Asientoestandare');
+
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+
+        $optionmiCliente = [
+                'contain' => [
+                ],
+                'conditions' => ['Cliente.id'=>$clienteid]
+        ];
+        $micliente = $this->Cliente->find('first',$optionmiCliente);
+
+        $fechadeconsulta = date('Y/m/d',strtotime("01-".$pemes."-".$peanio));
+
+        if(!isset($micliente['Cliente']['fchcorteejerciciofiscal'])||is_null($micliente['Cliente']['fchcorteejerciciofiscal'])||$micliente['Cliente']['fchcorteejerciciofiscal']==""){
+                $this->Session->setFlash(__('No se ha configurado fecha decorte de ejercicio fiscal para este contribuyente.'));
+                $fechadecorteAñoActual = date('Y/m/d',strtotime("01-01-".$peanio));
+        }else{
+                $fechadecorteAñoActual = date('Y/m/d',strtotime($micliente['Cliente']['fchcorteejerciciofiscal']."-".$peanio));
+        }
+        $fechaInicioConsulta = "";
+        $fechaFinConsulta = "";
+        if($fechadeconsulta<$fechadecorteAñoActual){
+                $fechaInicioConsulta =  date('Y/m/d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+        }else {
+                $fechaInicioConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 days"));;
+        }
+        //la fecha fin consulta es esta por quesolo vamos a ver hasta el ultimo dia del periodo que estamos
+        // consultando
+        $fechaFinConsulta =  date('Y/m/t',strtotime($fechadeconsulta));
+        $this->set('fechaInicioConsulta',$fechaInicioConsulta);
+        $this->set('fechaFinConsulta',$fechaFinConsulta);
+
+        $optionCliente = [
+            'contain' => [
+                'Asiento'=>[
+                    'Movimiento'=>[
+                        'Cuentascliente'
+                    ],
+                    'conditions'=>[
+                        'Asiento.tipoasiento'=>'apertura',
+                        'SUBSTRING(Asiento.periodo,4,7)*1 <= '.$peanio.'*1',
+                    ]
+                ],
+            ],
+            'conditions' => ['Cliente.id'=>$clienteid]
+        ];
+
+        $cliente = $this->Cliente->find('first',$optionCliente);
+        //aca vamos a setiar las cosas que necesitamos para dar de alta un asiento
+        $cuentaclienteOptions = [
+                'conditions' => [
+                        'Cuentascliente.cliente_id'=> $clienteid
+                ],
+                'fields' => [
+                        'Cuentascliente.id',
+                        'Cuentascliente.nombre',
+                        'Cuenta.numero',
+                ],
+                'order'=>['Cuenta.numero'],
+                'joins'=>[
+                        ['table'=>'cuentas',
+                                'alias' => 'Cuenta',
+                                'type'=>'inner',
+                                'conditions'=> [
+                                        'Cuentascliente.cuenta_id = Cuenta.id',
+                                        'Cuenta.tipo'=>'cuenta',
+                                ]
+                        ],
+                ],
+        ];
+
+        $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
+        $this->set('cuentasclientes',$cuentasclientes);
+        $this->set('cliente',$cliente);
+        $this->set('periodo',$periodo);
+        
+        //seccion del asiento en si
+        $options = array(
+            'contain'=>array(
+                'Cuenta'=>[
+                    'Cuentascliente'=>[
+                        'Cuenta',
+                        'conditions'=>[
+                            'Cuentascliente.cliente_id'=>$clienteid
+                        ]
+                    ]
+                ]
+            ),
+            'conditions' => array(
+                'Asientoestandare.tipoasiento'=> 'existenciafinal',
+            ),
+        );       
+        $asientoestandares = $this->Asientoestandare->find('all', $options);
+        /*vamos a controlar que el asiento estandar tenga sus cuentas por defecto creadas en cuentacliente*/
+        $secrearoncuentas=false;
+        foreach ($asientoestandares as $asientoestandar) {
+            if(count($asientoestandar['Cuenta']['Cuentascliente'])==0){
+                //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
+                $this->Cuentascliente->create();
+                $this->Cuentascliente->set('cliente_id',$clienteid);
+                $this->Cuentascliente->set('cuenta_id',$asientoestandar['Cuenta']['id']);
+                $this->Cuentascliente->set('nombre',$asientoestandar['Cuenta']['nombre']);
+                $this->Cuentascliente->save();
+                $secrearoncuentas=true;
+            }
+        }
+        //ahora ya estamos seguros de que las cuentas clientes existen
+        if($secrearoncuentas){
+            $asientoestandares = $this->Asientoestandare->find('all', $options);
+        }
+        $options = array(
+            'contain'=>array(
+                'Movimiento',
+            ),
+            'conditions' => array(
+                'Asiento.tipoasiento'=> 'Existencia Final',
+                'Asiento.periodo'=>$periodo,
+                'Asiento.cliente_id'=>$clienteid
+            ),
+        );
+        $asientoyacargado = $this->Asiento->find('first', $options);
+        $this->set('asientoestandares',$asientoestandares);
+        $this->set('asientoyacargado',$asientoyacargado);
+        $this->layout = 'ajax';
+
+    }            
 //    public function numerarasientos(){
 //
 //        ini_set('max_execution_time', 600);

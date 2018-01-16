@@ -302,12 +302,19 @@ class PapelesdetrabajosController extends AppController {
             $this->loadModel('Movimiento');
             $this->loadModel('Cuentascliente');
             $this->loadModel('User');
+            $this->loadModel('Asiento');
 
             $pemes = substr($periodo, 0, 2);
             $peanio = substr($periodo, 3);
 
             $optionmiCliente = [
                     'contain' => [
+                        'Impcli'=>[        
+                            'Ajustescontable',
+                            'conditions'=>[
+                                'Impcli.impuesto_id'=>5
+                            ]
+                        ],
                         'Personasrelacionada'=>[
                             'conditions'=>[
                                 'Personasrelacionada.tipo'=>'gerente'
@@ -360,11 +367,21 @@ class PapelesdetrabajosController extends AppController {
 
             $optionCliente = [
                 'contain' => [
-                    'Cuentaclientevalororigen',
-                    'Cuentaclienteactualizacion',
-                    'Cuentaclienteterreno',
-                    'Cuentaclienteedificacion',
-                    'Cuentaclientemejora',
+                    'Cuentaclientevalororigen'=>[
+                        'Amortizacione'
+                    ],
+                    'Cuentaclienteactualizacion'=>[
+                        'Amortizacione'
+                    ],
+                    'Cuentaclienteterreno'=>[
+                        'Amortizacione'
+                    ],
+                    'Cuentaclienteedificacion'=>[
+                        'Amortizacione'
+                    ],
+                    'Cuentaclientemejora'=>[
+                        'Amortizacione'
+                    ],
                     'Cuenta',
                     'Movimiento'=>[
                             'Asiento'=>[
@@ -390,6 +407,20 @@ class PapelesdetrabajosController extends AppController {
             $this->set('cliente',$micliente);
             $this->set('user',$user);
             $this->set('periodo',$periodo);
+            //vamos a llevar la lista de asientos realizados para saber que hacientos se hicieron
+            $optionAsiento = [
+                'contain' => [
+                    
+                ],
+                'conditions' => [
+                    'Asiento.cliente_id'=>$clienteid,
+                    'Asiento.fecha  >= '.$fechaInicioPeriodoAnterior,
+                    'Asiento.fecha  <= '.$fechaFinConsulta,
+                    ],
+               
+            ];
+            $asientos = $this->Asiento->find('all',$optionAsiento);
+            $this->set('asientos',$asientos);
     }
     public function ganancias($clienteid=null, $periodo=null){
         $this->loadModel('Cliente');
@@ -413,6 +444,11 @@ class PapelesdetrabajosController extends AppController {
                     ],
                     'Impcli'=>[
                         'Deduccione',
+                        'Ajustescontable'=>[
+                            'conditions'=>[
+                                'Ajustescontable.periodo'=>$peanio
+                            ]
+                        ],
                         'Quebranto'=>[
                             'conditions'=>[
                                 'SUBSTRING(Quebranto.periodo,4,7)'=>$peanio
@@ -499,7 +535,7 @@ class PapelesdetrabajosController extends AppController {
                                 "Movimiento.asiento_id IN (
                                         SELECT id FROM asientos as Asiento 
                                         WHERE Asiento.cliente_id = ".$clienteid."
-                                        AND    Asiento.fecha  >= '".$fechaInicioPeriodoAnterior."'
+                                        AND    Asiento.fecha  >= '".$fechaInicioConsulta."'
                                         AND    Asiento.fecha  <= '".$fechaFinConsulta."'
                                 )"
                         ]
@@ -546,11 +582,27 @@ class PapelesdetrabajosController extends AppController {
             $asientoestandares = $this->Asientoestandare->find('all', $options);
         }
         //si tiene 3ra vamos a agregar Caja a asiento estandar sino caja del 13
+        $tieneprimera=false;
+        $tienesegunda=false;
         $tienetercera=false;
+        $tieneterceraauxiliar=false;
+        $tienecuarta=false;
         foreach ($micliente['Actividadcliente'] as $actividadcliente){
-            $categoriaActividad = $actividadcliente['Cuentasganancia'][0]['categoria'];              
+           $categoriaActividad = $actividadcliente['Cuentasganancia'][0]['categoria'];              
+           if($categoriaActividad=='primeracateg'){
+               $tieneprimera=true;
+           }
+           if($categoriaActividad=='segundacateg'){
+               $tienesegunda=true;
+           }
            if($categoriaActividad=='terceracateg'){
                $tienetercera=true;
+           }
+           if($categoriaActividad=='terceracateg45'){
+               $tieneterceraauxiliar=true;
+           }
+           if($categoriaActividad=='cuartacateg'){
+               $tienecuarta=true;
            }
         }
        
@@ -598,7 +650,12 @@ class PapelesdetrabajosController extends AppController {
         $this->set('cliente',$micliente);
         $this->set('user',$user);
         $this->set('periodo',$periodo);
+        
+        $this->set('tieneprimera',$tieneprimera);
+        $this->set('tienesegunda',$tienesegunda);
         $this->set('tienetercera',$tienetercera);
+        $this->set('tieneterceraauxiliar',$tieneterceraauxiliar);
+        $this->set('tienecuarta',$tienecuarta);
     }
 }
 /*

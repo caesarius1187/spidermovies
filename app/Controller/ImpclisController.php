@@ -1453,6 +1453,7 @@ class ImpclisController extends AppController {
 
 		$this->loadModel('Conceptosrestante');
 		$this->loadModel('Cuenta');
+		$this->loadModel('Cliente');
 		$contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
 		$this->set(compact('contribucionesSindicatos'));
 		$optionsCuentasContribucionesSindicatos = [
@@ -1518,41 +1519,40 @@ class ImpclisController extends AppController {
         $this->set('impcliSolicitado',$impcliSolicitado);
 		$options = [
 			'contain'=>[
-				'Cliente'=>[
-					'Cuentascliente'=>[
-						'Cuenta',
-						'conditions'=>[
-//							'Cuentascliente.cuenta_id' => $contribucionesSindicatos,
-						]
-					],
-				],
-				'Impuesto'=>[
-
-					'Conveniocolectivotrabajo'=>[
-						'Empleado'=>[
-							'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
-							'Valorrecibo'=>[
-								'Cctxconcepto'=>[
-								],
-								'conditions'=>[
-									'Valorrecibo.periodo'=>$periodo
-								]
-							],
-							'conditions'=>[
-								'Empleado.cliente_id' => $impcliIdAUsar['Impcli']['cliente_id'],
-								'OR'=>[
-									'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
-									'Empleado.fechaegreso is null' ,
-								],
-								'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
-							],
-						]
-					],
-				],
+                            'Cliente'=>[
+                                'Cuentascliente'=>[
+                                    'Cuenta',
+                                    'conditions'=>[
+//					'Cuentascliente.cuenta_id' => $contribucionesSindicatos,
+                                    ]
+                                ],
+                            ],
+                            'Impuesto'=>[
+                                'Conveniocolectivotrabajo'=>[
+                                    'Empleado'=>[
+                                        'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
+                                        'Valorrecibo'=>[
+                                            'Cctxconcepto'=>[
+                                            ],
+                                            'conditions'=>[
+                                                'Valorrecibo.periodo'=>$periodo
+                                            ]
+                                        ],
+                                        'conditions'=>[
+                                            'Empleado.cliente_id' => $impcliIdAUsar['Impcli']['cliente_id'],
+                                            'OR'=>[
+                                                'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                                                'Empleado.fechaegreso is null' ,
+                                            ],
+                                            'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                                        ],
+                                    ]
+                                ],
+                            ],
 
 			],
 			'conditions' => [
-				'Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']
+                            'Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']
 			]
 		];
 		$impcli = $this->Impcli->find('first', $options);
@@ -1586,6 +1586,9 @@ class ImpclisController extends AppController {
 		);
 		$conceptosrestantesafavor = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
 		$this->set('impcliSaldoAFavor',$conceptosrestantesafavor);
+                $impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
+                $this->set('impuestosactivos',$impuestosactivos);
+
 	}
 	public function papeldetrabajocooperadoraasistencial($impcliid=null,$periodo=null){
         $this->loadModel('Conceptosrestante');

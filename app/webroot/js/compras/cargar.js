@@ -666,7 +666,7 @@ $(document).ready(function() {
             //Calcular TOTAl
             neto = $("#"+formulario+" #CompraNeto").val();
             iva=neto*(alicuota/100);
-
+            iva=iva.toFixed(2);
             total+=neto * 1;
             total+=iva * 1;
 

@@ -123,7 +123,7 @@
                 Cargo: <?php echo $empleado['Cargo']['nombre'] ?>
                 <?php echo $empleado['Empleado']['jornada']=='0.5'?"Media":"" ?>
                 Jornada: <?php echo $empleado['Empleado']['jornada']=='0.5'?"":"Completa" ?>
-                F. Ingreso:  <?php echo date('d-m-Y',strtotime($empleado['Empleado']['fechaalta'])); ?>
+                F. Ingreso:  <?php echo date('d-m-Y',strtotime($empleado['Empleado']['fechaingreso'])); ?>
                 Basico: <?php echo number_format($empleado['Cargo']['sueldobasico']+$empleado['Cargo']['preciohora'], 2, ",", "."); ?>
                 Modalid ad de contratacion:  <?php echo $empleado['Empleado']['codigoafip']; ?>
             </td>
@@ -188,12 +188,16 @@
                         <?php
                         break;
                     case 'NO REMUNERATIVOS':
+                         $suma = 1;
+                        if($valor['resta']*1==1){
+                            $suma = -1;
+                        }
                         ?>
                         <td>
                             <?php echo $valor['concepto']; ?>
                         </td>
                         <td class="tdWithNumber">
-                            <?php echo number_format($valor['valor'], 2, ",", "."); ?>
+                            <?php echo number_format($valor['valor']*$suma, 2, ",", "."); ?>
                         </td>
                         <td></td>
                         <td></td>

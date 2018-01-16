@@ -88,119 +88,108 @@ class CuentasclientesController extends AppController {
 		$this->render('serializejson');	
 	}
 	public function informesumaysaldo($clienteid = null, $periodo = null){
-        ini_set('memory_limit', '2560M');
-        $this->loadModel('Cliente');
-		$this->loadModel('Movimiento');
-		$this->loadModel('Cuentascliente');
+            ini_set('memory_limit', '2560M');
+            $this->loadModel('Cliente');
+            $this->loadModel('Movimiento');
+            $this->loadModel('Cuentascliente');
 
-		$pemes = substr($periodo, 0, 2);
-		$peanio = substr($periodo, 3);
+            $pemes = substr($periodo, 0, 2);
+            $peanio = substr($periodo, 3);
 
-		$optionmiCliente = [
-			'contain' => [
-			],
-			'conditions' => ['Cliente.id'=>$clienteid]
-		];
-		$micliente = $this->Cliente->find('first',$optionmiCliente);
+            $optionmiCliente = [
+                    'contain' => [
+                    ],
+                    'conditions' => ['Cliente.id'=>$clienteid]
+            ];
+            $micliente = $this->Cliente->find('first',$optionmiCliente);
 
-		$fechadeconsulta = date('Y/m/d',strtotime("01-".$pemes."-".$peanio));
+            $fechadeconsulta = date('Y/m/d',strtotime("01-".$pemes."-".$peanio));
 
-		if(!isset($micliente['Cliente']['fchcorteejerciciofiscal'])||is_null($micliente['Cliente']['fchcorteejerciciofiscal'])||$micliente['Cliente']['fchcorteejerciciofiscal']==""){
-			$this->Session->setFlash(__('No se ha configurado fecha decorte de ejercicio fiscal para este
-			 ccontribuyente .'));
-			$fechadecorteAñoActual = date('Y/m/d',strtotime("01-01-".$peanio));
+            if(!isset($micliente['Cliente']['fchcorteejerciciofiscal'])||is_null($micliente['Cliente']['fchcorteejerciciofiscal'])||$micliente['Cliente']['fchcorteejerciciofiscal']==""){
+                    $this->Session->setFlash(__('No se ha configurado fecha decorte de ejercicio fiscal para este
+                     ccontribuyente .'));
+                    $fechadecorteAñoActual = date('Y/m/d',strtotime("01-01-".$peanio));
 
-		}else{
-			$fechadecorteAñoActual = date('Y/m/d',strtotime($micliente['Cliente']['fchcorteejerciciofiscal']."-".$peanio));
-		}
-		$fechaInicioConsulta = "";
-		$fechaFinConsulta = "";
-		if($fechadeconsulta<$fechadecorteAñoActual){
-			$fechaInicioConsulta =  date('Y/m/d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+            }else{
+                    $fechadecorteAñoActual = date('Y/m/d',strtotime($micliente['Cliente']['fchcorteejerciciofiscal']."-".$peanio));
+            }
+            $fechaInicioConsulta = "";
+            $fechaFinConsulta = "";
+            if($fechadeconsulta<$fechadecorteAñoActual){
+                    $fechaInicioConsulta =  date('Y/m/d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
 //			$fechaFinConsulta =  $fechadecorteAñoActual;
-		}else {
-			$fechaInicioConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 days"));;
+            }else {
+                    $fechaInicioConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 days"));;
 //			$fechaFinConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 Years"));
-		}
-		//la fecha fin consulta es esta por quesolo vamos a ver hasta el ultimo dia del periodo que estamos
-		// consultando
-		$fechaFinConsulta =  date('Y/m/t',strtotime($fechadeconsulta));
-		$this->set('fechaInicioConsulta',$fechaInicioConsulta);
-		$this->set('fechaFinConsulta',$fechaFinConsulta);
+            }
+            //la fecha fin consulta es esta por quesolo vamos a ver hasta el ultimo dia del periodo que estamos
+            // consultando
+            $fechaFinConsulta =  date('Y/m/t',strtotime($fechadeconsulta));
+            $this->set('fechaInicioConsulta',$fechaInicioConsulta);
+            $this->set('fechaFinConsulta',$fechaFinConsulta);
 
-		$optionCliente = [
-			'contain' => [
-				'Cuentascliente'=>[
-					'Cuenta',
+            $optionCliente = [
+                    'contain' => [
+                            'Cuentascliente'=>[
+                                    'Cuenta',
 //					'Saldocuentacliente'=>[
 //						'conditions'=>[
 //							'Saldocuentacliente.periodo'=>$periodo
 //						],
 //					],
-					'Movimiento'=>[
-						'Asiento'=>[
-							'fields'=>['id','fecha']
-						],
-						'conditions'=>[
-							//tengo que traer los movimientos que tengan asientos con fechas posteriores
-							//a la fecha de corte del cliente
-							"Movimiento.asiento_id IN (
-								SELECT id FROM asientos as Asiento 
-								WHERE Asiento.cliente_id = ".$clienteid."
-								AND  Asiento.fecha >= '".date('Y-m-d', strtotime($fechaInicioConsulta))."'
-								AND  Asiento.fecha <= '".date('Y-m-d', strtotime($fechaFinConsulta))."'
-							)"
-						]
-					],
-					'conditions'=>[
+                                    'Movimiento'=>[
+                                            'Asiento'=>[
+                                                    'fields'=>['id','fecha']
+                                            ],
+                                            'conditions'=>[
+                                                    //tengo que traer los movimientos que tengan asientos con fechas posteriores
+                                                    //a la fecha de corte del cliente
+                                                    "Movimiento.asiento_id IN (
+                                                            SELECT id FROM asientos as Asiento 
+                                                            WHERE Asiento.cliente_id = ".$clienteid."
+                                                            AND  Asiento.fecha >= '".date('Y-m-d', strtotime($fechaInicioConsulta))."'
+                                                            AND  Asiento.fecha <= '".date('Y-m-d', strtotime($fechaFinConsulta))."'
+                                                    )"
+                                            ]
+                                    ],
+                                    'conditions'=>[
 
-					]
-				],
-			],
-			'conditions' => ['Cliente.id'=>$clienteid]
-		];
+                                    ]
+                            ],
+                    ],
+                    'conditions' => ['Cliente.id'=>$clienteid]
+            ];
 
-        $cliente = $this->Cliente->find('first',$optionCliente);
-//		for ($i=0;$i<count($cliente['Cuentascliente'])-1;$i++){
-//			for ($j=$i;$j<count($cliente['Cuentascliente']);$j++) {
-//				$burbuja = $cliente['Cuentascliente'][$i]['Cuenta']['numero'];
-//				$aux = $cliente['Cuentascliente'][$j]['Cuenta']['numero'];
-//				if($burbuja>$aux){
-//					$myaux=$cliente['Cuentascliente'][$i];
-//					$cliente['Cuentascliente'][$i]=$cliente['Cuentascliente'][$j];
-//					$cliente['Cuentascliente'][$j]=$myaux;
-//				}
-//			}
-//		}
-		//aca vamos a setiar las cosas que necesitamos para dar de alta un asiento
-		$cuentaclienteOptions = [
-			'conditions' => [
-				'Cuentascliente.cliente_id'=> $clienteid
-			],
-			'fields' => [
-				'Cuentascliente.id',
-				'Cuentascliente.nombre',
-				'Cuenta.numero',
-			],
-			'order'=>['Cuenta.numero'],
-			'joins'=>[
-				['table'=>'cuentas',
-					'alias' => 'Cuenta',
-					'type'=>'inner',
-					'conditions'=> [
-						'Cuentascliente.cuenta_id = Cuenta.id',
-						'Cuenta.tipo'=>'cuenta',
-					]
-				],
-			],
-		];
+            $cliente = $this->Cliente->find('first',$optionCliente);
+            //aca vamos a setiar las cosas que necesitamos para dar de alta un asiento
+            $cuentaclienteOptions = [
+                    'conditions' => [
+                            'Cuentascliente.cliente_id'=> $clienteid
+                    ],
+                    'fields' => [
+                            'Cuentascliente.id',
+                            'Cuentascliente.nombre',
+                            'Cuenta.numero',
+                    ],
+                    'order'=>['Cuenta.numero'],
+                    'joins'=>[
+                            ['table'=>'cuentas',
+                                    'alias' => 'Cuenta',
+                                    'type'=>'inner',
+                                    'conditions'=> [
+                                            'Cuentascliente.cuenta_id = Cuenta.id',
+                                            'Cuenta.tipo'=>'cuenta',
+                                    ]
+                            ],
+                    ],
+            ];
 
-        $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
-		$this->set('cuentasclientes',$cuentasclientes);
-		$this->set('cliente',$cliente);
-		$this->set('periodo',$periodo);
+            $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
+                    $this->set('cuentasclientes',$cuentasclientes);
+                    $this->set('cliente',$cliente);
+                    $this->set('periodo',$periodo);
 
-    }
+        }
 
 	public function activarcuentasdeimpuestos(){
 		set_time_limit ( 1200 );

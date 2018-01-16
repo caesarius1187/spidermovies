@@ -219,7 +219,7 @@ div.actions h3 {
             height:auto;
          }
        
-        tr.page-break  { display: block; page-break-before: always; }
+        /*tr.page-break  { display: block; page-break-before: always; }*/
 }
 
  @page 
@@ -2744,7 +2744,7 @@ transition: all 0.4s ease-in-out;
 }
 .tblEstadoContable{
     border-collapse: collapse;
-    page-break-inside: avoid !important;
+    /*page-break-inside: avoid !important;*/
 }
 .tblAnexoI td{
     padding: 1px 2px;

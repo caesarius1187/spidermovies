@@ -693,7 +693,8 @@ Total = 89.69";
                                 $contUth = 0;
                                 if($empleado['conveniocolectivotrabajo_id']=='8'/*el convenio del empleado es casir*/){
                                     $mesesAPagarContEspCASYR = [
-                                        '07-2017'=>300
+                                        '07-2017'=>300,
+                                        '12-2017'=>300
                                     ];
                                     if(isset($mesesAPagarContEspCASYR[$periodo])){
                                         $contUth = $mesesAPagarContEspCASYR[$periodo];
@@ -1014,7 +1015,7 @@ Total = 89.69";
 	</div>
 
     <?php
-    if(count($impcliSolicitado['Impuesto']['Asientoestandare'])>0){
+    if(count($impcliSolicitado['Impuesto']['Asientoestandare'])>0&&$impuestosactivos['contabiliza']){
         ?>
     <div id="divContenedorContabilidad" style="margin-top:10px;width:100%;">
         <div class="" id="AsientoAutomaticoDevengamiento931">
