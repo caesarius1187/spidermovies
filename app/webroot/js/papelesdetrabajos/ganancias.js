@@ -16,7 +16,6 @@ $(document).ready(function() {
         $('#noprint').hide();
         //showAllDivs();
         tblsys.destroy();
-       
 
           
         $(".index").each(
@@ -94,7 +93,6 @@ function showAllDivs(){
     $("#divDeterminacionGPF").show();
     $("#divJustificacionVarPat").show();
     $("#divQuebrantos").show();
-    $("#divAsientos").show();
 }
 function CambiarTab(sTab)	{
     $("#tabSumasYSaldos").attr("class", "cliente_view_tab");
@@ -106,34 +104,32 @@ function CambiarTab(sTab)	{
     $("#tabCuartaDEFCategoria").attr("class", "cliente_view_tab");
     $("#tabJustVarPat").attr("class", "cliente_view_tab");
     $("#tabQuebranto").attr("class", "cliente_view_tab");
-    $("#tabAsiento").attr("class", "cliente_view_tab");
 
     if(sTab == "sumasysaldos")
     {
         $("#tabSumasYSaldos").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").show();
         $("#divPrimeraCategoria").hide();
-	    $("#divPatrimonioTercera").hide();
-	    $("#divPatrimonio").hide();
-	    $("#divDeduccionesGenerales").hide();
-	    $("#divDeduccionesPersonales").hide();
-	    $("#divDeterminacionGPF").hide();
-	    $("#divJustificacionVarPat").hide();        
-	    $("#divQuebrantos").hide();        
+        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonio").hide();
+        $("#divDeduccionesGenerales").hide();
+        $("#divDeduccionesPersonales").hide();
+        $("#divDeterminacionGPF").hide();
+        $("#divJustificacionVarPat").hide();        
+        $("#divQuebrantos").hide();        
     }
     if(sTab == "primeracategoria")
     {
         $("#tabPrimeraCategoria").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").hide();
         $("#divPrimeraCategoria").show();
-	    $("#divPatrimonioTercera").hide();
-	    $("#divPatrimonio").hide();
-	    $("#divDeduccionesGenerales").hide();
-	    $("#divDeduccionesPersonales").hide();
-	    $("#divDeterminacionGPF").hide();
-            $("#divJustificacionVarPat").hide();
-            $("#divQuebrantos").hide();      
-            $("#divAsientos").hide();
+        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonio").hide();
+        $("#divDeduccionesGenerales").hide();
+        $("#divDeduccionesPersonales").hide();
+        $("#divDeterminacionGPF").hide();
+        $("#divJustificacionVarPat").hide();
+        $("#divQuebrantos").hide();      
     }
     if (sTab == "patrimoniotercera")
     {
@@ -141,14 +137,13 @@ function CambiarTab(sTab)	{
         $("#tabPatrimoniotercera").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").hide();
         $("#divPrimeraCategoria").hide();
-	    $("#divPatrimonioTercera").show();
-	    $("#divPatrimonio").hide();
-	    $("#divDeduccionesGenerales").hide();
-	    $("#divDeduccionesPersonales").hide();
-	    $("#divDeterminacionGPF").hide();
-            $("#divJustificacionVarPat").hide();
-            $("#divQuebrantos").hide();       
-            $("#divAsientos").hide();
+        $("#divPatrimonioTercera").show();
+        $("#divPatrimonio").hide();
+        $("#divDeduccionesGenerales").hide();
+        $("#divDeduccionesPersonales").hide();
+        $("#divDeterminacionGPF").hide();
+        $("#divJustificacionVarPat").hide();
+        $("#divQuebrantos").hide();       
     }
     if (sTab == "tercerarestocategoria")
     {
@@ -156,14 +151,13 @@ function CambiarTab(sTab)	{
         $("#tabTercerarRestoCategoria").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").hide();
         $("#divPrimeraCategoria").hide();
-	    $("#divPatrimonioTercera").hide();
-	    $("#divPatrimonio").show();
-	    $("#divDeduccionesGenerales").hide();
-	    $("#divDeduccionesPersonales").hide();
-	    $("#divDeterminacionGPF").hide();
-            $("#divJustificacionVarPat").hide();
-            $("#divQuebrantos").hide();   
-            $("#divAsientos").hide();
+        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonio").show();
+        $("#divDeduccionesGenerales").hide();
+        $("#divDeduccionesPersonales").hide();
+        $("#divDeterminacionGPF").hide();
+        $("#divJustificacionVarPat").hide();
+        $("#divQuebrantos").hide();   
     }
     if (sTab == "terceracategoria")
     {
@@ -171,14 +165,13 @@ function CambiarTab(sTab)	{
         $("#tabTerceraCategoria").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").hide();
         $("#divPrimeraCategoria").hide();
-	    $("#divPatrimonioTercera").hide();
-	    $("#divPatrimonio").hide();
-	    $("#divDeduccionesGenerales").show();
-	    $("#divDeduccionesPersonales").hide();
-	    $("#divDeterminacionGPF").hide();
-            $("#divJustificacionVarPat").hide();
-            $("#divQuebrantos").hide();        
-            $("#divAsientos").hide();
+        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonio").hide();
+        $("#divDeduccionesGenerales").show();
+        $("#divDeduccionesPersonales").hide();
+        $("#divDeterminacionGPF").hide();
+        $("#divJustificacionVarPat").hide();
+        $("#divQuebrantos").hide();        
     }
     if (sTab == "cuartaabccategoria")
     {
@@ -186,70 +179,52 @@ function CambiarTab(sTab)	{
         $("#tabCuartaABCCategoria").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").hide();
         $("#divPrimeraCategoria").hide();
-	    $("#divPatrimonioTercera").hide();
-	    $("#divPatrimonio").hide();
-	    $("#divDeduccionesGenerales").hide();
-	    $("#divDeduccionesPersonales").show();
-	    $("#divDeterminacionGPF").hide();
-            $("#divJustificacionVarPat").hide();
-            $("#divQuebrantos").hide();        
-            $("#divAsientos").hide();
+        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonio").hide();
+        $("#divDeduccionesGenerales").hide();
+        $("#divDeduccionesPersonales").show();
+        $("#divDeterminacionGPF").hide();
+        $("#divJustificacionVarPat").hide();
+        $("#divQuebrantos").hide();        
     }
     if (sTab == "cuartadefcategoria")
     {
         $("#tabCuartaDEFCategoria").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").hide();
         $("#divPrimeraCategoria").hide();
-	    $("#divPatrimonioTercera").hide();
-	    $("#divPatrimonio").hide();
-	    $("#divDeduccionesGenerales").hide();
-	    $("#divDeduccionesPersonales").hide();
-            $("#divJustificacionVarPat").hide();
-	    $("#divDeterminacionGPF").show();
-            $("#divQuebrantos").hide();     
-            $("#divAsientos").hide();
+        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonio").hide();
+        $("#divDeduccionesGenerales").hide();
+        $("#divDeduccionesPersonales").hide();
+        $("#divJustificacionVarPat").hide();
+        $("#divDeterminacionGPF").show();
+        $("#divQuebrantos").hide();     
     }   
     if (sTab == "justificacionvarpat")
     {
         $("#tabJustVarPat").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").hide();
         $("#divPrimeraCategoria").hide();
-	    $("#divPatrimonioTercera").hide();
-	    $("#divPatrimonio").hide();
-	    $("#divDeduccionesGenerales").hide();
-	    $("#divDeduccionesPersonales").hide();
-            $("#divJustificacionVarPat").show();
-	    $("#divDeterminacionGPF").hide();
-            $("#divQuebrantos").hide();     
-            $("#divAsientos").hide();
+        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonio").hide();
+        $("#divDeduccionesGenerales").hide();
+        $("#divDeduccionesPersonales").hide();
+        $("#divJustificacionVarPat").show();
+        $("#divDeterminacionGPF").hide();
+        $("#divQuebrantos").hide();     
     }   
     if (sTab == "quebrantos")
     {
         $("#tabQuebranto").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").hide();
         $("#divPrimeraCategoria").hide();
-	    $("#divPatrimonioTercera").hide();
-	    $("#divPatrimonio").hide();
-	    $("#divDeduccionesGenerales").hide();
-	    $("#divDeduccionesPersonales").hide();
-            $("#divJustificacionVarPat").hide();
-	    $("#divDeterminacionGPF").hide();
-            $("#divQuebrantos").show();     
-            $("#divAsientos").hide();
-    }   
-    if (sTab == "asiento")
-    {
-        $("#tabAsiento").attr("class", "cliente_view_tab_active");
-        $("#divContenedorBSyS").hide();
-        $("#divPrimeraCategoria").hide();
-	    $("#divPatrimonioTercera").hide();
-	    $("#divPatrimonio").hide();
-	    $("#divDeduccionesGenerales").hide();
-	    $("#divDeduccionesPersonales").hide();
-            $("#divJustificacionVarPat").hide();
-	    $("#divDeterminacionGPF").hide();
-            $("#divQuebrantos").hide();     
-            $("#divAsientos").show();
+        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonio").hide();
+        $("#divDeduccionesGenerales").hide();
+        $("#divDeduccionesPersonales").hide();
+        $("#divJustificacionVarPat").hide();
+        $("#divDeterminacionGPF").hide();
+        $("#divQuebrantos").show();     
     }   
 }
 function imprimir(){
@@ -265,8 +240,8 @@ function imprimir(){
 function addTolblTotalDebeAsieto(event) {
     var debesubtotal = 0;
     var habersubtotal = 0;
-     if($('#myModal #cuenta2224').length > 0){         
-         var orden = $('#myModal #cuenta2224').attr('orden');
+     if($('#cuenta2224').length > 0){         
+         var orden = $('#cuenta2224').attr('orden');
         $('#myModal #Asiento0Movimiento'+orden+'Debe').val(0);
         $('#myModal #Asiento0Movimiento'+orden+'Haber').val(0);          
     }
@@ -349,6 +324,141 @@ function showIconDebeHaber(){
         $("#myModal #iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
     }       
 }
+
+function addTolblTotalDebeAsietoModal(event) {
+    var debesubtotal = 0;
+    var habersubtotal = 0;
+     if($('#myModal #cuenta2224').length > 0){         
+         var orden = $('#myModal #cuenta2224').attr('orden');
+        $('#myModal #Asiento0Movimiento'+orden+'Debe').val(0);
+        $('#myModal #Asiento0Movimiento'+orden+'Haber').val(0);          
+    }
+    $("#myModal .inputDebe").each(function () {
+        debesubtotal = debesubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+    });
+    $("#myModal .inputHaber").each(function () {
+        habersubtotal = habersubtotal*1 + this.value*1;
+    });
+    if($('#myModal #cuenta2224').length > 0){
+        var orden = $('#myModal #cuenta2224').attr('orden');
+        var debe=debesubtotal*1;
+        var haber=habersubtotal*1;
+        var saldo = debe-haber;
+        if(saldo>0){
+            $('#myModal #Asiento0Movimiento'+orden+'Haber').val(saldo);
+            $('#myModal .inputHaber').each(function(){
+                $(this).trigger("change");
+                 return;
+             });
+        }else{
+            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*-1);
+            debesubtotal+=saldo*-1;
+        }
+    }
+    $("#myModal #lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;         
+    showIconDebeHaberModal();
+}
+function addTolblTotalhaberAsietoModal(event) {
+    var debesubtotal = 0;
+    var habersubtotal = 0;
+     if($('#myModal #cuenta2224').length > 0){         
+         var orden = $('#myModal #cuenta2224').attr('orden');
+        $('#myModal #Asiento0Movimiento'+orden+'Debe').val(0);
+        $('#myModal #Asiento0Movimiento'+orden+'Haber').val(0);          
+    }
+    $("#myModal .inputHaber").each(function () {
+        habersubtotal = habersubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+    });
+    $("#myModal .inputDebe").each(function () {
+        debesubtotal = debesubtotal*1 + this.value*1;
+    });
+    if($('#myModal #cuenta2224').length > 0){
+        var orden = $('#cuenta2224').attr('orden');
+        var debe=debesubtotal*1;
+        var haber=habersubtotal*1;
+        var saldo = debe-haber;         
+        if(saldo>0){
+             $('#myModal #Asiento0Movimiento'+orden+'Haber').val(saldo);
+            habersubtotal+=saldo-1;
+        }else{
+            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*-1);               
+            $('#myModal .inputDebe').each(function(){
+                $(this).trigger("change");
+                 return;
+             });
+        }
+    }
+    $("#myModal #lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+    showIconDebeHaberModal();
+}
+function showIconDebeHaberModal(){
+    if($("#myModal #lblTotalHaber").text()==$("#myModal #lblTotalDebe").text()){
+        $("#myModal #iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+    }else{
+        $("#myModal #iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+    }       
+}
+
+function addTolblTotalDebeAsietoGanancias(event) {
+    var debesubtotal = 0;
+    var habersubtotal = 0;
+    $("#myModal .inputDebe").each(function () {
+        debesubtotal = debesubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+    });
+    $("#myModal .inputHaber").each(function () {
+        habersubtotal = habersubtotal*1 + this.value*1;
+    });
+    $("#myModal #lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;         
+    showIconDebeHaber()
+}
+function addTolblTotalhaberAsietoGanancias(event) {
+    var debesubtotal = 0;
+    var habersubtotal = 0;
+    $("#myModal .inputHaber").each(function () {
+        habersubtotal = habersubtotal*1 + this.value*1;
+        if(this.value*1!=0){
+            $(this).removeClass("movimientoSinValor");
+            $(this).addClass("movimientoConValor");
+        }else{
+            $(this).removeClass("movimientoConValor")
+            $(this).addClass("movimientoSinValor");
+        }
+    });
+    $("#myModal .inputDebe").each(function () {
+        debesubtotal = debesubtotal*1 + this.value*1;
+    });    
+    $("#myModal #lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+    showIconDebeHaberGanancias()
+}
+function showIconDebeHaberGanancias(){
+    if($("#myModal #lblTotalHaber").text()==$("#myModal #lblTotalDebe").text()){
+        $("#myModal #iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+    }else{
+        $("#myModal #iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+    }       
+}
+
 function catchAsientoDeduccionGeneral(){
     $('#AsientoDeduccionGeneral').submit(function(){
             /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
@@ -458,92 +568,93 @@ function loadFormImpuestoQuebrantos(impcliid,periodo){
     });
 }
 function contabilizarexistenciafinal (clienteid,periodo) {
- var data="";
- $.ajax({
-     type: "post",  // Request method: post, get
-     url: serverLayoutURL+"/asientos/contabilizarexistenciafinal/"+clienteid+"/"+periodo,
-     // URL to request
-     data: data,  // post data
-     success: function(response) {
-         $('#myModal').on('show.bs.modal', function() {
-             $('#myModal').find('.modal-title').html('Asiento automatico Existencia Final');
-             $('#myModal').find('.modal-body').html(response);
-             /*$('#myModal').find('.modal-content')
-                 .css({
-                     width: 'max-content',
-                     'margin-left': function () {
-                         return -($(this).width() / 2);
-                     }
-                 });*/
-             $('#myModal').find('.modal-footer').html("");
-             $('#myModal').find('.modal-footer').append($('<button>', {
-                 type:'button',
-                 datacontent:'remove',
-                 class:'btn btn-primary',
-                 id:'editRowBtn',
-                 onclick:"$('#AsientoAddForm').submit()",
-                 text:"Aceptar"
-             }));
-             $('#myModal').find('.modal-footer').append($('<button>', {
-                 type:'button',
-                 datacontent:'remove',
-                 class:'btn btn-primary',
-                 id:'editRowBtn',
-                 onclick:" $('#myModal').modal('hide')",
-                 text:"Cerrar"
-             }));
+    var data="";
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/asientos/contabilizarexistenciafinal/"+clienteid+"/"+periodo,
+        // URL to request
+        data: data,  // post data
+        success: function(response) {
+            $('#myModal').on('show.bs.modal', function() {
+                 $('#myModal').find('.modal-title').html('Asiento automatico Existencia Final');
+                 $('#myModal').find('.modal-body').html(response);
+                 /*$('#myModal').find('.modal-content')
+                     .css({
+                         width: 'max-content',
+                         'margin-left': function () {
+                             return -($(this).width() / 2);
+                         }
+                     });*/
+                 $('#myModal').find('.modal-footer').html("");
+                 $('#myModal').find('.modal-footer').append($('<button>', {
+                     type:'button',
+                     datacontent:'remove',
+                     class:'btn btn-primary',
+                     id:'editRowBtn',
+                     onclick:"$('#AsientoAddForm').submit()",
+                     text:"Aceptar"
+                 }));
+                 $('#myModal').find('.modal-footer').append($('<button>', {
+                     type:'button',
+                     datacontent:'remove',
+                     class:'btn btn-primary',
+                     id:'editRowBtn',
+                     onclick:" $('#myModal').modal('hide')",
+                     text:"Cerrar"
+                 }));
+             });
+            $('#myModal').modal('show');
+            $('.chosen-select-cuenta').chosen({
+                search_contains:true,
+                include_group_label_in_selected:true
+            });
+            var fecha = $("#fechaFinConsulta").val();
+            $("#myModal #Asiento0Fecha").val(fecha)
+            $('#myModal #AsientoAddForm').submit(function(){
+                $('#myModal').modal('hide');
+                /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+                var asientoyaguardado=false;
+                if($("#myModal #AsientoAddForm #Asiento0Id").val()*1!=0){
+                    asientoyaguardado=true;
+                }
+                var r=true;
+                if(asientoyaguardado){
+                    r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+                        " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+                        " Sumas y saldos y despues en Asientos");
+                }
+                if (r == true) {
+                   $('#myModal #AsientoAddForm input').each(function(){
+                       $(this).removeAttr('disabled');
+                   });
+                   //serialize form data
+                   var formData = $(this).serialize();
+                   //get form action
+                   var formUrl = $(this).attr('action');
+                   $.ajax({
+                       type: 'POST',
+                       url: formUrl,
+                       data: formData,
+                       success: function(data,textStatus,xhr){
+                           location.reload();
+                       },
+                       error: function(xhr,textStatus,error){
+                           $('#myModal').modal('show');
+                           alert(textStatus);
+                           callAlertPopint(textStatus);
+                           return false;
+                       }
+                   });
+                }else{
+                    callAlertPopint("El asiento no se ha sobreescrito.");
+                }
+                return false;
+            });
+         $("#myModal .inputDebe").each(function () {
+             $(this).change(addTolblTotalDebeAsietoModal());
          });
-         $('#myModal').modal('show');
-         $('.chosen-select-cuenta').chosen({
-             search_contains:true,
-             include_group_label_in_selected:true
-         });
-         $('#myModal #AsientoAddForm').submit(function(){
-             $('#myModal').modal('hide');
-             /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
-             var asientoyaguardado=false;
-             if($("#myModal #AsientoAddForm #Asiento0Id").val()*1!=0){
-                 asientoyaguardado=true;
-             }
-             var r=true;
-             if(asientoyaguardado){
-                 r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
-                     " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
-                     " Sumas y saldos y despues en Asientos");
-             }
-             if (r == true) {
-                $('#myModal #AsientoAddForm input').each(function(){
-                    $(this).removeAttr('disabled');
-                });
-                //serialize form data
-                var formData = $(this).serialize();
-                //get form action
-                var formUrl = $(this).attr('action');
-                $.ajax({
-                    type: 'POST',
-                    url: formUrl,
-                    data: formData,
-                    success: function(data,textStatus,xhr){
-                        location.reload();
-                    },
-                    error: function(xhr,textStatus,error){
-                        $('#myModal').modal('show');
-                        alert(textStatus);
-                        callAlertPopint(textStatus);
-                        return false;
-                    }
-                });
-             }else{
-                 callAlertPopint("El asiento no se ha sobreescrito.");
-             }
-
-             return false;
-         });
-         $(".inputDebe").each(function () {
-             $(this).change(addTolblTotalDebeAsieto);
-         });
-         $(".inputHaber").each(function () {
-             $(this).change(addTolblTotalhaberAsieto);
+         $("#myModal .inputHaber").each(function () {
+             $(this).change(addTolblTotalhaberAsietoModal());
          });
      },
      error:function (XMLHttpRequest, textStatus, errorThrown) {
@@ -553,11 +664,108 @@ function contabilizarexistenciafinal (clienteid,periodo) {
      }
  });
 }
-function contabilizarganancias (impcliid,periodo) {
+function contabilizarexistenciafinal (clienteid,periodo) {
+    var data="";
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/asientos/contabilizarexistenciafinal/"+clienteid+"/"+periodo,
+        // URL to request
+        data: data,  // post data
+        success: function(response) {
+            $('#myModal').on('show.bs.modal', function() {
+                 $('#myModal').find('.modal-title').html('Asiento automatico Existencia Final');
+                 $('#myModal').find('.modal-body').html(response);
+                 /*$('#myModal').find('.modal-content')
+                     .css({
+                         width: 'max-content',
+                         'margin-left': function () {
+                             return -($(this).width() / 2);
+                         }
+                     });*/
+                 $('#myModal').find('.modal-footer').html("");
+                 $('#myModal').find('.modal-footer').append($('<button>', {
+                     type:'button',
+                     datacontent:'remove',
+                     class:'btn btn-primary',
+                     id:'editRowBtn',
+                     onclick:"$('#AsientoAddForm').submit()",
+                     text:"Aceptar"
+                 }));
+                 $('#myModal').find('.modal-footer').append($('<button>', {
+                     type:'button',
+                     datacontent:'remove',
+                     class:'btn btn-primary',
+                     id:'editRowBtn',
+                     onclick:" $('#myModal').modal('hide')",
+                     text:"Cerrar"
+                 }));
+             });
+            $('#myModal').modal('show');
+            $('.chosen-select-cuenta').chosen({
+                search_contains:true,
+                include_group_label_in_selected:true
+            });
+            var fecha = $("#fechaFinConsulta").val();
+            $("#myModal #Asiento0Fecha").val(fecha)
+            $('#myModal #AsientoAddForm').submit(function(){
+                $('#myModal').modal('hide');
+                /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+                var asientoyaguardado=false;
+                if($("#myModal #AsientoAddForm #Asiento0Id").val()*1!=0){
+                    asientoyaguardado=true;
+                }
+                var r=true;
+                if(asientoyaguardado){
+                    r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+                        " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+                        " Sumas y saldos y despues en Asientos");
+                }
+                if (r == true) {
+                   $('#myModal #AsientoAddForm input').each(function(){
+                       $(this).removeAttr('disabled');
+                   });
+                   //serialize form data
+                   var formData = $(this).serialize();
+                   //get form action
+                   var formUrl = $(this).attr('action');
+                   $.ajax({
+                       type: 'POST',
+                       url: formUrl,
+                       data: formData,
+                       success: function(data,textStatus,xhr){
+                           location.reload();
+                       },
+                       error: function(xhr,textStatus,error){
+                           $('#myModal').modal('show');
+                           alert(textStatus);
+                           callAlertPopint(textStatus);
+                           return false;
+                       }
+                   });
+                }else{
+                    callAlertPopint("El asiento no se ha sobreescrito.");
+                }
+                return false;
+            });
+         $("#myModal .inputDebe").each(function () {
+             $(this).change(addTolblTotalDebeAsietoModal());
+         });
+         $("#myModal .inputHaber").each(function () {
+             $(this).change(addTolblTotalhaberAsietoModal());
+         });
+     },
+     error:function (XMLHttpRequest, textStatus, errorThrown) {
+         alert(textStatus);
+         alert(XMLHttpRequest);
+         alert(errorThrown);
+     }
+ });
+}
+function contabilizarapertura (cliid,periodo) {
  var data="";
  $.ajax({
      type: "post",  // Request method: post, get
-     url: serverLayoutURL+"/asientos/contabilizarimpuesto/"+impcliid+"/"+periodo,
+     url: serverLayoutURL+"/asientos/contabilizarapertura/"+cliid+"/"+periodo,
      // URL to request
      data: data,  // post data
      success: function(response) {
@@ -594,8 +802,7 @@ function contabilizarganancias (impcliid,periodo) {
              search_contains:true,
              include_group_label_in_selected:true
          });
-         rellenarAsientoGanancias();
-         $('#AsientoAddForm').submit(function(){
+         $('#myModal #AsientoAddForm').submit(function(){
              $('#myModal').modal('hide');
              /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
              var asientoyaguardado=false;
@@ -616,18 +823,14 @@ function contabilizarganancias (impcliid,periodo) {
                 var formData = $(this).serialize();
                 //get form action
                 var formUrl = $(this).attr('action');
-                $("#AjustescontableEditForm").submit();
                 $.ajax({
                     type: 'POST',
                     url: formUrl,
                     data: formData,
                     success: function(data,textStatus,xhr){
-                        //vamos a hacer el reload desde el guardado de los ajustes
-                        //location.reload();
-                        $(".ajusteImpuestoALaGanancia").each(function(){
-                            $(this).attr('disabled',false);
-                        })
-                        
+                        var respuesta = jQuery.parseJSON(data);
+                        var resp = respuesta.respuesta;
+                        callAlertPopint(textStatus);
                     },
                     error: function(xhr,textStatus,error){
                         $('#myModal').modal('show');
@@ -642,11 +845,11 @@ function contabilizarganancias (impcliid,periodo) {
 
              return false;
          });
-         $(".inputDebe").each(function () {
-             $(this).change(addTolblTotalDebeAsieto);
+         $("#myModal .inputDebe").each(function () {
+             $(this).change(addTolblTotalDebeAsietoGanancias());
          });
-         $(".inputHaber").each(function () {
-             $(this).change(addTolblTotalhaberAsieto);
+         $("#myModal .inputHaber").each(function () {
+             $(this).change(addTolblTotalhaberAsietoGanancias());
          });
      },
      error:function (XMLHttpRequest, textStatus, errorThrown) {
@@ -657,7 +860,7 @@ function contabilizarganancias (impcliid,periodo) {
  });
 }
 function rellenarAsientoGanancias(){
-    var fecha = '01-'+$("#periodo").val();
+    var fecha = $("#fechaInicioConsultaSiguiente").val();
     $("#myModal #Asiento0Fecha").val(fecha)
     $("#myModal #Asiento1Fecha").val(fecha)
     $("#myModal #Asiento2Fecha").val(fecha)
@@ -671,6 +874,8 @@ function rellenarAsientoGanancias(){
     var percepciones = percepciones.toFixed(2);
     var anticiposacomputar = $('#anticiposacomputar').val()*1;
     var anticiposacomputar = anticiposacomputar.toFixed(2);
+    var pagosacuenta = $('#pagosacuenta').val()*1;
+    var pagosacuenta = pagosacuenta.toFixed(2);
     var saldoAFavorPeriodoAnterior = $('#saldoAFavorPeriodoAnterior').val()*1;
     var saldoAFavorPeriodoAnterior = saldoAFavorPeriodoAnterior.toFixed(2);
     var saldoDeLibreDisponibilidadPeriodo = $('#saldoDeLibreDisponibilidadPeriodo').val()*1;
@@ -683,6 +888,7 @@ function rellenarAsientoGanancias(){
    var variacionSaldoLibreDisponibilidad = saldoDeLibreDisponibilidadPeriodo-saldoAFavorPeriodoAnterior;
    
     var saldoAPagar = 0;  
+    //Asiento Devengamiento
     if($('#0cuenta2534').length > 0){
         //Imp a las Ganancias
         var orden = $('#0cuenta2534').attr('orden');
@@ -697,68 +903,150 @@ function rellenarAsientoGanancias(){
             $('#myModal #Asiento0Movimiento'+orden+'Haber').val(impuestodeterminadofinal);
         }                        
     }
-    if($('#1cuenta264').length > 0){
-        //Imp a las Ganancias
-        var orden = $('#1cuenta264').attr('orden');
-        if($('#myModal #Asiento0Movimiento'+orden+'Id').val()==0){
-            if(variacionSaldoLibreDisponibilidad>0)
-                $('#myModal #Asiento0Movimiento'+orden+'Debe').val(variacionSaldoLibreDisponibilidad);
-            else
-                $('#myModal #Asiento0Movimiento'+orden+'Haber').val(variacionSaldoLibreDisponibilidad*-1);
-        }                        
-    }
+    //Asiento Cancelacion
+    var cancelacion = 0;
+    cancelacion += saldoAFavorPeriodoAnterior*1;
+    cancelacion += percepciones*1;
+    cancelacion += retenciones*1;
+    cancelacion += anticiposacomputar*1;
     
-    if($('#1cuenta298').length > 0){
-        //Imp a las Ganancias
-        var orden = $('#1cuenta298').attr('orden');
-        if($('#myModal #Asiento0Movimiento'+orden+'Id').val()==0){
-            $('#myModal #Asiento0Movimiento'+orden+'Haber').val(ley25413);
-        }                        
+    var cancelacionExtra = 0;
+    
+    
+    var saldo = impuestodeterminadofinal;
+    
+    var useley25413 = false;
+    var usadoley25413 = ley25413*1;
+    var usegananciaMinimaPresunta = false;
+    var usadogananciaMinimaPresunta = gananciaMinimaPresunta*1;
+    var usePagosACuenta = false;
+    var usadoPagosACuenta = pagosacuenta*1;
+    var sldPeriodo=0;
+    
+    if(saldo>0){
+        if( saldo < ley25413*1){
+            usadoley25413 = saldo*1;
+            cancelacionExtra+=saldo*1;
+            saldo=0;
+        }else{
+            saldo -= ley25413*1;    
+            cancelacionExtra+=ley25413*1;
+        }
+        useley25413 = true;
+        //cancelacion += ley25413*1;
+        if(saldo>0){
+            if( saldo < gananciaMinimaPresunta*1){
+                usadogananciaMinimaPresunta = saldo;
+                cancelacionExtra+=saldo*1;
+                saldo=0;
+            }else{
+                saldo -= gananciaMinimaPresunta*1;
+                cancelacionExtra+=gananciaMinimaPresunta*1;
+            }
+            //cancelacion += gananciaMinimaPresunta*1;
+            usegananciaMinimaPresunta = true;
+            if(saldo>0){
+                if( saldo < pagosacuenta*1){
+                    usadoPagosACuenta = saldo;                    
+                    cancelacionExtra+=gananciaMinimaPresunta*1;
+                    saldo=0;
+                }else{
+                    saldo -= pagosacuenta*1;
+                }
+                //cancelacion += pagosacuenta*1;
+                usePagosACuenta = true;
+            }
+        }else{
+            
+        }
+    }    
+    var apagar=impuestodeterminadofinal;
+    
+    if(cancelacion<saldo){
+        saldo -= cancelacion;
+    }else{
+        sldPeriodo = cancelacion-saldo;
+        saldo=0;
     }
+    var variacionSLD = sldPeriodo-saldoAFavorPeriodoAnterior;
+   
     if($('#1cuenta267').length > 0){
         //Imp a las Ganancias
         var orden = $('#1cuenta267').attr('orden');
-        if($('#myModal #Asiento0Movimiento'+orden+'Id').val()==0){
-            $('#myModal #Asiento0Movimiento'+orden+'Haber').val(percepciones);
+        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()==0){
+            $('#myModal #Asiento1Movimiento'+orden+'Haber').val(percepciones);            
         }                        
     }
     if($('#1cuenta268').length > 0){
         //Imp a las Ganancias
         var orden = $('#1cuenta268').attr('orden');
-        if($('#myModal #Asiento0Movimiento'+orden+'Id').val()==0){
-            $('#myModal #Asiento0Movimiento'+orden+'Haber').val(retenciones);
+        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()==0){
+            $('#myModal #Asiento1Movimiento'+orden+'Haber').val(retenciones);
         }                        
     }
     if($('#1cuenta265').length > 0){
         //Imp a las Ganancias
         var orden = $('#1cuenta265').attr('orden');
-        if($('#myModal #Asiento0Movimiento'+orden+'Id').val()==0){
-            $('#myModal #Asiento0Movimiento'+orden+'Haber').val(anticiposacomputar);
+        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()==0){
+            $('#myModal #Asiento1Movimiento'+orden+'Haber').val(anticiposacomputar);
+        }                        
+    }
+    if($('#1cuenta298').length > 0){
+        //Imp a las Ganancias
+        var orden = $('#1cuenta298').attr('orden');
+        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()==0){
+            if(useley25413){
+                //falta el saldo de esta cuenta
+                 $('#myModal #Asiento1Movimiento'+orden+'Haber').val(usadoley25413);    
+            }
+                   
+        }                        
+    }
+    if($('#1cuenta269').length > 0){
+        //Imp a las Ganancias
+        var orden = $('#1cuenta269').attr('orden');
+        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()==0){
+            if(usePagosACuenta){
+                //falta el saldo de esta cuenta
+                 $('#myModal #Asiento1Movimiento'+orden+'Haber').val(usadoPagosACuenta);    
+            }
+                   
         }                        
     }
     if($('#1cuenta275').length > 0){
         //Imp a las Ganancias
         var orden = $('#1cuenta275').attr('orden');
-        if($('#myModal #Asiento0Movimiento'+orden+'Id').val()==0){
-            $('#myModal #Asiento0Movimiento'+orden+'Haber').val(gananciaMinimaPresunta);
+        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()==0){
+            if(usegananciaMinimaPresunta){
+                //falta el saldo de esta cuenta
+                 $('#myModal #Asiento1Movimiento'+orden+'Haber').val(usadogananciaMinimaPresunta);
+            }
         }                        
-    }
-    if($('#1cuenta275').length > 0){
-        //Imp a las Ganancias
-        var orden = $('#1cuenta275').attr('orden');
-        if($('#myModal #Asiento0Movimiento'+orden+'Id').val()==0){
-            $('#myModal #Asiento0Movimiento'+orden+'Haber').val(gananciaMinimaPresunta);
-        }                        
-    }
-    
+    }        
     if($('#1cuenta1447').length > 0){
-        //Imp a las Ganancias
+        //2104041101 Ganancias - Saldo a Pagar
         var orden = $('#1cuenta1447').attr('orden');
-        if($('#myModal #Asiento0Movimiento'+orden+'Id').val()==0){            
-            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(apagar);
+        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()==0){  
+            if(cancelacion + cancelacionExtra >= apagar*1){
+                $('#myModal #Asiento1Movimiento'+orden+'Debe').val(apagar);
+            }else{
+                $('#myModal #Asiento1Movimiento'+orden+'Debe').val(cancelacion*1 + cancelacionExtra*1);
+            }
+           
         }                        
     }
-  
+    if($('#1cuenta264').length > 0){
+        //Imp a las Ganancias
+        var orden = $('#1cuenta264').attr('orden');
+        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()==0){
+            variacionSLD = variacionSLD.toFixed(2);
+            if(variacionSLD>0){
+                 $('#myModal #Asiento1Movimiento'+orden+'Debe').val(variacionSLD);
+            }else{
+                 $('#myModal #Asiento1Movimiento'+orden+'Haber').val(variacionSLD*-1);
+            }
+        }                        
+    }
 }
 function reloadDatePickers(){
 	jQuery(document).ready(function($) {

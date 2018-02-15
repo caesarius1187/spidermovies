@@ -15,6 +15,8 @@
 			'options'=>$localidades,
 			));
 		echo $this->Form->input('domicilio',array('label'=>'Domicilio','type'=>'text','style'=>'width:250px'));
+		echo $this->Form->input('titulosecundario',array('label'=>'Titulo Secundario'));
+		echo $this->Form->input('titulouniversitario',array('label'=>'Titulo Universitario'));
 		?>
 	</fieldset>
 	<fieldset style="border: 1px solid #1e88e5;">

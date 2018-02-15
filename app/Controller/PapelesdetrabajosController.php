@@ -36,13 +36,13 @@ class PapelesdetrabajosController extends AppController {
             $añoPeriodo="SUBSTRING( '".$periodo."',4,7)";
             $mesPeriodo="SUBSTRING( '".$periodo."',1,2)";
             $esMenorQuePeriodo = array(
-                    'OR'=>array(
-                    'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 < '.$añoPeriodo.'*1',
-                    'AND'=>array(
-                            'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 = '.$añoPeriodo.'*1',
-                            'SUBSTRING(Eventosimpuesto.periodo,1,2) < '.$mesPeriodo.'*1'
-                            ),												            		
-                    )
+                'OR'=>array(
+                'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 < '.$añoPeriodo.'*1',
+                'AND'=>array(
+                    'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 = '.$añoPeriodo.'*1',
+                    'SUBSTRING(Eventosimpuesto.periodo,1,2) < '.$mesPeriodo.'*1'
+                    ),												            		
+                )
             );
             $timePeriodo = strtotime("01-".$periodo ." -1 months");
             $periodoPrev = date("m-Y",$timePeriodo);
@@ -51,88 +51,88 @@ class PapelesdetrabajosController extends AppController {
             $pemes = substr($periodo, 0, 2);
             $peanio = substr($periodo, 3);
             $bajaesMayorQuePeriodo = array(
-                    'OR'=>array(
-                            'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
-                            'AND'=>array(
-                                    'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
-                                    'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
-                            ),
-                    )
+                'OR'=>array(
+                    'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+                        'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+                    ),
+                )
             );
             $options = 
                     [
                     'conditions' => ['Cliente.' . $this->Cliente->primaryKey => $ClienteId],
                     'contain' => [
-                            'Impcli'=>[
-                                    'Impuesto'=>[
-                                            'Asientoestandare'=>[
-                                                    'conditions'=>[
-                                                            'tipoasiento'=>['impuestos','impuestos2']
-                                                    ],
-                                                    'Cuenta'
-                                            ],
-                                    ],
-                                    'Eventosimpuesto'=>[
-                                            'conditions'=>[
-                                                    "Eventosimpuesto.periodo"=>[$periodoPrev,$periodo],
-                                                    //monto a favor del periodo anterior
-                                                    ],
-                                            ],
-                                    'Conceptosrestante'=>[
-                                            'conditions'=>[
-                                                    'Conceptosrestante.periodo' => $periodo,
-                                            ],
-                                    ],
-                'Asiento'=>[
-                    'Movimiento'=>[
-                                                    'Cuentascliente'
-                                            ],
-                    'conditions'=>['periodo'=>$periodo]
-                ],
+                        'Impcli'=>[
+                            'Impuesto'=>[
+                                'Asientoestandare'=>[
                                     'conditions'=>[
-                                            'Impcli.impuesto_id'=>19//IVA
-                                            ]
+                                        'tipoasiento'=>['impuestos','impuestos2']
                                     ],
+                                    'Cuenta'
+                                ],
+                            ],
+                            'Eventosimpuesto'=>[
+                                'conditions'=>[
+                                    "Eventosimpuesto.periodo"=>[$periodoPrev,$periodo],
+                                    //monto a favor del periodo anterior
+                                    ],
+                                ],
+                            'Conceptosrestante'=>[
+                                'conditions'=>[
+                                    'Conceptosrestante.periodo' => $periodo,
+                                ],
+                            ],
+                            'Asiento'=>[
+                                'Movimiento'=>[
+                                    'Cuentascliente'
+                                ],
+                                'conditions'=>['periodo'=>$periodo]
+                            ],
+                            'conditions'=>[
+                                'Impcli.impuesto_id'=>19//IVA
+                                ]
+                            ],
                             'Actividadcliente' => [
-                                    'Actividade',
-                                    'conditions'=>[
-                                            //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
-                                            'OR'=>[
-                                                    $bajaesMayorQuePeriodo,
-                                                    'Actividadcliente.baja = ""',
-                                                    'Actividadcliente.baja = "0000-00-00"',
-                                                    'Actividadcliente.baja is null' ,
-                                            ]
-                                    ],
+                                'Actividade',
+                                'conditions'=>[
+                                    //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+                                    'OR'=>[
+                                        $bajaesMayorQuePeriodo,
+                                        'Actividadcliente.baja = ""',
+                                        'Actividadcliente.baja = "0000-00-00"',
+                                        'Actividadcliente.baja is null' ,
+                                    ]
+                                ],
                             ],
                             'Cuentascliente'=>[
-                                    'Cuenta',
-                                    'conditions'=>[
-                                            'Cuentascliente.cuenta_id' => $cuentasIVA
-                                    ]
+                                'Cuenta',
+                                'conditions'=>[
+                                        'Cuentascliente.cuenta_id' => $cuentasIVA
+                                ]
 
                             ]
                     ],
             ];
 
             $Cliente = $this->Cliente->find('first', $options);
-    $this->set('cliente', $Cliente);
-            $conceptosOptions=[
-        'Usosaldo'=>[
-            'Eventosimpuesto'=>[
+            $this->set('cliente', $Cliente);
+                    $conceptosOptions=[
+                'Usosaldo'=>[
+                    'Eventosimpuesto'=>[
 
-            ]
-        ],
-                    'conditions'=>[
-            'Conceptosrestante.impcli_id'=>$Cliente['Impcli'][0]['id'],
-            'Conceptosrestante.periodo'=>$periodoPrev,
-            'Conceptosrestante.conceptostipo_id'=>1
-        ]
+                    ]
+                ],
+                            'conditions'=>[
+                    'Conceptosrestante.impcli_id'=>$Cliente['Impcli'][0]['id'],
+                    'Conceptosrestante.periodo'=>$periodoPrev,
+                    'Conceptosrestante.conceptostipo_id'=>1
+                ]
             ];
             $saldosLibreDisponibilidad = $this->Conceptosrestante->find('all',$conceptosOptions);
-    $this->set('saldosLibreDisponibilidad', $saldosLibreDisponibilidad);
-    $this->set('periodo', $periodo);
-    $this->set('periodoPrev', $periodoPrev);
+            $this->set('saldosLibreDisponibilidad', $saldosLibreDisponibilidad);
+            $this->set('periodo', $periodo);
+            $this->set('periodoPrev', $periodoPrev);
 
             $opcionesActividad = array(
                                                                'conditions'=>array(
@@ -160,32 +160,32 @@ class PapelesdetrabajosController extends AppController {
             */
 
             $opcionesVenta = array(
-                                                            'conditions'=>array(
-                                                                    'Venta.cliente_id' => $ClienteId,
-                                                                    'Venta.periodo' => $periodo,
-                                                                    ),
-                                                            'contain' => array(
-                                                                    'Comprobante' => [],
-                                                                    'Actividadcliente' => array(
-                                    'conditions'=>array(
-                                        //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
-                                        'OR'=>[
-                                            $bajaesMayorQuePeriodo,
-                                            'Actividadcliente.baja = ""',
-                                            'Actividadcliente.baja = "0000-00-00"',
-                                            'Actividadcliente.baja is null' ,
-                                        ]
-                                    ),
-                                    'Actividade',
-                                    )
-                                                              )
-                                                      );
+                'conditions'=>array(
+                        'Venta.cliente_id' => $ClienteId,
+                        'Venta.periodo' => $periodo,
+                        ),
+                'contain' => array(
+                    'Comprobante' => [],
+                    'Actividadcliente' => array(
+                         'conditions'=>array(
+                            //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+                            'OR'=>[
+                                $bajaesMayorQuePeriodo,
+                                'Actividadcliente.baja = ""',
+                                'Actividadcliente.baja = "0000-00-00"',
+                                'Actividadcliente.baja is null' ,
+                            ]
+                        ),
+                        'Actividade',
+                    )
+                )
+            );
             $ventas = $this->Venta->find('all', $opcionesVenta);
 
             $opcionesCompra = array(
                     'fields'=>[
                             'Compra.actividadcliente_id','Compra.tipocredito','Compra.imputacion','Compra.condicioniva','Compra.tipoiva',
-            'Compra.alicuota',
+                            'Compra.alicuota',
                             'SUM(neto)as neto',
                             'SUM(exentos)as exentos',
                             'SUM(nogravados)as nogravados',
@@ -196,25 +196,29 @@ class PapelesdetrabajosController extends AppController {
                             'Compra.periodo' => $periodo,
                             ),
                     'contain' => array(
-            'Actividadcliente' => [
-                    'fields'=>['actividade_id'],
-                                            'conditions'=>[
-                                                    //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
-                                                    'OR'=>[
-                                                            $bajaesMayorQuePeriodo,
-                                                            'Actividadcliente.baja = ""',
-                                                            'Actividadcliente.baja = "0000-00-00"',
-                                                            'Actividadcliente.baja is null' ,
-                                                    ]
-                                            ],
+                        'Actividadcliente' => [
+                            'fields'=>['actividade_id'],
+                                'conditions'=>[
+                                    //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+                                    'OR'=>[
+                                        $bajaesMayorQuePeriodo,
+                                        'Actividadcliente.baja = ""',
+                                        'Actividadcliente.baja = "0000-00-00"',
+                                        'Actividadcliente.baja is null' ,
                                     ]
-            //'actividades' => array(
-            //						'conditions' => array('Actividade.id' => 'Actividadcliente.actividade_id')
-            //					   )
-          ),
+                            ],
+                        ]
+                    //'actividades' => array(
+                    //						'conditions' => array('Actividade.id' => 'Actividadcliente.actividade_id')
+                    //					   )
+                    ),
                     'group'=>[
-                            'Compra.actividadcliente_id','Compra.tipocredito','Compra.imputacion','Compra.tipoiva','Compra.alicuota'
-                            ,'Compra.condicioniva'
+                            'Compra.actividadcliente_id',
+                            'Compra.tipocredito',
+                            'Compra.imputacion',
+                            'Compra.tipoiva',
+                            'Compra.alicuota',
+                            'Compra.condicioniva'
                     ]
               );
             $compras = $this->Compra->find('all', $opcionesCompra);
@@ -310,6 +314,11 @@ class PapelesdetrabajosController extends AppController {
             $optionmiCliente = [
                     'contain' => [
                         'Impcli'=>[        
+                            'Liquidaciondetalle'=>[
+                                'conditions'=>[
+                                    'Liquidaciondetalle.periodo'=>$peanio
+                                ]
+                            ],
                             'Ajustescontable',
                             'conditions'=>[
                                 'Impcli.impuesto_id'=>5
@@ -443,6 +452,17 @@ class PapelesdetrabajosController extends AppController {
                         'Cuentaclientemejora',
                     ],
                     'Impcli'=>[
+                        'Asiento'=>[
+                            'Movimiento'=>[
+                                'Cuentascliente'=>[
+                                    
+                                ]
+                            ],
+                            'conditions'=>[
+                                'Asiento.tipoasiento'=>'impuestos2',
+                                'SUBSTRING(Asiento.periodo,4,7)'=>$peanio
+                            ],
+                        ],
                         'Deduccione',
                         'Ajustescontable'=>[
                             'conditions'=>[
@@ -521,10 +541,22 @@ class PapelesdetrabajosController extends AppController {
                     'Modelo'=>['Marca'],
                     'Localidade'=>['Partido']
                 ],
-                'Cuentaclienteactualizacion',
-                'Cuentaclienteterreno',
-                'Cuentaclienteedificacion',
-                'Cuentaclientemejora',
+                'Cuentaclienteactualizacion'=>[
+                    'Modelo'=>['Marca'],
+                    'Localidade'=>['Partido']
+                ],
+                'Cuentaclienteterreno'=>[
+                    'Modelo'=>['Marca'],
+                    'Localidade'=>['Partido']
+                ],
+                'Cuentaclienteedificacion'=>[
+                    'Modelo'=>['Marca'],
+                    'Localidade'=>['Partido']
+                ],
+                'Cuentaclientemejora'=>[
+                    'Modelo'=>['Marca'],
+                    'Localidade'=>['Partido']
+                ],
                 'Cbu',
                 'Cuenta',
                 'Movimiento'=>[
@@ -656,6 +688,133 @@ class PapelesdetrabajosController extends AppController {
         $this->set('tienetercera',$tienetercera);
         $this->set('tieneterceraauxiliar',$tieneterceraauxiliar);
         $this->set('tienecuarta',$tienecuarta);
+    }
+    public function cm05(){
+        $this->loadModel('Venta');
+        $this->loadModel('Compra');
+        $this->loadModel('Cliente');
+        $mostrarInforme=false;
+        if ($this->request->is('post')) {
+            $pemesdesde=$this->request->data['papelesdetrabajos']['periodomesdesde'];
+            $peaniodesde=$this->request->data['papelesdetrabajos']['periodoaniodesde'];
+            $this->set('periodomesdesde', $pemesdesde);
+            $this->set('periodoaniodesde', $peaniodesde);
+            $pemeshasta=$this->request->data['papelesdetrabajos']['periodomeshasta'];
+            $peaniohasta=$this->request->data['papelesdetrabajos']['periodoaniohasta'];
+            $this->set('periodomeshasta', $pemeshasta);
+            $this->set('periodoaniohasta', $peaniohasta);
+
+            //A: Es menor que periodo Hasta
+            $esMayorQueDesde = array(
+                //HASTA es mayor que el periodo
+                'OR'=>array(
+                    'SUBSTRING(Venta.periodo,4,7)*1 > '.$peaniodesde.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Venta.periodo,4,7)*1 >= '.$peaniodesde.'*1',
+                        'SUBSTRING(Venta.periodo,1,2) >= '.$pemesdesde.'*1'
+                    ),
+                )
+            );
+            //B: Es mayor que periodo Desde
+            $esMenorQueHasta= array(
+                'OR'=>array(
+                    'SUBSTRING(Venta.periodo,4,7)*1 < '.$peaniohasta.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Venta.periodo,4,7)*1 <= '.$peaniohasta.'*1',
+                        'SUBSTRING(Venta.periodo,1,2) <= '.$pemeshasta.'*1'
+                    ),
+                )
+            );
+
+            $ventas = $this->Venta->find('all',array(
+                'fields' => array(
+                    'SUM(Venta.total) AS total',
+                    'SUM(Venta.neto) AS neto',
+                    'SUM(Venta.iva) AS iva',
+                    'SUM(Venta.ivapercep) AS ivapercep',
+                    'SUM(Venta.iibbpercep) AS iibbpercep',
+                    'SUM(Venta.actvspercep) AS actvspercep',
+                    'SUM(Venta.impinternos) AS impinternos',
+                    'SUM(Venta.nogravados) AS nogravados',
+                    'SUM(Venta.excentos) AS excentos',
+                    'SUM(Venta.exentosactividadeseconomicas) AS exentosactividadeseconomicas',
+                    'SUM(Venta.exentosactividadesvarias) AS exentosactividadesvarias',
+                    'SUM(Venta.comercioexterior) AS comercioexterior',
+                    'SUBSTRING(Venta.periodo,4,7) as anio',
+                    'SUBSTRING(Venta.periodo,1,2) as mes',
+                    'Venta.periodo',
+                    'Venta.comprobante_id',
+                    'Comprobante.tipodebitoasociado',
+                    'Venta.actividadcliente_id',
+                    'Venta.localidade_id',
+                    'Localidade.partido_id',
+                ),
+                'contain'=>array(
+                    'Comprobante',
+                    'Actividadcliente'=>[
+                        'Actividade'=>[
+                            'fields'=>['nombre']
+                        ]
+                    ],
+                    'Localidade'=>[
+                        'Partido'=>[
+                            'fields'=>['nombre']
+                        ]
+                    ],
+                ),
+                'conditions'=>array(
+                    'Venta.cliente_id'=> $this->request->data['papelesdetrabajos']['cliente_id'],
+                    $esMayorQueDesde,
+                    $esMenorQueHasta
+                ),
+                'group'=>array(
+                    'Venta.periodo','Venta.actividadcliente_id','Venta.localidade_id','Venta.comprobante_id'
+                ),
+                'order'=>array(
+                    'SUBSTRING(Venta.periodo,4,7)','SUBSTRING(Venta.periodo,1,2)'
+                )
+            ));
+            $this->set(compact('ventas'));
+            $cliente = $this->Cliente->find('first',array(
+                    'contain' =>[
+                        'Impcli'=>[
+                            'Impcliprovincia'=>[
+                                'Partido'
+                            ],
+                            'Eventosimpuesto',
+                            'conditions'=>[
+                                'Impcli.impuesto_id' => 174
+                            ],
+                        ],
+                        'Actividadcliente'=>[
+                            'Encuadrealicuota',
+                            'Actividade'
+                        ]
+                    ],
+                    'conditions' => array(
+                        'Cliente.id' => $this->request->data['papelesdetrabajos']['cliente_id'] ,
+                    ),
+                )
+            );
+            $this->set(compact('cliente'));
+            $mostrarInforme=true;
+        }
+        $conditionsCli = array(
+            'Grupocliente',
+        );
+        $clientes = $this->Cliente->find('list',array(
+                'contain' =>$conditionsCli,
+                'conditions' => array(
+                    'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                    'Cliente.estado' => 'habilitado' ,
+                    'Grupocliente.estado' => 'habilitado' ,
+                ),
+                'order'=>array('Grupocliente.nombre','Cliente.nombre'),
+                'fields'=>array('Cliente.id','Cliente.nombre','Grupocliente.nombre')
+            )
+        );
+        $this->set(compact('clientes'));
+        $this->set('mostrarInforme',$mostrarInforme);
     }
 }
 /*

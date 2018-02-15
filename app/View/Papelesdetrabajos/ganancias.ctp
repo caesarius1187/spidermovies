@@ -4,11 +4,8 @@ echo $this->Html->css('bootstrapmodal');
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 //echo $this->Html->script('jquery.table2excel',array('inline'=>false));
 echo $this->Html->script('table2excel',array('inline'=>false));
-
 echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
 echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
-echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
-
 echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
 
 
@@ -19,6 +16,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
  * Time: 12:15 PM
  */
     $periodoActual =  date('Y', strtotime($fechaInicioConsulta));
+    $fechaInicioConsultaSiguiente =  date('d-m-Y', strtotime($fechaInicioConsulta." + 1 Years"));
 ?>
 <div class="index" style="padding: 0px 1%; margin-bottom: 11px;" id="headerCliente">
     <div style="width:30%; float: left;padding-top:11px">
@@ -29,7 +27,11 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
     </div>
     <div style="width:25%; float: left;padding-top:11px">
         Periodo: <?php echo $periodo;
-        echo $this->Form->input('periodo',['type'=>'hidden','value'=>$periodo])?>
+        echo $this->Form->input('periodo',['type'=>'hidden','value'=>$periodo]);
+        echo $this->Form->input('fechaInicioConsultaSiguiente',['type'=>'hidden','value'=>$fechaInicioConsultaSiguiente]);
+        echo $this->Form->input('fechaInicioConsulta',['type'=>'hidden','value'=>$fechaInicioConsulta]);
+        echo $this->Form->input('fechaFinConsulta',['type'=>'hidden','value'=>date('d-m-Y', strtotime($fechaFinConsulta))]);
+        ?>
     </div>
     <div style="float:right; width:45%">
         <?php                       
@@ -139,10 +141,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
     </div>
     <div id="tabQuebranto" class="cliente_view_tab" onclick="CambiarTab('quebrantos');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Quebrantos</label>
-    </div>
-    <div id="tabAsiento" class="cliente_view_tab" onclick="CambiarTab('asiento');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Asiento</label>
-    </div>
+    </div>   
 </div>
 <div class="index estadocontable" id="divContenedorBSyS" >
     <?php
@@ -153,6 +152,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
             <tr class="trnoclickeable">
                 <td>N&uacute;mero</td>
                 <td>Cuenta</td>
+                <td>Apertura</td>
                 <td>Saldo Actual</td>
             </tr>
         </thead>
@@ -183,6 +183,9 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                     $arrayPeriodos[$periodoAImputar]['pasivo']=0;
                     $arrayPeriodos[$periodoAImputar]['perdida']=0;
                     $arrayPeriodos[$periodoAImputar]['ganancia']=0;
+                    $arrayPeriodos[$periodoAImputar]['costoscompra']=0;
+                    $arrayPeriodos[$periodoAImputar]['noDedGeneral']=0;
+
                 }
                 if(!isset($arrayCuentasxPeriodos[$numerodecuenta])){
                     $arrayCuentasxPeriodos[$numerodecuenta] = [];
@@ -194,8 +197,18 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['pasivo']=0;
                     $arrayCuentasxPeriodos[$numerodecuenta]['perdida']=0;
                     $arrayCuentasxPeriodos[$numerodecuenta]['ganancia']=0;
+                    $arrayCuentasxPeriodos[$numerodecuenta]['noDedGeneral']=[];
+                    $arrayCuentasxPeriodos[$numerodecuenta]['costoscompra']=[];
                 }          
-                
+                if($movimiento['Asiento']['tipoasiento']=='costoscompra'){
+                    $arrayPeriodos[$periodoAImputar]['costoscompra']+=round($movimiento['debe'], 2);
+                    $arrayPeriodos[$periodoAImputar]['costoscompra']-=round($movimiento['haber'], 2);
+                   
+                }
+                if($movimiento['Asiento']['tipoasiento']!='Deduccion General'){
+                    $arrayPeriodos[$periodoAImputar]['noDedGeneral']+=round($movimiento['debe'], 2);
+                    $arrayPeriodos[$periodoAImputar]['noDedGeneral']-=round($movimiento['haber'], 2);
+                }
                 if($movimiento['Asiento']['tipoasiento']=='Apertura'){
                     $arrayPeriodos[$periodoAImputar]['apertura']+=round($movimiento['debe'], 2);
                     $arrayPeriodos[$periodoAImputar]['apertura']-=round($movimiento['haber'], 2);
@@ -208,6 +221,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                 
                 $saldoCalculado += round($movimiento['debe'], 2);
                 $saldoCalculado -= round($movimiento['haber'], 2);
+                
             }
             //Saldos de cuentas esperados
             //1 +
@@ -281,8 +295,13 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                     $arrayPeriodos[$periodoActual]['haberes']=0;
                     $arrayPeriodos[$periodoActual]['apertura']=0;
                     $arrayPeriodos[$periodoActual]['movimiento']=0;                    
+                    $arrayPeriodos[$periodoActual]['noDedGeneral']=0;                    
                 }
                 $saldo = $arrayPeriodos[$periodoActual]['debes']-$arrayPeriodos[$periodoActual]['haberes'];
+                $apertura = $arrayPeriodos[$periodoActual]['apertura'];
+                echo '<td  class="numericTD">'.
+                    number_format($apertura, 2, ",", ".")
+                    ."</td>";
                 echo '<td  class="numericTD">'.
                     number_format($saldo, 2, ",", ".")
                     ."</td>";
@@ -292,10 +311,14 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual]=0;
                     $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual] = 0;
                     $arrayCuentasxPeriodos[$numerodecuenta]['movimiento'][$periodoActual] = 0;                       
+                    $arrayCuentasxPeriodos[$numerodecuenta]['costoscompra'][$periodoActual]= 0;                       
+                    $arrayCuentasxPeriodos[$numerodecuenta]['noDedGeneral'][$periodoActual]= 0;                       
                 }
                 $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual]=$saldo;
                 $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual]=$arrayPeriodos[$periodoActual]['apertura'];
-                $arrayCuentasxPeriodos[$numerodecuenta]['movimiento'][$periodoActual]=$arrayPeriodos[$periodoActual]['movimiento'];                                         
+                $arrayCuentasxPeriodos[$numerodecuenta]['movimiento'][$periodoActual]=$arrayPeriodos[$periodoActual]['movimiento'];       
+                $arrayCuentasxPeriodos[$numerodecuenta]['costoscompra'][$periodoActual]=$arrayPeriodos[$periodoActual]['costoscompra'];    
+                $arrayCuentasxPeriodos[$numerodecuenta]['noDedGeneral'][$periodoActual]=$arrayPeriodos[$periodoActual]['noDedGeneral'];    
                 
                 //aca le vamos a agregar los datos del bien de uso al $arrayCuentasxPeriodo porque si esta cuenta apunta a un bien de uso 
                 //desues vamos a necesitar los datos del BDU para mostrarlos
@@ -359,6 +382,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
             </tr>
         </tfoot>
     </table>
@@ -368,6 +392,108 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
 ?>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divPrimeraCategoria" >
+    <?php
+    //todo esto vamos a mostrar solo si es 3ra nomas che 
+    if($tienetercera){
+    ?>
+    <table style="display:none">
+        <thead>
+            <tr class="trnoclickeable trTitle">
+                <th colspan="6" style="text-align: left">
+                    Contribuyente <?php echo $cliente['Cliente']['nombre'];?>
+                </th>
+            </tr>
+            <tr class="trnoclickeable trTitle">
+                <th colspan="6" style="text-align: center">
+                    Resumen de carga de aplicativo Para 3er Categoria Empresas
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Compras y Gastos Imputables al Costo: Efectuado en el País - Ver Anexo II</td>
+                <?php
+                    //501000001 Costo de Venta
+                    //110502012 Prod. Terminado XX Compras
+                    //110504012 Prod. en Proceso XX Compras
+                    //110506012 MP y Materiales XX Compras
+                    //110507012 Otros bienes de cambio XX Compras*/
+                    $existenciaComprasMercaderias = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110500012"],$periodoActual,$keysCuentas,'costoscompra',-1);
+                    $existenciaComprasProdTerminado = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110502012"],$periodoActual,$keysCuentas,'costoscompra',-1);
+                    $existenciaComprasProdEnProc = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110504012"],$periodoActual,$keysCuentas,'costoscompra',-1);
+                    $existenciaComprasMpMaterials = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110506012"],$periodoActual,$keysCuentas,'costoscompra',-1);
+                    $existenciaComprasOtros = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110507012"],$periodoActual,$keysCuentas,'costoscompra',-1);
+                    $totalPeriodoCompras[$periodoActual] = $existenciaComprasMercaderias + $existenciaComprasProdTerminado + $existenciaComprasProdEnProc
+                    + $existenciaComprasMpMaterials + $existenciaComprasOtros;    
+                ?>
+                <td class="tdWithNumber">
+                    <?php echo number_format($totalPeriodoCompras[$periodoActual], 2, ",", ".");?>
+                </td>
+            </tr>
+            <tr>
+                <td>Compras y Gastos No Imputables al Costo: Efectuado en el País - Ver Anexo I</td>
+                <?php
+                    $arrayPrefijosGastos3raEmpresa=[];
+                    $arrayPrefijosGastos3raEmpresa[]='5010';
+                    $arrayPrefijosGastos3raEmpresa[]='5020';
+                    $arrayPrefijosGastos3raEmpresa[]='5030';
+                    $arrayPrefijosGastos3raEmpresa[]='50401';
+                    $arrayPrefijosGastos3raEmpresa[]='50402';
+                    $arrayPrefijosGastos3raEmpresa[]='50403';
+                    $arrayPrefijosGastos3raEmpresa[]='50405';
+                    $arrayPrefijosGastos3raEmpresa[]='50406';
+                    $arrayPrefijosGastos3raEmpresa[]='50407';
+                    $arrayPrefijosGastos3raEmpresa[]='50408';
+                    $arrayPrefijosGastos3raEmpresa[]='50409';
+                    $arrayPrefijosGastos3raEmpresa[]='50410';
+                    $arrayPrefijosGastos3raEmpresa[]='50411';
+                    $arrayPrefijosGastos3raEmpresa[]='50412';
+                    $arrayPrefijosGastos3raEmpresa[]='50413';
+
+                    if($tienetercera){
+                        $arrayPrefijosGastos3raEmpresa[]='50499';
+                        $arrayPrefijosGastos3raEmpresa[]='5050';
+                        $arrayPrefijosGastos3raEmpresa[]='50612';
+                        $arrayPrefijosGastos3raEmpresa[]='50613';
+                        $arrayPrefijosGastos3raEmpresa[]='50614';
+                        $arrayPrefijosGastos3raEmpresa[]='5062';
+                    }
+                    //tal vez las contribuciones tambien las tendriamos q agregar al if tiene tercera
+                    $arrayPrefijosGastos3raEmpresa[]='5063';
+                    $arrayPrefijosGastos3raEmpresa[]='507';
+                    $arrayPrefijosGastos3raEmpresa[]='50800';
+                    $arrayPrefijosGastos3raEmpresa[]='50801';
+                    $arrayPrefijosGastos3raEmpresa[]='50802';
+                    $arrayPrefijosGastos3raEmpresa[]='50803';
+                    $arrayPrefijosGastos3raEmpresa[]='5090';
+                    $totalGastos = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,$arrayPrefijosGastos3raEmpresa,$periodoActual,$keysCuentas,'todos',1);
+                    $totalCostoMV = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['501000003'],$periodoActual,$keysCuentas,'todos',1);
+                    $totalGastosSinCMV = $totalGastos-$totalCostoMV;
+                    
+                    $arrayPrefijosAmortizaciones=[];
+                    $arrayPrefijosAmortizaciones[]='50404';
+                    $totalAmortizaciones = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,$arrayPrefijosAmortizaciones,$periodoActual,$keysCuentas,'todos',1);
+
+                ?>
+                <td class="tdWithNumber"><?php echo number_format($totalGastosSinCMV, 2, ",", ".");?></td>
+            </tr>
+            <tr>
+                <td>Compras y Gastos atribuibles a ganancias exentas</td>
+                <td class="tdWithNumber"><?php echo number_format(0, 2, ",", ".");?></td>
+                <td>Deduccione y desgravaciones que no implican erogaciones de fondos Excepto Amortizaciones</td>
+                <td class="tdWithNumber"><?php echo number_format(0, 2, ",", ".");?></td>
+            </tr>
+            <tr>
+                <td>Amortizaciones</td>
+                <td class="tdWithNumber"><?php echo number_format($totalAmortizaciones, 2, ",", ".");?></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <?php
+    }
+    //Fin de Anexos de calculo de costos y cuadro de gastos para tercer categoria emppresas
+    ?>
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
@@ -375,7 +501,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                     Contribuyente <?php echo $cliente["Cliente"]['nombre'] ?>
                 </td>
                 <td>
-                    Año Fiscal <?php echo $periodoActual ?>
+                     Anexo I: Ingresos y Gastos por categoria Año Fiscal <?php echo $periodoActual ?>
                 </td>               
             </tr>
         </thead>
@@ -383,169 +509,409 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             
             <?php
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'60201','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'60202','Que Generan mov. de fondos');            
-            $columnas=['Ingresos',"Gravados",'Que Generan mov. de fondos','Que no generan mov. de fondos','Exentos, no grav. o no comput'];
+            /*Columnas 1er Categoria INGGRESOS
+             * Gravado IVA - No Gravado IVA
+             * 
+             * Columnas 1er Categoria Gastos
+             * Que Implican Erogacion - Que no Implican Erogacion - Amortizacion
+             */
+            
+            initializeConcepto($arrayPrefijos,'60201','Gravado IVA');
+            initializeConcepto($arrayPrefijos,'60202','Gravado IVA');            
+            if(!$tienetercera&&$tieneprimera){
+                initializeConcepto($arrayPrefijos,'6010','Gravado IVA');
+            }
+            $columnas=['Ingresos',"Gravados",'Gravado IVA','No Gravado IVA'];
             $totalIngresos1ra = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Ingresos 1&#176;",$columnas,"Gravados",2,
                     $fechaInicioConsulta,$fechaFinConsulta,null);
-            
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'510001001','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'510002001','Que no generan mov. de fondos');
+            initializeConcepto($arrayPrefijos,'510001001','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'510002001','Que No Imp. Erog.');
             //gastos de 3ra que tienen que salir en esta categoria
             if(!$tienetercera&&$tieneprimera){
-                initializeConcepto($arrayPrefijos,'50499','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5050','Que Generan mov. de fondos');//Estas son cuentas del banco    
-                initializeConcepto($arrayPrefijos,'50612','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50613','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50614','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5062','Que Generan mov. de fondos');
+                initializeConcepto($arrayPrefijos,'5030','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50499','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5050','Que Imp. Erog.');//Estas son cuentas del banco    
+                initializeConcepto($arrayPrefijos,'50612','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50613','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50614','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5062','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5063','Que Imp. Erog.');
             }
-            
-            $columnas=['Gastos',"Deducibles",'Que Generan mov. de fondos','Que no generan mov. de fondos','Amortiz.','No deducibles'];
-
+            $columnas=['Gastos',"Deducibles",'Que Imp. Erog.','Que No Imp. Erog.','Amortiz.'];
             $totalGastos1ra = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Gastos 1&#176;",$columnas,"Deducibles",3,
-                    $fechaInicioConsulta,$fechaInicioConsulta,$fechaFinConsulta,$totalIngresos1ra);
+                    $fechaInicioConsulta,$fechaFinConsulta,$totalIngresos1ra);
             
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'60301','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'60302','Que Generan mov. de fondos');
-            $columnas=['Ingresos','Instrumentos Fcieros. deriv.','Vts. acciones etc.',"Otros ing. gravados",'Que Generan mov. de fondos','Que no generan mov. de fondos','No computab.','Exentos, no grav. o no grav.'];
+            initializeConcepto($arrayPrefijos,'60301','Gravado IVA');
+            initializeConcepto($arrayPrefijos,'60302','Gravado IVA');
+            if(!$tienetercera&&!$tieneprimera&&$tienesegunda){
+                initializeConcepto($arrayPrefijos,'6010','Gravado IVA');
+            }
+            $columnas=['Ingresos',"Gravados",'Gravado IVA','No Gravado IVA'];
             $totalIngresos2da = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Ingresos 2&#176;",$columnas,"Otros ing. gravados",2,
                     $fechaInicioConsulta,$fechaFinConsulta,null);
+          
            
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'511001','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'5110021','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'5110022','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'5110023','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'5110024','Que no generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'5110025','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'511003','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'511004','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'511005','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'511006','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'511007','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'511008','Que Generan mov. de fondos');
-            $columnas=['Gastos','Instrumentos Fcieros. deriv.','Vts. acciones etc.',"Otros conceptos deducibles",'Que Generan mov. de fondos','Que no generan mov. de fondos','Amortiz.','No deducibles'];            
+            initializeConcepto($arrayPrefijos,'511001','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'5110021','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'5110022','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'5110023','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'5110024','Que No Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'5110025','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'511003','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'511004','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'511005','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'511006','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'511007','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'511008','Que Imp. Erog.');
+            $columnas=['Gastos',"Otros conceptos deducibles",'Que Imp. Erog.','Que No Imp. Erog.','Amortiz.'];            
             //gastos de 3ra que tienen que salir en esta categoria
             if(!$tienetercera&&!$tieneprimera&&$tienesegunda){
-                initializeConcepto($arrayPrefijos,'50499','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5050','Que Generan mov. de fondos');//Estas son cuentas del banco    
-                initializeConcepto($arrayPrefijos,'50612','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50613','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50614','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5062','Que Generan mov. de fondos');
+                initializeConcepto($arrayPrefijos,'5030','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50499','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5050','Que Imp. Erog.');//Estas son cuentas del banco    
+                initializeConcepto($arrayPrefijos,'50612','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50613','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50614','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5062','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5063','Que Imp. Erog.');
             }
             $totalGastos2da = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Gastos 2&#176;",$columnas,"Otros ing. gravados",3,
                     $fechaInicioConsulta,$fechaFinConsulta,$totalIngresos2da);
             
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'60401','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'60402','Que Generan mov. de fondos');
-            $columnas=['Ingresos','Gravados','Que Generan mov. de fondos','Que no generan mov. de fondos','No computab.','Exentos'];            
+            initializeConcepto($arrayPrefijos,'60401','Gravado IVA');
+            initializeConcepto($arrayPrefijos,'60402','Gravado IVA');
+            if(!$tienetercera&&!$tieneprimera&&!$tienesegunda&&$tieneterceraauxiliar){
+                initializeConcepto($arrayPrefijos,'6010','Gravado IVA');
+            }
+            $columnas=['Ingresos','Gravados','Gravado IVA','No Gravado IVA'];            
             $totalIngresos3ra = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Ingresos 3&#176;",$columnas,"Gravados",2,
                     $fechaInicioConsulta,$fechaFinConsulta,null);
 
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'512001','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512002001','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512002002','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512002003','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512002004','Que no generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512003','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512004','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512005','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512006','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512007','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'512008','Que Generan mov. de fondos');            
-            $columnas=['Gastos','Deducibles','Que Generan mov. de fondos','Que no generan mov. de fondos','Amortiz.','No deducibles'];  
+            initializeConcepto($arrayPrefijos,'512001','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512002001','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512002002','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512002003','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512002004','Que No Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512003','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512004','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512005','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512006','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512007','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'512008','Que Imp. Erog.');            
+            $columnas=['Gastos','Deducibles','Que Imp. Erog.','Que No Imp. Erog.','Amortiz.','No deducibles'];  
             //gastos de 3ra que tienen que salir en esta categoria
             if(!$tienetercera&&!$tieneprimera&&!$tienesegunda&&$tieneterceraauxiliar){
-                initializeConcepto($arrayPrefijos,'50499','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5050','Que Generan mov. de fondos');//Estas son cuentas del banco    
-                initializeConcepto($arrayPrefijos,'50612','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50613','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50614','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5062','Que Generan mov. de fondos');
+                initializeConcepto($arrayPrefijos,'5030','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50499','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5050','Que Imp. Erog.');//Estas son cuentas del banco    
+                initializeConcepto($arrayPrefijos,'50612','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50613','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50614','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5062','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5063','Que Imp. Erog.');
             }
             $totalGastos3ra = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Gastos 3&#176;",$columnas,"Deducibles",3,
                     $fechaInicioConsulta,$fechaFinConsulta,$totalIngresos3ra);
             
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'6010','Que Generan mov. de fondos');
-            $columnas=['Ingresos','Gravados','Que Generan mov. de fondos','Que no generan mov. de fondos','No computab.','Exentos o no gravados'];            
+            
+            if($tienetercera){
+                initializeConcepto($arrayPrefijos,'6010','Gravado IVA');
+            }
+            $columnas=['Ingresos','Gravados','Gravado IVA','No Gravado IVA'];            
             $totalIngresos3raEmpresa = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Ingresos 3&#176;(EU)",$columnas,"Gravados",2,
                     $fechaInicioConsulta,$fechaFinConsulta,null);
+            
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'5010','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'5020','Que no generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'5030','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50401','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50402','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50403','Que Generan mov. de fondos');
+            initializeConcepto($arrayPrefijos,'5010','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'5020','Que No Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'50401','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50402','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50403','Compras y Gastos Imp. al costo');
             initializeConcepto($arrayPrefijos,'50404','Amortiz.');
-            initializeConcepto($arrayPrefijos,'50405','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50406','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50407','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50408','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50409','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50410','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50411','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50412','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50413','Que Generan mov. de fondos');
+            initializeConcepto($arrayPrefijos,'50405','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50406','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50407','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50408','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50409','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50410','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50411','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50412','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50413','Compras y Gastos Imp. al costo');
 
             if($tienetercera){
-                initializeConcepto($arrayPrefijos,'50499','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5050','Que Generan mov. de fondos');//Estas son cuentas del banco    
-                initializeConcepto($arrayPrefijos,'50612','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50613','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50614','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5062','Que Generan mov. de fondos');
+                initializeConcepto($arrayPrefijos,'5030','Compras y Gastos Imp. al costo');
+                initializeConcepto($arrayPrefijos,'50499','Compras y Gastos Imp. al costo');
+                initializeConcepto($arrayPrefijos,'5050','Compras y Gastos Imp. al costo');//Estas son cuentas del banco    
+                initializeConcepto($arrayPrefijos,'50612','Compras y Gastos Imp. al costo');
+                initializeConcepto($arrayPrefijos,'50613','Compras y Gastos Imp. al costo');
+                initializeConcepto($arrayPrefijos,'50614','Compras y Gastos Imp. al costo');
+                initializeConcepto($arrayPrefijos,'5062','Compras y Gastos Imp. al costo');
+                initializeConcepto($arrayPrefijos,'5063','Compras y Gastos Imp. al costo');
             }
             //tal vez las contribuciones tambien las tendriamos q agregar al if tiene tercera
-            initializeConcepto($arrayPrefijos,'5063','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'507','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50800','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50801','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50802','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'50803','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'5090','Que Generan mov. de fondos');
-            $columnas=['Compras y Gastos','Costo de bienes de cambio','Gastos deducibles','Que Generan mov. de fondos','Que no generan mov. de fondos','Amortiz.','No deducibles'];            
+            initializeConcepto($arrayPrefijos,'507','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50800','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50801','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50802','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'50803','Compras y Gastos Imp. al costo');
+            initializeConcepto($arrayPrefijos,'5090','Compras y Gastos Imp. al costo');
+            $columnas=['Compras y Gastos','Gastos deducibles','Compras y Gastos Imp. al costo','Compras y Gastos No Imp. al costo','Que No Imp. Erog.','Amortiz.'];            
             $totalGastos3raEmpresa = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Gastos 3&#176;(EU)",$columnas,"Gravados",3,
                     $fechaInicioConsulta,$fechaFinConsulta,$totalIngresos3raEmpresa);
             
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'60501','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'60502','Que Generan mov. de fondos');
-            $columnas=['Ingresos','Que Generan mov. de fondos','Que no generan mov. de fondos','No computab.','Exentos o no gravados'];            
+            initializeConcepto($arrayPrefijos,'60501','Gravado IVA');
+            initializeConcepto($arrayPrefijos,'60502','Gravado IVA');
+            if(!$tienetercera&&!$tieneprimera&&!$tienesegunda&&!$tieneterceraauxiliar&&$tienecuarta){
+                initializeConcepto($arrayPrefijos,'6010','Gravado IVA');
+            }
+            $columnas=['Ingresos','Gravados','Gravado IVA','No Gravado IVA'];            
             $totalIngresos4ta = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Ingresos 4&#176;",$columnas,"Gravados",2,
                     $fechaInicioConsulta,$fechaFinConsulta,null);
            
             $arrayPrefijos=[];
-            initializeConcepto($arrayPrefijos,'513000001','Que Generan mov. de fondos');
-            initializeConcepto($arrayPrefijos,'513000002','Que no generan mov. de fondos');
+            initializeConcepto($arrayPrefijos,'513000001','Que Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'513000002','Que No Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'513000003','Que No Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'513000004','Que No Imp. Erog.');
+            initializeConcepto($arrayPrefijos,'513000005','Que Imp. Erog.');
             initializeConcepto($arrayPrefijos,'51300100','Amortiz.');
             initializeConcepto($arrayPrefijos,'51300200','Amortiz.');
             initializeConcepto($arrayPrefijos,'51300300','Amortiz.');
             initializeConcepto($arrayPrefijos,'51300400','Amortiz.');
             initializeConcepto($arrayPrefijos,'51300500','Amortiz.');
             initializeConcepto($arrayPrefijos,'51300600','Amortiz.');
-            $columnas=['Gastos','Que Generan mov. de fondos','Que no generan mov. de fondos','Amortiz.','No deducibles'];    
+            $columnas=['Gastos','Deducibles','Que Imp. Erog.','Que No Imp. Erog.','Amortiz.'];    
             //gastos de 3ra que tienen que salir en esta categoria
             if(!$tienetercera&&!$tieneprimera&&!$tienesegunda&&!$tieneterceraauxiliar&&$tienecuarta){
-                initializeConcepto($arrayPrefijos,'50499','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5050','Que Generan mov. de fondos');//Estas son cuentas del banco    
-                initializeConcepto($arrayPrefijos,'50612','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50613','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'50614','Que Generan mov. de fondos');
-                initializeConcepto($arrayPrefijos,'5062','Que Generan mov. de fondos');
+                initializeConcepto($arrayPrefijos,'5030','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50499','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5050','Que Imp. Erog.');//Estas son cuentas del banco    
+                initializeConcepto($arrayPrefijos,'50612','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50613','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'50614','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5062','Que Imp. Erog.');
+                initializeConcepto($arrayPrefijos,'5063','Que Imp. Erog.');
             }
             $totalGastos4ta = mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,"Gastos 4&#176;",$columnas,"Deducibles",3,
                     $fechaInicioConsulta,$fechaFinConsulta,$totalIngresos4ta);
+            //Debugger::dump($totalGastos4ta)
             ?>
         </tbody>
     </table>        
+    <?php
+    if($tienetercera){
+        ?>
+    <table   style="display:none" id="tblAnexoI"  class="toExcelTable tblEstadoContable tbl_verticalborder tblAnexoI" cellspacing="0">
+        <thead>
+            <tr class="trnoclickeable trTitle">
+                <th colspan="6" style="text-align: left">
+                    Contribuyente <?php echo $cliente['Cliente']['nombre'];?>
+                </th>
+            </tr>
+            <tr class="trnoclickeable trTitle">
+                <th colspan="6" style="text-align: center">
+                    Anexo II: Costo de los Bienes Vendidos, Servicios Prestados y de Producci&oacute;n al
+                    <?php echo date('d-m-Y', strtotime($fechaFinConsulta)); ?>  
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr class="trTitle">
+            <th colspan="2">
+                Existencia Inicial
+            </th>
+            <th colspan="2" style="text-align: center;width: 90px">
+            </th>
+
+        </tr>         
+            <?php
+
+            //aca vamos a buscar los valores de la cuenta 	110500011 Mercaderia Inicial que esten en un asiento de apertura
+            //capas que no sea necesario usar el asiento de apertura por que
+            $totalPeriodoExistenciaInicial=[];
+            if(!isset($totalPeriodoExistenciaInicial[$periodoActual])){
+                $totalPeriodoExistenciaInicial[$periodoActual] = 0;//existen estos valores
+            }
+            //existencia final del periodo anterior es la inicial de Actual
+            //110500013 Mercader&iacute;as XX E Final
+            //110502013 Prod. Terminado XX E Final
+            //110504013 Prod. en Proceso XX E Final
+            //110506013 MP y Materiales XX EFIN
+            //110507013 Otros Bienes de Cambio EFin*/
+            $existenciaInicialMercaderias = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110500011"],$periodoActual,$keysCuentas,'apertura',1);
+            $existenciaInicialProdTerminado = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110502011"],$periodoActual,$keysCuentas,'apertura',1);
+            $existenciaInicialProdEnProc = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110504011"],$periodoActual,$keysCuentas,'apertura',1);
+            $existenciaInicialMpMaterials = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110506011"],$periodoActual,$keysCuentas,'apertura',1);
+            $existenciaInicialOtros = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110507011"],$periodoActual,$keysCuentas,'apertura',1);
+            $totalPeriodoExistenciaInicial[$periodoActual] += $existenciaInicialMercaderias + $existenciaInicialProdTerminado + $existenciaInicialProdEnProc
+                    + $existenciaInicialMpMaterials + $existenciaInicialOtros;
+
+            ?>                    
+        <tr class="trTitle">
+            <th class="" colspan="2">
+                Total Existencia Inicial
+            </th>
+            <?php
+            echo '<th colspan="2" class="numericTD " style=";width: 90px">' .
+                    number_format($totalPeriodoExistenciaInicial[$periodoActual], 2, ",", ".")
+                    . "</th>";
+            ?>
+        </tr>
+        <tr class="trTitle">
+            <th colspan="2">
+                Compras
+            </th>
+            <th colspan="2" style="text-align: center;width: 90px">
+            </th>
+        </tr>
+            <?php
+            $totalPeriodoExistenciaFinal=[] ;
+            //COMPRAS PERIODO ACTUAL + Existencia FINAL ACTUAL - EXISTENCIA INICIAL ACTUAL
+
+        
+            //110500013 Mercader&iacute;as XX E Final
+            //110502013 Prod. Terminado XX E Final
+            //110504013 Prod. en Proceso XX E Final
+            //110506013 MP y Materiales XX EFIN
+            //110507013 Otros Bienes de Cambio EFin
+            $existenciaFinalMercaderias = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110500013"],$periodoActual,$keysCuentas,'todos',-1);
+            $existenciaFinalProdTerminado = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110502013"],$periodoActual,$keysCuentas,'todos',-1);
+            $existenciaFinalProdEnProc = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110504013"],$periodoActual,$keysCuentas,'todos',-1);
+            $existenciaFinalMpMaterials = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110506013"],$periodoActual,$keysCuentas,'todos',-1);
+            $existenciaFinalOtros = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110507013"],$periodoActual,$keysCuentas,'todos',-1);
+
+            $totalPeriodoExistenciaFinal[$periodoActual] = $existenciaFinalMercaderias + $existenciaFinalProdTerminado + $existenciaFinalProdEnProc 
+                    + $existenciaFinalMpMaterials + $existenciaFinalOtros;
+            //estoy sacando esta variable de dos lugares 
+            //o lo calculamos o lo traemos de contabilidad
+
+        
+        
+            //COMPRAS PERIODO ANTERIOR + Existencia FINAL ANTERIOR - EXISTENCIA INICIAL ANTERIOR
+
+            //110500012 Mercader&iacute;as XX Compras
+            //110502012 Prod. Terminado XX Compras
+            //110504012 Prod. en Proceso XX Compras
+            //110506012 MP y Materiales XX Compras
+            //110507012 Otros bienes de cambio XX Compras*/
+
+        showRowAnexoICostos("Mercader&iacute;as",$existenciaComprasMercaderias);              
+        //mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoCompras,"Productos Terminados","110502012",$fechaInicioConsulta,$fechaFinConsulta);
+        //mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoCompras,"Producci&oacute;n en Proceso","110504012",$fechaInicioConsulta,$fechaFinConsulta);
+        //mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoCompras,"Materias Primas e Insumos incorporados a la producci&oacute;n","110506012",$fechaInicioConsulta,$fechaFinConsulta);
+        showRowAnexoICostos("Productos Terminados",$existenciaComprasProdTerminado);
+        showRowAnexoICostos("Producci&oacute;n en Proceso",$existenciaComprasProdEnProc);
+        showRowAnexoICostos("Materias Primas e Insumos incorporados a la producci&oacute;n",$existenciaComprasMpMaterials);
+        showRowAnexoICostos("Insumos Incorporados a la Prestaci&oacute;n de Servicios",0);
+        showRowAnexoICostos("Otros: Gastos Activados",$existenciaComprasOtros);
+        showRowAnexoICostos("Participaci&oacute;n en negocios conjuntos",0);
+        ?>         
+        <tr class="trTitle">
+            <th class="" colspan="2">
+                Total de Compras
+            </th>
+            <?php
+            echo '<th colspan="2" class="numericTD " style="width: 90px">' .
+                    number_format($totalPeriodoCompras[$periodoActual], 2, ",", ".")
+                    . "</th>";
+            ?>
+        </tr>            
+        <tr class="trTitle">
+            <th colspan="2">
+                Devoluciones de Compras
+            </th>
+            <th colspan="2" style="text-align: center;width: 90px">
+            </th>
+
+        </tr>
+        <?php
+        $totalPeriodoDevoluciones = [];
+        mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Mercader&iacute;as","110500014",$fechaInicioConsulta,$fechaFinConsulta);
+        mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Productos Terminados","110502014",$fechaInicioConsulta,$fechaFinConsulta);
+        mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Producci&oacute;n en Proceso","110504014",$fechaInicioConsulta,$fechaFinConsulta);
+        mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Materias Primas e Insumos incorporados a la producci&oacute;n","110506014",$fechaInicioConsulta,$fechaFinConsulta);
+
+        showRowAnexoICostos("Insumos Incorporados a la Prestaci&oacute;n de Servicios",0);
+        showRowAnexoICostos("Otros",0);
+        showRowAnexoICostos("Participaci&oacute;n en negocios conjuntos",0);
+
+        ?>
+        <tr class="trTitle">
+            <th class="" colspan="2">
+                Total de Devoluciones de Compras
+            </th>
+            <?php
+            echo '<th colspan="2" class="numericTD " style="width: 90px">' .
+                    number_format($totalPeriodoDevoluciones[$periodoActual], 2, ",", ".")
+                    . "</th>";              
+            ?>
+        </tr>
+
+        <tr class="trTitle">
+            <th colspan="2">
+                Existencia Final
+            </th>
+            <th colspan="2" style="text-align: center">
+            </th>
+        </tr>
+        <tr>
+            <td colspan="2">
+                Mercader&iacute;as
+            </td>
+            <?php
+             echo '<td colspan="2" class="numericTD" style="width: 90px">' .
+                    number_format($totalPeriodoExistenciaFinal[$periodoActual], 2, ",", ".")
+                    . "</td>";
+            ?>
+        </tr>
+        <?php
+         mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoExistenciaFinal,"Productos Terminados","110502013",$fechaInicioConsulta,$fechaFinConsulta);
+         mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoExistenciaFinal,"Producci&oacute;n en Proceso","110504013",$fechaInicioConsulta,$fechaFinConsulta);
+         mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoExistenciaFinal,"Materias Primas y Materiales","110506013",$fechaInicioConsulta,$fechaFinConsulta);
+        ?>
+        <tr class="trTitle">
+            <th class=" " colspan="2">
+                Total Existencia Final
+            </th>
+            <?php
+           echo '<th colspan="2" class="numericTD  " style="width: 90px">' .
+                    number_format($totalPeriodoExistenciaFinal[$periodoActual], 2, ",", ".")
+                    . "</th>";
+            ?>
+        </tr>
+        <tr  class="trTitle">
+            <th colspan="2">
+                Costo de los Bienes, de los Servicios y de Producci&oacute;n
+            </th>
+            <?php
+            $totalPeriodoCostoBienesServiciosProduccion = [];
+            echo '<th colspan="2" class="numericTD" style="width: 90px">' ;
+                $totalPeriodo = $totalPeriodoExistenciaInicial[$periodoActual];
+                $totalPeriodo += $totalPeriodoCompras[$periodoActual];
+                $totalPeriodo -= $totalPeriodoDevoluciones[$periodoActual];
+                $totalPeriodo += $totalPeriodoExistenciaFinal[$periodoActual];
+
+                echo number_format($totalPeriodo, 2, ",", ".");
+                echo  "</th>";
+                if(!isset($totalPeriodoCostoBienesServiciosProduccion[$periodoActual])){
+                    $totalPeriodoCostoBienesServiciosProduccion[$periodoActual] = 0;//existen estos valores
+                }
+                $totalPeriodoCostoBienesServiciosProduccion[$periodoActual] += $totalPeriodo;
+            ?>
+        </tr>
+        </tbody>
+    </table>
+    <?php
+    //Fin Anexo II Costo de los Bienes Vendidos, Servicios Prestados y de Producci&oacute;n
+    }
+    ?>
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divPatrimonioTercera" >
@@ -566,12 +932,12 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 <th colspan="2">Ganancias</th>
             </tr>
             <tr>
-                <th colspan="2">Detalle del capital afectado a la actividad</th>
+                <th colspan="4">Detalle del capital afectado a la actividad</th>
                 <th colspan="">Inicial</th>
                 <th colspan="">Final</th>
             </tr>
             <tr class="trTitle">
-                <th colspan="2">Activo</th>
+                <th colspan="4">Activo</th>
                 <th colspan=""></th>
                 <th colspan=""></th>
             </tr>
@@ -598,39 +964,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 //$arrayPrefijos=[];
                 //$inmueblesmejora = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Inmuebles Mejora',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
                 $arrayPrefijos=[];
-                initializeConcepto($arrayPrefijos,'120601001','');
-                initializeConcepto($arrayPrefijos,'120601002','');
-                initializeConcepto($arrayPrefijos,'120601006','');
-                initializeConcepto($arrayPrefijos,'120601010','');
-                initializeConcepto($arrayPrefijos,'120601014','');
-                initializeConcepto($arrayPrefijos,'120601018','');
-                initializeConcepto($arrayPrefijos,'120601022','');
-                initializeConcepto($arrayPrefijos,'120601026','');
-                initializeConcepto($arrayPrefijos,'120601030','');
-                initializeConcepto($arrayPrefijos,'120601034','');
-                initializeConcepto($arrayPrefijos,'120601038','');
-                initializeConcepto($arrayPrefijos,'120601042','');
-                initializeConcepto($arrayPrefijos,'120601046','');
-                initializeConcepto($arrayPrefijos,'120601050','');
-                initializeConcepto($arrayPrefijos,'120601054','');
-                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Inmuebles Edificado',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
-                $arrayPrefijos=[];
-                initializeConcepto($arrayPrefijos,'120601003','');
-                initializeConcepto($arrayPrefijos,'120601007','');
-                initializeConcepto($arrayPrefijos,'120601011','');
-                initializeConcepto($arrayPrefijos,'120601015','');
-                initializeConcepto($arrayPrefijos,'120601019','');
-                initializeConcepto($arrayPrefijos,'120601023','');
-                initializeConcepto($arrayPrefijos,'120601027','');
-                initializeConcepto($arrayPrefijos,'120601031','');
-                initializeConcepto($arrayPrefijos,'120601035','');
-                initializeConcepto($arrayPrefijos,'120601039','');
-                initializeConcepto($arrayPrefijos,'120601043','');
-                initializeConcepto($arrayPrefijos,'120601047','');
-                initializeConcepto($arrayPrefijos,'120601051','');
-                initializeConcepto($arrayPrefijos,'120601055','');
-                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Inmuebles Mejora',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
-
+                initializeConcepto($arrayPrefijos,'1206010','');
+                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Inmuebles ',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1206020','');
                 //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
@@ -663,12 +998,14 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $totalPasivos[$periodoActual]=isset($totalPasivos[$periodoActual])?$totalPasivos[$periodoActual]:0;
             ?>
             <tr class="trTitle">
-                <td colspan="2">Total del Activo</td>
+                <td colspan="4">Total del Activo</td>
                 <td class="tdWithNumber"> <?php echo number_format($totalActivos['apertura'], 2, ",", ".")?></td>
                 <td class="tdWithNumber"> <?php echo number_format($totalActivos[$periodoActual], 2, ",", ".")?></td>
             </tr>
             <tr class="trTitle">
                 <th colspan="4">Pasivo</th>               
+                <th colspan="1"></th>               
+                <th colspan="1"></th>               
             </tr>
             <?php
             if($tienetercera){
@@ -695,6 +1032,12 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 initializeConcepto($arrayPrefijos,'2204','');
                 $deudasfiscales = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Deudas Fiscales',$fechaInicioConsulta,$fechaFinConsulta,$totalPasivos);
                 $arrayPrefijos=[];
+                initializeConcepto($arrayPrefijos,'2105','');
+                $anticipoclientes = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Anticipos clientes',$fechaInicioConsulta,$fechaFinConsulta,$totalPasivos);
+                $arrayPrefijos=[];
+                initializeConcepto($arrayPrefijos,'2106','');
+                $dividendosapagar = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Dividendos a pagar',$fechaInicioConsulta,$fechaFinConsulta,$totalPasivos);
+                $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'2107','');
                 initializeConcepto($arrayPrefijos,'2207','');
                 $otrasdeudas = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Otras Deudas',$fechaInicioConsulta,$fechaFinConsulta,$totalPasivos);
@@ -705,12 +1048,12 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             }
             ?>
             <tr class="trTitle">
-                <td colspan="2">Total del Pasivo</td>
+                <td colspan="4">Total del Pasivo</td>
                 <td class="tdWithNumber"> <?php echo number_format($totalPasivos['apertura'], 2, ",", ".")?></td>
                 <td class="tdWithNumber"> <?php echo number_format($totalPasivos[$periodoActual], 2, ",", ".")?></td>
             </tr>
             <tr class="trTitle">
-                <td colspan="2">Patrimonio Neto</td>
+                <td colspan="4">Patrimonio Neto</td>
                  <?php
                  $patrimonioNeto=[];
                  $patrimonioNeto['apertura']=$totalActivos['apertura']+$totalPasivos['apertura'];
@@ -727,7 +1070,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
-                <td colspan="2">
+                <td colspan="4">
                     Contribuyente <?php echo $cliente["Cliente"]['nombre'] ?>
                 </td>
                 <td>
@@ -741,6 +1084,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
         <tbody>    
             <tr class="trTitle">
                 <th colspan="4">Patrimonio en el pais</th>
+                <th colspan="1">Inicial</th>
+                <th colspan="1">Final Actual</th>
             </tr>
             <?php
             //Patrimonio 3ra que aparece aca por que se usaron cuentas de 3ra pero no tiene 3ra
@@ -751,7 +1096,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 /*$arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1103','');
                 initializeConcepto($arrayPrefijos,'1104','');
-                $creditos = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Creditos EU',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+                $creditos = mostrarPatrimonio 3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Creditos EU',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
                 */
                 $arrayPrefijos=[];                                 
                 initializeConcepto($arrayPrefijos,'1105','');
@@ -844,15 +1189,14 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             initializeConcepto($arrayPrefijos,'1301050','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
             $aeronaves = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Aeronave',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
-            //$arrayPrefijos=[];
-            //initializeConcepto($arrayPrefijos,'1301060','');
-            //Preguntar esto se carga en el SYS o tiene que salir del calculo anterior $patrimonioNeto
+          
+            
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
             //$empresas = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Patrimonio de Eampresas o Explotación Unipersonal',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
-            if($patrimonioNeto[$periodoActual]!=0||$patrimonioNeto['apertura']){ 
+            //if($patrimonioNeto[$periodoActual]!=0||$patrimonioNeto['apertura']){ 
                 ?>
                 <tr class="trnoclickeable trTitle">
-                    <th colspan="2">Patrimonio de Empresas o Explotación Unipersonal</th>
+                    <th colspan="4">Patrimonio de Empresas o Explotación Unipersonal</th>
                     <th colspan=""></th>
                     <th colspan=""></th>
                 </tr>
@@ -861,17 +1205,23 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 $totalPatrimonio[$periodoActual] += $patrimonioNeto[$periodoActual];
                 ?>
                 <tr>
-                    <td colspan="2">Patrimonio de Eampresas o Explotación Unipersonal</td>
+                    <td colspan="4">Patrimonio de Empresas o Explotación Unipersonal</td>
                     <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['apertura'], 2, ",", ".") ?></td>
                     <td class="tdWithNumber"><?php echo number_format($patrimonioNeto[$periodoActual], 2, ",", ".") ?></td>                
                 </tr>
+                <?php
+                $arrayPrefijos=[];
+                initializeConcepto($arrayPrefijos,'1301060','');
+                //Preguntar esto se carga en el SYS o tiene que salir del calculo anterior $patrimonioNeto
+                $participacionempresa = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Empresa Unipersonal',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);            
+                ?>
                 <tr>
-                    <th colspan="2"> Subtotal Patrimonio de Eampresas o Explotación Unipersonal</th>
-                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['apertura'], 2, ",", ".") ?></td>
-                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto[$periodoActual], 2, ",", ".") ?></td>            
+                    <th colspan="4"> Subtotal Patrimonio de Eampresas o Explotación Unipersonal</th>
+                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['apertura']+$participacionempresa['apertura'], 2, ",", ".") ?></td>
+                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto[$periodoActual]+$participacionempresa['periodoActual'], 2, ",", ".") ?></td>            
                 </tr>            
                 <?php             
-            }            
+            //}            
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301070','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
@@ -903,7 +1253,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301130','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $depositosefectivo = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Depositos en dinero',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $depositosefectivo = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Dinero en Efectivo',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301140','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
@@ -914,12 +1264,12 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $otrosbienes = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Otros bienes',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);     
             ?>
             <tr class="trTitle">
-                <th colspan="2">Subtotal Patrimonio en el pais</th>
+                <th colspan="4">Subtotal Patrimonio en el pais</th>
                 <th colspan="1" class="tdWithNumber"><?php echo  number_format($totalPatrimonio['apertura'], 2, ",", ".")?></th>
                 <th colspan="1" class="tdWithNumber"><?php echo number_format($totalPatrimonio[$periodoActual], 2, ",", ".")?></th>
             </tr>
             <tr class="trTitle">
-                <th colspan="4">Deudas en el pais</th>
+                <th colspan="6">Deudas en el pais</th>
             </tr>
             <?php
             $totalDeudaPais=[];
@@ -953,7 +1303,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'2108','');
                 initializeConcepto($arrayPrefijos,'2208','');
-                $previsiones = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Previsiones',$fechaInicioConsulta,$fechaFinConsulta,$totalDeudaPais);
+                $previsiones = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Previsiones',$fechaInicioConsulta,$fechaFinConsulta,$totalDeudaPais,2);
             }
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'230101','');
@@ -965,12 +1315,12 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $deudasenelpaisPJ = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Deudas en el Pais Persona juridica',$fechaInicioConsulta,$fechaFinConsulta,$totalDeudaPais);
             ?>
             <tr class="trTitle">
-                <th colspan="2">Subtotal deudas en el pais</th>
+                <th colspan="4">Subtotal deudas en el pais</th>
                 <th colspan="1" class="tdWithNumber"><?php echo  number_format($totalDeudaPais['apertura'], 2, ",", ".")?></th>
                 <th colspan="1" class="tdWithNumber"><?php echo number_format($totalDeudaPais[$periodoActual], 2, ",", ".")?></th>
             </tr>
             <tr class="trTitle">
-                <th colspan="2">Patrimonio Neto</th>
+                <th colspan="4">Patrimonio Neto</th>
                 <?php
                 $patrimonioNetoPF=[];
                 $patrimonioNetoPF['apertura']=$totalPatrimonio['apertura']+$totalDeudaPais['apertura'];
@@ -989,15 +1339,15 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
 //para poder calcular los topes de ganancias
             $ingresosGravados=[];            
             $resultadoneto=[];            
-            $ingresosGravados['primera']=(isset($totalIngresos1ra['Que Generan mov. de fondos']))?$totalIngresos1ra['Que Generan mov. de fondos']:0;
-            $ingresosGravados['primera']+=(isset($totalIngresos1ra['Que no generan mov. de fondos']))?$totalIngresos1ra['Que no generan mov. de fondos']:0;
-            $ingresosGravados['segunda']=(isset($totalIngresos2da['Que Generan mov. de fondos']))?$totalIngresos2da['Que Generan mov. de fondos']:0;
-            $ingresosGravados['segunda']+=(isset($totalIngresos2da['Que no generan mov. de fondos']))?$totalIngresos2da['Que no generan mov. de fondos']:0;
-            $ingresosGravados['segunda']+=(isset($totalIngresos2da['Vts. acciones etc.']))?$totalIngresos2da['Vts. acciones etc.']:0;
-            $ingresosGravados['tercera']=(isset($totalIngresos1ra['Que Generan mov. de fondos']))?$totalIngresos1ra['Que Generan mov. de fondos']:0;
-            $ingresosGravados['tercera']+=(isset($totalIngresos1ra['Que no generan mov. de fondos']))?$totalIngresos1ra['Que no generan mov. de fondos']:0;
-            $ingresosGravados['cuarta']=(isset($totalIngresos4ta['Que Generan mov. de fondos']))?$totalIngresos4ta['Que Generan mov. de fondos']:0;
-            $ingresosGravados['cuarta']+=(isset($totalIngresos4ta['Que no generan mov. de fondos']))?$totalIngresos4ta['Que no generan mov. de fondos']:0;
+            $ingresosGravados['primera']=(isset($totalIngresos1ra['Gravado IVA']))?$totalIngresos1ra['Gravado IVA']:0;
+            $ingresosGravados['primera']+=(isset($totalIngresos1ra['No Gravado IVA']))?$totalIngresos1ra['No Gravado IVA']:0;
+            $ingresosGravados['segunda']=(isset($totalIngresos2da['Gravado IVA']))?$totalIngresos2da['Gravado IVA']:0;
+            $ingresosGravados['segunda']+=(isset($totalIngresos2da['No Gravado IVA']))?$totalIngresos2da['No Gravado IVA']:0;
+            //$ingresosGravados['segunda']+=(isset($totalIngresos2da['Vts. acciones etc.']))?$totalIngresos2da['Vts. acciones etc.']:0;
+            $ingresosGravados['tercera']=(isset($totalIngresos3ra['Gravado IVA']))?$totalIngresos3ra['Gravado IVA']:0;
+            $ingresosGravados['tercera']+=(isset($totalIngresos3ra['No Gravado IVA']))?$totalIngresos3ra['No Gravado IVA']:0;
+            $ingresosGravados['cuarta']=(isset($totalIngresos4ta['Gravado IVA']))?$totalIngresos4ta['Gravado IVA']:0;
+            $ingresosGravados['cuarta']+=(isset($totalIngresos4ta['No Gravado IVA']))?$totalIngresos4ta['No Gravado IVA']:0;
             $resultadoneto['primera']= $ingresosGravados['primera'];
             $resultadoneto['segunda']= $ingresosGravados['segunda'];
             $resultadoneto['tercera']= $ingresosGravados['tercera'];
@@ -1007,12 +1357,12 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $resultadoneto['tercera']+= $participacionEnEmpresaTotal;
             
             $egresosGravados=[];            
-            $egresosGravados['primera']=(isset($totalGastos1ra['Que Generan mov. de fondos']))?$totalGastos1ra['Que Generan mov. de fondos']:0;
-            $egresosGravados['segunda']=(isset($totalIngresos2da['Que Generan mov. de fondos']))?$totalIngresos2da['Que Generan mov. de fondos']:0;
-            $egresosGravados['segunda']-=(isset($totalIngresos2da['Instrumentos Fcieros. deriv.']))?$totalIngresos2da['Instrumentos Fcieros. deriv.']:0;
-            $egresosGravados['segunda']-=(isset($totalIngresos2da['Vts. acciones etc.']))?$totalIngresos2da['Vts. acciones etc.']:0;
-            $egresosGravados['tercera']=(isset($totalGastos3ra['Que Generan mov. de fondos']))?$totalGastos3ra['Que Generan mov. de fondos']:0;
-            $egresosGravados['cuarta']=(isset($totalGastos4ta['Que Generan mov. de fondos']))?$totalGastos4ta['Que Generan mov. de fondos']:0;
+            $egresosGravados['primera']=(isset($totalGastos1ra['Que Imp. Erog.']))?$totalGastos1ra['Que Imp. Erog.']:0;
+            $egresosGravados['segunda']=(isset($totalGastos2da['Que Imp. Erog.']))?$totalGastos2da['Que Imp. Erog.']:0;
+            //$egresosGravados['segunda']-=(isset($totalGastos2da['Instrumentos Fcieros. deriv.']))?$totalGastos2da['Instrumentos Fcieros. deriv.']:0;
+            //$egresosGravados['segunda']-=(isset($totalGastos2da['Vts. acciones etc.']))?$totalGastos2da['Vts. acciones etc.']:0;
+            $egresosGravados['tercera']=(isset($totalGastos3ra['Que Imp. Erog.']))?$totalGastos3ra['Que Imp. Erog.']:0;
+            $egresosGravados['cuarta']=(isset($totalGastos4ta['Que Imp. Erog.']))?$totalGastos4ta['Que Imp. Erog.']:0;
             $resultadoneto['primera']-= $egresosGravados['primera'];
             $resultadoneto['segunda']-= $egresosGravados['segunda'];
             $resultadoneto['tercera']-= $egresosGravados['tercera'];
@@ -1158,7 +1508,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
         <tbody>
             <tr>
                 <td colspan="4">
-                    <div class="index">
+                    <div class="index" id="AsientoDeduccionesGenerales">
                         <h3><?php echo __('Asiento de Deducciones Generales')?></h3>
                         <?php
                         $id = 0;
@@ -1167,6 +1517,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                         $descripcion = "Manual";
                         $fecha = date('t-12-Y', strtotime($fechaInicioConsulta));
                         $miAsiento=array();
+                        $totalDebe=0;
+                        $totalHaber=0;
                         if(!isset($miAsiento['Movimiento'])){
                             $miAsiento['Movimiento']=array();
                         }
@@ -1202,13 +1554,27 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                             2774=>"996,31",
                             2775=>"996,31",
                             2776=>$montoActualGanancias,
+                            2776=>-1,
                             2778=>$resultadoNetoTotal5,
                             2779=>$resultadoNetoTotal5,
-                            2780=>$montoActualGanancias,
+                            2780=>-1,
                             2782=>$resultadoNetoTotal5,
                             2783=>"20.000,",
                             2789=>$montoActualGanancias,
-                            2789=>$montoActualGanancias,
+                        ];
+                        //aca vamos a guardar los valores de la contabilidad para despues rellenarlos cuando mostremos el asiento
+                        $valorContabilidad=[
+                            2773=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000001'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2774=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000002'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2775=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000003'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2776=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000004'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2777=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000005'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2778=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000006'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2779=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000007'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2780=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000008'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2782=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000010'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2783=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000011'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2789=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000017'],$periodoActual,$keysCuentas,'noDedGeneral',1),
                         ];
                         foreach ($asientoestandares as $asientoestandar) {
                             $cuentaclienteid = $asientoestandar['Cuenta']['Cuentascliente'][0]['id'];
@@ -1229,13 +1595,24 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                             $debe=0;
                             $haber=0;
                             $key=0;
-                            
+                            $cuentaBlokeadaPorUsoEnContabilidad = false;
+                            if(isset($valorContabilidad[$asientoestandar['Cuenta']['id']])){
+                                if($valorContabilidad[$asientoestandar['Cuenta']['id']]!=0){
+                                    $cuentaBlokeadaPorUsoEnContabilidad = true;
+                                    if($valorContabilidad[$asientoestandar['Cuenta']['id']]<0){
+                                       $haber=0;
+                                    }else{
+                                       $debe=0;
+                                    }                                                                               
+                                }
+                            }
                             foreach ($miAsiento['Movimiento'] as $kMov => $movimiento){
+                                
                                 if(!isset($miAsiento['Movimiento'][$kMov]['cargado'])) {
                                     $miAsiento['Movimiento'][$kMov]['cargado'] = false;
-                                }
+                                }                               
+                               
                                 if($cuentaclienteid==$movimiento['cuentascliente_id']){
-
                                     $key=$kMov;
                                     $movid=$movimiento['id'];
                                     $asiento_id=$movimiento['asiento_id'];
@@ -1246,6 +1623,18 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                             }
                             //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
                             //echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.key',['default'=>$key]);
+                            $label="&nbsp;";
+                            if(isset($topeCuentaCliente[$asientoestandar['Cuenta']['id']])){
+                                if($topeCuentaCliente[$asientoestandar['Cuenta']['id']]!=-1){
+                                    $label="El tope de la cuenta es $".$topeCuentaCliente[$asientoestandar['Cuenta']['id']]."." ;                                
+                                }else{
+                                    $label="Sin tope." ;
+                                }
+                            }
+                            if($cuentaBlokeadaPorUsoEnContabilidad){
+                                $label.="Cuenta utilizada en la contabilidad. Desactivada para evitar duplicaciond de uso." ;
+                            }
+                            echo $this->Form->label('',$label);
                             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
                             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
                             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha',['default'=>$fecha,'type'=>'hidden']);
@@ -1253,63 +1642,29 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',[
                                 'default'=>$cuentaclienteid,
                                 'options'=>$allcuentasclientes,
-                                'label'=>"&nbsp;",
+                                'label'=>false,
                                 ]);
-                            $label="&nbsp;";
-                            if(isset($topeCuentaCliente[$asientoestandar['Cuenta']['id']])){
-                                $label="El tope de la cuenta es $".$topeCuentaCliente[$asientoestandar['Cuenta']['id']] ;
-                            }
+                           
                             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
                                 'class'=>'inputDebe',
                                 'default'=>number_format($debe, 2, ".", ""),
-                                'label'=>$label,
+                                'label'=>false,
+                                'readonly'=>$cuentaBlokeadaPorUsoEnContabilidad,
                                 ]);
                             echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
                                 'class'=>'inputHaber',                                
                                 'default'=>number_format($haber, 2, ".", ""),
-                                'label'=>"&nbsp;",                                
+                                'label'=>false,                                
+                                'readonly'=>$cuentaBlokeadaPorUsoEnContabilidad,                                
                                 ]);
                             echo "</br>";
                             $i++;
-                        }
-                        /*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
-                        entonces tenemos que recorrer los movimientos y aquellos que esten marcados como cargado=false se deben mostrar*/
-                        foreach ($miAsiento['Movimiento'] as $kMov => $movimiento){
-                            $movid=0;
-                            $asiento_id=0;
-                            $debe=0;
-                            $haber=0;
-                            $cuentaclienteid=0;
-                            if( $miAsiento['Movimiento'][$kMov]['cargado']==false){
-                                $movid=$movimiento['id'];
-                                $asiento_id=$movimiento['asiento_id'];
-                                $debe=$movimiento['debe'];
-                                $haber=$movimiento['haber'];
-                                $cuentaclienteid=$movimiento['cuentascliente_id'];
-                                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
-                                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
-                                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha',['default'=>$fecha,'type'=>'hidden']);
-                                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',[
-                                    'default'=>$cuentaclienteid,
-                                    'options'=>$allcuentasclientes,
-                                    'label'=>"&nbsp;",                                   
-                                    ]);
-                                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
-                                    'default'=>number_format($debe, 2, ".", ""),
-                                    'label'=>"&nbsp;", 
-                                    ]);
-                                echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
-                                    'default'=>number_format($haber, 2, ".", ""),
-                                    'label'=>"&nbsp;",                                     
-                                    ]);
-                                echo "</br>";
-                                $i++;
-                            }
-                        }
+                            $totalDebe+=$debe;
+                            $totalHaber+=$haber;
+                        }                                          
                         echo $this->Form->end('Guardar asiento');
                         //Debugger::dump($miAsiento['Movimiento']);
-                        $totalDebe=0;
-                        $totalHaber=0;
+                      
                         echo $this->Form->label('','Total ',[
                             'style'=>"display: -webkit-inline-box;width:355px;"
                         ]);
@@ -1421,7 +1776,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             initializeConcepto($arrayPrefijos,'514000005','');
             initializeConcepto($arrayPrefijos,'514000014','');
             initializeConcepto($arrayPrefijos,'514000015','');
-            $tope=0 ;
+            $tope=100000 ;
             $DeduccionotrosFondos = mostrarDeduccionGeneral($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Otros fondeos de jubilaciones, pensiones, retiros o subsidios',$tope,$fechaInicioConsulta,$fechaFinConsulta,$totalDeudasGenerales);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'514000011','');
@@ -1491,7 +1846,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <?php 
-    $resultadoImpositivo=$resultadoNetoTotal-$totalDeudasGenerales['computable'];
+    $subtotalImpositivo=$resultadoNetoTotal-$totalDeudasGenerales['computable'];
+    $resultadoImpositivo=$subtotalImpositivo-$totalDeudasGenerales5['computable'];
     $resultadoFinal=$resultadoImpositivo-$totalcomputado;
 
  //Datos auxiliares para calculo tope deduccion especial
@@ -1590,18 +1946,18 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             if($resultadoFinal<=0){
                 $deduccionEspecialDeducible=0;
             }else{
-                if($montoDeduccionEspecialIncrementada){
-                    if($integracion4ta+$integracion3raEmp>=$montoDeduccionEspecialIncrementada){
+                if($tieneDeduccionIncrementada){
+                    if($integracion4ta>=$montoDeduccionEspecialIncrementada){
                         $deduccionEspecialDeducible=$montoDeduccionEspecialIncrementada;
                     }else{
-                        $deduccionEspecialDeducible=$integracion4ta+$integracion3raEmp;
+                        $deduccionEspecialDeducible=$integracion4ta;
                     }
                 }
-                if($montoDeduccionEspecialSimple&&!$montoDeduccionEspecialIncrementada){
-                    if($integracion4ta+$integracion3raEmp>=$montoDeduccionEspecialSimple){
+                if($tieneDeduccionEspecial&&!$tieneDeduccionIncrementada){                                        
+                    if($integracion4ta<=$montoDeduccionEspecialSimple){
                         $deduccionEspecialDeducible=$montoDeduccionEspecialSimple;
                     }else{
-                        $deduccionEspecialDeducible=$integracion4ta+$integracion3raEmp;
+                        $deduccionEspecialDeducible=$integracion4ta;
                     }
                 }              
             }
@@ -1909,7 +2265,7 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 <td></td>
                 <td>Subtotal</td>
                 <td class="tdWithNumber"><?php 
-                echo number_format($resultadoNetoTotal, 2, ",", ".")?></td>
+                echo number_format($subtotalImpositivo, 2, ",", ".")?></td>
             </tr>
             <tr>
                 <td></td>
@@ -1920,8 +2276,6 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             <tr>
                 <td></td>
                 <td>Resultado Impositivo</td>
-                <?php                
-                $resultadoImpositivo-=$totalDeudasGenerales5['computable'];?>
                 <td class="tdWithNumber"><?php echo number_format($resultadoImpositivo, 2, ",", ".")?></td>
             </tr>
             <tr>
@@ -2110,7 +2464,7 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             </tr>           
         </tbody>
     </table>
-    <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
+     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <tbody>
             <tr>
                 <td colspan="4">Determinac&iacute;on del saldo de declaraci&oacute;n jurada</td>
@@ -2127,20 +2481,56 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 <td>Ganancias M&iacute;nima Presunta comp. a cta.</td>
                 <?php 
                 $gananciaMinimaPresunta =sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['110403203'],$periodoActual,$keysCuentas,'todos',1);
-                $retenciones=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110403104"],$periodoActual,$keysCuentas,'todos',1);
-                $percepciones=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110403105"],$periodoActual,$keysCuentas,'todos',1);
+                $retenciones=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110403105"],$periodoActual,$keysCuentas,'todos',1);
+                $percepciones=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110403104"],$periodoActual,$keysCuentas,'todos',1);
                 $anticiposacomputar=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['110403102'],$periodoActual,$keysCuentas,'todos',1);
                 $ley25413=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['110403802'],$periodoActual,$keysCuentas,'todos',1);
                 $saldoAFavorPeriodoAnterior=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['110403101'],$periodoActual,$keysCuentas,'todos',1);
-                $totalreducciones=$gananciaMinimaPresunta+$retenciones+$percepciones+$anticiposacomputar+$ley25413+$saldoAFavorPeriodoAnterior;
-                $saldoDeLibreDisponibilidadPeriodo = 0;
-                if($totalreducciones*-1>$impuestodeterminadofinal){
-                    $impuestodeterminadofinal=0;
-                    $saldoDeLibreDisponibilidadPeriodo=$totalreducciones-$impuestodeterminadofinal;
+                $pagosacuenta=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['110403106'],$periodoActual,$keysCuentas,'todos',1);
+                
+                $reduccionesQueGeneranSLD = $retenciones+$percepciones+$anticiposacomputar+$saldoAFavorPeriodoAnterior;
+                $reduccionesQueNOGeneranSLD = $gananciaMinimaPresunta+$ley25413+$pagosacuenta;
+                
+                $saldo=$impuestodeterminadofinal;
+                $saldoLD=0;
+                $usadoley25413 = $ley25413;
+                $usadogananciaMinimaPresunta = $gananciaMinimaPresunta;
+                $usadoPagosACuenta = $gananciaMinimaPresunta;
+                //tengo que usar primero las cuentas que no sumas SLD y despues las que si suman                
+                if($saldo>0){
+                    if( $saldo < $ley25413*1){
+                        $usadoley25413 = $saldo*1;
+                        $saldo = 0;
+                    } else {
+                        $saldo -= $ley25413*1;
+                    }
+                    if($saldo>0){
+                        if( $saldo < $gananciaMinimaPresunta*1){
+                            $usadogananciaMinimaPresunta = $saldo;
+                            $saldo = 0;
+                        }else{
+                            $saldo-=$gananciaMinimaPresunta;
+                        }
+                        if($saldo>0){
+                            if( $saldo < $pagosacuenta*1){
+                                $usadoPagosACuenta = $saldo;
+                                $saldo = 0;
+                            }else{
+                                $saldo -= $pagosacuenta*1;
+                            }
+                        }
+                    }
+                }
+                if($reduccionesQueGeneranSLD<$saldo){
+                    //las reducciones no alcanzan hay que usar las que no generan sld
+                    $saldo -= $reduccionesQueGeneranSLD;
+                    $saldoLD=0;
                 }else{
-                   $impuestodeterminadofinal-=$totalreducciones;
+                    $saldoLD = $reduccionesQueGeneranSLD-$saldo;
+                    $saldo=0;
                 }
                 
+               
                 ?>
                 <td class="tdWithNumber"><?php echo number_format($gananciaMinimaPresunta,2,',','.');?></td>
             </tr>
@@ -2161,12 +2551,24 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 <td class="tdWithNumber"><?php echo number_format($anticiposacomputar,2,',','.');?></td>
             </tr>            
             <tr>
+                <td>Pagos a cuenta</td>
+                <td class="tdWithNumber"><?php echo number_format($pagosacuenta,2,',','.');?></td>
+            </tr>            
+            <tr>
                 <td>Saldo a favor cyte. Período ant.</td>
                 <td class="tdWithNumber"><?php echo number_format($saldoAFavorPeriodoAnterior,2,',','.');?></td>
             </tr>
             <tr>
-                <td>Saldo a pagar (saldo a favor cyte.)</td>
-                <td class="tdWithNumber"><?php echo number_format($impuestodeterminadofinal,2,',','.');?></td>
+                <td>Saldo a pagar </td>
+                <td class="tdWithNumber"><?php 
+                $saldoAPagar = $saldo;
+                echo number_format($saldoAPagar,2,',','.');?></td>
+            </tr>
+            <tr>
+                <td>Saldo a favor contribuyente</td>
+                <td class="tdWithNumber"><?php 
+                $saldoAFavor = $saldoLD;
+                echo number_format($saldoAFavor,2,',','.');?></td>
             </tr>
             <?php 
             echo $this->Form->input('gananciaMinimaPresunta',['type'=>'hidden','value'=>$gananciaMinimaPresunta]);
@@ -2174,12 +2576,16 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             echo $this->Form->input('retenciones',['type'=>'hidden','value'=>$retenciones]);
             echo $this->Form->input('percepciones',['type'=>'hidden','value'=>$percepciones]);
             echo $this->Form->input('anticiposacomputar',['type'=>'hidden','value'=>$anticiposacomputar]);
+            echo $this->Form->input('pagosacuenta',['type'=>'hidden','value'=>$pagosacuenta]);
             echo $this->Form->input('saldoAFavorPeriodoAnterior',['type'=>'hidden','value'=>$saldoAFavorPeriodoAnterior]);
-            echo $this->Form->input('saldoDeLibreDisponibilidadPeriodo',['type'=>'hidden','value'=>$saldoDeLibreDisponibilidadPeriodo]);
-            echo $this->Form->input('apagar',['type'=>'hidden','value'=>$impuestodeterminadofinal]);
+            echo $this->Form->input('saldoDeLibreDisponibilidadPeriodo',['type'=>'hidden','value'=>$saldoLD]);
+            echo $this->Form->input('apagar',['type'=>'hidden','value'=>$saldo]);
 ?>
         </tbody>
     </table>
+    <?php
+   
+    ?>
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divJustificacionVarPat" >
@@ -2206,26 +2612,53 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             <tr class="">
                 <th colspan="3">Monto consumido(por diferencia)</th>
                 <?php
-                $patrimonioInicial = $totalPatrimonio['apertura']-$totalDeudaPais['apertura'];
-                $patrimonioFinal = $totalPatrimonio[$periodoActual]-$totalDeudaPais[$periodoActual];
+                $patrimonioInicial = $totalPatrimonio['apertura']+$totalDeudaPais['apertura'];
+                $patrimonioFinal = $totalPatrimonio[$periodoActual]+$totalDeudaPais[$periodoActual];
                 
                 $bienesHerencia=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["6070"],$periodoActual,$keysCuentas,'todos',-1);
                 
-                $ingresosPresuntos['primera']=(isset($totalIngresos1ra['Que no generan mov. de fondos']))?$totalIngresos1ra['Que no generan mov. de fondos']:0;
-                $ingresosPresuntos['segunda']=(isset($totalIngresos2da['Que no generan mov. de fondos']))?$totalIngresos2da['Que no generan mov. de fondos']:0;
-                $ingresosPresuntos['tercera']=(isset($totalIngresos3ra['Que no generan mov. de fondos']))?$totalIngresos3ra['Que no generan mov. de fondos']:0;
-                $ingresosPresuntos['cuarta']=(isset($totalIngresos4ta['Que no generan mov. de fondos']))?$totalIngresos4ta['Que no generan mov. de fondos']:0;
-                $ingresospresuntosTotal = $ingresosPresuntos['primera']+$ingresosPresuntos['segunda']+$ingresosPresuntos['tercera']+$ingresosPresuntos['cuarta'];
+                /*$ingresosPresuntos['primera']=(isset($totalIngresos3ra['No Gravado IVA']))?$totalIngresos3ra['No Gravado IVA']:0;
+                $ingresosPresuntos['segunda']=(isset($totalIngresos2da['No Gravado IVA']))?$totalIngresos2da['No Gravado IVA']:0;
+                $ingresosPresuntos['tercera']=(isset($totalIngresos3ra['No Gravado IVA']))?$totalIngresos3ra['No Gravado IVA']:0;
+                $ingresosPresuntos['cuarta']=(isset($totalIngresos4ta['No Gravado IVA']))?$totalIngresos4ta['No Gravado IVA']:0;*/
+                $ingresospresuntosTotal =0; //$ingresosPresuntos['primera']+$ingresosPresuntos['segunda']+$ingresosPresuntos['tercera']+$ingresosPresuntos['cuarta'];
                 
-                $gastosNoDeducibles['primera']=(isset($totalGastos1ra['No deducibles']))?$totalGastos1ra['No deducibles']:0;
+                /*$gastosNoDeducibles['primera']=(isset($totalGastos1ra['No deducibles']))?$totalGastos1ra['No deducibles']:0;
                 $gastosNoDeducibles['segunda']=(isset($totalGastos2da['No deducibles']))?$totalGastos2da['No deducibles']:0;
                 $gastosNoDeducibles['tercera']=(isset($totalGastos3ra['No deducibles']))?$totalGastos3ra['No deducibles']:0;
                 $gastosNoDeducibles['terceraEmpresa']=(isset($totalGastos3raEmpresa['No deducibles']))?$totalGastos3raEmpresa['No deducibles']:0;
-                $gastosNoDeducibles['cuarta']=(isset($totalGastos4ta['Que no generan mov. de fondos']))?$totalGastos4ta['Que no generan mov. de fondos']:0;
-                $gastosNoDeduciblesTotal = $gastosNoDeducibles['primera']+$gastosNoDeducibles['segunda']
-                        +$gastosNoDeducibles['tercera']+$gastosNoDeducibles['terceraEmpresa']+$gastosNoDeducibles['cuarta'];
+                $gastosNoDeducibles['cuarta']=(isset($totalGastos4ta['Que no generan mov. de fondos']))?$totalGastos4ta['Que no generan mov. de fondos']:0;    */           
+                /*
+                 * Tengo que mostrar esto
+                Debugger::dump($gastosNoDeducibles['primera']);
+                Debugger::dump($gastosNoDeducibles['segunda']);
+                Debugger::dump($gastosNoDeducibles['tercera']);
+                Debugger::dump($gastosNoDeducibles['terceraEmpresa']);
+                Debugger::dump($gastosNoDeducibles['cuarta']);
+                */
+                $gastosNoDeduciblesTotal = 0;/*$gastosNoDeducibles['primera']+$gastosNoDeducibles['segunda']
+                        +$gastosNoDeducibles['tercera']+$gastosNoDeducibles['terceraEmpresa']+$gastosNoDeducibles['cuarta']*/
                 
-                $gananciasexentas['primera']=(isset($totalIngresos1ra['Exentos, no grav. o no comput']))?$totalIngresos1ra['Exentos, no grav. o no comput']:0;
+                //aca vamos a sumar en gastos no deducibles todas las cuentas del rubro 5980010 menos 598001001 que es consumos
+                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001002"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001003"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001004"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001005"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001006"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001007"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001008"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001009"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001010"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001011"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001012"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001013"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001014"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001015"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001016"],$periodoActual,$keysCuentas,'todos',1);                
+                $gastosNoDeduciblesTotal+= sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001017"],$periodoActual,$keysCuentas,'todos',1);                
+                
+                /*$gananciasexentas['primera']=(isset($totalIngresos1ra['Exentos, no grav. o no comput']))?$totalIngresos1ra['Exentos, no grav. o no comput']:0;
                 $gananciasexentas['segunda']=(isset($totalIngresos2da['No computab.']))?$totalIngresos2da['No computab.']:0;
                 $gananciasexentas['segunda']+=(isset($totalIngresos2da['Exentos, no grav. o no grav.']))?$totalIngresos2da['Exentos, no grav. o no grav.']:0;
                 $gananciasexentas['tercera']=(isset($totalIngresos3ra['No computab.']))?$totalIngresos3ra['No computab.']:0;
@@ -2236,7 +2669,7 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 $gananciasexentas['cuarta']+=(isset($totalIngresos4ta['No computab.']))?$totalIngresos4ta['No computab.']:0;
                 $gananciasexentas['cuarta']=(isset($totalIngresos4ta['Exentos o no gravados']))?$totalIngresos4ta['Exentos o no gravados']:0;
                 $gananciasexentasTotal = $gananciasexentas['primera']+$gananciasexentas['segunda']
-                        +$gananciasexentas['tercera']+$gananciasexentas['terceraEmpresa']+$gananciasexentas['cuarta'];
+                        +$gananciasexentas['tercera']+$gananciasexentas['terceraEmpresa']+$gananciasexentas['cuarta'];*/
                 
                 $gananciasexentasTotal2 = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["606"],$periodoActual,$keysCuentas,'todos',-1);
                 $conceptosQueJustificanErog = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["6080"],$periodoActual,$keysCuentas,'todos',1);
@@ -2249,22 +2682,26 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 $AmortizacionesdejejercicioTotal = $Amortizacionesdejejercicio['primera']+$Amortizacionesdejejercicio['segunda']
                         +$Amortizacionesdejejercicio['tercera']+$Amortizacionesdejejercicio['terceraEmpresa']+$Amortizacionesdejejercicio['cuarta'];
                 
-                $gastospresuntos['primera']=(isset($totalGastos1ra['Que no generan mov. de fondos']))?$totalGastos1ra['Que no generan mov. de fondos']:0;
+                /*$gastospresuntos['primera']=(isset($totalGastos1ra['Que no generan mov. de fondos']))?$totalGastos1ra['Que no generan mov. de fondos']:0;
                 $gastospresuntos['segunda']=(isset($totalGastos2da['Que no generan mov. de fondos']))?$totalGastos2da['Que no generan mov. de fondos']:0;
                 $gastospresuntos['tercera']=(isset($totalGastos3ra['Que no generan mov. de fondos']))?$totalGastos3ra['Que no generan mov. de fondos']:0;
                 $gastospresuntos['terceraEmpresa']=(isset($totalGastos3raEmpresa['Que no generan mov. de fondos']))?$totalGastos3raEmpresa['Que no generan mov. de fondos']:0;
-                $gastospresuntos['cuarta']=(isset($totalGastos4ta['Que no generan mov. de fondos']))?$totalGastos4ta['Que no generan mov. de fondos']:0;
-                $gastospresuntosTotal = $gastospresuntos['primera']+$gastospresuntos['segunda']
-                        +$gastospresuntos['tercera']+$gastospresuntos['terceraEmpresa']+$gastospresuntos['cuarta'];
+                $gastospresuntos['cuarta']=(isset($totalGastos4ta['Que no generan mov. de fondos']))?$totalGastos4ta['Que no generan mov. de fondos']:0;*/
+                $gastospresuntosTotal = 0/*$gastospresuntos['primera']+$gastospresuntos['segunda']
+                        +$gastospresuntos['tercera']+$gastospresuntos['terceraEmpresa']+$gastospresuntos['cuarta']*/;
                 
-                $primera=$ingresosPresuntos['primera']+$gastosNoDeducibles['primera'];
+                /*$primera=$ingresosPresuntos['primera']+$gastosNoDeducibles['primera'];
                 $segunda=$ingresosPresuntos['segunda']+$gastosNoDeducibles['segunda'];
                 $tercera=$ingresosPresuntos['tercera']+$gastosNoDeducibles['tercera'];
-                $cuarta=$ingresosPresuntos['cuarta']+$gastosNoDeducibles['cuarta'];
+                $cuarta=$ingresosPresuntos['cuarta']+$gastosNoDeducibles['cuarta'];*/
                 $totalOtrosConceptosQueNoJustificanErog=$ingresospresuntosTotal+$gastosNoDeduciblesTotal;
                 //sumar la cuenta de ganancias aca
                 $totalOtrosConceptosQueNoJustificanErog+=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["506110001"],$periodoActual,$keysCuentas,'todos',1);                
                 $totalOtrosConceptosQueNoJustificanErog+=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["597000"],$periodoActual,$keysCuentas,'todos',1);     
+                $totalOtrosConceptosQueNoJustificanErog+=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["599001002"],$periodoActual,$keysCuentas,'todos',1);     
+                $totalOtrosConceptosQueNoJustificanErog+=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["599001003"],$periodoActual,$keysCuentas,'todos',1);     
+                $totalOtrosConceptosQueNoJustificanErog+=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["599001004"],$periodoActual,$keysCuentas,'todos',1);     
+                $totalOtrosConceptosQueNoJustificanErog+=sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["599001005"],$periodoActual,$keysCuentas,'todos',1);     
                 
                 $columnaItotal=$patrimonioNetoPF[$periodoActual] + (($resultadoImpositivo<0)?$resultadoImpositivo*-1:0)+$totalOtrosConceptosQueNoJustificanErog+$totalDeudasGenerales['nodeducible'];
                 $columnaIItotal=$patrimonioInicial + (($resultadoImpositivo>=0)?$resultadoImpositivo:0)
@@ -2279,6 +2716,33 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 <th colspan="1" class="tdWithNumber"> <?php echo number_format($totalOtrosConceptosQueNoJustificanErog, 2, ",", ".");?> </th>
                 <td colspan="1">  </td>
             </tr>                                            
+            <?php
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["506110001"],$periodoActual,$keysCuentas,'todos',1,1);                
+
+                //completar esto
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001002"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001003"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001004"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001005"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001006"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001007"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001008"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001009"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001010"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001011"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001012"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001013"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001014"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001015"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001016"],$periodoActual,$keysCuentas,'todos',1,1);                
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["598001017"],$periodoActual,$keysCuentas,'todos',1,1);                
+
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["597000"],$periodoActual,$keysCuentas,'todos',1,1);     
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["599001002"],$periodoActual,$keysCuentas,'todos',1,1);     
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["599001003"],$periodoActual,$keysCuentas,'todos',1,1);     
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["599001004"],$periodoActual,$keysCuentas,'todos',1,1);     
+                mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["599001005"],$periodoActual,$keysCuentas,'todos',1,1);     
+            ?>
             <tr class="">
                 <th colspan="3">Deducciones generales que exceden el tope</th>                
                 <th colspan="1" class="tdWithNumber"> <?php echo number_format($totalDeudasGenerales['nodeducible'], 2, ",", ".");?> </th>
@@ -2290,6 +2754,9 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 <th colspan="1" class="tdWithNumber"> <?php /*echo number_format($gananciasexentasTotal, 2, ",", ".");*/?>
                     <?php echo number_format($gananciasexentasTotal2, 2, ",", ".");?> </th>
             </tr>
+            <?php
+            mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["606"],$periodoActual,$keysCuentas,'todos',-1,2);
+            ?>
             <tr class="">
                 <th colspan="3"> Bs. recibidos por herencia, legado o donaci&oacute;n </th>
                 <?php
@@ -2297,12 +2764,18 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 <th colspan="1"> </th>
                 <th colspan="1" class="tdWithNumber"> <?php echo number_format($bienesHerencia, 2, ",", ".");?> </th>
             </tr>
+            <?php
+            mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["6070"],$periodoActual,$keysCuentas,'todos',-1,2);
+            ?>
             <tr class="">
                 <th colspan="3"> Gastos que no implican erogaciones de fondos 
                     correspondientes a cada categoria</th>
                 <th colspan="1"> </th>
                 <th colspan="1" class="tdWithNumber"> <?php echo number_format($conceptosQueJustificanErog, 2, ",", ".");?> </th>
             </tr>
+            <?php
+            mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,["6080"],$periodoActual,$keysCuentas,'todos',1,2);
+            ?>
             <tr class="">
                 <th colspan="3"> Otros conceptos que justifican erogacion y/o 
                     aumentos patrimoniales(Incluye amortizacion de cada categoria)</th>
@@ -2365,7 +2838,10 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <?php
-function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nombreNota,$fechaInicioConsulta,$fechaFinConsulta,&$total){
+function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nombreNota,$fechaInicioConsulta,$fechaFinConsulta,&$total,$firstColumnColspan=null){
+    if(is_null($firstColumnColspan)){
+        $firstColumnColspan=4;
+    }
     $mostrarTotal = false;
     $periodoActual = date('Y', strtotime($fechaInicioConsulta));
     $totalNota = [];
@@ -2391,7 +2867,9 @@ function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas
                
                  ?>
                 <tr class="trnoclickeable trTitle">
-                    <th colspan="4" class=" "><?php echo $nombreNota ?></th>
+                    <th colspan="<?php echo $firstColumnColspan?>" class=" "><?php echo $nombreNota ?></th>
+                    <th colspan="" class=" "></th>
+                    <th colspan="" class=" "></th>
                 </tr>
                 <?php
             }
@@ -2405,7 +2883,7 @@ function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas
                 }
                 ?>
                  <tr>
-                    <td colspan="2"><?php echo $arrayCuentasxPeriodos[$numeroCuenta]['nombrecuenta'].$datosCBU;//aca tengo que agregar el CBU si existe ?></td>
+                    <td colspan="<?php echo $firstColumnColspan?>"><?php echo $arrayCuentasxPeriodos[$numeroCuenta]['nombrecuenta'].$datosCBU;//aca tengo que agregar el CBU si existe ?></td>
                 <?php                   
                     $charinicial = substr($numeroCuenta, 0, 1);        
                     $subtotal = $arrayCuentasxPeriodos[$numeroCuenta][$periodoActual];;
@@ -2444,7 +2922,7 @@ function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas
     }
     if($mostrarTotal){ ?>
         <tr class="trnoclickeable">
-            <th colspan="2" class="">Subtotal <?php echo $nombreNota ?></th>
+            <th colspan="<?php echo $firstColumnColspan?>" class="">Subtotal <?php echo $nombreNota ?></th>
             <th  class="numericTD tdborder" style="width:90px"><?php echo number_format($totalNota['apertura'], 2, ",", ".")?></th>
             <th  class="numericTD tdborder" style="width:90px"><?php echo number_format($totalNota[$periodoActual], 2, ",", ".")?></th>            
         </tr>
@@ -2553,35 +3031,41 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
             if(isset($arrayCuentasxPeriodos[$numerodecuenta]['periodo'])){
                 $periodoBDU = $arrayCuentasxPeriodos[$numerodecuenta]['periodo'];  
             }else{
-                $periodoBDU = date('m-Y', strtotime($fechaInicioConsulta));
+                $periodoBDU = -1;
             }
+            if($periodoBDU!=-1){
+                $pemesBDU = substr($periodoBDU, 0, 2);
+                $peanioBDU = substr($periodoBDU, 3);
 
-            $pemesBDU = substr($periodoBDU, 0, 2);
-            $peanioBDU = substr($periodoBDU, 3);
+                $cuatrimestre = 1;
+                switch ($pemesBDU){
+                    case '1':
+                    case '2':
+                    case '3':
+                    case '4':
+                        $cuatrimestre = 1;
+                    break;
+                    case '5':
+                    case '6':
+                    case '7':
+                    case '8':
+                        $cuatrimestre = 2;
+                    break;
+                    case '9':
+                    case '10':
+                    case '11':
+                    case '12':
+                        $cuatrimestre = 3;
+                    break;
+                }    
+            }else{
+                $periodoBDU="01-1990";
+                $peanioBDU="1990";
+            }
             
-            $cuatrimestre = 1;
-            switch ($pemesBDU){
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                    $cuatrimestre = 1;
-                break;
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                    $cuatrimestre = 2;
-                break;
-                case '9':
-                case '10':
-                case '11':
-                case '12':
-                    $cuatrimestre = 3;
-                break;
-            }    
             $periodoActual = date('Y', strtotime($fechaInicioConsulta));
-            $valororigen =  $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];                
+            $valororigen =  $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];   
+            $porcentajeamortizacion =  1;                
             if(isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionacumulada'])){
                 $amortizacionacumulada =  $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionacumulada'];
                 $porcentajeamortizacion =  $arrayCuentasxPeriodos[$numerodecuenta]['porcentajeamortizacion'];
@@ -2591,8 +3075,36 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
                 $porcentajeamortizacion =  0;
                 $amortizacionejercicio =  0;
             }
-
-            $subtotalAmortizacion = $amortizacionacumulada+$amortizacionejercicio;
+            $d1 = new DateTime('01-'.$periodoBDU);
+            $d2 = new DateTime($fechaFinConsulta);
+            $interval = $d2->diff($d1);
+            $aniosamortizados = $interval->format('%y')*1 + (($interval->format('%m')*1>0)?1:0);
+            $topeAmortizacion = ($porcentajeamortizacion!=0)?(100/$porcentajeamortizacion):1000;
+            /*Debugger::dump( $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta']);
+            Debugger::dump('aniosamortizados');
+            Debugger::dump($aniosamortizados);
+            Debugger::dump('topeAmortizacion');
+            Debugger::dump($topeAmortizacion);*/
+             if($aniosamortizados<=$topeAmortizacion){
+                if(($aniosamortizados)<=1){
+                    $amortizacionacumulada = 0;
+                }else{
+                    $amortizacionacumulada = ($porcentajeamortizacion/100)*$valororigen*($aniosamortizados-1);
+                }
+                if(($aniosamortizados)==0){
+                    $amortizacionEjercicio = 0;
+                }else{
+                    $amortizacionEjercicio = ($porcentajeamortizacion/100)*$valororigen;
+                }
+            }else{
+                $amortizacionacumulada = $valororigen;
+                $amortizacionEjercicio =  0;
+            }    
+           
+            //si esta echo el asiento entonces la amortizacion acumulada tiene que restar la amortizacion del ejercicio
+            $topeAmortizacionAnterior = ($porcentajeamortizacion!=0)?(100/$porcentajeamortizacion):1000;        
+                       
+            $subtotalAmortizacion = $amortizacionacumulada/*+$amortizacionejercicio*/;
             $valorresidual = $valororigen - $subtotalAmortizacion;
             $coefActualizacion = 1;//DE DONDE SALE ESTO???
             $amortizacionDeducible = $amortizacionejercicio * $coefActualizacion;
@@ -2601,8 +3113,32 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
             $pemes = date('m', strtotime($fechaInicioConsulta));
             $peanio = date('Y', strtotime($fechaInicioConsulta));
 
-            $alinicio = ($peanio==$peanioBDU)?0:$valororigen;
-            $altas = ($peanio==$peanioBDU)?$valororigen:0;
+            if(isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
+                foreach ($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'] as $kae => $amortespecial) {
+                    if($kae==$peanio){
+                        //aca podemos estar seguros q hay una amortizacion esecial para este periodo 
+                        $amortizacionEjercicio = $amortespecial['ejercicio'];
+                        $amortizacionacumulada = $amortespecial['amortizacion'];
+                        //Debugger::dump("alv todo tengo amort esp");
+                        //Debugger::dump($amortespecial['ejercicio']);
+                    }
+                }
+            }         
+            
+           
+            $valorresidual = $valororigen - $subtotalAmortizacion;
+            $coefActualizacion = 1;//DE DONDE SALE ESTO???
+            $amortizacionDeducible = $amortizacionEjercicio * $coefActualizacion;
+            $valorResidualImpositivo = $coefActualizacion * $valorresidual;
+          
+            if(($aniosamortizados)!=0){
+                $alinicio = ($peanio==$peanioBDU)?0:$valororigen;
+                $altas = ($peanio==$peanioBDU)?$valororigen:0;
+            }else{
+                $alinicio = 0;
+                $altas = 0;
+            }
+            
             $transferencias=0;//DE DONDE SALE ESTO???
             $bajas=0;//DE DONDE SALE ESTO???
             $revaluo=0;//DE DONDE SALE ESTO???
@@ -2659,7 +3195,7 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
                         <td><?php echo $bienDeuso['calle'];?></td>
                         <td><?php echo $bienDeuso['piso'];?></td>
                         <td><?php echo $bienDeuso['depto'];?></td>
-                        <td><?php echo $bienDeuso['Localidad']['nombre'];?></td>
+                        <td><?php echo $bienDeuso['Localidade']['nombre'];?></td>
                         <td><?php echo $bienDeuso['codigopostal'];?></td>
                         <td><?php echo $bienDeuso['Localidade']['Partido']['nombre'];?></td>
                         <td><?php echo $bienDeuso['catastro'];?></td>
@@ -2751,7 +3287,7 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
         }
         ?>
         <tr class="trnoclickeable trTitle">
-            <th colspan="2"><?php echo $nombrePrefijo; ?></th>
+            <th colspan="4"><?php echo $nombrePrefijo; ?></th>
             <th colspan=""></th>
             <th colspan=""></th>
         </tr>
@@ -2792,7 +3328,11 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
                 break;
             }    
             $periodoActual = date('Y', strtotime($fechaInicioConsulta));
-            $valororigen =  $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];                
+            
+            
+            $valororigen =  $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];          
+            $valorfinal =  $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];          
+
             if(isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionacumulada'])){
                 $amortizacionacumulada =  $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionacumulada'];
                 $porcentajeamortizacion =  $arrayCuentasxPeriodos[$numerodecuenta]['porcentajeamortizacion'];
@@ -2802,18 +3342,24 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
                 $porcentajeamortizacion =  0;
                 $amortizacionejercicio =  0;
             }
-
+            
             $subtotalAmortizacion = $amortizacionacumulada+$amortizacionejercicio;
-            $valorresidual = $valororigen - $subtotalAmortizacion;
+            
+            $pemes = date('m', strtotime($fechaInicioConsulta));
+            $peanio = date('Y', strtotime($fechaInicioConsulta));
+            
+            if($peanio==$peanioBDU){
+                $valorresidual = $valorfinal - $subtotalAmortizacion;
+            }else{
+                $valorresidual = $valororigen - $subtotalAmortizacion;
+            }
             $coefActualizacion = 1;//DE DONDE SALE ESTO???
             $amortizacionDeducible = $amortizacionejercicio * $coefActualizacion;
             $valorResidualImpositivo = $coefActualizacion * $valorresidual;
 
-            $pemes = date('m', strtotime($fechaInicioConsulta));
-            $peanio = date('Y', strtotime($fechaInicioConsulta));
-
+            
             $alinicio = ($peanio==$peanioBDU)?0:$valororigen;
-            $altas = ($peanio==$peanioBDU)?$valororigen:0;
+            $altas = 0;//$peanio==$peanioBDU)?$valororigen:0;
             $transferencias=0;//DE DONDE SALE ESTO???
             $bajas=0;//DE DONDE SALE ESTO???
             $revaluo=0;//DE DONDE SALE ESTO???
@@ -2847,14 +3393,13 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
          
             ?>
             <tr>
-                <td colspan="2"><?php echo $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'];?></td>
+                <td colspan="4"><?php echo $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'];?></td>
                 <td class="tdWithNumber"><?php echo number_format($alinicio+$altas, 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($valorresidual, 2, ",", ".") ?></td>               
             </tr>
             <tr>
                 <!--vamos a mostrar una nueva row con los datos extras del bien de uso-->
                 <?php
-                            
                 if(!isset($arrayCuentasxPeriodos[$numerodecuenta]['biendeuso'])){
                       ?>
                     <td colspan ="13">Esta cuenta no tiene un bien de uso relacionado</td>
@@ -2879,7 +3424,7 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
                             </p>
                         </td>
                         <?php
-                    }else if($bienDeuso['tipo']=='Automotores'){
+                    }else if($bienDeuso['tipo']=='Automotor'){
                         ?>
                         <td colspan="4"><p> 
                             Fecha adq:<?php echo $bienDeuso['fechaadquisicion'];?>
@@ -2926,7 +3471,7 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
                           ?>
                         <td colspan="4"><p>
                         Fecha adq:<?php echo $bienDeuso['fechaadquisicion'];?>
-                        Detalle:<?php echo $bienDeuso['detalle'];?></p></td>
+                        Detalle:<?php echo $bienDeuso['descripcion'];?></p></td>
                         <?php
                     }
                 }            
@@ -2936,12 +3481,12 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
             <?php
             if(!isset($total['apertura']))$total['apertura']=0;
             if(!isset($total[$periodoActual]))$total[$periodoActual]=0;
-            $total['apertura']+=$arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
-            $total[$periodoActual]+=$arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $total['apertura']+=$alinicio+$altas;
+            $total[$periodoActual]+=$valorresidual;
         }
          ?>
             <tr>
-                <th colspan="2"> Subtotal <?php echo $nombrePrefijo;?></th>
+                <th colspan="4"> Subtotal <?php echo $nombrePrefijo;?></th>
                 <td class="tdWithNumber"><?php echo number_format($totalPrefijo['alinicio']+$totalPrefijo['altas'], 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($totalPrefijo['valorresidual'], 2, ",", ".") ?></td>               
             </tr>
@@ -2978,7 +3523,7 @@ function mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$n
         }
         ?>
         <tr class="trnoclickeable trTitle">
-            <th colspan="2"><?php echo $nombrePrefijo; ?></th>
+            <th colspan="4"><?php echo $nombrePrefijo; ?></th>
             <th colspan=""></th>
             <th colspan=""></th>
         </tr>
@@ -3004,7 +3549,7 @@ function mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$n
          
             ?>
             <tr>
-                <td colspan="2"><?php echo $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'];?></td>
+                <td colspan="4"><?php echo $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'];?></td>
                 <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual], 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta][$periodoActual], 2, ",", ".") ?></td>                
             </tr>
@@ -3015,7 +3560,7 @@ function mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$n
         }
          ?>
         <tr>
-            <th colspan="2"> Subtotal <?php echo $nombrePrefijo;?></th>
+            <th colspan="4"> Subtotal <?php echo $nombrePrefijo;?></th>
             <th class="tdWithNumber"><?php echo number_format($totalPrefijo['apertura'], 2, ",", ".") ?></th>
             <th class="tdWithNumber"><?php echo number_format($totalPrefijo['periodoActual'], 2, ",", ".") ?></th>            
         </tr>
@@ -3026,7 +3571,7 @@ function mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$n
 }    
 function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nombreNota,$columnas,$nombreGastos,$colspanGastos,
         $fechaInicioConsulta,$fechaFinConsulta,$totalIngreso){
-    //vamos a extender la funcionalidad de esta funcion para que abarque tmb mostrary no solo calcular
+     //vamos a extender la funcionalidad de esta funcion para que abarque tmb mostrary no solo calcular
     //$numerofijo = "60101";
     //Una nota puede tener muchos prefijos y vamos a totalizar los prefijos por separado
     //y devolver el total de la nota.
@@ -3034,6 +3579,7 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
     $periodoActual = date('Y', strtotime($fechaInicioConsulta));
     $totalNota = [];
     $totalNota[$periodoActual]=0;
+    $totalNota['resultadoneto']=0;
     foreach ($columnas as $columna) {
         if(!isset($totalNota[$columna]))$totalNota[$columna]=0;
     }
@@ -3042,7 +3588,10 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
         'Gastos deducibles'
     ];
     $columnasAgrupadas=[
-        'Que Generan mov. de fondos','Que no generan mov. de fondos','Amortiz.'
+        'Que Generan mov. de fondos','Que no generan mov. de fondos','Amortiz.',
+        'Gravado IVA','No Gravado IVA',
+        'Que Imp. Erog.','Que No Imp. Erog.',
+        'Compras y Gastos Imp. al costo','Compras y Gastos No Imp. al costo'
     ];
     $columnasInicio=[
         'Ingresos','Compras y Gastos','Gastos'
@@ -3066,7 +3615,6 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                 </tr>
                 <tr>
                 <?php
-                $columnas3ra=['Ingresos','Que Generan mov. de fondos','Que no generan mov. de fondos','No computab.','Exentos o no gravados'];            
                 foreach ($columnas as $kc => $columna) {
                     if(in_array($columna,$columnasAgrupadoras)){
                         echo '<td colspan="'.$colspanGastos.'">'.$columna.'</td>';
@@ -3138,6 +3686,11 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
             }
         }
     }
+    foreach ($columnas as $kc => $columna) {
+        if(!isset($totalNota[$columna])) {
+            $totalNota[$columna]=0;
+        }
+    }
     if($mostrarTotal){ ?>
         <tr class="trnoclickeable">
             <th class="tdborder">Total de  <?php  echo $nombreNota; ?></th>
@@ -3159,11 +3712,45 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                         if(!in_array($columna,$columnasAgrupadoras)&&!in_array($columna, $columnasInicio)){
                             //if columna = "Amortiz." entonces en ingreso es "No computab."
                             if($columna=="Amortiz."){
-                                $subtotal = $totalIngreso["No computab."]-$totalNota[$columna];                                
+                                $subtotal = (isset($totalIngreso["No computab."])?$totalIngreso["No computab."]:0)-$totalNota[$columna];                                
                             }else if($columna=="No deducibles"){
-                                $subtotal = $totalIngreso["Exentos o no gravados"]-$totalNota[$columna];                                
+                                $subtotal = (isset($totalIngreso["Exentos o no gravados"])?$totalIngreso["Exentos o no gravados"]:0)-$totalNota[$columna];                                
                             }else if($columna=='Costo de bienes de cambio'){
                                 $subtotal = $totalNota[$columna];                                
+                            }else if($columna=='Costo de bienes de cambio'){
+                                $subtotal = $totalNota[$columna];                                
+                            }else if($columna=='Que Imp. Erog.'){
+                                if(isset($totalIngreso['Que Imp. Erog.'])){
+                                    $subtotal = $totalIngreso[$columna]-
+                                        $totalNota[$columna];     
+                                }else{
+                                    $subtotal = $totalIngreso['Gravado IVA']-
+                                        $totalNota[$columna];
+                                }
+                            }else if($columna=='Que No Imp. Erog.'){
+                                if(isset($totalIngreso['Que No Imp. Erog.'])){
+                                    $subtotal = $totalIngreso[$columna]-
+                                        $totalNota[$columna];     
+                                }else{
+                                    $subtotal = $totalIngreso['No Gravado IVA']-
+                                        $totalNota[$columna];
+                                }
+                            }else if($columna=='Compras y Gastos Imp. al costo'){
+                                if(isset($totalIngreso['Compras y Gastos Imp. al costo.'])){
+                                    $subtotal = $totalIngreso[$columna]-
+                                        $totalNota[$columna];     
+                                }else{
+                                    $subtotal = $totalIngreso['Gravado IVA']-
+                                        $totalNota[$columna];
+                                }
+                            }else if($columna=='Compras y Gastos No Imp. al costo'){
+                                if(isset($totalIngreso['Compras y Gastos No Imp. al costo'])){
+                                    $subtotal = $totalIngreso[$columna]-
+                                        $totalNota[$columna];     
+                                }else{
+                                    $subtotal = $totalIngreso['No Gravado IVA']-
+                                        $totalNota[$columna];
+                                }
                             }else{
                                 $subtotal = $totalIngreso[$columna]-
                                         $totalNota[$columna];                                
@@ -3178,10 +3765,20 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                 <th class="tdnoborder">Resultado neto de  <?php  echo $nombreNota; ?></th>
                 <?php
                     $costoventa = isset($totalNota['Costo de bienes de cambio'])?$totalNota['Costo de bienes de cambio']:0;
-                    $resultadoneto = 
-                            $totalDiferencia['Que Generan mov. de fondos']+
-                            $totalDiferencia['Que no generan mov. de fondos']-
-                            $totalNota['Amortiz.']-$costoventa;
+                    $resultadoneto = 0;
+
+                    $resultadoneto +=(isset($totalIngreso['Gravado IVA'])?$totalIngreso['Gravado IVA']:0);
+                    $resultadoneto +=(isset($totalIngreso['No Gravado IVA'])?$totalIngreso['No Gravado IVA']:0);
+
+                    $resultadoneto -=(isset($totalNota['Compras y Gastos Imp. al costo'])?$totalNota['Compras y Gastos Imp. al costo']:0);
+                    $resultadoneto -=(isset($totalNota['Compras y Gastos No Imp. al costo'])?$totalNota['Compras y Gastos No Imp. al costo']:0);
+
+                    $resultadoneto -=(isset($totalDiferencia['Que Imp. Erog.'])?$totalDiferencia['Que Imp. Erog.']:0);
+                    $resultadoneto -=(isset($totalDiferencia['Que No Imp. Erog.'])?$totalDiferencia['Que No Imp. Erog.']:0);
+                    $resultadoneto -=(isset($totalDiferencia['Que Generan mov. de fondos'])?$totalDiferencia['Que Generan mov. de fondos']:0);
+                    $resultadoneto -=(isset($totalDiferencia['Que no generan mov. de fondos'])?$totalDiferencia['Que no generan mov. de fondos']:0);
+                    $resultadoneto -=(isset($totalNota['Amortiz.'])?$totalNota['Amortiz.']:0);
+                    $resultadoneto -=$costoventa;
                      $totalNota['resultadoneto']= $resultadoneto;
                     //falta restar Costo de ventas
                     echo '<th  class="numericTD tdborder" style="width:90px">'. number_format($resultadoneto, 2, ",", ".").'</td>';
@@ -3189,7 +3786,14 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                 <th class="tdnoborder" colspan="2">Importe neto que mueve fondos</th>
                 <?php
                     $importenetoquemuevefondos = 
-                            $totalDiferencia['Que Generan mov. de fondos'];
+                            (isset($totalDiferencia['Que Generan mov. de fondos'])?$totalDiferencia['Que Generan mov. de fondos']:0)
+                            +(isset($totalDiferencia['Compras y Gastos Imp. al costo'])?$totalDiferencia['Compras y Gastos Imp. al costo']:0)
+                            +(isset($totalDiferencia['Compras y Gastos No Imp. al costo'])?$totalDiferencia['Compras y Gastos No Imp. al costo']:0);
+
+                            if(isset($totalDiferencia['Que Imp. Erog.'])){
+                                $importenetoquemuevefondos-=$totalDiferencia['Que Imp. Erog.'];
+                            }else{
+                                };
                             if(isset($totalDiferencia['Instrumentos Fcieros. deriv.'])){
                                 $resultadoneto+=$totalDiferencia['Instrumentos Fcieros. deriv.'];                             
                             }
@@ -3213,7 +3817,7 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                 <th class="tdnoborder">Resultado exento/no deducible</th>
                 <?php
                     $resultadoexento = 
-                            $totalDiferencia['No deducibles'];
+                            isset($totalDiferencia['No deducibles'])?$totalDiferencia['No deducibles']:0;
                      if(isset($totalIngreso['No computab.'])){
                                 $resultadoneto+=$totalIngreso['No computab.'];                             
                             };
@@ -3222,10 +3826,12 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                 <th class="tdnoborder" colspan="2">Importe neto que no mueve fondos</th>
                 <?php
                     $importenetoquenomuevefondos = 
-                            $totalDiferencia['Que no generan mov. de fondos'];
+                            isset($totalDiferencia['Que no generan mov. de fondos'])?$totalDiferencia['Que no generan mov. de fondos']:0
+                            -isset($totalDiferencia['Que No Imp. Erog.'])?$totalDiferencia['Que No Imp. Erog.']:0;
                             if(isset($totalDiferencia['Amortiz.'])){
                                 $resultadoneto-=$totalDiferencia['Amortiz.'];                             
                             }                            
+                            
                     //falta restar Costo de ventas
                     echo '<th  class="numericTD tdborder" style="width:90px">'. number_format($importenetoquenomuevefondos, 2, ",", ".").'</td>';
                 ?>
@@ -3394,6 +4000,9 @@ function sumarCuentasEnPeriodo($arrayCuentasxPeriodos,$arrayCuentas,$periodopara
                     case 'costoscompra':                       
                         $total += $arrayCuentasxPeriodos[$numeroCuenta]['costoscompra'][$periodoparasumar];
                         break;
+                    case 'noDedGeneral':                       
+                        $total += $arrayCuentasxPeriodos[$numeroCuenta]['noDedGeneral'][$periodoparasumar];
+                        break;
                     case 'todos':
                         $total += $arrayCuentasxPeriodos[$numeroCuenta][$periodoparasumar];
                         break;
@@ -3405,6 +4014,140 @@ function sumarCuentasEnPeriodo($arrayCuentasxPeriodos,$arrayCuentas,$periodopara
             }
         }
     }
+    return $total*$suma;
+}
+function mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,&$total,$titulo,$numerocuenta,$fechaInicioConsulta,$fechaFinConsulta){
+    $periodoPrevio = date('Y', strtotime($fechaFinConsulta."-1 Years"));
+    $periodoActual =  date('Y', strtotime($fechaFinConsulta));
+    $totalPeriodo1 = isset($arrayCuentasxPeriodos[$numerocuenta][$periodoActual])?$arrayCuentasxPeriodos[$numerocuenta][$periodoActual]:0;
+    if(!isset($total[$periodoActual])){
+                $total[$periodoActual] = 0;//existen estos valores
+            }    
+    if($totalPeriodo1==0)return;
+    ?>
+    <tr>
+        <td colspan="2">
+            <?php echo $titulo ?>
+        </td>
+        <?php
+            echo '<td colspan="2" class="numericTD" style="width: 90px">' .
+                number_format($totalPeriodo1, 2, ",", ".")
+                . "</td>";
+            
+            $total[$periodoActual]+=$totalPeriodo1;
+         
+        ?>
+    </tr>    
+    <?php
+}
+function showRowAnexoICostos($titulo,$actual){
+    if($actual==0)return;
+    ?>
+    <tr>
+        <td colspan="2">
+            <?php echo $titulo?>
+        </td>
+        <td colspan="2" class="numericTD" style="width: 90px">
+        <?php
+         echo number_format($actual, 2, ",", ".");
+         ?></td>
+    </tr>
+    <?php
+}
+function mostrarCuentasEnPeriodo($arrayCuentasxPeriodos,$arrayCuentas,$periodoparasumar,$keysCuentas,$tipoasiento,$suma=null,$columna){
+    $total = 0;
+    $suma = ($suma==null)?0:$suma;
+    foreach ($arrayCuentas as $prefijo) {       
+        $numerofijo = $prefijo;
+        $indexCuentasNumeroFijo = array_keys(
+            array_filter(
+                $keysCuentas,
+                function($var) use ($numerofijo){
+                    return (substr( $var, 0, strlen($numerofijo)  ) == $numerofijo);
+                }
+            )
+        );
+        if(count($indexCuentasNumeroFijo)!=0){ 
+            foreach ($indexCuentasNumeroFijo as $index) {
+                $numeroCuenta = $keysCuentas[$index];
+                $valorcuenta=0;   
+                switch ($tipoasiento) {
+                    case 'apertura':
+                        $valorcuenta += $arrayCuentasxPeriodos[$numeroCuenta]['apertura'][$periodoparasumar];
+                        $total += $arrayCuentasxPeriodos[$numeroCuenta]['apertura'][$periodoparasumar];
+                        break;
+                    case 'movimientos':
+                        $valorcuenta += $arrayCuentasxPeriodos[$numeroCuenta]['movimiento'][$periodoparasumar];
+                        $total += $arrayCuentasxPeriodos[$numeroCuenta]['movimiento'][$periodoparasumar];
+                        break;
+                    case 'distribucion de dividendos':
+                        $valorcuenta += $arrayCuentasxPeriodos[$numeroCuenta]['distribucion de dividendos'][$periodoparasumar];
+                        $total += $arrayCuentasxPeriodos[$numeroCuenta]['distribucion de dividendos'][$periodoparasumar];
+                        break;
+                    case 'Absorcion de perdida acumulada':
+                        $valorcuenta += $arrayCuentasxPeriodos[$numeroCuenta]['Absorcion de perdida acumulada'][$periodoparasumar];
+                        $total += $arrayCuentasxPeriodos[$numeroCuenta]['Absorcion de perdida acumulada'][$periodoparasumar];
+                        break;
+                    case 'costoscompra':                       
+                        $valorcuenta += $arrayCuentasxPeriodos[$numeroCuenta]['costoscompra'][$periodoparasumar];
+                        $total += $arrayCuentasxPeriodos[$numeroCuenta]['costoscompra'][$periodoparasumar];
+                        break;
+                    case 'todos':
+                        $valorcuenta += $arrayCuentasxPeriodos[$numeroCuenta][$periodoparasumar];
+                        $total += $arrayCuentasxPeriodos[$numeroCuenta][$periodoparasumar];
+                        break;
+                    default:
+                        $valorcuenta += $arrayCuentasxPeriodos[$numeroCuenta][$periodoparasumar];
+                        $total += $arrayCuentasxPeriodos[$numeroCuenta][$periodoparasumar];
+                        break;
+                }
+               ?>
+                <tr>
+                    <td>
+                       
+                    </td>
+                    <td colspan="2">
+                        <?php
+                        echo $arrayCuentasxPeriodos[$numeroCuenta]['nombrecuenta']
+                        ?>
+                    </td>
+                    <?php
+                    if($columna==1){
+                    ?>
+                    <td class="tdWithNumber">
+                        <?php
+                         echo number_format($valorcuenta*$suma, 2, ",", ".")
+                        ?>
+                    </td>
+                    <?php }else{
+                    ?>
+                    <td class="tdWithNumber">
+                       
+                    </td>                   
+                    <?php    
+                    } 
+                    if($columna==2){
+                    ?>
+                    <td class="tdWithNumber">
+                       <?php
+                         echo number_format($valorcuenta*$suma, 2, ",", ".")
+                        ?>
+                    </td>                   
+                    <?php
+                    }else{
+                    ?>
+                    <td class="tdWithNumber">
+                       
+                    </td>                   
+                    <?php    
+                    }
+                    ?>
+                </tr>
+                <?php
+            }
+        }
+    }
+    
     return $total*$suma;
 }
 ?>

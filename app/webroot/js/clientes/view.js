@@ -835,6 +835,29 @@ function catchEliminarDomicilio(){
 		});
 	});
 }
+function catchEliminarAmortizacion(){
+	jQuery(document).ready(function($) {
+		$('.deleteAmortizacion').removeAttr('onclick');
+		$('.deleteAmortizacion').click(function(e) {
+			e.preventDefault();
+			if (!confirm('¿Esta seguro que desea eliminar esta Amortizacion?')) {
+				return false;
+			}
+			var form = $(this).prev();
+			var url = $(form).attr("action");
+			var tr = $(this).closest('tr');
+			url = url + '.json';
+			$.post(url).success(function(res) {
+                            var respuesta = jQuery.parseJSON(res);
+                            callAlertPopint(respuesta.respuesta)
+                            tr.fadeOut(200);
+			}).error(function() {
+                            alert("Error");
+			})
+			return false;
+		});
+	});
+}
 
 /*Organismos*/
 function catchFormOrganismoxCliente(forname){
@@ -946,6 +969,32 @@ function deleteImpcli(impcliid){
 					var midata = jQuery.parseJSON(response);
 					callAlertPopint(midata.respuesta);
 					$('#rowImpcli'+impcliid).hide();
+				},
+				error:function (XMLHttpRequest, textStatus, errorThrown) {
+					alert(textStatus);
+					alert(XMLHttpRequest);
+					alert(errorThrown);
+				}
+			});
+
+		} else {
+			txt = "No se a eliminado el impuesto";
+		}
+	});
+}
+function deleteImpcliProvincia (impcliprovid){
+	jQuery(document).ready(function($) {
+		var r = confirm("Esta seguro que desea eliminar esta provincia?.");
+		if (r == true) {
+			$.ajax({
+				type: "post",  // Request method: post, get
+				url: serverLayoutURL+"/impcliprovincias/delete/"+impcliprovid, // URL to request
+				data: "",  // post data
+				success: function(response) {
+					var midata = jQuery.parseJSON(response);
+                                         $('#myModal').modal('hide');
+					callAlertPopint(midata.respuesta);
+					
 				},
 				error:function (XMLHttpRequest, textStatus, errorThrown) {
 					alert(textStatus);
@@ -2537,7 +2586,8 @@ function loadFormBiendeuso(cliid,biendeusoid){
                 $("#Bienesdeuso0Tipo").trigger("change");
                 $("#Bienesdeuso0Porcentajeamortizacion").on('change', function() {
                     var valororiginal = $("#Bienesdeuso0Valororiginal").val();
-                    var amortizacionperiodo = valororiginal / $("#Bienesdeuso0Porcentajeamortizacion").val();
+                    var porcentajeAmortizacion = $("#Bienesdeuso0Porcentajeamortizacion").val();
+                    var amortizacionperiodo = valororiginal * porcentajeAmortizacion / 100;
                     if($("#Bienesdeuso0Importeamorteizaciondelperiodo is:visible")){
                         $("#Bienesdeuso0Importeamorteizaciondelperiodo").val(amortizacionperiodo);                                    
                     }           
@@ -2637,7 +2687,6 @@ function loadFormBiendeuso(cliid,biendeusoid){
                                     [
                                        respuesta.bienesdeuso.Bienesdeuso.tipo,
                                        respuesta.bienesdeuso.Bienesdeuso.periodo,
-                                       respuesta.bienesdeuso.Bienesdeuso.titularidad,
                                        descripcionBDU,
                                     ];
                                 var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormBiendeuso('+respuesta.bienesdeuso.Bienesdeuso.cliente_id+','+bienesdeusoID+')" alt="">';
@@ -2665,6 +2714,7 @@ function loadFormBiendeuso(cliid,biendeusoid){
                 $("#Bienesdeuso0LocalidadeId_chosen").css('width', 'auto');
                 $("#Bienesdeuso0ModeloId_chosen").css('width', 'auto');
                 reloadDatePickers();
+                catchEliminarAmortizacion();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(errorThrown);

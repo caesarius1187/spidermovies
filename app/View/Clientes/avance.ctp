@@ -114,7 +114,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
           <?php
           $HayImpuestosHabilitados = false;
           //Aqui se pinta la caja que identifica a que impuesto pertenece cada row.
-        foreach ($cliente["Impcli"] as $impcli){  
+            foreach ($cliente["Impcli"] as $impcli){  
               if(Count($impcli['Periodosactivo'])!=0&&($impcli['Impuesto']['organismo']!='banco')){
                 $HayImpuestosHabilitados = true;
               }  

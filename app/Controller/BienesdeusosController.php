@@ -89,6 +89,8 @@ class BienesdeusosController extends AppController {
         //vamos a armar el nombre del Bien de uso
         $nombreBDU = " ";
         $nombreCuentaActivable = "";
+        $respuesta['respuesta']='';
+        $respuesta['cuentasactivadas']='';
         switch ($this->request->data['Bienesdeuso'][0]['tipo']){
             //Empresa
             case 'Rodado':
@@ -102,7 +104,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasRodadoValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasRodadoValorOrigen,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasRodadoValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasRodadoValorOrigen,$nombreBDU );
                 }else{
                     $cuentasRodadoValorOrigen=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }
@@ -111,7 +113,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==""
                 )   {
-                    $cuentasRodadoActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasRodadoActualizacion,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasRodadoActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasRodadoActualizacion,$nombreBDU );
                 }else{
                     $cuentasRodadoActualizacion=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
                 }
@@ -129,7 +131,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteterreno_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteterreno_id']==""
                 ){
-                    $cuentasInmuebleTerreno=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleTerreno,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$respuesta['cuentasactivadas'].=$cuentasInmuebleTerreno=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleTerreno,$nombreBDU );
                 }else{
                     $cuentasInmuebleTerreno=$this->request->data['Bienesdeuso'][0]['cuentaclienteterreno_id'];
                 }
@@ -138,7 +140,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteedificacion_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteedificacion_id']==""
                 ){
-                    $cuentasInmuebleEdif=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleEdif,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasInmuebleEdif=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleEdif,$nombreBDU );
                 }else{
                     $cuentasInmuebleEdif=$this->request->data['Bienesdeuso'][0]['cuentaclienteedificacion_id'];
                 }
@@ -147,7 +149,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientemejora_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientemejora_id']==""
                 ){
-                    $cuentasInmuebleMejora=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleMejora,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasInmuebleMejora=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleMejora,$nombreBDU );
                 }else{
                     $cuentasInmuebleMejora=$this->request->data['Bienesdeuso'][0]['cuentaclientemejora_id'];
                 }
@@ -156,7 +158,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==""
                 ){
-                    $cuentasInmuebleActualiz=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleActualiz,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasInmuebleActualiz=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebleActualiz,$nombreBDU );
                 }else{
                     $cuentasInmuebleActualiz=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
                 }
@@ -174,7 +176,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasInstalacionesValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInstalacionesValorOrigen,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasInstalacionesValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInstalacionesValorOrigen,$nombreBDU );
                 }else{
                     $cuentasInstalacionesValorOrigen=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }
@@ -183,7 +185,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==""
                 )   {
-                    $cuentasInstalacionesActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInstalacionesActualizacion,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasInstalacionesActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInstalacionesActualizacion,$nombreBDU );
                 }else{
                     $cuentasInstalacionesActualizacion=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
                 }
@@ -199,7 +201,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasMueblesYUtilesValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasMueblesYUtilesValorOrigen,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasMueblesYUtilesValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasMueblesYUtilesValorOrigen,$nombreBDU );
                 }else{
                     $cuentasMueblesYUtilesValorOrigen=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }
@@ -208,7 +210,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==""
                 )   {
-                    $cuentasMueblesYUtilesActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasMueblesYUtilesActualizacion,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasMueblesYUtilesActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasMueblesYUtilesActualizacion,$nombreBDU );
                 }else{
                     $cuentasMueblesYUtilesActualizacion=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
                 }
@@ -224,7 +226,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasMaquinariasValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasMaquinariasValorOrigen,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasMaquinariasValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasMaquinariasValorOrigen,$nombreBDU );
                 }else{
                     $cuentasMaquinariasValorOrigen=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }
@@ -233,7 +235,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==""
                 )   {
-                    $cuentasMaquinariasActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasMaquinariasActualizacion,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasMaquinariasActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasMaquinariasActualizacion,$nombreBDU );
                 }else{
                     $cuentasMaquinariasActualizacion=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
                 }
@@ -249,7 +251,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasActivosBiologicosValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasActivosBiologicosValorOrigen,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasActivosBiologicosValorOrigen=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasActivosBiologicosValorOrigen,$nombreBDU );
                 }else{
                     $cuentasActivosBiologicosValorOrigen=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }
@@ -258,7 +260,7 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id']==""
                 )   {
-                    $cuentasActivosBiologicosActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasActivosBiologicosActualizacion,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasActivosBiologicosActualizacion=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasActivosBiologicosActualizacion,$nombreBDU );
                 }else{
                     $cuentasActivosBiologicosActualizacion=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
                 }
@@ -281,9 +283,11 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasInmuebles=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebles,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasInmuebles=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasInmuebles,$nombreBDU );
                 }else{
-                    $cuentasInmuebles=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
+                    //Debugger::dump("NO hice la alta del bien de uso");
+                    
+					$cuentasInmuebles=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }
                 $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']=$cuentasInmuebles;
                 break;
@@ -302,9 +306,9 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasAutomotores=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasAutomotores,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasAutomotores=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasAutomotores,$nombreBDU );
                 }else{
-                    $cuentasAutomotores=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
+                    $cuentasAutomotores=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }
                 $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']=$cuentasAutomotores;
                 break;
@@ -313,6 +317,27 @@ class BienesdeusosController extends AppController {
                     $nombreBDU  .= $this->request->data['Bienesdeuso'][0]['marca'];
                 if($this->request->data['Bienesdeuso'][0]['modelo']!="")
                     $nombreBDU  .= " -".$this->request->data['Bienesdeuso'][0]['modelo'];
+                if($this->request->data['Bienesdeuso'][0]['enelpais']){
+                    $prefijo = "130104";
+                }else{
+                    $prefijo = "130203";
+                }
+                if(
+                    $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==0||
+                    $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
+                    $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
+                ){
+                    $respuesta['cuentasactivadas'].=$cuentasNaves=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasNaves,$nombreBDU );
+                }else{
+                    $cuentasNaves=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
+                }
+                $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']=$cuentasNaves;
+                break;
+            case 'Aeronave':
+                if($this->request->data['Bienesdeuso'][0]['matricula']!="")
+                    $nombreBDU  .= $this->request->data['Bienesdeuso'][0]['matricula'];
+                if($this->request->data['Bienesdeuso'][0]['fechaadquisicion']!="")
+                    $nombreBDU  .= " -".$this->request->data['Bienesdeuso'][0]['fechaadquisicion'];
                 if($this->request->data['Bienesdeuso'][0]['enelpais']){
                     $prefijo = "130105";
                 }else{
@@ -323,30 +348,9 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasNaves=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasNaves,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasAeronaves=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasAeronaves,$nombreBDU );
                 }else{
-                    $cuentasNaves=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
-                }
-                $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']=$cuentasNaves;
-                break;
-            case 'Aeronave':
-                if($this->request->data['Bienesdeuso'][0]['matricula']!="")
-                    $nombreBDU  .= $this->request->data['Bienesdeuso'][0]['matricula'];
-                if($this->request->data['Bienesdeuso'][0]['fechaadquisicion']!="")
-                    $nombreBDU  .= " -".$this->request->data['Bienesdeuso'][0]['fechaadquisicion'];
-                if($this->request->data['Bienesdeuso'][0]['enelpais']){
-                    $prefijo = "130104";
-                }else{
-                    $prefijo = "130203";
-                }
-                if(
-                    $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==0||
-                    $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
-                    $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
-                ){
-                    $cuentasAeronaves=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasAeronaves,$nombreBDU );
-                }else{
-                    $cuentasAeronaves=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
+                    $cuentasAeronaves=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }
                 $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']=$cuentasAeronaves;
                 break;
@@ -354,7 +358,7 @@ class BienesdeusosController extends AppController {
                 if($this->request->data['Bienesdeuso'][0]['descripcion']!="")
                     $nombreBDU  .= $this->request->data['Bienesdeuso'][0]['descripcion'];
                 if($this->request->data['Bienesdeuso'][0]['enelpais']){
-                    $prefijo = "130104";
+                    $prefijo = "130114";
                 }else{
                     $prefijo = "130206";
                 }
@@ -363,9 +367,9 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasBienesMueblesRegistrables=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasBienesMueblesRegistrables,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasBienesMueblesRegistrables=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasBienesMueblesRegistrables,$nombreBDU );
                 }else{
-                    $cuentasBienesMueblesRegistrables=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
+                    $cuentasBienesMueblesRegistrables=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']=$cuentasBienesMueblesRegistrables;
                 break;
             case 'Otros bienes':
@@ -381,14 +385,14 @@ class BienesdeusosController extends AppController {
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==null||
                     $this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']==""
                 ){
-                    $cuentasOtrosbienes=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasOtrosbienes,$nombreBDU );
+                    $respuesta['cuentasactivadas'].=$cuentasOtrosbienes=$this->Cuentascliente->altabiendeuso($cliid,$prefijo,$this->Cuenta->cuentasOtrosbienes,$nombreBDU );
                 }else{
-                    $cuentasOtrosbienes=$this->request->data['Bienesdeuso'][0]['cuentaclienteactualizacion_id'];
+                    $cuentasOtrosbienes=$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id'];
                 }$this->request->data['Bienesdeuso'][0]['cuentaclientevalororigen_id']=$cuentasOtrosbienes;
                 break;
         }
         if ($this->Bienesdeuso->saveAll($this->request->data['Bienesdeuso'][0])) {
-            $respuesta['respuesta']='El bien de uso ha sido guardado correctamente.';
+            $respuesta['respuesta'].='El bien de uso ha sido guardado correctamente.';
             $id = $this->Bienesdeuso->getLastInsertID();
             $options = array(
                     'contain'=>[],

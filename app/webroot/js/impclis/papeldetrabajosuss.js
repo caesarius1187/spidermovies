@@ -259,7 +259,7 @@ function cargarAsiento(){
 			apagar301EmpleadorAportesSegSocial*1-
 			apagar302AportesObrasSociales*1-
 			apagarEmbargos*1-
-            apagar935RENATEA*1-
+                        //apagar935RENATEA*1-
 			totalAportesSindicales*1;
 		sueldospersonal = parseFloat(sueldospersonal).toFixed(2);
 		$('#Asiento0Movimiento'+orden+'Haber').val(sueldospersonal);

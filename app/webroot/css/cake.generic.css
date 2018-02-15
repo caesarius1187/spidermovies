@@ -2304,6 +2304,9 @@ transition: all 0.4s ease-in-out;
 .formAddCompra input{
     width: 70px;
 }
+.compraWithError{
+    background-color: #ff9900;
+}
 .formAddImpcliprovincia div {
 	display: inline-block;
     margin: 0px 0px;

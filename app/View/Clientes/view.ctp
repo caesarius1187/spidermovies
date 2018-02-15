@@ -1201,7 +1201,6 @@ if($mostrarView){?>
                     <tr class="biendeuso">
                         <th><?php echo __('Tipo'); ?></th>
                         <th><?php echo __('Periodo'); ?></th>
-                        <th><?php echo __('Titularidad'); ?></th>
                         <th><?php echo __('Descripcion'); ?></th>
                         <th class=""><?php echo __('Acciones'); ?></th>
                     </tr>
@@ -1219,7 +1218,6 @@ if($mostrarView){?>
                             <tr class="biendeuso" id="rowBiendeuso<?php echo $bienesdeuso['id']; ?>">
                                 <td><?php echo $bienesdeuso['tipo']; ?></td>
                                 <td><?php echo $bienesdeuso['periodo']; ?></td>
-                                <td><?php echo $bienesdeuso['titularidad']; ?></td>
                                 <?php
                                 $descripcionBDU = "";
                                 //todo separar en case desc Bien de uso
@@ -2112,6 +2110,8 @@ if($mostrarView){?>
                     'options'=>$localidades,
                     'style'=>'width:250px'));
                 echo $this->Form->input('domicilio',array('label'=>'Domicilio','type'=>'text','style'=>'width:250px'));
+                echo $this->Form->input('titulosecundario',array('label'=>'Titulo Secundario'));
+		echo $this->Form->input('titulouniversitario',array('label'=>'Titulo Universitario'));
                 ?>
             </fieldset>
             <fieldset style="border: 1px solid #1e88e5;">

@@ -339,11 +339,11 @@ if(count($empleado)==0){
                                         $valor = $basicoMinimoCargo;
                                     }
                                     break;
-                                case 162:/*Almuerzo o Refrigerio*/
-                                    /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
-                                    tiene un Acuerdos Remunerativos cargado*/
+                                case 162:/*Almuerzo o Refrigerio*/                                  
                                     $valor = 1;
                                     break;
+                               
+                                
                                 case 175:/*Asignacion Rem 1er Quincena*/
                                     if($numeroliquidacion == 1) {
                                         //Estamos en la primer quincena
@@ -368,7 +368,23 @@ if(count($empleado)==0){
                                                 $aplicafuncion=false;
                                             }
                                         }
-                                    break;        
+                                    break;      
+                                 case 183:/*Titulo Universitario*/                                  
+                                    $valor = $empleado['Empleado']['titulouniversitario'];
+                                    break;
+                                case 184:/*Titulo Secundario*/                                  
+                                    $valor = $empleado['Empleado']['titulosecundario'];
+                                    break;
+                                case 185:/*Ad km menor que 100*/                                  
+                                    if (isset($empleado['Cargo']['kmmenortope']) && $empleado['Cargo']['kmmenortope'] * 1 != 0) {
+                                        $valor = $empleado['Cargo']['kmmenortope'] * 1;
+                                    }
+                                    break;
+                                case 186:/*Ad km mayor que 100*/                                  
+                                    if (isset($empleado['Cargo']['kmmayortope']) && $empleado['Cargo']['kmmayortope'] * 1 != 0) {
+                                        $valor = $empleado['Cargo']['kmmayortope'] * 1;
+                                    }
+                                    break;    
                                 /*case 36:/*Cuota Sindical aca estabamos guardando la cuota sindical extra en el empleado pero
                                 debe ser la misma para todos dependiendo del convenio
                                     $conceptoobligatorio['nombre'] = $empleado['Empleado']['cuotasindical'];

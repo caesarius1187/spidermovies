@@ -169,9 +169,9 @@ class ClientesController extends AppController {
 
                 $this->Paginator->settings = array(
                     'contain' => array(
-                                            'Actividadcliente'=>array(
-                                                    'Cuentasganancia'
-                                            ),
+                        'Actividadcliente'=>array(
+                                'Cuentasganancia'
+                        ),
                         'Grupocliente' => array(
                             'fields' => array('id', 'nombre','estudio_id'),
                         ),
@@ -228,14 +228,15 @@ class ClientesController extends AppController {
                             ],
                             'fields' => array('Impcli.id', 'Impcli.cliente_id', 'Impcli.impuesto_id'),
                         ],
-                                            'Asiento'=>[
+                        'Asiento'=>[
                             'fields'=>['id','tipoasiento'],
                             'conditions'=>[
+                                'Asiento.periodo'=>$pemes . '-' . $peanio,
                                 'Asiento.tipoasiento'=>[
-                                    'compras','ventas','retencionessufridas','retencionesrealizadas'
+                                    'compras','ventas','retencionessufridas','retencionesrealizadas','amortizacion'
                                 ]
                             ]
-                                            ]
+                        ]
                     ),
                     'conditions' => $conditionsClientesAvance,
                     'limit' => 25,

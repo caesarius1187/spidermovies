@@ -103,7 +103,7 @@ $(document).ready(function() {
 												'label'=>false, 
 												'class'=>'inputmontovto',
 												'style' => 'width:70px')); ?></td>
-		<td id="TDEventosimpuesto.".$i.".montorealizado"><?php 
+		<td id="<?php echo "TDEventosimpuesto.".$i.".montorealizado"?>"><?php 
 			echo $this->Form->input('Eventosimpuesto.'.$i.'.montorealizado',array(
 							'value'=>$eventosimpuesto['Eventosimpuesto']['montorealizado'],
 							'label'=>false, 
@@ -119,7 +119,7 @@ $(document).ready(function() {
 				$fchrealizadotoShow=date('d-m-Y',strtotime($eventosimpuesto['Eventosimpuesto']['fchrealizado']));
 			}
 			echo $this->Form->input('Eventosimpuesto.'.$i.'.fchrealizado', array(
-							                      'class'=>'datepicker', 
+							                      'class'=>'datepicker fchrealizado', 
 							                      'type'=>'text',
 							                      'label'=>false,
 							                      'style' => 'width:72px',
@@ -154,11 +154,11 @@ $(document).ready(function() {
 		$id = 0;
 		$nombre = "Pago de impuesto: ".$impclinombre;
 		$descripcion = "Automatico";
-		$fecha = date('d-m-Y');
+		$fecha = $fchrealizadotoShow ;
 		$miAsiento=array();
-        $totalDebe=0;
-        $totalHaber=0;
-        if(!isset($miAsiento['Movimiento'])){
+                $totalDebe=0;
+                $totalHaber=0;
+                if(!isset($miAsiento['Movimiento'])){
 			$miAsiento['Movimiento']=array();
 		}
 		if(isset($asientoyacargado['Asiento'])){

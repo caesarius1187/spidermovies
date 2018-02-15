@@ -45,7 +45,6 @@
                         }
                     }
                 }
-                
             }
         }
         if(!isset($miAsiento['Movimiento'])){

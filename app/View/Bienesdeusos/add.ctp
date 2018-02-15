@@ -5,6 +5,7 @@
 	]);
         $id=0;
         $venta_id = "";
+        $compra_id = $compraid;
         $localidade_id = "";
         $tipo = "";
         $modelo_id = "";
@@ -69,6 +70,7 @@
         if(isset($this->request->data['Bienesdeuso'])){
             $id = $this->request->data['Bienesdeuso']['id'];
             $venta_id = $this->request->data['Bienesdeuso']['venta_id'];
+            $compra_id = $this->request->data['Bienesdeuso']['compra_id'];
             $localidade_id = $this->request->data['Bienesdeuso']['localidade_id'];
             $tipo = $this->request->data['Bienesdeuso']['tipo'];
             $modelo_id =$this->request->data['Bienesdeuso']['modelo_id'];
@@ -138,7 +140,7 @@
         echo $this->Form->input('Bienesdeuso.0.compra_id',[
                 'class'=>'all',
                 'type'=>'hidden',
-            'value'=>$compraid!=null?$compraid:0
+            'value'=>$compra_id!=null?$compra_id:0
         ]);
          echo $this->Form->input('Bienesdeuso.0.venta_id',[
             'type'=>'hidden',
@@ -550,6 +552,7 @@
         ]);
 
         $optionsporcentajeamortizacion=[
+            '0'=>'Sin amortizacion',
             'Actividades Agropecuarias'=> [
                 '10'=>'Maquinas (sembradoras, rastras, etc) %10',
                 '3.03'=>'Alambrados y Tranqueras %3,03',
@@ -558,13 +561,13 @@
                 '20'=> 'Tractores/Herramientas y Utiles/Tarros tambos/Alfalfares %20',
             ],
             'Reproductores Machos'=> [
-                '5'=>'Toros y Carneros %5',
+                '20'=>'Toros y Carneros %20',
                 '10'=>'Padrillos %10',
                 '25'=> 'Cerdos %25',               
             ],
             'Reproductores Hembras'=> [
-                '8'=>'Vacas %8',
-                '5'=>'Ovejas %5',
+                '12.5'=>'Vacas %12,5',
+                '20'=>'Ovejas %20',
                 '10'=>'Yeguas %10',
             ],
             'Actividades Comerciales e Industriales'=> [
@@ -653,11 +656,27 @@
                 <?php 
                 foreach ($this->request->data['Amortizacione'] as $km => $amortizacion) {
                     ?>
-                    <tr>
+                    <tr  id="rowAmortizacion<?php echo $amortizacion['id']; ?>">
                         <td><?php echo $amortizacion['periodo'] ?></td>
                         <td><?php echo $amortizacion['amortizacionejercicio'] ?></td>
                         <td><?php echo $amortizacion['amortizacionacumulada'] ?></td>
-                        <td></td>
+                        <td> <?php 
+                            echo $this->Form->postLink(
+                                $this->Html->image('ic_delete_black_24dp.png', array(
+                                    'alt' => 'Eliminar',
+                                )),
+                                array(
+                                    'controller' => 'Amortizaciones',
+                                    'action' => 'delete',
+                                    $amortizacion["id"],
+                                ),
+                                array(
+                                    'class'=>'deleteAmortizacion',
+                                    'escape' => false, // Add this to avoid Cake from printing the img HTML code instead of the actual image
+                                ),
+                                __('Esta seguro que quiere eliminar esta amortizacion?')
+                            ); ?>
+                        </td>
                     </tr>
                     <?php
                 }

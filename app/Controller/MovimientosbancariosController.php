@@ -349,7 +349,7 @@ class MovimientosbancariosController extends AppController {
 
 		$this->set('alicuotas', $this->alicuotas);
 
-        $folderMovimientosbancarios = WWW_ROOT.'files'.DS.'movimientosbancarios'.DS.$cliid.DS.$cbuid.DS.$periodo.DS.'resumen';
+                $folderMovimientosbancarios = WWW_ROOT.'files'.DS.'movimientosbancarios'.DS.$cliid.DS.$cbuid.DS.$periodo.DS.'resumen';
 		if ($this->request->is('post')) {
 			$folderMovimientosbancarios = WWW_ROOT.'files'.DS.'movimientosbancarios'.DS.$this->request->data['Movimientosbancario']['cliid'].DS.$cbuid.DS.$this->request->data['Movimientosbancario']['periodo'].DS.'resumen';
 			$fileNameMovimientosbancario = null;
@@ -360,29 +360,29 @@ class MovimientosbancariosController extends AppController {
 				move_uploaded_file($tmpNameMovimientosbancario, $folderMovimientosbancarios.DS.$fileNameMovimientosbancario);
 			}
 		}
-        $cuentasrelacionadasbancos = $this->Cuenta->cuentasDeMovimientoBancario;
+                $cuentasrelacionadasbancos = $this->Cuenta->cuentasDeMovimientoBancario;
 		$cuentasclientes=$this->Cuentascliente->find('list', array(
-				'contain' => array(
-					'Cuenta'
-				),
-				'conditions' => array(
-					'Cuentascliente.cliente_id' =>  $cliid,
-                    'Cuentascliente.cuenta_id' => $cuentasrelacionadasbancos
-				),
-				'fields' => array(
-					'Cuentascliente.id','Cuentascliente.nombre'
-				)
-			)
+                    'contain' => array(
+                        'Cuenta'
+                    ),
+                    'conditions' => array(
+                            'Cuentascliente.cliente_id' =>  $cliid,
+                    '       Cuentascliente.cuenta_id' => $cuentasrelacionadasbancos
+                        ),
+                        'fields' => array(
+                                'Cuentascliente.id','Cuentascliente.nombre'
+                        )
+                    )
 		);
 		$this->set('cuentasclientes', $cuentasclientes);
-        $cliente=$this->Cliente->find('first', array(
-                'contain'=>array(
-                ),
-                'conditions' => array(
-                    'id' => $cliid,
-                ),
-            )
-        );
+                $cliente=$this->Cliente->find('first', array(
+                        'contain'=>array(
+                        ),
+                        'conditions' => array(
+                            'id' => $cliid,
+                        ),
+                    )
+                );
 		$cbu=$this->Cbu->find('first', array(
                 'contain'=>array(
 					'Impcli'=>[

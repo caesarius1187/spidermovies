@@ -131,7 +131,7 @@
 				<label id="lblDescripcionCuenta_<?php echo $CuentaCliId;?>" onclick="EditarDescripcion('<?php echo $CuentaCliId;?>')" />
 				<?php echo $DescCuenta;?>
 				</label>				
-				<input id="txtDescripcionCuenta_<?php echo $CuentaCliId;?>" type="text" value="" style="display:none;" "/>
+				<input id="txtDescripcionCuenta_<?php echo $CuentaCliId;?>" type="text" value="" style="display:none;" />
 			</td>		
 			<td style="width:10%;text-align:center">
 				<?php 

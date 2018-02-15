@@ -236,7 +236,17 @@ class ComprasController extends AppController {
 			'conditions' =>$conditionsProvedores,
 		));
 		$this->set(compact('provedores'));
-
+                $bajaMayorQuePeriodo = array(
+                                    //HASTA es mayor que el periodo
+                                    'OR'=>array(
+                                            'Actividadcliente.baja'=>['','0000-00-00'],
+                                            'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+                                            'AND'=>array(
+                                                    'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+                                                    'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+                                            ),
+                                    )
+                            );
 		$clienteActividadList=$this->Cliente->Actividadcliente->find('list', array(
 				'contain' => array(
 					'Actividade',
@@ -244,6 +254,7 @@ class ComprasController extends AppController {
 				),
 				'conditions' => array(
 					'Actividadcliente.cliente_id' => $id,
+                                        $bajaMayorQuePeriodo
 				),
 				'fields' => array(
 					'Actividadcliente.id','Actividade.nombre','Actividadcliente.descripcion'
@@ -871,19 +882,32 @@ class ComprasController extends AppController {
 		$this->set(compact('provedores'));
 
 		$this->set('condicionesiva', $this->condicionesiva);
-
+                $pemes = substr($this->request->data['Compra']['periodo'], 0, 2);
+                $peanio = substr($this->request->data['Compra']['periodo'], 3);
+                $bajaMayorQuePeriodo = array(
+                                    //HASTA es mayor que el periodo
+                                    'OR'=>array(
+                                            'Actividadcliente.baja'=>['','0000-00-00'],
+                                            'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+                                            'AND'=>array(
+                                                    'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+                                                    'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+                                            ),
+                                    )
+                            );
 		$clienteActividadList=$this->Compra->Actividadcliente->find('list', array(
-												'contain' => array(
-													'Actividade'
-													),
-											   'conditions' => array(
-												                'Actividadcliente.cliente_id' => $this->request->data['Compra']['cliente_id'], 
-												            ),
-											   'fields' => array(
-													'Actividadcliente.id','Actividade.nombre'
-														)
-											)
-									);	
+                                        'contain' => array(
+                                                    'Actividade'
+                                                    ),
+                                       'conditions' => array(
+                                                            'Actividadcliente.cliente_id' => $this->request->data['Compra']['cliente_id'], 
+                                                            $bajaMayorQuePeriodo
+                                                        ),
+                                       'fields' => array(
+                                                    'Actividadcliente.id','Actividade.nombre'
+                                                            )
+                                    )
+                    );	
 		$this->set('actividades', $clienteActividadList);
 
 		$tipocreditos = array('Credito Fiscal'=>'Credito Fiscal','Restitucion credito fiscal'=>'Restitucion credito fiscal');

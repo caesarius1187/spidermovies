@@ -230,6 +230,26 @@ $(document).ready(function() {
                 },
             },
         ],
+        createdRow: function( row, data, dataIndex){
+            var totalCompra = 0;
+            var neto = StrToNumber(data[12]);
+            var iva = StrToNumber(data[13]);
+            var ivapercep = StrToNumber(data[14]);
+            var iibbpercep = StrToNumber(data[15]);
+            var actvspercep = StrToNumber(data[16]);
+            var impinterno = StrToNumber(data[17]);
+            var impcomb = StrToNumber(data[18]);
+            var nogravados = StrToNumber(data[19]);
+            var exentos = StrToNumber(data[20]);
+            totalCompra = neto + iva + ivapercep + iibbpercep + actvspercep + impinterno + impcomb + nogravados + exentos;
+            totalCompra = totalCompra.toFixed(2);
+              if( StrToNumber(data[21]) !=  totalCompra){
+                  $(row).addClass('compraWithError');
+                  $(row).children().each(function(){
+                       $(this).addClass('compraWithError');
+                  });
+              }
+          }
     } );
     $('#tablaCompras tbody').on( 'click', 'tr', function () {
         if ( $(this).hasClass('selected') ) {
@@ -377,7 +397,8 @@ $(document).ready(function() {
                         $("#CompraAlicuota option[value='27']").hide();
                         $("#CompraAlicuota option:eq(0)").val();
                     }
-
+                    $("#CompraComprobanteId" ).trigger( "change" );
+                    $('.chosen-select').trigger("chosen:updated");
                 }
             }, this);
         });
@@ -533,7 +554,19 @@ $(document).ready(function() {
     });
     $('#jsonactividadescategorias').trigger( "change" );
 });
+    function StrToNumber (strNumber){
+        if (typeof strNumber === 'string') {
+            if(strNumber.charAt(0)=="<"){
+                //es un p y no se debe sumar
+                strNumber = 0
+            }else{
+                strNumber = strNumber.replace('.', "");
+                strNumber = strNumber.replace(',', ".");
+            }
 
+        }
+        return Number(strNumber).toFixed(2)*1;
+    }
     function setTwoNumberDecimal(event) {
         this.value = parseFloat(this.value).toFixed(2);
     }
@@ -986,7 +1019,7 @@ $(document).ready(function() {
             $('#myModal').modal('show');
             //perzonalizar formulario para tipo de Bien de uso
             var tipoPersona = $("#tipopersona").val();
-            $("#BienesdeusoTipo").on('change', function() {
+            $("#Bienesdeuso0Tipo").on('change', function() {
                 var selectedTipo = $(this).val();
                 hideallinputsbdu();
                 switch (selectedTipo) {
@@ -1051,15 +1084,15 @@ $(document).ready(function() {
                         break;
                 }
             });
-            $("#BienesdeusoTipo" ).trigger( "change" );
-            $("#BienesdeusoPorcentajeamortizacion").on('change', function() {
-                var valororiginal = $("#BienesdeusoValororiginal").val();
-                var amortizacionperiodo = valororiginal / $("#BienesdeusoPorcentajeamortizacion").val();
-                if($("#BienesdeusoImporteamorteizaciondelperiodo is:visible")){
-                    $("#BienesdeusoImporteamorteizaciondelperiodo").val(amortizacionperiodo);                                    
+            $("#Bienesdeuso0Tipo" ).trigger( "change" );
+            $("#Bienesdeuso0Porcentajeamortizacion").on('change', function() {
+                var valororiginal = $("#Bienesdeuso0Valororiginal").val();
+                var amortizacionperiodo = valororiginal / $("#Bienesdeuso0Porcentajeamortizacion").val();
+                if($("#Bienesdeuso0Importeamorteizaciondelperiodo is:visible")){
+                    $("#Bienesdeuso0Importeamorteizaciondelperiodo").val(amortizacionperiodo);                                    
                 }                
             });
-            $("#BienesdeusoPorcentajeamortizacion" ).trigger( "change" );
+            $("#Bienesdeuso0Porcentajeamortizacion" ).trigger( "change" );
             $('#BienesdeusoAddForm').submit(function(){
                     //serialize form data
                     var formData = $(this).serialize();
@@ -1081,8 +1114,8 @@ $(document).ready(function() {
                     return false;
                 });
              $('.chosen-select').chosen({search_contains: true});
-            $("#BienesdeusoLocalidadeId_chosen").css('width', 'auto');
-            $("#BienesdeusoModeloId_chosen").css('width', 'auto');
+            $("#Bienesdeuso0LocalidadeId_chosen").css('width', 'auto');
+            $("#Bienesdeuso0ModeloId_chosen").css('width', 'auto');
         reloadInputDates();
         },
         error:function (XMLHttpRequest, textStatus, errorThrown) {

@@ -394,6 +394,12 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             var totalretenciones = $("#totalretenciones").val();
             $('#Asiento0Movimiento'+orden+'Haber').val(totalretenciones);
         }
+//        110403404	IVA - Pagos a cuenta
+        if($('#cuenta292').length > 0){
+            var orden = $('#cuenta292').attr('orden');
+            var totalpagosacuenta = $("#totalpagosacuenta").val();
+            $('#Asiento0Movimiento'+orden+'Haber').val(totalpagosacuenta);
+        }
 //        110403405	IVA - Decreto 814
 // todo Agregar Cuenta Decreto 814
 // /**Este concepto falta no se por que no esta en el plan de cuentas**/
@@ -597,7 +603,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     foreach ($ventas as $venta){
                         if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                         {
-                            if ($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
+                            if (!in_array($venta['Venta']['tipogasto_id'],$ingresosBienDeUso) && $venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso' && $venta['Venta']['condicioniva'] == 'responsableinscripto')
                             {
                                 if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                                 {
@@ -768,7 +774,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     foreach ($ventas as $venta){
                         if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                         {
-                            if ($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
+                            if (!in_array($venta['Venta']['tipogasto_id'],$ingresosBienDeUso) && $venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso' && $venta['Venta']['condicioniva'] == 'consf/exento/noalcanza')
                             {
                                 $totalacomputar = $venta['Venta']['total']-$venta['Venta']['excentos']-$venta['Venta']['nogravados'];
                                 if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
@@ -938,7 +944,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         //echo $venta['Actividadcliente']['actividade_id']. ' - '.$ActividadCliente_id;
                         if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                         {
-                            if ($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso' && $venta['Venta']['condicioniva'] == 'monotributista')
+                            if (!in_array($venta['Venta']['tipogasto_id'],$ingresosBienDeUso) && $venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso' && $venta['Venta']['condicioniva'] == 'monotributista')
                             {
                                 if ($venta['Venta']['alicuota'] == '0' || $venta['Venta']['alicuota'] == '')
                                 {
@@ -1094,9 +1100,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     foreach ($ventas as $venta){
                         if($venta['Actividadcliente']['id'] == $ActividadCliente_id)
                         {
-                            if ($venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso')
+                            if (!in_array($venta['Venta']['tipogasto_id'],$ingresosBienDeUso) && $venta['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso')
                             {
-                               
                                 if(
                                     (($venta['Venta']['nogravados']*1)>0)
                                     ||
@@ -1674,7 +1679,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             <table id='divTablaActividad_RestCredFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')"  style="margin-bottom:0; cursor: pointer" >
                 <tr>
                     <td colspan="5" style='background-color:#76b5cd'>
-                        > TIPO CREDITO: Restitución de Crédito Fiscal
+                        > TIPO CREDITO: Restituci&oacute;n de Cr&eacute;dito Fiscal
                     </td>
                 </tr>
             </table>
@@ -3391,6 +3396,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                 $TotalSaldoLibreDisponibilidadAFavorRespPeriodoAnteriorNetousos=0;
                 $TotalSaldoLibreDisponibilidadAFavorRespPeriodo=0;
                 $TotalPagosACuenta = 0;
+                $PagosACuenta = 0;
                 $AjusteAnualAFavorResponsable = 0;
                 $AjusteAnualAFavorAFIP = 0;
                 $Diferimiento518 = 0;
@@ -3439,12 +3445,14 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $BonosFiscales += $conceptosrestante['montoretenido'];
                     }else if($conceptosrestante['conceptostipo_id']=='12'/**Decreto 814**/){
                         //$BonosFiscales += $conceptosrestante['montoretenido'];
+                    }else if($conceptosrestante['conceptostipo_id']=='10'/**Decreto 814**/){
+                        $PagosACuenta += $conceptosrestante['montoretenido'];
                     }else{
                         $TotalPagosACuenta += $conceptosrestante['montoretenido'];
                     }
                     //echo $TotalPagosACuenta ."//";
                 }
-                $TotalPagosACuenta += $TotalPercepcionesIVA ;
+                $TotalPagosACuenta += $TotalPercepcionesIVA +$PagosACuenta ;
                 $CreditoGeneral = 0;
                 $CreditoGeneral = $TotalCreditoFiscalComputable_SumaTotal +  $TotalSaldoTecnicoAFavorRespPeriodoAnterior + $AjusteAnualAFavorResponsable ;
                 $DebitoGeneral = 0;
@@ -3615,7 +3623,10 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <?php
                         echo $this->Form->input('totalretenciones', array(
                             'type'=>'hidden',
-                            'value'=>number_format($TotalPagosACuenta-$TotalPercepcionesIVA, 2, ".", "")));
+                            'value'=>number_format($TotalPagosACuenta - $TotalPercepcionesIVA - $PagosACuenta, 2, ".", "")));
+                        echo $this->Form->input('totalpagosacuenta', array(
+                            'type'=>'hidden',
+                            'value'=>number_format($PagosACuenta, 2, ".", "")));
                         ?>
                     </td>
                 </tr>
@@ -3698,7 +3709,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     $movId[$asientoestandarIVA['cuenta_id']]=0;
                 }
                 $cuentaclienteid=0;
-                $cuentaclientenombre="0";
+                $cuentaclientenombre=$asientoestandarIVA['Cuenta']['nombre'];
                 foreach ($cliente['Cuentascliente'] as $cuentaclientaIVA){
                     if($cuentaclientaIVA['cuenta_id']==$asientoestandarIVA['cuenta_id']){
                         $cuentaclienteid=$cuentaclientaIVA['id'];

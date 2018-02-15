@@ -598,70 +598,70 @@ class ImpclisController extends AppController {
             $this->loadModel('Tipogasto');
             $this->set('periodo',$periodo);
             $this->set('impcliid',$impcliid);
-    $cuentasdeActVarias = $this->Cuenta->cuentasdeActVarias;
+            $cuentasdeActVarias = $this->Cuenta->cuentasdeActVarias;
 
             $options = [
-                    'contain'=>[
-            'Impuesto'=>[
-                'Asientoestandare'=>[
-                                            'conditions'=>[
-                                                    'tipoasiento'=>'impuestos'
-                                            ],
-                                            'Cuenta'
-                                    ],
-            ],
-                            'Cliente'=>[
-                'Cuentascliente'=>[
-                    'Cuenta',
-                    'conditions'=>[
-                        'Cuentascliente.cuenta_id' => $cuentasdeActVarias,
-                    ]
-                ]
-            ],
-                            'Asiento'=>[
-                                    'Movimiento'=>['Cuentascliente'],
-                                    'conditions'=>['periodo'=>$periodo]
+                'contain'=>[
+                    'Impuesto'=>[
+                        'Asientoestandare'=>[
+                            'conditions'=>[
+                                'tipoasiento'=>'impuestos'
                             ],
-                            /*'Impcliprovincia'=>[
-                                    'Localidade'=>[
-                                            'Partido'
-                                            ],
-                                    'conditions'=>[
-                                            'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
-                                                    'impcli_id' => $impcliid,
-                                            ],
-                                            'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']				
+                            'Cuenta'
+                        ],
+                    ],
+                                    'Cliente'=>[
+                        'Cuentascliente'=>[
+                            'Cuenta',
+                            'conditions'=>[
+                                'Cuentascliente.cuenta_id' => $cuentasdeActVarias,
+                            ]
+                        ]
+                    ],
+                    'Asiento'=>[
+                            'Movimiento'=>['Cuentascliente'],
+                            'conditions'=>['periodo'=>$periodo]
+                    ],
+                    /*'Impcliprovincia'=>[
+                            'Localidade'=>[
+                                    'Partido'
                                     ],
-                            ],*/
-        ],
-                    'conditions' => ['Impcli.' . $this->Impcli->primaryKey => $impcliid]
-    ];
+                            'conditions'=>[
+                                    'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
+                                            'impcli_id' => $impcliid,
+                                    ],
+                                    'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']				
+                            ],
+                    ],*/
+                ],
+                'conditions' => ['Impcli.' . $this->Impcli->primaryKey => $impcliid]
+            ];
             $impcli = $this->Impcli->find('first', $options);
             $this->set('impcli',$impcli);
 
             $impcliprovinciasoptions = [
-                    'contain'=>[
-                            'Localidade'=>[
-                                    'Partido'
-                            ],
+                'contain'=>[
+                    'Localidade'=>[
+                        'Partido'
                     ],
-                    //'fields'=>["*"],					
-                    'conditions'=>[
-                            'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
-                            'impcli_id' => $impcliid,
-                    ],		
-                    'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']							
+                ],
+                //'fields'=>["*"],					
+                'conditions'=>[
+                    'CONCAT( SUBSTRING(periodo` ,4,7),SUBSTRING(periodo` ,1,2)) <= CONCAT( SUBSTRING("'.$periodo.'",4,7),SUBSTRING("'.$periodo.'" ,1,2))',			
+                    'impcli_id' => $impcliid,
+                ],		
+                'order'=>['CONCAT( SUBSTRING(periodo ,4,7),SUBSTRING(periodo ,1,2))   desc']							
             ]; 
             $impcliprovincias = $this->Impcli->Impcliprovincia->find('all',$impcliprovinciasoptions);		
             $impcliprovinciasnorepetidas = [];
             //no se pudo hacer la consulta para que traiga los resultados que debia, asi que vamos a borrar los repetidos
             //y dejar el maximo para cada jurisdiccion y nada mas
             foreach ($impcliprovincias as $icp => $impcliprovincia) {
-                    if(in_array($impcliprovincia['Impcliprovincia']['localidade_id'], $impcliprovinciasnorepetidas)){
-                             unset($impcliprovincias[$icp]);
-                    }else{
-                             $impcliprovinciasnorepetidas[] = $impcliprovincia['Impcliprovincia']['localidade_id'];
-                    }
+                if(in_array($impcliprovincia['Impcliprovincia']['localidade_id'], $impcliprovinciasnorepetidas)){
+                    unset($impcliprovincias[$icp]);
+                }else{
+                    $impcliprovinciasnorepetidas[] = $impcliprovincia['Impcliprovincia']['localidade_id'];
+                }
             }
             $this->set('impcliprovincias',$impcliprovincias);
 
@@ -669,73 +669,74 @@ class ImpclisController extends AppController {
             $pemes = substr($periodo, 0, 2);
             $peanio = substr($periodo, 3);
             $bajaesMayorQuePeriodo = array(
-                    'OR'=>array(
-                            'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
-                            'AND'=>array(
-                                    'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
-                                    'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
-                            ),
-                    )
+                'OR'=>array(
+                    'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+                        'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+                    ),
+                )
             );
-    $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
-    $conditionsActividades = array(
-                    'contain'=>array(
-                            'Actividade'=>array(
-                                    'Alicuota'=>array(
-                                            ),	
+            $ingresosBienDeUso = $this->Tipogasto->ingresosBienDeUso;
+            $conditionsActividades = array(
+                'contain'=>array(
+                    'Actividade'=>array(
+                        'Alicuota'=>array(
+                                ),	
+                        ),
+                    'Basesprorrateada'=>array(
+                            'Impcliprovincia'=>array(
+                                    'Partido'
                                     ),
-                            'Basesprorrateada'=>array(
-                                    'Impcliprovincia'=>array(
-                                            'Partido'
-                                            ),
-                                    'conditions'=>array(
-                                            'Basesprorrateada.periodo'=>$periodo
-                                            )
-                                    ),
-                            'Encuadrealicuota'=>array(//esto se puede mejorar trayendo solo los encuadresalicuotas que sean de las localidades que estan en impcliprovincia
-                                    ),
-                            'Venta'=>array(
-                                    'Localidade'=>array(
-                                            'Partido'
-                                            ),
-                                    'Comprobante',
-                                    'conditions'=>array(
-                                            'Venta.periodo'=>$periodo,
-                                            'Venta.tipogasto_id NOT IN '=>$ingresosBienDeUso
-                    )
-                                    ),
-                            'Compra'=>array(
-                                    'Localidade'=>array(
-                                            'Partido'
-                                            ),
-                                    'conditions'=>array(
-                                            'Compra.periodo'=>$periodo
-                                            )
-                                    ),
-                            'Cliente'=>array(					
-                                    'Impcli'=>array(
-                                            'Conceptosrestante'=>array(
-                                                    'conditions'=>array(
-                                                            'Conceptosrestante.periodo'=>$periodo,
-                                                            )	
-                                                    ),
-                                            'conditions'=>array(
-                                                    'Impcli.impuesto_id'=>6/*Actividades Varias*/,
-                                                    )
-                                    ),						
-                                    'fields'=>array('Cliente.id','Cliente.nombre','Cliente.cuitcontribullente'),
+                            'conditions'=>array(
+                                    'Basesprorrateada.periodo'=>$periodo
+                                    )
                             ),
+                    'Encuadrealicuota'=>array(
+                                //esto se puede mejorar trayendo solo los encuadresalicuotas que sean de las localidades que estan en impcliprovincia
+                            ),
+                    'Venta'=>array(
+                            'Localidade'=>array(
+                                    'Partido'
+                                    ),
+                            'Comprobante',
+                            'conditions'=>array(
+                                    'Venta.periodo'=>$periodo,
+                                    'Venta.tipogasto_id NOT IN '=>$ingresosBienDeUso
+                                )
+                            ),
+                    'Compra'=>array(
+                            'Localidade'=>array(
+                                    'Partido'
+                                    ),
+                            'conditions'=>array(
+                                    'Compra.periodo'=>$periodo
+                                    )
+                            ),
+                    'Cliente'=>array(					
+                            'Impcli'=>array(
+                                    'Conceptosrestante'=>array(
+                                            'conditions'=>array(
+                                                    'Conceptosrestante.periodo'=>$periodo,
+                                                    )	
+                                            ),
+                                    'conditions'=>array(
+                                            'Impcli.impuesto_id'=>6/*Actividades Varias*/,
+                                            )
+                            ),						
+                            'fields'=>array('Cliente.id','Cliente.nombre','Cliente.cuitcontribullente'),
                     ),
-                    'conditions' => array(
-                            'Actividadcliente.cliente_id'=>$impcli['Cliente']['id'],
-                            //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
-                            'OR'=>[
-                                    $bajaesMayorQuePeriodo,
-                                    'Actividadcliente.baja = ""',
-                                    'Actividadcliente.baja = "0000-00-00"',
-                                    'Actividadcliente.baja is null' ,
-                            ]
-                    ),
+                ),
+                'conditions' => array(
+                    'Actividadcliente.cliente_id'=>$impcli['Cliente']['id'],
+                    //traer solo las actividades que tengan periodo baja null "" o que sean menor que el periodo
+                    'OR'=>[
+                        $bajaesMayorQuePeriodo,
+                        'Actividadcliente.baja = ""',
+                        'Actividadcliente.baja = "0000-00-00"',
+                        'Actividadcliente.baja is null' ,
+                    ]
+                ),
             );
             $actividadclientes = $this->Actividadcliente->find('all',$conditionsActividades);
             $this->set('actividadclientes',$actividadclientes);

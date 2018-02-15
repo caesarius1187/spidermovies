@@ -369,6 +369,7 @@ if($mostrarInforme){
                 }
             } );
         }
+         $('.chosen-select').chosen({search_contains:true});
     })
 </script>
         <div id="Formhead" class="clientes informefinancierotributario index" style="margin-bottom:10px; font-family: 'Arial'">

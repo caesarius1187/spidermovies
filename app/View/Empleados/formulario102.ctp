@@ -153,8 +153,8 @@ echo $this->Form->button('Imprimir',
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid; border-bottom: 1px solid">
                                         <input style="margin:2px;" type="radio" name="rubroI<?php echo $empleado['Empleado']['cuit'];?>"
-                                                class="checkboxrubroI trabajadoractivo menosde12" value="176.00"
-                                                aportes="34" contribuciones="142">
+                                                class="checkboxrubroI trabajadoractivo menosde12" value="188.88"
+                                                aportes="43.52" contribuciones="145.36">
                                         <label style="margin-top:2px;">- Menos de 12</label>
                                     </td>
                                     <td style="padding: 0px;width: 30%; text-align:center; border-bottom: 1px solid;font-size: 10px">(*)</td>
@@ -162,8 +162,8 @@ echo $this->Form->button('Imprimir',
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid; border-bottom: 1px solid">
                                         <input style="margin:2px;" type="radio" name="rubroI<?php echo $empleado['Empleado']['cuit'];?>"
-                                               class="checkboxrubroI trabajadoractivo desde12a16" value="252.00"
-                                               aportes="63" contribuciones="189">
+                                               class="checkboxrubroI trabajadoractivo desde12a16" value="276.36"
+                                               aportes="80.64" contribuciones="195.72">
                                         <label style="margin-top:2px;">- Desde 12 a menos 16</label>
                                     </td>
                                     <td style="padding: 0px;width: 30%;text-align:center; border-bottom: 1px solid;font-size: 10px">
@@ -172,8 +172,8 @@ echo $this->Form->button('Imprimir',
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid">
                                         <input style="margin:2px;" type="radio" name="rubroI<?php echo $empleado['Empleado']['cuit'];?>"
-                                               class="checkboxrubroI trabajadoractivo 16omas" value="684.00"
-                                               aportes="419" contribuciones="265">
+                                               class="checkboxrubroI trabajadoractivo 16omas" value="811.15"
+                                               aportes="536.35" contribuciones="274.8">
                                         <label style="margin-top:2px;">- 16 o mas</label>
                                     </td>
                                     <td style="padding: 0px;width: 30%;text-align:center;font-size: 10px">(***)</td>
@@ -205,31 +205,31 @@ echo $this->Form->button('Imprimir',
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid; border-bottom: 1px solid">
                                         <input style="margin:2px;" type="radio" name="rubroI<?php echo $empleado['Empleado']['cuit'];?>"
-                                               class="checkboxrubroI trabajadorjubilado menosde12" value="142.00"
-                                               aportes="0" contribuciones="142">
+                                               class="checkboxrubroI trabajadorjubilado menosde12" value="145.36"
+                                               aportes="0" contribuciones="145.36">
                                         <label style="margin-top:2px;">- Menos de 12</label>
                                     </td>
                                     <td style="padding: 0px;width: 30%;text-align:center;border-bottom: 1px solid;font-size: 10px">
-                                        $142.00
+                                        $145,36
                                     </td>
                                 </tr>
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid; border-bottom: 1px solid">
                                         <input style="margin:2px;" type="radio" name="rubroI<?php echo $empleado['Empleado']['cuit'];?>"
-                                               class="checkboxrubroI trabajadorjubilado desde12a16" value="189.00"
-                                               aportes="0" contribuciones="189">
+                                               class="checkboxrubroI trabajadorjubilado desde12a16" value="195.72"
+                                               aportes="0" contribuciones="195.72">
                                         <label style="margin-top:2px;">- Desde 12 a menos 16</label>
                                     </td>
-                                    <td style="padding: 0px;width: 30%;text-align:center;border-bottom: 1px solid;font-size: 10px">$189.00</td>
+                                    <td style="padding: 0px;width: 30%;text-align:center;border-bottom: 1px solid;font-size: 10px">$195,72</td>
                                 </tr>
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid">
                                         <input style="margin:2px;" type="radio" name="rubroI<?php echo $empleado['Empleado']['cuit'];?>"
-                                               class="checkboxrubroI trabajadorjubilado 16omas" value="265.00"
-                                               aportes="0" contribuciones="265">
+                                               class="checkboxrubroI trabajadorjubilado 16omas" value="274.80"
+                                               aportes="0" contribuciones="274.80">
                                         <label style="margin-top:2px;">- 16 o mas</label>
                                     </td>
-                                    <td style="padding: 0px;width: 30%;text-align:center;font-size: 10px">$265.00</td>
+                                    <td style="padding: 0px;width: 30%;text-align:center;font-size: 10px">$274,80</td>
                                 </tr>
                             </table>
                         </div>
@@ -258,8 +258,8 @@ echo $this->Form->button('Imprimir',
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid;border-bottom: 1px solid;">
                                         <input style="margin:2px;" type="radio" name="rubroI<?php echo $empleado['Empleado']['cuit'];?>"
-                                               class="checkboxrubroI trabajadormenores 16omas" value="164.00"
-                                               aportes="34" contribuciones="130">
+                                               class="checkboxrubroI trabajadormenores 16omas" value="173.52"
+                                               aportes="43.52" contribuciones="130">
                                         <label style="margin-top:2px;">- Menos de 12</label>
                                     </td>
                                     <td style="padding: 0px;width: 30%;text-align:center;font-size: 10px;border-bottom: 1px solid;">(I)</td>
@@ -267,8 +267,8 @@ echo $this->Form->button('Imprimir',
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid;border-bottom: 1px solid;">
                                         <input style="margin:2px;" type="radio" name="rubroI<?php echo $empleado['Empleado']['cuit'];?>"
-                                               class="checkboxrubroI trabajadormenores desde12a16" value="228.00"
-                                               aportes="63" contribuciones="165">
+                                               class="checkboxrubroI trabajadormenores desde12a16" value="245.64"
+                                               aportes="80.64" contribuciones="165">
                                         <label style="margin-top:2px;">- Desde 12 a menos 16</label>
                                     </td>
                                     <td style="padding: 0px;width: 30%;text-align:center;font-size: 10px;border-bottom: 1px solid;">(II)</td>
@@ -276,8 +276,8 @@ echo $this->Form->button('Imprimir',
                                 <tr style="width: 100%;">
                                     <td style="padding: 0px;font-size: 10px;width: 69%;border-right: 1px solid">
                                         <input style="margin:2px;" type="radio" name="rubroI<?php echo $empleado['Empleado']['cuit'];?>"
-                                               class="checkboxrubroI trabajadormenores 16omas" value="649.00"
-                                               aportes="419" contribuciones="230">- 16 o mas</td>
+                                               class="checkboxrubroI trabajadormenores 16omas" value="766.35"
+                                               aportes="536.35" contribuciones="230">- 16 o mas</td>
                                     <td style="padding: 0px;width: 30%;text-align:center;font-size: 10px">(III)</td>
                                 </tr>
                             </table>
@@ -291,24 +291,24 @@ echo $this->Form->button('Imprimir',
         <tr class="row" style="padding: 0px">
             <td style="padding: 0px;width:40%">                
                 <div style="font-size: 8px; width: 100%; text-align:right">
-                    <b>(*) Importe hasta el 05/16 $161 - Desde el 06/16 $176</b>
+                    <b>(*)Importe Desde el 01/01/2018 $188,88</b>
                 </div>
                 <div style="font-size: 8px; width: 100%; text-align:right">
-                    <b>(**) Importe hasta el 05/16 $224 - Desde el 06/16 $252</b>
+                    <b>(**)Importe Desde el 01/01/2018 $276,36</b>
                 </div>
                 <div style="font-size: 8px; width: 100%; text-align:right">
-                    <b>(**) Importe hasta el 05/16 $498 - Desde el 06/16 $684</b>
+                    <b>(**)Importe Desde el 01/01/2018 $811,15</b>
                 </div>               
             </td>            
             <td  style="padding: 0px;width:60%">                
                 <div style="font-size: 8px; width: 100%; text-align:right;">
-                    <b style="padding-right:20px">(I)Importe hasta el 05/16 $149 - Desde el 06/16 $164</b>
+                    <b style="padding-right:20px">(I)Importe Desde el 01/01/2018 $173,52</b>
                 </div>
                 <div style="font-size: 8px; width: 100%; text-align:right;">
-                    <b style="padding-right:20px">(II)Importe hasta el 05/16 $200 - Desde el 06/16 $228</b>
+                    <b style="padding-right:20px">(II)Importe Desde el 01/01/2018 $245,64</b>
                 </div>
                 <div style="font-size: 8px; width: 100%; text-align:right;">
-                    <b style="padding-right:20px">(III)Importe hasta el 05/16 $463 - Desde el 06/16 $649</b>
+                    <b style="padding-right:20px">(III)Importe Desde el 01/01/2018 $766,35</b>
                 </div>                
             </td>
         </tr>
@@ -825,6 +825,12 @@ echo $this->Form->button('Imprimir',
                             if(isset($valores['140'])) {//Horas Decoracion(horas trabajadas)
                                 $horastrabajadas+=$valores['140']['valor']*8;
                             }
+                            if(isset($valores['22'])) {//Horas Extras 50%
+                                $horastrabajadas+=$valores['22']['valor'];
+                            }
+                            if(isset($valores['23'])) {//Horas Extras 100%
+                                $horastrabajadas+=$valores['23']['valor'];
+                            }
                             ?>
                             <input type="text" class="cantHoras" id="cantidadHoras<?php echo $empleado['Empleado']['id']?>"  maxlength="3" value="<?php echo $horastrabajadas ?>" style="width: 40px;" >
                         </td>
@@ -998,7 +1004,52 @@ echo $this->Form->button('Imprimir',
                                     </tr>
                                 <?php }else{
                                     echo  '<p id="vacacionesnogozadas" class="vacacionesnogozadas" style="display: none;"></p>';
-                                } ?>
+                                } 
+                                if(
+                                    isset($valores['25'])
+                                    &&
+                                    (($valores['25']['valor']*1)>0)
+                                ) { ?>
+                                    <tr>
+                                        <td style="padding: 0px;font-size:10px;width:60%">
+                                            Horas Extras al 50%:
+                                        </td>
+                                        <td style="padding: 0px;font-size:10px;width:40%">
+                                            <?php
+                                            if(isset($valores['25'])) {//Horas Extras al 50
+                                                echo  '<p id="horasextrasal50" class="horasextrasal50" style="display: initial;">'.
+                                                    number_format($valores['25']['valor'], 2, ",", ".").
+                                                    '</p>';
+                                            }
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php }else{
+                                    echo  '<p id="horasextrasal50" class="horasextrasal50" style="display: none;"></p>';
+                                } 
+                                if(
+                                    isset($valores['26'])
+                                    &&
+                                    (($valores['26']['valor']*1)>0)
+                                ) { ?>
+                                    <tr>
+                                        <td style="padding: 0px;font-size:10px;width:60%">
+                                            Horas Extras al 100%:
+                                        </td>
+                                        <td style="padding: 0px;font-size:10px;width:40%">
+                                            <?php
+                                            if(isset($valores['26'])) {//Horas Extras al 100
+                                                echo  '<p id="horasextrasal00" class="horasextrasal100" style="display: initial;">'.
+                                                    number_format($valores['26']['valor'], 2, ",", ".").
+                                                    '</p>';
+                                            }
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php }else{
+                                    echo  '<p id="horasextrasal00" class="horasextrasal00" style="display: none;"></p>';
+                                } 
+                                ?>
                                 <tr>
                                     <td style="padding: 0px;font-size:10px;width:60%">
                                         Suma Total

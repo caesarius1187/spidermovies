@@ -48,7 +48,88 @@ if(isset($error)){ ?>
     $cuentaclienteid = 0;
     $totalDebe=0;
     $totalHaber=0;
+    
+    //vamos a calcular las amortizaciones acumuladas y del periodo por cada bien de uso
+    foreach ($bienesdeusos as $kbdu => $bienesdeuso) {
+        if(isset($bienesdeuso['Bienesdeuso']['periodo'])){
+            $periodoBDU = $bienesdeuso['Bienesdeuso']['periodo'];  
+        }else{
+            $periodoBDU = -1;
+        }
+        if($periodoBDU!=-1){
+            $pemesBDU = substr($periodoBDU, 0, 2);
+            $peanioBDU = substr($periodoBDU, 3);
+        }else{
+            $periodoBDU="01-1990";
+            $peanioBDU="1990";
+        }
+        $periodoActual = date('Y', strtotime($fecha));
+        $valororigen =  $bienesdeuso['Bienesdeuso']['valororiginal'];                
+        $porcentajeamortizacion =  1;                
 
+        $amortizacionacumulada =  $bienesdeuso['Bienesdeuso']['amortizacionacumulada'];
+        $porcentajeamortizacion =  $bienesdeuso['Bienesdeuso']['porcentajeamortizacion'];
+        $amortizacionEjercicio =  $bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo'];
+        //Debugger::dump("amort guardado en el BDU");
+        //Debugger::dump($bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']);
+        //calcular la amortizacion acumulada en funcion de la alicuota , el periodo y el valor original
+        $d1 = new DateTime('01-'.$periodoBDU);
+        $d2 = new DateTime($fecha);
+
+        $interval = $d2->diff($d1);
+
+        $aniosamortizados = $interval->format('%y')*1 + (($interval->format('%m')*1>0)?1:0);
+
+        $topeAmortizacion = ($porcentajeamortizacion!=0)?(100/$porcentajeamortizacion):1000;
+
+        if($aniosamortizados<$topeAmortizacion){
+            if(($aniosamortizados)<=1){
+                $amortizacionacumulada = 0;
+            }else{
+                $amortizacionacumulada = ($porcentajeamortizacion/100)*$valororigen*($aniosamortizados-1);
+            }
+            if(($aniosamortizados)==0){
+                $amortizacionEjercicio = 0;
+                //Debugger::dump("aniosamort = 0 => 0");
+                //Debugger::dump($bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']);
+            }else{
+                $amortizacionEjercicio = ($porcentajeamortizacion/100)*$valororigen;
+                //Debugger::dump("aniosamort < tope=>(".$porcentajeamortizacion."/100)*".$valororigen);
+                //Debugger::dump($bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']);
+            }
+        }else{
+            $amortizacionacumulada = $valororigen;
+            $amortizacionEjercicio =  0;
+            //Debugger::dump("aniosamort > tope=>0");
+            //Debugger::dump($bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']);
+        }    
+
+        //si esta echo el asiento entonces la amortizacion acumulada tiene que restar la amortizacion del ejercicio
+        //$amortizacionacumulada-=$amortizacionEjercicio;
+        //$amortizacionAcumuladaAnterior-=$amortizacionEjercicio;
+
+        //aca si esta definido la amortizacion especial
+        //vamos a reemplazar todos los calculos por lo que se ha guardado
+        $pemes = date('m', strtotime($fecha));
+        $peanio = date('Y', strtotime($fecha));
+        if(isset($bienesdeuso['Amortizacione'])){
+            foreach ($bienesdeuso['Amortizacione'] as $kae => $amortespecial) {
+                
+                if($amortespecial['periodo']==$peanio){
+                    //aca podemos estar seguros q hay una amortizacion esecial para este periodo 
+                    $amortizacionEjercicio = $amortespecial['amortizacionejercicio'];
+                    //Debugger::dump("alv todo tengo amort esp");
+                    //Debugger::dump($amortespecial['amortizacionacumulada']);
+                    $amortizacionacumulada = $amortespecial['amortizacionacumulada'];
+                }else{
+                     //Debugger::dump($amortespecial['periodo']."!=".$peanio);                    
+                }
+            }
+        } 
+        $bienesdeusos[$kbdu]['Bienesdeuso']['amortEjercicioCalculada']=$amortizacionEjercicio;
+        $bienesdeusos[$kbdu]['Bienesdeuso']['amortAcumuladaCalculada']=$amortizacionacumulada;
+        //die();
+    }
     foreach ($asientoestandares as $asientoestandar) {
         $cuentaclienteid = $asientoestandar['Cuenta']['Cuentascliente'][0]['id'];
         /*lo mismo que hicimos con el asiento vamos a hacer con los movimientos, si existe un movimiento
@@ -77,6 +158,8 @@ if(isset($error)){ ?>
         }
         /*Aca vamos a reescribir el debe y el haber si es que corresponde para esta cuenta con este cliente*/
         $title = "";
+        
+        
         switch ($asientoestandar['Cuenta']['id']){         
             /*Casos Primera Categoria*/
             //Debe
@@ -112,7 +195,7 @@ if(isset($error)){ ?>
                     if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                         continue;
                     }
-                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
+                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['amortEjercicioCalculada'];
                 }
                 $debe = $cuentaprimera;
                  $title = "";
@@ -149,7 +232,7 @@ if(isset($error)){ ?>
                     if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                         continue;
                     }
-                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
+                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['amortEjercicioCalculada'];
                 }
                 $debe = $cuentaprimera;
                 break;
@@ -187,7 +270,7 @@ if(isset($error)){ ?>
                     if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                         continue;
                     }
-                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
+                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['amortEjercicioCalculada'];
                 }
                 $debe = $cuentaprimera;
                 break;
@@ -225,7 +308,7 @@ if(isset($error)){ ?>
                     if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                         continue;
                     }
-                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
+                    $cuentaprimera+=$bienesdeuso['Bienesdeuso']['amortEjercicioCalculada'];
                 }
                 $debe = $cuentaprimera;
                 break;
@@ -262,7 +345,7 @@ if(isset($error)){ ?>
                         if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
+                        $cuentaprimera+=$bienesdeuso['Bienesdeuso']['amortEjercicioCalculada'];
                     }
                     $debe = $cuentaprimera;
                 break;
@@ -298,7 +381,7 @@ if(isset($error)){ ?>
                         if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
+                        $cuentaprimera+=$bienesdeuso['Bienesdeuso']['amortEjercicioCalculada'];
                     }
                     $debe = $cuentaprimera;
                 break;
@@ -334,7 +417,7 @@ if(isset($error)){ ?>
                         if(!in_array($bienesdeuso['Bienesdeuso']['tipo'],$cuentasTipoInmueble[$asientoestandar['Cuenta']['id']])){
                             continue;
                         }
-                        $cuentaprimera+=$bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'];
+                        $cuentaprimera+=$bienesdeuso['Bienesdeuso']['amortEjercicioCalculada'];
                     }
                     $haber = $cuentaprimera;
                 break;
@@ -503,21 +586,21 @@ if(isset($error)){ ?>
                     <legend align= "left" ><?php  echo $this->Form->label("",$descripcionBDU); ?> </legend>
                 <?php
                 echo $this->Form->label("","Amortizacion acumulada actual: "
-                        .number_format($bienesdeuso['Bienesdeuso']['amortizacionacumulada'], 2, ",", ".")
+                        .number_format($bienesdeuso['Bienesdeuso']['amortAcumuladaCalculada'], 2, ",", ".")
                         ."/ Amortizacion del periodo actual: "
-                        .number_format($bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo'], 2, ",", ".")
+                        .number_format($bienesdeuso['Bienesdeuso']['amortEjercicioCalculada'], 2, ",", ".")
                         ."/ Amortizacion acelerada del periodo actual: "
                         .number_format($bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo'], 2, ",", "."),
                         ['style'=>'font-size: 10px;']
                         );
                         $amortizacionacumulada = 
-                        $bienesdeuso['Bienesdeuso']['amortizacionacumulada']*1 +
-                        $bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']*1+
+                        $bienesdeuso['Bienesdeuso']['amortAcumuladaCalculada']*1 +
+                        $bienesdeuso['Bienesdeuso']['amortEjercicioCalculada']*1+
                         $bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo']*1;
                 echo $this->Form->input('Bienesdeuso.'.$c.'.amortizacionacumulada',[
                     'value'=> number_format($amortizacionacumulada, 2, ".", ""),
                 ]);
-                $amortizaciondelperiodo = $bienesdeuso['Bienesdeuso']['importeamorteizaciondelperiodo']*1+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo']*1;
+                $amortizaciondelperiodo = $bienesdeuso['Bienesdeuso']['amortEjercicioCalculada']*1+$bienesdeuso['Bienesdeuso']['importeamortizacionaceleradadelperiodo']*1;
                 echo $this->Form->input('Bienesdeuso.'.$c.'.amortizaciondelperiodo',[
                     'value'=> number_format($amortizaciondelperiodo, 2, ".", ""),
                 ])."</br>";

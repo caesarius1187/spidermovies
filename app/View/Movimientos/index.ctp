@@ -111,7 +111,9 @@ $asiento = $asientos[0];
 				echo $this->Form->input('Asiento.0.Movimiento.'.$km.'.cuentascliente_id',
 					[
 						'value'=>$movimiento['cuentascliente_id'],
-						'type'=>'hidden',
+						'class'=>'chosen-select',
+                                                'style'=>'width:300px',
+                                                'div'=>['style'=>'width:300px'],
 					]);
 				echo $this->Form->input('Asiento.0.Movimiento.'.$km.'.fecha',
 					[

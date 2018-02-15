@@ -511,7 +511,23 @@ class VentasController extends AppController {
                             $optionsPuntosDeVenta = array('contain'=>[],'conditions'=>array('Puntosdeventa.id' => $this->request->data['Venta']['puntosdeventa_id']));
                             $optionsSubCliente = array('contain'=>[],'conditions'=>array('Subcliente.id'=>$this->request->data['Venta']['subcliente_id']));
                             $optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Venta']['localidade_id']));
-                            $optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id']));
+                            $pemes = substr($this->request->data['Venta']['periodo'], 0, 2);
+                            $peanio = substr($this->request->data['Venta']['periodo'], 3);
+                            $bajaMayorQuePeriodo = array(
+                                    //HASTA es mayor que el periodo
+                                    'OR'=>array(
+                                            'Actividadcliente.baja'=>['','0000-00-00'],
+                                            'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+                                            'AND'=>array(
+                                                    'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+                                                    'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+                                            ),
+                                    )
+                            );
+                            $optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array(
+                                'Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id'],
+                                $bajaMayorQuePeriodo
+                                    ));
             $optionstipogasto = array(
                                     'contain'=>[],
                                     'conditions'=>array(
@@ -668,7 +684,7 @@ class VentasController extends AppController {
 					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
 				),
 			)
-		);
+		);		
 		//B: Es mayor que periodo Desde
 		$esMayorQueDesde = array(
 			'OR'=>array(
@@ -736,14 +752,25 @@ class VentasController extends AppController {
 			)
 		);
 		$this->set(compact('subclientes'));
-
+                
+                $bajaMayorQuePeriodo = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'Actividadcliente.baja'=>['','0000-00-00'],
+                                'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
 		$clienteActividadList=$this->Cliente->Actividadcliente->find('list', array(
 				'contain' => array(
 					'Actividade',
-
 				),
 				'conditions' => array(
 					'Actividadcliente.cliente_id' => $id,
+                                        $bajaMayorQuePeriodo
 				),
 				'fields' => array(
 					'Actividadcliente.id','Actividade.nombre','Actividadcliente.descripcion'
@@ -1042,15 +1069,29 @@ class VentasController extends AppController {
 		//Tipo Debito
 		$this->set('tipodebitos', $this->tipodebitos);
 		//Actividades del Cliente
-		$clienteActividadList=$this->Actividadcliente->find('list', array(
+                $pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+                $bajaMayorQuePeriodo = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'Actividadcliente.baja'=>['','0000-00-00'],
+                                'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+		$clienteActividadList=$this->Cliente->Actividadcliente->find('list', array(
 				'contain' => array(
-					'Actividade'
+					'Actividade',
 				),
 				'conditions' => array(
-					'Actividadcliente.cliente_id' =>  $cliid,
+					'Actividadcliente.cliente_id' => $cliid,
+                                        $bajaMayorQuePeriodo
 				),
 				'fields' => array(
-					'Actividadcliente.id','Actividade.nombre'
+					'Actividadcliente.id','Actividade.nombre','Actividadcliente.descripcion'
 				)
 			)
 		);

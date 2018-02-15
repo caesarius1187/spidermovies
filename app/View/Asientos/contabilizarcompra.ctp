@@ -323,18 +323,22 @@ if(isset($error)){ ?>
                     //Debugger::dump($ActividadesGeneros);
                     $genero = $ActividadesGeneros[$comprasgravada['Actividadcliente']['actividade_id']];                    
                     if(!in_array($genero[0],$cuentasTipoActividad[$asientoestandar['Cuenta']['id']])){
+                        //Debugger::dump('sali por genero');
                         continue;
                     }
                     if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
+                        //Debugger::dump('bien de uso');
                         continue;
                     }
                     if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                        //Debugger::dump('sali tipo gasto');
                         continue;
                     }
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                        //Debugger::dump('reste un credito');
                         $suma=-1;
                     }
-                    $cuentatercera+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
+                    $cuentatercera+=($comprasgravada[0]['neto']+$comprasgravada[0]['nogravados']+$comprasgravada[0]['exentos'])*$suma;
                 }
                 $debe = $cuentatercera;
                 break;

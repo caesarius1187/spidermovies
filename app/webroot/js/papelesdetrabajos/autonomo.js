@@ -166,8 +166,8 @@ function papelesDeTrabajo(periodo,impcli){
 }
 function cargarAsiento(){
 	// 504990006	Autonomo
-	if($('#cuenta2335').length > 0){
-		var orden = $('#cuenta2335').attr('orden');
+	if($('#cuenta2780').length > 0){
+		var orden = $('#cuenta2780').attr('orden');
 		var apagarAutonomo = $("#apagarAutonomo").val();
 		$('#Asiento0Movimiento'+orden+'Debe').val(apagarAutonomo);
 	}
