@@ -255,9 +255,9 @@ jQuery(document).ready(function($) {
                         var subclienteID = mirespuesta.subcliente.Subcliente.id;
                         var rowData =
                         [
-                            mirespuesta.subcliente.Subcliente.nombre,
                             mirespuesta.subcliente.Subcliente.cuit,
                             mirespuesta.subcliente.Subcliente.dni,
+                            mirespuesta.subcliente.Subcliente.nombre,
                         ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormSubcliente('+subclienteID+')" alt="">';
                         tdactions = tdactions + '<form action="'+serverLayoutURL+'/Subclientes/delete/'+subclienteID+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
