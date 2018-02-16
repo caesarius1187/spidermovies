@@ -236,6 +236,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                         $tieneasientodecompras=false;
                         $tieneasientoderetenciones=false;
                         $tieneasientodeamortizacion=false;
+                        $tieneasientodeapertura=false;
                         foreach ($cliente["Asiento"] as $asiento ){
                             if($asiento['tipoasiento']=='ventas'){
                                 $tieneasientodeventas=true;
@@ -248,6 +249,9 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                             }
                             if($asiento['tipoasiento']=='amortizacion'){
                                 $tieneasientodeamortizacion=true;
+                            }
+                            if($asiento['tipoasiento']=='apertura'){
+                                $tieneasientodeapertura=true;
                             }
                         }
                         if($tieneasientodeventas){
@@ -357,7 +361,8 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                         $peMesCorte = substr($diamesCorteEjFiscal, 3);
 
                         $ultimoPeriodo = $peMesCorte."-".$peanio;
-
+                        
+                        $primerPeriodo = date('m', strtotime($diamesCorteEjFiscal."-".$peanio." +1 days"));
                         if($ultimoPeriodo == $periodoSel){
                            if($tieneasientodeamortizacion){
                             $buttonclass="buttonImpcliRealizado";
@@ -370,6 +375,21 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                                   'class'=>$buttonclass." progress-button state-loading",
                                   'onClick'=>"contabilizaramortizacion(".$paramsPrepPapeles.")",
                                   'id'=>'buttonAsAmortizacion'.$cliente['Cliente']['id'],
+                              ),
+                              array());
+                        }                       
+                        if($primerPeriodo == $pemes){
+                           if($tieneasientodeapertura){
+                            $buttonclass="buttonImpcliRealizado";
+                          }else{
+                              $buttonclass="buttonImpcliListo";
+                          }
+                          echo $this->Form->button(
+                              'As. Apertura',
+                              array(
+                                  'class'=>$buttonclass." progress-button state-loading",
+                                  'onClick'=>"crearAsApertura(".$paramsPrepPapeles.")",
+                                  'id'=>'buttonAsApertura'.$cliente['Cliente']['id'],
                               ),
                               array());
                         }                       

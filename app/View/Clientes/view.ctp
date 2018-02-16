@@ -1210,7 +1210,6 @@ if($mostrarView){?>
                         <th></th>
                         <th></th>
                         <th></th>
-                        <th></th>
                     </tfoot>
                     <tbody>
                     <?php if (!empty($cliente['Bienesdeuso'])): ?>

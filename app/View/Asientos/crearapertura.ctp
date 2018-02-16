@@ -6,7 +6,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 echo $this->Html->script('table2excel',array('inline'=>false));
 echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
 echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
-echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
+echo $this->Html->script('asientos/crearapertura',array('inline'=>false));
 
 
 /**
@@ -32,64 +32,26 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         echo $this->Form->input('fechaInicioConsulta',['type'=>'hidden','value'=>$fechaInicioConsulta]);
         echo $this->Form->input('fechaFinConsulta',['type'=>'hidden','value'=>date('d-m-Y', strtotime($fechaFinConsulta))]);
         ?>
-    </div>
-    <div style="float:right; width:45%">
-        <?php                       
-        echo $this->Form->button('Imprimir',
-            array('type' => 'button',
-                'class' =>"btn_imprimir",
-                'onClick' => "imprimir()"
-            )
-        );
-        ?>
-        <div style="display: none">
-            <?php
-            echo $this->Form->create('cuentascliente',['id'=>'plandecuentasForm','action' => 'plancuentas']); ?>
-            <?php
-            echo $this->Form->input('clis', array(
-                //'multiple' => 'multiple',
-                'type' => 'hidden',
-                'value' => $cliente["Cliente"]['id'],
-                'class'=>'btn_imprimir',
-                'label' => false,
-            )); ?>
-            <?php echo $this->Form->end(__('Plan de cuentas')); ?>
-        </div>
-        <?php
-        
-        ?>
-    </div>
+    </div>    
 </div>
 <div style="width:100%; height:30px; margin-left: 11px;"  class="Formhead noExl" id="divTabs" >
-    <div id="tabSumasYSaldos" class="cliente_view_tab_active" onclick="CambiarTab('sumasysaldos');" style="width:14%;">
+    <div id="tabSumasYSaldos" class="cliente_view_tab_active" onclick="CambiarTab('sumasysaldos');" style="width:14%;display:none">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Balance de Sumas y Saldos</label>
     </div>
-    <div id="tabPrimeraCategoria" class="cliente_view_tab" onclick="CambiarTab('primeracategoria');" style="width:14%;">
+    <div id="tabAsientoApertura" class="cliente_view_tab" onclick="CambiarTab('asientoapertura');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Asiento de Apertura</label>
-    </div>
-    <div id="tabPatrimoniotercera" class="cliente_view_tab" onclick="CambiarTab('patrimoniotercera');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Pat 3&#176;(EU)</label>
-    </div>
-    <div id="tabTercerarRestoCategoria" class="cliente_view_tab" onclick="CambiarTab('tercerarestocategoria');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Patrimonio</label>
-    </div>
-    <div id="tabTerceraCategoria" class="cliente_view_tab" onclick="CambiarTab('terceracategoria');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Ded. Grales.</label>
-    </div>
-    <div id="tabCuartaABCCategoria" class="cliente_view_tab" onclick="CambiarTab('cuartaabccategoria');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Ded. Pers.</label>
-    </div>
-    <div id="tabCuartaDEFCategoria" class="cliente_view_tab" onclick="CambiarTab('cuartadefcategoria');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Determinacion del impuesto</label>
-    </div>
-    <div id="tabJustVarPat" class="cliente_view_tab" onclick="CambiarTab('justificacionvarpat');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Just. Var. Pat.</label>
-    </div>
-    <div id="tabQuebranto" class="cliente_view_tab" onclick="CambiarTab('quebrantos');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Quebrantos</label>
-    </div>   
+    </div>    
 </div>
-<div class="index estadocontable" id="divContenedorBSyS" >
+<?php
+if(count($cliente['Asiento'])>0){
+    ?>
+    <div class="index" id="" style="">
+        Ya se ha creado un asiento de apertura para este periodo. Si desea volver a generarlo, elimine el actual y recargue esta pagina.
+    </div>
+    <?php
+}else{
+?>
+<div class="index estadocontable" id="divContenedorBSyS" style="display:none">
     <?php
     echo "<h3>Balance de Sumas y Saldos del periodo  ".date('d-m-Y', strtotime($fechaInicioConsulta))." hasta ".date('d-m-Y', strtotime($fechaFinConsulta))."</h3>";
     ?>
@@ -110,30 +72,28 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         foreach ($cuentasclientes as $kc => $cuentascliente){
             $numerodecuenta = $cuentascliente['Cuenta']['numero'];
             //si no hay movimientos para esta cuentacliente no la vamos a mostrar en el suma y saldos
-            if(count($cuentascliente['Movimiento'])==0){
+            if((count($cuentascliente['Movimiento'])==0)&&(!in_array($cuentascliente['Cuentascliente']['cuenta_id'], ['2212']))){
                 continue;
             }
             $saldoCalculado = 0;
             $arrayPeriodos = [];
+            $periodoAImputar = date('Y', strtotime($fechaInicioConsulta));
+
+            if(!isset($arrayPeriodos[$periodoAImputar])){
+                $arrayPeriodos[$periodoAImputar]=[];
+                $arrayPeriodos[$periodoAImputar]['debes']=0;
+                $arrayPeriodos[$periodoAImputar]['haberes']=0;
+                $arrayPeriodos[$periodoAImputar]['apertura']=0;
+            }
+            if(!isset($arrayCuentasxPeriodos[$numerodecuenta])){
+                $arrayCuentasxPeriodos[$numerodecuenta] = [];
+                $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'] = $cuentascliente['Cuentascliente']['nombre'];
+                $arrayCuentasxPeriodos[$numerodecuenta]['cuentaclienteid'] = $cuentascliente['Cuentascliente']['id'];
+                $arrayCuentasxPeriodos[$numerodecuenta]['cuentaid'] = $cuentascliente['Cuentascliente']['cuenta_id'];
+                $arrayCuentasxPeriodos[$periodoAImputar] = 0;
+                $arrayCuentasxPeriodos[$numerodecuenta]['apertura'] = [];
+            }       
             foreach ($cuentascliente['Movimiento'] as $movimiento){
-                
-                $periodoAImputar = date('Y', strtotime($fechaInicioConsulta));
-                
-                if(!isset($arrayPeriodos[$periodoAImputar])){
-                    $arrayPeriodos[$periodoAImputar]=[];
-                    $arrayPeriodos[$periodoAImputar]['debes']=0;
-                    $arrayPeriodos[$periodoAImputar]['haberes']=0;
-                    $arrayPeriodos[$periodoAImputar]['apertura']=0;
-                }
-                if(!isset($arrayCuentasxPeriodos[$numerodecuenta])){
-                    $arrayCuentasxPeriodos[$numerodecuenta] = [];
-                    $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'] = $cuentascliente['Cuentascliente']['nombre'];
-                    $arrayCuentasxPeriodos[$numerodecuenta]['cuentaclienteid'] = $cuentascliente['Cuentascliente']['id'];
-                    $arrayCuentasxPeriodos[$numerodecuenta]['cuentaid'] = $cuentascliente['Cuentascliente']['cuenta_id'];
-                    $arrayCuentasxPeriodos[$periodoAImputar] = 0;
-                    $arrayCuentasxPeriodos[$numerodecuenta]['apertura'] = [];
-                }          
-                
                 if($movimiento['Asiento']['tipoasiento']=='Apertura'){
                     $arrayPeriodos[$periodoAImputar]['apertura']+=round($movimiento['debe'], 2);
                     $arrayPeriodos[$periodoAImputar]['apertura']-=round($movimiento['haber'], 2);
@@ -143,10 +103,8 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                 }
                 $arrayPeriodos[$periodoAImputar]['debes']+=round($movimiento['debe'], 2);
                 $arrayPeriodos[$periodoAImputar]['haberes']+=round($movimiento['haber'], 2);
-                
                 $saldoCalculado += round($movimiento['debe'], 2);
                 $saldoCalculado -= round($movimiento['haber'], 2);
-                
             }
             //Saldos de cuentas esperados
             //1 +
@@ -190,7 +148,10 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                     }else{
                         $colorTR= "#ffae00";
                     }
+                     $arrayPeriodos[$periodoActual]['debes']=0;
+                     $arrayPeriodos[$periodoActual]['haberes']=0;
                     $saldoCalculado = 0;
+                    
                     break;
                 
                 case "6":
@@ -199,6 +160,8 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                     }else{
                         $colorTR= "#ffae00";
                     }
+                     $arrayPeriodos[$periodoActual]['debes']=0;
+                     $arrayPeriodos[$periodoActual]['haberes']=0;
                     $saldoCalculado = 0;
                     break;
             }            
@@ -249,9 +212,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         </tfoot>
     </table>
 </div>
-
-
-<div class="index estadocontable">
+<div class="index estadocontable" id="divAsientoApertura">
     <h3><?php echo __('Asiento de Apertura a crear'); ?></h3>
     <?php
     
@@ -295,17 +256,20 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         $asiento_id= $id;
         $debe=($cuentacliente[$periodoActual]>0)?$cuentacliente[$periodoActual]:0;
         $haber=($cuentacliente[$periodoActual]<0)?$cuentacliente[$periodoActual]*-1:0;
-        if($debe==0&&$haber==0)continue;
         $cuentaclienteid=$cuentacliente["cuentaclienteid"];
         $cuentaid=$cuentacliente["cuentaid"];
-       
+        if(($debe==0&&$haber==0)&&(!array_key_exists($cuentaid, $cuentasdeapertura)))
+                continue;
         //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
         //echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.key',['default'=>$key]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.id',['default'=>$movid]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
+        echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.fecha',['default'=>$fecha,'type'=>'hidden']);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuentascliente_id',[
             'default'=>$cuentaclienteid,
             'options'=>$allcuentasclientes,
+            'class'=>'chosen-select-cuenta',
+            'label' => ($i != 0) ? false : 'Cuenta',
                 ]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.cuenta_id',[
             'readonly'=>'readonly',
@@ -317,10 +281,12 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.debe',[
             'default'=>number_format($debe, 2, ".", ""),
             'class'=>'inputDebe',
+            'label' => ($i != 0) ? false : 'Debe',
             ]);
         echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.haber',[
             'default'=>number_format($haber, 2, ".", ""),
             'class'=>'inputHaber',
+            'label' => ($i != 0) ? false : 'Haber',
             ]);
         echo "</br>";
         $i++;
@@ -328,54 +294,59 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         $totalHaber+=$haber;
         //if($i>30)die();
     }
-    echo $this->Form->end();
-    echo $this->Form->label('','Total ',[
+    echo $this->Form->end("Guardar");
+    
+    ?>
+    <div id="asientofooter" style="width:500px">
+        <?php 
+        echo  $this->Form->label('','Total ',[
         'style'=>"display: -webkit-inline-box;width:355px;"
-    ]);
-    ?>
-    <div style="width:98px;margin-left: 300px">
+        ]);?>
+            <?php
+            echo $this->Form->label('lblTotalDebe',
+                number_format($totalDebe, 2, ".", ""),
+                [
+                    'id'=>'lblTotalDebe',
+                    'style'=>"display: inline;"
+                ]
+            );
+            ?>
+            <?php
+            echo $this->Form->label('lblTotalHaber',
+                number_format($totalHaber, 2, ".", ""),
+                [
+                    'id'=>'lblTotalHaber',
+                    'style'=>"display: inline;margin-left: 20px;"
+                ]
+            );
+            ?>
         <?php
-        echo $this->Form->label('lblTotalDebe',
-            number_format($totalDebe, 2, ".", ""),
-            [
-                'id'=>'lblTotalDebe',
-                'style'=>"display: inline;float:right"
-            ]
-        );
+        if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
+                echo $this->Html->image('test-pass-icon.png',array(
+                        'id' => 'iconDebeHaber',
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                        'style' => 'float:right',
+                        'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+                    )
+                );
+        }else{
+                echo $this->Html->image('test-fail-icon.png',array(
+                        'id' => 'iconDebeHaber',
+                        'alt' => 'open',
+                        'class' => 'btn_exit',
+                        'style' => 'float:right',
+                        'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+                    )
+                );
+        }
         ?>
     </div>
-    <div style="width:124px;margin-left: 80px">
-        <?php
-        echo $this->Form->label('lblTotalHaber',
-            number_format($totalHaber, 2, ".", ""),
-            [
-                'id'=>'lblTotalHaber',
-                'style'=>"display: inline;float:right"
-            ]
-        );
-        ?>
-    </div>
-    <?php
-    if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
-            echo $this->Html->image('test-pass-icon.png',array(
-                    'id' => 'iconDebeHaber',
-                    'alt' => 'open',
-                    'class' => 'btn_exit',
-                    'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
-                )
-            );
-    }else{
-            echo $this->Html->image('test-fail-icon.png',array(
-                    'id' => 'iconDebeHaber',
-                    'alt' => 'open',
-                    'class' => 'btn_exit',
-                    'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
-                )
-            );
-    }
-    ?>
     
 </div>
+<?php
+}
+?>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" style="width:90%;">
         <div class="modal-content">

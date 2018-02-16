@@ -1619,13 +1619,19 @@ class AsientosController extends AppController {
         $this->loadModel('User');
         $this->loadModel('Asientoestandare');
         $this->loadModel('Asiento');
+        $this->loadModel('Cuenta');
 
         $pemes = substr($periodo, 0, 2);
         $peanio = substr($periodo, 3);
 
         $optionmiCliente = [
                 'contain' => [
-                  
+                    'Asiento'=>[
+                        'conditions'=>[
+                            'Asiento.tipoasiento'=>'apertura',
+                            'Asiento.periodo'=>$periodo
+                        ]
+                    ]
                 ],
                 'conditions' => ['Cliente.id'=>$clienteid]
         ];
@@ -1647,26 +1653,26 @@ class AsientosController extends AppController {
         }
         $fechaInicioConsulta = "";
         $fechaInicioPeriodoAnterior = "";
+        $fechaFinPeriodoAnterior = "";
         //$fechaFinConsulta = "";
         if($fechadeconsulta<=$fechadecorteAñoActual){
             $fechaInicioConsulta =  date('Y-m-d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
             $fechaInicioPeriodoAnterior =  date('Y-m-d',strtotime($fechadecorteAñoActual." - 2 Years + 1 days"));
+            
             //$fechaFinConsulta =  $fechadecorteAñoActual;
         }else {
             $fechaInicioConsulta = date('Y-m-d', strtotime($fechadecorteAñoActual . " + 1 days"));;
             $fechaInicioPeriodoAnterior =  date('Y-m-d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
             //$fechaFinConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 Years"));
         }
+        $fechaFinPeriodoAnterior =  date('Y-m-d',strtotime($fechaInicioPeriodoAnterior." + 1 Years - 1 days"));
         //la fecha fin consulta es esta por que solo vamos a ver hasta el ultimo dia del periodo que estamos
         // consultando
         $fechaFinConsulta =  date('Y-m-t',strtotime($fechadeconsulta));
 
-        //$fechaFinConsulta  = date('Y',strtotime("01-".$pemes."-".$peanio));
-        //$fechadeconsulta = date('Y',strtotime("01-".$pemes."-".$peanio." -1 Year"));                                                
-        //$fechaInicioConsulta = $fechadeconsulta;
-        //$fechaFinConsulta = $fechaFinConsulta;
-        $this->set('fechaInicioConsulta',$fechaInicioConsulta);
-        $this->set('fechaFinConsulta',$fechaFinConsulta);
+        //vamos a intercambiar las fechas por que quiero traer los datos del periodo anterior
+        $this->set('fechaInicioConsulta',$fechaInicioPeriodoAnterior);
+        $this->set('fechaFinConsulta',$fechaFinPeriodoAnterior);
 
         $optionCliente = [
             'contain' => [
@@ -1679,8 +1685,8 @@ class AsientosController extends AppController {
                                 "Movimiento.asiento_id IN (
                                         SELECT id FROM asientos as Asiento 
                                         WHERE Asiento.cliente_id = ".$clienteid."
-                                        AND    Asiento.fecha  >= '".$fechaInicioConsulta."'
-                                        AND    Asiento.fecha  <= '".$fechaFinConsulta."'
+                                        AND    Asiento.fecha  >= '".$fechaInicioPeriodoAnterior."'
+                                        AND    Asiento.fecha  <= '".$fechaFinPeriodoAnterior."'
                                 )"
                         ]
                 ],
@@ -1711,7 +1717,23 @@ class AsientosController extends AppController {
                 ],
             ],
         ];
-        $allcuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);                
+        $allcuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);            
+          //vamos a traer las cuentas que tienen que aparecer en el asiento de apertura
+        //ya sea que tienen valor o no
+        $optionCuenta = [
+            'contain' => [
+
+            ],
+            'conditions' => [
+                'OR'=>[
+                    "Cuenta.numero like '11050%'",
+                    "Cuenta.numero like '420300001'"
+                    ]
+                ],
+        ];
+        $cuentasdeapertura = $this->Cuenta->find('list',$optionCuenta);
+        $this->set('cuentasdeapertura',$cuentasdeapertura);
+        
         $this->set('cuentasclientes',$cuentasclientes);
         $this->set('allcuentasclientes',$allcuentasclientes);
         $this->set('cliente',$micliente);
