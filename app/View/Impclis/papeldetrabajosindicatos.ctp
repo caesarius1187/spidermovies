@@ -602,11 +602,11 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                     //en este primer loop vamos a calcular todos los siguientes totales
                                     //Solo calcular este INACAP si es comercio
                                     if($empleado['conveniocolectivotrabajo_id']=='3'){
-                                        $title="Cuota vigente a julio 2017 (18.237,62*0,005)= 91,19";
+                                        $title="Cuota vigente a julio 2017 (18.536,60*0,005)= 92,68";
                                         echo "<td title='".$title."'>";
-                                        echo (18237.62*0.005);
-                                        $totalContribucion += (18237.62*0.005);
-                                        $apagarcontribuciones +=(18237.62*0.005);
+                                        echo (18536.60*0.005);
+                                        $totalContribucion += (18536.60*0.005);
+                                        $apagarcontribuciones +=(18536.60*0.005);
                                         echo "</td>";
                                     }else{
                                         $title="No paga INACAP por que no es de Comercio";

@@ -335,6 +335,11 @@ function catchFormAsiento(idForm){
                         $("#myModalAsientos").scrollTop(0);
                     }
                 }else{
+                    if($('#myModalFormAgregarAsiento').length>0){
+                        $('#myModalFormAgregarAsiento').modal('hide');
+                    }else{
+                        $('#myModalAsientos').modal('hide');
+                    }
                     callAlertPopint(respuesta.respuesta);
                 }
                  // reiniciarFormAgregarAsiento()

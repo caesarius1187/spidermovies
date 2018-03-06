@@ -307,8 +307,6 @@ $(document).ready(function() {
         $("#CompraExentos").on('change paste', function() {
             calcularivaytotalcompra("saveComprasForm");
         });
-
-
         $("#CompraCondicioniva").on('change paste', function() {
             $("#CompraComprobanteId" ).trigger( "change" );
         });
@@ -321,16 +319,18 @@ $(document).ready(function() {
                             $("#CompraTipocredito option[value='Credito Fiscal']").show();
                             $("#CompraTipocredito option[value='Restitucion credito fiscal']").hide();
                             $("#CompraTipocredito").val($("#CompraTipocredito option:eq(0)").val());
-
+                            $('.chosen-select').trigger("chosen:updated");
                             break;
                         case 'Restitucion credito fiscal':
                             $("#CompraTipocredito option[value='Credito Fiscal']").hide();
                             $("#CompraTipocredito option[value='Restitucion credito fiscal']").show();
                             $("#CompraTipocredito").val($("#CompraTipocredito option:eq(1)").val());
+                            $('.chosen-select').trigger("chosen:updated");
                             break;
                     }
-
+                        
                     if(tipodecomprobanteCompraseleccionado==comprobante.Comprobante.tipo){
+                        $('.chosen-select').trigger("chosen:updated");
                         return;
                     }
 
@@ -397,7 +397,6 @@ $(document).ready(function() {
                         $("#CompraAlicuota option[value='27']").hide();
                         $("#CompraAlicuota option:eq(0)").val();
                     }
-                    $("#CompraComprobanteId" ).trigger( "change" );
                     $('.chosen-select').trigger("chosen:updated");
                 }
             }, this);

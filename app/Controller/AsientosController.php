@@ -221,8 +221,8 @@ class AsientosController extends AppController {
                 $totaldebe = 0;
                 $totalhaber = 0;
                 if(!isset($this->request->data['Asiento'][$a]['Movimiento'])){
-                    $respuesta['error']=2;
-                    $respuesta['respuesta'].= $a.": Asiento sin movimientos, no se guardará. ";
+                    //$respuesta['error']=2;
+                    //$respuesta['respuesta'].= $a.": Asiento sin movimientos, no se guardará. ";
                     continue;
                 }
                 foreach ($this->request->data['Asiento'][$a]['Movimiento'] as $k => $movimiento){
@@ -1888,7 +1888,8 @@ class AsientosController extends AppController {
                     ],
                     'conditions'=>[
                         'Asiento.tipoasiento'=>'apertura',
-                        'SUBSTRING(Asiento.periodo,4,7)*1 <= '.$peanio.'*1',
+                        "Asiento.fecha >= '".date('Y-m-d', strtotime($fechaInicioConsulta))."'",
+                        "Asiento.fecha <= '".date('Y-m-d', strtotime($fechaFinConsulta))."'"
                     ]
                 ],
             ],

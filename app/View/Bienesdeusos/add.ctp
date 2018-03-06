@@ -1,7 +1,7 @@
 <div class="bienesdeusos form">
 <?php echo $this->Form->create('Bienesdeuso',
 	[
-		'class'=>'formTareaCarga formAddCompra'
+		'class'=>'formTareaCarga formAddBienDeUso'
 	]);
         $id=0;
         $venta_id = "";
@@ -295,7 +295,6 @@
         echo $this->Form->input('Bienesdeuso.0.periodo',[
             'class'=>'all datepicker-month-year',
             'value'=>$periodo,
-            'class'=>'all'
         ]);
         echo $this->Form->input('Bienesdeuso.0.titularidad',[
             'label'=>'% de Titularidad',

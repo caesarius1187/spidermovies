@@ -763,6 +763,42 @@ function loadFormDomicilio(domid,cliid){
 		});
 	});
 }
+function loadFormCambiarGrupo(){
+    jQuery(document).ready(function($) {
+        var divCambioGrupo = $("#divCambioGrupo").html();
+         $('#myModal').on('show.bs.modal', function() {
+            $('#myModal').find('.modal-title').html('Cambiar de grupo el cont');
+            $('#myModal').find('.modal-body').html(divCambioGrupo);
+            var onclick =" jQuery(document).ready(function($) {$('#cambiargrupoForm').submit()});";
+            $('#myModal').find('.modal-footer').html(
+                    
+                    '<button type="button2 data-content="remove" class="btn btn-primary" id="editRowBtn" onClick="'+onclick+'">Modificar</button>'+
+                    '<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>'
+                    );
+        });
+        $('#myModal').modal('show');
+        $('#cambiargrupoForm').submit(function(){
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+            $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(data,textStatus,xhr){
+                            //callAlertPopint(data);
+                            callAlertPopint("Contribuyente cambiado de grupo");
+                            location.reload();
+                    },
+                    error: function(xhr,textStatus,error){
+                            callAlertPopint(textStatus);
+                    }
+            });
+            return false;
+        });
+    });
+}
 function loadFormActividadcliente(actcliid,cliid){
 	jQuery(document).ready(function($) {
 		var data ="";

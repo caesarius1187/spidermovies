@@ -406,7 +406,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['periodo']=$cuentascliente['Cuentaclienteactualizacion'][0]['periodo'];                
                     $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio']=$cuentascliente['Cuentaclienteactualizacion'][0]['importeamorteizaciondelperiodo']+
                             $cuentascliente['Cuentaclienteactualizacion'][0]['importeamortizacionaceleradadelperiodo'];    
-                    foreach ($cuentascliente['Cuentaclientevalororigen'][0]['Amortizacione'] as $ka => $amortizacione) {
+                    foreach ($cuentascliente['Cuentaclienteactualizacion'][0]['Amortizacione'] as $ka => $amortizacione) {
                         if(!isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
                             $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial']=[];
                         }
@@ -422,7 +422,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['periodo']=$cuentascliente['Cuentaclienteterreno'][0]['periodo'];                
                     $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio']=$cuentascliente['Cuentaclienteterreno'][0]['importeamorteizaciondelperiodo']+
                             $cuentascliente['Cuentaclienteterreno'][0]['importeamortizacionaceleradadelperiodo'];            
-                    foreach ($cuentascliente['Cuentaclientevalororigen'][0]['Amortizacione'] as $ka => $amortizacione) {
+                    foreach ($cuentascliente['Cuentaclienteterreno'][0]['Amortizacione'] as $ka => $amortizacione) {
                         if(!isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
                             $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial']=[];
                         }
@@ -438,7 +438,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['periodo']=$cuentascliente['Cuentaclienteedificacion'][0]['periodo'];                
                     $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio']=$cuentascliente['Cuentaclienteedificacion'][0]['importeamorteizaciondelperiodo']+
                             $cuentascliente['Cuentaclienteedificacion'][0]['importeamortizacionaceleradadelperiodo'];                
-                    foreach ($cuentascliente['Cuentaclientevalororigen'][0]['Amortizacione'] as $ka => $amortizacione) {
+                    foreach ($cuentascliente['Cuentaclienteedificacion'][0]['Amortizacione'] as $ka => $amortizacione) {
                         if(!isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
                             $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial']=[];
                         }
@@ -454,7 +454,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['periodo']=$cuentascliente['Cuentaclientemejora'][0]['periodo'];                
                     $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio']=$cuentascliente['Cuentaclientemejora'][0]['importeamorteizaciondelperiodo']+
                             $cuentascliente['Cuentaclientemejora'][0]['importeamortizacionaceleradadelperiodo'];                
-                    foreach ($cuentascliente['Cuentaclientevalororigen'][0]['Amortizacione'] as $ka => $amortizacione) {
+                    foreach ($cuentascliente['Cuentaclientemejora'][0]['Amortizacione'] as $ka => $amortizacione) {
                         if(!isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
                             $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial']=[];
                         }
@@ -5412,7 +5412,7 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $valororigen =  $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];                
             $valororigenAnterior =  $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];                
             $porcentajeamortizacion =  1;                
-            if(isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionacumulada'])){
+            if(isset($arrayCuentasxPeriodos[$numerodecuenta]['porcentajeamortizacion'])){
                 $amortizacionacumulada =  $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionacumulada'];
                 $porcentajeamortizacion =  $arrayCuentasxPeriodos[$numerodecuenta]['porcentajeamortizacion'];
                 $amortizacionEjercicio =  $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio'];
@@ -5431,8 +5431,18 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $interval2 = $d3->diff($d1);
             $aniosamortizados = $interval->format('%y')*1 + (($interval->format('%m')*1>0)?1:0);
             $aniosamortizadosAnterior = $interval2->format('%y')*1 + (($interval2->format('%m')*1>0)?1:0);
-            $topeAmortizacion = ($porcentajeamortizacion!=0)?(100/$porcentajeamortizacion):1000;
+            if($d2<$d1){
+                 $aniosamortizados = 0;
+            }
+            if($d3<$d1){
+                 $aniosamortizadosAnterior = 0;
+            }
             
+            $topeAmortizacion = ($porcentajeamortizacion!=0)?(100/$porcentajeamortizacion):1000;
+            Debugger::dump($arrayCuentasxPeriodos[$numerodecuenta]);
+            Debugger::dump($porcentajeamortizacion);
+            Debugger::dump($aniosamortizados);
+            Debugger::dump($topeAmortizacion);
             if($aniosamortizados<$topeAmortizacion){
                 if(($aniosamortizados)<=1){
                     $amortizacionacumulada = 0;
@@ -5584,6 +5594,7 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $totalNota['ejercicioAnterior'] += $ejercicioAnterior;
             $totalNota['alinicioAnterior'] += $alinicioAnterior;
             $totalNota['altasAnterior'] += $altasAnterior;
+            $titleEjAnterior = "Al Inicio: ".$alinicioAnterior." - Altas : ".$altasAnterior." - Depreciacion: ".$depreciacionalcierreAnterior;
             ?>
             <tr>
                 <td style="border-right: 2px black solid"><?php echo $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'];?></td>
@@ -5602,7 +5613,7 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
                 <td class="tdWithNumber" style="display: none"><?php echo number_format($depreciacionrecuperodesvalorizacion, 2, ",", ".") ?></td>
                 <td class="tdWithNumber" style="border-right: 2px black solid"><?php echo number_format($depreciacionalcierre, 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($ejercicioActual, 2, ",", ".") ?></td>
-                <td class="tdWithNumber"><?php echo number_format($ejercicioAnterior, 2, ",", ".") ?></td>
+                <td class="tdWithNumber" title="<?php echo $titleEjAnterior?> "><?php echo number_format($ejercicioAnterior, 2, ",", ".") ?></td>
             </tr>
             <?php
            

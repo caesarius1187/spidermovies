@@ -284,6 +284,9 @@ $(document).ready(function() {
     function verPapelDeTrabajoGanancias(periodo,cliid){
         var win = window.open(serverLayoutURL+'/papelesdetrabajos/ganancias/'+cliid+'/'+periodo , '_blank');
     }
+    function verPapelDeTrabajoBP(periodo,cliid){
+        var win = window.open(serverLayoutURL+'/papelesdetrabajos/bienespersonales/'+cliid+'/'+periodo , '_blank');
+    }
     function verCuentasDepuradas(cliid,periodo){
         var win = window.open(serverLayoutURL+'/controles/cuentasdepuradas/'+cliid+'/'+periodo , '_blank');
     }

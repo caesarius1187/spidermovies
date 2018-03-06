@@ -2304,6 +2304,15 @@ transition: all 0.4s ease-in-out;
 .formAddCompra input{
     width: 70px;
 }
+.formAddBienDeUso div{
+    margin: 0px 3.2px;
+}
+.formAddBienDeUso .submit{
+    /*width: 25px;*/
+}
+.formAddBienDeUso input{
+    width: 100px;
+}
 .compraWithError{
     background-color: #ff9900;
 }

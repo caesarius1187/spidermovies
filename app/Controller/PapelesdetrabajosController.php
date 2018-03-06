@@ -437,6 +437,7 @@ class PapelesdetrabajosController extends AppController {
         $this->loadModel('Cuentascliente');
         $this->loadModel('User');
         $this->loadModel('Asientoestandare');
+        $this->loadModel('Impcli');
         $this->loadModel('Asiento');
 
         $pemes = substr($periodo, 0, 2);
@@ -452,15 +453,17 @@ class PapelesdetrabajosController extends AppController {
                         'Cuentaclientemejora',
                     ],
                     'Impcli'=>[
+                        'Cbu'=>[
+                            
+                        ],
                         'Asiento'=>[
                             'Movimiento'=>[
                                 'Cuentascliente'=>[
-                                    
                                 ]
                             ],
                             'conditions'=>[
-                                'Asiento.tipoasiento'=>'impuestos2',
-                                'SUBSTRING(Asiento.periodo,4,7)'=>$peanio
+                                'Asiento.tipoasiento'=>'impuestos',
+                                'Asiento.periodo'=>$periodo
                             ],
                         ],
                         'Deduccione',
@@ -495,10 +498,9 @@ class PapelesdetrabajosController extends AppController {
         ];
         $micliente = $this->Cliente->find('first',$optionmiCliente);
         $optionUser = [
-                'contain' => [
-
-                ],
-                'conditions' => ['User.id'=>$this->Session->read('Auth.User.id'),]
+            'contain' => [
+            ],
+            'conditions' => ['User.id'=>$this->Session->read('Auth.User.id'),]
         ];
         $user = $this->User->find('first',$optionUser);
         $fechadeconsulta = date('Y-m-t',strtotime("01-".$pemes."-".$peanio));
@@ -559,18 +561,23 @@ class PapelesdetrabajosController extends AppController {
                 ],
                 'Cbu',
                 'Cuenta',
+                'Bienespersonale'=>[
+                    'conditions'=>[
+                         'Bienespersonale.periodo'=>$periodo
+                    ]
+                ],
                 'Movimiento'=>[
-                        'Asiento'=>[
-                                'fields'=>['id','fecha','tipoasiento']
-                        ],
-                        'conditions'=>[
-                                "Movimiento.asiento_id IN (
-                                        SELECT id FROM asientos as Asiento 
-                                        WHERE Asiento.cliente_id = ".$clienteid."
-                                        AND    Asiento.fecha  >= '".$fechaInicioConsulta."'
-                                        AND    Asiento.fecha  <= '".$fechaFinConsulta."'
-                                )"
-                        ]
+                    'Asiento'=>[
+                        'fields'=>['id','fecha','tipoasiento']
+                    ],
+                    'conditions'=>[
+                        "Movimiento.asiento_id IN (
+                            SELECT id FROM asientos as Asiento 
+                            WHERE Asiento.cliente_id = ".$clienteid."
+                            AND    Asiento.fecha  >= '".$fechaInicioConsulta."'
+                            AND    Asiento.fecha  <= '".$fechaFinConsulta."'
+                        )"
+                    ]
                 ],
             ],
             'conditions' => ['Cuentascliente.cliente_id'=>$clienteid],
@@ -619,8 +626,12 @@ class PapelesdetrabajosController extends AppController {
         $tienetercera=false;
         $tieneterceraauxiliar=false;
         $tienecuarta=false;
+        $tieneMonotributo=false;
         foreach ($micliente['Actividadcliente'] as $actividadcliente){
            $categoriaActividad = $actividadcliente['Cuentasganancia'][0]['categoria'];              
+           if($categoriaActividad=='monotributo'){
+               $tieneMonotributo=true;
+           }
            if($categoriaActividad=='primeracateg'){
                $tieneprimera=true;
            }
@@ -674,7 +685,60 @@ class PapelesdetrabajosController extends AppController {
             ],
         ];
         $asientoyacargado = $this->Asiento->find('first', $options);
+        $options = [
+            'contain'=>[
+                'Movimiento',
+            ],
+            'conditions' => [
+                'Asiento.tipoasiento'=> 'impuestos',
+                'Asiento.periodo'=>$periodo,
+                'Asiento.cliente_id'=>$clienteid,
+                'Asiento.impcli_id'=>$micliente['Impcli'][0]['id']
+            ],
+        ];
+        $asientoganancias = $this->Asiento->find('first', $options);
         
+        $optionsCuentaLey25413 = [
+            'contain'=>[
+                'Movimientosbancario'=>[
+                    'conditions'=>[
+                        "Movimientosbancario.fecha  >= '".$fechaInicioConsulta."'
+                         AND    Movimientosbancario.fecha  <= '".$fechaFinConsulta."'"
+                    ]
+                ]
+            ],
+            'conditions' => [
+                'Cuentascliente.cuenta_id'=>298,
+                'Cuentascliente.cliente_id'=>$clienteid
+            ],
+        ];
+        $cuentasLey25413 = $this->Cuentascliente->find('first', $optionsCuentaLey25413);
+        $optionmiimpcliCBU = [
+                'contain' => [
+                    'Impuesto'=>[],
+                    'Cbu'=>[],                        
+                ],
+                'conditions' => ['Impcli.cliente_id'=>$clienteid]
+        ];
+        $impcliCBU = $this->Impcli->find('all',$optionmiimpcliCBU);
+        
+        /*
+         *Ahora vamos a llevar los datos que necesitamos para calcular BP           
+         */
+        $optionsBP = [
+            'contain'=>[
+            ],
+            'conditions' => [
+                'Impcli.impuesto_id'=>159,
+                'Impcli.cliente_id'=>$clienteid
+            ],
+        ];
+        $bienespersonales = $this->Impcli->find('first', $optionsBP);
+        
+
+        $this->set('cuentasLey25413',$cuentasLey25413);
+        $this->set('impcliCBU',$impcliCBU);
+        $this->set('bienespersonales',$bienespersonales);
         $this->set('asientoDeduccionGeneral',$asientoyacargado);
         $this->set('allcuentasclientes',$allcuentasclientes);
         $this->set('asientoestandares',$asientoestandares);
@@ -683,11 +747,118 @@ class PapelesdetrabajosController extends AppController {
         $this->set('user',$user);
         $this->set('periodo',$periodo);
         
+        $this->set('tieneMonotributo',$tieneMonotributo);
         $this->set('tieneprimera',$tieneprimera);
         $this->set('tienesegunda',$tienesegunda);
         $this->set('tienetercera',$tienetercera);
         $this->set('tieneterceraauxiliar',$tieneterceraauxiliar);
         $this->set('tienecuarta',$tienecuarta);
+    }
+    public function bienespersonales($clienteid=null, $periodo=null){
+        $this->loadModel('Cliente');
+        $this->loadModel('Movimiento');
+        $this->loadModel('Cuentascliente');
+        $this->loadModel('User');
+        $this->loadModel('Asientoestandare');
+        $this->loadModel('Asiento');
+
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+
+        $optionmiCliente = [
+                'contain' => [
+                    'Impcli'=>[
+                        'Asiento'=>[
+                            'Movimiento'=>[
+                                'Cuentascliente'=>[
+                                    
+                                ]
+                            ],
+                            'conditions'=>[
+                                'Asiento.tipoasiento'=>'impuestos',
+                                'Asiento.periodo'=>$periodo
+                            ],
+                        ],
+                        'conditions'=>[
+                            'Impcli.impuesto_id'=>159
+                        ]
+                    ]
+                ],
+                'conditions' => ['Cliente.id'=>$clienteid]
+        ];
+        $micliente = $this->Cliente->find('first',$optionmiCliente);
+        $optionUser = [
+            'contain' => [
+            ],
+            'conditions' => ['User.id'=>$this->Session->read('Auth.User.id'),]
+        ];
+        $user = $this->User->find('first',$optionUser);
+        $fechadeconsulta = date('Y-m-t',strtotime("01-".$pemes."-".$peanio));
+
+        if(!isset($micliente['Cliente']['fchcorteejerciciofiscal'])||is_null($micliente['Cliente']['fchcorteejerciciofiscal'])||$micliente['Cliente']['fchcorteejerciciofiscal']==""){
+            $this->Session->setFlash(__('No se ha configurado fecha decorte de ejercicio fiscal para este
+             contribuyente .'));
+            $fechadecorteAñoActual = date('Y-m-d',strtotime("01-01-".$peanio));
+        }else{
+            $fechadecorteAñoActual = date('Y-m-d',strtotime($micliente['Cliente']['fchcorteejerciciofiscal']."-".$peanio));
+        }
+        $fechaInicioConsulta = "";
+        $fechaInicioPeriodoAnterior = "";
+        //$fechaFinConsulta = "";
+        if($fechadeconsulta<=$fechadecorteAñoActual){
+            $fechaInicioConsulta =  date('Y-m-d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+            $fechaInicioPeriodoAnterior =  date('Y-m-d',strtotime($fechadecorteAñoActual." - 2 Years + 1 days"));
+            //$fechaFinConsulta =  $fechadecorteAñoActual;
+        }else {
+            $fechaInicioConsulta = date('Y-m-d', strtotime($fechadecorteAñoActual . " + 1 days"));;
+            $fechaInicioPeriodoAnterior =  date('Y-m-d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+            //$fechaFinConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 Years"));
+        }
+        //la fecha fin consulta es esta por que solo vamos a ver hasta el ultimo dia del periodo que estamos
+        // consultando
+        $fechaFinConsulta =  date('Y-m-t',strtotime($fechadeconsulta));
+
+        //$fechaFinConsulta  = date('Y',strtotime("01-".$pemes."-".$peanio));
+        //$fechadeconsulta = date('Y',strtotime("01-".$pemes."-".$peanio." -1 Year"));                                                
+        //$fechaInicioConsulta = $fechadeconsulta;
+        //$fechaFinConsulta = $fechaFinConsulta;
+        $this->set('fechaInicioConsulta',$fechaInicioConsulta);
+        $this->set('fechaFinConsulta',$fechaFinConsulta);
+
+        $optionCliente = [
+            'contain' => [
+                'Cbu',
+                'Cuenta',
+                'Bienespersonale'=>[
+                    'conditions'=>[
+                        'Bienespersonale.periodo'=>$periodo
+                    ],
+                ],
+                'Movimiento'=>[
+                        'Asiento'=>[
+                                'fields'=>['id','fecha','tipoasiento']
+                        ],
+                        'conditions'=>[
+                                "Movimiento.asiento_id IN (
+                                        SELECT id FROM asientos as Asiento 
+                                        WHERE Asiento.cliente_id = ".$clienteid."
+                                        AND    Asiento.fecha  >= '".$fechaInicioConsulta."'
+                                        AND    Asiento.fecha  <= '".$fechaFinConsulta."'
+                                )"
+                        ]
+                ],
+            ],
+            'conditions' => ['Cuentascliente.cliente_id'=>$clienteid],
+            'order'=>[
+                'Cuenta.numero'
+            ]
+        ];
+        $cuentasclientes = $this->Cuentascliente->find('all',$optionCliente);
+                
+        $this->set('cuentasclientes',$cuentasclientes);
+        $this->set('cliente',$micliente);
+        $this->set('user',$user);
+        $this->set('periodo',$periodo);
     }
     public function cm05(){
         $this->loadModel('Venta');

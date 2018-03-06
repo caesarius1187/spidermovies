@@ -274,7 +274,15 @@ if($mostrarView){?>
                             <?php echo $this->Form->input('dni',array('label'=>'DNI', 'style'=>'width:180px','maxlength'=>'8','class'=>'numeric')); ?>
                         </td>
                         <td>
-                            <?php echo $this->Form->input('grupocliente_id',array('label'=>'Grupo Clientes', 'style'=>'width:180px')); ?> 
+                            <?php 
+                            echo $this->Form->label(
+                                    '',
+                                    "Grupo: ".$cliente['Grupocliente']['nombre'],
+                                    [
+                                        'onClick'=>'loadFormCambiarGrupo();'
+                                    ]);
+                                            
+                            ?> 
                         </td>
                     </tr>    
                     <tr>
@@ -2236,3 +2244,21 @@ if($mostrarView){?>
     <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+<div id="divCambioGrupo" style="display:none">
+    <p><label>Cambiar un contribuyente de grupo generar&aacute; deudas o recibos de dinero que hoy no existen en el Informe Tributario Financiero</label></p>
+    <p><label>Por lo que cuando un contribuyente abandona un grupo se crear&aacute; (para cada periodo en el que este contribuyente haya echo 
+        recibos, c&aacute;lculo de impuestos, planes de pagos o honorarios) un recibo, en un contribuyente que se queda en el grupo, que 
+        balancear&aacute; las deudas o recibos de dinero que produce su salida. Tambien se crear&aacute;n recibos en el mismo contribuyente
+        que se va del grupo para que el grupo al que llega no se vea afectado por este movimiento.</label>
+    </p>
+    <?php
+        echo $this->Form->create('Cliente',array('action'=>'cambiardegrupo','id'=>'cambiargrupoForm', 'class' => 'form_popin'));            
+        echo $this->Form->input('cliente_id',array(
+            'type'=>'hidden',
+            'value'=>isset($cliente['Cliente']['nombre'])?$cliente['Cliente']['id']:0));
+        echo $this->Form->input('grupocliente_id',array(
+            'label'=>'Seleccionar Nuevo grupo'
+        ));
+        echo $this->Form->end();        
+    ?>
+</div>

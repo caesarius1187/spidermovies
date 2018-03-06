@@ -188,7 +188,7 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
 	                                'Volver', 
 	                                array(
 	                                    'controller' => 'Cuentasclientes',
-	                                    'action' => 'plancuentas', $clienteId
+	                                    'action' => 'informesumaysaldo', $clienteId , date('m-Y')
 	                                ),
 	                                array(
 	                                	'style' => 'float:left; margin-left:10px;margin-top:15px'

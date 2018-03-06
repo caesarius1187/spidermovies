@@ -93,6 +93,7 @@ function showAllDivs(){
     $("#divDeterminacionGPF").show();
     $("#divJustificacionVarPat").show();
     $("#divQuebrantos").show();
+    $("#divDeterminacionBP").show();
 }
 function CambiarTab(sTab)	{
     $("#tabSumasYSaldos").attr("class", "cliente_view_tab");
@@ -104,6 +105,7 @@ function CambiarTab(sTab)	{
     $("#tabCuartaDEFCategoria").attr("class", "cliente_view_tab");
     $("#tabJustVarPat").attr("class", "cliente_view_tab");
     $("#tabQuebranto").attr("class", "cliente_view_tab");
+    $("#tabDetImpBP").attr("class", "cliente_view_tab");
 
     if(sTab == "sumasysaldos")
     {
@@ -117,6 +119,7 @@ function CambiarTab(sTab)	{
         $("#divDeterminacionGPF").hide();
         $("#divJustificacionVarPat").hide();        
         $("#divQuebrantos").hide();        
+        $("#divDeterminacionBP").hide();        
     }
     if(sTab == "primeracategoria")
     {
@@ -130,6 +133,7 @@ function CambiarTab(sTab)	{
         $("#divDeterminacionGPF").hide();
         $("#divJustificacionVarPat").hide();
         $("#divQuebrantos").hide();      
+        $("#divDeterminacionBP").hide();        
     }
     if (sTab == "patrimoniotercera")
     {
@@ -144,6 +148,7 @@ function CambiarTab(sTab)	{
         $("#divDeterminacionGPF").hide();
         $("#divJustificacionVarPat").hide();
         $("#divQuebrantos").hide();       
+        $("#divDeterminacionBP").hide();        
     }
     if (sTab == "tercerarestocategoria")
     {
@@ -158,6 +163,7 @@ function CambiarTab(sTab)	{
         $("#divDeterminacionGPF").hide();
         $("#divJustificacionVarPat").hide();
         $("#divQuebrantos").hide();   
+        $("#divDeterminacionBP").hide();        
     }
     if (sTab == "terceracategoria")
     {
@@ -171,7 +177,9 @@ function CambiarTab(sTab)	{
         $("#divDeduccionesPersonales").hide();
         $("#divDeterminacionGPF").hide();
         $("#divJustificacionVarPat").hide();
-        $("#divQuebrantos").hide();        
+        $("#divQuebrantos").hide();     
+        $("#divDeterminacionBP").hide();        
+        
     }
     if (sTab == "cuartaabccategoria")
     {
@@ -186,6 +194,7 @@ function CambiarTab(sTab)	{
         $("#divDeterminacionGPF").hide();
         $("#divJustificacionVarPat").hide();
         $("#divQuebrantos").hide();        
+        $("#divDeterminacionBP").hide();        
     }
     if (sTab == "cuartadefcategoria")
     {
@@ -199,6 +208,7 @@ function CambiarTab(sTab)	{
         $("#divJustificacionVarPat").hide();
         $("#divDeterminacionGPF").show();
         $("#divQuebrantos").hide();     
+        $("#divDeterminacionBP").hide();        
     }   
     if (sTab == "justificacionvarpat")
     {
@@ -212,6 +222,7 @@ function CambiarTab(sTab)	{
         $("#divJustificacionVarPat").show();
         $("#divDeterminacionGPF").hide();
         $("#divQuebrantos").hide();     
+        $("#divDeterminacionBP").hide();        
     }   
     if (sTab == "quebrantos")
     {
@@ -225,6 +236,21 @@ function CambiarTab(sTab)	{
         $("#divJustificacionVarPat").hide();
         $("#divDeterminacionGPF").hide();
         $("#divQuebrantos").show();     
+        $("#divDeterminacionBP").hide();        
+    }   
+    if (sTab == "detImpBP")
+    {
+        $("#tabDetImpBP").attr("class", "cliente_view_tab_active");
+        $("#divContenedorBSyS").hide();
+        $("#divPrimeraCategoria").hide();
+        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonio").hide();
+        $("#divDeduccionesGenerales").hide();
+        $("#divDeduccionesPersonales").hide();
+        $("#divJustificacionVarPat").hide();
+        $("#divDeterminacionGPF").hide();
+        $("#divQuebrantos").hide();     
+        $("#divDeterminacionBP").show();        
     }   
 }
 function imprimir(){
@@ -664,6 +690,109 @@ function contabilizarexistenciafinal (clienteid,periodo) {
      }
  });
 }
+function contabilizarganancias (impcliid,periodo) {
+ var data="";
+ $.ajax({
+     type: "post",  // Request method: post, get
+     url: serverLayoutURL+"/asientos/contabilizarimpuesto/"+impcliid+"/"+periodo,
+     // URL to request
+     data: data,  // post data
+     success: function(response) {
+         $('#myModal').on('show.bs.modal', function() {
+             $('#myModal').find('.modal-title').html('Asiento automatico Devengamiento Ganancias');
+             $('#myModal').find('.modal-body').html(response);
+             /*$('#myModal').find('.modal-content')
+                 .css({
+                     width: 'max-content',
+                     'margin-left': function () {
+                         return -($(this).width() / 2);
+                     }
+                 });*/
+             $('#myModal').find('.modal-footer').html("");
+             $('#myModal').find('.modal-footer').append($('<button>', {
+                 type:'button',
+                 datacontent:'remove',
+                 class:'btn btn-primary',
+                 id:'editRowBtn',
+                 onclick:"$('#AsientoAddForm').submit()",
+                 text:"Aceptar"
+             }));
+             $('#myModal').find('.modal-footer').append($('<button>', {
+                 type:'button',
+                 datacontent:'remove',
+                 class:'btn btn-primary',
+                 id:'editRowBtn',
+                 onclick:" $('#myModal').modal('hide')",
+                 text:"Cerrar"
+             }));
+         });
+         $('#myModal').modal('show');
+         $('.chosen-select-cuenta').chosen({
+             search_contains:true,
+             include_group_label_in_selected:true
+         });
+         rellenarAsientoGanancias();
+         $('#AsientoAddForm').submit(function(){
+             $('#myModal').modal('hide');
+             /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
+             var asientoyaguardado=false;
+             if($("#AsientoAddForm #Asiento0Id").val()*1!=0){
+                 asientoyaguardado=true;
+             }
+             var r=true;
+             if(asientoyaguardado){
+                 r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
+                     " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
+                     " Sumas y saldos y despues en Asientos");
+             }
+             if (r == true) {
+                $('#AsientoAddForm input').each(function(){
+                    $(this).removeAttr('disabled');
+                });
+                //serialize form data
+                var formData = $(this).serialize();
+                //get form action
+                var formUrl = $(this).attr('action');
+                $("#AjustescontableEditForm").submit();
+                $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(data,textStatus,xhr){
+                        //vamos a hacer el reload desde el guardado de los ajustes
+                        //location.reload();
+                        $(".ajusteImpuestoALaGanancia").each(function(){
+                            $(this).attr('disabled',false);
+                        })
+                        
+                    },
+                    error: function(xhr,textStatus,error){
+                        $('#myModal').modal('show');
+                        alert(textStatus);
+                        callAlertPopint(textStatus);
+                        return false;
+                    }
+                });
+             }else{
+                 callAlertPopint("El asiento no se ha sobreescrito.");
+             }
+
+             return false;
+         });
+         $(".inputDebe").each(function () {
+             $(this).change(addTolblTotalDebeAsieto);
+         });
+         $(".inputHaber").each(function () {
+             $(this).change(addTolblTotalhaberAsieto);
+         });
+     },
+     error:function (XMLHttpRequest, textStatus, errorThrown) {
+         alert(textStatus);
+         alert(XMLHttpRequest);
+         alert(errorThrown);
+     }
+ });
+}
 function contabilizarexistenciafinal (clienteid,periodo) {
     var data="";
     $.ajax({
@@ -999,7 +1128,6 @@ function rellenarAsientoGanancias(){
                 //falta el saldo de esta cuenta
                  $('#myModal #Asiento1Movimiento'+orden+'Haber').val(usadoley25413);    
             }
-                   
         }                        
     }
     if($('#1cuenta269').length > 0){

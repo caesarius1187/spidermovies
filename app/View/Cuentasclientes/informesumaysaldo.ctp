@@ -331,7 +331,7 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                             'required'=>"required",
                             'readonly'=>"readonly",
                             'style'=>"width:120px"]);
-                    echo $this->Form->input('Asiento.0.tipoasiento',
+                    echo $this->Form->input('Asiento.1.tipoasiento',
                         [
                             'type'=>"select",
                             'options'=>[

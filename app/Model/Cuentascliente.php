@@ -103,6 +103,19 @@ class Cuentascliente extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
+		'Bienespersonale' => array(
+			'className' => 'Bienespersonale',
+			'foreignKey' => 'cuentascliente_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
 		'Movimiento' => array(
 			'className' => 'Movimiento',
 			'foreignKey' => 'cuentascliente_id',

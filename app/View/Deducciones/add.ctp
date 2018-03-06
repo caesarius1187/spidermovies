@@ -149,8 +149,9 @@ if(!isset($error)){ ?>
                     <tr id="#rowDeduccion<?php echo $deduccion['Deduccione']['id']; ?>">  
                             <td><?php echo $deduccion['Deduccione']['clase'];?></td>
                             <td><?php echo $deduccion['Deduccione']['nombre']
-                                    ." ".$deduccion['Deduccione']['cuit']
-                                    ." ".$deduccion['Deduccione']['documento']
+                                    ." CUIT: ".$deduccion['Deduccione']['cuit']
+                                    ." CUIL: ".$deduccion['Deduccione']['cuil']
+                                    ." DNI: ".$deduccion['Deduccione']['documento']
                                     ?></td>
                             <td>
                                 <a href="#"  onclick="deleteDeduccion(<?php echo $deduccion['Deduccione']['id']; ?>)" class="button_view"> 

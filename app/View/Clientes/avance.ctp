@@ -210,9 +210,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                     if($cliente['impuestosactivos']['contabiliza']){
                         $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
                         //si es cliente del estudio 2(Manjon) o 16(Alejandro Farah) vamos a permitir ver balance hasta la fecha
-                         if(in_array($cliente['Grupocliente']['estudio_id'],['2','16','5'])&&($cliente['Cliente']['tipopersona']=='juridica')){
-//            $esPersonaJuridica=true;
-//        })){
+                         if(($cliente['Cliente']['id']=='56'||($cliente['Cliente']['tipopersona']=='juridica'))){
                             echo $this->Form->button(
                                 'Estados Contables',
                                 array(
@@ -1048,7 +1046,7 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
             break;
         case 14/*Autonomo*/:
             $onclick = 'verPapelDeTrabajoAutonomo('."'".$periodo."'".','."'".$impcliid."'".')';
-            break;
+            break;       
         case 19/*IVA*/:
             $onclick = 'verPapelDeTrabajoIVA('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
             break;
@@ -1061,6 +1059,9 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
             break;
         case 160/*Ganancias PF*/:
             $onclick = 'verPapelDeTrabajoGanancias('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
+            break;
+         case 159/*Bienes Personales*/:
+            $onclick = 'verPapelDeTrabajoBP('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
             break;
         default:
             if($impcli['Impuesto']['organismo']=='sindicato'){

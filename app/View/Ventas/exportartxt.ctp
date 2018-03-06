@@ -126,16 +126,12 @@
             //        $lineVenta['cantidadalicuotas']=substr($line, 241,1);
             $lineVenta .= str_pad($venta[0]['cantalicuotas'], 1, "0", STR_PAD_LEFT);
             //        $lineVenta['operacioncodigo']=substr($line, 242,1);
-
-            if(isset($venta[0]['alicuota'])){
-                if($venta[0]['alicuota']==0){
-                    $lineVenta .= str_pad("E", 1, "0", STR_PAD_LEFT);
-                }else{
-                }
+            if($venta['Venta']['alicuota']==0){
+                $lineVenta .= str_pad("E", 1, "0", STR_PAD_LEFT);
             }else{
                 $lineVenta .= str_pad(0, 1, "0", STR_PAD_LEFT);
             }
-
+            
             //        $lineVenta['otrostributos']=substr($line, 243,13).'.'.substr($line, 256, 2);
             $lineVenta .= str_pad(0, 15, "0", STR_PAD_LEFT);
             //        $lineVenta['fechavencimientopago']=substr($line, 258,8);

@@ -67,6 +67,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         $paramsPrepPapeles2="'".$cliente['Impcli'][0]['id']."','".$periodo."'";
         $tieneasientodeApertura=false;
         $tieneasientodeexistenciafinal=false;
+        $tieneasientodeganancias=false;
         foreach ($cuentasclientes as $kc => $cuentascliente){
             foreach ($cuentascliente['Movimiento'] as $movimiento){
                 if($movimiento['Asiento']['tipoasiento']=='Apertura'){
@@ -76,6 +77,9 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                     $tieneasientodeexistenciafinal=true;
                 }
             }
+        }
+        foreach($cliente['Impcli'][0]['Asiento'] as $asiento){
+            $tieneasientodeganancias=true;
         }
         if($tieneasientodeApertura){
             $buttonclass="buttonImpcliRealizado";
@@ -103,13 +107,17 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                 'id'=>'buttonAsExistenciaFinal',
             ),
         array());
-        $buttonclass="buttonImpcliListo";
+         if($tieneasientodeganancias){
+            $buttonclass="buttonImpcliRealizado";
+        }else{
+            $buttonclass="buttonImpcliListo";
+        }
         echo $this->Form->button(
             'As. Ganancias',
             array(
                 'class'=>$buttonclass." progress-button state-loading",
                 'onClick'=>"contabilizarganancias(".$paramsPrepPapeles2.")",
-                'id'=>'buttonAsExistenciaFinal',
+                'id'=>'buttonAsGanancias',
             ),
         array());?>
     </div>
@@ -134,14 +142,17 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Ded. Pers.</label>
     </div>
     <div id="tabCuartaDEFCategoria" class="cliente_view_tab" onclick="CambiarTab('cuartadefcategoria');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Determinacion del impuesto</label>
-    </div>
+        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Determinacion del impuesto G</label>
+    </div>    
     <div id="tabJustVarPat" class="cliente_view_tab" onclick="CambiarTab('justificacionvarpat');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Just. Var. Pat.</label>
     </div>
     <div id="tabQuebranto" class="cliente_view_tab" onclick="CambiarTab('quebrantos');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Quebrantos</label>
     </div>   
+    <div id="tabDetImpBP" class="cliente_view_tab" onclick="CambiarTab('detImpBP');" style="width:14%;">
+        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Determinacion del impuesto BP</label>
+    </div>
 </div>
 <div class="index estadocontable" id="divContenedorBSyS" >
     <?php
@@ -154,6 +165,8 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                 <td>Cuenta</td>
                 <td>Apertura</td>
                 <td>Saldo Actual</td>
+                <td>BP Gravado</td>
+                <td>BP Exento/No Gravado</td>
             </tr>
         </thead>
         <tbody>
@@ -199,6 +212,8 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['ganancia']=0;
                     $arrayCuentasxPeriodos[$numerodecuenta]['noDedGeneral']=[];
                     $arrayCuentasxPeriodos[$numerodecuenta]['costoscompra']=[];
+                    $arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal']=0;
+                    $arrayCuentasxPeriodos[$numerodecuenta]['exento']=0;
                 }          
                 if($movimiento['Asiento']['tipoasiento']=='costoscompra'){
                     $arrayPeriodos[$periodoAImputar]['costoscompra']+=round($movimiento['debe'], 2);
@@ -299,6 +314,14 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                 }
                 $saldo = $arrayPeriodos[$periodoActual]['debes']-$arrayPeriodos[$periodoActual]['haberes'];
                 $apertura = $arrayPeriodos[$periodoActual]['apertura'];
+                $bienespersonales = $saldo;
+                $exento =0;
+                if(count($cuentascliente['Bienespersonale'])>0){
+                    if($cuentascliente['Bienespersonale'][0]['periodo']==$periodo){
+                        $bienespersonales = $cuentascliente['Bienespersonale'][0]['monto'];
+                        $exento = $cuentascliente['Bienespersonale'][0]['exento'];
+                    }
+                }
                 echo '<td  class="numericTD">'.
                     number_format($apertura, 2, ",", ".")
                     ."</td>";
@@ -306,15 +329,26 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                     number_format($saldo, 2, ",", ".")
                     ."</td>";
                 
+                echo '<td  class="numericTD">'.
+                    number_format($bienespersonales, 2, ",", ".")
+                    ."</td>";
+                echo '<td  class="numericTD">'.
+                    number_format($exento, 2, ",", ".")
+                    ."</td>";
+                
                 
                 if(!isset($arrayCuentasxPeriodos[$numerodecuenta][$periodoActual])){
                     $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual]=0;
+                    $arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal']=0;
+                    $arrayCuentasxPeriodos[$numerodecuenta]['exento']=0;
                     $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual] = 0;
                     $arrayCuentasxPeriodos[$numerodecuenta]['movimiento'][$periodoActual] = 0;                       
                     $arrayCuentasxPeriodos[$numerodecuenta]['costoscompra'][$periodoActual]= 0;                       
                     $arrayCuentasxPeriodos[$numerodecuenta]['noDedGeneral'][$periodoActual]= 0;                       
                 }
                 $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual]=$saldo;
+                $arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal']=$bienespersonales;
+                $arrayCuentasxPeriodos[$numerodecuenta]['exento']=$exento;
                 $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual]=$arrayPeriodos[$periodoActual]['apertura'];
                 $arrayCuentasxPeriodos[$numerodecuenta]['movimiento'][$periodoActual]=$arrayPeriodos[$periodoActual]['movimiento'];       
                 $arrayCuentasxPeriodos[$numerodecuenta]['costoscompra'][$periodoActual]=$arrayPeriodos[$periodoActual]['costoscompra'];    
@@ -369,7 +403,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
                             $cuentascliente['Cuentaclientemejora'][0]['importeamortizacionaceleradadelperiodo'];                
                 }
                 if(count($cuentascliente['Cbu'])>0){
-                $arrayCuentasxPeriodos[$numerodecuenta]['Cbu']=$cuentascliente['Cbu'][0];
+                    $arrayCuentasxPeriodos[$numerodecuenta]['Cbu']=$cuentascliente['Cbu'][0];
                 }
                 ?>
             </tr>
@@ -379,6 +413,8 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         </tbody>
         <tfoot>
             <tr class="trnoclickeable">
+                <td></td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -918,26 +954,31 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
-                <td colspan="2">
+                <td colspan="4">
                     Contribuyente <?php echo $cliente["Cliente"]['nombre'] ?>
                 </td>
-                <td colspan="2">
+                <td colspan="4">
                     Año Fiscal <?php echo $periodoActual ?>
                 </td>               
             </tr>
         </thead>
         <tbody>    
             <tr>
-                <th colspan="2"></th>
+                <th colspan="4"></th>
                 <th colspan="2">Ganancias</th>
+                <th colspan="2">Bienes Personales</th>
             </tr>
             <tr>
                 <th colspan="4">Detalle del capital afectado a la actividad</th>
                 <th colspan="">Inicial</th>
                 <th colspan="">Final</th>
+                <th colspan="">Gravado</th>
+                <th colspan="">Exento/No Gravado</th>
             </tr>
             <tr class="trTitle">
                 <th colspan="4">Activo</th>
+                <th colspan=""></th>
+                <th colspan=""></th>
                 <th colspan=""></th>
                 <th colspan=""></th>
             </tr>
@@ -946,7 +987,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $totalPasivos=[];
             if($tienetercera){
                 $arrayPrefijos=[];
-                initializeConcepto($arrayPrefijos,'1101','');
+                initializeConcepto($arrayPrefijos,'1101',''); 
                 $disponibilidades = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Disponibilidades',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1103','');
@@ -965,17 +1006,17 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 //$inmueblesmejora = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Inmuebles Mejora',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1206010','');
-                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Inmuebles ',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
+                $inmuebles = mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Inmuebles ',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1206020','');
                 //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
                 //$rodados = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Rodados',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
-                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Rodados',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
+                $rodados = mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Rodados',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1206030','');
                 //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
                 //$instalaciones = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Instalaciones',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
-                 mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Instalaciones',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
+                $instalaciones = mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Instalaciones',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1206040','');
                 initializeConcepto($arrayPrefijos,'1206050','');
@@ -985,7 +1026,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 initializeConcepto($arrayPrefijos,'1209000','');
                 //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
                 //$otrosbienesdeuso = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Otros bienes de uso',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
-                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Otros bienes de uso',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
+                $otrosBienesDeUso = mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Otros bienes de uso',$fechaInicioConsulta, $fechaFinConsulta,$totalActivos);
                  $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'120800','');
                 initializeConcepto($arrayPrefijos,'1210000','');
@@ -994,16 +1035,25 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             }
             $totalActivos['apertura']=isset($totalActivos['apertura'])?$totalActivos['apertura']:0;
             $totalActivos[$periodoActual]=isset($totalActivos[$periodoActual])?$totalActivos[$periodoActual]:0;
+            $totalActivos['bienpersonal']=isset($totalActivos['bienpersonal'])?$totalActivos['bienpersonal']:0;
+            $totalActivos['exento']=isset($totalActivos['exento'])?$totalActivos['exento']:0;
+            
             $totalPasivos['apertura']=isset($totalPasivos['apertura'])?$totalPasivos['apertura']:0;
             $totalPasivos[$periodoActual]=isset($totalPasivos[$periodoActual])?$totalPasivos[$periodoActual]:0;
+            $totalPasivos['bienpersonal']=isset($totalPasivos['bienpersonal'])?$totalPasivos['bienpersonal']:0;
+            $totalPasivos['exento']=isset($totalPasivos['exento'])?$totalPasivos['exento']:0;
             ?>
             <tr class="trTitle">
                 <td colspan="4">Total del Activo</td>
                 <td class="tdWithNumber"> <?php echo number_format($totalActivos['apertura'], 2, ",", ".")?></td>
                 <td class="tdWithNumber"> <?php echo number_format($totalActivos[$periodoActual], 2, ",", ".")?></td>
+                <td class="tdWithNumber"> <?php echo number_format($totalActivos['bienpersonal'], 2, ",", ".")?></td>
+                <td class="tdWithNumber"> <?php echo number_format($totalActivos['exento'], 2, ",", ".")?></td>
             </tr>
             <tr class="trTitle">
                 <th colspan="4">Pasivo</th>               
+                <th colspan="1"></th>               
+                <th colspan="1"></th>               
                 <th colspan="1"></th>               
                 <th colspan="1"></th>               
             </tr>
@@ -1051,6 +1101,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 <td colspan="4">Total del Pasivo</td>
                 <td class="tdWithNumber"> <?php echo number_format($totalPasivos['apertura'], 2, ",", ".")?></td>
                 <td class="tdWithNumber"> <?php echo number_format($totalPasivos[$periodoActual], 2, ",", ".")?></td>
+                <td class="tdWithNumber"> <?php echo number_format($totalPasivos['bienpersonal'], 2, ",", ".")?></td>
+                <td class="tdWithNumber"> <?php echo number_format($totalPasivos['exento'], 2, ",", ".")?></td>
             </tr>
             <tr class="trTitle">
                 <td colspan="4">Patrimonio Neto</td>
@@ -1058,9 +1110,13 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                  $patrimonioNeto=[];
                  $patrimonioNeto['apertura']=$totalActivos['apertura']+$totalPasivos['apertura'];
                  $patrimonioNeto[$periodoActual]=$totalActivos[$periodoActual]+$totalPasivos[$periodoActual];
+                 $patrimonioNeto['bienpersonal']=$totalActivos['bienpersonal']+$totalPasivos['bienpersonal'];
+                 $patrimonioNeto['exento']=$totalActivos['exento']+$totalPasivos['exento'];
                  ?>
                 <td class="tdWithNumber"> <?php echo number_format($patrimonioNeto['apertura'], 2, ",", ".")?></td>
                 <td class="tdWithNumber"> <?php echo number_format($patrimonioNeto[$periodoActual], 2, ",", ".")?></td>
+                <td class="tdWithNumber"> <?php echo number_format($patrimonioNeto['bienpersonal'], 2, ",", ".")?></td>
+                <td class="tdWithNumber"> <?php echo number_format($patrimonioNeto['exento'], 2, ",", ".")?></td>
             </tr>
         </tbody>
     </table>
@@ -1070,14 +1126,17 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
-                <td colspan="4">
+                <td colspan="3">
                     Contribuyente <?php echo $cliente["Cliente"]['nombre'] ?>
                 </td>
                 <td>
                     Año Fiscal <?php echo $periodoActual ?>
                 </td>               
-                <td>
-                    Patrimonio
+                <td colspan="2">
+                    Ganancias
+                </td>               
+                <td colspan="2">
+                    Bienes Personales
                 </td>               
             </tr>
         </thead>
@@ -1086,73 +1145,43 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 <th colspan="4">Patrimonio en el pais</th>
                 <th colspan="1">Inicial</th>
                 <th colspan="1">Final Actual</th>
+                <th colspan="1">Gravado</th>
+                <th colspan="1">Exento/No Gravado</th>
             </tr>
             <?php
             //Patrimonio 3ra que aparece aca por que se usaron cuentas de 3ra pero no tiene 3ra
             if(!$tienetercera){
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1101','');
-                $disponibilidades = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Disponibilidades',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
-                /*$arrayPrefijos=[];
+                $patdisponibilidades = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Disponibilidades',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+                $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1103','');
                 initializeConcepto($arrayPrefijos,'1104','');
-                $creditos = mostrarPatrimonio 3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Creditos EU',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
-                */
+                $patcreditos = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Creditos EU',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
                 $arrayPrefijos=[];                                 
                 initializeConcepto($arrayPrefijos,'1105','');
-                $bienesdecambio = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Bienes de Cambio',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+                $patbienesdecambio = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Bienes de Cambio',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1102','');
                 initializeConcepto($arrayPrefijos,'1202','');
-                $Inversiones = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Inversiones',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+                $patInversiones = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Inversiones',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
                 //$arrayPrefijos=[];
                 //$inmueblesedificado = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Inmuebles Edificado',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
                 //$arrayPrefijos=[];
                 //$inmueblesmejora = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Inmuebles Mejora',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
                 $arrayPrefijos=[];
-                initializeConcepto($arrayPrefijos,'120601001','');
-                initializeConcepto($arrayPrefijos,'120601002','');
-                initializeConcepto($arrayPrefijos,'120601006','');
-                initializeConcepto($arrayPrefijos,'120601010','');
-                initializeConcepto($arrayPrefijos,'120601014','');
-                initializeConcepto($arrayPrefijos,'120601018','');
-                initializeConcepto($arrayPrefijos,'120601022','');
-                initializeConcepto($arrayPrefijos,'120601026','');
-                initializeConcepto($arrayPrefijos,'120601030','');
-                initializeConcepto($arrayPrefijos,'120601034','');
-                initializeConcepto($arrayPrefijos,'120601038','');
-                initializeConcepto($arrayPrefijos,'120601042','');
-                initializeConcepto($arrayPrefijos,'120601046','');
-                initializeConcepto($arrayPrefijos,'120601050','');
-                initializeConcepto($arrayPrefijos,'120601054','');
-                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Inmuebles Edificado',$fechaInicioConsulta, $fechaFinConsulta,$totalPatrimonio);
-                $arrayPrefijos=[];
-                initializeConcepto($arrayPrefijos,'120601003','');
-                initializeConcepto($arrayPrefijos,'120601007','');
-                initializeConcepto($arrayPrefijos,'120601011','');
-                initializeConcepto($arrayPrefijos,'120601015','');
-                initializeConcepto($arrayPrefijos,'120601019','');
-                initializeConcepto($arrayPrefijos,'120601023','');
-                initializeConcepto($arrayPrefijos,'120601027','');
-                initializeConcepto($arrayPrefijos,'120601031','');
-                initializeConcepto($arrayPrefijos,'120601035','');
-                initializeConcepto($arrayPrefijos,'120601039','');
-                initializeConcepto($arrayPrefijos,'120601043','');
-                initializeConcepto($arrayPrefijos,'120601047','');
-                initializeConcepto($arrayPrefijos,'120601051','');
-                initializeConcepto($arrayPrefijos,'120601055','');
-                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Inmuebles Mejora',$fechaInicioConsulta, $fechaFinConsulta,$totalPatrimonio);
-
+                initializeConcepto($arrayPrefijos,'1206010','');
+                $patinmuebles = mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Inmuebles',$fechaInicioConsulta, $fechaFinConsulta,$totalPatrimonio);              
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1206020','');
                 //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
                 //$rodados = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Rodados',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
-                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Rodados',$fechaInicioConsulta, $fechaFinConsulta,$totalPatrimonio);
+                $patrodados = mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Rodados',$fechaInicioConsulta, $fechaFinConsulta,$totalPatrimonio);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1206030','');
                 //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
                 //$instalaciones = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Instalaciones',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
-                 mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Instalaciones',$fechaInicioConsulta, $fechaFinConsulta,$totalPatrimonio);
+                $patinstalaciones = mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Instalaciones',$fechaInicioConsulta, $fechaFinConsulta,$totalPatrimonio);
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1206040','');
                 initializeConcepto($arrayPrefijos,'1206050','');
@@ -1162,33 +1191,33 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 initializeConcepto($arrayPrefijos,'1209000','');
                 //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
                 //$otrosbienesdeuso = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Otros bienes de uso',$fechaInicioConsulta,$fechaFinConsulta,$totalActivos);
-                mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Otros bienes de uso',$fechaInicioConsulta, $fechaFinConsulta,$totalPatrimonio);
-                 $arrayPrefijos=[];
+                $patotrosBienesDeUso = mostrarBienDeUsoTercera($arrayCuentasxPeriodos, $arrayPrefijos, $keysCuentas, 'Otros bienes de uso',$fechaInicioConsulta, $fechaFinConsulta,$totalPatrimonio);
+                $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'120800','');
                 initializeConcepto($arrayPrefijos,'1210000','');
                 //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-                $bienesintangibles = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Bienes Intangibles',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+                $patbienesintangibles = mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Bienes Intangibles',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             }
             //Patrimonio NO Tercera
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301010','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $inmuebles = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Inmuebles',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $patinmueble = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Inmuebles',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'130102','');
-            $derechosreales = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Derechos Reales',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $patderechosreales = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Derechos Reales',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301030','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $automotores = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Automotores',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $patautomotores = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Automotores',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301040','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $navesyates = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Naves, Yates y similares',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $patnavesyates = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Naves, Yates y similares',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301050','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $aeronaves = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Aeronave',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $pataeronaves = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Aeronave',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
           
             
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
@@ -1199,77 +1228,91 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                     <th colspan="4">Patrimonio de Empresas o Explotación Unipersonal</th>
                     <th colspan=""></th>
                     <th colspan=""></th>
+                    <th colspan=""></th>
+                    <th colspan=""></th>
                 </tr>
                 <?php
                 $totalPatrimonio['apertura'] += $patrimonioNeto['apertura'];
                 $totalPatrimonio[$periodoActual] += $patrimonioNeto[$periodoActual];
+                $totalPatrimonio['bienpersonal'] += $patrimonioNeto['bienpersonal'];
+                $totalPatrimonio['exento'] += $patrimonioNeto['exento'];
                 ?>
                 <tr>
                     <td colspan="4">Patrimonio de Empresas o Explotación Unipersonal</td>
                     <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['apertura'], 2, ",", ".") ?></td>
                     <td class="tdWithNumber"><?php echo number_format($patrimonioNeto[$periodoActual], 2, ",", ".") ?></td>                
+                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['bienpersonal'], 2, ",", ".") ?></td>                
+                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['exento'], 2, ",", ".") ?></td>                
                 </tr>
                 <?php
                 $arrayPrefijos=[];
                 initializeConcepto($arrayPrefijos,'1301060','');
                 //Preguntar esto se carga en el SYS o tiene que salir del calculo anterior $patrimonioNeto
-                $participacionempresa = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Empresa Unipersonal',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);            
+                $patparticipacionempresa = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Empresa Unipersonal',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);            
                 ?>
                 <tr>
                     <th colspan="4"> Subtotal Patrimonio de Eampresas o Explotación Unipersonal</th>
-                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['apertura']+$participacionempresa['apertura'], 2, ",", ".") ?></td>
-                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto[$periodoActual]+$participacionempresa['periodoActual'], 2, ",", ".") ?></td>            
+                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['apertura']+$patparticipacionempresa['apertura'], 2, ",", ".") ?></td>
+                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto[$periodoActual]+$patparticipacionempresa['periodoActual'], 2, ",", ".") ?></td>            
+                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['bienpersonal']+$patparticipacionempresa['bienpersonal'], 2, ",", ".") ?></td>            
+                    <td class="tdWithNumber"><?php echo number_format($patrimonioNeto['exento']+$patparticipacionempresa['exento'], 2, ",", ".") ?></td>            
                 </tr>            
                 <?php             
             //}            
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301070','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $accionesconcotizacion = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Acciones/ Fondos Comun Inv/Oblig. Negociable con Contizacion',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $pataccionesconcotizacion = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Acciones/ Fondos Comun Inv/Oblig. Negociable con Contizacion',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301080','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $accionessincontizacion = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Acciones/ Cuotas/ Participaciones sociales sin cotizacion',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $pataccionessincontizacion = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Acciones/ Cuotas/ Participaciones sociales sin cotizacion',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301090','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $titulossincotizacion = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Titulos publicos y privados sin cotizacion',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $pattitulossincotizacion = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Titulos publicos y privados sin cotizacion',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301100','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $titulosconcotizacion = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Titulos publicos y privados con cotizacion',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $pattitulosconcotizacion = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Titulos publicos y privados con cotizacion',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301110','');
             if(!$tienetercera){
-                initializeConcepto($arrayPrefijos,'1103','');
-                initializeConcepto($arrayPrefijos,'1104','');
+                //initializeConcepto($arrayPrefijos,'1103','');
+                //initializeConcepto($arrayPrefijos,'1104','');
             }
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $creditospf = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Creditos_PF',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $patcreditospf = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Creditos_PF',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301120','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $depositosdinero = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Depositos en dinero',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $patdepositosdinero = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Depositos en dinero',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301130','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $depositosefectivo = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Dinero en Efectivo',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $patdepositosefectivo = mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Dinero en Efectivo',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301140','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $bienesmueblesregistrables = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Bienes Muebles Registrables',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
+            $patbienesmueblesregistrables = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Bienes Muebles Registrables',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'1301150','');
             //esto esta como el culo por que un bien de uso tiene una sola linea no dos(una v/o y otra actualizacion
-            $otrosbienes = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Otros bienes',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);     
+            $patotrosbienes = mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Otros bienes',$fechaInicioConsulta,$fechaFinConsulta,$totalPatrimonio);     
             ?>
             <tr class="trTitle">
                 <th colspan="4">Subtotal Patrimonio en el pais</th>
                 <th colspan="1" class="tdWithNumber"><?php echo  number_format($totalPatrimonio['apertura'], 2, ",", ".")?></th>
                 <th colspan="1" class="tdWithNumber"><?php echo number_format($totalPatrimonio[$periodoActual], 2, ",", ".")?></th>
+                <th colspan="1" class="tdWithNumber"><?php echo number_format($totalPatrimonio['bienpersonal'], 2, ",", ".")?></th>
+                <th colspan="1" class="tdWithNumber"><?php echo number_format($totalPatrimonio['exento'], 2, ",", ".")?></th>
             </tr>
             <tr class="trTitle">
-                <th colspan="6">Deudas en el pais</th>
+                <th colspan="4">Deudas en el pais</th>
+                <th colspan="1"></th>
+                <th colspan="1"></th>
+                <th colspan="1"></th>
+                <th colspan="1"></th>
             </tr>
             <?php
             $totalDeudaPais=[];
@@ -1318,6 +1361,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 <th colspan="4">Subtotal deudas en el pais</th>
                 <th colspan="1" class="tdWithNumber"><?php echo  number_format($totalDeudaPais['apertura'], 2, ",", ".")?></th>
                 <th colspan="1" class="tdWithNumber"><?php echo number_format($totalDeudaPais[$periodoActual], 2, ",", ".")?></th>
+                <th colspan="1" class="tdWithNumber"><?php echo number_format($totalDeudaPais['bienpersonal'], 2, ",", ".")?></th>
+                <th colspan="1" class="tdWithNumber"><?php echo number_format($totalDeudaPais['exento'], 2, ",", ".")?></th>
             </tr>
             <tr class="trTitle">
                 <th colspan="4">Patrimonio Neto</th>
@@ -1325,9 +1370,13 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 $patrimonioNetoPF=[];
                 $patrimonioNetoPF['apertura']=$totalPatrimonio['apertura']+$totalDeudaPais['apertura'];
                 $patrimonioNetoPF[$periodoActual]=$totalPatrimonio[$periodoActual]+$totalDeudaPais[$periodoActual];
+                $patrimonioNetoPF['bienpersonal']=$totalPatrimonio['bienpersonal']+$totalDeudaPais['bienpersonal'];
+                $patrimonioNetoPF['exento']=$totalPatrimonio['exento']+$totalDeudaPais['exento'];
                 ?>
                 <th colspan="1" class="tdWithNumber"><?php echo  number_format($patrimonioNetoPF['apertura'], 2, ",", ".")?></th>
                 <th colspan="1" class="tdWithNumber"><?php echo number_format($patrimonioNetoPF[$periodoActual], 2, ",", ".")?></th>
+                <th colspan="1" class="tdWithNumber"><?php echo number_format($patrimonioNetoPF['bienpersonal'], 2, ",", ".")?></th>
+                <th colspan="1" class="tdWithNumber"><?php echo number_format($patrimonioNetoPF['exento'], 2, ",", ".")?></th>
             </tr>
         </tbody>
     </table>
@@ -1376,19 +1425,23 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             
             $minimoNoImponible=[
                 2016=>42318,
-                2017=>51967
+                2017=>51967,
+                2018=>51967
             ];
             $conyugueNoImponible=[
                 2016=>39778,
-                2017=>48557
+                2017=>48447,
+                2018=>48447,
             ];
             $hijoNoImponible=[
                 2016=>19889,
-                2017=>24432
+                2017=>24432,
+                2018=>24432,
             ];
             $otrascargasNoImponible=[
                 2016=>19889,
-                2017=>24432
+                2017=>24432,
+                2018=>24432,
             ];
             $montoActualGanancias = $minimoNoImponible[$periodoActual]; //minimo no imponible
             $montoActualConyugue = $conyugueNoImponible[$periodoActual];
@@ -2583,6 +2636,77 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
 ?>
         </tbody>
     </table>
+    <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
+        <thead>
+            <tr>
+                <td colspan="4">Subtotal por Cuenta Bancaria Ley 25413</td>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $cbuMovimientos = [];
+            foreach ($cuentasLey25413['Movimientosbancario'] as $kcl => $movimientos) {
+                if(!isset($cbuMovimientos[$movimientos['cbu_id']]))$cbuMovimientos[$movimientos['cbu_id']]=0;
+
+                $cbuMovimientos[$movimientos['cbu_id']]+=$movimientos['debito'];
+                $cbuMovimientos[$movimientos['cbu_id']]-=$movimientos['credito'];
+            }
+            foreach ($impcliCBU as $kicbu => $iccbu) {
+                foreach ($iccbu['Cbu'] as $kic => $cbu) {
+                    $abreviacionCBUTipo = "";
+                    switch ($cbu['tipocuenta']) {
+                        case 'Caja de Ahorro en Euros':
+                            $abreviacionCBUTipo = "CA €";
+                        break;
+                        case 'Caja de Ahorro en Moneda Local':
+                            $abreviacionCBUTipo = "CA $";
+                        break;
+                        case 'Caja de Ahorro en U$S':
+                            $abreviacionCBUTipo = "CA U$ S";
+                        break;
+                        case 'Cuenta Corriente en Euros':
+                            $abreviacionCBUTipo = "CC €";
+                        break;
+                        case 'Cuenta Corriente en Moneda Local':
+                            $abreviacionCBUTipo = "CC $";
+                        break;
+                        case 'Cuenta Corriente en U$S':
+                            $abreviacionCBUTipo = "CC U$ S";
+                        break;
+                        case 'Otras':
+                            $abreviacionCBUTipo = "Otras";
+                        break;
+                        case 'Plazo Fijo en Euros':
+                            $abreviacionCBUTipo = "PF €";
+                        break;
+                        case 'Plazo Fijo en U$S':
+                         $abreviacionCBUTipo = "PF U$ S";
+                        break;
+                        case 'Plazo Fijo en Moneda Local':
+                            $abreviacionCBUTipo = "PF $";
+                        break;
+                        default:
+                            $abreviacionCBUTipo = "cc $";
+                        break;
+                    }
+                    ?>
+            <tr>
+                <td> 
+                    <legend style="color:#1e88e5;font-weight:normal;">
+                            <?php echo $iccbu['Impuesto']['nombre']." ".substr($cbu['numerocuenta'], -5)." ".
+                                $abreviacionCBUTipo?></legend>
+                </td>
+                <td>                 
+                    <?php echo isset($cbuMovimientos[$cbu['id']])?$cbuMovimientos[$cbu['id']]:0;?>
+                </td>
+            </tr>
+                        <?php
+                }   
+            }
+            
+            ?>
+        </tbody>
+    </table>
     <?php
    
     ?>
@@ -2837,6 +2961,282 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
     </table>
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
+<div class="index estadocontable" id="divDeterminacionBP" style="display:none">
+    <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
+        <thead>
+            <tr>
+                <td colspan="3">
+                    Contribuyente <?php echo $cliente["Cliente"]['nombre'] ?>
+                </td>
+                <td>
+                    Año Fiscal <?php echo $periodoActual ?>
+                </td>                            
+            </tr>
+            <tr>
+                <td colspan="4">
+                    Determinación Impuesto sobre bienes personales
+                </td>               
+            </tr>
+        </thead>
+        <tbody>    
+            <tr class="">
+                <th colspan="2">  </th>
+                <th colspan="1"> Importes gravados</th>
+                <th colspan="1"> Importes exentos/no gravados </th>               
+            </tr>
+            <tr class="">
+                <th colspan="2"> Bienes situados en el país </th>
+                <th colspan="1">  </th>
+                <th colspan="1">  </th>
+            </tr>
+            <?php
+            $totalBP = [];
+            $totalBP['gravado'] = 0;
+            $totalBP['exento'] = 0;
+            function showRowDetBP($nombre,$rowToShow,&$totalBP){
+                if($rowToShow['bienpersonal']==0&&$rowToShow['exento']==0)
+                    return;
+                $totalBP['gravado']+=$rowToShow['bienpersonal'];
+                $totalBP['exento']+=$rowToShow['exento'];
+                ?>
+                <tr>
+                   <th colspan="1" >  </th>
+                   <th colspan="1"> <?php echo $nombre ?> </th>
+                   <th colspan="1" class="numericTD"> <?php echo number_format($rowToShow['bienpersonal'], 2, ",", ".") ?></th>
+                   <th colspan="1" class="numericTD"> <?php echo number_format($rowToShow['exento'], 2, ",", ".") ?> </th>
+                </tr>
+                <?php
+            }
+            if(isset($patdisponibilidades)){
+                    showRowDetBP('Disponibilidades',$patdisponibilidades,$totalBP);
+                    }
+            if(isset($patcreditos)){
+                    showRowDetBP('Creditos',$patcreditos,$totalBP);
+                    }
+            if(isset($patbienesdecambio)){
+                    showRowDetBP('Bienes de cambio',$patbienesdecambio,$totalBP);
+                    }
+            if(isset($patInversiones)){
+                    showRowDetBP('Inversiones',$patInversiones,$totalBP);
+                    }            
+            if(isset($patinmuebles)){
+                    showRowDetBP('Inmuebles',$patinmuebles,$totalBP);
+                    }
+            if(isset($patrodados)){
+                    showRowDetBP('Rodados',$patrodados,$totalBP);
+                    }
+            if(isset($patinstalaciones)){
+                    showRowDetBP('Instalaciones',$patinstalaciones,$totalBP);
+                    }
+            if(isset($patotrosBienesDeUso)){
+                    showRowDetBP('Otros Bienes de uso',$patotrosBienesDeUso,$totalBP);
+                    }
+            if(isset($patbienesintangibles)){
+                    showRowDetBP('Bienes intangibles',$patbienesintangibles,$totalBP);
+                    }
+            if(isset($patinmueble)){
+                    showRowDetBP('Inmueble',$patinmueble,$totalBP);
+                    }
+            if(isset($patderechosreales)){
+                    showRowDetBP('Derechos reales',$patderechosreales,$totalBP);
+                    }
+            if(isset($patautomotores)){
+                    showRowDetBP('Automotores',$patautomotores,$totalBP);
+                    }
+            if(isset($patnavesyates)){
+                    showRowDetBP('Naves y yates',$patnavesyates,$totalBP);
+                    }
+            if(isset($pataeronaves)){
+                    showRowDetBP('Aeronaves',$pataeronaves,$totalBP);
+                    }
+            if(isset($patpatrimonioNeto)){
+                    showRowDetBP('Patrimonio Neto',$patpatrimonioNeto,$totalBP);
+                    }
+            if(isset($patrimonioNeto)){
+                    showRowDetBP('Participacion de Empresas o Explotacion unipersonal',$patrimonioNeto,$totalBP);
+                    }
+            if(isset($patparticipacionempresa)){
+                    showRowDetBP('Participacion Empresa',$patparticipacionempresa,$totalBP);
+                    }
+            if(isset($pataccionesconcotizacion)){
+                    showRowDetBP('Acciones con cotizacion',$pataccionesconcotizacion,$totalBP);
+                    }
+            if(isset($pataccionessincontizacion)){
+                    showRowDetBP('Acciones sin contizacion',$pataccionessincontizacion,$totalBP);
+                    }
+            if(isset($pattitulossincotizacion)){
+                    showRowDetBP('Titulos sin cotizacion',$pattitulossincotizacion,$totalBP);
+                    }
+            if(isset($pattitulosconcotizacion)){
+                    showRowDetBP('Titulos con cotizacion',$pattitulosconcotizacion,$totalBP);
+                    }
+            if(isset($patcreditospf)){
+                    showRowDetBP('Creditos pf',$patcreditospf,$totalBP);
+                    }
+            if(isset($patdepositosdinero)){
+                    showRowDetBP('Depositos Dinero',$patdepositosdinero,$totalBP);
+                    }
+            if(isset($patdepositosefectivo)){
+                    showRowDetBP('Depositos Efectivo',$patdepositosefectivo,$totalBP);
+                    }
+            if(isset($patbienesmueblesregistrables)){
+                    showRowDetBP('Bienes muebles registrables',$patbienesmueblesregistrables,$totalBP);
+                    }
+            if(isset($patotrosbienes)){
+                    showRowDetBP('Otros bienes',$patotrosbienes,$totalBP);
+                    }
+            ?>
+            <tr class="trTitle">
+                <td colspan="2">Subtotal Bienes en el país, excluidos bienes del hogar y UP</td>
+                <td colspan="1" class="numericTD"> <?php echo number_format($totalBP['gravado'], 2, ",", ".") ?> </td>
+                <td colspan="1" class="numericTD"> <?php echo number_format($totalBP['exento'], 2, ",", ".") ?> </td>
+            </tr>    
+            <tr class="trTitle">
+                <td colspan="1"></td>
+                <td colspan="1">Bienes del hogar y uso personal</td>
+                <td colspan="1" class="numericTD"> </td>
+                <td colspan="1" class="numericTD">  </td>
+            </tr>    
+            <tr class="">
+                <td colspan="1"></td>
+                <td colspan="1">Importe presunto 5%</td>
+                <?php 
+                $importepresunto = $totalBP['gravado']*0.05;
+                $totalBP['gravado']+=$importepresunto;
+                ?>
+                <td colspan="1" class="numericTD"> <?php echo number_format($importepresunto, 2, ",", ".") ?> </td>
+                <td colspan="1" class="numericTD"> </td>
+            </tr>    
+            <tr class="">
+                <td colspan="1"></td>
+                <td colspan="1">Importe declarado</td>
+                <td colspan="1" class="numericTD"> </td>
+                <td colspan="1" class="numericTD">  </td>
+            </tr>    
+            <tr class="trTitle">
+                <td colspan="2">Total Bienes en el país</td>
+                <td colspan="1" class="numericTD"> <?php echo number_format($totalBP['gravado'], 2, ",", ".") ?> </td>
+                <td colspan="1" class="numericTD"> <?php echo number_format($totalBP['exento'], 2, ",", ".") ?> </td>
+            </tr> 
+        </tbody>
+    </table>   
+    <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
+        <thead>            
+            <tr>
+                <td colspan="2">
+                    Determinación del impuesto
+                </td>               
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td>Total de bienes sujetos al impuesto</td>
+                <td colspan="1" class="numericTD"> <?php echo number_format($totalBP['gravado'], 2, ",", ".") ?> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Minimo exento</td>
+                <?php 
+                $minimoexento  = [];
+                $minimoexento['2016']  = 800000;
+                $minimoexento['2017']  = 950000;
+                
+                ?>
+                <td colspan="1" class="numericTD"> <?php echo number_format($minimoexento[$periodoActual], 2, ",", ".") ?> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Diferencia</td>
+                <?php 
+                $diferencia = $totalBP['gravado']-$minimoexento[$periodoActual];
+                $diferencia = ($diferencia>0)?$diferencia:0;
+                ?>
+                <td colspan="1" class="numericTD"> <?php echo number_format($diferencia, 2, ",", ".") ?> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Alicuota del impuesto</td>
+                <?php 
+                $alicuotadelimpuesto  = [];
+                $alicuotadelimpuesto['2016']  = 0.0075;
+                $alicuotadelimpuesto['2017']  = 0.005;
+                $alicuotadelimpuesto['2018']  = 0.0025;
+                ?>
+                <td colspan="1" class="numericTD"> <?php echo number_format($alicuotadelimpuesto[$periodoActual], 2, ",", ".") ?> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Impuesto determinado</td>               
+                <?php
+                $BPImpuestoDeterminado = $diferencia*$alicuotadelimpuesto[$periodoActual];
+                ?>
+                <td colspan="1" class="numericTD"> <?php echo number_format($BPImpuestoDeterminado, 2, ",", ".") ?> </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
+        <thead>            
+            <tr>
+                <td colspan="2">
+                    Determinación del saldo de Declaracion Jurada
+                </td>               
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td>Total de bienes sujetos al impuesto </td>
+                <td colspan="1" class="numericTD"> <?php echo number_format($BPImpuestoDeterminado, 2, ",", ".") ?> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Menos:</td>
+                <td colspan="1" class="numericTD"> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Total de anticipos cancelados</td>
+                <?php 
+                $bpAnticipos  = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110403301"],$periodoActual,$keysCuentas,'todos',1);                
+                ?>
+                <td colspan="1" class="numericTD"> <?php echo number_format($bpAnticipos, 2, ",", ".") ?> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Total de pagos a cuenta</td>
+                <?php 
+                $bpPagosACuenta  = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110403305"],$periodoActual,$keysCuentas,'todos',1);  
+                ?>
+                <td colspan="1" class="numericTD"> <?php echo number_format($bpPagosACuenta, 2, ",", ".") ?> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Saldo a favor del período anterior</td>
+                <?php 
+                $bpSLD  = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110403303"],$periodoActual,$keysCuentas,'todos',1);  
+                ?>
+                <td colspan="1" class="numericTD"> <?php echo number_format($bpSLD, 2, ",", ".") ?> </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>Impuesto determinado  </td>
+                <?php
+                $BPImpuestoDeterminado -= $bpAnticipos;
+                $BPImpuestoDeterminado -= $bpPagosACuenta;
+                $BPImpuestoDeterminado -= $bpSLD;
+                ?>
+                <td colspan="1" class="numericTD"> <?php echo number_format($BPImpuestoDeterminado, 2, ",", ".") ?> </td>
+            </tr>
+        </tbody>
+    </table>
+    <?php
+   
+    ?>
+</div>
+<div  style="width:100%;height: 1px; page-break-before:always"></div>
 <?php
 function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nombreNota,$fechaInicioConsulta,$fechaFinConsulta,&$total,$firstColumnColspan=null){
     if(is_null($firstColumnColspan)){
@@ -2847,9 +3247,13 @@ function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas
     $totalNota = [];
     $totalNota[$periodoActual]=0;    
     $totalNota['apertura']=0;   
+    $totalNota['bienpersonal']=0;   
+    $totalNota['exento']=0;   
     if (!isset($total[$periodoActual])){
         $total[$periodoActual]=0;    
         $total['apertura']=0;   
+        $total['bienpersonal']=0;   
+        $total['exento']=0;   
     }
     foreach ($arrayPrefijos as $prefijo => $valoresPrefijo) {       
         $numerofijo = $valoresPrefijo['prefijo'];
@@ -2868,6 +3272,8 @@ function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas
                  ?>
                 <tr class="trnoclickeable trTitle">
                     <th colspan="<?php echo $firstColumnColspan?>" class=" "><?php echo $nombreNota ?></th>
+                    <th colspan="" class=" "></th>
+                    <th colspan="" class=" "></th>
                     <th colspan="" class=" "></th>
                     <th colspan="" class=" "></th>
                 </tr>
@@ -2908,12 +3314,20 @@ function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas
                             $subtotal = $arrayCuentasxPeriodos[$numeroCuenta]['ganancia']*-1;                                        
                             break;
                     }            
+                    $bienpersonal = $arrayCuentasxPeriodos[$numeroCuenta]['bienpersonal'];          
+                    $exento = $arrayCuentasxPeriodos[$numeroCuenta]['exento'];          
                     echo '<td  class="numericTD tdborder" style="width:90px">'. number_format($subtotalapertura, 2, ",", ".").'</td>';
                     echo '<td  class="numericTD tdborder" style="width:90px">'. number_format($subtotal, 2, ",", ".").'</td>';
+                    echo '<td  class="numericTD tdborder" style="width:90px">'. number_format($bienpersonal, 2, ",", ".").'</td>';
+                    echo '<td  class="numericTD tdborder" style="width:90px">'. number_format($exento, 2, ",", ".").'</td>';
                     $totalNota['apertura']+=$subtotalapertura;
                     $totalNota[$periodoActual]+=$subtotal;
+                    $totalNota['bienpersonal']+=$bienpersonal;
+                    $totalNota['exento']+=$exento;
                     $total['apertura']+=$subtotalapertura;
                     $total[$periodoActual]+=$subtotal;
+                    $total['bienpersonal']+=$bienpersonal;
+                    $total['exento']+=$exento;
                     ?>
                 </tr>
                <?php
@@ -2925,6 +3339,8 @@ function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas
             <th colspan="<?php echo $firstColumnColspan?>" class="">Subtotal <?php echo $nombreNota ?></th>
             <th  class="numericTD tdborder" style="width:90px"><?php echo number_format($totalNota['apertura'], 2, ",", ".")?></th>
             <th  class="numericTD tdborder" style="width:90px"><?php echo number_format($totalNota[$periodoActual], 2, ",", ".")?></th>            
+            <th  class="numericTD tdborder" style="width:90px"><?php echo number_format($totalNota['bienpersonal'], 2, ",", ".")?></th>            
+            <th  class="numericTD tdborder" style="width:90px"><?php echo number_format($totalNota['exento'], 2, ",", ".")?></th>            
         </tr>
     <?php
     
@@ -2942,6 +3358,8 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
     $totalNota['apertura'] = 0;
     $totalNota['periodoActual'] = 0;    
     $totalNota['depreciacionalinicio'] = 0;    
+    $totalNota['bienpersonal'] = 0;    
+    $totalNota['exento'] = 0;    
 
     foreach ($arrayPrefijos as $valoresPrefijo) {                   
         $totalPrefijo = [];
@@ -2951,6 +3369,8 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
         $totalPrefijo['apertura'] = 0;
         $totalPrefijo['periodoActual'] = 0;      
         $totalPrefijo['depreciacionalinicio'] = 0;       
+        $totalPrefijo['bienpersonal'] = 0;    
+        $totalPrefijo['exento'] = 0;    
 
         $numerofijo = $valoresPrefijo['prefijo'];
         $indexCuentasNumeroFijo = array_keys(
@@ -2972,11 +3392,12 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
             <th colspan="1">V/R</th>
             <th colspan="1"></th>
             <th colspan="1"></th>
+            <th colspan="1"></th>
+            <th colspan="1"></th>
             
             <?php
             switch ($nombrePrefijo) {
-                case 'Inmuebles Edificado':
-                case 'Inmuebles Mejora':                         					 	
+                case 'Inmuebles':
                     ?>
                     <th colspan="">Fecha adq.</th>
                     <th colspan="">Tipo</th>
@@ -3162,6 +3583,8 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
             $totalPrefijo['depreciacionalinicio'] += $depreciacionalinicio;
             $totalPrefijo['apertura'] += $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
             $totalPrefijo['periodoActual'] += $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $totalPrefijo['bienpersonal'] += $arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'];
+            $totalPrefijo['exento'] += $arrayCuentasxPeriodos[$numerodecuenta]['exento'];
                       
             $totalNota['alinicio'] += $alinicio;
             $totalNota['altas'] += $altas;
@@ -3169,6 +3592,8 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
             $totalNota['depreciacionalinicio'] += $depreciacionalinicio;
             $totalNota['apertura'] += $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
             $totalNota['periodoActual'] += $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $totalNota['bienpersonal'] += $arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'];
+            $totalNota['exento'] += $arrayCuentasxPeriodos[$numerodecuenta]['exento'];
          
             ?>
             <tr>
@@ -3178,6 +3603,8 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
                 <td class="tdWithNumber"><?php echo number_format($valorresidual, 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual], 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta][$periodoActual], 2, ",", ".") ?></td>
+                <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'], 2, ",", ".") ?></td>
+                <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta]['exento'], 2, ",", ".") ?></td>
                 <!--vamos a mostrar las cells extras de bien de uso-->
                 <?php
                             
@@ -3236,8 +3663,10 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
             <?php
             if(!isset($total['apertura']))$total['apertura']=0;
             if(!isset($total[$periodoActual]))$total[$periodoActual]=0;
+            if(!isset($total['exento']))$total['exento']=0;
             $total['apertura']+=$arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
             $total[$periodoActual]+=$arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $total['exento']+=$arrayCuentasxPeriodos[$numerodecuenta]['exento'];
         }
          ?>
             <tr>
@@ -3247,6 +3676,8 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
                 <td class="tdWithNumber"><?php echo number_format($totalPrefijo['valorresidual'], 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($totalPrefijo['apertura'], 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($totalPrefijo['periodoActual'], 2, ",", ".") ?></td>
+                <td class="tdWithNumber"><?php echo number_format($totalPrefijo['bienpersonal'], 2, ",", ".") ?></td>
+                <td class="tdWithNumber"><?php echo number_format($totalPrefijo['exento'], 2, ",", ".") ?></td>
             </tr>
            <?php
         
@@ -3263,6 +3694,8 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
     $totalNota['apertura'] = 0;
     $totalNota['periodoActual'] = 0;    
     $totalNota['depreciacionalinicio'] = 0;    
+    $totalNota['bienpersonal'] = 0;    
+    $totalNota['exento'] = 0;    
 
     foreach ($arrayPrefijos as $valoresPrefijo) {                   
         $totalPrefijo = [];
@@ -3272,6 +3705,8 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
         $totalPrefijo['apertura'] = 0;
         $totalPrefijo['periodoActual'] = 0;      
         $totalPrefijo['depreciacionalinicio'] = 0;       
+        $totalPrefijo['bienpersonal'] = 0;       
+        $totalPrefijo['exento'] = 0;       
 
         $numerofijo = $valoresPrefijo['prefijo'];
         $indexCuentasNumeroFijo = array_keys(
@@ -3288,6 +3723,8 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
         ?>
         <tr class="trnoclickeable trTitle">
             <th colspan="4"><?php echo $nombrePrefijo; ?></th>
+            <th colspan=""></th>
+            <th colspan=""></th>
             <th colspan=""></th>
             <th colspan=""></th>
         </tr>
@@ -3383,6 +3820,8 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
             $totalPrefijo['depreciacionalinicio'] += $depreciacionalinicio;
             $totalPrefijo['apertura'] += $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
             $totalPrefijo['periodoActual'] += $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $totalPrefijo['bienpersonal'] += $arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'];
+            $totalPrefijo['exento'] += $arrayCuentasxPeriodos[$numerodecuenta]['exento'];
                       
             $totalNota['alinicio'] += $alinicio;
             $totalNota['altas'] += $altas;
@@ -3390,12 +3829,16 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
             $totalNota['depreciacionalinicio'] += $depreciacionalinicio;
             $totalNota['apertura'] += $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
             $totalNota['periodoActual'] += $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $totalNota['bienpersonal'] += $arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'];
+            $totalNota['exento'] += $arrayCuentasxPeriodos[$numerodecuenta]['exento'];
          
             ?>
             <tr>
                 <td colspan="4"><?php echo $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'];?></td>
                 <td class="tdWithNumber"><?php echo number_format($alinicio+$altas, 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($valorresidual, 2, ",", ".") ?></td>               
+                <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'], 2, ",", ".") ?></td>               
+                <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta]['exento'], 2, ",", ".") ?></td>               
             </tr>
             <tr>
                 <!--vamos a mostrar una nueva row con los datos extras del bien de uso-->
@@ -3481,14 +3924,20 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$no
             <?php
             if(!isset($total['apertura']))$total['apertura']=0;
             if(!isset($total[$periodoActual]))$total[$periodoActual]=0;
+            if(!isset($total['bienpersonal']))$total['bienpersonal']=0;
+            if(!isset($total['exento']))$total['exento']=0;
             $total['apertura']+=$alinicio+$altas;
             $total[$periodoActual]+=$valorresidual;
+            $total['bienpersonal']+=$arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'];
+            $total['exento']+=$arrayCuentasxPeriodos[$numerodecuenta]['exento'];
         }
          ?>
             <tr>
                 <th colspan="4"> Subtotal <?php echo $nombrePrefijo;?></th>
                 <td class="tdWithNumber"><?php echo number_format($totalPrefijo['alinicio']+$totalPrefijo['altas'], 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($totalPrefijo['valorresidual'], 2, ",", ".") ?></td>               
+                <td class="tdWithNumber"><?php echo number_format($totalPrefijo['bienpersonal'], 2, ",", ".") ?></td>               
+                <td class="tdWithNumber"><?php echo number_format($totalPrefijo['exento'], 2, ",", ".") ?></td>               
             </tr>
            <?php
         
@@ -3502,12 +3951,18 @@ function mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$n
     $totalNota = [];
     $totalNota['apertura'] = 0;
     $totalNota['periodoActual'] = 0;
+    $totalNota['bienpersonal'] = 0;
+    $totalNota['exento'] = 0;
     if(!isset($total['apertura']))$total['apertura']=0;
     if(!isset($total[$periodoActual]))$total[$periodoActual]=0;
+    if(!isset($total['bienpersonal']))$total['bienpersonal']=0;
+    if(!isset($total['exento']))$total['exento']=0;
     foreach ($arrayPrefijos as $valoresPrefijo) {                   
         $totalPrefijo = [];
         $totalPrefijo['apertura'] = 0;
         $totalPrefijo['periodoActual'] = 0;
+        $totalPrefijo['bienpersonal'] = 0;
+        $totalPrefijo['exento'] = 0;
 
         $numerofijo = $valoresPrefijo['prefijo'];
         $indexCuentasNumeroFijo = array_keys(
@@ -3524,6 +3979,8 @@ function mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$n
         ?>
         <tr class="trnoclickeable trTitle">
             <th colspan="4"><?php echo $nombrePrefijo; ?></th>
+            <th colspan=""></th>
+            <th colspan=""></th>
             <th colspan=""></th>
             <th colspan=""></th>
         </tr>
@@ -3543,26 +4000,36 @@ function mostrarPatrimonio($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$n
 
             $totalPrefijo['apertura'] += $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
             $totalPrefijo['periodoActual'] += $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $totalPrefijo['bienpersonal'] += $arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'];
+            $totalPrefijo['exento'] += $arrayCuentasxPeriodos[$numerodecuenta]['exento'];
                       
             $totalNota['apertura'] += $arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
             $totalNota['periodoActual'] += $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $totalNota['bienpersonal'] += $arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'];
+            $totalNota['exento'] += $arrayCuentasxPeriodos[$numerodecuenta]['exento'];
          
             ?>
             <tr>
                 <td colspan="4"><?php echo $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'];?></td>
                 <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual], 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta][$periodoActual], 2, ",", ".") ?></td>                
+                <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'], 2, ",", ".") ?></td>                
+                <td class="tdWithNumber"><?php echo number_format($arrayCuentasxPeriodos[$numerodecuenta]['exento'], 2, ",", ".") ?></td>                
             </tr>
             <?php
            
             $total['apertura']+=$arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
             $total[$periodoActual]+=$arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $total['bienpersonal']+=$arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'];
+            $total['exento']+=$arrayCuentasxPeriodos[$numerodecuenta]['exento'];
         }
          ?>
         <tr>
             <th colspan="4"> Subtotal <?php echo $nombrePrefijo;?></th>
             <th class="tdWithNumber"><?php echo number_format($totalPrefijo['apertura'], 2, ",", ".") ?></th>
             <th class="tdWithNumber"><?php echo number_format($totalPrefijo['periodoActual'], 2, ",", ".") ?></th>            
+            <th class="tdWithNumber"><?php echo number_format($totalPrefijo['bienpersonal'], 2, ",", ".") ?></th>            
+            <th class="tdWithNumber"><?php echo number_format($totalPrefijo['exento'], 2, ",", ".") ?></th>            
         </tr>
        <?php
         
