@@ -23,10 +23,12 @@ $cakeDescription = __d('conta.com.ar', 'CONTA');
           gtag('config', 'UA-115639849-1');
         </script>
         <?php echo $this->Html->charset(); ?>
-        <title>
+                <title>
 			<?php echo $cakeDescription ?>:
 			<?php echo $title_for_layout; ?>
 		</title>
+                <meta name="robots" content="index, follow">
+                <meta name="author" content="CONTA Software SRL">
 		<?php
 			echo $this->Html->meta(
 				'icon',

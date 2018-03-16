@@ -17,10 +17,11 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-
           gtag('config', 'UA-115639849-1');
         </script>
 	<meta name="theme-color" content="#1e88e5">
+        <meta name="robots" content="index, follow">
+        <meta name="author" content="CONTA Software SRL">
 	<?php echo $this->Html->charset(); ?>
 	<title>
 		<?php echo $cakeDescription ?>:
