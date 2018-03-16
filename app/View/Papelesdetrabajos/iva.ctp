@@ -1674,15 +1674,14 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             <!---------- FIN TIPO DEBITo: Bines de Uso ---------->
 
             <!------------- Restitucion Credito Fiscal ---------->
-                <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_RestCredFiscal' style="">
-
-            <table id='divTablaActividad_RestCredFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')"  style="margin-bottom:0; cursor: pointer" >
-                <tr>
-                    <td colspan="5" style='background-color:#76b5cd'>
-                        > TIPO CREDITO: Restituci&oacute;n de Cr&eacute;dito Fiscal
-                    </td>
-                </tr>
-            </table>
+            <div id='divTablaTipoDebito_<?php echo $ActividadCliente_id; ?>_RestCredFiscal' style="">
+                <table id='divTablaActividad_RestCredFiscal_<?php echo $ActividadCliente_id; ?>' onclick="MostrarOperaciones(this,'ventas')"  style="margin-bottom:0; cursor: pointer" >
+                    <tr>
+                        <td colspan="5" style='background-color:#76b5cd'>
+                            > TIPO CREDITO: Restituci&oacute;n de Cr&eacute;dito Fiscal
+                        </td>
+                    </tr>
+                </table>
 
             <?php
 

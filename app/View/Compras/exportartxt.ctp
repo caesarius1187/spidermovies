@@ -142,7 +142,8 @@
     //        $linecompra['importepercepcionespagosacuentaiva']=substr($line, 149,13).'.'.substr($line, 162, 2);
             $lineaCompra .= str_pad(number_format($compra[0]['ivapercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
     //        $linecompra['importepercepcionespagosacuentaimpuestosnacionales']=substr($line, 164,13).'.'.substr($line, 177, 2);
-            $lineaCompra .= str_pad(number_format(0, 2, "", ""), 15, "0", STR_PAD_LEFT);
+            //vamos a agregar aca las percepciones de ganancias
+            $lineaCompra .= str_pad(number_format($compra[0]['ganapercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             //TODO: No estamos guardando importepercepcionespagosacuentaimpuestosnacionales en compras
     //        $linecompra['importeingresosbrutos']=substr($line, 179,13).'.'.substr($line, 192, 2);
             $lineaCompra .= str_pad(number_format($compra[0]['iibbpercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);

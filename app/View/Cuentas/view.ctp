@@ -1,3 +1,4 @@
+
 <?php
 echo $this->Html->script('mark.min.js',array('inline'=>false));
 ?>
@@ -331,9 +332,9 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
                     </td>
             </tr>
                     <?php
-                    if($cuenta['Cuenta']['level']==3){
-//			die("me mori");
-                    }
+                    /*if($cuenta['Cuenta']['level']==5){
+			die("me mori");
+                    }*/
                 } ?>
 		</tbody>
 		<tfoot>

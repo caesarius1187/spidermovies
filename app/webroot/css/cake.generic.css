@@ -2255,7 +2255,8 @@ transition: all 0.4s ease-in-out;
 }
 .formTareaCarga input{
 	display: inline;
-	height: 25px;
+	/*height: 25px;*/
+        height: 20px;
 	width: 70px;
 }
 .formAsiento input{
@@ -2281,6 +2282,7 @@ transition: all 0.4s ease-in-out;
 }
 
 .formTareaCarga div label {
+        font-size: 10px;
 	display: table-cell;
 }
 .formTareaCarga div {
@@ -2294,6 +2296,7 @@ transition: all 0.4s ease-in-out;
 }
 .formTareaCarga select {
     width: 80px;
+    height: 24px;
 }
 .formAddCompra div{
     margin: 0px 3.2px;
@@ -2348,16 +2351,16 @@ transition: all 0.4s ease-in-out;
 .tooltip {
     position: relative;
     display: inline-block;
-    border-right: 1px dotted black;
+    /*border-right: 1px dotted black;*/
 }
 
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 90px;
-    background-color: #1c94c4;
+    /*background-color: #1c94c4;*/
     color: white;
     text-align: center;
-    border-radius: 6px;
+    /*border-radius: 6px;*/
     padding: 5px 0;
 	max-width: unset;
 
@@ -2422,7 +2425,7 @@ transition: all 0.4s ease-in-out;
 }
 .ventaFormVertical{
     width: 100%;
-    background-color:#1e88e5 ;
+    /*background-color:#1e88e5 ;*/
 }
 .ventaFormVertical div {
     margin: 0px 2px;

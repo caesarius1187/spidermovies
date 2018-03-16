@@ -11,6 +11,15 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 <!DOCTYPE html>
 <html>
 <head>
+        <!-- Etiqueta global de sitio (gtag.js) de Google Analytics -->
+         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115639849-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-115639849-1');
+        </script>
 	<meta name="theme-color" content="#1e88e5">
 	<?php echo $this->Html->charset(); ?>
 	<title>

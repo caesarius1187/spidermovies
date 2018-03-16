@@ -123,39 +123,45 @@ $(document).ready(function() {
                         }
                     },
                     {
+                        text: 'Conmutar Gana.Percep',
+                        action: function ( e, dt, node, config ) {
+                            dt.column( 17 ).visible( ! dt.column( 16 ).visible() );
+                        }
+                    },
+                    {
                         text: 'Conmutar Imp. Interno',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 17 ).visible( ! dt.column( 17 ).visible() );
+                            dt.column( 18 ).visible( ! dt.column( 17 ).visible() );
                         }
                     },
                     {
                         text: 'Conmutar Imp. Comb.',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 18 ).visible( ! dt.column( 18 ).visible() );
+                            dt.column( 19 ).visible( ! dt.column( 18 ).visible() );
                         }
                     },
                     {
                         text: 'Conmutar No Gravados',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 19 ).visible( ! dt.column( 19 ).visible() );
+                            dt.column( 20 ).visible( ! dt.column( 19 ).visible() );
                         }
                     },
                     {
                         text: 'Conmutar Exentos',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 20 ).visible( ! dt.column( 20 ).visible() );
+                            dt.column( 21 ).visible( ! dt.column( 20 ).visible() );
                         }
                     },
                     {
                         text: 'Conmutar Total',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 21 ).visible( ! dt.column( 21 ).visible() );
+                            dt.column( 22 ).visible( ! dt.column( 21 ).visible() );
                         }
                     },
                     {
                         text: 'Conmutar KW',
                         action: function ( e, dt, node, config ) {
-                            dt.column( 22 ).visible( ! dt.column( 22 ).visible() );
+                            dt.column( 23 ).visible( ! dt.column( 22 ).visible() );
                         }
                     },
                     {
@@ -237,13 +243,14 @@ $(document).ready(function() {
             var ivapercep = StrToNumber(data[14]);
             var iibbpercep = StrToNumber(data[15]);
             var actvspercep = StrToNumber(data[16]);
-            var impinterno = StrToNumber(data[17]);
-            var impcomb = StrToNumber(data[18]);
-            var nogravados = StrToNumber(data[19]);
-            var exentos = StrToNumber(data[20]);
-            totalCompra = neto + iva + ivapercep + iibbpercep + actvspercep + impinterno + impcomb + nogravados + exentos;
+            var ganapercep = StrToNumber(data[17]);
+            var impinterno = StrToNumber(data[18]);
+            var impcomb = StrToNumber(data[19]);
+            var nogravados = StrToNumber(data[20]);
+            var exentos = StrToNumber(data[21]);
+            totalCompra = neto + iva + ivapercep + iibbpercep + actvspercep + ganapercep + impinterno + impcomb + nogravados + exentos;
             totalCompra = totalCompra.toFixed(2);
-              if( StrToNumber(data[21]) !=  totalCompra){
+              if( StrToNumber(data[22]) !=  totalCompra){
                   $(row).addClass('compraWithError');
                   $(row).children().each(function(){
                        $(this).addClass('compraWithError');
@@ -289,6 +296,9 @@ $(document).ready(function() {
         $("#CompraActvspercep").on('change paste', function() {
             calcularivaytotalcompra("saveComprasForm");
         });
+        $("#CompraGanapercep").on('change paste', function() {
+            calcularivaytotalcompra("saveComprasForm");
+        });
         $("#CompraIibbpercep").on('change paste', function() {
             calcularivaytotalcompra("saveComprasForm");
         });
@@ -316,23 +326,23 @@ $(document).ready(function() {
                 if($("#CompraComprobanteId").val()==comprobante.Comprobante.id){
                     switch(comprobante.Comprobante.tipocreditoasociado){
                         case 'Credito Fiscal':
-                            $("#CompraTipocredito option[value='Credito Fiscal']").show();
-                            $("#CompraTipocredito option[value='Restitucion credito fiscal']").hide();
+                            //$("#CompraTipocredito option[value='Credito Fiscal']").show();
+                            //$("#CompraTipocredito option[value='Restitucion credito fiscal']").hide();
                             $("#CompraTipocredito").val($("#CompraTipocredito option:eq(0)").val());
-                            $('.chosen-select').trigger("chosen:updated");
+                            //$('.chosen-select').trigger("chosen:updated");
                             break;
                         case 'Restitucion credito fiscal':
-                            $("#CompraTipocredito option[value='Credito Fiscal']").hide();
-                            $("#CompraTipocredito option[value='Restitucion credito fiscal']").show();
+                            //$("#CompraTipocredito option[value='Credito Fiscal']").hide();
+                            //$("#CompraTipocredito option[value='Restitucion credito fiscal']").show();
                             $("#CompraTipocredito").val($("#CompraTipocredito option:eq(1)").val());
-                            $('.chosen-select').trigger("chosen:updated");
+                            //$('.chosen-select').trigger("chosen:updated");
                             break;
                     }
                         
-                    if(tipodecomprobanteCompraseleccionado==comprobante.Comprobante.tipo){
+                    /*if(tipodecomprobanteCompraseleccionado==comprobante.Comprobante.tipo){
                         $('.chosen-select').trigger("chosen:updated");
                         return;
-                    }
+                    }*/
 
                     if(comprobante.Comprobante.tipo=="A"){
                         //Preparar para recibir Neto y calcular IVA y Total
@@ -342,10 +352,10 @@ $(document).ready(function() {
                         $("#CompraTotal").prop("readonly",true);
                         //Permitir editar los campos relacionados a IVA
                         tipodecomprobanteCompraseleccionado = 'A';
-                        $("#CompraCondicioniva option[value='monotributista']").show();
+                        /*$("#CompraCondicioniva option[value='monotributista']").show();
                         $("#CompraCondicioniva option[value='responsableinscripto']").show();
-                        $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
-                        $("#CompraCondicioniva").val($("#CompraCondicioniva option:eq(1)").val());
+                        $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();*/
+                        //$("#CompraCondicioniva").val($("#CompraCondicioniva option:eq(1)").val());
 
                         $("#CompraAlicuota option[value='0']").show();
                         $("#CompraAlicuota option[value='2.5']").show();
@@ -353,7 +363,7 @@ $(document).ready(function() {
                         $("#CompraAlicuota option[value='10.5']").show();
                         $("#CompraAlicuota option[value='21']").show();
                         $("#CompraAlicuota option[value='27']").show();
-                        $("#CompraAlicuota").val($("#CompraAlicuota option:eq(1)").val());
+                        //$("#CompraAlicuota").val($("#CompraAlicuota option:eq(1)").val());
                     }else  if(comprobante.Comprobante.tipo=="B"){
                         $("#CompraNeto").prop("readonly",false);
                         $("#CompraIva").prop("readonly",true);
@@ -363,17 +373,6 @@ $(document).ready(function() {
                         $("#CompraIva").val(0);
                         $("#CompraIvapercep").val(0);
                         tipodecomprobanteCompraseleccionado = 'B';
-                        $("#CompraCondicioniva option[value='monotributista']").show();
-                        $("#CompraCondicioniva option[value='responsableinscripto']").show();
-                        $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
-                        $("#CompraCondicioniva").val($("#CompraCondicioniva option:eq(1)").val());
-
-                        $("#CompraAlicuota option[value='0']").show();
-                        $("#CompraAlicuota option[value='2.5']").hide();
-                        $("#CompraAlicuota option[value='5']").hide();
-                        $("#CompraAlicuota option[value='10.5']").hide();
-                        $("#CompraAlicuota option[value='21']").hide();
-                        $("#CompraAlicuota option[value='27']").hide();
                         $("#CompraAlicuota option:eq(0)").val();
                     }else  if(comprobante.Comprobante.tipo=="C"){
                         $("#CompraNeto").prop("readonly",false);
@@ -384,17 +383,6 @@ $(document).ready(function() {
                         $("#CompraIva").val(0);
                         $("#CompraIvapercep").val(0);
                         tipodecomprobanteCompraseleccionado = 'C';
-                        $("#CompraCondicioniva option[value='monotributista']").show();
-                        $("#CompraCondicioniva option[value='responsableinscripto']").show();
-                        $("#CompraCondicioniva option[value='consf/exento/noalcanza']").hide();
-                        $("#CompraCondicioniva").val($("#CompraCondicioniva option:eq(0)").val());
-
-                        $("#CompraAlicuota option[value='0']").show();
-                        $("#CompraAlicuota option[value='2.5']").hide();
-                        $("#CompraAlicuota option[value='5']").hide();
-                        $("#CompraAlicuota option[value='10.5']").hide();
-                        $("#CompraAlicuota option[value='21']").hide();
-                        $("#CompraAlicuota option[value='27']").hide();
                         $("#CompraAlicuota option:eq(0)").val();
                     }
                     $('.chosen-select').trigger("chosen:updated");
@@ -464,6 +452,7 @@ $(document).ready(function() {
                                 respuesta.compra.Compra.ivapercep*positivo,
                                 respuesta.compra.Compra.iibbpercep*positivo,
                                 respuesta.compra.Compra.actvspercep*positivo,
+                                respuesta.compra.Compra.ganapercep*positivo,
                                 respuesta.compra.Compra.impinternos*positivo,
                                 respuesta.compra.Compra.impcombustible*positivo,
                                 respuesta.compra.Compra.nogravados*positivo,
@@ -682,6 +671,7 @@ $(document).ready(function() {
             var ivapercep = 0;
             var agenteDePercepcionIIBB = 0;
             var agenteDePercepcionActividadesVarias = 0;
+            var agenteDePercepcionGanancias = 0;
             var impinternos = 0;
             var impcombustible=0;
             var nogravados=0;
@@ -710,6 +700,9 @@ $(document).ready(function() {
 
             agenteDePercepcionActividadesVarias = $("#"+formulario+" #CompraActvspercep").val() * 1;
             total+= agenteDePercepcionActividadesVarias * 1;
+            
+            agenteDePercepcionGanancias = $("#"+formulario+" #CompraGanapercep").val() * 1;
+            total+= agenteDePercepcionGanancias * 1;
 
             impinternos = $("#"+formulario+" #CompraImpinternos").val() * 1;
             total+= impinternos * 1;
@@ -945,6 +938,7 @@ $(document).ready(function() {
                               respuesta.compra.Compra.ivapercep*positivo,
                               respuesta.compra.Compra.iibbpercep*positivo,
                               respuesta.compra.Compra.actvspercep*positivo,
+                              respuesta.compra.Compra.ganapercep*positivo,
                               respuesta.compra.Compra.impinternos*positivo,
                               respuesta.compra.Compra.impcombustible*positivo,
                               respuesta.compra.Compra.nogravados*positivo,

@@ -256,7 +256,7 @@ class PapelesdetrabajosController extends AppController {
                     'contain'=>[
                             'Autonomoimporte'=>[
                                     'conditions'=>[
-                                            "Autonomoimporte.desde < '".date('Y-m-d',strtotime('02-'.$periodo))."'"
+                                            "Autonomoimporte.desde < '".date('Y-m-t',strtotime('02-'.$periodo))."'"
                                     ],
                 'order'=>[
                     "Autonomoimporte.desde desc"

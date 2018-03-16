@@ -5,7 +5,8 @@ if(!$mostrarForm) { ?>
     if(isset($data)){
       echo json_encode($data);
     }else{      
-      ?>
+        ?>
+     
       <td class="<?php echo $tdClass?>"><?php echo date('d-m-Y',strtotime($this->data['Compra']["fecha"]))?></td>
       <td class="<?php echo $tdClass?>"><?php echo $this->data['Comprobante']["nombre"]?>-
       <?php echo $this->data["Compra"]['puntosdeventa']?>-
@@ -24,6 +25,7 @@ if(!$mostrarForm) { ?>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["ivapercep"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["iibbpercep"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["actvspercep"], 2, ",", ".")?></td>
+      <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["ganapercep"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["impinternos"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["impcombustible"], 2, ",", ".")?></td>
       <td class="<?php echo $tdClass?>"><?php echo "$".number_format($this->data['Compra']["nogravados"], 2, ",", ".")?></td>
@@ -38,7 +40,8 @@ if(!$mostrarForm) { ?>
         echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarCompra(".$paramsCompra.")"));?>
       </td>
     <?php } ?>
-<?php }else{ ?>
+<?php }else{            
+?>
     <td colspan="20" id="tdcompra<?php echo $comid?>" style="overflow: inherit;">
         <div  >
       <?php echo $this->Form->create('Compra',array(
@@ -139,6 +142,10 @@ if(!$mostrarForm) { ?>
         ));
       echo $this->Form->input('actvspercep',array(
           'label'=> 'Act.Vs. percep',
+          'style'=>'max-width: 94px;width: 68px;'
+        ));  
+      echo $this->Form->input('ganapercep',array(
+          'label'=> 'Gana. percep',
           'style'=>'max-width: 94px;width: 68px;'
         ));  
       echo $this->Form->input('impinternos',array(

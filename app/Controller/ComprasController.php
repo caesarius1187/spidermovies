@@ -416,8 +416,8 @@ class ComprasController extends AppController {
 						'Tipogasto.id' => $this->request->data['Compra']['tipogasto_id'],
 						'Tipogasto.tipo'=>'compras'),
 					'fields'=>array('id','nombre','categoria'),
-                    'contain'=>[],
-                );
+                                    'contain'=>[],
+                                );
 				$optionsProverode = array('contain'=>[],'conditions'=>array('Provedore.id'=>$this->request->data['Compra']['provedore_id']));
 				$optionsLocalidade = [
 					'contain'=>[
@@ -434,29 +434,29 @@ class ComprasController extends AppController {
 					]
 				];
 
-                $this->request->data('Compra.fecha',date('d-m-Y',strtotime($this->request->data['Compra']['fecha'])));
-                $this->request->data['Compra']['fecha'] = date('d-m-Y',strtotime($this->request->data['Compra']['fecha']));
+                                $this->request->data('Compra.fecha',date('d-m-Y',strtotime($this->request->data['Compra']['fecha'])));
+                                $this->request->data['Compra']['fecha'] = date('d-m-Y',strtotime($this->request->data['Compra']['fecha']));
 				$this->request->data['Compra']['created'] = date('Y-m-d hh:mm:ss');
 				$data = array(
-		            "respuesta" => "La Compra ha sido creada.",
-		            "compra_id" => $this->Compra->getLastInsertID(),
-		            "compra"=> $this->request->data,
-		            "comprobante"=> $this->Comprobante->find('first',$optionsComprobante),
-		            "tipogasto"=> $this->Tipogasto->find('first',$optionsTipoGasto),
-		            "provedore"=> $this->Provedore->find('first',$optionsProverode),
-		            "localidade"=> $this->Localidade->find('first',$optionsLocalidade),
-		            "actividadcliente"=> $this->Actividadcliente->find('first',$optionsActividadCliente),
-		            "actividadcliente_id"=> $this->request->data['Compra']['actividadcliente_id'],
-		            /*AFIP*/
-		            "tieneMonotributo"=> $this->request->data['Compra']['tieneMonotributo'],
-		            "tieneIVA"=> $this->request->data['Compra']['tieneIVA'],
-		            "tieneIVAPercepciones"=> $this->request->data['Compra']['tieneIVAPercepciones'],
-		            "tieneImpuestoInterno"=> $this->request->data['Compra']['tieneImpuestoInterno'],
-			        /*DGR*/
-		            "tieneAgenteDePercepcionIIBB"=> $this->request->data['Compra']['tieneAgenteDePercepcionIIBB'],
-			        /*DGRM*/
-		            "tieneAgenteDePercepcionActividadesVarias"=> $this->request->data['Compra']['tieneAgenteDePercepcionActividadesVarias'],
-		        );
+                                "respuesta" => "La Compra ha sido creada.",
+                                "compra_id" => $this->Compra->getLastInsertID(),
+                                "compra"=> $this->request->data,
+                                "comprobante"=> $this->Comprobante->find('first',$optionsComprobante),
+                                "tipogasto"=> $this->Tipogasto->find('first',$optionsTipoGasto),
+                                "provedore"=> $this->Provedore->find('first',$optionsProverode),
+                                "localidade"=> $this->Localidade->find('first',$optionsLocalidade),
+                                "actividadcliente"=> $this->Actividadcliente->find('first',$optionsActividadCliente),
+                                "actividadcliente_id"=> $this->request->data['Compra']['actividadcliente_id'],
+                                /*AFIP*/
+                                "tieneMonotributo"=> $this->request->data['Compra']['tieneMonotributo'],
+                                "tieneIVA"=> $this->request->data['Compra']['tieneIVA'],
+                                "tieneIVAPercepciones"=> $this->request->data['Compra']['tieneIVAPercepciones'],
+                                "tieneImpuestoInterno"=> $this->request->data['Compra']['tieneImpuestoInterno'],
+                                    /*DGR*/
+                                "tieneAgenteDePercepcionIIBB"=> $this->request->data['Compra']['tieneAgenteDePercepcionIIBB'],
+                                    /*DGRM*/
+                                "tieneAgenteDePercepcionActividadesVarias"=> $this->request->data['Compra']['tieneAgenteDePercepcionActividadesVarias'],
+                            );
 			}
 			else{
 				$data = array(
@@ -465,7 +465,7 @@ class ComprasController extends AppController {
 		        );
 			}
 			$this->layout = 'ajax';
-	        $this->set('data', $data);
+                        $this->set('data', $data);
 			$this->render('serializejson');
 			
 		}
@@ -1027,7 +1027,7 @@ class ComprasController extends AppController {
 		$optionsComptras=[
 			'fields'=>['*','count(*) as cantalicuotas'
 				,'sum(total) as total','sum(nogravados) as nogravados','sum(exentos) as exentos'
-				,'sum(ivapercep) as ivapercep','sum(iibbpercep) as iibbpercep','sum(actvspercep) as actvspercep'
+				,'sum(ivapercep) as ivapercep','sum(iibbpercep) as iibbpercep','sum(actvspercep) as actvspercep','sum(ganapercep) as ganapercep'
 				,'sum(impinternos) as impinternos','sum(impcombustible) as impcombustible','alicuota'],
 			'contain'=>[
 				'Comprobante',

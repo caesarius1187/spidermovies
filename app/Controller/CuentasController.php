@@ -20,22 +20,25 @@ class CuentasController extends AppController {
  */
 	public function view($ClienteId) 
 	{
+        set_time_limit (360);
         $this->Components->unload('DebugKit.Toolbar');
         $options = array(
 			'contain'=>[],
 			'fields'=> [
-                'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.level,
-                Cuentascliente.id,Cuentascliente.nombre'],
+                            'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.level,
+                            Cuentascliente.id,Cuentascliente.nombre'
+                        ],
 			'joins'=>array(
-				array('table'=>'cuentasclientes', 
-	                  'alias' => 'Cuentascliente',
-	                  'type'=>'left',
-	                  'conditions'=> [
-	                 		'Cuentascliente.cuenta_id = Cuenta.id',
-						    'Cuentascliente.cliente_id'=>$ClienteId
-	           		   ]
-                 	),
-				),
+                            array(
+                                'table'=>'cuentasclientes', 
+                                'alias' => 'Cuentascliente',
+                                'type'=>'left',
+                                'conditions'=> [
+                                    'Cuentascliente.cuenta_id = Cuenta.id',
+                                    'Cuentascliente.cliente_id'=>$ClienteId
+                                ]
+                            ),
+                        ),
 //            'limit'=>1000,
 //            'page'=>1,
             'order'=>['numero'],

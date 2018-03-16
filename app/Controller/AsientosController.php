@@ -1147,7 +1147,7 @@ class AsientosController extends AppController {
             'fields'=>[
                 'Compra.tipogasto_id','Compra.tipocredito','Compra.imputacion','Compra.actividadcliente_id','sum(total) as total,
                 sum(neto) as neto,sum(iva) as iva,sum(nogravados) as nogravados, sum(exentos) as exentos, 
-                sum(ivapercep) as ivapercep,sum(iibbpercep) as iibbpercep,sum(actvspercep) as actvspercep,
+                sum(ivapercep) as ivapercep,sum(iibbpercep) as iibbpercep,sum(actvspercep) as actvspercep,sum(ganapercep) as ganapercep,
                 sum(impinternos) as impinternos,sum(impcombustible) as impcombustible'
             ],
             'group'=>
