@@ -259,9 +259,9 @@ jQuery(document).ready(function($) {
                             mirespuesta.subcliente.Subcliente.dni,
                             mirespuesta.subcliente.Subcliente.nombre,
                         ];
-                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormSubcliente('+subclienteID+')" alt="">';
+                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormSubcliente('+subclienteID+')" alt="" class="img_edit">';
                         tdactions = tdactions + '<form action="'+serverLayoutURL+'/Subclientes/delete/'+subclienteID+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar" class="img_trash"></a>';
                         //onclick="eliminarSubcliente('+respuesta.compra_id+')"
                         rowData.push(tdactions);
 
@@ -309,17 +309,16 @@ jQuery(document).ready(function($) {
                             )
                             .append($('<td>')
                                 .text(mirespuesta.puntodeventa.Domicilio.calle)
-                            )
-                            .append($('<td>')
-                                .text(mirespuesta.puntodeventa.Puntosdeventa.direccion)
-                            )
+                            )                           
                             .append($('<td>')
                                 .append($('<a>')
                                     .attr('onclick', "loadFormPuntoDeVenta("+puntoid+")")
                                     .attr('id', "editLinkPuntoVenta"+puntoid)
                                     .append($('<img>')
+                                        .attr('class', "img_edit")
                                         .attr('src', serverLayoutURL+'/img/edit_view.png')
                                         .text('Image cell')
+
                                     )
                                 )
 
@@ -360,7 +359,7 @@ jQuery(document).ready(function($) {
                             ];
                         var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormProvedore('+provedoreID+')" alt="">';
                         tdactions = tdactions + '<form action="'+serverLayoutURL+'/Provedores/delete/'+provedoreID+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar" class="img_trash"></a>';
                         //onclick="eliminarProvedore('+respuesta.compra_id+')"
                         rowData.push(tdactions);
 
@@ -415,36 +414,65 @@ function activateLabelsFunctionality(){
 			if($('.datosPersonales').is(":visible")){
 			 	 $('.datosPersonales').hide();
 			 	 $("#imgDatosPersonales").attr('src',serverLayoutURL+"/img/menos2.png");
+                 $("#viewTh1").css("background-color","#FFF");
+                 $("#viewTh2").css("background-color","#FFF");
+                 $("#viewTh3").css("background-color","#FFF");
+                 
+                 $("#lblDatosPeronales").css("color","#000");
 		 	}else{
 	 			 $('.datosPersonales').show();
-			 	 $("#imgDatosPersonales").attr('src',serverLayoutURL+"/img/mas2.png");
+			 	 $("#imgDatosPersonales").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                 $("#viewTh1").css("background-color","#2196f3");
+                 $("#viewTh2").css("background-color","#2196f3");
+                 $("#viewTh3").css("background-color","#2196f3");
+                 
+                 $("#lblDatosPeronales").css("color","#FFF");
 		 	}
 		});
 		$( "#lblDomicilio" ).click(function() {		
 		 if($('.domicilios').is(":visible")){
 		 	 $('.domicilios').hide();
 		 	 $("#imgDomicilio").attr('src',serverLayoutURL+"/img/menos2.png");
+             $("#viewTh4").css("background-color","#FFF");
+             $("#viewTh5").css("background-color","#FFF");
+             $("#lblDomicilio").css("color","#000");
+             
 		 	}else{
 	 		 $('.domicilios').show();
-			 	 $("#imgDomicilio").attr('src',serverLayoutURL+"/img/mas2.png");
+			 	 $("#imgDomicilio").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                 $("#viewTh4").css("background-color","#2196f3");
+                 $("#viewTh5").css("background-color","#2196f3");
+                 $("#lblDomicilio").css("color","#FFF");
 		 	}
 		});
 		$( "#lblActividad" ).click(function() {		
 		 if($('.actividades').is(":visible")){
 		 	 $('.actividades').hide();
 		 	 $("#imgActividad").attr('src',serverLayoutURL+"/img/menos2.png");
+             $("#viewTh8").css("background-color","#FFF");
+             $("#viewTh9").css("background-color","#FFF");
+             $("#lblActividad").css("color","#000");
 		 	}else{
 	 		 $('.actividades').show();
-			 	 $("#imgActividad").attr('src',serverLayoutURL+"/img/mas2.png");
+			 	 $("#imgActividad").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                 $("#viewTh8").css("background-color","#2196f3");
+                 $("#viewTh9").css("background-color","#2196f3");
+                 $("#lblActividad").css("color","#FFF");
 		 	}
 		});
 		$( "#lblPersona" ).click(function() {		
 		 if($('.personas').is(":visible")){
 		 	 $('.personas').hide();
 		 	 $("#imgPersona").attr('src',serverLayoutURL+"/img/menos2.png");
+             $("#viewTh6").css("background-color","#FFF");
+             $("#viewTh7").css("background-color","#FFF");
+             $("#lblPersona").css("color","#000");
 		 	}else{
 	 		 $('.personas').show();
-			 	 $("#imgPersona").attr('src',serverLayoutURL+"/img/mas2.png");
+			 	 $("#imgPersona").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                 $("#viewTh6").css("background-color","#2196f3");
+                 $("#viewTh7").css("background-color","#2196f3");
+                 $("#lblPersona").css("color","#FFF");
 		 	}
 		});
 		// $( "#lblFacturacion" ).click(function() {
@@ -957,6 +985,7 @@ function loadFormImpuestoPeriodos(impcliid){
 										.attr('onclick', "loadFormImpuesto("+respuesta.periodosactivo.Periodosactivo.impcli_id+","+respuesta.periodosactivo.Periodosactivo.cliente_id+")")
 										.append($('<img>')
 											.attr('src', serverLayoutURL+'/img/edit_view.png')
+                                            .attr('class','img_edit')
 											.text('Image cell')
 										)
 									)
@@ -1992,16 +2021,16 @@ function catchFormAndSaveResult(impForm,impTable,impAlta){
 						location.hash ="#x";
 						callAlertPopint(mirespuesta.respuesta);
 					}else if(mirespuesta.accion == 'editar'){
-                                            location.hash ="#x";
-                                            callAlertPopint("Impuesto relacionado con exito.Periodo activo creado.");
-                                            $("#rowImpcli"+mirespuesta.impid).replaceWith(mirespuesta.impclirow);
-                                            $("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
-                                            $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
+                        location.hash ="#x";
+                        callAlertPopint("Impuesto relacionado con exito.Periodo activo creado.");
+                        $("#rowImpcli"+mirespuesta.impid).replaceWith(mirespuesta.impclirow);
+                        $("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
+                        $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
 					}else{
-                                            $("#"+impTable).append(mirespuesta.impclirow);
-                                            $("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
-                                            $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
-                                            location.hash ="#x";
+                        $("#"+impTable).append(mirespuesta.impclirow);
+                        $("#"+impForm+" #ImpcliImpuestoId").find('option:selected').remove();
+                        $("#"+impForm+" #ImpcliImpuestoId").trigger("chosen:updated");
+                        location.hash ="#x";
 					}
 				},
 				error: function(xhr,textStatus,error){
@@ -2151,9 +2180,9 @@ function loadSubclientes(cliid){
                                 subcliente.Subcliente.dni,
                                 subcliente.Subcliente.nombre,
                             ];
-                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormSubcliente('+subcliente.Subcliente.id+')" alt="">';
+                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormSubcliente('+subcliente.Subcliente.id+')" alt="" class="img_edit">';
                         tdactions = tdactions + '<form action="'+serverLayoutURL+'/Subclientes/delete/'+subcliente.Subcliente.id+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                        tdactions = tdactions + '<a href="#" class="deleteSubcliente"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar" class="img_trash"></a>';
                         //onclick="eliminarSubcliente('+respuesta.compra_id+')"
                         rowData.push(tdactions);
 
@@ -2193,9 +2222,9 @@ function loadProvedores(cliid){
                                 provedore.Provedore.nombre,
                                 provedore.Provedore.cuit,
                             ];
-                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormProvedore('+provedore.Provedore.id+')" alt="">';
+                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormProvedore('+provedore.Provedore.id+')" alt="" class="img_edit">';
                         tdactions = tdactions + '<form action="'+serverLayoutURL+'/Provedores/delete/'+provedore.Provedore.id+'" name="post_58b6e59f6102d291860796" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                        tdactions = tdactions + '<a href="#" class="deleteProvedore"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar" class="img_trash"></a>';
                         //onclick="eliminarProvedore('+respuesta.compra_id+')"
                         rowData.push(tdactions);
 
@@ -2282,7 +2311,7 @@ function loadFormAddEmpleado(){
                                 ];
                             var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormEmpleado('+empleadoID+')" alt="">';
                             tdactions = tdactions + '<form action="'+serverLayoutURL+'/Empleados/delete/'+empleadoID+'" name="post_58b8299bb3aae846453655" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                            tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                            tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar" class="img_trash"></a>';
                             //onclick="eliminarProvedore('+respuesta.compra_id+')"
                             rowData.push(tdactions);
 
@@ -2352,9 +2381,9 @@ function loadFormEmpleado(empid){
                                             respuesta.empleado.Empleado.cuit,
                                             respuesta.empleado.Empleado.fechaingreso,
                                         ];
-                                    var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormEmpleado('+empleadoID+')" alt="">';
+                                    var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormEmpleado('+empleadoID+')" alt="" class="img_edit">';
                                     tdactions = tdactions + '<form action="'+serverLayoutURL+'/Empleados/delete/'+empleadoID+'" name="post_58b8299bb3aae846453655" id="post_58b6e59f6102d291860796" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                                    tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                                    tdactions = tdactions + '<a href="#" class="deleteEmpleado"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar" class="img_trash"></a>';
                                     //onclick="eliminarProvedore('+respuesta.compra_id+')"
                                     rowData.push(tdactions);
 
@@ -2725,9 +2754,9 @@ function loadFormBiendeuso(cliid,biendeusoid){
                                        respuesta.bienesdeuso.Bienesdeuso.periodo,
                                        descripcionBDU,
                                     ];
-                                var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormBiendeuso('+respuesta.bienesdeuso.Bienesdeuso.cliente_id+','+bienesdeusoID+')" alt="">';
+                                var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="loadFormBiendeuso('+respuesta.bienesdeuso.Bienesdeuso.cliente_id+','+bienesdeusoID+')" alt="" class="img_edit">';
                                 tdactions = tdactions + '<form action="'+serverLayoutURL+'/Bienesdeusos/delete/'+bienesdeusoID+'" name="post_58b8299bb3aae846453655'+bienesdeusoID+'" id="post_58b6e59f6102d291860796'+bienesdeusoID+'" style="display:none;" method="post"><input type="hidden" name="_method" value="POST"></form>';
-                                tdactions = tdactions + '<a href="#" class="deleteBiendeuso"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar"></a>';
+                                tdactions = tdactions + '<a href="#" class="deleteBiendeuso"><img src="'+serverLayoutURL+'/img/ic_delete_black_24dp.png" width="20" height="20"  alt="Eliminar" class="img_trash"></a>';
                                 //onclick="eliminarProvedore('+respuesta.compra_id+')"
                                 rowData.push(tdactions);
 

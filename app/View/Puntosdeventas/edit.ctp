@@ -6,7 +6,7 @@ if(!$showform) { ?>
     <td class="<?php echo $tdClass?>"><?php echo $this->data['Domicilio']['calle']?></td> 
     <td class="<?php echo $tdClass?>">
         <a href="#"  onclick="loadFormPuntoDeVenta(<?php echo $this->data['Puntosdeventa']["id"]; ?>)" class="button_view" id="editLinkPuntoVenta<?php echo $this->data['Puntosdeventa']["id"]; ?>"> 
-         <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+         <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
         </a>
     </td>
 <?php }else{ ?>
