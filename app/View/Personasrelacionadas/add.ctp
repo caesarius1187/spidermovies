@@ -8,11 +8,12 @@ if(isset($respuesta)){
 	    <td><?php echo h($persona['Personasrelacionada']['movil']); ?></td>
 	    <td class="">
 	        <a href="#"  onclick="loadFormPersonaRelacionada(<?php echo$persona['Personasrelacionada']['id']; ?>,<?php echo $persona['Personasrelacionada']['cliente_id'];?>,'rowpersonarelacionada<?php echo h($persona['Personasrelacionada']['id']); ?>')" class="button_view"> 
-	            <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?> 
+	            <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?> 
 	        </a>      
 	         <?php echo $this->Form->postLink(
 	                     $this->Html->image('ic_delete_black_24dp.png', array(
-	                        'alt' => 'Eliminar',
+	                       'alt' => 'Eliminar',
+	                       'class' => 'img_trash'
 	                    )),
 	                    array(
 	                        'controller' => 'Personasrelacionadas',

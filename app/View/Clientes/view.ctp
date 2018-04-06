@@ -27,17 +27,7 @@ if(!$mostrarView){
     <table style="margin-bottom:20px">
         <tr>
         <td style="padding-left: 0px">
-            <h2>
-                <?php 
-                  if($mostrarView){
-                        echo __($cliente['Cliente']['nombre']);                        
-                    } 
-                    else{
-                        echo __('Clientes'); 
-                    }            
-                ?>
-            </h2>
-            <input placeholder="Buscar Cliente" id="txtBuscarClintes" type="text" style="float:left; width:100%; padding-top:5px" />
+            <input placeholder="Buscar Contribuyente" id="txtBuscarClintes" type="text" style="float:left; width:100%; padding-top:5px" />
         </td>                
         <td style="text-align: right;" title="Agregar Cliente">
             <div class="fab blue">
@@ -95,17 +85,21 @@ if(!$mostrarView){
                                           );
                 }
                 $classCliente =  "section_cli_view";
+                $classLabel   =  "lbl_cli_view" ;
+                $img          =  "cli_view.png";
                 if($mostrarView){
                     if($clientex['Cliente']['id']==$cliente['Cliente']['id']){
                         $classCliente = "section_cli_view_selected";
+                        $classLabel   = "lbl_cli_view_selected";
+                        $img          = "cli_view_blanco.png";
                     }             
                 }
 
                 echo $this->Html->link(
                     $this->Html->div(
                                 $classCliente, 
-                                $this->Html->image('cli_view.png', array('alt' => '','id'=>'imgcli','class'=>'','style'=>'float:left')).
-                                __($this->Form->label('Cliente', $clientex['Cliente']['nombre'], 'lbl_cli_view',array('style'=>'float:right'))), 
+                                $this->Html->image($img, array('alt' => '','id'=>'imgcli','class'=>'','style'=>'float:left')).
+                                __($this->Form->label('Cliente', $clientex['Cliente']['nombre'], $classLabel,array('style'=>'float:right'))), 
                                 array()), 
                     array('action' => 'view', $clientex['Cliente']['id']),
                     array('escape'=>false, 'style' => 'text-decoration:none; width:100%', 'id' => 'lnkCliente_'.$clientex['Cliente']['id'])
@@ -192,11 +186,25 @@ if($mostrarView){?>
  <?php /**************************************************************************/ ?>
  <?php /*****************************Datos Personales*****************************/ ?>
  <?php /**************************************************************************/ ?>
+
+<div class="clientes_header" style="width:70%;">
+        <h2 class = "h2_clientes">
+                <?php 
+                  if($mostrarView){
+                        echo __($cliente['Cliente']['nombre']);                        
+                    } 
+                    else{
+                        echo __('Clientes'); 
+                    }            
+                ?>
+        </h2>
+</div>
+
 <div class="clientes_view" style="width:70%;">
     <div class="" style="width:100%;height:30px;">
          <div class="cliente_view_tab"  onClick="showDatosCliente()" id="cliente_view_tab_cliente">
             <?php
-               echo $this->Form->label(null, $text = 'Cliente',array('style'=>'text-align:center;margin-top:5px;cursor:pointer')); 
+               echo $this->Form->label(null, $text = 'Cliente',array('style'=>'text-align:center;margin-top:5px;cursor:pointer;')); 
                //$this->Html->image('cli_view.png', array('alt' => '','id'=>'imgcli','class'=>'','style'=>'margin-left: 50%;'));
              ?>
         </div>
@@ -215,30 +223,30 @@ if($mostrarView){?>
     <div id="divCliente_Info" style="width:100%; overflow:auto">
 	<table class="tbl_view" cellpadding="0" cellspacing="0">
     	<tr class="rowheaderdatosPersonales"> <!--1. Datos personales-->
-        	<th colspan="6" class="tbl_view_th1">
+        	<th colspan="6" class="tbl_view_th1" id = "viewTh1">
         		<h2 id="lblDatosPeronales" class="h2header">
         			<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgDatosPersonales','class'=>'imgOpenClose'));?>
         			<?php echo __('Contribuyente'); ?>
         		</h2>
         	</th>                    
-            <th class="tbl_view_th2">
-                <a href="#" class="button_view" onClick="loadFormEditarPersona()"> 
-                    <?php echo $this->Html->image(
-                                        'edit_view.png', 
-                                        array(
-                                            'alt' => 'edit',
-                                            'class'=>'imgedit',
-                                            'style'=>'color:red;float:left;margin-top:10px'                                            
-                                            )
-                                        );
-                    ?>
-                </a>
+            <th class="tbl_view_th2" id = "viewTh2">
+                    <a href="#" class="button_view" onClick="loadFormEditarPersona()"> 
+                        <?php echo $this->Html->image(
+                                            'edit_view.png', 
+                                            array(
+                                                'alt' => 'edit',
+                                                'class'=>'img_edit'
+                                                //,'style'=>'color:red;float:left;margin-top:10px'                                            
+                                                )
+                                            );
+                        ?>
+                    </a>
             </th>
-            <th class="tbl_view_th2">
-
+            <th class="tbl_view_th2" id = "viewTh3">
                 <?php echo $this->Form->postLink(
                                          $this->Html->image('ic_delete_black_24dp.png', array(
-                                            'alt' => 'DESHABILITAR',
+                                            'alt'   => 'DESHABILITAR',
+                                            'class' => 'img_trash'
                                         )),
                                         array(
                                             'controller' => 'Clientes',
@@ -248,7 +256,7 @@ if($mostrarView){?>
                                         array(
                                             'escape' => false, // Add this to avoid Cake from printing the img HTML code instead of the actual image,
                                             'class'=>' imgedit',
-                                            'style'=>'color:red;float:right;margin-top:10px'
+                                            'style'=>'color:red;float:right;'
                                         ),
                                         __('Esta seguro que quiere Deshabilitar a '.$cliente['Cliente']['nombre'].'? Una vez deshabilitado no aparecera en ningun Informe', $cliente['Cliente']['id'])                                    
                                 ); ?>
@@ -259,7 +267,7 @@ if($mostrarView){?>
                 <?php 
                 echo $this->Form->create('Cliente',array('action'=>'edit','id'=>'saveDatosPersonalesForm', 'class' => 'form_popin'));            
                 echo $this->Form->input('id',array('type'=>'hidden'));?>
-                <table cellspacing="0" cellpadding="0" id="tableDatosPersonalesEdit">
+                <table cellspacing="0" cellpadding="0" id="tableDatosPersonalesEdit" class = "tbl_datos_cli">
                     <tr>
                         <td><?php echo $this->Form->input('tipopersona',array(
                                                             'label'=>'Tipo de Persona',
@@ -353,16 +361,16 @@ if($mostrarView){?>
  <?php /*****************************Domicilios***********************************/ ?>
  <?php /**************************************************************************/ ?>
         <tr  class="rowheaderdomicilios"> <!--2. Domicilio-->
-            <th colspan="7" class="tbl_view_th1">
+            <th colspan="7" class="tbl_view_th1" id = "viewTh4">
                 <h2 class="h2header" id="lblDomicilio">
                 <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgDomicilio','class'=>'imgOpenClose'));?>
                 <?php echo __('Domicilios'); ?>
                </h2>
             </th>
-            <th class="tbl_view_th2">
-                <a href="#nuevo_domicilio" class="button_view"> 
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'imgedit'));?>
-                </a>
+            <th class="tbl_view_th2" id = "viewTh5">
+                    <a href="#nuevo_domicilio" class="button_view"> 
+                        <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add'));?>
+                    </a>
             </th>
         </tr>
        
@@ -371,14 +379,14 @@ if($mostrarView){?>
             <table id="relatedDomicilios" class="tbl_related">
                 <head>
                      <tr class="domicilio">    
-                        <th><?php echo __('Domicilio'); ?></th>     
+                        <th class="th_header"><?php echo __('Domicilio'); ?></th>     
                         <th><?php echo __('Provincia'); ?></th>  
                         <th><?php echo __('Localidad'); ?></th>     
                         <th><?php echo __('Superficie'); ?></th>     
                         <th><?php echo __('Acciones'); ?></th>    
                      </tr>  
                      <tr>
-                        <th colspan="6"><hr color="#E4E4E4" width="100%"></th> 
+                        <th colspan="6"><hr color="#B6B6B6" width="100%"></th> 
                     </tr>
                 </head>     
                 <tbody>
@@ -391,11 +399,11 @@ if($mostrarView){?>
                         <td><?php echo h($domicilio['superficie']); ?></td> 
                         <td class="">
                             <a href="#"  onclick="loadFormDomicilio(<?php echo$domicilio['id']; ?>,<?php echo $domicilio['cliente_id'];?>)" class="button_view"> 
-                             <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                             <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
                             </a> 
                             <?php echo $this->Form->postLink(
                                          $this->Html->image('ic_delete_black_24dp.png', array(
-                                            'alt' => 'Eliminar',
+                                            'alt' => 'Eliminar', 'class'=>'img_trash'
                                         )),
                                         array(
                                             'controller' => 'Domicilios',
@@ -421,15 +429,15 @@ if($mostrarView){?>
  <?php /*****************************Personas Relacionadas************************/ ?>
  <?php /**************************************************************************/ ?>        
         <tr class="rowheaderpersonas"> <!--4. Persona relacionada-->
-            <th colspan="7" class="tbl_view_th1">
+            <th colspan="7" class="tbl_view_th1" id = "viewTh6">
                 <h2 class="h2header" id="lblPersona">
                 <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgPersona','class'=>'imgOpenClose'));?>
                 <?php echo __('Contactos'); ?>
                </h2>
             </th>
-            <th class="tbl_view_th2">
+            <th class="tbl_view_th2" id = "viewTh7">
                 <a href="#nuevo_persona" class="button_view"> 
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'imgedit'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -444,7 +452,7 @@ if($mostrarView){?>
                         <th><?php echo __('Acciones'); ?></th>     
                      </tr>  
                      <tr>
-                        <th colspan="6"><hr color="#E4E4E4" width="100%"></th> 
+                        <th colspan="6"><hr color="#B6B6B6" width="100%"></th> 
                      </tr>
                 </head>     
                 <tbody>
@@ -456,11 +464,11 @@ if($mostrarView){?>
                         <td><?php echo h($persona['movil']); ?></td>
                         <td class="">
                             <a href="#"  onclick="loadFormPersonaRelacionada(<?php echo$persona['id']; ?>,<?php echo $persona['cliente_id'];?>,'rowpersonarelacionada<?php echo h($persona['id']); ?>')" class="button_view"> 
-                                <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?> 
+                                <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?> 
                             </a>      
                              <?php echo $this->Form->postLink(
                                          $this->Html->image('ic_delete_black_24dp.png', array(
-                                            'alt' => 'Eliminar',
+                                            'alt' => 'Eliminar', 'class'=>'img_trash'
                                         )),
                                         array(
                                             'controller' => 'Personasrelacionadas',
@@ -485,15 +493,15 @@ if($mostrarView){?>
  <?php /*****************************Actividades Relacionadas************************/ ?>
  <?php /**************************************************************************/ ?>        
         <tr class="rowheaderactividades"> <!--4. Persona relacionada-->
-            <th colspan="7" class="tbl_view_th1">
+            <th colspan="7" class="tbl_view_th1" id="viewTh8">
                 <h2 class="h2header" id="lblActividad">
                 <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgActividad','class'=>'imgOpenClose'));?>
                 <?php echo __('Actividades'); ?>
                </h2>
             </th>
-            <th class="tbl_view_th2">
+            <th class="tbl_view_th2" id="viewTh9">
                 <a href="#nuevo_actividad" class="button_view"> 
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'imgedit'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -509,7 +517,7 @@ if($mostrarView){?>
                         <th><?php echo __('Acciones'); ?></th>     
                      </tr>  
                      <tr>
-                        <th colspan="6"><hr color="#E4E4E4" width="100%"></th> 
+                        <th colspan="6"><hr color="#B6B6B6" width="100%"></th> 
                      </tr>
                 </head>     
                 <tbody>
@@ -528,11 +536,11 @@ if($mostrarView){?>
                          </td>
                          <td class="">
                              <a href="#"  onclick="loadFormActividadcliente(<?php echo $actividad['id'].",".$actividad['cliente_id'];?>)" class="button_view">
-                                 <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                 <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
                              </a>
                              <?php echo $this->Form->postLink(
                                          $this->Html->image('ic_delete_black_24dp.png', array(
-                                            'alt' => 'Eliminar',
+                                            'alt' => 'Eliminar', 'class'=>'img_trash'
                                         )),
                                         array(
                                             'controller' => 'Actividadclientes',
@@ -562,7 +570,11 @@ if($mostrarView){?>
    				<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgAFIP','class'=>'imgOpenClose'));?>
     			<?php echo __('AFIP'); ?></h2></th>
    		<th class="tbl_view_th2">
-           
+            <th>
+                    <a href="#nuevoImpcliAfip" class="button_view"> 
+                        <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add','title'=>'Agregar impuesto'));?>
+                    </a>                                            
+            </th>
         </th>    		
     </tr> 
     <tr class="afip" style="display: none/*inicialmente no se muestra*/">
@@ -595,14 +607,9 @@ if($mostrarView){?>
                 <th><?php echo __('Impuesto'); ?></th>
                 <th><?php echo __('Alta'); ?></th>                   
                 <th><?php echo __('Acciones'); ?></th>
-                <th>
-                    <a href="#nuevoImpcliAfip" class="button_view"> 
-                        <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'imgedit','title'=>'Agregar impuesto'));?>
-                    </a>                                            
-                </th>  
             </tr>  
             <tr>
-                <th colspan="6"><hr color="#E4E4E4" width="100%"></th> 
+                <th colspan="6"><hr color="#B6B6B6" width="100%"></th> 
             </tr>
             <?php if (!empty($cliente['Impcli'])): ?>                            
                 <?php foreach ($cliente['Impcli'] as $impcli): ?>
@@ -626,23 +633,23 @@ if($mostrarView){?>
                             </td>                                
                             <td>
                                 <a href="#"  onclick="loadFormImpuesto(<?php echo$impcli['id']; ?>,<?php echo $impcli['cliente_id'];?>)" class="button_view"> 
-                                 <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit', 'title' => 'Editar'));?>
+                                 <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit', 'title' => 'Editar'));?>
                                 </a>
                                 <a href="#"  onclick="loadFormImpuestoPeriodos(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                 <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                 <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'img_calendario'));?>
                                 </a>
                                 <a href="#"  onclick="deleteImpcli(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                 <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                 <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'img_trash'));?>
                                 </a>
                                 <?php
                                 if($impcli['impuesto_id']==5/*Ganancias Sociedades*/||$impcli['impuesto_id']==160/*Ganancias Personas Físicas*/){?>
                                     <a href="#"  onclick="loadFormImpuestoCuentasganancias(<?php echo$impcli['cliente_id']; ?>)" class="button_view">
-                                        <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'img_ganancias'));?>
                                     </a>
                                 <?php }
                                 if($impcli['impuesto_id']==160/*Ganancias Personas Físicas*/){?>
                                     <a href="#"  onclick="loadFormImpuestoDeducciones(<?php echo$impcli['id']; ?>)" class="button_view">
-                                        <?php echo $this->Html->image('deduccion.jpg', array('alt' => 'deduccion','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('deduccion.jpg', array('alt' => 'deduccion','class'=>'img_ganancias'));?>
                                     </a>
                                     <!--<a href="#"  onclick="loadFormImpuestoQuebrantos(<?php echo$impcli['id']; ?>)" class="button_view">
                                         <?php echo $this->Html->image('quebranto.png', array('alt' => 'quebranto','class'=>'imgedit'));?>
@@ -670,7 +677,11 @@ if($mostrarView){?>
        				<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgDGR','class'=>'imgOpenClose'));?>
         			<?php echo __('DGR'); ?></h2></th>
 	   		<th class="tbl_view_th2">
-                
+                <th>
+                    <a href="#nuevo_DGR" class="button_view"> 
+                        <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add'));?>
+                    </a>
+                </th>
             </th>		
         </tr>
         <tr class="dgr"  style="display: none/*inicialmente no se muestra*/">
@@ -704,14 +715,9 @@ if($mostrarView){?>
                         <th><?php echo __('Impuesto'); ?></th>
                         <th><?php echo __('Alta'); ?></th>                        
                         <th><?php echo __('Acciones'); ?></th>
-                        <th>
-                            <a href="#nuevo_DGR" class="button_view"> 
-                                <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'imgedit'));?>
-                            </a>
-                        </th>
                     </tr>
                     <tr>
-                        <th colspan="6"><hr color="#E4E4E4" width="100%"></th> 
+                        <th colspan="6"><hr color="#B6B6B6" width="100%"></th> 
                     </tr>  
                     <?php if (!empty($cliente['Impcli'])): ?>                            
                         <?php foreach ($cliente['Impcli'] as $impcli): ?>
@@ -725,19 +731,19 @@ if($mostrarView){?>
                                     </td>                                   
                                     <td>
                                         <a href="#"  onclick="loadFormImpuesto(<?php echo$impcli['id']; ?>,<?php echo $impcli['cliente_id'];?>)" class="button_view"> 
-                                         <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                         <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
                                             </a>
                                         <a href="#"  onclick="loadFormImpuestoPeriodos(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                         <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                         <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'img_calendario'));?>
                                         </a>
                                         <a href="#"  onclick="deleteImpcli(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                         <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                         <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'img_trash'));?>
                                         </a>
                                         <?php 
                                         //aca vamos a agregar la opcion de manejar las Provincias de un impuesto que debe relacionar Provincias 
                                         if($impcli['impuesto_id']==174/*Convenio Multilateral*/||$impcli['impuesto_id']==21/*Convenio Multilateral*/){?>
                                         <a href="#"  onclick="loadFormImpuestoProvincias(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                         <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                         <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'img_prov'));?>
                                         </a>
                                         <?php }
                                         ?>
@@ -762,7 +768,12 @@ if($mostrarView){?>
        				<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgDGRM','class'=>'imgOpenClose'));?>
         			<?php echo __('DGRM'); ?></h2></th>
 	   		<th class="tbl_view_th2">
-            </th>
+                <th>
+                    <a href="#nuevo_DGRM" class="button_view"> 
+                                <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                    </a>
+                </th>
+            </th>                                                                                       
         </tr> 
         <tr class="dgrm" style="display: none/*inicialmente no se muestra*/"><!--9.1 Tabla DGRM -->
             <td> 
@@ -794,12 +805,7 @@ if($mostrarView){?>
                 <tr>     
                     <th><?php echo __('Impuesto'); ?></th>
                     <th><?php echo __('Alta'); ?></th>                   
-                    <th><?php echo __('Acciones'); ?></th>    
-                    <th> 
-                        <a href="#nuevo_DGRM" class="button_view"> 
-                            <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
-                        </a> 
-                    </th>    
+                    <th><?php echo __('Acciones'); ?></th>        
                 </tr>  
                 <tr>
                     <th colspan="6"><hr color="#E4E4E4" width="100%"></th> 
@@ -816,19 +822,19 @@ if($mostrarView){?>
                                 </td>                               
                                 <td>
                                     <a href="#"  onclick="loadFormImpuesto(<?php echo$impcli['id']; ?>,<?php echo $impcli['cliente_id'];?>)" class="button_view"> 
-                                     <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                     <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
                                     </a>
                                      <a href="#"  onclick="loadFormImpuestoPeriodos(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                     <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                     <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'img_calendario'));?>
                                     </a>
                                     <a href="#"  onclick="deleteImpcli(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                        <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'img_trash'));?>
                                     </a>
                                     <?php
                                     //aca vamos a agregar la opcion de manejar las Provincias de un impuesto que debe relacionar Provincias 
                                     if($impcli['impuesto_id']==6/*Actividades Varias*/){?>
                                     <a href="#"  onclick="loadFormImpuestoLocalidades(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                     <?php echo $this->Html->image('localidad.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                     <?php echo $this->Html->image('localidad.png', array('alt' => 'open','class'=>'img_localidad'));?>
                                     </a>
                                     <?php } ?>
                                 </td>
@@ -852,7 +858,11 @@ if($mostrarView){?>
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'ImgSindicatos','class'=>'imgOpenClose'));?>
                     <?php echo __('Sindicatos'); ?></h2></th>
             <th class="tbl_view_th2">
-                
+                <th>
+                    <a href="#nuevo_SINDICATO" class="button_view"> 
+                        <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                    </a>
+                </th>
             </th>
         </tr>
         <!--9.2 Impuestos del Organismo -->        
@@ -865,12 +875,7 @@ if($mostrarView){?>
                     <th><?php echo __('Alta'); ?></th>                   
                     <th><?php echo __('Usuario'); ?></th>                   
                     <th><?php echo __('Clave'); ?></th>                   
-                    <th><?php echo __('Acciones'); ?></th>    
-                    <th>
-                        <a href="#nuevo_SINDICATO" class="button_view"> 
-                        <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
-                        </a>
-                    </th>                        
+                    <th><?php echo __('Acciones'); ?></th>                          
                 </tr>  
                 <tr>
                     <th colspan="6"><hr color="#E4E4E4" width="100%"></th> 
@@ -889,13 +894,13 @@ if($mostrarView){?>
                                 <td><?php echo $impcli['clave']; ?></td>
                                 <td>
                                     <a href="#"  onclick="loadFormImpuesto(<?php echo$impcli['id']; ?>,<?php echo $impcli['cliente_id'];?>)" class="button_view"> 
-                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
                                     </a>
                                     <a href="#"  onclick="loadFormImpuestoPeriodos(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                        <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'img_calendario'));?>
                                     </a>
                                     <a href="#"  onclick="deleteImpcli(<?php echo$impcli['id']; ?>)" class="button_view"> 
-                                        <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'img_trash'));?>
                                     </a>
                                 </td>
                             </tr>
@@ -917,11 +922,15 @@ if($mostrarView){?>
                 </h2>
             </th>
             <th class="tbl_view_th2">
-                
+                <th>
+                    <a href="#nuevo_Banco" class="button_view"> 
+                        <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                    </a>
+                </th>
             </th>        
         </tr> 
         <tr class="bancos" style="display: none/*inicialmente no se muestra*/">
-            <td colspan="7"> 
+            <td colspan="6"> 
             <table id="tablaImpBanco" class="tbl_related">    
                 <tr>     
                     <th><?php echo __('Impuesto'); ?></th>
@@ -929,11 +938,7 @@ if($mostrarView){?>
                     <th><?php echo __('Usuario'); ?></th>                   
                     <th><?php echo __('Clave'); ?></th>                    
                     <th><?php echo __('Acciones'); ?></th>                                
-                    <th>
-                        <a href="#nuevo_Banco" class="button_view"> 
-                            <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
-                        </a>
-                    </th>                       
+                                         
                 </tr>  
                 <tr>
                     <th colspan="6"><hr color="#E4E4E4" width="100%"></th> 
@@ -952,16 +957,16 @@ if($mostrarView){?>
                                 <td><?php echo $impcli['clave']; ?></td>                           
                                 <td>
                                     <a href="#"  onclick="loadFormImpuesto(<?php echo $impcli['id']; ?>,<?php echo $impcli['cliente_id'];?>)" class="button_view">
-                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
                                     </a>
                                     <a href="#"  onclick="loadFormImpuestoPeriodos(<?php echo $impcli['id']; ?>)" class="button_view">
-                                        <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'img_calendario'));?>
                                     </a>
                                     <a href="#"  onclick="deleteImpcli(<?php echo $impcli['id']; ?>)" class="button_view">
-                                        <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'img_trash'));?>
                                     </a>
                                     <a href="#"  onclick="loadCbus(<?php echo $impcli['id']; ?>)" class="button_view">
-                                        <?php echo $this->Html->image('cuentabancaria.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('cuentabancaria.png', array('alt' => 'open','class'=>'img_cbu'));?>
                                     </a>
                                 </td>
                             </tr>                            
@@ -984,7 +989,7 @@ if($mostrarView){?>
             </th>
             <th class="tbl_view_th2">
                 <a href="#nuevo_puntodeventa" class="button_view"> 
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1010,7 +1015,7 @@ if($mostrarView){?>
                         <td><?php echo $puntodeventa['Domicilio']['calle'].'-'.$puntodeventa['Domicilio']['Localidade']['Partido']['nombre'].'-'.$puntodeventa['Domicilio']['Localidade']['nombre']; ?></td>
                          <td >
                             <a href="#"  onclick="loadFormPuntoDeVenta(<?php echo$puntodeventa['id']; ?>)" class="button_view" id="editLinkPuntoVenta<?php echo$puntodeventa['id']; ?>"> 
-                             <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                             <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
                             </a>
                         </td>
                     </tr>
@@ -1032,7 +1037,7 @@ if($mostrarView){?>
             </th>
             <th class="tbl_view_th2">
                 <a href="#nuevo_subcliente" class="button_view">
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1074,7 +1079,7 @@ if($mostrarView){?>
             </th>
             <th class="tbl_view_th2">
                 <a href="#nuevo_provedor" class="button_view">
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1117,7 +1122,7 @@ if($mostrarView){?>
             </th>
             <th class="tbl_view_th2">
                 <a class="button_view" onclick="loadFormAddEmpleado();">
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1153,11 +1158,12 @@ if($mostrarView){?>
                                 <td><?php echo date('d-m-Y',strtotime($empleado['fechaingreso'])) ?></td>
                                 <td >
                                     <a href="#"  onclick="loadFormEmpleado(<?php echo $empleado['id']; ?>)" class="button_view">
-                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
                                     </a>
                                     <?php echo $this->Form->postLink(
                                         $this->Html->image('ic_delete_black_24dp.png', array(
                                             'alt' => 'Eliminar',
+                                            'class'=> 'img_trash'
                                         )),
                                         array(
                                             'controller' => 'Empleados',
@@ -1190,7 +1196,7 @@ if($mostrarView){?>
             </th>
             <th class="tbl_view_th2">
                 <a class="button_view" onclick="loadFormBiendeuso(<?php echo $cliente['Cliente']['id'].",0,0"?>);">
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'imgedit'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1305,11 +1311,11 @@ if($mostrarView){?>
                                 <td><?php echo $descripcionBDU; ?></td>
                                 <td >
                                     <a href="#"  onclick="loadFormBiendeuso(<?php echo $cliente['Cliente']['id'].",".$bienesdeuso['id'].",0"?>)" class="button_view">
-                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+                                        <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
                                     </a>
                                     <?php echo $this->Form->postLink(
                                         $this->Html->image('ic_delete_black_24dp.png', array(
-                                            'alt' => 'Eliminar',
+                                            'alt' => 'Eliminar','class'=>'img_trash'
                                         )),
                                         array(
                                             'controller' => 'Bienesdeusos',
@@ -1455,7 +1461,7 @@ if($mostrarView){?>
                             <a href="#close" onclick="" class="btn_cancelar" style="margin-top:15px">Cancelar</a>
                         </td>
                         <td align="right">
-                            <?php echo $this->Form->end(__('Agregar',array('class' =>'btn_aceptar'))); ?>                          
+                            <?php echo $this->Form->end(__('Aceptar',array('class' =>'btn_aceptar'))); ?>                          
                         </td>
                     </tr>
                 </table>
