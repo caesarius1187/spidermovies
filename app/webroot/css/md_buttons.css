@@ -1,6 +1,6 @@
 body {
       background-color: #f9f9f9;
-      font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+      /*font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;*/
      /* -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
@@ -108,8 +108,8 @@ body {
     .fab {
       position: relative;
       display: inline-block;
-      width: 56px;
-      height: 56px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
       color: #fff;
       overflow: hidden;
@@ -123,7 +123,7 @@ body {
     }
     
     .fab.blue {
-      background-color: #d84315;
+      background-color: #2196f3;
       cursor: pointer;
     }
     
@@ -137,7 +137,7 @@ body {
     }
     
     .fab > core-icon {
-      margin: 8px -42px;
+      margin: 0px -32px;
       position: absolute;
     }
     

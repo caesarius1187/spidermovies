@@ -43,13 +43,13 @@ if(isset($respuesta)){
         '.$rowUsuClave.'
         <td>
             <a href="#"  onclick="loadFormImpuesto('.$impcli['Impcli']['id'].','.$impcli['Impcli']['cliente_id'].')" class="button_view"> 
-             '.$this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit')).'
+             '.$this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit')).'
                 </a>
             <a href="#"  onclick="loadFormImpuestoPeriodos('.$impcli['Impcli']['id'].')" class="button_view"> 
-             '.$this->Html->image('calendario.png', array('alt' => 'open','class'=>'imgedit')).'
+             '.$this->Html->image('calendario.png', array('alt' => 'open','class'=>'img_calendario')).'
             </a>
             <a href="#"  onclick="deleteImpcli('.$impcli['Impcli']['id'].')" class="button_view"> 
-             '.$this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit')).'
+             '.$this->Html->image('delete.png', array('alt' => 'open','class'=>'img_trash')).'
             </a>
             '.$tdImpcliprov.'
         </td>

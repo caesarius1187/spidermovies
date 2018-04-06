@@ -14,11 +14,12 @@ if($error!=0||!isset($error)){
         ?></td>
     <td class="">
         <a href="#"  onclick="loadFormActividadcliente(<?php echo $actividad['Actividadcliente']['id']; ?>,<?php echo $actividad['Actividadcliente']['cliente_id'];?>)" class="button_view">
-            <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+            <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
         </a>
        <?php echo $this->Form->postLink(
                                          $this->Html->image('ic_delete_black_24dp.png', array(
                                             'alt' => 'Eliminar',
+                                            'class' => 'img_trash'
                                         )),
                                         array(
                                             'controller' => 'Actividadclientes',

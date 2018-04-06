@@ -42,7 +42,7 @@
 				<td><?php echo h($cbu['Cbu']['tipocuenta']); ?></td>
 				<td class="actions">
 					<a href="#"  onclick="loadModificarCbu(<?php echo $impcli['Impcli']['id'];?>,<?php echo $cbu['Cbu']['id'];?>)" class="button_view">
-						<?php echo $this->Html->image('edit.png', array('alt' => 'open','class'=>'imgedit'));?>
+						<?php echo $this->Html->image('edit.png', array('alt' => 'open','class'=>'img_cbu'));?>
 					</a>
 				</td>
 			</tr>
