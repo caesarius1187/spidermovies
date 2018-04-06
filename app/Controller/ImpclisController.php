@@ -1333,12 +1333,10 @@ class ImpclisController extends AppController {
 		$impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
 		$this->set(compact('impuestosactivos'));
     }
-	public function papeldetrabajosuss($impcliid=null,$periodo=null){
-		ini_set('memory_limit', '2560M');
-
-		$this->Components->unload('DebugKit.Toolbar');
-
-		$this->loadModel('Empleado');
+    public function papeldetrabajosuss($impcliid=null,$periodo=null){
+        ini_set('memory_limit', '2560M');
+        $this->Components->unload('DebugKit.Toolbar');
+        $this->loadModel('Empleado');
         $this->loadModel('Cuenta');
         $this->loadModel('Asiento');
         $this->loadModel('Cliente');
@@ -1356,322 +1354,328 @@ class ImpclisController extends AppController {
             $aportesSindicatos
         );
         $optionsImpCliSolic = array(
-			'contain' => array('Impuesto'),
-			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
-		);
-		//Impuesto Solicitado (por ef FAESYS)
-		//Impuesto a Liquidar (Por ejemplo SEC)
-		$impcliSolicitado = $this->Impcli->find('first', $optionsImpCliSolic);
+                'contain' => array('Impuesto'),
+                'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
+        );
+        //Impuesto Solicitado (por ef FAESYS)
+        //Impuesto a Liquidar (Por ejemplo SEC)
+        $impcliSolicitado = $this->Impcli->find('first', $optionsImpCliSolic);
 
-		$options = array(
-			'contain'=>array(
-				'Impuesto'=>[
-					'Asientoestandare'=>[
-						'conditions'=>[
-                            'tipoasiento'=>'impuestos'
+        $options = array(
+                'contain'=>array(
+                        'Impuesto'=>[
+                                'Asientoestandare'=>[
+                                        'conditions'=>[
+                    'tipoasiento'=>'impuestos'
+                ],
+                                        'Cuenta'
+                                ],
                         ],
-						'Cuenta'
-					],
-				],
-				'Asiento'=>[
-					'Movimiento'=>[
-						'Cuentascliente'
-					],
-					'conditions'=>[
-						'periodo'=>$periodo,
-						'tipoasiento'=>'impuestos'
-					]
-				],
-				'Cliente'=>array(
-					'Cuentascliente'=>[
-						'Cuenta',
-						'conditions'=>[
-							'Cuentascliente.cuenta_id' => $asientodevengamientoSUSS,
-						]
-					],
-					'Empleado'=>array(
-						'Conveniocolectivotrabajo'=>[
-							'Impuesto'
-						],
-						'Valorrecibo'=>array(
-							'Cctxconcepto'=>array(
-								'Concepto',
-								'Conveniocolectivotrabajo'=>[]
-							),
-							'conditions'=>array(
-								'Valorrecibo.periodo'=>$periodo,
-								'Valorrecibo.tipoliquidacion'=>array(1,2,3,7)
-							)
-						),
-						'conditions'=>array(
-							'Empleado.conveniocolectivotrabajo_id <> 10',//este convenio no debe impactar en suss por que es
-							//servicio domestico
-							'Empleado.cliente_id' => $impcliSolicitado['Impcli']['cliente_id'],
-							'OR'=>[
-								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
-								'Empleado.fechaegreso is null' ,
-							],
-							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
-						),
-						'order'=>['Empleado.cuit']
-					)
-				),
-			),
-			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
+                        'Asiento'=>[
+                                'Movimiento'=>[
+                                        'Cuentascliente'
+                                ],
+                                'conditions'=>[
+                                        'periodo'=>$periodo,
+                                        'tipoasiento'=>'impuestos'
+                                ]
+                        ],
+                        'Cliente'=>array(
+                                'Cuentascliente'=>[
+                                        'Cuenta',
+                                        'conditions'=>[
+                                                'Cuentascliente.cuenta_id' => $asientodevengamientoSUSS,
+                                        ]
+                                ],
+                                'Empleado'=>array(
+                                        'Obrassociale',
+                                        'Domicilio'=>[
+                                            'Localidade'=>[
+                                                'Partido'
+                                            ]
+                                        ],
+                                        'Conveniocolectivotrabajo'=>[
+                                                'Impuesto'
+                                        ],
+                                        'Valorrecibo'=>array(
+                                                'Cctxconcepto'=>array(
+                                                        'Concepto',
+                                                        'Conveniocolectivotrabajo'=>[]
+                                                ),
+                                                'conditions'=>array(
+                                                        'Valorrecibo.periodo'=>$periodo,
+                                                        'Valorrecibo.tipoliquidacion'=>array(1,2,3,7)
+                                                )
+                                        ),
+                                        'conditions'=>array(
+                                                'Empleado.conveniocolectivotrabajo_id <> 10',//este convenio no debe impactar en suss por que es
+                                                //servicio domestico
+                                                'Empleado.cliente_id' => $impcliSolicitado['Impcli']['cliente_id'],
+                                                'OR'=>[
+                                                        'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                                                        'Empleado.fechaegreso is null' ,
+                                                ],
+                                                'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                                        ),
+                                        'order'=>['Empleado.cuit']
+                                )
+                        ),
+                ),
+                'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
 
-		$impcli = $this->Impcli->find('first', $options);
-		$this->set('impcli',$impcli);
+        $impcli = $this->Impcli->find('first', $options);
+        $this->set('impcli',$impcli);
 
-		$this->set(compact('impcliid','periodo'));
-		$optionsSUSS = array(
-			'351ContribucionesSegSocial' => '351 Contribuciones Seg. Social',
-			'301EmpleadorAportesSegSocial' => '301 Empleador - Aportes Seg. Social',
-			'360ContribuciónRENATEA' => '360 Contribución RENATEA',
-			'352ContribucionesObraSocial' => '352 Contribuciones Obra Social',
-			'935RENATEA' => '935 RENATEA',
-			'302AportesObrasSociales' => '302 Aportes Obras Sociales',
-			'270ContribValesAlimentl24700' => '270 Contrib. Vales Aliment.l.24700',
-			'312AsegRiesgodeTrabajoL24557' => '312 Aseg. Riesgo de Trabajo L 24557',
-			'28SegurodeVidaColectivo'=>'28 Seguro de Vida Colectivo' ,
-		);
-		$this->set('optionsSUSS',$optionsSUSS);
-		$this->set('codigorevista',$this->Empleado->codigorevista);
-		$this->set('codigoactividad',$this->Empleado->codigoactividad);
-		$this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
-		$this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
-		$this->set('tipoempresa',$this->Empleado->tipoempresa);
-		$this->set('codigozona',$this->Empleado->codigozona);
+        $this->set(compact('impcliid','periodo'));
+        $optionsSUSS = array(
+                '351ContribucionesSegSocial' => '351 Contribuciones Seg. Social',
+                '301EmpleadorAportesSegSocial' => '301 Empleador - Aportes Seg. Social',
+                '360ContribuciónRENATEA' => '360 Contribución RENATEA',
+                '352ContribucionesObraSocial' => '352 Contribuciones Obra Social',
+                '935RENATEA' => '935 RENATEA',
+                '302AportesObrasSociales' => '302 Aportes Obras Sociales',
+                '270ContribValesAlimentl24700' => '270 Contrib. Vales Aliment.l.24700',
+                '312AsegRiesgodeTrabajoL24557' => '312 Aseg. Riesgo de Trabajo L 24557',
+                '28SegurodeVidaColectivo'=>'28 Seguro de Vida Colectivo' ,
+        );
+        $this->set('optionsSUSS',$optionsSUSS);
+        $this->set('codigorevista',$this->Empleado->codigorevista);
+        $this->set('codigoactividad',$this->Empleado->codigoactividad);
+        $this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
+        $this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
+        $this->set('tipoempresa',$this->Empleado->tipoempresa);
+        $this->set('codigozona',$this->Empleado->codigozona);
 
         //Aca vamos a buscar si tiene Monotributo
         $pemes = substr($periodo, 0, 2);
         $peanio = substr($periodo, 3);
 
-		$impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
+        $impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
         $this->set(compact('impuestosactivos'));
-	}
-	public function papeldetrabajosindicatos($impcliid=null,$periodo=null){
+    }
+    public function papeldetrabajosindicatos($impcliid=null,$periodo=null){
 //		$this->Components->unload('DebugKit.Toolbar');
 
-		$this->loadModel('Conceptosrestante');
-		$this->loadModel('Cuenta');
-		$this->loadModel('Cliente');
-		$contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
-		$this->set(compact('contribucionesSindicatos'));
-		$optionsCuentasContribucionesSindicatos = [
-            'contain' => [],
-            'conditions' => [
-				'Cuenta.' . $this->Cuenta->primaryKey => $contribucionesSindicatos
-			]
-		];
-		$cuentasContribucionesSindicatos = $this->Cuenta->find('all', $optionsCuentasContribucionesSindicatos);
-		$this->set('cuentasContribucionesSindicatos',$cuentasContribucionesSindicatos);
+            $this->loadModel('Conceptosrestante');
+            $this->loadModel('Cuenta');
+            $this->loadModel('Cliente');
+            $contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
+            $this->set(compact('contribucionesSindicatos'));
+            $optionsCuentasContribucionesSindicatos = [
+        'contain' => [],
+        'conditions' => [
+                            'Cuenta.' . $this->Cuenta->primaryKey => $contribucionesSindicatos
+                    ]
+            ];
+            $cuentasContribucionesSindicatos = $this->Cuenta->find('all', $optionsCuentasContribucionesSindicatos);
+            $this->set('cuentasContribucionesSindicatos',$cuentasContribucionesSindicatos);
 
-		//Aca vamos a controlar que el sindicato que estamos por liquidar
-		//sea un sindicato con Convenios y no uno que apunte a otro sindicato.
-		//Y si es un sindicato que apunta a otro sindicato buscar el "otro sindicato" para liquidar el primero.
-		//Por ejemplo el sindicato SEC tiene CCT(convenio colectivo de trabajo) Comercio, pero los empleados que
-        // estan en el convenio de comercio pagan FAESYS tambien, pero cuando liquidamos FAESYS no tenemos convenios
-        // asociados, por eso Faesys apuntara a SEC para su liquidacion
+            //Aca vamos a controlar que el sindicato que estamos por liquidar
+            //sea un sindicato con Convenios y no uno que apunte a otro sindicato.
+            //Y si es un sindicato que apunta a otro sindicato buscar el "otro sindicato" para liquidar el primero.
+            //Por ejemplo el sindicato SEC tiene CCT(convenio colectivo de trabajo) Comercio, pero los empleados que
+    // estan en el convenio de comercio pagan FAESYS tambien, pero cuando liquidamos FAESYS no tenemos convenios
+    // asociados, por eso Faesys apuntara a SEC para su liquidacion
 
-        $optionsImpCliSolic = array(
-			'contain' => [
-                'Asiento'=>[
-                    'Movimiento'=>[
-                        'Cuentascliente'
-                    ],
+    $optionsImpCliSolic = array(
+                    'contain' => [
+            'Asiento'=>[
+                'Movimiento'=>[
+                    'Cuentascliente'
+                ],
+                'conditions'=>[
+                    'Asiento.periodo'=>$periodo,
+                    'Asiento.impcli_id'=>$impcliid,
+                    'Asiento.tipoasiento'=>'impuestos',
+                ]
+            ],
+            'Impuesto'=>[
+                'Asientoestandare'=>[
+                    'Cuenta',
                     'conditions'=>[
-                        'Asiento.periodo'=>$periodo,
-                        'Asiento.impcli_id'=>$impcliid,
-                        'Asiento.tipoasiento'=>'impuestos',
+                        'Asientoestandare.tipoasiento'=>'impuestos'
                     ]
                 ],
+            ],'Cliente'
+        ],
+                    'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
+            );
+            //Impuesto Solicitado (por ef FAESYS)
+            //Impuesto a Liquidar (Por ejemplo SEC)
+            $impcliSolicitado = $this->Impcli->find('first', $optionsImpCliSolic);
+    $impcliIdAUsar = array();
+    if($impcliSolicitado['Impuesto']['delegado']){
+                    //aca vamos a tener que buscar un Impcli con el cliente_id del solicitado y el Impuesto_id del ALiquidar
+                    $optionsImpCliDeleg = array(
+                            'contain' => [
+                'Cliente',
                 'Impuesto'=>[
-                    'Asientoestandare'=>[
-                        'Cuenta',
-                        'conditions'=>[
-                            'Asientoestandare.tipoasiento'=>'impuestos'
-                        ]
-                    ],
-                ],'Cliente'
-            ],
-			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid)
-		);
-		//Impuesto Solicitado (por ef FAESYS)
-		//Impuesto a Liquidar (Por ejemplo SEC)
-		$impcliSolicitado = $this->Impcli->find('first', $optionsImpCliSolic);
-        $impcliIdAUsar = array();
-        if($impcliSolicitado['Impuesto']['delegado']){
-			//aca vamos a tener que buscar un Impcli con el cliente_id del solicitado y el Impuesto_id del ALiquidar
-			$optionsImpCliDeleg = array(
-				'contain' => [
-                    'Cliente',
-                    'Impuesto'=>[
 
-                    ],
                 ],
-				'conditions' => array(
-                    'Impcli.cliente_id'=> $impcliSolicitado['Impcli']['cliente_id'],
-					'Impcli.impuesto_id'=> $impcliSolicitado['Impuesto']['delegadoid'])
-			);
-            $impcliIdAUsar = $this->Impcli->find('first', $optionsImpCliDeleg);
-		}else{
-            $impcliIdAUsar = $impcliSolicitado;
-        }
-        $this->set('impcliSolicitado',$impcliSolicitado);
-		$options = [
-			'contain'=>[
-                            'Cliente'=>[
-                                'Cuentascliente'=>[
-                                    'Cuenta',
-                                    'conditions'=>[
+            ],
+                            'conditions' => array(
+                'Impcli.cliente_id'=> $impcliSolicitado['Impcli']['cliente_id'],
+                                    'Impcli.impuesto_id'=> $impcliSolicitado['Impuesto']['delegadoid'])
+                    );
+        $impcliIdAUsar = $this->Impcli->find('first', $optionsImpCliDeleg);
+            }else{
+        $impcliIdAUsar = $impcliSolicitado;
+    }
+    $this->set('impcliSolicitado',$impcliSolicitado);
+            $options = [
+                    'contain'=>[
+                        'Cliente'=>[
+                            'Cuentascliente'=>[
+                                'Cuenta',
+                                'conditions'=>[
 //					'Cuentascliente.cuenta_id' => $contribucionesSindicatos,
-                                    ]
-                                ],
+                                ]
                             ],
-                            'Impuesto'=>[
-                                'Conveniocolectivotrabajo'=>[
-                                    'Empleado'=>[
-                                        'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
-                                        'Valorrecibo'=>[
-                                            'Cctxconcepto'=>[
-                                            ],
-                                            'conditions'=>[
-                                                'Valorrecibo.periodo'=>$periodo
-                                            ]
+                        ],
+                        'Impuesto'=>[
+                            'Conveniocolectivotrabajo'=>[
+                                'Empleado'=>[
+                                    'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
+                                    'Valorrecibo'=>[
+                                        'Cctxconcepto'=>[
                                         ],
                                         'conditions'=>[
-                                            'Empleado.cliente_id' => $impcliIdAUsar['Impcli']['cliente_id'],
-                                            'OR'=>[
-                                                'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
-                                                'Empleado.fechaegreso is null' ,
-                                            ],
-                                            'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                                            'Valorrecibo.periodo'=>$periodo
+                                        ]
+                                    ],
+                                    'conditions'=>[
+                                        'Empleado.cliente_id' => $impcliIdAUsar['Impcli']['cliente_id'],
+                                        'OR'=>[
+                                            'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                                            'Empleado.fechaegreso is null' ,
                                         ],
-                                    ]
-                                ],
+                                        'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                                    ],
+                                ]
                             ],
+                        ],
 
-			],
-			'conditions' => [
-                            'Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']
-			]
-		];
-		$impcli = $this->Impcli->find('first', $options);
-		$this->set('impcli',$impcli);
+                    ],
+                    'conditions' => [
+                        'Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']
+                    ]
+            ];
+            $impcli = $this->Impcli->find('first', $options);
+            $this->set('impcli',$impcli);
 
-		$this->set(compact('impcliid','periodo'));
-		$conditionsConceptosrestantes=array(
-			'contain'=>array(
+            $this->set(compact('impcliid','periodo'));
+            $conditionsConceptosrestantes=array(
+                    'contain'=>array(
 
-			),
-			'conditions'=>array(
-				'Conceptosrestante.periodo'=>$periodo,
-				'Conceptosrestante.impcli_id'=>$impcliIdAUsar['Impcli']['id'],
-			)
-		);
-		$conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
-		$this->set('conceptosrestantes',$conceptosrestantes);
+                    ),
+                    'conditions'=>array(
+                            'Conceptosrestante.periodo'=>$periodo,
+                            'Conceptosrestante.impcli_id'=>$impcliIdAUsar['Impcli']['id'],
+                    )
+            );
+            $conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
+            $this->set('conceptosrestantes',$conceptosrestantes);
 
-		$timePeriodo = strtotime("01-".$periodo ." -1 months");
-		$periodoPrevio = date("m-Y",$timePeriodo);
+            $timePeriodo = strtotime("01-".$periodo ." -1 months");
+            $periodoPrevio = date("m-Y",$timePeriodo);
 
-		$conditionsConceptosrestantes=array(
-			'contain'=>array(
+            $conditionsConceptosrestantes=array(
+                    'contain'=>array(
 
-			),
-			'conditions'=>array(
-				'Conceptosrestante.periodo'=>$periodoPrevio,
-				'Conceptosrestante.impcli_id'=>$impcliid,
-				'Conceptosrestante.conceptostipo_id'=>'1',
-			)
-		);
-		$conceptosrestantesafavor = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
-		$this->set('impcliSaldoAFavor',$conceptosrestantesafavor);
-                $impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
-                $this->set('impuestosactivos',$impuestosactivos);
+                    ),
+                    'conditions'=>array(
+                            'Conceptosrestante.periodo'=>$periodoPrevio,
+                            'Conceptosrestante.impcli_id'=>$impcliid,
+                            'Conceptosrestante.conceptostipo_id'=>'1',
+                    )
+            );
+            $conceptosrestantesafavor = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
+            $this->set('impcliSaldoAFavor',$conceptosrestantesafavor);
+            $impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
+            $this->set('impuestosactivos',$impuestosactivos);
 
-	}
-	public function papeldetrabajocooperadoraasistencial($impcliid=null,$periodo=null){
-        $this->loadModel('Conceptosrestante');
-        $options = array(
-			'contain'=>array(
-				'Asiento'=>[
-					'Movimiento'=>[
-						'Cuentascliente'
-					],
-					'conditions'=>[
-						'Asiento.periodo'=>$periodo,
-						'Asiento.impcli_id'=>$impcliid,
-						'Asiento.tipoasiento'=>'impuestos',
-					]
-				],
-				'Impuesto'=>[
-					'Asientoestandare'=>[
-						'Cuenta',
-						'conditions'=>[
-							'Asientoestandare.tipoasiento'=>'impuestos'
-						]
-					],
-				],
-				'Cliente'=>array(
-					'Cuentascliente',
-					'Empleado'=>array(
-						'Domicilio'=>array(
-							'Localidade'=>array(
-								'Partido'
-							)
-						),
-						'Valorrecibo'=>array(
-							'Cctxconcepto'=>array(
-								'Concepto'
-							),
-							'conditions'=>array(
-								'Valorrecibo.periodo'=>$periodo,
-							)
-						),
-						'conditions'=>[
-							'Empleado.conveniocolectivotrabajo_id <> 10',//este convenio no debe impactar en suss por que es
-							//servicio domestico
-							'OR'=>[
-								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
-								'Empleado.fechaegreso is null' ,
-							],
-							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
-						],
-					)
-				),
-			),
-			'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
-		$impcli = $this->Impcli->find('first', $options);
-		$this->set('impcli',$impcli);
+    }
+    public function papeldetrabajocooperadoraasistencial($impcliid=null,$periodo=null){
+    $this->loadModel('Conceptosrestante');
+    $options = array(
+                    'contain'=>array(
+                            'Asiento'=>[
+                                    'Movimiento'=>[
+                                            'Cuentascliente'
+                                    ],
+                                    'conditions'=>[
+                                            'Asiento.periodo'=>$periodo,
+                                            'Asiento.impcli_id'=>$impcliid,
+                                            'Asiento.tipoasiento'=>'impuestos',
+                                    ]
+                            ],
+                            'Impuesto'=>[
+                                    'Asientoestandare'=>[
+                                            'Cuenta',
+                                            'conditions'=>[
+                                                    'Asientoestandare.tipoasiento'=>'impuestos'
+                                            ]
+                                    ],
+                            ],
+                            'Cliente'=>array(
+                                    'Cuentascliente',
+                                    'Empleado'=>array(
+                                            'Domicilio'=>array(
+                                                    'Localidade'=>array(
+                                                            'Partido'
+                                                    )
+                                            ),
+                                            'Valorrecibo'=>array(
+                                                    'Cctxconcepto'=>array(
+                                                            'Concepto'
+                                                    ),
+                                                    'conditions'=>array(
+                                                            'Valorrecibo.periodo'=>$periodo,
+                                                    )
+                                            ),
+                                            'conditions'=>[
+                                                    'Empleado.conveniocolectivotrabajo_id <> 10',//este convenio no debe impactar en suss por que es
+                                                    //servicio domestico
+                                                    'OR'=>[
+                                                            'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                                                            'Empleado.fechaegreso is null' ,
+                                                    ],
+                                                    'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                                            ],
+                                    )
+                            ),
+                    ),
+                    'conditions' => array('Impcli.' . $this->Impcli->primaryKey => $impcliid));
+            $impcli = $this->Impcli->find('first', $options);
+            $this->set('impcli',$impcli);
 
-		$this->set(compact('impcliid','periodo'));
-        $conditionsConceptosrestantes=array(
-            'contain'=>array(
+            $this->set(compact('impcliid','periodo'));
+    $conditionsConceptosrestantes=array(
+        'contain'=>array(
 
-            ),
-            'conditions'=>array(
-                'Conceptosrestante.periodo'=>$periodo,
-                'Conceptosrestante.impcli_id'=>$impcliid,
-            )
-        );
-        $conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
-        $this->set('conceptosrestantes',$conceptosrestantes);
+        ),
+        'conditions'=>array(
+            'Conceptosrestante.periodo'=>$periodo,
+            'Conceptosrestante.impcli_id'=>$impcliid,
+        )
+    );
+    $conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
+    $this->set('conceptosrestantes',$conceptosrestantes);
 
-        $timePeriodo = strtotime("01-".$periodo ." -1 months");
-        $periodoPrevio = date("m-Y",$timePeriodo);
+    $timePeriodo = strtotime("01-".$periodo ." -1 months");
+    $periodoPrevio = date("m-Y",$timePeriodo);
 
-        $conditionsConceptosrestantes=array(
-            'contain'=>array(
+    $conditionsConceptosrestantes=array(
+        'contain'=>array(
 
-            ),
-            'conditions'=>array(
-                'Conceptosrestante.periodo'=>$periodoPrevio,
-                'Conceptosrestante.impcli_id'=>$impcliid,
-                'Conceptosrestante.conceptostipo_id'=>'1',
-            )
-        );
-        $conceptosrestantesafavor = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
-        $this->set('impcliSaldoAFavor',$conceptosrestantesafavor);
-	}
+        ),
+        'conditions'=>array(
+            'Conceptosrestante.periodo'=>$periodoPrevio,
+            'Conceptosrestante.impcli_id'=>$impcliid,
+            'Conceptosrestante.conceptostipo_id'=>'1',
+        )
+    );
+    $conceptosrestantesafavor = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
+    $this->set('impcliSaldoAFavor',$conceptosrestantesafavor);
+    }
 }

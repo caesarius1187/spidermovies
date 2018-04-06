@@ -4972,16 +4972,16 @@ function mostrarNotaEFE(&$nota,$periodoPrevio, $periodoActual,&$numeroNota){
         switch ($total['composicion']){
             case 'periodos':
                 if(!isset($total['valores'][$periodoPrevio])){
-                    Debugger::dump($nombreConcepto);
-                    Debugger::dump($total);
+                    //Debugger::dump($nombreConcepto);
+                    //Debugger::dump($total);
                 }
                 $valorPrevio = $total['valores'][$periodoPrevio]*$suma;
                 $valorActual = $total['valores'][$periodoActual]*$suma;
                 break;
             case 'corriente':
                 if(!isset($total['valores']['corriente'][$periodoPrevio])){
-                    Debugger::dump($nombreConcepto);
-                    Debugger::dump($total);
+                    //Debugger::dump($nombreConcepto);
+                    //Debugger::dump($total);
                 }
                 $valorPrevio = $total['valores']['corriente'][$periodoPrevio]*$suma;
                 $valorActual = $total['valores']['corriente'][$periodoActual]*$suma;
@@ -5439,10 +5439,10 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             }
             
             $topeAmortizacion = ($porcentajeamortizacion!=0)?(100/$porcentajeamortizacion):1000;
-            Debugger::dump($arrayCuentasxPeriodos[$numerodecuenta]);
-            Debugger::dump($porcentajeamortizacion);
-            Debugger::dump($aniosamortizados);
-            Debugger::dump($topeAmortizacion);
+            //Debugger::dump($arrayCuentasxPeriodos[$numerodecuenta]);
+            //Debugger::dump($porcentajeamortizacion);
+            //Debugger::dump($aniosamortizados);
+            //Debugger::dump($topeAmortizacion);
             if($aniosamortizados<$topeAmortizacion){
                 if(($aniosamortizados)<=1){
                     $amortizacionacumulada = 0;
@@ -5829,7 +5829,7 @@ function mostrarNotaDelGrupo($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,
     return $totalNota;
 }
 function mostrarNotaDeESP($arrayCuentasxPeriodos,&$arrayPrefijos,$keysCuentas,&$numeroDeNota,$nombreNota,$fechaInicioConsulta,$fechaFinConsulta){
-    //vamos a extender la funcionalidad de esta funcion para que abarque tmb mostrary no solo calcular
+    //vamos a extender la funcionalidad de esta funcion para que abarque tmb mostrar y no solo calcular
     //$numerofijo = "60101";
     //Una nota puede tener muchos prefijos y vamos a totalizar los prefijos por separado
     //y devolver el total de la nota.
@@ -5909,7 +5909,7 @@ function mostrarNotaDeESP($arrayCuentasxPeriodos,&$arrayPrefijos,$keysCuentas,&$
         foreach ($indexCuentasNumeroFijoCorriente as $ki =>$index) {              
             $numeroCuentaCorriente = $keysCuentas[$index];
             if(!isset($arrayCuentasxPeriodos[$numeroCuentaCorriente][$periodoActual])){
-                Debugger::dump($arrayCuentasxPeriodos[$numeroCuentaCorriente]);
+                //Debugger::dump($arrayCuentasxPeriodos[$numeroCuentaCorriente]);
             }
             $tieneValores+=$arrayCuentasxPeriodos[$numeroCuentaCorriente][$periodoActual];
             $tieneValores+=$arrayCuentasxPeriodos[$numeroCuentaCorriente][$periodoPrevio];

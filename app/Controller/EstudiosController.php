@@ -32,14 +32,133 @@ class EstudiosController extends AppController {
  * @param string $id
  * @return void
  */
-	public function view($id = null) {
+	public function view($id = null,$periodo = null) {
+                $this->loadModel('Venta');
+                $this->loadModel('Compra');
 		if (!$this->Estudio->exists($id)) {
 			throw new NotFoundException(__('Invalid estudio'));
 		}
-
-		$options = array('conditions' => array('Estudio.' . $this->Estudio->primaryKey => $id));
-		$this->set('estudio', $this->Estudio->find('first', $options));
-		$this->request->data = $this->Estudio->find('first', $options);
+                if($periodo!=null){
+                    $pemes = substr($periodo, 0, 2);
+                    $peanio = substr($periodo, 3);
+                }else{
+                    $pemes = date('m');
+                    $peanio = date('Y');   
+                }
+                                 
+                $this->set('periodomes', $pemes);
+                $this->set('periodoanio', $peanio);
+                //A: Es menor que periodo Hasta
+                $esMenorQueHasta = array(
+                    //HASTA es mayor que el periodo
+                    'OR' => array(
+                        'SUBSTRING(Periodosactivo.hasta,4,7)*1 > ' . $peanio . '*1',
+                        'AND' => array(
+                            'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= ' . $peanio . '*1',
+                            'SUBSTRING(Periodosactivo.hasta,1,2) >= ' . $pemes . '*1'
+                        ),
+                    )
+                );
+                //B: Es mayor que periodo Desde
+                $esMayorQueDesde = array(
+                    'OR' => array(
+                        'SUBSTRING(Periodosactivo.desde,4,7)*1 < ' . $peanio . '*1',
+                        'AND' => array(
+                            'SUBSTRING(Periodosactivo.desde,4,7)*1 <= ' . $peanio . '*1',
+                            'SUBSTRING(Periodosactivo.desde,1,2) <= ' . $pemes . '*1'
+                        ),
+                    )
+                );
+                $periodoNull = array(
+                    'OR' => array(
+                        array('Periodosactivo.hasta' => null),
+                        array('Periodosactivo.hasta' => ""),
+                    )
+                );
+                //C: Tiene Periodo Hasta 0 NULL
+                $conditionsImpCliHabilitados = array(
+                    //El periodo esta dentro de un desde hasta
+                    'AND' => array(
+                        $esMayorQueDesde,
+                        'OR' => array(
+                            $esMenorQueHasta,
+                            $periodoNull
+                        )
+                    )
+                );
+                
+		$options = array(
+                    'contain'=>[
+                        'Grupocliente'=>[
+                            'Cliente'=>[
+                                'Empleado'=>[
+                                    'conditions'=>[
+                                        'OR'=>[
+                                                'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$pemes.'-'.$peanio)),
+                                                'Empleado.fechaegreso is null' ,
+                                        ],
+                                        'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$pemes.'-'.$peanio)),
+                                    ]
+                                ],
+                                'Impcli'=>[
+                                    'Periodosactivo'=>[
+                                        'conditions'=>$conditionsImpCliHabilitados
+                                    ]
+                                ],
+                                'conditions'=>[
+                                    'Cliente.estado'=>'habilitado'
+                                ]
+                            ],
+                            'conditions'=>[
+                                'Grupocliente.estado'=>'habilitado'
+                            ]
+                        ],
+                    ],
+                    'conditions' => array(
+                        'Estudio.' . $this->Estudio->primaryKey => $id
+                        )
+                    );
+                $miEstudio = $this->Estudio->find('first', $options);
+		$this->set('estudio', $miEstudio);
+		$this->request->data = $miEstudio;
+                
+                $idClientesDelEstudio=[];
+                foreach ($miEstudio['Grupocliente'] as $grupocliente) {
+                    foreach ($grupocliente['Cliente'] as $cliente) {
+                       $idClientesDelEstudio[] = $cliente['id'];
+                    }
+                }
+                
+                $optionsVentas = array(
+                    'fields'=>[
+                        'Venta.cliente_id , count(*) as total'
+                    ],
+                    'group'=>[
+                        'Venta.cliente_id'
+                    ],
+                    'conditions' => array(
+                        'Venta.cliente_id' => $idClientesDelEstudio,
+                        'Venta.periodo' =>  $pemes.'-'.$peanio
+                        )
+                    );
+                $misVentas = $this->Venta->find('all', $optionsVentas);
+                $optionsCompras = array(
+                    'fields'=>[
+                        'Compra.cliente_id , count(*) as total'
+                    ],                    
+                    'group'=>[
+                        'Compra.cliente_id'
+                    ],
+                    'conditions' => array(
+                        'Compra.cliente_id' => $idClientesDelEstudio,
+                        'Compra.periodo' =>  $pemes.'-'.$peanio
+                        )
+                    );
+                $misCompras = $this->Compra->find('all', $optionsCompras);
+                $this->set('ventas', $misVentas);
+                $this->set('compras', $misCompras);
+                
+                
 
 	}
 

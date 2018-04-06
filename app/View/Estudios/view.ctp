@@ -72,6 +72,179 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 			&nbsp;
 		</dd>
 	</dl>
+<h2><?php echo __('Mi Estudio en el periodo '.$periodomes.'-'.$periodoanio); ?></h2>
+    <dl>
+        <dt><?php echo __('Monotributistas'); ?></dt>
+        <dd>
+            <?php
+            $monotributistas = 0;
+            $respInscriptos = 0;
+            $topEmpleados=0;
+            $convenios=[];
+            $nombreClientes = [];
+            foreach ($estudio['Grupocliente'] as $grupocliente) {
+                foreach ($grupocliente['Cliente'] as $cliente) {
+                    $nombreClientes[$cliente['id']]=$cliente['nombre'];
+                    foreach ($cliente['Impcli'] as $impcli ) {
+                        if($impcli['impuesto_id']==4&&count($impcli['Periodosactivo'])>0){
+                            $monotributistas++;
+                        }
+                        if($impcli['impuesto_id']==19&&count($impcli['Periodosactivo'])>0){
+                            $respInscriptos++;
+                        }
+                    }
+                    //Debugger::dump($cliente['nombre'].": ".count($cliente['Empleado'])."</br>");
+                    if($topEmpleados<count($cliente['Empleado'])){
+                        $topEmpleados = count($cliente['Empleado']);
+                        $nombreEmpleados = $cliente['nombre'];
+                    }
+                    foreach ($cliente['Empleado'] as $empleado ) {
+                        if(!in_array($empleado['conveniocolectivotrabajo_id'], $convenios)){
+                            $convenios[]=$empleado['conveniocolectivotrabajo_id'];
+                        }
+                    }
+                }
+            }
+            ?>
+                <?php echo h($monotributistas); ?>
+                &nbsp;
+        </dd>
+        <dt><?php echo __('Responsables Inscriptos'); ?></dt>
+        <dd>            
+                <?php echo h($respInscriptos); ?>
+                &nbsp;
+        </dd>
+        <dt><?php echo __('Maximas Ventas por contribuyente'); ?></dt>
+           
+            <?php
+            $topVentas=0;
+            $topVentas2=0;
+            $topVentas3=0;
+            $topVentas4=0;
+            $topVentas5=0;
+            $nombreVentas=0;
+            $nombreVentas2=0;
+            $nombreVentas3=0;
+            $nombreVentas4=0;
+            $nombreVentas5=0;
+            foreach ($ventas as $key => $venta) {
+                if($topVentas<$venta[0]['total']){
+                    if($topVentas2<$topVentas){
+                        if($topVentas3<$topVentas2){
+                            if($topVentas4<$topVentas3){
+                                if($topVentas5<$topVentas4){
+                                    $topVentas5 = $topVentas4;
+                                    $nombreVentas5 = $nombreVentas4;
+                                }
+                                $topVentas4 = $topVentas3;
+                                $nombreVentas4 = $nombreVentas3;
+                            }
+                            $topVentas3 = $topVentas2;
+                            $nombreVentas3 = $nombreVentas2;
+                        }
+                        $topVentas2 = $topVentas;
+                        $nombreVentas2 = $nombreVentas;
+                    }
+                    $topVentas = $venta[0]['total'];
+                    $nombreVentas = $nombreClientes[$venta['Venta']['cliente_id']];
+                }
+            }
+            ?>
+        <dd>         
+                <?php echo h($nombreVentas.": ".$topVentas); ?>
+                &nbsp;
+        </dd>
+        <dt>2&ordm;</dt>
+        <dd>         
+                <?php echo h($nombreVentas2.": ".$topVentas2); ?>
+                &nbsp;
+        </dd>
+        <dt>3&ordm;</dt>
+        <dd>         
+                <?php echo h($nombreVentas3.": ".$topVentas3); ?>
+                &nbsp;
+        </dd>
+        <dt>4&ordm;</dt>
+        <dd>         
+                <?php echo h($nombreVentas4.": ".$topVentas4); ?>
+                &nbsp;
+        </dd>
+        <dt>5&ordm;</dt>
+        <dd>         
+                <?php echo h($nombreVentas5.": ".$topVentas5); ?>
+                &nbsp;
+        </dd>
+        <dt><?php echo __('Maximas Compras por contribuyente'); ?></dt>
+        <dd>            
+            <?php
+            $topCompras=0;
+            $nombrecompra="";
+            $topCompras2=0;
+            $nombrecompra2="";
+            $topCompras3=0;
+            $nombrecompra3="";
+            $topCompras4=0;
+            $nombrecompra4="";
+            $topCompras5=0;
+            $nombrecompra5="";
+            foreach ($compras as $key => $compra) {
+                if($topCompras < $compra[0]['total']*1){
+                    if($topCompras2 < $topCompras){
+                        if($topCompras3 < $topCompras2){
+                            if($topCompras4 < $topCompras3){
+                                if($topCompras5 < $topCompras4){
+                                   $topCompras5 = $topCompras4;
+                                    $nombrecompra5 = $nombrecompra4;
+                                }
+                                $topCompras4 = $topCompras3;
+                                $nombrecompra4 = $nombrecompra3;
+                            }
+                            $topCompras3 = $topCompras2;
+                            $nombrecompra3 = $nombrecompra2;
+                        }
+                        $topCompras2 = $topCompras;
+                        $nombrecompra2 = $nombrecompra;
+                    }
+                    $topCompras = $compra[0]['total']*1;
+                    $nombrecompra = $nombreClientes[$compra['Compra']['cliente_id']];
+                }
+            }
+            ?>
+                <?php echo h($nombrecompra.": ".$topCompras); ?>
+                &nbsp;
+        </dd>
+        <dt>2&ordm;</dt>
+        <dd>         
+                <?php echo h($nombrecompra2.": ".$topCompras2); ?>
+                &nbsp;
+        </dd>
+        <dt>3&ordm;</dt>
+        <dd>         
+                <?php echo h($nombrecompra3.": ".$topCompras3); ?>
+                &nbsp;
+        </dd>
+        <dt>4&ordm;</dt>
+        <dd>         
+                <?php echo h($nombrecompra4.": ".$topCompras4); ?>
+                &nbsp;
+        </dd>
+        <dt>5&ordm;</dt>
+        <dd>         
+                <?php echo h($nombrecompra5.": ".$topCompras5); ?>
+                &nbsp;
+        </dd>
+        
+        <dt><?php echo __('Max Empleados x contribuyente'); ?></dt>
+        <dd>                      
+                <?php echo h($nombreEmpleados.': '.$topEmpleados); ?>
+                &nbsp;
+        </dd>
+        <dt><?php echo __('Convenios Utilizados'); ?></dt>
+        <dd>                      
+                <?php echo h(count($convenios)); ?>
+                &nbsp;
+        </dd>
+    </dl>
 </div>
 <!-- Popin Modal para edicion de ventas a utilizar por datatables-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">

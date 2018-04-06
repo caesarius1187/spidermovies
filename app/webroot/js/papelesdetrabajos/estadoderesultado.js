@@ -73,7 +73,7 @@ $(document).ready(function() {
     reloadDatePickers();
     catchEditFormsLiquidacionDetalles();
     loadInformeAuditor();
-    loadNotasYDatos();
+    //loadNotasYDatos();
 });
 function ajustarheadeepn() {
         var header_height = 0;

@@ -22,6 +22,18 @@ class Compra extends AppModel {
  *
  * @var array
  */
+        public $codigooperacion =[
+            '0', //NO CORRESPONDE
+            'A', //NO ALCANZADO
+            'C', //OPERAC. CANJE / DEVOL. IVA TURISTAS EXTR.
+            'E', //OPERACIONES EXENTAS
+            'N', //NO GRAVADO
+            'T', //REINTEGRO DECRETO 1043/2016
+            'X', //IMPORTACION DEL EXTERIOR
+            'Z', //IMPORTACION DE ZONA FRANCA
+        ];
+            
+
 	public $belongsTo = array(
 		'Cliente' => array(
 			'className' => 'Cliente',

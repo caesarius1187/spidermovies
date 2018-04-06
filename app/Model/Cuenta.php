@@ -64,7 +64,8 @@ class Cuenta extends AppModel {
                         '3860','3861','3862','3863','3864','3865','3866','3867','3868','3869',//otros anticipos
                         '3870','3871','3872','3873','3874','3875','3876','3877','3878','3879',//otros anticipos
                         '3880','3881','3882','3883','3884','3885','3886','3887','3888','3889',//otros anticipos
-                        '3890','3891','3892','3893','3894','3895','3896','3897'//otros anticipos
+                        '3890','3891','3892','3893','3894','3895','3896','3897',//otros anticipos
+                        '3968',//Moneda Extranjera Euros
                     ];
 
 	public $cuentasComisionGastosInteresesOtros = [

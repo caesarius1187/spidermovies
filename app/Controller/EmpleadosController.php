@@ -262,14 +262,68 @@ class EmpleadosController extends AppController {
 		);
 		$this->set(compact('cliente'));
 	}
-	public function view($id = null) {
-		if (!$this->Empleado->exists($id)) {
-			throw new NotFoundException(__('Invalid empleado'));
-		}
-		$options = array('conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
-		$this->set('empleado', $this->Empleado->find('first', $options));
-	}
-	public function papeldetrabajosueldos($cliid=null,$periodo=null ,$empleadoamostrar=null, $tipoliquidacion=null) {
+	public function exportacion($cliid=null,$periodo=null,$tipoliquidacion=null){
+            ini_set('memory_limit', '2560M');
+            $this->Components->unload('DebugKit.Toolbar');
+            $this->loadModel('Empleado');
+            $this->loadModel('Cliente');            
+            $this->set('periodo',$periodo);
+            $this->set('cliid',$cliid);
+            $options = array(
+                'contain'=>array(
+                    'Empleado'=>array(
+                        'Conveniocolectivotrabajo'=>[
+                            'Impuesto'
+                        ],
+                        'Valorrecibo'=>array(
+                            'Cctxconcepto'=>array(
+                                'Concepto',
+                                'Conveniocolectivotrabajo'=>[]
+                            ),
+                            'conditions'=>array(
+                                'Valorrecibo.periodo'=>$periodo,
+                                'Valorrecibo.tipoliquidacion'=>array(1,2,3,7)
+                            )
+                        ),
+                        'conditions'=>array(
+                            'Empleado.conveniocolectivotrabajo_id <> 10',//este convenio no debe impactar en suss por que es
+                            //servicio domestico
+                            'Empleado.cliente_id' => $impcliSolicitado['Impcli']['cliente_id'],
+                            'OR'=>[
+                                'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                                'Empleado.fechaegreso is null' ,
+                            ],
+                            'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                        ),
+                        'order'=>['Empleado.cuit']
+                    )
+                ),
+                'conditions' => array('Cliente.' . $this->Cliente->primaryKey => $cliid)
+            );
+
+            $cliente = $this->Cliente->find('first', $options);
+            $this->set('cliente',$cliente);
+
+            $this->set(compact('cliid','periodo'));           
+            $this->set('codigorevista',$this->Empleado->codigorevista);
+            $this->set('codigoactividad',$this->Empleado->codigoactividad);
+            $this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
+            $this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
+            $this->set('tipoempresa',$this->Empleado->tipoempresa);
+            $this->set('codigozona',$this->Empleado->codigozona);
+
+            //Aca vamos a buscar si tiene Monotributo
+            $pemes = substr($periodo, 0, 2);
+            $peanio = substr($periodo, 3);
+        }	
+    public function view($id = null) {
+            if (!$this->Empleado->exists($id)) {
+                    throw new NotFoundException(__('Invalid empleado'));
+            }
+            $options = array('conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
+            $this->set('empleado', $this->Empleado->find('first', $options));
+    }
+    public function papeldetrabajosueldos($cliid=null,$periodo=null ,$empleadoamostrar=null, $tipoliquidacion=null) {
             $this->loadModel('Impcli');
             $this->loadModel('Empleado');
             $this->loadModel('Concepto');
@@ -869,121 +923,129 @@ class EmpleadosController extends AppController {
         $this->layout = 'ajax';
         $this->render('formulario102');
     }
-	public function add() {
-		$respuesta = array('respuesta'=>'');
-		if ($this->request->is('post')) {
-			$this->Empleado->create();
-            if(isset($this->request->data['Empleado']['fechaingresoedit'])){
-                $this->request->data['Empleado']['fechaingreso']=$this->request->data['Empleado']['fechaingresoedit'];
+    public function add() {
+            $respuesta = array('respuesta'=>'');
+            if ($this->request->is('post')) {
+                    $this->Empleado->create();
+        if(isset($this->request->data['Empleado']['fechaingresoedit'])){
+            $this->request->data['Empleado']['fechaingreso']=$this->request->data['Empleado']['fechaingresoedit'];
+        }
+                    if(isset($this->request->data['Empleado']['fechaaltaedit'])){
+            $this->request->data['Empleado']['fechaalta']=$this->request->data['Empleado']['fechaaltaedit'];
+        }
+        if(isset($this->request->data['Empleado']['fechaegresoedit'])){
+            $this->request->data['Empleado']['fechaegreso']=$this->request->data['Empleado']['fechaegresoedit'];
+        }
+                    $this->request->data('Empleado.fechaingreso',date('Y-m-d',strtotime($this->request->data['Empleado']['fechaingreso'])));
+                    $this->request->data('Empleado.fechaalta',date('Y-m-d',strtotime($this->request->data['Empleado']['fechaalta'])));
+                    if($this->request->data['Empleado']['fechaegreso']) {
+                            $this->request->data('Empleado.fechaegreso', date('Y-m-d', strtotime($this->request->data['Empleado']['fechaegreso'])));
+                    }
+                    if ($this->Empleado->save($this->request->data)) {
+                            $this->request->data('Empleado.fechaingreso',date('d-m-Y',strtotime($this->request->data['Empleado']['fechaingreso'])));
+                            $respuesta['empleado'] = $this->request->data;
+                            if(!isset($respuesta['empleado']['Empleado']['id'])||$respuesta['empleado']['Empleado']['id']==''){
+                                    $respuesta['empleado']['Empleado']['id'] = $this->Empleado->getLastInsertID();
+                            }
+                            $respuesta['respuesta'] = 'Se ha guardado el empleado con exito';
+                    } else {
+                            $respuesta['error'] = '1';
+                            $respuesta['respuesta'] = 'NO se ha guardado el empleado con exito. Por favor intente de nuevo mas tarde.';
+                    }
+                    $this->set('data',$respuesta);
+                    $this->autoRender=false;
+                    $this->layout = 'ajax';
+                    $this->render('serializejson');
+                    return;
             }
-			if(isset($this->request->data['Empleado']['fechaaltaedit'])){
-                $this->request->data['Empleado']['fechaalta']=$this->request->data['Empleado']['fechaaltaedit'];
+            $this->set('respuesta',$respuesta);
+            $this->autoRender=false;
+            $this->layout = 'ajax';
+            $this->render('add');
+            return;
+    }
+    public function edit($id = null) {
+            $this->loadModel('Domicilio');
+            $this->loadModel('Conveniocolectivotrabajo');
+            $this->loadModel('Cargo');
+            $this->loadModel('Impuesto');
+            $this->loadModel('Localidade');
+            $this->loadModel('Obrassociale');
+            if (!$this->Empleado->exists($id)) {
+                    throw new NotFoundException(__('Invalid empleado'));
             }
-            if(isset($this->request->data['Empleado']['fechaegresoedit'])){
-                $this->request->data['Empleado']['fechaegreso']=$this->request->data['Empleado']['fechaegresoedit'];
+            $options = array('conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
+            $this->request->data = $this->Empleado->find('first', $options);
+
+            $this->set(compact('cliid'));
+
+            $optionsDomic = array(
+                    'conditions' => array('Domicilio.cliente_id' => $this->request->data['Empleado']['cliente_id'])
+            );
+            $domicilios = $this->Domicilio->find('list',$optionsDomic);
+            $this->set('domicilios', $domicilios);
+
+            $conveniocolectivotrabajos = $this->Conveniocolectivotrabajo->find('list');
+            $this->set('conveniocolectivotrabajos', $conveniocolectivotrabajos);
+
+            $this->set('cargos',$this->Cargo->find('list',[
+                            'contain'=>[
+                                    'Conveniocolectivotrabajo'
+                            ],
+                            'fields'=>[
+                                    'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
+                            ]
+                    ]
+            )
+            );
+
+            //aca vamos a setiar las listas que se necesita para cargar empleados
+            $this->set('codigorevista',$this->Empleado->codigorevista);
+            $this->set('codigocondicion',$this->Empleado->codigocondicion);
+            $this->set('codigoactividad',$this->Empleado->codigoactividad);
+            $this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
+            $this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
+            $this->set('tipoempresa',$this->Empleado->tipoempresa);
+            $this->set('codigozona',$this->Empleado->codigozona);
+            $this->set('cargos',$this->Cargo->find('list',[
+                            'contain'=>[
+                                    'Conveniocolectivotrabajo'
+                            ],
+                            'fields'=>[
+                                    'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
+                            ]
+                    ]
+            )
+            );
+            $bancosOptions = array(
+                    'conditions' => array(
+                            'Impuesto.organismo'=> 'banco'
+                    ),
+            );
+            $bancos=$this->Impuesto->find('list',$bancosOptions);
+            $this->set('bancos', $bancos);
+
+            $optionsLoc = array(
+                    'contain'=>array('Partido'),
+                    'conditions' => array( ),
+                    'fields'=> array('Localidade.id','Localidade.nombre','Partido.nombre'),
+                    'order'=>array('Partido.nombre','Localidade.nombre')
+            );
+
+            $localidades = $this->Localidade->find('list',$optionsLoc);
+            $this->set('localidades', $localidades);
+            $optionsOS = [];
+            $obrassociales = $this->Obrassociale->find('list',$optionsOS);
+            $this->set('obrassociales', $obrassociales);
+            $this->autoRender=false;
+            if($this->RequestHandler->isAjax()){
+                $this->layout = 'ajax';
             }
-			$this->request->data('Empleado.fechaingreso',date('Y-m-d',strtotime($this->request->data['Empleado']['fechaingreso'])));
-			$this->request->data('Empleado.fechaalta',date('Y-m-d',strtotime($this->request->data['Empleado']['fechaalta'])));
-			if($this->request->data['Empleado']['fechaegreso']) {
-				$this->request->data('Empleado.fechaegreso', date('Y-m-d', strtotime($this->request->data['Empleado']['fechaegreso'])));
-			}
-			if ($this->Empleado->save($this->request->data)) {
-				$this->request->data('Empleado.fechaingreso',date('d-m-Y',strtotime($this->request->data['Empleado']['fechaingreso'])));
-				$respuesta['empleado'] = $this->request->data;
-				if(!isset($respuesta['empleado']['Empleado']['id'])||$respuesta['empleado']['Empleado']['id']==''){
-					$respuesta['empleado']['Empleado']['id'] = $this->Empleado->getLastInsertID();
-				}
-				$respuesta['respuesta'] = 'Se ha guardado el empleado con exito';
-			} else {
-				$respuesta['error'] = '1';
-				$respuesta['respuesta'] = 'NO se ha guardado el empleado con exito. Por favor intente de nuevo mas tarde.';
-			}
-			$this->set('data',$respuesta);
-			$this->autoRender=false;
-			$this->layout = 'ajax';
-			$this->render('serializejson');
-			return;
-		}
-		$this->set('respuesta',$respuesta);
-		$this->autoRender=false;
-		$this->layout = 'ajax';
-		$this->render('add');
-		return;
-	}
-	public function edit($id = null) {
-		$this->loadModel('Domicilio');
-		$this->loadModel('Conveniocolectivotrabajo');
-		$this->loadModel('Cargo');
-		$this->loadModel('Impuesto');
-		$this->loadModel('Localidade');
-		if (!$this->Empleado->exists($id)) {
-			throw new NotFoundException(__('Invalid empleado'));
-		}
-		$options = array('conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
-		$this->request->data = $this->Empleado->find('first', $options);
-
-		$this->set(compact('cliid'));
-
-		$optionsDomic = array(
-			'conditions' => array('Domicilio.cliente_id' => $this->request->data['Empleado']['cliente_id'])
-		);
-		$domicilios = $this->Domicilio->find('list',$optionsDomic);
-		$this->set('domicilios', $domicilios);
-
-		$conveniocolectivotrabajos = $this->Conveniocolectivotrabajo->find('list');
-		$this->set('conveniocolectivotrabajos', $conveniocolectivotrabajos);
-
-		$this->set('cargos',$this->Cargo->find('list',[
-				'contain'=>[
-					'Conveniocolectivotrabajo'
-				],
-				'fields'=>[
-					'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
-				]
-			]
-		)
-		);
-
-		//aca vamos a setiar las listas que se necesita para cargar empleados
-		$this->set('codigorevista',$this->Empleado->codigorevista);
-		$this->set('codigoactividad',$this->Empleado->codigoactividad);
-		$this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
-		$this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
-		$this->set('tipoempresa',$this->Empleado->tipoempresa);
-		$this->set('codigozona',$this->Empleado->codigozona);
-		$this->set('cargos',$this->Cargo->find('list',[
-				'contain'=>[
-					'Conveniocolectivotrabajo'
-				],
-				'fields'=>[
-					'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
-				]
-			]
-		)
-		);
-		$bancosOptions = array(
-			'conditions' => array(
-				'Impuesto.organismo'=> 'banco'
-			),
-		);
-		$bancos=$this->Impuesto->find('list',$bancosOptions);
-		$this->set('bancos', $bancos);
-		
-		$optionsLoc = array(
-			'contain'=>array('Partido'),
-			'conditions' => array( ),
-			'fields'=> array('Localidade.id','Localidade.nombre','Partido.nombre'),
-			'order'=>array('Partido.nombre','Localidade.nombre')
-		);
-
-		$localidades = $this->Localidade->find('list',$optionsLoc);
-		$this->set('localidades', $localidades);
-
-		$this->autoRender=false;
-		$this->layout = 'ajax';
-		$this->render('edit');
-	}
-	public function delete($id = null) {
+            $this->autoRender=false;
+            
+            $this->render('edit');
+    }
+    public function delete($id = null) {
 		$id = substr($id,0, -5);
 		$this->Empleado->id = $id;
 		if (!$this->Empleado->exists()) {

@@ -2360,7 +2360,7 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             <?php
             $tablaAlicuotaGanancias=
                 [
-                    "2017"=>[
+                    "2016"=>[
                         [
                                 'desde'=>0,
                                 'hasta'=>10000,
@@ -2411,6 +2411,71 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                                 'base'=>0,
                         ]
                             ],
+                    "2017"=>[
+                        [
+                                'desde'=>0,
+                                'hasta'=>20000,
+                                'alicuota'=>5,
+                                'base'=>0,
+                                'resta'=>0,
+                        ],
+                        [
+                                'desde'=>20000,
+                                'hasta'=>40000,
+                                'alicuota'=>9,
+                                'base'=>1000,
+                                'resta'=>0,
+                        ],
+                        [
+                                'desde'=>40000,
+                                'hasta'=>60000,
+                                'alicuota'=>12,
+                                'base'=>2800,
+                                'resta'=>0,
+                        ],
+                        [
+                                'desde'=>60000,
+                                'hasta'=>80000,
+                                'alicuota'=>15,
+                                'base'=>5200,
+                                'resta'=>0,
+                        ],
+                        [
+                                'desde'=>80000,
+                                'hasta'=>120000,
+                                'alicuota'=>19,
+                                'base'=>8200,
+                                'resta'=>0,
+                        ],
+                        [
+                                'desde'=>120000,
+                                'hasta'=>160000,
+                                'alicuota'=>23,
+                                'base'=>15800,
+                                'resta'=>0,
+                        ],
+                        [
+                                'desde'=>160000,
+                                'hasta'=>240000,
+                                'alicuota'=>27,
+                                'base'=>25000,
+                                'resta'=>0,
+                        ],
+                        [
+                                'desde'=>240000,
+                                'hasta'=>320000,
+                                'alicuota'=>31,
+                                'base'=>46600,
+                                'resta'=>0,
+                        ],
+                        [
+                                'desde'=>320000,
+                                'hasta'=>999999999,
+                                'alicuota'=>35,
+                                'base'=>71400,
+                                'resta'=>0,
+                        ]
+                    ],
                     "2018"=>[
                         [
                                 'desde'=>0,
@@ -2485,7 +2550,9 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 $impuestodeterminadofinal=0;
                 foreach ($tablaAlicuotaGanancias[$periodoActual] as $tag) {
                     if($ganancianetasujetaaimpuesto>$tag['desde']&&$ganancianetasujetaaimpuesto<=$tag['hasta']){
-                        $impuestodeterminadofinal = ($ganancianetasujetaaimpuesto*$tag['alicuota']/100)-$tag['resta']+$tag['base'];
+                        
+                        $exedente = $ganancianetasujetaaimpuesto*1 - $tag['desde']*1;
+                        $impuestodeterminadofinal = ($exedente*$tag['alicuota']/100)-$tag['resta']+$tag['base'];
                     }
                 }
                 echo number_format($impuestodeterminadofinal,2,',','.');
@@ -2645,11 +2712,12 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
         <tbody>
             <?php
             $cbuMovimientos = [];
-            foreach ($cuentasLey25413['Movimientosbancario'] as $kcl => $movimientos) {
-                if(!isset($cbuMovimientos[$movimientos['cbu_id']]))$cbuMovimientos[$movimientos['cbu_id']]=0;
-
-                $cbuMovimientos[$movimientos['cbu_id']]+=$movimientos['debito'];
-                $cbuMovimientos[$movimientos['cbu_id']]-=$movimientos['credito'];
+            if(isset($cuentasLey25413['Movimientosbancario'])){
+                foreach ($cuentasLey25413['Movimientosbancario'] as $kcl => $movimientos) {
+                    if(!isset($cbuMovimientos[$movimientos['cbu_id']]))$cbuMovimientos[$movimientos['cbu_id']]=0;
+                    $cbuMovimientos[$movimientos['cbu_id']]+=$movimientos['debito'];
+                    $cbuMovimientos[$movimientos['cbu_id']]-=$movimientos['credito'];
+                }
             }
             foreach ($impcliCBU as $kicbu => $iccbu) {
                 foreach ($iccbu['Cbu'] as $kic => $cbu) {
@@ -3142,6 +3210,7 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
                 $minimoexento  = [];
                 $minimoexento['2016']  = 800000;
                 $minimoexento['2017']  = 950000;
+                $minimoexento['2018']  = 950000;
                 
                 ?>
                 <td colspan="1" class="numericTD"> <?php echo number_format($minimoexento[$periodoActual], 2, ",", ".") ?> </td>

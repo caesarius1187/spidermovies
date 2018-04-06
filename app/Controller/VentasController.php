@@ -328,7 +328,7 @@ class VentasController extends AppController {
 	 	$this->autoRender=false;
 	 	if ($this->request->is('post')) {
 	 		$optionsVenta = array( );
-	 		//controlar que no se repita la factura para el mismo cluente(subcliente), punto de venta, numero de comprobante y alicuota(si tiene iva)
+	 		//controlar que no se repita la factura para el mismo cliente(subcliente), punto de venta, numero de comprobante y alicuota(si tiene iva)
 	 		if($this->request->data['Venta']['tieneMonotributo']){
 	 			//Es Monotributista comprobar solo por numero de comprobante
  				$optionsVenta = array(
@@ -351,15 +351,17 @@ class VentasController extends AppController {
 			$ventaAnterior = $this->Venta->hasAny($optionsVenta);
 			
 			if($ventaAnterior){
-				$data = array(
-		            "respuesta" => "La Venta ".$this->request->data['Venta']['numerocomprobante']." ya ha sido registrada en el periodo".$this->request->data['Venta']['periodo'].". Por favor cambie el numero de comprobante o la alicuota",
-		            "venta_id" => 0,
-		            "venta"=> array(),		            
-		        );
-		        $this->layout = 'ajax';
-		        $this->set('data', $data);
-				$this->render('serializejson');
-				return ;
+                            $data = array(
+                                "respuesta" => "La Venta ".$this->request->data['Venta']['numerocomprobante']." ya ha sido registrada en un periodo anterior. Por favor cambie el numero de comprobante o la alicuota",
+                                "datos" => $this->Venta->find('first',$optionsVenta),		            
+                                "optionsVenta" => $optionsVenta,		            
+                                "venta_id" => 0,
+                                "venta"=> array(),		            
+                            );
+                            $this->layout = 'ajax';
+                            $this->set('data', $data);
+                            $this->render('serializejson');
+                            return ;
 	 		}
 			$this->Venta->create();
 			if($this->request->data['Venta']['fecha']!="")				

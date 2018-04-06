@@ -250,7 +250,7 @@ $(document).ready(function() {
         ],
         iDisplayLength: -1
     });
-    $('#tblsys').floatThead();
+    //$('#tblsys').floatThead();
 });
 var visiblesaldosMensuales = 1;
 function toogleColumns(){    

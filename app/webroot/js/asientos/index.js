@@ -139,21 +139,25 @@ function agregarMovimiento()
     alert(CuentaCliente);
 }
 function eliminarAsiento(asientoID){
-     var data ="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/asientos/eliminar/"+asientoID,
-        // URL to request
-        data: data,  // post data
-        success: function(mirespuesta) {
-            var respuesta = JSON.parse(mirespuesta);          
-            callAlertPopint(respuesta.respuesta);
-            location.reload();
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
-        }
-    });
+    var r = confirm("Esta seguro que desea eliminar este asiento?");
+    if(r){
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/asientos/eliminar/"+asientoID,
+            // URL to request
+            data: data,  // post data
+            success: function(mirespuesta) {
+                var respuesta = JSON.parse(mirespuesta);          
+                callAlertPopint(respuesta.respuesta);
+                location.reload();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    }
+    
 }
 function editarMovimientos(asientoID){
     var data ="";

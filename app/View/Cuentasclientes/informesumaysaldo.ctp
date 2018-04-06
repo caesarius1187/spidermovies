@@ -1,34 +1,39 @@
 <?php
+//echo $this->Html->script('https://code.jquery.com/jquery-1.12.4.js',array('inline'=>false));
+
 echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
+
+/*echo $this->Html->script('https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js',array('inline'=>false));
+echo $this->Html->script('https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js',array('inline'=>false));
+echo $this->Html->script('https://cdn.datatables.net/buttons/1.5.1/js/buttons.flash.min.js',array('inline'=>false));
+echo $this->Html->script('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js',array('inline'=>false));
+echo $this->Html->script('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js',array('inline'=>false));
+echo $this->Html->script('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js',array('inline'=>false));
+echo $this->Html->script('https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js',array('inline'=>false));
+echo $this->Html->script('https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js',array('inline'=>false));*/
+
 echo $this->Html->script('jquery-ui',array('inline'=>false));
-echo $this->Html->css('bootstrapmodal');
-echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
+//echo $this->Html->css('bootstrapmodal');
+//echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 echo $this->Html->script('cuentasclientes/informesumaysaldo',array('inline'=>false));
 echo $this->Html->script('asientos/index',array('inline'=>false));
-echo $this->Html->script('jquery.table2excel',array('inline'=>false));
 
-echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
-echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
-echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
-echo $this->Html->script('dataTables.buttons.min.js',array('inline'=>false));
-echo $this->Html->script('buttons.print.min.js',array('inline'=>false));
-echo $this->Html->script('buttons.flash.min.js',array('inline'=>false));
-echo $this->Html->script('jszip.min.js',array('inline'=>false));
-echo $this->Html->script('pdfmake.min.js',array('inline'=>false));
-echo $this->Html->script('vfs_fonts.js',array('inline'=>false));
-echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
-<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>-->
-<!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css"/>-->
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.1.2/css/buttons.dataTables.min.css"/>
-<link rel="stylesheet" href="https://cdn.datatables.net/select/1.1.2/css/select.dataTables.min.css"/>
-<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.0.2/css/responsive.dataTables.min.css"/>
+//echo $this->Html->script('jquery.table2excel',array('inline'=>false));
 
-<!--<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>-->
-<!--<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>-->
-
-<script src="https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
+//echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
+//echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
+?>
+<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/dataTables.jqueryui.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.jqueryui.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.html5.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.print.min.js"></script>
+<script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/buttons.colVis.min.js"></script>
 <?php
 /**
  * Created by PhpStorm.

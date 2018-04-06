@@ -70,10 +70,18 @@ if(!$showTheForm){?>
             if( $this->request->data['Impuesto']['id']==10/*SUSS*/){?>
                 <td>
                 <?php
+                echo $this->Form->input('aplicaley27430',
+                    [
+                        'label' => 'Aplica Ley 27430',
+                        'div'=>['style'=>"width: 88px;"]
+                    ]);?>
+                </td>
+                <td>
+                <?php
                 echo $this->Form->input('alicuotaart',
                     [
                         'label' => 'Alicuota ART',
-                        'div'=>['style'=>"width: 200px;"]
+                        'div'=>['style'=>"width: 88px;"]
                     ]);?>
                 </td>
                 <td>
@@ -81,7 +89,7 @@ if(!$showTheForm){?>
                 echo $this->Form->input('fijoart',
                     [
                         'label' => 'Cuota Fija LRT',
-                        'div'=>['style'=>"width: 200px;"]
+                        'div'=>['style'=>"width: 85px;"]
                     ]);?>
                 </td>
                 <td>
@@ -89,7 +97,7 @@ if(!$showTheForm){?>
                 echo $this->Form->input('segurodevida',
                     [
                         'label' => 'Seguro de vida',
-                        'div'=>['style'=>"width: 200px;"]
+                        'div'=>['style'=>"width: 92px;"]
                     ]);?>
                 </td>
                 <td>
@@ -97,7 +105,7 @@ if(!$showTheForm){?>
                 echo $this->Form->input('padron',
                     [
                         'label' => 'Padron',
-                        'div'=>['style'=>"width: 200px;"]
+                        'div'=>['style'=>"width: 55px;"]
                     ]);?>
                 </td>
             <?php }

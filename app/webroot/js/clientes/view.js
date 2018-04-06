@@ -402,8 +402,8 @@ jQuery(document).ready(function($) {
         $('.chosen-select').chosen({search_contains:true});
 
         "vamos a guardar este html en una variable por que tenemos que cargarlo en Modal"
-        form_empleadoHTML = $("#form_empleado").html();
-        $("#form_empleado").html("");
+        //form_empleadoHTML = $("#form_empleado").parent().detach("#form_empleado");
+        //$("#form_empleado").html("");
 
 });
 
@@ -2256,7 +2256,7 @@ function loadFormAddEmpleado(){
     jQuery(document).ready(function($) {
         $('#myModal').on('show.bs.modal', function () {
             $('#myModal').find('.modal-title').html('Agregar Empleado');
-            $('#myModal').find('.modal-body').html(form_empleadoHTML);
+            $("#form_empleado").appendTo($('#myModal').find('.modal-body'));
             $('#EmpleadoAddForm').submit(function(){
                 //serialize form data
                 var formData = $(this).serialize();
@@ -2326,9 +2326,11 @@ function loadFormEmpleado(empid){
                 $('#myModal').on('show.bs.modal', function () {
                         $('#myModal').find('.modal-title').html('Agregar Empleado');
                         $('#myModal').find('.modal-body').html(data);
-                    $('.chosen-select').chosen({search_contains:true});
-                    reloadDatePickers();
+                    
                     $('#EmpleadoEditForm #EmpleadoCargoId').filterGroups({groupSelector: '#EmpleadoEditForm #EmpleadoConveniocolectivotrabajoId', });
+                    $(".chosen-container-single").each(function(){
+                        $(this).css('width','100px;');
+                    });
                     $('#EmpleadoEditForm').submit(function(){
                         //serialize form data
                         var formData = $(this).serialize();
@@ -2380,7 +2382,8 @@ function loadFormEmpleado(empid){
                     });
                 });
                 $('#myModal').modal('show');
-
+                $('.chosen-select').chosen({search_contains:true});
+                reloadDatePickers();
             },
             error: function(xhr,textStatus,error){
                 callAlertPopint(textStatus);

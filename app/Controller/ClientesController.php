@@ -408,10 +408,10 @@ class ClientesController extends AppController {
 		$this->loadModel('Comprobante');
 		$this->loadModel('Compra');
 		$this->loadModel('Conceptostipo');
-        $this->loadModel('Impcli');
-        $this->loadModel('Cbu');
-        $this->loadModel('Cuentascliente');
-        $this->loadModel('Cuenta');
+                $this->loadModel('Impcli');
+                $this->loadModel('Cbu');
+                $this->loadModel('Cuentascliente');
+                $this->loadModel('Cuenta');
 
 		$pemes = substr($periodo, 0, 2);
 		$peanio = substr($periodo, 3);
@@ -1388,6 +1388,7 @@ class ClientesController extends AppController {
 		$this->loadModel('Cargo');
 		$this->loadModel('Autonomocategoria');
 		$this->loadModel('Bienesdeuso');
+		$this->loadModel('Obrassociale');
 
 		if(!is_null($id)){
 			$containCliAuth = array(
@@ -1646,7 +1647,7 @@ class ClientesController extends AppController {
 			$bancos=$this->Impuesto->find('list',$bancosOptions);
 			$this->set('bancos', $bancos);
 
-            $mostrarView=true;
+                        $mostrarView=true;
 		}else{
 			$mostrarView=false;
 		}
@@ -1681,11 +1682,15 @@ class ClientesController extends AppController {
 		$this->set('mostrarView',$mostrarView);
 		//aca vamos a setiar las listas que se necesita para cargar empleados
 		$this->set('codigorevista',$this->Empleado->codigorevista);
+		$this->set('codigocondicion',$this->Empleado->codigocondicion);
 		$this->set('codigoactividad',$this->Empleado->codigoactividad);
 		$this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
 		$this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
 		$this->set('tipoempresa',$this->Empleado->tipoempresa);
 		$this->set('codigozona',$this->Empleado->codigozona);
+                $optionsOS = [];
+                $obrassociales = $this->Obrassociale->find('list',$optionsOS);
+                $this->set('obrassociales', $obrassociales);
 		$this->set('cargos',$this->Cargo->find('list',[
 					'contain'=>[
 						'Conveniocolectivotrabajo'
@@ -1702,9 +1707,9 @@ class ClientesController extends AppController {
 	public function habilitar($id=null) {
 		$this->Cliente->id = $id;		
 		if($this->Cliente->saveField('estado', 'habilitado')&&$this->Cliente->saveField('fchfincliente', '')){
-			$this->Session->setFlash(__('El cliente a sido habilitado.'));
+			$this->Session->setFlash(__('El cliente ha sido habilitado.'));
 		}else{
-			$this->Session->setFlash(__('El cliente NO a sido habilitado.'));
+			$this->Session->setFlash(__('El cliente NO ha sido habilitado.'));
 		}
 		$this->redirect(array('action' => 'view'));	
 	}

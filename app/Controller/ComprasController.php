@@ -1041,7 +1041,7 @@ class ComprasController extends AppController {
 				'Compra.comprobante_id',
 				'Compra.puntosdeventa',
 				//'Compra.alicuota',
-				'Compra.numerocomprobante',
+				'Compra.numerocomprobante*1',
 				'Compra.provedore_id',
 			]
 		];
@@ -1059,7 +1059,6 @@ class ComprasController extends AppController {
 			],
 
 		];
-
 		$alicuotas = $this->Compra->find('all',$optionsAlicuotas);
 
 		$optionCliente=[

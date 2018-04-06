@@ -296,8 +296,8 @@ function addTolblTotalDebeAsieto(event) {
                  return;
              });
         }else{
-            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*-1);
-            debesubtotal+=saldo*-1;
+            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*(-1));
+            debesubtotal+=saldo*(-1);
         }
     }
     $("#myModal #lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;         
@@ -331,9 +331,9 @@ function addTolblTotalhaberAsieto(event) {
         var saldo = debe-haber;         
         if(saldo>0){
              $('#myModal #Asiento0Movimiento'+orden+'Haber').val(saldo);
-            habersubtotal+=saldo-1;
+            habersubtotal+=saldo(-1);
         }else{
-            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*-1);               
+            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*(-1));               
             $('#myModal .inputDebe').each(function(){
                 $(this).trigger("change");
                  return;
@@ -384,8 +384,8 @@ function addTolblTotalDebeAsietoModal(event) {
                  return;
              });
         }else{
-            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*-1);
-            debesubtotal+=saldo*-1;
+            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*(-1));
+            debesubtotal+=saldo*(-1);
         }
     }
     $("#myModal #lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;         
@@ -419,9 +419,9 @@ function addTolblTotalhaberAsietoModal(event) {
         var saldo = debe-haber;         
         if(saldo>0){
              $('#myModal #Asiento0Movimiento'+orden+'Haber').val(saldo);
-            habersubtotal+=saldo-1;
+            habersubtotal+=saldo(-1);
         }else{
-            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*-1);               
+            $('#myModal #Asiento0Movimiento'+orden+'Debe').val(saldo*(-1));               
             $('#myModal .inputDebe').each(function(){
                 $(this).trigger("change");
                  return;
@@ -593,103 +593,6 @@ function loadFormImpuestoQuebrantos(impcliid,periodo){
         });
     });
 }
-function contabilizarexistenciafinal (clienteid,periodo) {
-    var data="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/asientos/contabilizarexistenciafinal/"+clienteid+"/"+periodo,
-        // URL to request
-        data: data,  // post data
-        success: function(response) {
-            $('#myModal').on('show.bs.modal', function() {
-                 $('#myModal').find('.modal-title').html('Asiento automatico Existencia Final');
-                 $('#myModal').find('.modal-body').html(response);
-                 /*$('#myModal').find('.modal-content')
-                     .css({
-                         width: 'max-content',
-                         'margin-left': function () {
-                             return -($(this).width() / 2);
-                         }
-                     });*/
-                 $('#myModal').find('.modal-footer').html("");
-                 $('#myModal').find('.modal-footer').append($('<button>', {
-                     type:'button',
-                     datacontent:'remove',
-                     class:'btn btn-primary',
-                     id:'editRowBtn',
-                     onclick:"$('#AsientoAddForm').submit()",
-                     text:"Aceptar"
-                 }));
-                 $('#myModal').find('.modal-footer').append($('<button>', {
-                     type:'button',
-                     datacontent:'remove',
-                     class:'btn btn-primary',
-                     id:'editRowBtn',
-                     onclick:" $('#myModal').modal('hide')",
-                     text:"Cerrar"
-                 }));
-             });
-            $('#myModal').modal('show');
-            $('.chosen-select-cuenta').chosen({
-                search_contains:true,
-                include_group_label_in_selected:true
-            });
-            var fecha = $("#fechaFinConsulta").val();
-            $("#myModal #Asiento0Fecha").val(fecha)
-            $('#myModal #AsientoAddForm').submit(function(){
-                $('#myModal').modal('hide');
-                /*Vamos a advertir que estamos reemplazando un asiento ya guardado*/
-                var asientoyaguardado=false;
-                if($("#myModal #AsientoAddForm #Asiento0Id").val()*1!=0){
-                    asientoyaguardado=true;
-                }
-                var r=true;
-                if(asientoyaguardado){
-                    r = confirm("Este asiento sobreescribira al previamente guardado, reemplazando los valores por los calculados" +
-                        " en este momento. Para ver el asiento previamente guardado CANCELE, luego ingrese en el Informe de " +
-                        " Sumas y saldos y despues en Asientos");
-                }
-                if (r == true) {
-                   $('#myModal #AsientoAddForm input').each(function(){
-                       $(this).removeAttr('disabled');
-                   });
-                   //serialize form data
-                   var formData = $(this).serialize();
-                   //get form action
-                   var formUrl = $(this).attr('action');
-                   $.ajax({
-                       type: 'POST',
-                       url: formUrl,
-                       data: formData,
-                       success: function(data,textStatus,xhr){
-                           location.reload();
-                       },
-                       error: function(xhr,textStatus,error){
-                           $('#myModal').modal('show');
-                           alert(textStatus);
-                           callAlertPopint(textStatus);
-                           return false;
-                       }
-                   });
-                }else{
-                    callAlertPopint("El asiento no se ha sobreescrito.");
-                }
-                return false;
-            });
-         $("#myModal .inputDebe").each(function () {
-             $(this).change(addTolblTotalDebeAsietoModal());
-         });
-         $("#myModal .inputHaber").each(function () {
-             $(this).change(addTolblTotalhaberAsietoModal());
-         });
-     },
-     error:function (XMLHttpRequest, textStatus, errorThrown) {
-         alert(textStatus);
-         alert(XMLHttpRequest);
-         alert(errorThrown);
-     }
- });
-}
 function contabilizarganancias (impcliid,periodo) {
  var data="";
  $.ajax({
@@ -804,13 +707,6 @@ function contabilizarexistenciafinal (clienteid,periodo) {
             $('#myModal').on('show.bs.modal', function() {
                  $('#myModal').find('.modal-title').html('Asiento automatico Existencia Final');
                  $('#myModal').find('.modal-body').html(response);
-                 /*$('#myModal').find('.modal-content')
-                     .css({
-                         width: 'max-content',
-                         'margin-left': function () {
-                             return -($(this).width() / 2);
-                         }
-                     });*/
                  $('#myModal').find('.modal-footer').html("");
                  $('#myModal').find('.modal-footer').append($('<button>', {
                      type:'button',
@@ -877,10 +773,10 @@ function contabilizarexistenciafinal (clienteid,periodo) {
                 return false;
             });
          $("#myModal .inputDebe").each(function () {
-             $(this).change(addTolblTotalDebeAsietoModal());
+             $(this).change(addTolblTotalDebeAsietoModal);
          });
          $("#myModal .inputHaber").each(function () {
-             $(this).change(addTolblTotalhaberAsietoModal());
+             $(this).change(addTolblTotalhaberAsietoModal);
          });
      },
      error:function (XMLHttpRequest, textStatus, errorThrown) {
@@ -1077,10 +973,11 @@ function rellenarAsientoGanancias(){
             if(saldo>0){
                 if( saldo < pagosacuenta*1){
                     usadoPagosACuenta = saldo;                    
-                    cancelacionExtra+=gananciaMinimaPresunta*1;
+                    cancelacionExtra+=saldo*1;
                     saldo=0;
                 }else{
                     saldo -= pagosacuenta*1;
+                    cancelacionExtra+=pagosacuenta*1;
                 }
                 //cancelacion += pagosacuenta*1;
                 usePagosACuenta = true;
@@ -1154,13 +1051,16 @@ function rellenarAsientoGanancias(){
     if($('#1cuenta1447').length > 0){
         //2104041101 Ganancias - Saldo a Pagar
         var orden = $('#1cuenta1447').attr('orden');
-        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()==0){  
-            if(cancelacion + cancelacionExtra >= apagar*1){
-                $('#myModal #Asiento1Movimiento'+orden+'Debe').val(apagar);
-            }else{
-                $('#myModal #Asiento1Movimiento'+orden+'Debe').val(cancelacion*1 + cancelacionExtra*1);
-            }
-           
+        if($('#myModal #Asiento1Movimiento'+orden+'Id').val()*1==0){  
+            //if(cancelacion + cancelacionExtra == 0){
+            //    $('#myModal #Asiento1Movimiento'+orden+'Debe').val(apagar);
+            //}else{
+                if(cancelacion + cancelacionExtra >= apagar*1){
+                    $('#myModal #Asiento1Movimiento'+orden+'Debe').val(apagar);
+                }else{
+                    $('#myModal #Asiento1Movimiento'+orden+'Debe').val(cancelacion*1 + cancelacionExtra*1 );
+                }
+            //}
         }                        
     }
     if($('#1cuenta264').length > 0){
@@ -1171,7 +1071,7 @@ function rellenarAsientoGanancias(){
             if(variacionSLD>0){
                  $('#myModal #Asiento1Movimiento'+orden+'Debe').val(variacionSLD);
             }else{
-                 $('#myModal #Asiento1Movimiento'+orden+'Haber').val(variacionSLD*-1);
+                 $('#myModal #Asiento1Movimiento'+orden+'Haber').val(variacionSLD*(-1));
             }
         }                        
     }

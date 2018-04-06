@@ -99,6 +99,30 @@
     <h2>Txt Compras Facturas</h2>
     <div class="index" style="overflow-x: auto;" id="divFacturas" ><?php
         $totalComprasExportados = 0;
+         foreach($compras as $c => $compra ) {
+            //aca vamos a buscar dos alicuotas de la misma compra, si esta alicuota es 0  entonces hay que borrarla
+            //vamos a buscar la compra con mas de una alicuota
+            if($compra[0]['cantalicuotas']>1){
+                //si encuentro una busco las alicuotas de esta y si alguna tiene alic = 0 la borro
+                foreach($alicuotas as $a => $alicuota ) {
+                    if(
+                            $compra['Compra']['comprobante_id']==$alicuota['Compra']['comprobante_id']&&
+                            $compra['Compra']['puntosdeventa']==$alicuota['Compra']['puntosdeventa']&&
+                            $compra['Compra']['numerocomprobante']==$alicuota['Compra']['numerocomprobante']&&
+                            $compra['Compra']['provedore_id']==$alicuota['Compra']['provedore_id']
+                        )
+                    {
+                        //encontre una alicuota de una compra con 2 alicuotas, si la alic == 0 entonces la borro
+                        if($alicuota['Compra']['alicuota']=='0'){
+                            //Debugger::dump("elimine:");
+                            //Debugger::dump($alicuota);
+                            unset($alicuotas[$a]);
+                            $compras[$c][0]['cantalicuotas']--;
+                        }
+                    }                   
+                }
+            }
+        }
         foreach($compras as $c => $compra ) {
             $lineaCompra = "";
     //        $linecompra['fecha']=date('d-m-Y',strtotime(substr($line, 0,8)));
@@ -271,7 +295,9 @@
     <h2>Txt Compras Alicuotas</h2>
     <div class="index" style="overflow-x: auto;" id="divAlicuotas" ><?php
     $totalIVAAlicuotaExportados=0;
+       
         foreach($alicuotas as $c => $alicuota ) {
+            //El tema es que si tengo 2 alicuotas 
             $lineaAlicuota = "";
             //si el codigo del comprobante es 011 no debemos mostrar alicuota
             if($alicuota["Comprobante"]['codigo']=='011'){continue;}

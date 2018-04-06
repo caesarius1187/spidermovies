@@ -7,6 +7,27 @@ echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden')
 echo $this->Form->input('clinombre',array('value'=>$impcli['Cliente']['nombre'],'type'=>'hidden'));
 echo $this->Form->input('impcliid',array('value'=>$impcliid,'type'=>'hidden'));
 echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>'hidden'));?>
+<script>
+    function exportarFacturas() {
+        var container = $('#divEmpleados');
+        var anchor = $('#aExportarEmpleados');
+        anchor.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(container.html());
+        anchor.download = 'Exportacion SUSS.txt';
+    };
+    function downloadInnerHtml(filename, elId, mimeType) {
+        var elHtml = document.getElementById(elId).innerHTML;
+        var elTXT = elHtml.replace(/(?:\r\n|\r|\n)/g, '<br />');
+        elTXT = elTXT.replace(/&nbsp;/gi," ");
+        elTXT = elTXT.replace(/<br\s*\/?>/mg,"\r\n");
+
+        var link = document.createElement('a');
+        mimeType = mimeType || 'text/plain';
+
+        link.setAttribute('download', filename);
+        link.setAttribute('href', 'data:' + mimeType + ';charset=utf-8,' + encodeURIComponent(elTXT));
+        link.click();
+    }
+</script>
 <div class="eventosclientes index">
     <div id="divLiquidarSUSS">
     </div>
@@ -54,14 +75,18 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $miempleado['embargos'] = 0;
                 $miempleado['horasextras'] = 0;
                 $miempleado['importehorasextras'] = 0;
+                $miempleado['diassac'] = 0;
                 $miempleado['SAC'] = 0;
                 $miempleado['vacaciones'] = 0;
+                $miempleado['diasvacaciones'] = 0;
                 $miempleado['premios'] = 0;
                 $miempleado['maternidad'] = 0;
                 $miempleado['conceptosnorem'] = 0;
                 $miempleado['remtotal'] = 0;
                 $miempleado['rem1'] = 0;
+                $miempleado['titleRem10'] = 0;
                 $miempleado['rem2'] = 0;
+                $miempleado['importeADetraer'] = 0;
                 $miempleado['rem3'] = 0;
                 $miempleado['rem4'] = 0;
                 $miempleado['rem5'] = 0;
@@ -69,6 +94,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $miempleado['rem7'] = 0;
                 $miempleado['rem8'] = 0;
                 $miempleado['rem9'] = 0;
+                $miempleado['rem10'] = 0;
                 //Seguridad Social
                 $miempleado['seguridadsocialaporteadicional'] = 0;
                 $miempleado['seguridadsocialcontribtareadif'] = 0;
@@ -121,9 +147,15 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             $adicionales=0;
             $embargos=0;
             $horasextras=0;$importehorasextras=0;
-            $SAC=0;$vacaciones=0;$premios=0;$maternidad=0;$conceptosnorem=0;
+            $diassac=0;
+            $SAC=0;
+            $vacaciones=0;
+            $diasvacaciones=0;
+            $premios=0;$maternidad=0;$conceptosnorem=0;
             $remtotal=0;$rem1=0;$rem2=0;$rem3=0;$rem4=0;
             $rem5=0;$rem6=0;$rem7=0;$rem8=0;$rem9=0;
+            $rem10=0;
+            $importeADetraer=0;
             $redondeo=0;
             //Seguridad Social
             $seguridadsocialaporteadicional=0;
@@ -258,7 +290,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 }
                 if ($valorrecibo['Cctxconcepto']['Concepto']['id']=='20'/*Vacaciones Remunerativas*/){
                     $sueldo -= $valorrecibo['valor'];
-                }
+                }                
                 //Adicionales
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                     [
@@ -286,6 +318,12 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 ){
                     $importehorasextras += $valorrecibo['valor'];
                 }
+                //dias sac
+                if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    array('57'/*sac*/), true )
+                ){
+                    $diassac += $valorrecibo['valor'];
+                }
                 //SAC
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                     array('92'/*S.A.C. Remunerativo 1*/,'93'/*S.A.C. Remunerativo 2*/,'94'/*Total SAC Remunerativo*/), true )
@@ -297,6 +335,14 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     array('20'/*Vacaciones Remunerativas*/), true )
                 ){
                     $vacaciones += $valorrecibo['valor'];
+                }
+                //Dias Vacaciones
+                if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    [
+                        '60'/*Vacaciones No Gozadas*/,
+                        '13'/*Vacaciones*/,//                     
+                    ], true )){
+                    $diasvacaciones += $valorrecibo['valor'];
                 }
                 //Premios
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -350,20 +396,16 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 ){
                     $remtotal += $valorrecibo['valor'];
                 }
-                //Remuneracion 1
+                //Remuneracion 1 y 2 
                 if (
                 in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
                     array('27'/*Total Remunerativos C/D*/), true )
                 ){
                     $rem1 += $valorrecibo['valor'];
-                }
-                //Remuneracion 2
-                if (
-                in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('27'/*Total Remunerativos C/D*/), true )
-                ){
                     $rem2 += $valorrecibo['valor'];
                 }
+               
+                
                 //Remuneracion 3
                 $rem3 = $rem1;
                 //Seguridad Social Aporte Adicional
@@ -496,6 +538,76 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     }
                 }
             }
+            
+            $titleRem10 = "Rem2 = ".$rem2;
+            //vamos a aplicar nueva reglamentacion a partir del 01-2018
+            //si el codigo AFIP es 0 => $rem2 = ($rem2 - (12000*alicuota*jornada*sac))
+            $alicuotasContribuciones = [
+                2018=>0.20,
+                2019=>0.40,
+                2020=>0.60,
+                2021=>0.80,
+                2022=>1,
+            ];
+            $pemes = substr($periodo, 0, 2)*1;
+            $peanio = substr($periodo, 3)*1;
+            if($diassac>0){
+                $porcentajeSAC = 1 + $diassac/360 ;    
+            }else{
+                $porcentajeSAC = 1;
+            }
+            $reduccionPorCodigoContratacion = 1;
+            if($codigoafip=='0'){
+                //reduccion 0%
+                $titleRem10 .= " reduccion 0%";
+                $reduccionPorCodigoContratacion = 1;
+            }
+            if($codigoafip=='1'){
+                //reduccion 50%
+                $titleRem10 .= " reduccion 50%";
+                $reduccionPorCodigoContratacion = 0.5;
+            }
+            if($codigoafip=='2'){
+                //reduccion 25%
+                $titleRem10 .= " reduccion 25%";
+                $reduccionPorCodigoContratacion = 0.75;
+            }
+            if($codigoafip=='3'){
+                //reduccion 75%
+                $titleRem10 .= " reduccion 75%";
+                $reduccionPorCodigoContratacion = 0.25;
+            }
+            if($codigoafip=='4'){
+                //reduccion 100%
+                $titleRem10 .= " reduccion 100%";
+                $reduccionPorCodigoContratacion = 0;
+            }
+            $rem10 = $rem2;
+            
+            if(isset($alicuotasContribuciones[$peanio])&&$codigoafip=='0'&&$impcli['Impcli']['aplicaley27430']=='1'){
+                //si tiene vacaciones NO se multiplica por la jornada
+                if($diasvacaciones>0){
+                    $reduccion = (12000*$alicuotasContribuciones[$peanio]*$porcentajeSAC);
+                    $titleRem10 .= " monto reduccion: (12000*".$alicuotasContribuciones[$peanio]."*".$porcentajeSAC.")=".$reduccion;
+                }else{
+                    $reduccion = (12000*$alicuotasContribuciones[$peanio]*$jornada*$porcentajeSAC);
+                    $titleRem10 .= " monto reduccion: (12000*".$alicuotasContribuciones[$peanio]."*".$jornada."*".$porcentajeSAC.")=".$reduccion;
+                }
+               
+                $rem10 = ($rem2 - $reduccion);
+                $importeADetraer = $reduccion;
+                if($rem10<0)$rem10=0;
+            }
+            $valorMopre = 840.20;
+            $minimoContribuciones = 3*840.20;
+            //si la REm2 < que 3MOPRE => se toma REM2 para contribuciones y REM10 = 0;
+            if($rem2<$minimoContribuciones){
+                $titleRem10 .= " Rem2 < Minimo: ".$minimoContribuciones.", entonces rem10 = 0 y se toma Rem 2 para calcular contribuciones";
+                $importeADetraer=0;
+                $rem10=$rem2;
+            }
+           
+
             //Remuneracion 4 Segunda Parte
             $titlerem4="";
             if($AporteOSaporteadicionalos>0){
@@ -517,60 +629,57 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             //Jubilacion SIPA
             //todo cambiar por concepto guardado solo si se ah guardado un concepto "CODIGO AFIP"
             //Y si no tiene codigo que use 0
+            
+            //Cuando salgan las alicuotas de Contribucion hay que cargarlas aca
+            //una por cada año 2017/2018/2019/2020
+            $porcentajes = [
+                2017=>0.17,
+                2018=>0.175,
+                2019=>0.18,
+                2020=>0.185,
+                2021=>0.19,
+                2022=>0.195,
+            ];
+            $proporcionContribuciones = [
+                'inssjp'=>0.088235,
+                'sipa'=>0.598235,
+                'FNE'=>0.052353,
+                'AsigFliar'=>0.261176
+            ];
+            
+            $nuevaContSSJubSIPA = $porcentajes[$peanio]*$proporcionContribuciones['sipa'];
+            $nuevaContSSinssjp = $porcentajes[$peanio]*$proporcionContribuciones['inssjp'];
+            $nuevaContSSFNE = $porcentajes[$peanio]*$proporcionContribuciones['FNE'];
+            $nuevaContSSAsigFliar = $porcentajes[$peanio]*$proporcionContribuciones['AsigFliar'];
+            
             if($codigoafip=='0'){
-                $ContribSSjubilacionsipa+=$rem2*0.1017;
-            }
-            if($codigoafip=='1'){
-                $ContribSSjubilacionsipa+=$rem2*0.1017*0.5;
-            }
-            if($codigoafip=='2'){
-                $ContribSSjubilacionsipa+=$rem2*0.1017*0.75;
-            }
-            if($codigoafip=='3'){
-                $ContribSSjubilacionsipa+=$rem2*0.1017*0.25;
-            }
-            if($codigoafip=='4'){
-                $ContribSSjubilacionsipa+=$rem2*0.1017*0.0;
-            }
-            //Jubilacion INSSJP
-            if($codigoafip=='0'){
-                $INSSJP+=$rem2*0.01500;
-            }
-            if($codigoafip=='1'){
-                $INSSJP+=$rem2*0.01500*0.5;
-            }
-            if($codigoafip=='2'){
-                $INSSJP+=$rem2*0.01500*0.75;
-            }
-            if($codigoafip=='3'){
-                $INSSJP+=$rem2*0.01500*0.25;
-            }
-            if($codigoafip=='4'){
-                $INSSJP+=$rem2*0.01500*0.0;
+                //reduccion 0%
+                $ContribSSjubilacionsipa+=$rem10*$nuevaContSSJubSIPA;
+                //Debugger::dump("codigo: 0; rem 2: ".$rem10);
+                //Debugger::dump("nuevo sipa: ".$nuevaContSSJubSIPA);
+                $INSSJP+=$rem10*$nuevaContSSinssjp;
+                //Asignaciones Familiares
+                $asignacionfamiliar+=$rem10*$nuevaContSSAsigFliar;
+            }else{
+                $ContribSSjubilacionsipa+=$rem10*$nuevaContSSJubSIPA*$reduccionPorCodigoContratacion;
+                $INSSJP+=$rem10*$nuevaContSSinssjp*$reduccionPorCodigoContratacion;
+                 //Asignaciones Familiares
+                $asignacionfamiliar+=$rem10*$nuevaContSSAsigFliar*$reduccionPorCodigoContratacion;
+                
             }
             //Contrib Tarea Dif
             $ContribSScontribtareadif = $rem1*($seguridadsocialcontribtareadif/100);
 
             //Jubilacion FNE
             if(!$trabajadorAgrario){
-                if($codigoafip=='0'){
-                    $FNE+=$rem1*0.0089;
-                }
-                if($codigoafip=='1'){
-                    $FNE+=$rem1*0.0089*0.5;
-                }
-                if($codigoafip=='2'){
-                    $FNE+=$rem1*0.0089*0.75;
-                }
-                if($codigoafip=='3'){
-                    $FNE+=$rem1*0.0089*0.25;
-                }
-                if($codigoafip=='4'){
-                    $FNE+=$rem1*0.0089*0.0;
-                }
+                $FNE+=$rem10*$nuevaContSSFNE*$reduccionPorCodigoContratacion;
             }else{
 
             }
+             if($rem2<$minimoContribuciones){
+                $rem10=0;
+            }
+           
             //Contrib Seg Soc ANSSAL
             $minimoANSSAL = 2400;
             /*este dato de obra social sindical debe ser marcado en el empleado
@@ -599,22 +708,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             }else{
                 $ContribSSANSSAL+=($rem8*0.060+$ContribucionesOScontribucionadicionalos)*$alicuotaANSSAL;
             }
-            //Asignaciones Familiares
-            if($codigoafip=='0'){
-                $asignacionfamiliar+=$rem1*0.04440;
-            }
-            if($codigoafip=='1'){
-                $asignacionfamiliar+=$rem1*0.04440*0.5;
-            }
-            if($codigoafip=='2'){
-                $asignacionfamiliar+=$rem1*0.04440*0.75;
-            }
-            if($codigoafip=='3'){
-                $asignacionfamiliar+=$rem1*0.04440*0.25;
-            }
-            if($codigoafip=='4'){
-                $asignacionfamiliar+=$rem1*0.04440*0.0;
-            }
+           
             //Total Contribuciones
             $totalContribucionesSS =
                 $ContribSSjubilacionsipa + $INSSJP +
@@ -700,8 +794,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             $miempleado['conceptosnorem']=$conceptosnorem;
             $miempleado['remtotal']=$remtotal;
             $miempleado['rem1']=$rem1;
-            $miempleado['rem2']=$rem1;
-            $miempleado['rem3']=$rem1;
+            $miempleado['rem2']=$rem2;
+            $miempleado['importeADetraer']=$importeADetraer;            
+            $miempleado['titleRem10']=$titleRem10;
+            $miempleado['rem3']=$rem3;
             $miempleado['titlerem4']=$titlerem4;
             $miempleado['rem4']=$rem4;
             $miempleado['rem5']=$rem1;
@@ -709,6 +805,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             $miempleado['rem7']=$rem1;
             $miempleado['rem8']=$rem4;
             $miempleado['rem9']=$rem9;
+            $miempleado['rem10']=$rem10;
             $miempleado['seguridadsocialaporteadicional']=$seguridadsocialaporteadicional;
             $miempleado['seguridadsocialcontribtareadif']=$seguridadsocialcontribtareadif;
             $miempleado['obrasocialaporteadicional']=$obrasocialaporteadicional;
@@ -990,7 +1087,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     ?>
                 </tr>
                 <tr>
-                    <td rowspan="10" style=" vertical-align:middle!important;">
+                    <td rowspan="11" style=" vertical-align:middle!important;">
                         <div >
                             Remunerativos
                         </div>
@@ -999,7 +1096,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <?php
                     $redondeoTotal=0;
                     $remtotal=0;$rem1=0;$rem2=0;$rem3=0;$rem4=0;
-                    $rem5=0;$rem6=0;$rem7=0;$rem8=0;$rem9=0;
+                    $rem5=0;$rem6=0;$rem7=0;$rem8=0;$rem9=0;$rem10=0;
                     //Seguridad Social
                     $seguridadsocialaporteadicional=0;
                     $seguridadsocialcontribtareadif=0;
@@ -1041,6 +1138,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         $remtotal+=$empleadoDatos[$empleadoid]['remtotal'];
                         $rem1+=$empleadoDatos[$empleadoid]['rem1'];
                         $rem2+=$empleadoDatos[$empleadoid]['rem2'];
+                        $titleRem10=$empleadoDatos[$empleadoid]['titleRem10'];
                         $rem3+=$empleadoDatos[$empleadoid]['rem3'];
                         $rem4+=$empleadoDatos[$empleadoid]['rem4'];
                         $rem5+=$empleadoDatos[$empleadoid]['rem5'];
@@ -1048,6 +1146,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         $rem7+=$empleadoDatos[$empleadoid]['rem7'];
                         $rem8+=$empleadoDatos[$empleadoid]['rem8'];
                         $rem9+=$empleadoDatos[$empleadoid]['rem9'];
+                        $rem10+=$empleadoDatos[$empleadoid]['rem10'];
                         $seguridadsocialaporteadicional+=$empleadoDatos[$empleadoid]['seguridadsocialaporteadicional'];
                         $seguridadsocialcontribtareadif+=$empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif'];
                         $obrasocialaporteadicional+=$empleadoDatos[$empleadoid]['obrasocialaporteadicional'];
@@ -1120,7 +1219,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td>Rem. 2 (Cont. SIPA + INSSJP)</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td >';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem2'], 2, ",", ".")."</td>";
                     }
@@ -1203,6 +1302,17 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     }
                     ?>
                     <td><?php echo number_format($rem9, 2, ",", "."); ?></td>
+                </tr>
+                <tr>
+                    <td>Rem. 10 </td>
+                    <?php
+                    foreach ($impcli['Cliente']['Empleado'] as $empleado) {
+                        echo '<td title="'.$empleadoDatos[$empleadoid]['titleRem10'].'">';
+                        $empleadoid = $empleado['id'];
+                        echo number_format($empleadoDatos[$empleadoid]['rem10'], 2, ",", ".")."</td>";
+                    }
+                    ?>
+                    <td><?php echo number_format($rem10, 2, ",", "."); ?></td>
                 </tr>
                 <tr>
                     <td rowspan="2" style=" vertical-align:middle!important;">
@@ -1704,8 +1814,170 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 </tr>
             </tbody>
 	</table>
-	</div>
+    </div>
+    <div>
+        <h2>Txt Exportacion SUSS</h2>
+        <a id="aExportarEmpleados" href="#" class="buttonImpcli" style="margin-right: 8px;width: initial;"
+               onclick="downloadInnerHtml('<?php echo $impcli["Cliente"]['nombre']."-".$periodo; ?>SUSS.txt','divEmpleados','text/html')">
+                Descargar TXT SUSS
+            </a>
+        <div class="index" style="overflow-x: auto;" id="divEmpleados" ><?php
+            foreach ($impcli['Cliente']['Empleado'] as $empleado) {           
+                $empleadoid = $empleado['id'];
+                //Debugger::dump($empleado);
+                $lineaEmpleado = "";
+                //1 CUIL 1 - 11
+                $lineaEmpleado .= str_pad($empleado['cuit'], 11, " ", STR_PAD_LEFT);
+                //2 nombre 12 - 30
+                $lineaEmpleado .= str_pad($empleado['nombre'], 30, " ", STR_PAD_RIGHT);
+                //3conyugue  42 - 1
+                $lineaEmpleado .= str_pad(($empleado['conyugue']==1)?"T":"N", 1, " ", STR_PAD_RIGHT);
+                //4cantidad hijos  43 - 2
+                $lineaEmpleado .= str_pad($empleado['hijos'], 2, "0", STR_PAD_LEFT);
+                //5Codigo situacion  45 - 2
+                $lineaEmpleado .= str_pad($empleado['codigosituacion'], 2, "0", STR_PAD_LEFT);
+                //6Codigo condicion  47 - 2
+                $lineaEmpleado .= str_pad($empleado['codigocondicion'], 2, "0", STR_PAD_LEFT);
+                //7Codigo actividad  49 - 3
+                $lineaEmpleado .= str_pad($empleado['codigoactividad'], 3, "0", STR_PAD_LEFT);
+                //8Codigo de zona  52 - 2
+                $lineaEmpleado .= str_pad($empleado['codigozona'], 2, "0", STR_PAD_LEFT);
+                //9Porcentaje aporte adicional SS  54 - 5
+                $lineaEmpleado .= str_pad(number_format($empleado['porcentajeos'], 2, ",", ""), 5, " ", STR_PAD_LEFT);
+                //10codigo de modalidad de contratacion  59 - 3
+                $lineaEmpleado .= str_pad($empleado['codigomodalidadcontratacion'], 3, "0", STR_PAD_LEFT);
+                //11codigo de obra social 62 - 6
+                if(isset($empleado['Obrassociale']['codigo'])){
+                    $lineaEmpleado .= str_pad($empleado['Obrassociale']['codigo'], 6, "0", STR_PAD_LEFT);
+                }else{
+                    $lineaEmpleado .= str_pad(0, 6, "0", STR_PAD_LEFT);
+                }
+                //12cantidad adherentes 68 - 2
+                $lineaEmpleado .= str_pad($empleado['adherente'], 2, "0", STR_PAD_LEFT);
+                //13remuneracion total 70 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['remtotal'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //14remuneracion imponible 1 82 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem1'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //15Asignaciones Familiares Pagadas 94 - 9
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['asignacionfamiliar'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                //16Importe aporte voluntario 103 - 9 
+                /*Aportes voluntarios: se elimina el campo a partir de 03-2009 aún cuando desde 11-
+                    2008 no deberían haberse informado aportes voluntarios en este campo.*/
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                //17Importe adicional OS 112 - 9
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['obrasocialaporteadicional'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                //18Importe Excedentes Aporte SS 121 - 9
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                //19Importe Excedentes Aporte OS 130 - 9
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);               
+                //20Provincia Localidad 139 - 50
+                $lineaEmpleado .= str_pad($empleado['Domicilio']['Localidade']['Partido']['nombre']." - ".$empleado['Domicilio']['Localidade']['nombre'] , 50, " ", STR_PAD_RIGHT);
+                //21Remuneracion Imponible 2 189 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem2'], 2, ",", "") , 12, " ", STR_PAD_LEFT);
+                //22Remuneracion Imponible 3 201 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem3'], 2, ",", "") , 12, " ", STR_PAD_LEFT);
+                //23Remuneracion Imponible 4 213 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem4'], 2, ",", "") , 12, " ", STR_PAD_LEFT);
+                //24Codigo siniestrado 225 - 2
+                $lineaEmpleado .= str_pad($empleado['codigosiniestrado'], 2, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //25marca de Corresponde Reduccion 227 - 1
+                $lineaEmpleado .= str_pad("1", 1, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //26Capital de recomposicion de LRT 228 - 9
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                 /*Completar*/
+                //27Tipo de empresa 237 - 1
+                $lineaEmpleado .= str_pad(1, 1, " ", STR_PAD_LEFT);
+                 /*Completar*/
+                //28Aporte adicional de obra social 238 - 9
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //29Regimen 247 - 1
+                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //30Situacion de Revista 1 248 - 2
+                $lineaEmpleado .= str_pad($empleado['codigosituacion'], 2, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //31Dia Inicio de Revista 1 250 - 2
+                $lineaEmpleado .= str_pad('01', 2, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //32Situacion de Revista 2 252 - 2
+                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //33Dia Inicio de Revista 2 254 - 2
+                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //34Situacion de Revista 3 256 - 2
+                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //35Dia Inicio de Revista 3 258 - 2
+                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                //36Sueldo + Adicionales 260 - 12
+                $sueldoAMostrar = $empleadoDatos[$empleadoid]['sueldo'];
+                if($empleadoDatos[$empleadoid]['diadelgremiotrabajado']==0){
+                    $sueldoAMostrar += $empleadoDatos[$empleadoid]['diadelgremio'];
+                }
+                $adicionalesAMostrar = $empleadoDatos[$empleadoid]['adicionales'];
+                if($empleadoDatos[$empleadoid]['diadelgremiotrabajado']==1){
+                    $adicionalesAMostrar += $empleadoDatos[$empleadoid]['diadelgremio'];
+                }
+                $sueldoMasAdicional = $sueldoAMostrar+$adicionalesAMostrar;
+                $lineaEmpleado .= str_pad(number_format($sueldoMasAdicional, 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //37SAC 272 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['SAC'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //38Horas Extras 284 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['importehorasextras'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //39Zona desfavorable 296 - 12
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //40Vacaciones 308 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['vacaciones'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //41Cantidad de dias trabajados 320 - 9
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['horasDias'], 2, ",", ""), 12, " ", STR_PAD_LEFT);                
+                //42Remuneracion Imponible 5 329 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem5'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //43Trabajador Convenicionado 341 - 1
+                $lineaEmpleado .= str_pad(0, 1, " ", STR_PAD_LEFT);
+                //44Remuneracion Imponible 6 342 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem6'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //45Tipo de operacion 354 - 1
+                $lineaEmpleado .= str_pad(0, 1, " ", STR_PAD_LEFT);
+                //46Adicionales 355 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['adicionales'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //47Premios 367 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['premios'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //48Rm.Dec 788/05 - Rem Impon. 8 379 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem8'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //49Remuneracion Imponible 7 391 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem7'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                //50Cantidad de Horas Extras 403 - 3
+                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['horasextras'], 3, " ", STR_PAD_LEFT);
+                //51Conceptos no remunerativos 406 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['conceptosnorem'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //52Maternidad 418 - 12
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 12, " ", STR_PAD_LEFT);
+                /*Completar*/
+                //53Rectificacion de remuneracion 430 - 9
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                //54Contribucion tarea diferencial (%) 451 - 9
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['ContribSScontribtareadif'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                //55Horas trabajadas 460 - 3
+                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['horasDias'], 3, " ", STR_PAD_LEFT);
+                //57Seguro Colectivo de vida Obligatorio 463 - 1
+                $lineaEmpleado .= str_pad(($empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio']>0)?"T":0, 1, " ", STR_PAD_LEFT);
+                //58Importe a Detraer 464 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['importeADetraer'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
 
+                //$lineaEmpleado = date('Y', strtotime($empleado['CUIT'])) . date('m', strtotime($empleado['fecha'])) . date('d', strtotime($empleado['fecha']));
+                
+                echo $lineaEmpleado."</br>";
+            }
+        ?></div>
+    </div>
     <?php
     if(!$impuestosactivos['contabiliza']){ ?>
         <div id="divContenedorContabilidad" style="margin-top:10px">  </div>
@@ -2059,4 +2331,5 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
         </div>
     </div>
     <?php } ?>
+        
 </div>

@@ -2095,7 +2095,7 @@ if($mostrarView){?>
 <!-- Inicio Popin Nuevo Empleado -->
     <a href="#x" class="overlay" id="nuevo_empleado"></a>
     <div class="popup" >
-        <div id="form_empleado" class="form" style="width: 94%;">
+        <div id="form_empleado" class="form" style="width: 94%;float: none; ">
             <?php
             //todo: AGREGAR SI TIENE conyugue, hijos, adherente,
             //todo: codigoactividad, codigosituacion, codigocondicion, codigozona, codigomodalidadcontratacion
@@ -2114,8 +2114,11 @@ if($mostrarView){?>
                 echo $this->Form->input('localidade_id',array(
                     'label'=>'Localidad',
                     'type'=>'select',
+                    'class'=>'chosen-select',
                     'options'=>$localidades,
-                    'style'=>'width:250px'));
+                    'style'=>'width:250px'
+                    )
+                );
                 echo $this->Form->input('domicilio',array('label'=>'Domicilio','type'=>'text','style'=>'width:250px'));
                 echo $this->Form->input('titulosecundario',array('label'=>'Titulo Secundario'));
 		echo $this->Form->input('titulouniversitario',array('label'=>'Titulo Universitario'));
@@ -2182,27 +2185,32 @@ if($mostrarView){?>
                         'label'=>'Codigo Afip',
                         'options'=>array(
                             '0'=>'0%',
-                            '3'=>'25%',
+                            '2'=>'25%',                            
                             '1'=>'50%',
-                            '2'=>'75%',
+                            '3'=>'75%',
                             '4'=>'100%',
                         )
                     )
                 );
                 echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
                 echo $this->Form->input('adherente',array('label'=>'Adherentes','value'=>0));
+                echo $this->Form->input('obrassociale_id',array(
+                            'label'=>'Obra Social',
+                            'class'=>'chosen-select',
+                            )
+                        );
                 echo $this->Form->input('obrasocialsindical',array(
                     'label'=>'Obra social Sindical',
                     'value'=>1,
                     'checked'=>'checked',
                     'title'=>'Indicar si el empleado tiene una obra social que no sea sindical'));
-                echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad));
-                echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion'));
-                echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion'));
-                echo $this->Form->input('codigozona',array('label'=>'Codigo Zona','options'=>$codigozona));
-                echo $this->Form->input('codigomodalidadcontratacion',array('label'=>'Codigo Modalidad Contratacion','options'=>$codigomodalidadcontratacion));
-                echo $this->Form->input('codigosiniestrado',array('label'=>'Codigo Siniestrado','options'=>$codigosiniestrado));
-                echo $this->Form->input('tipoempresa',array('label'=>'Tipo empresa','options'=>$tipoempresa))."</br>";
+                echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad,'class'=>'chosen-select',));
+                echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion','options'=>$codigorevista,'class'=>'chosen-select',));
+                echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion','options'=>$codigoactividad,'class'=>'chosen-select',));
+                echo $this->Form->input('codigozona',array('label'=>'Codigo Zona','options'=>$codigozona,'class'=>'chosen-select',));
+                echo $this->Form->input('codigomodalidadcontratacion',array('label'=>'Codigo Modalidad Contratacion','options'=>$codigomodalidadcontratacion,'class'=>'chosen-select',));
+                echo $this->Form->input('codigosiniestrado',array('label'=>'Codigo Siniestrado','options'=>$codigosiniestrado,'class'=>'chosen-select',));
+                echo $this->Form->input('tipoempresa',array('label'=>'Tipo empresa','options'=>$tipoempresa,'class'=>'chosen-select',))."</br>";
 
 
                 ?>
