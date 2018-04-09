@@ -18,7 +18,7 @@ echo $this->Html->script('asientos/crearapertura',array('inline'=>false));
     $periodoActual =  date('Y', strtotime($fechaInicioConsulta));
     $fechaInicioConsultaSiguiente =  date('d-m-Y', strtotime($fechaInicioConsulta." + 1 Years"));
 ?>
-<div class="index" style="padding: 0px 1%; margin-bottom: 11px;" id="headerCliente">
+<div class="" style="padding: 0px 1%; margin-bottom: 11px;" id="headerCliente">
     <div style="width:30%; float: left;padding-top:11px">
         Contribuyente: <?php echo $cliente["Cliente"]['nombre'];
         echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);

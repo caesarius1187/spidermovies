@@ -272,7 +272,7 @@ echo $this->Html->script('conceptosrestantes/importartxtrecaudacionesbancarias',
                     'type'=>'image',
                     'title'=>'Importar',
                     'src' => $this->webroot.'img/check.png',
-                    'class'=>'imgedit',
+                    'class'=>'img_edit',
                     'style'=>'width:25px;height:25px;'
                 )
             );

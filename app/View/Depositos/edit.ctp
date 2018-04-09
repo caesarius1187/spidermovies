@@ -7,7 +7,7 @@ if(!$showTheForm){?>
     <td><?php echo $this->request->data['Deposito']['monto']; ?></td>
     <td >
         <a href="#"  onclick="loadFormRecibo(<?php echo $this->request->data['Deposito']['id']; ?>)" class="btn_edit"> 
-         <?php echo $this->Html->image('edit.png', array('alt' => 'open','class'=>'imgedit'));?>
+         <?php echo $this->Html->image('edit.png', array('alt' => 'open','class'=>'img_edit'));?>
         </a>
     </td>
 <?php 

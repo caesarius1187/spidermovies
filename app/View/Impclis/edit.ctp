@@ -40,12 +40,12 @@ if(!$showTheForm){?>
         //aca vamos a agregar la opcion de manejar las Provincias de un impuesto que debe relacionar Provincias
         if($this->request->data['Impuesto']['id']==174/*Convenio Multilateral*/||$this->request->data['Impuesto']['id']==21/*Convenio Multilateral*/){?>
             <a href="#"  onclick="loadFormImpuestoProvincias(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
-                <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'imgedit'));?>
+                <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'img_edit'));?>
             </a>
         <?php }
             if($this->request->data['Impuesto']['id']==5/*Ganancias Sociedades*/||$this->request->data['Impuesto']['id']==160/*Ganancias Personas Físicas*/){?>
             <a href="#"  onclick="loadFormImpuestoCuentasganancias(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
-                <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'imgedit'));?>
+                <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'img_edit'));?>
             </a>
         <?php }
         if( $this->request->data['Impuesto']['organismo']=='banco'){ ?>

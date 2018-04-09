@@ -42,8 +42,8 @@ class EstudiosController extends AppController {
                     $pemes = substr($periodo, 0, 2);
                     $peanio = substr($periodo, 3);
                 }else{
-                    $pemes = date('m');
-                    $peanio = date('Y');   
+                    $pemes = date('m', strtotime('-1 months'));   
+                    $peanio = date('Y', strtotime('-1 months'));   
                 }
                                  
                 $this->set('periodomes', $pemes);

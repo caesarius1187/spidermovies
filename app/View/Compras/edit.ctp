@@ -190,7 +190,7 @@ if(!$mostrarForm) { ?>
       echo $this->Form->submit('+', array(
           'type'=>'image',
           'src' => $this->webroot.'img/check.png',
-          'class'=>'imgedit',
+          'class'=>'img_edit',
           'style'=>'width:25px;height:25px;')
           );  
       echo $this->Form->end();  

@@ -309,7 +309,7 @@ Error relativo porcentual deberá ser <= 0.01% o el error absoluto <=1.';
                     'type'=>'image',
                     'title'=>'Importar',
                     'src' => $this->webroot.'img/check.png',
-                    'class'=>'imgedit',
+                    'class'=>'img_edit',
                     'style'=>'width:25px;height:25px;')
             );
         }

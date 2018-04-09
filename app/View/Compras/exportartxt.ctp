@@ -274,7 +274,7 @@
                         case 'Caja de Ahorro en U$S':
                         case 'Cuenta Corriente en U$S':
                         case 'Plazo Fijo en U$S':
-                        $moneda = "USD";
+                        $moneda = "DOL";
                             break;
                     }
                     $lineaCompra .= str_pad($moneda, 3, " ", STR_PAD_LEFT);

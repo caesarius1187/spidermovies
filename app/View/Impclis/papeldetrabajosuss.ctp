@@ -1843,7 +1843,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //8Codigo de zona  52 - 2
                 $lineaEmpleado .= str_pad($empleado['codigozona'], 2, "0", STR_PAD_LEFT);
                 //9Porcentaje aporte adicional SS  54 - 5
-                $lineaEmpleado .= str_pad(number_format($empleado['porcentajeos'], 2, ",", ""), 5, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 5, " ", STR_PAD_LEFT);
                 //10codigo de modalidad de contratacion  59 - 3
                 $lineaEmpleado .= str_pad($empleado['codigomodalidadcontratacion'], 3, "0", STR_PAD_LEFT);
                 //11codigo de obra social 62 - 6
@@ -1859,19 +1859,23 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //14remuneracion imponible 1 82 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem1'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 //15Asignaciones Familiares Pagadas 94 - 9
-                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['asignacionfamiliar'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //16Importe aporte voluntario 103 - 9 
                 /*Aportes voluntarios: se elimina el campo a partir de 03-2009 aún cuando desde 11-
                     2008 no deberían haberse informado aportes voluntarios en este campo.*/
                 $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //17Importe adicional OS 112 - 9
-                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['obrasocialaporteadicional'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['obrasocialcontribucionadicional'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //18Importe Excedentes Aporte SS 121 - 9
                 $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //19Importe Excedentes Aporte OS 130 - 9
                 $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);               
                 //20Provincia Localidad 139 - 50
-                $lineaEmpleado .= str_pad($empleado['Domicilio']['Localidade']['Partido']['nombre']." - ".$empleado['Domicilio']['Localidade']['nombre'] , 50, " ", STR_PAD_RIGHT);
+                if(isset($empleado['Domicilio'])){
+                    $lineaEmpleado .= str_pad($empleado['Domicilio']['Localidade']['Partido']['nombre']." - ".$empleado['Domicilio']['Localidade']['nombre'] , 50, " ", STR_PAD_RIGHT);                
+                }else{
+                    $lineaEmpleado .= str_pad(" ", 50, " ", STR_PAD_RIGHT);                
+                }
                 //21Remuneracion Imponible 2 189 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem2'], 2, ",", "") , 12, " ", STR_PAD_LEFT);
                 //22Remuneracion Imponible 3 201 - 12
@@ -1882,7 +1886,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $lineaEmpleado .= str_pad($empleado['codigosiniestrado'], 2, " ", STR_PAD_LEFT);
                 /*Completar*/
                 //25marca de Corresponde Reduccion 227 - 1
-                $lineaEmpleado .= str_pad("1", 1, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad(1, 1, " ", STR_PAD_LEFT);
                 /*Completar*/
                 //26Capital de recomposicion de LRT 228 - 9
                 $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
@@ -1894,7 +1898,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 /*Completar*/
                 //29Regimen 247 - 1
-                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad(0, 1, " ", STR_PAD_LEFT);
                 /*Completar*/
                 //30Situacion de Revista 1 248 - 2
                 $lineaEmpleado .= str_pad($empleado['codigosituacion'], 2, " ", STR_PAD_LEFT);
@@ -1934,7 +1938,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //40Vacaciones 308 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['vacaciones'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 //41Cantidad de dias trabajados 320 - 9
-                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['horasDias'], 2, ",", ""), 12, " ", STR_PAD_LEFT);                
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['horasDias'], 2, ",", ""), 9, " ", STR_PAD_LEFT);                
                 //42Remuneracion Imponible 5 329 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem5'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 /*Completar*/
@@ -1964,7 +1968,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //53Rectificacion de remuneracion 430 - 9
                 $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //54Contribucion tarea diferencial (%) 451 - 9
-                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['ContribSScontribtareadif'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif']/100, 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //55Horas trabajadas 460 - 3
                 $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['horasDias'], 3, " ", STR_PAD_LEFT);
                 //57Seguro Colectivo de vida Obligatorio 463 - 1
@@ -2331,5 +2335,4 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
         </div>
     </div>
     <?php } ?>
-        
 </div>

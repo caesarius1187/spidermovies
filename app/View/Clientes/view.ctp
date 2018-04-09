@@ -255,7 +255,7 @@ if($mostrarView){?>
                                         ),
                                         array(
                                             'escape' => false, // Add this to avoid Cake from printing the img HTML code instead of the actual image,
-                                            'class'=>' imgedit',
+                                            'class'=>' img_edit',
                                             'style'=>'color:red;float:right;'
                                         ),
                                         __('Esta seguro que quiere Deshabilitar a '.$cliente['Cliente']['nombre'].'? Una vez deshabilitado no aparecera en ningun Informe', $cliente['Cliente']['id'])                                    

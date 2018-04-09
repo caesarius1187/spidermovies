@@ -13,7 +13,7 @@ if(isset($error)){ ?>
     return;
 }
 ?>
-<div class="index">
+<div class="">
     <h3><?php echo __('Contabilizar Compras:'.$cliente['Cliente']['nombre'] ); ?></h3>
     <?php
     $id = 0;

@@ -9,7 +9,7 @@ $empleado = $respuesta['data']['Empleado'];
 	<td><?php echo $empleado['fechaingreso']; ?></td>
 	<td>
 		<a href="#"  onclick="loadFormEmpleado(<?php echo $empleado['id']; ?>)" class="button_view">
-			<?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+			<?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
 		</a>
 		<?php echo $this->Form->postLink(
 			$this->Html->image('ic_delete_black_24dp.png', array(

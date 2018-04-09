@@ -156,7 +156,7 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 						'edit_view.png',
 						array(
 							'alt' => 'edit',
-							'class'=>'imgedit',
+							'class'=>'img_edit',
 							'style'=>'color:red;float:left;margin: 0px;',
 							'onClick' => 'editarMovimientos('.$asiento['Asiento']['id'].')'
 						)
@@ -165,7 +165,7 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 						'ic_delete_black_24dp.png',
 						array(
 							'alt' => 'edit',
-							'class'=>'imgedit',
+							'class'=>'img_trash',
 							'style'=>'color:red;float:left;margin: 0px;',
 							'onClick' => 'eliminarAsiento('.$asiento['Asiento']['id'].')'
 						)

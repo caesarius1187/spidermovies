@@ -18,7 +18,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
     $periodoActual =  date('Y', strtotime($fechaInicioConsulta));
     $fechaInicioConsultaSiguiente =  date('d-m-Y', strtotime($fechaInicioConsulta." + 1 Years"));
 ?>
-<div class="index" style="padding: 0px 1%; margin-bottom: 11px;" id="headerCliente">
+<div class="index" style="padding: 0px 4%; margin-bottom: 11px;margin-left:16px;float: left;" id="headerCliente">
     <div style="width:30%; float: left;padding-top:11px">
         Contribuyente: <?php echo $cliente["Cliente"]['nombre'];
         echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);
@@ -1450,7 +1450,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
 ?>
 <div class="index estadocontable" id="divQuebrantos" >
     <a href="#"  onclick="loadFormImpuestoQuebrantos(<?php echo $cliente['Impcli'][0]['id']; ?>,'<?php echo $periodo; ?>')" class="button_view">
-        <?php echo $this->Html->image('quebranto.png', array('alt' => 'quebranto','class'=>'imgedit'));?>
+        <?php echo $this->Html->image('quebranto.png', array('alt' => 'quebranto','class'=>'img_edit','style'=>'width: 20px;'));?>
     </a>
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>

@@ -25,7 +25,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 					'edit_view.png',
 					array(
 						'alt' => 'edit',
-						'class'=>'imgedit',
+						'class'=>'img_edit',
 					)
 				),
 				array('type' => 'button',
@@ -127,28 +127,22 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             $nombreVentas3=0;
             $nombreVentas4=0;
             $nombreVentas5=0;
-            foreach ($ventas as $key => $venta) {
-                if($topVentas<$venta[0]['total']){
-                    if($topVentas2<$topVentas){
-                        if($topVentas3<$topVentas2){
-                            if($topVentas4<$topVentas3){
-                                if($topVentas5<$topVentas4){
-                                    $topVentas5 = $topVentas4;
-                                    $nombreVentas5 = $nombreVentas4;
-                                }
-                                $topVentas4 = $topVentas3;
-                                $nombreVentas4 = $nombreVentas3;
-                            }
-                            $topVentas3 = $topVentas2;
-                            $nombreVentas3 = $nombreVentas2;
-                        }
-                        $topVentas2 = $topVentas;
-                        $nombreVentas2 = $nombreVentas;
-                    }
-                    $topVentas = $venta[0]['total'];
-                    $nombreVentas = $nombreClientes[$venta['Venta']['cliente_id']];
-                }
-            }
+            $arrayMaximos = [];
+            
+            usort($ventas, function ($a, $b) { return $b[0]['total'] - $a[0]['total']; });
+            $top5 = array_slice($ventas, 0, 5);
+                      
+            $topVentas = isset($ventas[0])?$ventas[0][0]['total']:"";
+            $nombreVentas = isset($ventas[0])?$nombreClientes[$ventas[0]['Venta']['cliente_id']]:"";
+            $topVentas2 = isset($ventas[1])?$ventas[1][0]['total']:"";
+            $nombreVentas2 = isset($ventas[1])?$nombreClientes[$ventas[1]['Venta']['cliente_id']]:"";
+            $topVentas3 = isset($ventas[2])?$ventas[2][0]['total']:"";
+            $nombreVentas3 = isset($ventas[2])?$nombreClientes[$ventas[2]['Venta']['cliente_id']]:"";
+            $topVentas4 = isset($ventas[3])?$ventas[3][0]['total']:"";
+            $nombreVentas4 = isset($ventas[3])?$nombreClientes[$ventas[3]['Venta']['cliente_id']]:"";
+            $topVentas5 = isset($ventas[4])?$ventas[4][0]['total']:"";
+            $nombreVentas5 = isset($ventas[4])?$nombreClientes[$ventas[4]['Venta']['cliente_id']]:"";
+            
             ?>
         <dd>         
                 <?php echo h($nombreVentas.": ".$topVentas); ?>
@@ -187,28 +181,18 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             $nombrecompra4="";
             $topCompras5=0;
             $nombrecompra5="";
-            foreach ($compras as $key => $compra) {
-                if($topCompras < $compra[0]['total']*1){
-                    if($topCompras2 < $topCompras){
-                        if($topCompras3 < $topCompras2){
-                            if($topCompras4 < $topCompras3){
-                                if($topCompras5 < $topCompras4){
-                                   $topCompras5 = $topCompras4;
-                                    $nombrecompra5 = $nombrecompra4;
-                                }
-                                $topCompras4 = $topCompras3;
-                                $nombrecompra4 = $nombrecompra3;
-                            }
-                            $topCompras3 = $topCompras2;
-                            $nombrecompra3 = $nombrecompra2;
-                        }
-                        $topCompras2 = $topCompras;
-                        $nombrecompra2 = $nombrecompra;
-                    }
-                    $topCompras = $compra[0]['total']*1;
-                    $nombrecompra = $nombreClientes[$compra['Compra']['cliente_id']];
-                }
-            }
+            
+            usort($compras, function ($a, $b) { return $b[0]['total'] - $a[0]['total']; });
+            $topCompras = isset($compras[0])?$compras[0][0]['total']:"";
+            $nombrecompra = isset($compras[0])?$nombreClientes[$compras[0]['Compra']['cliente_id']]:"";
+            $topCompras2 = isset($compras[1])?$compras[1][0]['total']:"";
+            $nombrecompra2 = isset($compras[1])?$nombreClientes[$compras[1]['Compra']['cliente_id']]:"";
+            $topCompras3 = isset($compras[2])?$compras[2][0]['total']:"";
+            $nombrecompra3 = isset($compras[2])?$nombreClientes[$compras[2]['Compra']['cliente_id']]:"";
+            $topCompras4 = isset($compras[3])?$compras[3][0]['total']:"";
+            $nombrecompra4 = isset($compras[3])?$nombreClientes[$compras[3]['Compra']['cliente_id']]:"";
+            $topCompras5 = isset($compras[4])?$compras[4][0]['total']:"";
+            $nombrecompra5 = isset($compras[4])?$nombreClientes[$compras[4]['Compra']['cliente_id']]:"";
             ?>
                 <?php echo h($nombrecompra.": ".$topCompras); ?>
                 &nbsp;

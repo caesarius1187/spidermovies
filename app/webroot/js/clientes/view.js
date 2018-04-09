@@ -318,7 +318,6 @@ jQuery(document).ready(function($) {
                                         .attr('class', "img_edit")
                                         .attr('src', serverLayoutURL+'/img/edit_view.png')
                                         .text('Image cell')
-
                                     )
                                 )
 

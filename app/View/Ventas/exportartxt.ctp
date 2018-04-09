@@ -66,9 +66,10 @@
             //        $lineVenta['puntodeventa']=substr($line, 11,5);
             $lineVenta .= str_pad($venta["Puntosdeventa"]['nombre'], 5, "0", STR_PAD_LEFT);
             //        $lineVenta['comprobantenumero']=substr($line, 16,20);
-            $lineVenta .= str_pad($venta['Venta']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
+            $trimNumComprobante = ltrim($venta['Venta']['numerocomprobante']," ");
+            $lineVenta .= str_pad($trimNumComprobante, 20, "0", STR_PAD_LEFT);
             //        $lineVenta['comprobantenumerohasta']=substr($line, 36,20);
-            $lineVenta .= str_pad($venta['Venta']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
+            $lineVenta .= str_pad($trimNumComprobante, 20, "0", STR_PAD_LEFT);
             //        $lineVenta['codigodocumento']=substr($line, 56,2);
 
             //si CUIT mostrar 80, SI DNI(lenght = 8) mostrar 96

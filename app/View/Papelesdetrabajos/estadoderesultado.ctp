@@ -43,7 +43,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
     $periodoActual =  date('Y', strtotime($fechaFinConsulta));
 ?>
 <div id="contentEstadosContables">
-<div class="index" style="padding: 0px 1%; margin-bottom: 11px;" id="headerCliente">
+<div class="index" style="padding: 0px 4%; margin-bottom: 11px;margin-left: 16px;float: left;width: 89%" id="headerCliente">
     <div style="width:30%; float: left;padding-top:11px">
         Contribuyente: <?php echo $cliente["Cliente"]['nombre'];
         echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);
