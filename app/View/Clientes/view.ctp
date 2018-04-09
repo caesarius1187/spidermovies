@@ -200,6 +200,8 @@ if($mostrarView){?>
         </h2>
 </div>
 
+
+
 <div class="clientes_view" style="width:70%;">
     <div class="" style="width:100%;height:30px;">
          <div class="cliente_view_tab"  onClick="showDatosCliente()" id="cliente_view_tab_cliente">
