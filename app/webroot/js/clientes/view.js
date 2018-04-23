@@ -630,6 +630,16 @@ function showDatosImpuesto(){
         $('.rowheaderbienesdeusos').hide();
         $('.rowheaderprovedores').hide();
 		$('.rowheadercompras').hide();
+
+        $("#viewTh1").css("background-color","#FFF");
+        $("#viewTh2").css("background-color","#FFF");
+        $("#viewTh3").css("background-color","#FFF");
+        $("#viewTh4").css("background-color","#FFF");
+        $("#viewTh5").css("background-color","#FFF");
+        $("#viewTh6").css("background-color","#FFF");
+        $("#viewTh7").css("background-color","#FFF");
+        $("#viewTh8").css("background-color","#FFF");
+        $("#viewTh9").css("background-color","#FFF");
 	});
 }
 function showDatosVenta(){
