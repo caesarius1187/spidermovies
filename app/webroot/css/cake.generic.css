@@ -492,6 +492,7 @@ form .submit input[type=submit] {
 form .submit input[type=submit]:hover {
 	color: #CCC;
 }
+
 /* Botones view_clientes */
 
 .btn_clientes_view {

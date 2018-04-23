@@ -1,7 +1,6 @@
 <div class="page-container">
-	<form action="/contasynfotech/users/login" id="UserLoginForm" method="post" accept-charset="utf-8"
-		  style="background-color: #99c8f2;padding: 40px;">
-		<img src="../img/logo_extendido.png" width="200px" height="170px">
+	<form action="/contasynfotech/users/login" id="UserLoginForm" method="post" accept-charset="utf-8" class="form_login">
+		<img src="../img/logo_conta_transparente.png" width="200px" height="200px">
 		<div style="display:none;">
 			<input type="hidden" name="_method" value="POST">
 		</div>
@@ -13,3 +12,4 @@
 		</fieldset>
 	</form>
 </div>
+

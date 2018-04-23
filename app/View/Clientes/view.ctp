@@ -200,6 +200,8 @@ if($mostrarView){?>
         </h2>
 </div>
 
+
+
 <div class="clientes_view" style="width:70%;">
     <div class="" style="width:100%;height:30px;">
          <div class="cliente_view_tab"  onClick="showDatosCliente()" id="cliente_view_tab_cliente">
@@ -255,7 +257,6 @@ if($mostrarView){?>
                                         ),
                                         array(
                                             'escape' => false, // Add this to avoid Cake from printing the img HTML code instead of the actual image,
-                                            'class'=>' img_edit',
                                             'style'=>'color:red;float:right;'
                                         ),
                                         __('Esta seguro que quiere Deshabilitar a '.$cliente['Cliente']['nombre'].'? Una vez deshabilitado no aparecera en ningun Informe', $cliente['Cliente']['id'])                                    
