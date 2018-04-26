@@ -154,6 +154,7 @@ if(count($empleado)==0){
                             //aca buscamos el valor que ya guardardamos para este concepto
                             //y mostramos un formulario para modificarlo
                             $valor = 0;
+                            $valordefault = '';
                             $porcentaje = 0;
                             $valorreciboid = 0;
                             $aplicafuncion = true;
@@ -162,6 +163,7 @@ if(count($empleado)==0){
                             $nuevaformula = "";
                             if(count($conceptoobligatorio['Valorrecibo'])>0){
                                 $valor = $conceptoobligatorio['Valorrecibo'][0]['valor'];
+                                $valordefault = $conceptoobligatorio['Valorrecibo'][0]['valor'];
                                 $formulamodificada = $conceptoobligatorio['Valorrecibo'][0]['formulamodificada'];
                                 $nuevaformula = $conceptoobligatorio['Valorrecibo'][0]['nuevaformula'];
                                 $valorreciboid = $conceptoobligatorio['Valorrecibo'][0]['id'];
@@ -171,6 +173,7 @@ if(count($empleado)==0){
                             if($conceptoobligatorio['Concepto']['aplicaatodos']){
                                 $muestraAplicarATodos=true;
                             }
+                            $options = [];
                             switch ($conceptoobligatorio['Concepto']['id']){
                                 case 9:/*Precio de la Hora*/
                                     /* Aca vamos a preguntar si el empleado tiene un cargo definido y si este cargo
@@ -385,6 +388,14 @@ if(count($empleado)==0){
                                         $valor = $empleado['Cargo']['kmmayortope'] * 1;
                                     }
                                     break;    
+                                case 190:/*Situacion de Revista 1*/                                  
+                                case 192:/*Situacion de Revista 1*/                                  
+                                case 194:/*Situacion de Revista 1*/                                  
+                                   $options = $codigorevista;
+                                   if($valordefault==''){
+                                       $valordefault = '01';
+                                   }
+                                    break;    
                                 /*case 36:/*Cuota Sindical aca estabamos guardando la cuota sindical extra en el empleado pero
                                 debe ser la misma para todos dependiendo del convenio
                                     $conceptoobligatorio['nombre'] = $empleado['Empleado']['cuotasindical'];
@@ -461,6 +472,13 @@ if(count($empleado)==0){
                                     'inputclass' => $inputClass,
                                     'valdata-codigo' => $conceptoobligatorio['Concepto']['codigo'],
                                 ));
+                            }else if($unidadmedida=="select"){
+                                echo $this->Form->input('Valorrecibo.'.$i.'.valor',array(
+                                    'default'=>$valordefault,
+                                    'value'=>$valordefault,
+                                    'options' => $options,
+                                    'type' => 'select',
+                                )); 
                             }else{
                                 echo $this->Form->input('Valorrecibo.'.$i.'.valor',array(
                                     'value'=>$valor,

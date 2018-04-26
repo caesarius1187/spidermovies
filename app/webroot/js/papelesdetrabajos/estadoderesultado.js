@@ -73,8 +73,154 @@ $(document).ready(function() {
     reloadDatePickers();
     catchEditFormsLiquidacionDetalles();
     loadInformeAuditor();
-    //loadNotasYDatos();
+    
+    loadAnexoIIFuncionalities();
+    
+    //Progress BAR
+    var $progressDiv = $("#progressBar");
+    var $progressBar = $progressDiv.progressStep();
+    $progressBar.addStep("As. Apertura");
+    $progressBar.addStep("As. Existencia Final");
+    $progressBar.addStep("As. Ganancias");                
+
+    for (var stepCounter = 0; stepCounter < 3; stepCounter++) {
+        var currentStep = $progressBar.getStep(stepCounter);
+        currentStep.onClick = onClick;
+        currentStep.beforeEntry = beforeEntry;
+        currentStep.afterEntry = afterEntry;
+        currentStep.beforeExit = beforeExit;
+        currentStep.afterExit = afterExit;
+    }
+
+
+
+    function resetVisited() {
+        for (var counter = 0; counter < 3; counter++) {
+            var currentStep = $progressBar.getStep(counter);
+            currentStep.setVisited(false);
+        }
+    }
+
+    var counter = 1;
+    var intervalId = null;
+    function startLoop() {
+        if (intervalId) {
+            // continue
+        }
+        else {
+            intervalId = setInterval(function () {
+                if (counter == 0) {
+                    resetVisited();
+                }
+                $progressBar.setCurrentStep(counter);
+                counter++;
+                if (counter > 3) {
+                    counter = 0;
+                }
+            }, 1000);
+        }
+    }
+
+    function stopLoop() {
+        if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+        }
+    }
+
+    $("#startLoop").click(startLoop);
+    $("#stopLoop").click(stopLoop);
+    $("#resetVisited").click(resetVisited);
+
+    if($("#tieneasientodeApertura").val()==1){
+        $progressBar.setCurrentStep(0);
+        if($("#tieneasientodeexistenciafinal").val()==1){
+            $progressBar.setCurrentStep(1);
+            if($("#tieneasientodeGanancias").val()==1){
+                $progressBar.setCurrentStep(2);
+            }
+        }
+    }    
+    $progressBar.refreshLayout();
 });
+function loadAnexoIIFuncionalities(){
+    $("#tblAnexoII tr").each(function(){
+        if($(this).hasClass('trclickeable')){
+            $(this).dblclick(function () {
+                //vamos a preguntar si es visible el Div que tenemos que mostrar para no recibir el click si no se tiene el foco
+
+                var cuecliid = $(this).attr('cuecliid');
+                var cliid = $("#cliid").val();
+                var periodo = $("#periodoInicioActual").val();
+                var data = "";
+                $.ajax({
+                    type: "GET",  // Request method: post, get
+                    url: serverLayoutURL+"/anexogastos/add/"+cliid+"/"+periodo+"/"+cuecliid, // URL to request
+                    data: data,  // post data
+                    success: function(response) {
+                        $('#myModal').on('show.bs.modal', function() {
+                            if ($('#myModal').is(":visible")){
+                                return;
+                            }
+                            $('#myModal').find('.modal-title').html('Libro Mayor');
+                            $('#myModal').find('.modal-body').html(response);
+                            catchFormAsiento("FormAgregarAnexogastos");
+                            // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                        });
+                        $('#myModal').modal('show');
+                    },
+                    error:function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(textStatus);
+                    }
+                });
+            });
+        }
+    });
+}
+function catchFormAsiento(idForm){
+    $('#'+idForm).submit(function(){       
+        //serialize form data
+        var formData = $(this).serialize();
+        //get form action
+        var formUrl = $(this).attr('action');
+        $.ajax({
+            type: 'POST',
+            url: formUrl,
+            data: formData,
+            success: function(data,textStatus,xhr){
+                var respuesta = JSON.parse(data);
+                 //$('#myModalAsientos').modal('hide');
+                 //$('#myModalFormAgregarAsiento').modal('hide');
+                if(respuesta.error!=0){
+                    //callAlertPopint(respuesta.respuesta);
+                    var divRespueta = $('<div>')
+                            .append(
+                                $('<h4>').html(
+                                   "Error:"
+                                )
+                            )
+                           .append(
+                                $('<label>').html(
+                                    respuesta.respuesta
+                                )
+                            )
+                            .addClass('index');;
+                    $('#myModal').find('.modal-body').prepend(divRespueta);
+                    $("#myModal").scrollTop(0);
+                }else{                   
+                    $('#myModal').modal('hide');
+                    callAlertPopint(respuesta.respuesta);
+                }
+            },
+            error: function(xhr,textStatus,error){
+                $('#myModal').modal('hide');
+                callAlertPopint(error);
+                alert(textStatus);
+            }
+        });
+        return false;
+    });
+}
 function ajustarheadeepn() {
         var header_height = 0;
         $('.tblEEPN th').css('font-size','8');
@@ -869,4 +1015,40 @@ function catchAjustescontablesAdd(){
             });
             return false;
     });
+}
+
+//Progress BAR
+function onClick() {
+    console.log("Clicked: " + this.index);
+    var cliid = $("#cliid").val();
+    var impcliid = $("#impcliid").val();
+    var periodo = $("#periodo").val();
+    if(this.index==0){
+        contabilizarApertura(cliid,periodo);
+    }
+    if(this.index==1){
+        contabilizarexistenciafinal(cliid,periodo);
+    }
+    if(this.index==2){
+        contabilizarganancias(impcliid,periodo);
+    }
+    return true;
+}
+
+function beforeEntry() {
+    console.log("Before entry: " + this.index);
+    return true;
+}
+
+function afterEntry() {
+    console.log("After entry: " + this.index);
+}
+
+function beforeExit() {
+    console.log("Before exit: " + this.index);
+    return true;
+}
+
+function afterExit() {
+    console.log("After exit: " + this.index);
 }

@@ -12,7 +12,7 @@
     $id = 0;
     $nombre = "Determinacion de Existencia Final: ".$periodo;
     $descripcion = "Automatico";
-    $fecha = date('t-m-Y');
+    $fecha = date('t-m-Y', strtotime('01-'.$periodo));
     //esta fecha debe ser en funcion del periodo en el que estamos consultando
     
     $miAsiento=array();

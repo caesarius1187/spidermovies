@@ -106,11 +106,11 @@
                 //si encuentro una busco las alicuotas de esta y si alguna tiene alic = 0 la borro
                 foreach($alicuotas as $a => $alicuota ) {
                     if(
-                            $compra['Compra']['comprobante_id']==$alicuota['Compra']['comprobante_id']&&
-                            $compra['Compra']['puntosdeventa']==$alicuota['Compra']['puntosdeventa']&&
-                            $compra['Compra']['numerocomprobante']==$alicuota['Compra']['numerocomprobante']&&
-                            $compra['Compra']['provedore_id']==$alicuota['Compra']['provedore_id']
-                        )
+                        $compra['Compra']['comprobante_id']==$alicuota['Compra']['comprobante_id']&&
+                        $compra['Compra']['puntosdeventa']==$alicuota['Compra']['puntosdeventa']&&
+                        $compra['Compra']['numerocomprobante']==$alicuota['Compra']['numerocomprobante']&&
+                        $compra['Compra']['provedore_id']==$alicuota['Compra']['provedore_id']
+                    )
                     {
                         //encontre una alicuota de una compra con 2 alicuotas, si la alic == 0 entonces la borro
                         if($alicuota['Compra']['alicuota']=='0'){

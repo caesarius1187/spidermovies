@@ -10,7 +10,9 @@ echo $this->Html->script('table2excel',array('inline'=>false));
 echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
 echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
-
+echo $this->Html->script('raphael.js',array('inline'=>false));
+echo $this->Html->script('progressStep.js',array('inline'=>false));
+echo $this->Html->css('progressbarstyle');
 //orden de impresion/
 /*
 01 esp
@@ -41,13 +43,17 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 }*/
     $periodoPrevio = date('Y', strtotime($fechaFinConsulta." -1 Years"));
     $periodoActual =  date('Y', strtotime($fechaFinConsulta));
+    
 ?>
 <div id="contentEstadosContables">
 <div class="index" style="padding: 0px 4%; margin-bottom: 11px;margin-left: 16px;float: left;width: 89%" id="headerCliente">
     <div style="width:30%; float: left;padding-top:11px">
         Contribuyente: <?php echo $cliente["Cliente"]['nombre'];
         echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);
-        echo $this->Form->input('cliid',['type'=>'hidden','value'=>$cliente["Cliente"]['id']]);?>
+        echo $this->Form->input('cliid',['type'=>'hidden','value'=>$cliente["Cliente"]['id']]);
+        echo $this->Form->input('impcliid',['type'=>'hidden','value'=>$cliente['Impcli'][0]['id']]);
+        echo $this->Form->input('periodoInicioActual',['type'=>'hidden','value'=>$periodoInicioActual]);
+        echo $this->Form->input('periodoInicioPrevio',['type'=>'hidden','value'=>$periodoInicioPrevio]);?>
     </div>
     <div style="width:25%; float: left;padding-top:11px">
         Periodo: <?php echo $periodo;
@@ -89,53 +95,31 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
         
         $tieneasientodeApertura=false;
         $tieneasientodeexistenciafinal=false;
+        $tieneasientodeGanancias=false;
         foreach ($cuentasclientes as $kc => $cuentascliente){
             foreach ($cuentascliente['Movimiento'] as $movimiento){
-                if($movimiento['Asiento']['tipoasiento']=='Apertura'){
+                $fechaInicioConsultaActual =  date('Y-m-d', strtotime($fechaInicioConsulta));
+                if($movimiento['Asiento']['tipoasiento']=='Apertura'&&$fechaInicioConsultaActual<=$movimiento['Asiento']['fecha']){
                     $tieneasientodeApertura=true;
                 }
-                if($movimiento['Asiento']['tipoasiento']=='Existencia Final'){
+                if($movimiento['Asiento']['tipoasiento']=='Existencia Final'&&$fechaInicioConsultaActual<=$movimiento['Asiento']['fecha']){
                     $tieneasientodeexistenciafinal=true;
                 }
             }
         }
-        if($tieneasientodeApertura){
-            $buttonclass="buttonImpcliRealizado";
-        }else{
-            $buttonclass="buttonImpcliListo";
+        foreach($cliente['Impcli'][0]['Asiento'] as $asiento){
+            $tieneasientodeGanancias=true;
+            break;
         }
-         echo $this->Form->button(
-            'As. Apertura',
-            array(
-                'class'=>$buttonclass." progress-button state-loading",
-                'onClick'=>"contabilizarApertura(".$paramsPrepPapeles.")",
-                'id'=>'buttonAsApertura',
-            ),
-            array());
-        if($tieneasientodeexistenciafinal){
-            $buttonclass="buttonImpcliRealizado";
-        }else{
-            $buttonclass="buttonImpcliListo";
-        }
-        echo $this->Form->button(
-            'As. Existencia Final',
-            array(
-                'class'=>$buttonclass." progress-button state-loading",
-                'onClick'=>"contabilizarexistenciafinal(".$paramsPrepPapeles.")",
-                'id'=>'buttonAsExistenciaFinal',
-            ),
-        array());
-        $buttonclass="buttonImpcliListo";
-        if(isset($cliente['Impcli'][0])){
-            echo $this->Form->button(
-                'As. Ganancias',
-                array(
-                    'class'=>$buttonclass." progress-button state-loading",
-                    'onClick'=>"contabilizarganancias(".$paramsPrepPapeles2.")",
-                    'id'=>'buttonAsExistenciaFinal',
-                ),
-            array());
-        }?>
+        echo $this->Form->input('tieneasientodeApertura',['type'=>'hidden','value'=>$tieneasientodeApertura]);
+        echo $this->Form->input('tieneasientodeexistenciafinal',['type'=>'hidden','value'=>$tieneasientodeexistenciafinal]);
+        echo $this->Form->input('tieneasientodeGanancias',['type'=>'hidden','value'=>$tieneasientodeGanancias]);
+        
+
+       
+        
+       ?>
+        <div id="progressBar" style="width: 200px;height: 65px;padding: 5px 5px;float:left;"></div>
     </div>
 </div>
 <div style="width:100%; height:30px; margin-left: 11px;"  class="Formhead noExl" id="divTabs" >
@@ -231,12 +215,14 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                 if(!isset($arrayCuentasxPeriodos[$numerodecuenta])){
                     $arrayCuentasxPeriodos[$numerodecuenta] = [];
                     $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'] = $cuentascliente['Cuentascliente']['nombre'];
+                    $arrayCuentasxPeriodos[$numerodecuenta]['id'] = $cuentascliente['Cuentascliente']['id'];
+                    $arrayCuentasxPeriodos[$numerodecuenta]['anexogastos'] = $cuentascliente['Anexogasto'];
                     $arrayCuentasxPeriodos[$periodoAImputar] = 0;
                     $arrayCuentasxPeriodos[$numerodecuenta]['apertura'] = [];
                     $arrayCuentasxPeriodos[$numerodecuenta]['costoscompra'] = [];
                     $arrayCuentasxPeriodos[$numerodecuenta]['movimiento'] = [];     
                     $arrayCuentasxPeriodos[$numerodecuenta]['distribucion de dividendos'] = [];     
-                    $arrayCuentasxPeriodos[$numerodecuenta]['Absorcion de perdida acumulada'] = [];                                                             
+                    $arrayCuentasxPeriodos[$numerodecuenta]['Absorcion de perdida acumulada'] = [];                                                                                 
                 }          
                 
                 if($movimiento['Asiento']['tipoasiento']=='Apertura'){
@@ -1043,7 +1029,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
         </table>
     </div>
     <div id="AnexoII" class="" style="">
-        <table id="tblAnexoII" class="toExcelTable tbl_border tblEstadoContable tblAnexoII">
+        <table id="tblAnexoII" class="toExcelTable tbl_border tblEstadoContable tblAnexoII" >
             <thead>
                 <tr class="trnoclickeable trTitle">
                     <th colspan="6" style="text-align: left">
@@ -1229,48 +1215,37 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 $subtotalManodeObra2 = mostrarNotasDeGastos( $arrayCuentasxPeriodos,"Mano de Obra", "5071000", $fechaInicioConsulta, $fechaFinConsulta,$totalAnexoII);
                 $subtotalContribucionesEmpleador2 = mostrarNotasDeGastos($arrayCuentasxPeriodos,"Contribuciones Empleador","5072000",$fechaInicioConsulta,$fechaFinConsulta,$totalAnexoII);
                 $subtotalGastosExtraordinarios = mostrarNotasDeGastos($arrayCuentasxPeriodos,"Gastos Extraordinarios","50900000",$fechaInicioConsulta,$fechaFinConsulta,$totalAnexoII);
-            $mesAMostrar = $periodoActual;
-            $subtottalPeriodo = $totalAnexoII[$mesAMostrar];
             echo '<tr class="trTitle">
                     <th>Total Ejercicio Actual</th>
                     <th  class="numericTD">' .
-                number_format($subtottalPeriodo*0.0, 2, ",", ".")
-                . "</th>";
-            $totalAnexoIIActualAdmin = $subtottalPeriodo*0.25;
-            $totalAnexoIIActualAdmin = round($totalAnexoIIActualAdmin,2,PHP_ROUND_HALF_UP);
-            $totalAnexoIIActualComer = $subtottalPeriodo*0.75;
-            $totalAnexoIIActualComer = round($totalAnexoIIActualComer,2,PHP_ROUND_HALF_DOWN);
-            echo '<th  class="numericTD"  title="'.$subtottalPeriodo*0.25.'">' .
-                number_format($totalAnexoIIActualAdmin, 2, ",", ".")
-                . "</th>";
-            echo '<th  class="numericTD"  title="'.$subtottalPeriodo*0.75.'">' .
-                number_format($totalAnexoIIActualComer, 2, ",", ".")
+                number_format($totalAnexoII['actual']['venta'], 2, ",", ".")
+                . "</th>";            
+            echo '<th  class="numericTD">' .
+                number_format($totalAnexoII['actual']['administracion'], 2, ",", ".")
                 . "</th>";
             echo '<th  class="numericTD">' .
-                number_format($subtottalPeriodo, 2, ",", ".")
+                number_format($totalAnexoII['actual']['comercializacion'], 2, ",", ".")
                 . "</th>";
-            $mesAMostrar = $periodoPrevio;
-            $subtottalPeriodo = $totalAnexoII[$mesAMostrar];
-            $totalAnexoIIPrevioAdmin = $subtottalPeriodo*0.25;
-            $totalAnexoIIPrevioAdmin = round($totalAnexoIIPrevioAdmin,2,PHP_ROUND_HALF_UP);
-            $totalAnexoIIPrevioComer = $subtottalPeriodo*0.75;
-            $totalAnexoIIPrevioComer = round($totalAnexoIIPrevioComer,2,PHP_ROUND_HALF_DOWN);
             echo '<th  class="numericTD">' .
-                number_format($subtottalPeriodo, 2, ",", ".")
+                number_format($totalAnexoII[$periodoActual], 2, ",", ".")
+                . "</th>";
+            echo '<th  class="numericTD">' .
+                number_format($totalAnexoII[$periodoPrevio], 2, ",", ".")
                 . "</th></tr>";
+            
             echo '<tr class="trTitle">
                     <th>Total Ejercicio Anterior</th>
                     <th  class="numericTD">' .
-                number_format($subtottalPeriodo*0.0, 2, ",", ".")
-                . "</th>";
-            echo '<th  class="numericTD"  title="'.$subtottalPeriodo*0.25.'">' .
-                number_format($totalAnexoIIPrevioAdmin, 2, ",", ".")
-                . "</th>";
-            echo '<th  class="numericTD"  title="'.$subtottalPeriodo*0.75.'">' .
-                number_format($totalAnexoIIPrevioComer, 2, ",", ".")
+                number_format($totalAnexoII['previo']['venta'], 2, ",", ".")
                 . "</th>";
             echo '<th  class="numericTD">' .
-                number_format($subtottalPeriodo, 2, ",", ".")
+                number_format($totalAnexoII['previo']['administracion'], 2, ",", ".")
+                . "</th>";
+            echo '<th  class="numericTD">' .
+                number_format($totalAnexoII['previo']['comercializacion'], 2, ",", ".")
+                . "</th>";
+            echo '<th  class="numericTD">' .
+                number_format($totalAnexoII[$periodoPrevio], 2, ",", ".")
                 . "</th></tr>";
             ?>
             </tbody>
@@ -1442,12 +1417,12 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             </td>
             <td class="numericTD">
                 <?php
-                echo number_format($totalAnexoII[$periodoActual]*0.0, 2, ",", ".");
+                echo number_format($totalAnexoII['actual']['venta'], 2, ",", ".");
                 ?>
             </td>
             <td class="numericTD">
                 <?php
-                echo number_format($totalAnexoII[$periodoPrevio]*0.0, 2, ",", ".");
+                echo number_format($totalAnexoII['previo']['venta'], 2, ",", ".");
                 ?>
             </td>
             
@@ -1457,14 +1432,14 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             <td>
                 Anexo II
             </td>
-            <td class="numericTD"  title="<?php echo $totalAnexoII[$periodoActual]*0.75; ?>">
+            <td class="numericTD">
                 <?php
-                echo number_format($totalAnexoII[$periodoActual]*0.75, 2, ",", ".");
+                echo number_format($totalAnexoII['actual']['comercializacion'], 2, ",", ".");
                 ?>
             </td>
-            <td class="numericTD"  title="<?php echo $totalAnexoII[$periodoPrevio]*0.75; ?>">
+            <td class="numericTD">
                 <?php
-                echo number_format($totalAnexoII[$periodoPrevio]*0.75, 2, ",", ".");
+                echo number_format($totalAnexoII['previo']['comercializacion'], 2, ",", ".");
                 ?>
             </td>
            
@@ -1474,12 +1449,11 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             <td>
                 Anexo II
             </td>
-            <td class="numericTD" title="<?php echo $totalAnexoII[$periodoActual]*0.25; ?>">
-                <?php echo number_format($totalAnexoII[$periodoActual]*0.25, 2, ",", "."); ?>
+            <td class="numericTD">
+                <?php echo number_format($totalAnexoII['actual']['administracion'], 2, ",", "."); ?>
             </td>
-            <td class="numericTD" title="<?php echo $totalAnexoII[$periodoPrevio]*0.25; ?>">
-                <?php
-                echo number_format($totalAnexoII[$periodoPrevio]*0.25, 2, ",", ".");
+            <td class="numericTD">
+                <?php echo number_format($totalAnexoII['previo']['comercializacion'], 2, ",", ".");
                 if(!isset($totalPeriodo[$periodoActual])){
                     $totalPeriodo[$periodoActual] = 0;//existen estos valores
                 }
@@ -4905,7 +4879,7 @@ echo $this->Form->end();
         <?php
         $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
         ?>
-        <label style='font-size: 8px' id="">Firmado a efectos de su identificacion con mi informe de fecha <span id="spanFechaFooter"> <?php echo date('d')?> del mes de <?php echo $meses[date('n')-1]?> de <?php echo date('Y')?> </span>
+        <label style='font-size: 6.5px' id="">Firmado a efectos de su identificacion con mi informe de fecha <span id="spanFechaFooter"> <?php echo date('d')?> del mes de <?php echo $meses[date('n')-1]?> de <?php echo date('Y')?> </span>
             </br><?php
         if(isset($cliente['Personasrelacionada'][0])){
             echo $cliente['Personasrelacionada'][0]['nombre'];
@@ -4917,7 +4891,7 @@ echo $this->Form->end();
     </div>
     <div style="text-align:center;" class="divToRight" >
         <span style="display:inline-block;vertical-align:middle;line-height:normal;">
-            <label style="font-size: 8px"><?php echo $user['User']['nombre']; ?></br>
+            <label style="font-size: 6.5px"><?php echo $user['User']['nombre']; ?></br>
             Contador Publico Nacional</br>
             Mat.<?php echo $user['User']['matricula']?> T.V. F.<?php echo $user['User']['folio']?> C.P.C.E. Salta</label>
         </span>
@@ -5514,15 +5488,16 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $valorResidualImpositivo = $coefActualizacion * $valorresidual;
             
           
-             
+            $fechaCompraBDU = $peanioBDU.'-'.$pemesBDU.'-01';
+            $fechaInicioConsultaActual =  date('Y-m-d', strtotime($fechaInicioConsulta));
             if(($aniosamortizados)!=0){
-                $alinicio = ($peanio==$peanioBDU)?0:$valororigen;
-                $altas = ($peanio==$peanioBDU)?$valororigen:0;
+                $alinicio = ($fechaInicioConsultaActual<=$fechaCompraBDU)?0:$valororigen;
+                $altas = ($fechaInicioConsultaActual<=$fechaCompraBDU)?$valororigen:0;
             }else{
                 $alinicio = 0;
                 $altas = 0;
             }
-           
+            
             $transferencias=0;//DE DONDE SALE ESTO???
             $bajas=0;//DE DONDE SALE ESTO???
             
@@ -5537,13 +5512,14 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $depreciaciondesvalorizacion=0;//DE DONDE SALE ESTO???
             $depreciacionrecuperodesvalorizacion=0;//DE DONDE SALE ESTO???
             $depreciacionalcierre=$depreciacionalinicio-$depreciacionbajas+$depreciaciondelejercicio;
-            
+                    
             $ejercicioActual = $alcierre - $depreciacionalcierre;
              
-            
+            $fechaCompraBDU = $peanioBDU.'-'.$pemesBDU.'-01';
+            $fechaInicioConsultaAnterior =  date('Y-m-d', strtotime($fechaInicioConsulta." -1 years"));
             if(($aniosamortizadosAnterior)!=0){
-                $alinicioAnterior = ($peanioAnterior==$peanioBDU)?0:$valororigenAnterior;
-                $altasAnterior = ($peanioAnterior==$peanioBDU)?$valororigenAnterior:0;
+                $alinicioAnterior = ($fechaInicioConsultaAnterior<=$fechaCompraBDU)?0:$valororigenAnterior;
+                $altasAnterior = ($fechaInicioConsultaAnterior<=$fechaCompraBDU)?$valororigenAnterior:0;
             }else{
                 $alinicioAnterior = 0;
                 $altasAnterior = 0;
@@ -6259,6 +6235,9 @@ function mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,&$total,$titulo,$nu
     <?php
 }
 function mostrarNotasDeGastos($arrayCuentasxPeriodos,$nombreNota,$numerofijo,$fechaInicioConsulta,$fechaFinConsulta,&$totalAnexoII){
+    
+    $periodoInicioActual = date('m-Y', strtotime($fechaInicioConsulta));
+    $periodoInicioPrevio = date('m-Y', strtotime($fechaInicioConsulta." -1 Years"));
     $mesAMostrar = date('Y', strtotime($fechaFinConsulta));
     $mesAMostrarPrevio = date('Y', strtotime($mesAMostrar."-01-01 -1 Year"));
     $subtotal = [];
@@ -6285,6 +6264,21 @@ function mostrarNotasDeGastos($arrayCuentasxPeriodos,$nombreNota,$numerofijo,$fe
     if(!isset($subtotal[$mesAMostrarPrevio])) {
         $subtotal[$mesAMostrarPrevio];
     }
+    if(!isset($totalAnexoII[$mesAMostrar])) {
+        $totalAnexoII[$mesAMostrar]=0;
+    }
+    if(!isset($totalAnexoII['actual'])) {
+        $totalAnexoII['actual']=[];
+        $totalAnexoII['actual']['venta']=0;
+        $totalAnexoII['actual']['administracion']=0;
+        $totalAnexoII['actual']['comercializacion']=0;
+    }
+    if(!isset($totalAnexoII['previo'])) {
+        $totalAnexoII['previo']=[];
+        $totalAnexoII['previo']['venta']=0;
+        $totalAnexoII['previo']['administracion']=0;
+        $totalAnexoII['previo']['comercializacion']=0;
+    }
      if(count($indexCuentas)!=0) {                   
         
     ?>
@@ -6299,16 +6293,25 @@ function mostrarNotasDeGastos($arrayCuentasxPeriodos,$nombreNota,$numerofijo,$fe
         <?php
         foreach ($indexCuentas as $index) {
             $numeroCuenta = $keysCuentas[$index];
-            echo '<tr>';
-            echo '<td title="'.$numerofijo.'" style="padding: 1px 10px">'.$arrayCuentasxPeriodos[$numeroCuenta]['nombrecuenta'].' </td>' ;
+            echo '<tr  cuecliid="'.$arrayCuentasxPeriodos[$numeroCuenta]['id'].'" class="trclickeable">';
+            echo '<td title="'.$numeroCuenta.'" style="padding: 1px 10px">'.$arrayCuentasxPeriodos[$numeroCuenta]['nombrecuenta'].' </td>' ;
             //como son dos estados vamos a mostrar cuando estemos en el ultimo y de ahi para abajo :S
-            if(!isset($totalAnexoII[$mesAMostrar])) {
-                $totalAnexoII[$mesAMostrar]=0;
-            }
+            
             if(!isset($subtotal[$mesAMostrar])) {
                 $subtotal[$mesAMostrar];
             }
-            
+            if(!isset($subtotal['actual'])) {
+                $subtotal['actual']=[];
+                $subtotal['actual']['venta']=0;
+                $subtotal['actual']['administracion']=0;
+                $subtotal['actual']['comercializacion']=0;
+            }
+            if(!isset($subtotal['previo'])) {
+                $subtotal['previo']=[];
+                $subtotal['previo']['venta']=0;
+                $subtotal['previo']['administracion']=0;
+                $subtotal['previo']['comercializacion']=0;
+            }
             $charinicial = substr($numerofijo, 0, 1);
             //vamos a cambiar el signo si es Perdida O Ganancia
             $suma = 1;
@@ -6333,20 +6336,53 @@ function mostrarNotasDeGastos($arrayCuentasxPeriodos,$nombreNota,$numerofijo,$fe
                     break;
             }
             $subtottalPeriodo = $arrayCuentasxPeriodos[$numeroCuenta][$mesAMostrar]*$suma;
+            //aca vamos a cambiar la forma en la que calculamos la distribucion de la cuenta
+            //por defecto va a ser 0/0.25/0.75
+            //en segundo lugar se va a aplicar la general modificada (por ahora es la por defecto nomas)
+            //y por ultimo vamos a preg si hay una distribucion diferente para esta cuenta particularmente
+            $porcentajeVenta = 0;
+            $porcentajeAdministracion =0.25;
+            $porcentajeComercializacion =0.75;
+            $porcentajeVentaPrevio = 0;
+            $porcentajeAdministracionPrevio =0.25;
+            $porcentajeComercializacionPrevio =0.75;
+            
+            if(count( $arrayCuentasxPeriodos[$numeroCuenta]['anexogastos'])>0){
+                foreach ($arrayCuentasxPeriodos[$numeroCuenta]['anexogastos'] as $kanexo => $anexos) {
+                    if($anexos['periodo']==$periodoInicioActual){
+                        $porcentajeAdministracion=$anexos['porcentajeadministracion'];
+                        $porcentajeComercializacion=$anexos['porcentajecomercializacion'];
+                        $porcentajeVenta=$anexos['porcentajeventa'];
+                    }
+                    if($anexos['periodo']==$periodoInicioPrevio){
+                        $porcentajeAdministracionPrevio=$anexos['porcentajeadministracion'];
+                        $porcentajeComercializacionPrevio=$anexos['porcentajecomercializacion'];
+                        $porcentajeVentaPrevio=$anexos['porcentajeventa'];
+                    }
+                }
+            }
+            
+            
             echo '<td  class="numericTD" style="width:70px">' .
-                number_format($subtottalPeriodo*0.0, 2, ",", ".")
+                number_format($subtottalPeriodo*$porcentajeVenta, 2, ",", ".")
                 . "</td>";
             echo '<td  class="numericTD" style="width:70px">' .
-                number_format($subtottalPeriodo*0.25, 2, ",", ".")
+                number_format($subtottalPeriodo*$porcentajeAdministracion, 2, ",", ".")
                 . "</td>";
             echo '<td  class="numericTD" style="width:70px">' .
-                number_format($subtottalPeriodo*0.75, 2, ",", ".")
+                number_format($subtottalPeriodo*$porcentajeComercializacion, 2, ",", ".")
                 . "</td>";
             echo '<td  class="numericTD" style="width:70px">' .
                 number_format($subtottalPeriodo, 2, ",", ".")
                 . "</td>";
             $totalAnexoII[$mesAMostrar]+=$subtottalPeriodo;
+            $totalAnexoII['actual']['venta']+=$subtottalPeriodo*$porcentajeVenta;
+            $totalAnexoII['actual']['administracion']+=$subtottalPeriodo*$porcentajeAdministracion;
+            $totalAnexoII['actual']['comercializacion']+=$subtottalPeriodo*$porcentajeComercializacion;
             $subtotal[$mesAMostrar]+=$subtottalPeriodo;
+            $subtotal['actual']['venta']+=$subtottalPeriodo*$porcentajeVenta;
+            $subtotal['actual']['administracion']+=$subtottalPeriodo*$porcentajeAdministracion;
+            $subtotal['actual']['comercializacion']+=$subtottalPeriodo*$porcentajeComercializacion;
             //ahora vamos a mostrar el ano anterior
             $mesAMostrarPrevio = date('Y', strtotime($mesAMostrar."-01-01 -1 Year"));
             if(!isset($totalAnexoII[$mesAMostrarPrevio])) {
@@ -6357,7 +6393,16 @@ function mostrarNotasDeGastos($arrayCuentasxPeriodos,$nombreNota,$numerofijo,$fe
             }
             $subtottalPeriodo = $arrayCuentasxPeriodos[$numeroCuenta][$mesAMostrarPrevio]*$suma;
             $totalAnexoII[$mesAMostrarPrevio]+=$subtottalPeriodo;
+            
+            $totalAnexoII['previo']['venta']+=$subtottalPeriodo*$porcentajeVentaPrevio;
+            $totalAnexoII['previo']['administracion']+=$subtottalPeriodo*$porcentajeAdministracionPrevio;
+            $totalAnexoII['previo']['comercializacion']+=$subtottalPeriodo*$porcentajeComercializacionPrevio;
+            
             $subtotal[$mesAMostrarPrevio]+=$subtottalPeriodo;
+            $subtotal['previo']['venta']+=$subtottalPeriodo*$porcentajeVentaPrevio;
+            $subtotal['previo']['administracion']+=$subtottalPeriodo*$porcentajeAdministracionPrevio;
+            $subtotal['previo']['comercializacion']+=$subtottalPeriodo*$porcentajeComercializacionPrevio;
+            
             echo '<td  class="numericTD" style="width:70px">' .
                 number_format($subtottalPeriodo, 2, ",", ".")
                 . "</td>";

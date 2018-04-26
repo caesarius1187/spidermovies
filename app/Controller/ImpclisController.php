@@ -1397,6 +1397,8 @@ class ImpclisController extends AppController {
                                         'Conveniocolectivotrabajo'=>[
                                                 'Impuesto'
                                         ],
+                                        'Cargo'=>[
+                                        ],
                                         'Valorrecibo'=>array(
                                                 'Cctxconcepto'=>array(
                                                         'Concepto',

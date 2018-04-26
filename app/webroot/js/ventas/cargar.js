@@ -185,101 +185,137 @@ $(document).ready(function() {
                             },
                         },
                     ],
-                } );
-                $('#bodyTablaVentas').width("100%");
-                calcularFooterTotales(tblTablaVentas);
-                hidecolumnstablaventas();
-                ventasOnChange();
-                $('#saveVentasForm').submit(function(){
-                    var formData = $(this).serialize();
-                    var formUrl = $(this).attr('action');
-                    //Controles de inputs
-                    var fecha = $('#VentaFecha').val();
-                    var ventaNumeroComprobante = $('#VentaNumerocomprobante').val();
-                    if(fecha==null || fecha == ""){
-                        callAlertPopint('Debes seleccionar una fecha');
-                        return false;
-                    }
-                    if(ventaNumeroComprobante==null || ventaNumeroComprobante == ""){
-                        callAlertPopint('Debes ingresar un numero de comprobante');
-                        return false;
-                    }
-                    $.ajax({
-                        type: 'POST',
-                        url: formUrl,
-                        data: formData,
-                        success: function(data,textStatus,xhr){
-                            var respuesta = JSON.parse(data);
-                            if(respuesta.venta.Venta!=null){
-                                //Incrementar en 1 el numero de comprobante
-                                $( "#VentaNumerocomprobante" ).val(
-                                    pad ($( "#VentaNumerocomprobante" ).val()*1 + 1, 8)
-                                 );
-                                //Agregar la fila nueva a la tabla
-                                var  tdClass = "tdViewVenta"+respuesta.venta_id;
-                                var positivo = 1;
-                                if(respuesta.comprobante.Comprobante.tipodebitoasociado=='Restitucion de debito fiscal'){
-                                    positivo = positivo*-1;
-                                }
-                                var ventaDescripcion = respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante;
-                                var rowData =
-                                    [
-                                        respuesta.venta.Venta.fecha,
-                                        ventaDescripcion,
-                                        respuesta.subcliente.Subcliente.cuit,
-                                        respuesta.subcliente.Subcliente.nombre,
-                                        respuesta.venta.Venta.condicioniva,
-                                        respuesta.actividadcliente.Actividade.nombre,
-                                    ];
-                                if(respuesta.hasOwnProperty('tipogasto')){
-                                    rowData.push(respuesta.tipogasto.Tipogasto.nombre);
-                                }
-                                rowData.push( respuesta.localidade.Localidade.nombre);
-                                rowData.push(respuesta.venta.Venta.alicuota+"%");
-                                rowData.push(respuesta.venta.Venta.neto*positivo);
-                                rowData.push(respuesta.venta.Venta.iva*positivo);
-                                rowData.push(respuesta.venta.Venta.ivapercep*positivo);
-                                rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
-                                rowData.push(respuesta.venta.Venta.actvspercep*positivo);
-                                rowData.push(respuesta.venta.Venta.impinternos*positivo);
-                                rowData.push(respuesta.venta.Venta.nogravados * positivo);
-                                rowData.push(respuesta.venta.Venta.excentos * positivo);
-                                rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);
-                                rowData.push(respuesta.venta.Venta.exentosactividadesvarias*positivo);
-                                rowData.push(respuesta.venta.Venta.total*positivo);
-                                var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarVenta('+respuesta.venta_id+')" alt="">';
-                                tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarVenta('+respuesta.venta_id+')" alt="">';
-                                if(respuesta.hasOwnProperty('tipogasto')) {
-                                    var tipoIngresosBiendeUso = [];
-                                    tipoIngresosBiendeUso = JSON.parse($("#jsonalltiposingresosbiendeuso").val());
-                                    if ($.inArray(respuesta.tipogasto.Tipogasto.id, tipoIngresosBiendeUso)!=-1 /*Tipo Gasto Bien de uso*/) {
-                                        tdactions = tdactions + '<img src="' + serverLayoutURL + '/img/biendeuso.png" width="20" height="20" onclick="relacionarBienesdeuso(\'' + respuesta.venta_id + '\',\'' + ventaDescripcion + '\')" alt="">';
-                                    }
-                                }
-                                rowData.push(tdactions);
-
-                                var rowIndex = $('#tablaVentas').dataTable().fnAddData(rowData);
-                                var row = $('#tablaVentas').dataTable().fnGetNodes(rowIndex);
-                                $(row).attr( 'id', "rowventa"+respuesta.venta_id );
-                                calcularFooterTotales(tblTablaVentas);
-                            }else{
-                                callAlertPopint(respuesta.respuesta);
-                            }
-                        },
-                        error: function(xhr,textStatus,error){
-                            callAlertPopint(textStatus);
+                    createdRow: function( row, data, dataIndex){
+                        var totalVenta = 0;
+                        var neto = StrToNumber(data[9]);
+                        var iva = StrToNumber(data[10]);
+                        var ivapercep = StrToNumber(data[11]);
+                        var iibbpercep = StrToNumber(data[12]);
+                        var actvspercep = StrToNumber(data[13]);
+                        var impinterno = StrToNumber(data[14]);
+                        var nogravados = StrToNumber(data[15]);
+                        var exentos = StrToNumber(data[16]);
+                        totalVenta = neto + iva + ivapercep + iibbpercep + actvspercep + impinterno + nogravados + exentos;
+                        totalVenta = totalVenta.toFixed(2);
+                        
+                        var alicuota =  data[8];
+                         alicuota =   alicuota.replace('%', "");
+                         alicuota =  StrToNumber(alicuota)/100;
+                        var IVAStrict = neto*alicuota;
+                        IVAStrict = IVAStrict.toFixed(2)*1;
+                        if( StrToNumber(data[19]) !=  totalVenta){
+                            //si el total no es igual a la sumatoria de los componentes de la compra
+                            $(row).addClass('compraWithError');
+                            $(row).attr('title','Neto + IVA + impuestos de la ventas no coinciden con el total');
+                            $(row).children().each(function(){
+                                 $(this).addClass('compraWithError');
+                            });
                         }
-                    });
+                        if( (IVAStrict - iva)>0.02||(IVAStrict - iva)<-0.02){
+                            //si iva != neto * alicuota
+                            $(row).addClass('compraWithError');
+                            $(row).attr('title','IVA Mal Cargado, el IVA correcto seria $'+IVAStrict);
+                            $(row).children().each(function(){
+                                 $(this).addClass('compraWithError');
+                            });
+                        }
+                      }
+                } 
+            );
+                $('#bodyTablaVentas').width("100%");
+            calcularFooterTotales(tblTablaVentas);
+            hidecolumnstablaventas();
+            ventasOnChange();
+            $('#saveVentasForm').submit(function(){
+                var formData = $(this).serialize();
+                var formUrl = $(this).attr('action');
+                //Controles de inputs
+                var fecha = $('#VentaFecha').val();
+                var ventaNumeroComprobante = $('#VentaNumerocomprobante').val();
+                if(fecha==null || fecha == ""){
+                    callAlertPopint('Debes seleccionar una fecha');
                     return false;
+                }
+                if(ventaNumeroComprobante==null || ventaNumeroComprobante == ""){
+                    callAlertPopint('Debes ingresar un numero de comprobante');
+                    return false;
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(data,textStatus,xhr){
+                        var respuesta = JSON.parse(data);
+                        if(respuesta.venta.Venta!=null){
+                            //Incrementar en 1 el numero de comprobante
+                            $( "#VentaNumerocomprobante" ).val(
+                                pad ($( "#VentaNumerocomprobante" ).val()*1 + 1, 8)
+                             );
+                            //Agregar la fila nueva a la tabla
+                            var  tdClass = "tdViewVenta"+respuesta.venta_id;
+                            var positivo = 1;
+                            if(respuesta.comprobante.Comprobante.tipodebitoasociado=='Restitucion de debito fiscal'){
+                                positivo = positivo*-1;
+                            }
+                            var ventaDescripcion = respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante;
+                            var rowData =
+                                [
+                                    respuesta.venta.Venta.fecha,
+                                    ventaDescripcion,
+                                    respuesta.subcliente.Subcliente.cuit,
+                                    respuesta.subcliente.Subcliente.nombre,
+                                    respuesta.venta.Venta.condicioniva,
+                                    respuesta.actividadcliente.Actividade.nombre,
+                                ];
+                            if(respuesta.hasOwnProperty('tipogasto')){
+                                rowData.push(respuesta.tipogasto.Tipogasto.nombre);
+                            }
+                            rowData.push( respuesta.localidade.Localidade.nombre);
+                            rowData.push(respuesta.venta.Venta.alicuota+"%");
+                            rowData.push(respuesta.venta.Venta.neto*positivo);
+                            rowData.push(respuesta.venta.Venta.iva*positivo);
+                            rowData.push(respuesta.venta.Venta.ivapercep*positivo);
+                            rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
+                            rowData.push(respuesta.venta.Venta.actvspercep*positivo);
+                            rowData.push(respuesta.venta.Venta.impinternos*positivo);
+                            rowData.push(respuesta.venta.Venta.nogravados * positivo);
+                            rowData.push(respuesta.venta.Venta.excentos * positivo);
+                            rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);
+                            rowData.push(respuesta.venta.Venta.exentosactividadesvarias*positivo);
+                            rowData.push(respuesta.venta.Venta.total*positivo);
+                            var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarVenta('+respuesta.venta_id+')" alt="">';
+                            tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarVenta('+respuesta.venta_id+')" alt="">';
+                            if(respuesta.hasOwnProperty('tipogasto')) {
+                                var tipoIngresosBiendeUso = [];
+                                tipoIngresosBiendeUso = JSON.parse($("#jsonalltiposingresosbiendeuso").val());
+                                if ($.inArray(respuesta.tipogasto.Tipogasto.id, tipoIngresosBiendeUso)!=-1 /*Tipo Gasto Bien de uso*/) {
+                                    tdactions = tdactions + '<img src="' + serverLayoutURL + '/img/biendeuso.png" width="20" height="20" onclick="relacionarBienesdeuso(\'' + respuesta.venta_id + '\',\'' + ventaDescripcion + '\')" alt="">';
+                                }
+                            }
+                            rowData.push(tdactions);
+
+                            var rowIndex = $('#tablaVentas').dataTable().fnAddData(rowData);
+                            var row = $('#tablaVentas').dataTable().fnGetNodes(rowIndex);
+                            $(row).attr( 'id', "rowventa"+respuesta.venta_id );
+                            calcularFooterTotales(tblTablaVentas);
+                        }else{
+                            callAlertPopint(respuesta.respuesta);
+                        }
+                    },
+                    error: function(xhr,textStatus,error){
+                        callAlertPopint(textStatus);
+                    }
                 });
-                //Fin Configuracion Tabla Ventas
-            },
-            error:function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
-                alert(XMLHttpRequest);
-                alert(errorThrown);
-            }
-        });
+                return false;
+            });
+            //Fin Configuracion Tabla Ventas
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus);
+            alert(XMLHttpRequest);
+            alert(errorThrown);
+        }
+    });
 
 
 
@@ -489,285 +525,505 @@ $(document).ready(function() {
     $('#jsonactividadescategorias').trigger( "change" );
 
 });
-    function hidecolumnstablaventas() {
+function StrToNumber (strNumber){
+    if (typeof strNumber === 'string') {
+        if(strNumber.charAt(0)=="<"){
+            //es un p y no se debe sumar
+            strNumber = 0
+        }else{
+            strNumber = strNumber.replace('.', "");
+            strNumber = strNumber.replace('.', "");
+            strNumber = strNumber.replace(',', ".");
+        }
+
+    }
+    return Number(strNumber).toFixed(2)*1;
+}
+function hidecolumnstablaventas() {
+    var tieneMonotributo = $("#saveVentasForm #VentaTieneMonotributo").val();
+    var contabiliza = $("#saveVentasForm #VentaContabiliza").val();
+    var tieneIVA = $("#saveVentasForm #VentaTieneIVA").val();
+    var tieneIVAPercepciones = $("#saveVentasForm #VentaTieneIVAPercepciones").val();
+    var tieneImpuestoInterno = $("#saveVentasForm #VentaTieneImpuestoInterno").val();
+    var tieneAgenteDePercepcionActividadesVarias = $("#saveVentasForm #VentaTieneAgenteDePercepcionActividadesVarias").val();
+    var tieneAgenteDePercepcionIIBB = $("#saveVentasForm #VentaTieneAgenteDePercepcionIIBB").val();
+    if(!contabiliza){
+        hidecolumn(tblTablaVentas,6,false);//tipoingreso*/
+    }
+    if(tieneMonotributo){
+        // hidecolumn(tblTablaVentas,8,false);//Debito*/
+        hidecolumn(tblTablaVentas,8,false);//Alicuota*/
+        hidecolumn(tblTablaVentas,9,false);//Neto*/
+        hidecolumn(tblTablaVentas,10,false);//IVA*/
+
+        hidecolumn(tblTablaVentas,15,false);//No Gravadoss*/
+        hidecolumn(tblTablaVentas,16,false);//Exento*/
+    }
+    if(!tieneIVAPercepciones){
+        hidecolumn(tblTablaVentas,11,false);//IVA Percep*/
+       }
+    if(!tieneAgenteDePercepcionIIBB){
+        hidecolumn(tblTablaVentas,12,false);//IIBB Percep*/
+    }
+    if(!tieneAgenteDePercepcionActividadesVarias){
+        hidecolumn(tblTablaVentas,13,false);//Act Vs Perc*/
+    }
+    if(!tieneImpuestoInterno){
+        hidecolumn(tblTablaVentas,14,false);//Imp Internos*/
+    }
+}
+function hidecolumn(table,column,visible){
+    var column = table.column( column );
+    column.visible( visible );
+}
+function setTwoNumberDecimal(event) {
+    this.value = parseFloat(this.value).toFixed(2);
+}
+function addTolblTotalDebeAsieto(event) {
+    var debesubtotal = 0;
+    $(".inputDebe").each(function () {
+        debesubtotal = debesubtotal*1 + this.value*1;
+    });
+    $("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
+    showIconDebeHaber()
+}
+function addTolblTotalhaberAsieto(event) {
+//        $("#lblTotalAFavor").val(0) ;
+    var habersubtotal = 0;
+    $(".inputHaber").each(function () {
+        habersubtotal = habersubtotal*1 + this.value*1;
+    });
+    $("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
+    showIconDebeHaber()
+}
+function showIconDebeHaber(){
+    if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
+        $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
+    }else{
+        $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
+    }
+
+}
+function calcularFooterTotales(mitabla){
+        mitabla.columns( '.sum' ).every( function () {
+            try {
+                var micolumndata = this.data();
+                var columnLength = this.data().length;
+                if(columnLength > 0){
+                    var sum = this
+                        .data()
+                        .reduce( function (a,b) {
+                            if (a != null && b != null) {
+
+                                if (typeof a === 'string') {
+                                    a = a.replace('.', "");
+                                    a = a.replace('.', "");
+                                    a = a.replace(',', ".");
+                                }
+                                a = Number(a);
+                                if (typeof b === 'string') {
+                                    b = b.replace('.', "");
+                                    b = b.replace('.', "");
+                                    b = b.replace(',', ".");
+                                }
+                                b = Number(b);
+                                var resultado = a + b;
+                                return resultado;
+                            } else {
+                                return 0;
+                            }
+                        } );
+                    if (typeof sum === 'string') {
+                        sum = sum.replace('.', "");
+                        sum = sum.replace('.', "");
+                        sum = sum.replace(',', ".");
+                        $( this.footer() ).html((sum*1).toFixed(2));
+                    }else{
+                        $( this.footer() ).html(sum.toFixed(2));
+                    }
+                }
+            }
+            catch (e)
+            {
+                alert(e.message);
+            }
+        } );
+    }
+var allcomprobantes;
+var tipodecomprobanteseleccionado = 'A';
+var tipodecomprobanteCompraseleccionado = '';
+function calcularivaytotal(formulario){
+
+        $("#"+formulario+" #VentaComprobanteId").trigger( "change" );
+
         var tieneMonotributo = $("#saveVentasForm #VentaTieneMonotributo").val();
-        var contabiliza = $("#saveVentasForm #VentaContabiliza").val();
         var tieneIVA = $("#saveVentasForm #VentaTieneIVA").val();
         var tieneIVAPercepciones = $("#saveVentasForm #VentaTieneIVAPercepciones").val();
         var tieneImpuestoInterno = $("#saveVentasForm #VentaTieneImpuestoInterno").val();
         var tieneAgenteDePercepcionActividadesVarias = $("#saveVentasForm #VentaTieneAgenteDePercepcionActividadesVarias").val();
         var tieneAgenteDePercepcionIIBB = $("#saveVentasForm #VentaTieneAgenteDePercepcionIIBB").val();
-        if(!contabiliza){
-            hidecolumn(tblTablaVentas,6,false);//tipoingreso*/
-        }
-        if(tieneMonotributo){
-            // hidecolumn(tblTablaVentas,8,false);//Debito*/
-            hidecolumn(tblTablaVentas,8,false);//Alicuota*/
-            hidecolumn(tblTablaVentas,9,false);//Neto*/
-            hidecolumn(tblTablaVentas,10,false);//IVA*/
 
-            hidecolumn(tblTablaVentas,15,false);//No Gravadoss*/
-            hidecolumn(tblTablaVentas,16,false);//Exento*/
-        }
-        if(!tieneIVAPercepciones){
-            hidecolumn(tblTablaVentas,11,false);//IVA Percep*/
-           }
-        if(!tieneAgenteDePercepcionIIBB){
-            hidecolumn(tblTablaVentas,12,false);//IIBB Percep*/
-        }
-        if(!tieneAgenteDePercepcionActividadesVarias){
-            hidecolumn(tblTablaVentas,13,false);//Act Vs Perc*/
-        }
-        if(!tieneImpuestoInterno){
-            hidecolumn(tblTablaVentas,14,false);//Imp Internos*/
-        }
-    }
-    function hidecolumn(table,column,visible){
-        var column = table.column( column );
-        column.visible( visible );
-    }
-    function setTwoNumberDecimal(event) {
-        this.value = parseFloat(this.value).toFixed(2);
-    }
-    function addTolblTotalDebeAsieto(event) {
-        var debesubtotal = 0;
-        $(".inputDebe").each(function () {
-            debesubtotal = debesubtotal*1 + this.value*1;
-        });
-        $("#lblTotalDebe").text(parseFloat(debesubtotal).toFixed(2)) ;
-        showIconDebeHaber()
-    }
-    function addTolblTotalhaberAsieto(event) {
-    //        $("#lblTotalAFavor").val(0) ;
-        var habersubtotal = 0;
-        $(".inputHaber").each(function () {
-            habersubtotal = habersubtotal*1 + this.value*1;
-        });
-        $("#lblTotalHaber").text(parseFloat(habersubtotal).toFixed(2)) ;
-        showIconDebeHaber()
-    }
-    function showIconDebeHaber(){
-        if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
-            $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');
-        }else{
-            $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
-        }
-
-    }
-    function calcularFooterTotales(mitabla){
-            mitabla.columns( '.sum' ).every( function () {
-                try {
-                    var micolumndata = this.data();
-                    var columnLength = this.data().length;
-                    if(columnLength > 0){
-                        var sum = this
-                            .data()
-                            .reduce( function (a,b) {
-                                if (a != null && b != null) {
-
-                                    if (typeof a === 'string') {
-                                        a = a.replace('.', "");
-                                        a = a.replace(',', ".");
-                                    }
-                                    a = Number(a);
-                                    if (typeof b === 'string') {
-                                        b = b.replace('.', "");
-                                        b = b.replace(',', ".");
-                                    }
-                                    b = Number(b);
-                                    var resultado = a + b;
-                                    return resultado;
-                                } else {
-                                    return 0;
-                                }
-                            } );
-                        if (typeof sum === 'string') {
-                            sum = sum.replace('.', "");
-                            sum = sum.replace(',', ".");
-                            $( this.footer() ).html((sum*1).toFixed(2));
-                        }else{
-                            $( this.footer() ).html(sum.toFixed(2));
-                        }
-                    }
-                }
-                catch (e)
-                {
-                    alert(e.message);
-                }
-            } );
-        }
-    var allcomprobantes;
-    var tipodecomprobanteseleccionado = 'A';
-    var tipodecomprobanteCompraseleccionado = '';
-    function calcularivaytotal(formulario){
-
-            $("#"+formulario+" #VentaComprobanteId").trigger( "change" );
-
-            var tieneMonotributo = $("#saveVentasForm #VentaTieneMonotributo").val();
-            var tieneIVA = $("#saveVentasForm #VentaTieneIVA").val();
-            var tieneIVAPercepciones = $("#saveVentasForm #VentaTieneIVAPercepciones").val();
-            var tieneImpuestoInterno = $("#saveVentasForm #VentaTieneImpuestoInterno").val();
-            var tieneAgenteDePercepcionActividadesVarias = $("#saveVentasForm #VentaTieneAgenteDePercepcionActividadesVarias").val();
-            var tieneAgenteDePercepcionIIBB = $("#saveVentasForm #VentaTieneAgenteDePercepcionIIBB").val();
-
-            tieneMonotributo ? tieneMonotributo = true : tieneMonotributo = false;
-            tieneIVA ? tieneIVA = true : tieneIVA = false;
-            tieneIVAPercepciones ? tieneIVAPercepciones = true : tieneIVAPercepciones = false;
-            tieneImpuestoInterno ? tieneImpuestoInterno = true : tieneImpuestoInterno = false;
-            tieneAgenteDePercepcionActividadesVarias ? tieneAgenteDePercepcionActividadesVarias = true : tieneAgenteDePercepcionActividadesVarias = false;
-            tieneAgenteDePercepcionIIBB ? tieneAgenteDePercepcionIIBB = true : tieneAgenteDePercepcionIIBB = false;
-
-            var alicuota = 0;
-            var ivapercep = 0;
-            var agenteDePercepcionIIBB = 0;
-            var agenteDePercepcionActividadesVarias = 0;
-            var impinternos = 0;
-
-            var neto = 0;
-            var iva = 0;
-
-            var total = 0;
-            var noGravados = $("#"+formulario+" #VentaNogravados").val();
-            var excentos = $("#"+formulario+" #VentaExcentos").val();
-
-            if(tieneMonotributo){
-                $("#"+formulario+" #VentaAlicuota").val(0);
-                $("#"+formulario+" #VentaIva").val(0);
-                total = $("#"+formulario+" #VentaTotal").val()*1;
-                $("#"+formulario+" #VentaNeto").val(total*1);
-                $("#"+formulario+" #VentaTotal").val(total*1);
-            }else{
-                alicuota = $("#"+formulario+" #VentaAlicuota").val() * 1;
-               if(tipodecomprobanteseleccionado == "A"){
-                //Ingreso Alicuota
-                //Ingreso Neto
-                //Calcular IVA
-                //Calcular TOTAl
-                neto = $("#"+formulario+" #VentaNeto").val();
-                iva=neto*(alicuota/100);
-                iva=iva.toFixed(2);
-                total+=neto * 1;
-                total+=iva * 1;
-
-                if(tieneIVAPercepciones){
-                  ivapercep = $("#"+formulario+" #VentaIvapercep").val() * 1;
-                  total+= ivapercep * 1;
-                }
-                if(tieneImpuestoInterno){
-                  impinternos = $("#"+formulario+" #VentaImpinternos").val() * 1;
-                  total+= impinternos * 1;
-                }
-                if(tieneAgenteDePercepcionActividadesVarias){
-                  agenteDePercepcionActividadesVarias = $("#"+formulario+" #VentaActvspercep").val() * 1;
-                  total+= agenteDePercepcionActividadesVarias * 1;
-                }
-                if(tieneAgenteDePercepcionIIBB){
-                  agenteDePercepcionIIBB = $("#"+formulario+" #VentaIibbpercep").val() * 1;
-                  total+= agenteDePercepcionIIBB * 1;
-                }
-                total+= noGravados * 1;
-                total+= excentos * 1;
-
-                $("#"+formulario+" #VentaTotal").val(total)
-                $("#"+formulario+" #VentaIva").val(iva);
-              }
-              if(tipodecomprobanteseleccionado=="B"){
-                //Ingreso alicuota
-                //Ingreso Total
-                //Calcular IVA
-                //Calcular Neto
-                total = $("#"+formulario+" #VentaTotal").val() * 1;
-    
-                neto += total;
-                if(tieneIVAPercepciones){
-                  ivapercep = $("#"+formulario+" #VentaIvapercep").val() * 1;
-                  neto-= ivapercep * 1;
-                }
-                if(tieneImpuestoInterno){
-                  impinternos = $("#"+formulario+" #VentaImpinternos").val() * 1;
-                  neto-= impinternos * 1;
-                }
-                if(tieneAgenteDePercepcionActividadesVarias){
-                  agenteDePercepcionActividadesVarias = $("#"+formulario+" #VentaActvspercep").val() * 1;
-                  neto-= agenteDePercepcionActividadesVarias * 1;
-                }
-                if(tieneAgenteDePercepcionIIBB){
-                  agenteDePercepcionIIBB = $("#"+formulario+" #VentaIibbpercep").val() * 1;
-                  neto-= agenteDePercepcionIIBB * 1;
-                }
-                neto -= noGravados * 1;
-                neto -= excentos * 1;
-                iva = neto/((alicuota/100)+1)*(alicuota/100);
-                iva = iva.toFixed(2);
-                neto = neto/((alicuota/100)+1);
-                neto = neto.toFixed(2);
-                $("#"+formulario+" #VentaNeto").val(neto);
-                $("#"+formulario+" #VentaIva").val(iva);
-              }
-            }
-        }
-    function reloadInputDates(){
-        var d = new Date( );
-        d.setMonth( d.getMonth( ) - 1 );
-        (function($){
-           $( "input.datepicker" ).datepicker({
-            yearRange: "-100:+50",
-            changeMonth: true,
-            changeYear: true,
-            constrainInput: false,
-            dateFormat: 'dd-mm-yy',
-            defaultDate: d,
-          });
-          $( "input.datepicker-dia" ).datepicker({
-            yearRange: "-100:+50",
-            changeMonth: false,
-            changeYear: false,
-            constrainInput: false,
-            dateFormat: 'dd',
-            defaultDate: d,
-    
-          });
-        })(jQuery);
-        
-      }
-/*Update Ventas*/
-    function modificarVenta(venid){
-        var tieneMonotributo = $("#VentaTieneMonotributo").val();
-        var tieneIVA = $("#VentaTieneIVA").val();
-        var tieneIVAPercepciones = $("#VentaTieneIVAPercepciones").val();
-        var tieneImpuestoInterno = $("#VentaTieneImpuestoInterno").val();
-        var tieneAgenteDePercepcionActividadesVarias = $("#VentaTieneAgenteDePercepcionActividadesVarias").val();
-        var tieneAgenteDePercepcionIIBB = $("#VentaTieneAgenteDePercepcionIIBB").val();
         tieneMonotributo ? tieneMonotributo = true : tieneMonotributo = false;
         tieneIVA ? tieneIVA = true : tieneIVA = false;
         tieneIVAPercepciones ? tieneIVAPercepciones = true : tieneIVAPercepciones = false;
         tieneImpuestoInterno ? tieneImpuestoInterno = true : tieneImpuestoInterno = false;
         tieneAgenteDePercepcionActividadesVarias ? tieneAgenteDePercepcionActividadesVarias = true : tieneAgenteDePercepcionActividadesVarias = false;
         tieneAgenteDePercepcionIIBB ? tieneAgenteDePercepcionIIBB = true : tieneAgenteDePercepcionIIBB = false;
-        var data ="";
+
+        var alicuota = 0;
+        var ivapercep = 0;
+        var agenteDePercepcionIIBB = 0;
+        var agenteDePercepcionActividadesVarias = 0;
+        var impinternos = 0;
+
+        var neto = 0;
+        var iva = 0;
+
+        var total = 0;
+        var noGravados = $("#"+formulario+" #VentaNogravados").val();
+        var excentos = $("#"+formulario+" #VentaExcentos").val();
+
+        if(tieneMonotributo){
+            $("#"+formulario+" #VentaAlicuota").val(0);
+            $("#"+formulario+" #VentaIva").val(0);
+            total = $("#"+formulario+" #VentaTotal").val()*1;
+            $("#"+formulario+" #VentaNeto").val(total*1);
+            $("#"+formulario+" #VentaTotal").val(total*1);
+        }else{
+            alicuota = $("#"+formulario+" #VentaAlicuota").val() * 1;
+           if(tipodecomprobanteseleccionado == "A"){
+            //Ingreso Alicuota
+            //Ingreso Neto
+            //Calcular IVA
+            //Calcular TOTAl
+            neto = $("#"+formulario+" #VentaNeto").val();
+            iva=neto*(alicuota/100);
+            iva=iva.toFixed(2);
+            total+=neto * 1;
+            total+=iva * 1;
+
+            if(tieneIVAPercepciones){
+              ivapercep = $("#"+formulario+" #VentaIvapercep").val() * 1;
+              total+= ivapercep * 1;
+            }
+            if(tieneImpuestoInterno){
+              impinternos = $("#"+formulario+" #VentaImpinternos").val() * 1;
+              total+= impinternos * 1;
+            }
+            if(tieneAgenteDePercepcionActividadesVarias){
+              agenteDePercepcionActividadesVarias = $("#"+formulario+" #VentaActvspercep").val() * 1;
+              total+= agenteDePercepcionActividadesVarias * 1;
+            }
+            if(tieneAgenteDePercepcionIIBB){
+              agenteDePercepcionIIBB = $("#"+formulario+" #VentaIibbpercep").val() * 1;
+              total+= agenteDePercepcionIIBB * 1;
+            }
+            total+= noGravados * 1;
+            total+= excentos * 1;
+
+            $("#"+formulario+" #VentaTotal").val(total)
+            $("#"+formulario+" #VentaIva").val(iva);
+          }
+          if(tipodecomprobanteseleccionado=="B"){
+            //Ingreso alicuota
+            //Ingreso Total
+            //Calcular IVA
+            //Calcular Neto
+            total = $("#"+formulario+" #VentaTotal").val() * 1;
+
+            neto += total;
+            if(tieneIVAPercepciones){
+              ivapercep = $("#"+formulario+" #VentaIvapercep").val() * 1;
+              neto-= ivapercep * 1;
+            }
+            if(tieneImpuestoInterno){
+              impinternos = $("#"+formulario+" #VentaImpinternos").val() * 1;
+              neto-= impinternos * 1;
+            }
+            if(tieneAgenteDePercepcionActividadesVarias){
+              agenteDePercepcionActividadesVarias = $("#"+formulario+" #VentaActvspercep").val() * 1;
+              neto-= agenteDePercepcionActividadesVarias * 1;
+            }
+            if(tieneAgenteDePercepcionIIBB){
+              agenteDePercepcionIIBB = $("#"+formulario+" #VentaIibbpercep").val() * 1;
+              neto-= agenteDePercepcionIIBB * 1;
+            }
+            neto -= noGravados * 1;
+            neto -= excentos * 1;
+            iva = neto/((alicuota/100)+1)*(alicuota/100);
+            iva = iva.toFixed(2);
+            neto = neto/((alicuota/100)+1);
+            neto = neto.toFixed(2);
+            $("#"+formulario+" #VentaNeto").val(neto);
+            $("#"+formulario+" #VentaIva").val(iva);
+          }
+        }
+    }
+function reloadInputDates(){
+    var d = new Date( );
+    d.setMonth( d.getMonth( ) - 1 );
+    (function($){
+       $( "input.datepicker" ).datepicker({
+        yearRange: "-100:+50",
+        changeMonth: true,
+        changeYear: true,
+        constrainInput: false,
+        dateFormat: 'dd-mm-yy',
+        defaultDate: d,
+      });
+      $( "input.datepicker-dia" ).datepicker({
+        yearRange: "-100:+50",
+        changeMonth: false,
+        changeYear: false,
+        constrainInput: false,
+        dateFormat: 'dd',
+        defaultDate: d,
+
+      });
+    })(jQuery);
+
+  }
+/*Update Ventas*/
+function modificarVenta(venid){
+    var tieneMonotributo = $("#VentaTieneMonotributo").val();
+    var tieneIVA = $("#VentaTieneIVA").val();
+    var tieneIVAPercepciones = $("#VentaTieneIVAPercepciones").val();
+    var tieneImpuestoInterno = $("#VentaTieneImpuestoInterno").val();
+    var tieneAgenteDePercepcionActividadesVarias = $("#VentaTieneAgenteDePercepcionActividadesVarias").val();
+    var tieneAgenteDePercepcionIIBB = $("#VentaTieneAgenteDePercepcionIIBB").val();
+    tieneMonotributo ? tieneMonotributo = true : tieneMonotributo = false;
+    tieneIVA ? tieneIVA = true : tieneIVA = false;
+    tieneIVAPercepciones ? tieneIVAPercepciones = true : tieneIVAPercepciones = false;
+    tieneImpuestoInterno ? tieneImpuestoInterno = true : tieneImpuestoInterno = false;
+    tieneAgenteDePercepcionActividadesVarias ? tieneAgenteDePercepcionActividadesVarias = true : tieneAgenteDePercepcionActividadesVarias = false;
+    tieneAgenteDePercepcionIIBB ? tieneAgenteDePercepcionIIBB = true : tieneAgenteDePercepcionIIBB = false;
+    var data ="";
+    $.ajax({
+    type: "post",  // Request method: post, get
+    url: serverLayoutURL+"/ventas/edit/"+venid+"/"+tieneMonotributo+"/"+tieneIVAPercepciones+"/"+tieneImpuestoInterno+"/"+tieneIVA+"/"+tieneAgenteDePercepcionIIBB+"/"+tieneAgenteDePercepcionActividadesVarias,
+    data: data,  // post data
+    success: function(response) {
+        //var oldRow = $("#rowventa"+venid).html();
+        var rowid="rowventa"+venid;
+        // $("#rowventa"+venid).find('td').each(function(){
+        //   $(this).hide();
+        // })
+        // $("#"+rowid).html(response);
+        $('#myModal').on('show.bs.modal', function() {
+            $('#myModal').find('.modal-title').html('Editar Venta');
+            $('#myModal').find('.modal-body').html(response);
+            // $('#myModal').find('.modal-footer').append($('<button>', {
+            //     type:'button',
+            //     datacontent:'remove',
+            //     class:'btn btn-primary',
+            //     id:'editRowBtn',
+            //     onclick:"$('#BienesdeusoRelacionarventaForm').submit()",
+            //     text:"Aceptar"
+            // }));
+            $('#myModal').find('.modal-footer').html("")
+            $('#myModal').find('.modal-footer').append($('<button>', {
+                type:'button',
+                datacontent:'remove',
+                class:'btn btn-primary',
+                id:'editRowBtn',
+                onclick:" $('#myModal').modal('hide')",
+                text:"Cerrar"
+            }));
+        });
+
+        $('#myModal').modal('show');
+        // $('#myModal input[0]').focus();
+      //$(".tdViewVenta"+venid).hide();
+
+      reloadInputDates();
+      //Aca vamos a agregar los controles para este formulario tal cual los ejecutamos al agregar una venta
+      $("#VentaFormEdit"+venid+" #VentaIvapercep").on('change paste', function() {
+        calcularivaytotal("VentaFormEdit"+venid);
+      });
+      $("#VentaFormEdit"+venid+" #VentaImpinternos").on('change paste', function() {
+        calcularivaytotal("VentaFormEdit"+venid);
+      });
+      $("#VentaFormEdit"+venid+" #VentaActvspercep").on('change paste', function() {
+        calcularivaytotal("VentaFormEdit"+venid);
+      });
+      $("#VentaFormEdit"+venid+" #VentaIibbpercep").on('change paste', function() {
+        calcularivaytotal("VentaFormEdit"+venid);
+      });
+      $("#VentaFormEdit"+venid+" #VentaAlicuota").on('change paste', function() {
+        calcularivaytotal("VentaFormEdit"+venid);
+      });
+      $("#VentaFormEdit"+venid+" #VentaTotal").on('change paste', function() {
+        calcularivaytotal("VentaFormEdit"+venid);
+      });
+      $("#VentaFormEdit"+venid+" #VentaNeto").on('change paste', function() {
+        calcularivaytotal("VentaFormEdit"+venid);
+      });
+      $("#VentaFormEdit"+venid+" #VentaComprobanteId").on('change paste', function() {
+        allcomprobantes.forEach(function(comprobante) {
+          if($("#VentaFormEdit"+venid+" #VentaComprobanteId").val()==comprobante.Comprobante.id){
+            if(tipodecomprobanteseleccionado==comprobante.Comprobante.tipo){
+              return;
+            }
+            if(comprobante.Comprobante.tipo=="A"){
+              $("#VentaFormEdit"+venid+" #VentaNeto").prop("readonly",false);
+              $("#VentaFormEdit"+venid+" #VentaIva").prop("readonly",true);
+              $("#VentaFormEdit"+venid+" #VentaTotal").prop("readonly",true);
+              tipodecomprobanteseleccionado="A";
+              //$('#VentaFormEdit'+venid+' #VentaAlicuota').find("option:not(:hidden):eq(0)");
+
+            }else  if(comprobante.Comprobante.tipo=="B"){
+              $("#VentaFormEdit"+venid+" #VentaNeto").prop('readonly', true);
+              $("#VentaFormEdit"+venid+" #VentaIva").prop('readonly', true);
+              $("#VentaFormEdit"+venid+" #VentaTotal").prop('readonly', false);
+              tipodecomprobanteseleccionado="B";
+             // $('#VentaFormEdit'+venid+' #VentaAlicuota').find("option:not(:hidden):eq(0)");
+            }else  if(comprobante.Comprobante.tipo=="C"){
+              tipodecomprobanteseleccionado="C";
+             // $('#VentaFormEdit'+venid+' #VentaAlicuota').find("option:not(:hidden):eq(0)");
+            }
+          }
+        }, this);
+      });
+      $('.chosen-select').chosen({search_contains:true});
+
+        $("#VentaFormEdit"+venid+" #VentaActividadclienteId").on('change', function() {
+            $('#VentaFormEdit'+venid+' #jsonactividadescategorias').val($("#VentaFormEdit"+venid+" #VentaActividadclienteId").val());
+            $('#VentaFormEdit'+venid+' #jsonactividadescategorias').trigger( "change" );
+        });
+        if($('#VentaFormEdit'+venid+' #jsonactividadescategorias option').size()>0 ){
+            $('#VentaFormEdit'+venid+' #VentaTipogastoId').filterGroups({groupSelector: '#VentaFormEdit'+venid+' #jsonactividadescategorias', });
+        }
+        $('#VentaFormEdit'+venid+' #jsonactividadescategorias').trigger( "change" );
+
+
+
+      $('#VentaFormEdit'+venid).submit(function(){
+        var formData = $(this).serialize();
+        var formUrl = $(this).attr('action');
         $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/ventas/edit/"+venid+"/"+tieneMonotributo+"/"+tieneIVAPercepciones+"/"+tieneImpuestoInterno+"/"+tieneIVA+"/"+tieneAgenteDePercepcionIIBB+"/"+tieneAgenteDePercepcionActividadesVarias,
-        data: data,  // post data
+          type: 'POST',
+          url: formUrl,
+          data: formData,
+          success: function(data,textStatus,xhr){
+                try
+                {
+                   var respuesta = JSON.parse(data);
+                    //Agregar la fila nueva a la tabla
+                    var  tdClass = "tdViewVenta"+respuesta.venta_id;
+                    var positivo = 1;
+                    if(respuesta.comprobante.Comprobante.tipodebitoasociado=='Restitucion de debito fiscal'){
+                        positivo = -1;
+                    }
+                    var rowData =
+                        [
+                            respuesta.venta.Venta.fecha,
+                            respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante,
+                            respuesta.subcliente.Subcliente.cuit,
+                            respuesta.subcliente.Subcliente.nombre,
+                            respuesta.venta.Venta.condicioniva,
+                            respuesta.actividadcliente.Actividade.nombre,
+                            respuesta.tipogasto.Tipogasto.nombre,
+                            respuesta.localidade.Localidade.nombre,
+                        ];
+                    rowData.push(respuesta.venta.Venta.alicuota+"%");
+                    rowData.push(respuesta.venta.Venta.neto*positivo);
+                    rowData.push(respuesta.venta.Venta.iva*positivo);
+                    rowData.push(respuesta.venta.Venta.ivapercep*positivo);
+                    rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
+                    rowData.push(respuesta.venta.Venta.actvspercep*positivo);
+                    rowData.push(respuesta.venta.Venta.impinternos*positivo);
+                    rowData.push(respuesta.venta.Venta.nogravados*positivo);
+                    rowData.push(respuesta.venta.Venta.excentos*positivo);
+                    rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);
+                    rowData.push(respuesta.venta.Venta.exentosactividadesvarias*positivo);
+                    rowData.push(respuesta.venta.Venta.total*positivo);
+                    var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarVenta('+respuesta.venta_id+')" alt="">';
+                    tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarVenta('+respuesta.venta_id+')" alt="">';
+                    rowData.push(tdactions);
+
+                    $('#tablaVentas').dataTable().fnDeleteRow($("#rowventa"+venid));
+
+                    var rowIndex = $('#tablaVentas').dataTable().fnAddData(rowData);
+                    var row = $('#tablaVentas').dataTable().fnGetNodes(rowIndex);
+                    $(row).attr( 'id', "rowventa"+respuesta.venta_id );
+                    calcularFooterTotales(tblTablaVentas);
+                    $('#myModal').modal('hide');
+                }
+                catch(e)
+                {
+                  var rowid="rowventa"+venid;
+                  $("#"+rowid).html( data);
+                }
+            },
+          error: function(xhr,textStatus,error){
+            alert(textStatus);
+          }
+        });
+        return false;
+      });
+    },
+   error:function (XMLHttpRequest, textStatus, errorThrown) {
+        alert(textStatus);
+   }
+});
+}
+function eliminarVenta(venid,descripcion){
+  var r = confirm("Esta seguro que desea eliminar esta venta?. Es una accion que no podra deshacer.");
+  if (r == true) {
+    $.ajax({
+       type: "post",  // Request method: post, get
+       url: serverLayoutURL+"/ventas/delete/"+venid, // URL to request
+       data: "",  // post data
+       success: function(response) {
+                    var mirespuesta = jQuery.parseJSON(response);
+                    if(mirespuesta.error==0){
+                      callAlertPopint(mirespuesta.respuesta);
+                      $('#tablaVentas').DataTable().row('#rowventa'+venid)
+                          .remove()
+                          .draw();
+                      calcularFooterTotales($('#tablaVentas').DataTable());
+                    }else if(mirespuesta.error==1){
+                       callAlertPopint(mirespuesta.respuesta);
+                    }else{
+                      callAlertPopint("Error por favor intente mas tarde");
+                    }
+
+               },
+       error:function (XMLHttpRequest, textStatus, errorThrown) {
+              alert(textStatus);
+              alert(XMLHttpRequest);
+              alert(errorThrown);
+      }
+    });
+  } else {
+      txt = "No se a eliminado la venta";
+      callAlertPopint(txt);
+  }/*
+  */
+}
+function relacionarBienesdeuso(venid,descripcion){
+    //primero vamos a cargar el id de la venta (con una descripcion) en el formulario
+    //despues es ejecutar el ajax cargado al principio nada mas
+    var clienteid = $('#cliid').val();
+    $.ajax({
+        type: "get",  // Request method: post, get
+        url: serverLayoutURL+"/bienesdeusos/relacionarventa/"+clienteid+"/"+venid,
+
+        // URL to request
+        data: "",  // post data
         success: function(response) {
-            //var oldRow = $("#rowventa"+venid).html();
-            var rowid="rowventa"+venid;
-            // $("#rowventa"+venid).find('td').each(function(){
-            //   $(this).hide();
-            // })
-            // $("#"+rowid).html(response);
             $('#myModal').on('show.bs.modal', function() {
-                $('#myModal').find('.modal-title').html('Editar Venta');
+                $('#myModal').find('.modal-title').html('Relacionar Bien de uso a la Venta: ' +descripcion);
                 $('#myModal').find('.modal-body').html(response);
-                // $('#myModal').find('.modal-footer').append($('<button>', {
-                //     type:'button',
-                //     datacontent:'remove',
-                //     class:'btn btn-primary',
-                //     id:'editRowBtn',
-                //     onclick:"$('#BienesdeusoRelacionarventaForm').submit()",
-                //     text:"Aceptar"
-                // }));
-                $('#myModal').find('.modal-footer').html("")
+                $('#myModal').find('.modal-footer').html("");
+                $('#myModal').find('.modal-footer').append($('<button>', {
+                    type:'button',
+                    datacontent:'remove',
+                    class:'btn btn-primary',
+                    id:'editRowBtn',
+                    onclick:"$('#BienesdeusoRelacionarventaForm').submit()",
+                    text:"Aceptar"
+                }));
                 $('#myModal').find('.modal-footer').append($('<button>', {
                     type:'button',
                     datacontent:'remove',
@@ -777,266 +1033,63 @@ $(document).ready(function() {
                     text:"Cerrar"
                 }));
             });
-
             $('#myModal').modal('show');
-            // $('#myModal input[0]').focus();
-          //$(".tdViewVenta"+venid).hide();
 
-          reloadInputDates();
-          //Aca vamos a agregar los controles para este formulario tal cual los ejecutamos al agregar una venta
-          $("#VentaFormEdit"+venid+" #VentaIvapercep").on('change paste', function() {
-            calcularivaytotal("VentaFormEdit"+venid);
-          });
-          $("#VentaFormEdit"+venid+" #VentaImpinternos").on('change paste', function() {
-            calcularivaytotal("VentaFormEdit"+venid);
-          });
-          $("#VentaFormEdit"+venid+" #VentaActvspercep").on('change paste', function() {
-            calcularivaytotal("VentaFormEdit"+venid);
-          });
-          $("#VentaFormEdit"+venid+" #VentaIibbpercep").on('change paste', function() {
-            calcularivaytotal("VentaFormEdit"+venid);
-          });
-          $("#VentaFormEdit"+venid+" #VentaAlicuota").on('change paste', function() {
-            calcularivaytotal("VentaFormEdit"+venid);
-          });
-          $("#VentaFormEdit"+venid+" #VentaTotal").on('change paste', function() {
-            calcularivaytotal("VentaFormEdit"+venid);
-          });
-          $("#VentaFormEdit"+venid+" #VentaNeto").on('change paste', function() {
-            calcularivaytotal("VentaFormEdit"+venid);
-          });
-          $("#VentaFormEdit"+venid+" #VentaComprobanteId").on('change paste', function() {
-            allcomprobantes.forEach(function(comprobante) {
-              if($("#VentaFormEdit"+venid+" #VentaComprobanteId").val()==comprobante.Comprobante.id){
-                if(tipodecomprobanteseleccionado==comprobante.Comprobante.tipo){
-                  return;
-                }
-                if(comprobante.Comprobante.tipo=="A"){
-                  $("#VentaFormEdit"+venid+" #VentaNeto").prop("readonly",false);
-                  $("#VentaFormEdit"+venid+" #VentaIva").prop("readonly",true);
-                  $("#VentaFormEdit"+venid+" #VentaTotal").prop("readonly",true);
-                  tipodecomprobanteseleccionado="A";
-                  //$('#VentaFormEdit'+venid+' #VentaAlicuota').find("option:not(:hidden):eq(0)");
-
-                }else  if(comprobante.Comprobante.tipo=="B"){
-                  $("#VentaFormEdit"+venid+" #VentaNeto").prop('readonly', true);
-                  $("#VentaFormEdit"+venid+" #VentaIva").prop('readonly', true);
-                  $("#VentaFormEdit"+venid+" #VentaTotal").prop('readonly', false);
-                  tipodecomprobanteseleccionado="B";
-                 // $('#VentaFormEdit'+venid+' #VentaAlicuota').find("option:not(:hidden):eq(0)");
-                }else  if(comprobante.Comprobante.tipo=="C"){
-                  tipodecomprobanteseleccionado="C";
-                 // $('#VentaFormEdit'+venid+' #VentaAlicuota').find("option:not(:hidden):eq(0)");
-                }
-              }
-            }, this);
-          });
-          $('.chosen-select').chosen({search_contains:true});
-
-            $("#VentaFormEdit"+venid+" #VentaActividadclienteId").on('change', function() {
-                $('#VentaFormEdit'+venid+' #jsonactividadescategorias').val($("#VentaFormEdit"+venid+" #VentaActividadclienteId").val());
-                $('#VentaFormEdit'+venid+' #jsonactividadescategorias').trigger( "change" );
-            });
-            if($('#VentaFormEdit'+venid+' #jsonactividadescategorias option').size()>0 ){
-                $('#VentaFormEdit'+venid+' #VentaTipogastoId').filterGroups({groupSelector: '#VentaFormEdit'+venid+' #jsonactividadescategorias', });
-            }
-            $('#VentaFormEdit'+venid+' #jsonactividadescategorias').trigger( "change" );
-
-
-
-          $('#VentaFormEdit'+venid).submit(function(){
-            var formData = $(this).serialize();
-            var formUrl = $(this).attr('action');
-            $.ajax({
-              type: 'POST',
-              url: formUrl,
-              data: formData,
-              success: function(data,textStatus,xhr){
-                    try
-                    {
-                       var respuesta = JSON.parse(data);
-                        //Agregar la fila nueva a la tabla
-                        var  tdClass = "tdViewVenta"+respuesta.venta_id;
-                        var positivo = 1;
-                        if(respuesta.comprobante.Comprobante.tipodebitoasociado=='Restitucion de debito fiscal'){
-                            positivo = -1;
-                        }
-                        var rowData =
-                            [
-                                respuesta.venta.Venta.fecha,
-                                respuesta.comprobante.Comprobante.abreviacion+"-"+respuesta.puntosdeventa.Puntosdeventa.nombre+"-"+respuesta.venta.Venta.numerocomprobante,
-                                respuesta.subcliente.Subcliente.cuit,
-                                respuesta.subcliente.Subcliente.nombre,
-                                respuesta.venta.Venta.condicioniva,
-                                respuesta.actividadcliente.Actividade.nombre,
-                                respuesta.tipogasto.Tipogasto.nombre,
-                                respuesta.localidade.Localidade.nombre,
-                            ];
-                        rowData.push(respuesta.venta.Venta.alicuota+"%");
-                        rowData.push(respuesta.venta.Venta.neto*positivo);
-                        rowData.push(respuesta.venta.Venta.iva*positivo);
-                        rowData.push(respuesta.venta.Venta.ivapercep*positivo);
-                        rowData.push(respuesta.venta.Venta.iibbpercep*positivo);
-                        rowData.push(respuesta.venta.Venta.actvspercep*positivo);
-                        rowData.push(respuesta.venta.Venta.impinternos*positivo);
-                        rowData.push(respuesta.venta.Venta.nogravados*positivo);
-                        rowData.push(respuesta.venta.Venta.excentos*positivo);
-                        rowData.push(respuesta.venta.Venta.exentosactividadeseconomicas*positivo);
-                        rowData.push(respuesta.venta.Venta.exentosactividadesvarias*positivo);
-                        rowData.push(respuesta.venta.Venta.total*positivo);
-                        var tdactions= '<img src="'+serverLayoutURL+'/img/edit_view.png" width="20" height="20" onclick="modificarVenta('+respuesta.venta_id+')" alt="">';
-                        tdactions = tdactions + '<img src="'+serverLayoutURL+'/img/eliminar.png" width="20" height="20" onclick="eliminarVenta('+respuesta.venta_id+')" alt="">';
-                        rowData.push(tdactions);
-
-                        $('#tablaVentas').dataTable().fnDeleteRow($("#rowventa"+venid));
-
-                        var rowIndex = $('#tablaVentas').dataTable().fnAddData(rowData);
-                        var row = $('#tablaVentas').dataTable().fnGetNodes(rowIndex);
-                        $(row).attr( 'id', "rowventa"+respuesta.venta_id );
-                        calcularFooterTotales(tblTablaVentas);
-                        $('#myModal').modal('hide');
+            $('#BienesdeusoRelacionarventaForm').submit(function(){
+                $('#myModal').modal('hide');
+                //serialize form data
+                var formData = $(this).serialize();
+                //get form action
+                var formUrl = $(this).attr('action');
+                //aca tenemos que sacar todos los disabled para que se envien los campos
+                $.ajax({
+                    type: 'POST',
+                    url: formUrl,
+                    data: formData,
+                    success: function(data,textStatus,xhr){
+                        var respuesta = JSON.parse(data);
+                        callAlertPopint(respuesta.respuesta);
+                    },
+                    error: function(xhr,textStatus,error){
+                        $('#myModal').modal('show');
+                        alert(textStatus);
                     }
-                    catch(e)
-                    {
-                      var rowid="rowventa"+venid;
-                      $("#"+rowid).html( data);
-                    }
-                },
-              error: function(xhr,textStatus,error){
-                alert(textStatus);
-              }
+                });
+                return false;
             });
-            return false;
-          });
         },
-       error:function (XMLHttpRequest, textStatus, errorThrown) {
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);
-       }
+            alert(XMLHttpRequest);
+            alert(errorThrown);
+        }
     });
-    }
-    function eliminarVenta(venid,descripcion){
-      var r = confirm("Esta seguro que desea eliminar esta venta?. Es una accion que no podra deshacer.");
-      if (r == true) {
-        $.ajax({
-           type: "post",  // Request method: post, get
-           url: serverLayoutURL+"/ventas/delete/"+venid, // URL to request
-           data: "",  // post data
-           success: function(response) {
-                        var mirespuesta = jQuery.parseJSON(response);
-                        if(mirespuesta.error==0){
-                          callAlertPopint(mirespuesta.respuesta);
-                          $('#tablaVentas').DataTable().row('#rowventa'+venid)
-                              .remove()
-                              .draw();
-                          calcularFooterTotales($('#tablaVentas').DataTable());
-                        }else if(mirespuesta.error==1){
-                           callAlertPopint(mirespuesta.respuesta);
-                        }else{
-                          callAlertPopint("Error por favor intente mas tarde");
-                        }
-
-                   },
-           error:function (XMLHttpRequest, textStatus, errorThrown) {
-                  alert(textStatus);
-                  alert(XMLHttpRequest);
-                  alert(errorThrown);
-          }
-        });
-      } else {
-          txt = "No se a eliminado la venta";
-          callAlertPopint(txt);
-      }/*
-      */
-    }
-    function relacionarBienesdeuso(venid,descripcion){
-        //primero vamos a cargar el id de la venta (con una descripcion) en el formulario
-        //despues es ejecutar el ajax cargado al principio nada mas
-        var clienteid = $('#cliid').val();
-        $.ajax({
-            type: "get",  // Request method: post, get
-            url: serverLayoutURL+"/bienesdeusos/relacionarventa/"+clienteid+"/"+venid,
-
-            // URL to request
-            data: "",  // post data
-            success: function(response) {
-                $('#myModal').on('show.bs.modal', function() {
-                    $('#myModal').find('.modal-title').html('Relacionar Bien de uso a la Venta: ' +descripcion);
-                    $('#myModal').find('.modal-body').html(response);
-                    $('#myModal').find('.modal-footer').html("");
-                    $('#myModal').find('.modal-footer').append($('<button>', {
-                        type:'button',
-                        datacontent:'remove',
-                        class:'btn btn-primary',
-                        id:'editRowBtn',
-                        onclick:"$('#BienesdeusoRelacionarventaForm').submit()",
-                        text:"Aceptar"
-                    }));
-                    $('#myModal').find('.modal-footer').append($('<button>', {
-                        type:'button',
-                        datacontent:'remove',
-                        class:'btn btn-primary',
-                        id:'editRowBtn',
-                        onclick:" $('#myModal').modal('hide')",
-                        text:"Cerrar"
-                    }));
-                });
-                $('#myModal').modal('show');
-
-                $('#BienesdeusoRelacionarventaForm').submit(function(){
-                    $('#myModal').modal('hide');
-                    //serialize form data
-                    var formData = $(this).serialize();
-                    //get form action
-                    var formUrl = $(this).attr('action');
-                    //aca tenemos que sacar todos los disabled para que se envien los campos
-                    $.ajax({
-                        type: 'POST',
-                        url: formUrl,
-                        data: formData,
-                        success: function(data,textStatus,xhr){
-                            var respuesta = JSON.parse(data);
-                            callAlertPopint(respuesta.respuesta);
-                        },
-                        error: function(xhr,textStatus,error){
-                            $('#myModal').modal('show');
-                            alert(textStatus);
-                        }
-                    });
-                    return false;
-                });
-            },
-            error:function (XMLHttpRequest, textStatus, errorThrown) {
-                alert(textStatus);
-                alert(XMLHttpRequest);
-                alert(errorThrown);
-            }
-        });
-    }
+}
 /* fin Update Ventas*/
-    function realizarEventoCliente(periodo,clienteid,estadotarea){
-        var datas =  "0/tarea3/"+periodo+"/"+clienteid;
-        var data ="";
-        $.ajax({
-            type: "post",  // Request method: post, get
-            url: serverLayoutURL+"/eventosclientes/realizareventocliente/0/ventascargadas/"+periodo+"/"+clienteid+"/"+estadotarea, // URL to request
-            data: data,  // post data
-            success: function(response) {
-              var resp = response.split("&&");
-              var respuesta=resp[1];
-              var error=resp[0];
-              if(error!=0){
-                callAlertPopint('Error por favor intente mas tarde');
-                return;
-              }else{
-                callAlertPopint('Estado de la tarea modificado');
-              }
-              return false;
-            },
-            error:function (XMLHttpRequest, textStatus, errorThrown) {
-              alert(textStatus);
-              return false;
-            }
-        });
-        return false;
-    }
+function realizarEventoCliente(periodo,clienteid,estadotarea){
+    var datas =  "0/tarea3/"+periodo+"/"+clienteid;
+    var data ="";
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/eventosclientes/realizareventocliente/0/ventascargadas/"+periodo+"/"+clienteid+"/"+estadotarea, // URL to request
+        data: data,  // post data
+        success: function(response) {
+          var resp = response.split("&&");
+          var respuesta=resp[1];
+          var error=resp[0];
+          if(error!=0){
+            callAlertPopint('Error por favor intente mas tarde');
+            return;
+          }else{
+            callAlertPopint('Estado de la tarea modificado');
+          }
+          return false;
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+          alert(textStatus);
+          return false;
+        }
+    });
+    return false;
+}
 

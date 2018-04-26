@@ -250,12 +250,20 @@ $(document).ready(function() {
             var exentos = StrToNumber(data[21]);
             totalCompra = neto + iva + ivapercep + iibbpercep + actvspercep + ganapercep + impinterno + impcomb + nogravados + exentos;
             totalCompra = totalCompra.toFixed(2);
-              if( StrToNumber(data[22]) !=  totalCompra){
-                  $(row).addClass('compraWithError');
-                  $(row).children().each(function(){
-                       $(this).addClass('compraWithError');
-                  });
-              }
+            if( StrToNumber(data[22]) !=  totalCompra){
+                //si el total no es igual a la sumatoria de los componentes de la compra
+                $(row).addClass('compraWithError');
+                $(row).children().each(function(){
+                     $(this).addClass('compraWithError');
+                });
+            }
+            if( StrToNumber(data[22]) !=  totalCompra){
+                //si iva != neto * alicuota
+                $(row).addClass('compraWithError');
+                $(row).children().each(function(){
+                     $(this).addClass('compraWithError');
+                });
+            }
           }
     } );
     $('#tablaCompras tbody').on( 'click', 'tr', function () {
@@ -549,6 +557,7 @@ $(document).ready(function() {
                 strNumber = 0
             }else{
                 strNumber = strNumber.replace('.', "");
+                strNumber = strNumber.replace('.', "");
                 strNumber = strNumber.replace(',', ".");
             }
 
@@ -600,6 +609,7 @@ $(document).ready(function() {
                                             a = 0
                                         }else{
                                             a = a.replace('.', "");
+                                            a = a.replace('.', "");
                                             a = a.replace(',', ".");
                                         }
 
@@ -611,6 +621,7 @@ $(document).ready(function() {
                                             //es un p y no se debe sumar
                                             b = 0
                                         }else {
+                                            b = b.replace('.', "");
                                             b = b.replace('.', "");
                                             b = b.replace(',', ".");
                                         }
@@ -625,6 +636,7 @@ $(document).ready(function() {
                                 }
                             } );
                         if (typeof sum === 'string') {
+                            sum = sum.replace('.', "");
                             sum = sum.replace('.', "");
                             sum = sum.replace(',', ".");
                             $( this.footer() ).html((sum*1).toFixed(2));

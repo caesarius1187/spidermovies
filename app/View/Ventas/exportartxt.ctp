@@ -55,6 +55,30 @@
     </div>
     <h2>Txt Ventas Facturas</h2>
     <div style="overflow-x:auto;" class="index" id="divFacturas"><?php
+        foreach($ventas as $c => $venta ) {
+            //aca vamos a buscar dos alicuotas de la misma venta, si esta alicuota es 0  entonces hay que borrarla
+            //vamos a buscar la venta con mas de una alicuota
+            if($venta[0]['cantalicuotas']>1){
+                //si encuentro una busco las alicuotas de esta y si alguna tiene alic = 0 la borro
+                foreach($alicuotas as $a => $alicuota ) {
+                    if(
+                            $venta['Venta']['comprobante_id']==$alicuota['Venta']['comprobante_id']&&
+                            $venta['Venta']['puntosdeventa_id']==$alicuota['Venta']['puntosdeventa_id']&&
+                            $venta['Venta']['numerocomprobante']==$alicuota['Venta']['numerocomprobante']&&
+                            $venta['Venta']['subcliente_id']==$alicuota['Venta']['subcliente_id']
+                        )
+                    {
+                        //encontre una alicuota de una compra con 2 alicuotas, si la alic == 0 entonces la borro
+                        if($alicuota['Venta']['alicuota']=='0'){
+                            //Debugger::dump("elimine:");
+                            //Debugger::dump($alicuota);
+                            unset($alicuotas[$a]);
+                            $ventas[$c][0]['cantalicuotas']--;
+                        }
+                    }                   
+                }
+            }
+        }
         foreach($ventas as $v => $venta ) {
             $totalVenta  = 0;
             $lineVenta = "";
@@ -67,6 +91,11 @@
             $lineVenta .= str_pad($venta["Puntosdeventa"]['nombre'], 5, "0", STR_PAD_LEFT);
             //        $lineVenta['comprobantenumero']=substr($line, 16,20);
             $trimNumComprobante = ltrim($venta['Venta']['numerocomprobante']," ");
+            if($trimNumComprobante*1==442){
+                /*Debugger::dump($venta[0]['totalfactura']);
+                Debugger::dump($venta['Venta']['excentos']);
+                Debugger::dump($venta[0]['excentos']);*/
+            }
             $lineVenta .= str_pad($trimNumComprobante, 20, "0", STR_PAD_LEFT);
             //        $lineVenta['comprobantenumerohasta']=substr($line, 36,20);
             $lineVenta .= str_pad($trimNumComprobante, 20, "0", STR_PAD_LEFT);
@@ -106,20 +135,20 @@
             //        $lineVenta['importetotaloperacion']=substr($line, 108,13).'.'.substr($line, 121, 2);
             $lineVenta .= str_pad(number_format($venta[0]['totalfactura'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             //        $lineVenta['importeconceptosprecionetogravado']=substr($line, 123,13).'.'.substr($line, 136, 2);
-            $lineVenta .= str_pad(number_format($venta['Venta']['nogravados'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+            $lineVenta .= str_pad(number_format($venta[0]['nogravados'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             //        $lineVenta['percepcionesnocategorizados']=substr($line, 138,13).'.'.substr($line, 151, 2);
-            $lineVenta .= str_pad(number_format($venta['Venta']['ivapercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+            $lineVenta .= str_pad(number_format($venta[0]['ivapercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             //        $lineVenta['importeoperacionesexentas']=substr($line, 153,13).'.'.substr($line, 166, 2);
-            $lineVenta .= str_pad(number_format($venta['Venta']['excentos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+            $lineVenta .= str_pad(number_format($venta[0]['excentos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             //        $lineVenta['importepercepcionespagosacuenta']=substr($line, 168,13).'.'.substr($line, 181, 2);
             $lineVenta .= str_pad(number_format(0, 2, "", ""), 15, "0", STR_PAD_LEFT);
             //Todo: Buscar importepercepcionespagosacuenta en ventas importar y recuperarlos al exportar
             //        $lineVenta['importeingresosbrutos']=substr($line, 183,13).'.'.substr($line, 196, 2);
-            $lineVenta .= str_pad(number_format($venta['Venta']['iibbpercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+            $lineVenta .= str_pad(number_format($venta[0]['iibbpercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             //        $lineVenta['importeimpuestosmunicipales']=substr($line, 198,13).'.'.substr($line, 211, 2);
-            $lineVenta .= str_pad(number_format($venta['Venta']['actvspercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+            $lineVenta .= str_pad(number_format($venta[0]['actvspercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             //        $lineVenta['importeimpuestosinternos']=substr($line, 213,13).'.'.substr($line, 223, 2);
-            $lineVenta .= str_pad(number_format($venta['Venta']['impinternos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
+            $lineVenta .= str_pad(number_format($venta[0]['impinternos'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             //        $lineVenta['codigomoneda']=substr($line, 228,3);
             $lineVenta .= str_pad("PES", 3, " ", STR_PAD_LEFT);
             //        $lineVenta['cambiotipo']=substr($line, 231,10);
@@ -159,7 +188,8 @@
 //            $lineAlicuota['puntodeventa'] = substr($line, 3, 5);
             $lineaAlicuota .= str_pad($alicuota['Puntosdeventa']['nombre'], 5, "0", STR_PAD_LEFT);
 //            $lineAlicuota['comprobantenumero'] = substr($line, 8, 20);
-            $lineaAlicuota .= str_pad($alicuota['Venta']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
+            $trimNumComprobante = ltrim($alicuota['Venta']['numerocomprobante']," ");
+            $lineaAlicuota .= str_pad($trimNumComprobante, 20, "0", STR_PAD_LEFT);
 //            $lineAlicuota['importenetogravado'] = substr($line, 50, 13).'.'.substr($line, 63, 2);
             $lineaAlicuota .= str_pad(number_format($alicuota['Venta']['neto'], 2, "", ""), 15, "0", STR_PAD_LEFT);
 

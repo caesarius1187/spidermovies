@@ -147,7 +147,7 @@ class ActividadclientesController extends AppController {
 			Eliminelas y luego intente borrar esta actividad.'));
 			return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $cliid));
 		}
-		if(count($actividadcliente['Encuadrealicuota'])>0){
+		/*if(count($actividadcliente['Encuadrealicuota'])>0){
 			$this->Session->setFlash(__('La Actividad del Cliente tiene Encuadre alicuotas de IIBB relacionados y por eso no se puede eliminar. 
 			Eliminelos y luego intente borrar esta actividad.'));
 			return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $cliid));
@@ -156,7 +156,7 @@ class ActividadclientesController extends AppController {
 			$this->Session->setFlash(__('La Actividad del Cliente tiene Cuentas de Ganancia y por eso no se puede eliminar. 
 			Eliminelas y luego intente borrar esta actividad.'));
 			return $this->redirect(array('controller'=>'clientes', 'action' => 'view', $cliid));
-		}
+		}*/
 
 		if ($this->Actividadcliente->delete()) {
 			$this->Session->setFlash(__('La Actividad del Cliente ha sido eliminada.'));

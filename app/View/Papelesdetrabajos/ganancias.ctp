@@ -7,7 +7,9 @@ echo $this->Html->script('table2excel',array('inline'=>false));
 echo $this->Html->script('jquery.dataTables.js',array('inline'=>false));
 echo $this->Html->script('dataTables.altEditor.js',array('inline'=>false));
 echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
-
+echo $this->Html->script('raphael.js',array('inline'=>false));
+echo $this->Html->script('progressStep.js',array('inline'=>false));
+echo $this->Html->css('progressbarstyle');
 
 /**
  * Created by PhpStorm.
@@ -23,6 +25,7 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         Contribuyente: <?php echo $cliente["Cliente"]['nombre'];
         echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);
         echo $this->Form->input('cliid',['type'=>'hidden','value'=>$cliente["Cliente"]['id']]);
+        echo $this->Form->input('impcliid',['type'=>'hidden','value'=>$cliente['Impcli'][0]['id']]);
         echo $this->Form->input('tienetercera',['type'=>'hidden','value'=>$tienetercera]);?>
     </div>
     <div style="width:25%; float: left;padding-top:11px">
@@ -80,46 +83,13 @@ echo $this->Html->script('papelesdetrabajos/ganancias',array('inline'=>false));
         }
         foreach($cliente['Impcli'][0]['Asiento'] as $asiento){
             $tieneasientodeganancias=true;
+            break;
         }
-        if($tieneasientodeApertura){
-            $buttonclass="buttonImpcliRealizado";
-        }else{
-            $buttonclass="buttonImpcliListo";
-        }
-         echo $this->Form->button(
-            'As. Apertura',
-            array(
-                'class'=>$buttonclass." progress-button state-loading",
-                'onClick'=>"contabilizarapertura(".$paramsPrepPapeles.")",
-                'id'=>'buttonAsApertura',
-            ),
-            array());
-        if($tieneasientodeexistenciafinal){
-            $buttonclass="buttonImpcliRealizado";
-        }else{
-            $buttonclass="buttonImpcliListo";
-        }
-         echo $this->Form->button(
-            'As. Existencia Final',
-            array(
-                'class'=>$buttonclass." progress-button state-loading",
-                'onClick'=>"contabilizarexistenciafinal(".$paramsPrepPapeles.")",
-                'id'=>'buttonAsExistenciaFinal',
-            ),
-        array());
-         if($tieneasientodeganancias){
-            $buttonclass="buttonImpcliRealizado";
-        }else{
-            $buttonclass="buttonImpcliListo";
-        }
-        echo $this->Form->button(
-            'As. Ganancias',
-            array(
-                'class'=>$buttonclass." progress-button state-loading",
-                'onClick'=>"contabilizarganancias(".$paramsPrepPapeles2.")",
-                'id'=>'buttonAsGanancias',
-            ),
-        array());?>
+        echo $this->Form->input('tieneasientodeApertura',['type'=>'hidden','value'=>$tieneasientodeApertura]);
+        echo $this->Form->input('tieneasientodeexistenciafinal',['type'=>'hidden','value'=>$tieneasientodeexistenciafinal]);
+        echo $this->Form->input('tieneasientodeGanancias',['type'=>'hidden','value'=>$tieneasientodeganancias]);?>
+        
+        <div id="progressBar" style="width: 200px;height: 65px;padding: 5px 5px;float:left;"></div>
     </div>
 </div>
 <div style="width:100%; height:30px; margin-left: 11px;"  class="Formhead noExl" id="divTabs" >

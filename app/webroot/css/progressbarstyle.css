@@ -1,0 +1,18 @@
+p {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: lighter;
+}
+
+button {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.0em;    
+}
+
+div#progressBar {
+    width: 350px; 
+    height: 100px;
+}
+
+svg {
+    padding: 2px 8px;
+}
