@@ -316,6 +316,29 @@ class EmpleadosController extends AppController {
             $pemes = substr($periodo, 0, 2);
             $peanio = substr($periodo, 3);
         }	
+        public function deletefile($name=null,$cliid=null,$folder=null){
+		App::uses('Folder', 'Utility');
+		App::uses('File', 'Utility');
+		$file = WWW_ROOT.'files'.DS.'empleados'.DS.$cliid.DS.$folder.DS.$name;
+		chmod($file, 0777);
+		if( is_file( $file ) AND is_readable( $file ) ){
+			if(unlink($file)){
+				$this->Session->setFlash(__('El Archivo ha sido eliminado.File:'.$file.fileperms ($file)));
+			}else{
+				$this->Session->setFlash(__('El Archivo NO ha sido eliminado.Por favor nuevamente intente mas tarde.'.$file.fileperms ($file)));
+			}
+		}else{
+			$this->Session->setFlash(__('No se puede acceder al archivo'.$file));
+		}
+		return $this->redirect(
+			array(
+				'controller'=>'empleados',
+				'action' => 'importacion',
+				$cliid,
+			)
+		);
+	}
+	
     public function view($id = null) {
             if (!$this->Empleado->exists($id)) {
                     throw new NotFoundException(__('Invalid empleado'));
@@ -416,49 +439,49 @@ class EmpleadosController extends AppController {
                         $numeroliquidacion = 7;
                         break;
 		}
-		$optionsempleados = array(
-                    'contain'=>array(
-                        'Cargo',
-                        'Conveniocolectivotrabajo'=>array(
-                            'Cctxconcepto'=>array(
-                                'Concepto',
-                                'Valorrecibo'=>array(
-                                    'conditions'=>array(
-                                            'Valorrecibo.empleado_id'=>$empleadoamostrar,
-                                            'Valorrecibo.tipoliquidacion'=>$numeroliquidacion,
-                                            'Valorrecibo.periodo'=>$periodo,
-                                    )
-                                ),
+            $optionsempleados = array(
+                'contain'=>array(
+                    'Cargo',
+                    'Conveniocolectivotrabajo'=>array(
+                        'Cctxconcepto'=>array(
+                            'Concepto',
+                            'Valorrecibo'=>array(
                                 'conditions'=>array(
-                                    'OR'=>array(
-                                            'AND'=>array(
-                                                    'Cctxconcepto.cliente_id' => $cliid,
-                                                    'Cctxconcepto.campopersonalizado' => 1,
-                                            ),
-                                            'Cctxconcepto.campopersonalizado' => 0,
-                                    ),
-                                ),
-                                'order'=>array('Cctxconcepto.orden'),
+                                        'Valorrecibo.empleado_id'=>$empleadoamostrar,
+                                        'Valorrecibo.tipoliquidacion'=>$numeroliquidacion,
+                                        'Valorrecibo.periodo'=>$periodo,
+                                )
                             ),
-                            'Impuesto'=>[
-                                'Impcli'=>[
-                                        'conditions'=>[
-                                                'Impcli.cliente_id'=>$cliid
-                                        ]
-                                ]
-                            ],
+                            'conditions'=>array(
+                                'OR'=>array(
+                                        'AND'=>array(
+                                                'Cctxconcepto.cliente_id' => $cliid,
+                                                'Cctxconcepto.campopersonalizado' => 1,
+                                        ),
+                                        'Cctxconcepto.campopersonalizado' => 0,
+                                ),
+                            ),
+                            'order'=>array('Cctxconcepto.orden'),
                         ),
+                        'Impuesto'=>[
+                            'Impcli'=>[
+                                    'conditions'=>[
+                                            'Impcli.cliente_id'=>$cliid
+                                    ]
+                            ]
+                        ],
                     ),
-                    'conditions' => array(
-                            'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
-                    )
-		);
-		$optionsempleados['conditions']=[
-                    'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
-                    $conditionLiquidacion,
-		];
-		$empleado = $this->Empleado->find('first', $optionsempleados);
-		/*
+                ),
+                'conditions' => array(
+                        'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
+                )
+            );
+            $optionsempleados['conditions']=[
+                'Empleado.' . $this->Empleado->primaryKey => $empleadoamostrar,
+                $conditionLiquidacion,
+            ];
+            $empleado = $this->Empleado->find('first', $optionsempleados);
+            /*
          * Primero vamos a ordenar los cctxconcepto en base a la seccion a la que pertenece
          * */
         $this->set('empleadobeforeorden',$empleado);
@@ -643,6 +666,8 @@ class EmpleadosController extends AppController {
             } 
         }
         $this->set(compact('empleado','mayorRemunerativo','mayorNORemunerativo','tipoliquidacion','numeroliquidacion','tieneLiquidacion'));
+        $this->set('codigorevista',$this->Empleado->codigorevista);
+
         $this->autoRender=false;
         if($this->RequestHandler->isAjax()){
             $this->layout = 'ajax';
@@ -965,85 +990,221 @@ class EmpleadosController extends AppController {
             return;
     }
     public function edit($id = null) {
-            $this->loadModel('Domicilio');
-            $this->loadModel('Conveniocolectivotrabajo');
-            $this->loadModel('Cargo');
-            $this->loadModel('Impuesto');
-            $this->loadModel('Localidade');
-            $this->loadModel('Obrassociale');
-            if (!$this->Empleado->exists($id)) {
-                    throw new NotFoundException(__('Invalid empleado'));
-            }
-            $options = array('conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
-            $this->request->data = $this->Empleado->find('first', $options);
+        $this->loadModel('Domicilio');
+        $this->loadModel('Conveniocolectivotrabajo');
+        $this->loadModel('Cargo');
+        $this->loadModel('Impuesto');
+        $this->loadModel('Localidade');
+        $this->loadModel('Obrassociale');
+        if (!$this->Empleado->exists($id)) {
+                throw new NotFoundException(__('Invalid empleado'));
+        }
+        $options = array('conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
+        $this->request->data = $this->Empleado->find('first', $options);
 
-            $this->set(compact('cliid'));
+        $this->set(compact('cliid'));
 
-            $optionsDomic = array(
-                    'conditions' => array('Domicilio.cliente_id' => $this->request->data['Empleado']['cliente_id'])
-            );
-            $domicilios = $this->Domicilio->find('list',$optionsDomic);
-            $this->set('domicilios', $domicilios);
+        $optionsDomic = array(
+                'conditions' => array('Domicilio.cliente_id' => $this->request->data['Empleado']['cliente_id'])
+        );
+        $domicilios = $this->Domicilio->find('list',$optionsDomic);
+        $this->set('domicilios', $domicilios);
 
-            $conveniocolectivotrabajos = $this->Conveniocolectivotrabajo->find('list');
-            $this->set('conveniocolectivotrabajos', $conveniocolectivotrabajos);
+        $conveniocolectivotrabajos = $this->Conveniocolectivotrabajo->find('list');
+        $this->set('conveniocolectivotrabajos', $conveniocolectivotrabajos);
 
-            $this->set('cargos',$this->Cargo->find('list',[
-                            'contain'=>[
-                                    'Conveniocolectivotrabajo'
-                            ],
-                            'fields'=>[
-                                    'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
-                            ]
+        $this->set('cargos',$this->Cargo->find('list',[
+                        'contain'=>[
+                                'Conveniocolectivotrabajo'
+                        ],
+                        'fields'=>[
+                                'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
+                        ]
+                ]
+        )
+        );
+
+        //aca vamos a setiar las listas que se necesita para cargar empleados
+        $this->set('codigorevista',$this->Empleado->codigorevista);
+        $this->set('codigocondicion',$this->Empleado->codigocondicion);
+        $this->set('codigoactividad',$this->Empleado->codigoactividad);
+        $this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
+        $this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
+        $this->set('tipoempresa',$this->Empleado->tipoempresa);
+        $this->set('codigozona',$this->Empleado->codigozona);
+        $this->set('cargos',$this->Cargo->find('list',[
+                        'contain'=>[
+                                'Conveniocolectivotrabajo'
+                        ],
+                        'fields'=>[
+                                'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
+                        ]
+                ]
+        )
+        );
+        $bancosOptions = array(
+                'conditions' => array(
+                        'Impuesto.organismo'=> 'banco'
+                ),
+        );
+        $bancos=$this->Impuesto->find('list',$bancosOptions);
+        $this->set('bancos', $bancos);
+
+        $optionsLoc = array(
+                'contain'=>array('Partido'),
+                'conditions' => array( ),
+                'fields'=> array('Localidade.id','Localidade.nombre','Partido.nombre'),
+                'order'=>array('Partido.nombre','Localidade.nombre')
+        );
+
+        $localidades = $this->Localidade->find('list',$optionsLoc);
+        $this->set('localidades', $localidades);
+        $optionsOS = [];
+        $obrassociales = $this->Obrassociale->find('list',$optionsOS);
+        $this->set('obrassociales', $obrassociales);
+        $this->autoRender=false;
+        if($this->RequestHandler->isAjax()){
+            $this->layout = 'ajax';
+        }
+        $this->autoRender=false;
+
+        $this->render('edit');
+    }
+    public function importacion($cliid = null) {
+        set_time_limit (360);
+//		ini_set('memory_limit', '2560M');
+        App::uses('Folder', 'Utility');
+        App::uses('File', 'Utility');
+        $this->loadModel('Domicilio');
+        $this->loadModel('Conveniocolectivotrabajo');
+        $this->loadModel('Cargo');
+        $this->loadModel('Impuesto');
+        $this->loadModel('Localidade');
+        $this->loadModel('Obrassociale');
+        $this->loadModel('Cliente');
+        
+        
+        $folderEmpleados = WWW_ROOT.'files'.DS.'empleados'.DS.$cliid.DS.'empleados';
+        if ($this->request->is('post')) {
+                $folderEmpleados = WWW_ROOT.'files'.DS.'empleados'.DS.$this->request->data['Empleado']['cliid'].DS.'empleados';
+                $fileNameEmpleado = null;
+                $tmpNameEmpleado= $this->request->data['Empleado']['archivoempleado']['tmp_name'];
+                if (!empty($tmpNameEmpleado)&& is_uploaded_file($tmpNameEmpleado)) {
+                    // Strip path information
+                    $fileNameEmpleado = $this->request->data['Empleado']['archivoempleado']['name'];
+                    move_uploaded_file($tmpNameEmpleado, $folderEmpleados.DS.$fileNameEmpleado);
+                }                
+        }
+        $optionsCliente = [
+            'contain'=>[],
+            'conditions' => [
+                'Cliente.id' => $cliid
+                ]
+            ];
+        $cliente = $this->Cliente->find('first', $optionsCliente);
+        
+        $options = [
+            'conditions' => [
+                'Empleado.cliente_id' => $cliid
+                ]
+            ];
+        $empleados = $this->Empleado->find('all', $options);
+
+        $this->set(compact('cliid','empleados','cliente','folderEmpleados'));
+
+        $optionsDomic = [
+            'conditions' => [
+               'Domicilio.cliente_id' => $cliid
+            ]
+        ];
+        $domicilios = $this->Domicilio->find('list',$optionsDomic);
+        $this->set('domicilios', $domicilios);
+
+        $conveniocolectivotrabajos = $this->Conveniocolectivotrabajo->find('list');
+        $this->set('conveniocolectivotrabajos', $conveniocolectivotrabajos);
+
+        $this->set('cargos',$this->Cargo->find('list',[
+                    'contain'=>[
+                        'Conveniocolectivotrabajo'
+                    ],
+                    'fields'=>[
+                        'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
                     ]
+                ]
             )
-            );
+        );
 
-            //aca vamos a setiar las listas que se necesita para cargar empleados
-            $this->set('codigorevista',$this->Empleado->codigorevista);
-            $this->set('codigocondicion',$this->Empleado->codigocondicion);
-            $this->set('codigoactividad',$this->Empleado->codigoactividad);
-            $this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
-            $this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
-            $this->set('tipoempresa',$this->Empleado->tipoempresa);
-            $this->set('codigozona',$this->Empleado->codigozona);
-            $this->set('cargos',$this->Cargo->find('list',[
-                            'contain'=>[
-                                    'Conveniocolectivotrabajo'
-                            ],
-                            'fields'=>[
-                                    'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
-                            ]
+        //aca vamos a setiar las listas que se necesita para cargar empleados
+        $this->set('codigorevista',$this->Empleado->codigorevista);
+        $this->set('codigocondicion',$this->Empleado->codigocondicion);
+        $this->set('codigoactividad',$this->Empleado->codigoactividad);
+        $this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
+        $this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
+        $this->set('tipoempresa',$this->Empleado->tipoempresa);
+        $this->set('codigozona',$this->Empleado->codigozona);
+        $this->set('cargos',$this->Cargo->find('list',[
+                    'contain'=>[
+                        'Conveniocolectivotrabajo'
+                    ],
+                    'fields'=>[
+                        'Cargo.id','Cargo.nombre','Conveniocolectivotrabajo.nombre'
                     ]
+                ]
             )
-            );
-            $bancosOptions = array(
-                    'conditions' => array(
-                            'Impuesto.organismo'=> 'banco'
-                    ),
-            );
-            $bancos=$this->Impuesto->find('list',$bancosOptions);
-            $this->set('bancos', $bancos);
+        );
+        $bancosOptions = array(
+            'conditions' => array(
+                'Impuesto.organismo'=> 'banco'
+            ),
+        );
+        $bancos=$this->Impuesto->find('list',$bancosOptions);
+        $this->set('bancos', $bancos);
 
-            $optionsLoc = array(
-                    'contain'=>array('Partido'),
-                    'conditions' => array( ),
-                    'fields'=> array('Localidade.id','Localidade.nombre','Partido.nombre'),
-                    'order'=>array('Partido.nombre','Localidade.nombre')
-            );
+        $optionsLoc = array(
+            'contain'=>array('Partido'),
+            'conditions' => array( ),
+            'fields'=> array('Localidade.id','Localidade.nombre','Partido.nombre'),
+            'order'=>array('Partido.nombre','Localidade.nombre')
+        );
 
-            $localidades = $this->Localidade->find('list',$optionsLoc);
-            $this->set('localidades', $localidades);
-            $optionsOS = [];
-            $obrassociales = $this->Obrassociale->find('list',$optionsOS);
-            $this->set('obrassociales', $obrassociales);
-            $this->autoRender=false;
-            if($this->RequestHandler->isAjax()){
-                $this->layout = 'ajax';
+        $localidades = $this->Localidade->find('list',$optionsLoc);
+        $this->set('localidades', $localidades);
+        $optionsOS = [];
+        $obrassociales = $this->Obrassociale->find('list',$optionsOS);
+        $this->set('obrassociales', $obrassociales);
+        if($this->RequestHandler->isAjax()){
+            $this->layout = 'ajax';
+        }
+    }
+    public function cargarempleados(){
+        $data=array();
+        if ($this->request->is('post')) {
+            $params = array();
+            $myParser = new ParserUnlimited();
+            //Debugger::dump($this->request->data);
+            $myParser->my_parse_str($this->request->data['Empleado'][0]['jsonencript'],$params);
+            $data['respuesta'] = '';
+            foreach ($params['data']['Empleado'] as $k => $miempleado){
+                $mifecha1 = $miempleado['fechaingreso'];
+                $params['data']['Empleado'][$k]['fechaingreso'] = ($mifecha1!="")?date('Y-m-d',strtotime($mifecha1)):"";
+                $mifecha2 = $miempleado['fechaalta'];
+                $params['data']['Empleado'][$k]['fechaalta'] = ($mifecha2!="")?date('Y-m-d',strtotime($mifecha2)):"";
+                $mifecha3 = $miempleado['fechaegreso'];
+                $params['data']['Empleado'][$k]['fechaegreso'] = ($mifecha3!="")?date('Y-m-d',strtotime($mifecha3)):"";              
+           }
+            $this->Empleado->create();
+            if ($this->Empleado->saveAll($params['data']['Empleado'])) {
+            //if (1==1) {
+                $data['respuesta'] .= 'Los Empleados han sido guardados.';
+            } else {
+                $data['respuesta'] .= 'Error al guardar los Empleados, por favor intende de nuevo mas tarde.';
             }
-            $this->autoRender=false;
-            
-            $this->render('edit');
+        } else {
+            $data['respuesta'] = 'acceso denegado';
+        }
+        $this->layout = 'ajax';
+        $this->set('data', $data);
+        $this->render('serializejson');
     }
     public function delete($id = null) {
 		$id = substr($id,0, -5);

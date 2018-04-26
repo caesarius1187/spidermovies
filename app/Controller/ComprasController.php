@@ -587,14 +587,14 @@ class ComprasController extends AppController {
 		$this->set('tipocreditos', $this->tipocreditos);
 		$this->set('imputaciones', $this->imputaciones);
 
-        $optionsTipoGastos=array(
-			'conditions'=>array(
-						'Tipogasto.tipo'=>'compras'),
-			'fields'=>array('id','nombre','categoria'),
-			'contain'=>[],
-        );
-        $tipogastos = $this->Compra->Tipogasto->find('list',$optionsTipoGastos);
-        $this->set('tipogastos', $tipogastos);
+                $optionsTipoGastos=array(
+                                'conditions'=>array(
+                                                        'Tipogasto.tipo'=>'compras'),
+                                'fields'=>array('id','nombre','categoria'),
+                                'contain'=>[],
+                );
+                $tipogastos = $this->Compra->Tipogasto->find('list',$optionsTipoGastos);
+                $this->set('tipogastos', $tipogastos);
 
 		$clienteActividadList=$this->Actividadcliente->find('list', array(
 				'contain' => array(
@@ -650,53 +650,52 @@ class ComprasController extends AppController {
 		$this->set('comprasperiodo',$comprasperiodo);
 	}
 	public function cargarcompras(){
-		$data=array();
-		if ($this->request->is('post')) {
-			$params = array();
-			$myParser = new ParserUnlimited();
-            //Debugger::dump($this->request->data);
-            $myParser->my_parse_str($this->request->data['Compra'][0]['jsonencript'],$params);
-			$data['respuesta'] = '';
-			$data['comprasyacargadas'] = '';
-			foreach ($params['data']['Compra'] as $k => $micompra){
-                $mifecha = $micompra['fecha'];
-                $params['data']['Compra'][$k]['fecha'] = date('Y-m-d',strtotime($mifecha));
+            $data=array();
+            if ($this->request->is('post')) {
+                $params = array();
+                $myParser = new ParserUnlimited();
+                //Debugger::dump($this->request->data);
+                $myParser->my_parse_str($this->request->data['Compra'][0]['jsonencript'],$params);
+                $data['respuesta'] = '';
+                $data['comprasyacargadas'] = '';
+                foreach ($params['data']['Compra'] as $k => $micompra){
+                    $mifecha = $micompra['fecha'];
+                    $params['data']['Compra'][$k]['fecha'] = date('Y-m-d',strtotime($mifecha));
 
-				//vamos a recorrer las compras que estamos importanto para ver si no las estamos repitiendo
-				$optionsCompra = array(
-					'Compra.cliente_id'=>$params['data']['Compra'][$k]['cliente_id'],
-					'Compra.comprobante_id'=>$params['data']['Compra'][$k]['comprobante_id'],
-					'Compra.puntosdeventa*1 = '.$params['data']['Compra'][$k]['puntosdeventa']*1,
-					'Compra.numerocomprobante*1 = '.$params['data']['Compra'][$k]['numerocomprobante']*1,
-					'Compra.alicuota'=>$params['data']['Compra'][$k]['alicuota'],
-					'Compra.provedore_id'=>$params['data']['Compra'][$k]['provedore_id'],
-				);
-				$compraAnterior = $this->Compra->hasAny($optionsCompra);
-
-				if($compraAnterior){
-					$data ["comprasyacargadas" ].="La Compra ".$params['data']['Compra'][$k]['numerocomprobante']
+                    //vamos a recorrer las compras que estamos importanto para ver si no las estamos repitiendo
+                    $optionsCompra = array(
+                            'Compra.cliente_id'=>$params['data']['Compra'][$k]['cliente_id'],
+                            'Compra.comprobante_id'=>$params['data']['Compra'][$k]['comprobante_id'],
+                            'Compra.puntosdeventa*1 = '.$params['data']['Compra'][$k]['puntosdeventa']*1,
+                            'Compra.numerocomprobante*1 = '.$params['data']['Compra'][$k]['numerocomprobante']*1,
+                            'Compra.alicuota'=>$params['data']['Compra'][$k]['alicuota'],
+                            'Compra.provedore_id'=>$params['data']['Compra'][$k]['provedore_id'],
+                    );
+                    $compraAnterior = $this->Compra->hasAny($optionsCompra);
+                    if($compraAnterior){
+                        $data ["comprasyacargadas" ].="La Compra ".$params['data']['Compra'][$k]['numerocomprobante']
                         ." ya ha sido creada. Por favor cambie el numero de comprobante o la alicuota.";
-					unset($params['data']['Compra'][$k]);
-				}
-            }
-            if($data ["comprasyacargadas" ]!="")
-                $this->Session->setFlash($data ["comprasyacargadas" ]);
+                         unset($params['data']['Compra'][$k]);
+                    }
+               }
+                if($data ["comprasyacargadas" ]!="")
+                    $this->Session->setFlash($data ["comprasyacargadas" ]);
 
-            $this->Compra->create();
-            if ($this->Compra->saveAll($params['data']['Compra'])) {
-            //if (1==1) {
+                $this->Compra->create();
+                if ($this->Compra->saveAll($params['data']['Compra'])) {
+                //if (1==1) {
                     $data['respuesta'] .= 'Las Compras han sido guardadas.';
                 } else {
                     $data['respuesta'] .= 'Error al guardar compras, por favor intende de nuevo mas tarde.';
                 }
-		}else{
-			$data['respuesta'] = 'acceso denegado';
-		}
-		$this->layout = 'ajax';
-		$this->set('data', $data);
-		$this->render('serializejson');
-		//return $this->redirect(array('controller'=>'compras', 'action' => 'importar',$this->request->data['Compra'][0]['cliente_id'],$this->request->data['Compra'][0]['periodo']));
-	}
+            }else{
+                    $data['respuesta'] = 'acceso denegado';
+            }
+            $this->layout = 'ajax';
+            $this->set('data', $data);
+            $this->render('serializejson');
+            //return $this->redirect(array('controller'=>'compras', 'action' => 'importar',$this->request->data['Compra'][0]['cliente_id'],$this->request->data['Compra'][0]['periodo']));
+        }
 	public function deletefile($name=null,$cliid=null,$folder=null,$periodo=null){
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');

@@ -319,6 +319,12 @@ class PapelesdetrabajosController extends AppController {
                                     'Liquidaciondetalle.periodo'=>$peanio
                                 ]
                             ],
+                            'Asiento'=>[
+                                'conditions'=>[
+                                    'Asiento.periodo'=>$periodo,
+                                    'Asiento.cliente_id'=>$clienteid
+                                ]
+                            ],
                             'Ajustescontable',
                             'conditions'=>[
                                 'Impcli.impuesto_id'=>5
@@ -372,7 +378,8 @@ class PapelesdetrabajosController extends AppController {
             //$fechaFinConsulta = $fechaFinConsulta;
             $this->set('fechaInicioConsulta',$fechaInicioConsulta);
             $this->set('fechaFinConsulta',$fechaFinConsulta);
-
+            $periodoInicioActual =  date('m-Y', strtotime($fechaInicioConsulta));
+            $periodoInicioPrevio =  date('m-Y', strtotime($fechaInicioConsulta." -1 Years"));
 
             $optionCliente = [
                 'contain' => [
@@ -392,6 +399,11 @@ class PapelesdetrabajosController extends AppController {
                         'Amortizacione'
                     ],
                     'Cuenta',
+                    'Anexogasto'=>[
+                        'conditions'=>[
+                             'Anexogasto.periodo'=>[$periodoInicioActual,$periodoInicioPrevio]
+                        ]
+                    ],
                     'Movimiento'=>[
                             'Asiento'=>[
                                     'fields'=>['id','fecha','tipoasiento']
@@ -416,6 +428,8 @@ class PapelesdetrabajosController extends AppController {
             $this->set('cliente',$micliente);
             $this->set('user',$user);
             $this->set('periodo',$periodo);
+            $this->set('periodoInicioActual',$periodoInicioActual);
+            $this->set('periodoInicioPrevio',$periodoInicioPrevio);
             //vamos a llevar la lista de asientos realizados para saber que hacientos se hicieron
             $optionAsiento = [
                 'contain' => [
@@ -560,7 +574,7 @@ class PapelesdetrabajosController extends AppController {
                     'Localidade'=>['Partido']
                 ],
                 'Cbu',
-                'Cuenta',
+                'Cuenta',                
                 'Bienespersonale'=>[
                     'conditions'=>[
                          'Bienespersonale.periodo'=>$periodo

@@ -21,7 +21,7 @@ class CuentasController extends AppController {
 	public function view($ClienteId) 
 	{
         set_time_limit (360);
-        $this->Components->unload('DebugKit.Toolbar');
+        //$this->Components->unload('DebugKit.Toolbar');
         $options = array(
 			'contain'=>[],
 			'fields'=> [

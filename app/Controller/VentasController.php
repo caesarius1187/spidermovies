@@ -950,7 +950,16 @@ class VentasController extends AppController {
 
 		$conditionsVentas = [
 			'fields'=>[
-				'Venta.*','Count(*) as cantalicuotas','SUM(Venta.total) as totalfactura','Venta.total','Venta.alicuota'
+                            'Venta.*','Count(*) as cantalicuotas',
+                            'SUM(Venta.total) as totalfactura',
+                            'SUM(Venta.excentos) as excentos',
+                            'SUM(Venta.nogravados) as nogravados',
+                            'SUM(Venta.ivapercep) as ivapercep',
+                            'SUM(Venta.iibbpercep) as iibbpercep',
+                            'SUM(Venta.actvspercep) as actvspercep',
+                            'SUM(Venta.impinternos) as impinternos',
+                            'Venta.total',
+                            'Venta.alicuota',
 			],
 			'group'=>[
 				'Venta.puntosdeventa_id',

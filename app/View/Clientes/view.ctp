@@ -1137,6 +1137,13 @@ if($mostrarView){?>
         </tr>
         <tr class="rowheaderempleados" style="display: none/*inicialmente no se muestra*/">
             <td class="empleado">
+                <a href="#"  onclick="loadFormImportarEmpleado(<?php echo $cliente['Cliente']['id']?>)" class="button_view">
+                <?php echo $this->Html->image('importar.png', array(
+                'alt' => 'importar',
+                'title'=>'Importar empleados desde la web de la AFip',
+                'class'=>'img_add',
+                ));?>
+                </a>
                 <table id="relatedEmpleados" class="tbl_related">
                     <thead>
                     <tr class="empleado">
@@ -2213,7 +2220,7 @@ if($mostrarView){?>
                     'title'=>'Indicar si el empleado tiene una obra social que no sea sindical'));
                 echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad,'class'=>'chosen-select',));
                 echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion','options'=>$codigorevista,'class'=>'chosen-select',));
-                echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion','options'=>$codigoactividad,'class'=>'chosen-select',));
+                echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion','options'=>$codigocondicion,'class'=>'chosen-select',));
                 echo $this->Form->input('codigozona',array('label'=>'Codigo Zona','options'=>$codigozona,'class'=>'chosen-select',));
                 echo $this->Form->input('codigomodalidadcontratacion',array('label'=>'Codigo Modalidad Contratacion','options'=>$codigomodalidadcontratacion,'class'=>'chosen-select',));
                 echo $this->Form->input('codigosiniestrado',array('label'=>'Codigo Siniestrado','options'=>$codigosiniestrado,'class'=>'chosen-select',));

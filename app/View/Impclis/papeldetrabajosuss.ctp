@@ -82,6 +82,14 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $miempleado['premios'] = 0;
                 $miempleado['maternidad'] = 0;
                 $miempleado['conceptosnorem'] = 0;
+                
+                $miempleado['situacionrevista1'] = 01;                             
+                $miempleado['situacionrevista2'] = 00;                             
+                $miempleado['situacionrevista3'] = 00;      
+                $miempleado['diasituacionrevista1'] = 01;      
+                $miempleado['diasituacionrevista2'] = 00;      
+                $miempleado['diasituacionrevista3'] = 00;      
+                
                 $miempleado['remtotal'] = 0;
                 $miempleado['rem1'] = 0;
                 $miempleado['titleRem10'] = 0;
@@ -152,6 +160,14 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             $vacaciones=0;
             $diasvacaciones=0;
             $premios=0;$maternidad=0;$conceptosnorem=0;
+            
+            $situacionrevista1=01;
+            $situacionrevista2=01;
+            $situacionrevista3=01;
+            $diasituacionrevista1=01;
+            $diasituacionrevista2=00;
+            $diasituacionrevista3=00;
+            
             $remtotal=0;$rem1=0;$rem2=0;$rem3=0;$rem4=0;
             $rem5=0;$rem6=0;$rem7=0;$rem8=0;$rem9=0;
             $rem10=0;
@@ -343,6 +359,51 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         '13'/*Vacaciones*/,//                     
                     ], true )){
                     $diasvacaciones += $valorrecibo['valor'];
+                }
+                //Situacion Revista 1
+                if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    [
+                        '190'/*Situacion revista 1*/,//                     
+                    ], true )){
+                    if(!is_null($valorrecibo['valor'])&&$valorrecibo['valor']!=""&&$valorrecibo['valor']!="01")
+                        $situacionrevista1 += $valorrecibo['valor'];
+                }
+                //Situacion Revista 2
+                if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    [
+                        '192'/*Situacion revista 2*/,//                     
+                    ], true )){
+                    if(!is_null($valorrecibo['valor'])&&$valorrecibo['valor']!=""&&$valorrecibo['valor']!="01")
+                        $situacionrevista2 += $valorrecibo['valor'];
+                }
+                //Situacion Revista 3
+                if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    [
+                        '194'/*Situacion revista 3*/,//                     
+                    ], true )){
+                    if(!is_null($valorrecibo['valor'])&&$valorrecibo['valor']!=""&&$valorrecibo['valor']!="01")
+                        $situacionrevista3 += $valorrecibo['valor'];
+                }
+                //Dia Situacion Revista 1
+                if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    [
+                        '191'/*Situacion revista 1*/,//                     
+                    ], true )){
+                    $diasituacionrevista1 += $valorrecibo['valor'];
+                }
+                //Dia Situacion Revista 2
+                if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    [
+                        '193'/*Situacion revista 2*/,//                     
+                    ], true )){
+                    $diasituacionrevista2 += $valorrecibo['valor'];
+                }
+                //Dia Situacion Revista 3
+                if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
+                    [
+                        '195'/*Situacion revista 3*/,//                     
+                    ], true )){
+                    $diasituacionrevista3 += $valorrecibo['valor'];
                 }
                 //Premios
                 if (in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
@@ -789,6 +850,14 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             $miempleado['importehorasextras']=$importehorasextras;
             $miempleado['SAC']=$SAC;
             $miempleado['vacaciones']=$vacaciones;
+            
+            $miempleado['situacionrevista1']=$situacionrevista1;            
+            $miempleado['situacionrevista2']=$situacionrevista2;            
+            $miempleado['situacionrevista3']=$situacionrevista3;            
+            $miempleado['diasituacionrevista1']=$diasituacionrevista1;            
+            $miempleado['diasituacionrevista2']=$diasituacionrevista2;            
+            $miempleado['diasituacionrevista3']=$diasituacionrevista3;            
+            
             $miempleado['premios']=$premios;
             $miempleado['maternidad']=$maternidad;
             $miempleado['conceptosnorem']=$conceptosnorem;
@@ -801,8 +870,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             $miempleado['titlerem4']=$titlerem4;
             $miempleado['rem4']=$rem4;
             $miempleado['rem5']=$rem1;
-            $miempleado['rem6']=$rem1;
-            $miempleado['rem7']=$rem1;
+            $miempleado['rem6']=0;//algunos regimenes especiales deben darle valor a este campo
+            $miempleado['rem7']=0;//pero de todas formas no se usa para calcular naada
             $miempleado['rem8']=$rem4;
             $miempleado['rem9']=$rem9;
             $miempleado['rem10']=$rem10;
@@ -1831,7 +1900,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //2 nombre 12 - 30
                 $lineaEmpleado .= str_pad($empleado['nombre'], 30, " ", STR_PAD_RIGHT);
                 //3conyugue  42 - 1
-                $lineaEmpleado .= str_pad(($empleado['conyugue']==1)?"T":"N", 1, " ", STR_PAD_RIGHT);
+                $lineaEmpleado .= ($empleado['conyugue']==1)?"1":"0";
                 //4cantidad hijos  43 - 2
                 $lineaEmpleado .= str_pad($empleado['hijos'], 2, "0", STR_PAD_LEFT);
                 //5Codigo situacion  45 - 2
@@ -1846,7 +1915,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 5, " ", STR_PAD_LEFT);
                 //10codigo de modalidad de contratacion  59 - 3
                 $lineaEmpleado .= str_pad($empleado['codigomodalidadcontratacion'], 3, "0", STR_PAD_LEFT);
-                //11codigo de obra social 62 - 6
+                //11codigo de obra social 62 - 6               
                 if(isset($empleado['Obrassociale']['codigo'])){
                     $lineaEmpleado .= str_pad($empleado['Obrassociale']['codigo'], 6, "0", STR_PAD_LEFT);
                 }else{
@@ -1867,9 +1936,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //17Importe adicional OS 112 - 9
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['obrasocialcontribucionadicional'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //18Importe Excedentes Aporte SS 121 - 9
-                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['ley19032'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //19Importe Excedentes Aporte OS 130 - 9
-                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);               
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['obrasocialaporteadicional'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //20Provincia Localidad 139 - 50
                 if(isset($empleado['Domicilio'])){
                     $lineaEmpleado .= str_pad($empleado['Domicilio']['Localidade']['Partido']['nombre']." - ".$empleado['Domicilio']['Localidade']['nombre'] , 50, " ", STR_PAD_RIGHT);                
@@ -1895,28 +1964,28 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $lineaEmpleado .= str_pad(1, 1, " ", STR_PAD_LEFT);
                  /*Completar*/
                 //28Aporte adicional de obra social 238 - 9
-                $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['obrasocialaporteadicional'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 /*Completar*/
                 //29Regimen 247 - 1
                 $lineaEmpleado .= str_pad(0, 1, " ", STR_PAD_LEFT);
                 /*Completar*/
                 //30Situacion de Revista 1 248 - 2
-                $lineaEmpleado .= str_pad($empleado['codigosituacion'], 2, " ", STR_PAD_LEFT);
-                /*Completar*/
+                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['situacionrevista1'], 2, "0", STR_PAD_LEFT);
+                /*Situacion Revista se carga en las liquidaciones y si no existen se pone el standar*/
                 //31Dia Inicio de Revista 1 250 - 2
-                $lineaEmpleado .= str_pad('01', 2, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['diasituacionrevista1'], 2, "0", STR_PAD_LEFT);
                 /*Completar*/
                 //32Situacion de Revista 2 252 - 2
-                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['situacionrevista2'], 2, "0", STR_PAD_LEFT);
                 /*Completar*/
                 //33Dia Inicio de Revista 2 254 - 2
-                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['diasituacionrevista2'], 2, "0", STR_PAD_LEFT);
                 /*Completar*/
                 //34Situacion de Revista 3 256 - 2
-                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['situacionrevista3'], 2, "0", STR_PAD_LEFT);
                 /*Completar*/
                 //35Dia Inicio de Revista 3 258 - 2
-                $lineaEmpleado .= str_pad(0, 2, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['diasituacionrevista3'], 2, "0", STR_PAD_LEFT);
                 //36Sueldo + Adicionales 260 - 12
                 $sueldoAMostrar = $empleadoDatos[$empleadoid]['sueldo'];
                 if($empleadoDatos[$empleadoid]['diadelgremiotrabajado']==0){
@@ -1926,7 +1995,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 if($empleadoDatos[$empleadoid]['diadelgremiotrabajado']==1){
                     $adicionalesAMostrar += $empleadoDatos[$empleadoid]['diadelgremio'];
                 }
-                $sueldoMasAdicional = $sueldoAMostrar+$adicionalesAMostrar;
+                $sueldoMasAdicional = $sueldoAMostrar/*+$adicionalesAMostrar*/;
                 $lineaEmpleado .= str_pad(number_format($sueldoMasAdicional, 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 //37SAC 272 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['SAC'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
@@ -1938,12 +2007,16 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //40Vacaciones 308 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['vacaciones'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 //41Cantidad de dias trabajados 320 - 9
-                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['horasDias'], 2, ",", ""), 9, " ", STR_PAD_LEFT);                
+                $diasTrabajados = 0;
+                if($empleado['Cargo']['formapago']=='dia'){
+                    $diasTrabajados = $empleadoDatos[$empleadoid]['horasDias'];
+                }                
+                $lineaEmpleado .= str_pad(number_format($diasTrabajados, 2, ",", ""), 9, " ", STR_PAD_LEFT);                
                 //42Remuneracion Imponible 5 329 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem5'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 /*Completar*/
                 //43Trabajador Convenicionado 341 - 1
-                $lineaEmpleado .= str_pad(0, 1, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad("T", 1, " ", STR_PAD_LEFT);
                 //44Remuneracion Imponible 6 342 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem6'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 /*Completar*/
@@ -1958,7 +2031,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //49Remuneracion Imponible 7 391 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem7'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 //50Cantidad de Horas Extras 403 - 3
-                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['horasextras'], 3, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['horasextras'], 3, "0", STR_PAD_LEFT);
                 //51Conceptos no remunerativos 406 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['conceptosnorem'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 /*Completar*/
@@ -1967,10 +2040,16 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 /*Completar*/
                 //53Rectificacion de remuneracion 430 - 9
                 $lineaEmpleado .= str_pad(number_format(0, 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                //54Remuneracion Imponible 9 439 - 12
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem9'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 //54Contribucion tarea diferencial (%) 451 - 9
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif']/100, 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //55Horas trabajadas 460 - 3
-                $lineaEmpleado .= str_pad($empleadoDatos[$empleadoid]['horasDias'], 3, " ", STR_PAD_LEFT);
+                $horasTrabajados = 0;
+                if($empleado['Cargo']['formapago']=='hora'){
+                    $horasTrabajados = $empleadoDatos[$empleadoid]['horasDias'];
+                }
+                $lineaEmpleado .= str_pad($horasTrabajados, 3, "0", STR_PAD_LEFT);
                 //57Seguro Colectivo de vida Obligatorio 463 - 1
                 $lineaEmpleado .= str_pad(($empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio']>0)?"T":0, 1, " ", STR_PAD_LEFT);
                 //58Importe a Detraer 464 - 12
