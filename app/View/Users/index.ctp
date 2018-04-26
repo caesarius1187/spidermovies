@@ -113,7 +113,7 @@
 						'edit_view.png',
 						array(
 							'alt' => 'edit',
-							'class'=>'imgedit',
+							'class'=>'img_edit',
 							'onClick' => 'editarUsuario('.$user["User"]["id"].')'
 						)
 					); ?>

@@ -66,9 +66,10 @@
             //        $lineVenta['puntodeventa']=substr($line, 11,5);
             $lineVenta .= str_pad($venta["Puntosdeventa"]['nombre'], 5, "0", STR_PAD_LEFT);
             //        $lineVenta['comprobantenumero']=substr($line, 16,20);
-            $lineVenta .= str_pad($venta['Venta']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
+            $trimNumComprobante = ltrim($venta['Venta']['numerocomprobante']," ");
+            $lineVenta .= str_pad($trimNumComprobante, 20, "0", STR_PAD_LEFT);
             //        $lineVenta['comprobantenumerohasta']=substr($line, 36,20);
-            $lineVenta .= str_pad($venta['Venta']['numerocomprobante'], 20, "0", STR_PAD_LEFT);
+            $lineVenta .= str_pad($trimNumComprobante, 20, "0", STR_PAD_LEFT);
             //        $lineVenta['codigodocumento']=substr($line, 56,2);
 
             //si CUIT mostrar 80, SI DNI(lenght = 8) mostrar 96
@@ -126,16 +127,12 @@
             //        $lineVenta['cantidadalicuotas']=substr($line, 241,1);
             $lineVenta .= str_pad($venta[0]['cantalicuotas'], 1, "0", STR_PAD_LEFT);
             //        $lineVenta['operacioncodigo']=substr($line, 242,1);
-
-            if(isset($venta[0]['alicuota'])){
-                if($venta[0]['alicuota']==0){
-                    $lineVenta .= str_pad("E", 1, "0", STR_PAD_LEFT);
-                }else{
-                }
+            if($venta['Venta']['alicuota']==0){
+                $lineVenta .= str_pad("E", 1, "0", STR_PAD_LEFT);
             }else{
                 $lineVenta .= str_pad(0, 1, "0", STR_PAD_LEFT);
             }
-
+            
             //        $lineVenta['otrostributos']=substr($line, 243,13).'.'.substr($line, 256, 2);
             $lineVenta .= str_pad(0, 15, "0", STR_PAD_LEFT);
             //        $lineVenta['fechavencimientopago']=substr($line, 258,8);

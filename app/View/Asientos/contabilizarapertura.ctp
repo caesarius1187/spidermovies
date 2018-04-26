@@ -6,7 +6,7 @@
  * Time: 12:33 PM
  */
 ?>
-<div class="index">
+<div class="">
     <h3><?php echo __('Asiento de Apertura'); ?></h3>
     <?php
     $id = 0;

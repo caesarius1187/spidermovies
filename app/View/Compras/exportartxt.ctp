@@ -98,6 +98,31 @@
     </div>
     <h2>Txt Compras Facturas</h2>
     <div class="index" style="overflow-x: auto;" id="divFacturas" ><?php
+        $totalComprasExportados = 0;
+         foreach($compras as $c => $compra ) {
+            //aca vamos a buscar dos alicuotas de la misma compra, si esta alicuota es 0  entonces hay que borrarla
+            //vamos a buscar la compra con mas de una alicuota
+            if($compra[0]['cantalicuotas']>1){
+                //si encuentro una busco las alicuotas de esta y si alguna tiene alic = 0 la borro
+                foreach($alicuotas as $a => $alicuota ) {
+                    if(
+                            $compra['Compra']['comprobante_id']==$alicuota['Compra']['comprobante_id']&&
+                            $compra['Compra']['puntosdeventa']==$alicuota['Compra']['puntosdeventa']&&
+                            $compra['Compra']['numerocomprobante']==$alicuota['Compra']['numerocomprobante']&&
+                            $compra['Compra']['provedore_id']==$alicuota['Compra']['provedore_id']
+                        )
+                    {
+                        //encontre una alicuota de una compra con 2 alicuotas, si la alic == 0 entonces la borro
+                        if($alicuota['Compra']['alicuota']=='0'){
+                            //Debugger::dump("elimine:");
+                            //Debugger::dump($alicuota);
+                            unset($alicuotas[$a]);
+                            $compras[$c][0]['cantalicuotas']--;
+                        }
+                    }                   
+                }
+            }
+        }
         foreach($compras as $c => $compra ) {
             $lineaCompra = "";
     //        $linecompra['fecha']=date('d-m-Y',strtotime(substr($line, 0,8)));
@@ -124,6 +149,12 @@
     //        $linecompra['nombre']=substr($line, 74,30);
             $lineaCompra .= str_pad( $nombreamostrar, 30, " ", STR_PAD_RIGHT);
     //        $linecompra['importetotaloperacion']=substr($line, 104,13).'.'.substr($line, 117, 2);
+            if($compra['Compra']["tipocredito"]=='Restitucion credito fiscal'){
+                $totalComprasExportados -= $compra[0]['total'] ;
+            }else{
+                $totalComprasExportados += $compra[0]['total'] ;
+            }
+            
             $lineaCompra .= str_pad(number_format($compra[0]['total'], 2, "", ""), 15, "0", STR_PAD_LEFT);
     //        $linecompra['importeconceptosprecionetogravado']=substr($line, 119,13).'.'.substr($line, 132, 2);
             //vamos a sumas a los no grabados los impuestos combustibles por que ese dato no lo exportamos por que
@@ -135,7 +166,8 @@
     //        $linecompra['importepercepcionespagosacuentaiva']=substr($line, 149,13).'.'.substr($line, 162, 2);
             $lineaCompra .= str_pad(number_format($compra[0]['ivapercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
     //        $linecompra['importepercepcionespagosacuentaimpuestosnacionales']=substr($line, 164,13).'.'.substr($line, 177, 2);
-            $lineaCompra .= str_pad(number_format(0, 2, "", ""), 15, "0", STR_PAD_LEFT);
+            //vamos a agregar aca las percepciones de ganancias
+            $lineaCompra .= str_pad(number_format($compra[0]['ganapercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             //TODO: No estamos guardando importepercepcionespagosacuentaimpuestosnacionales en compras
     //        $linecompra['importeingresosbrutos']=substr($line, 179,13).'.'.substr($line, 192, 2);
             $lineaCompra .= str_pad(number_format($compra[0]['iibbpercep'], 2, "", ""), 15, "0", STR_PAD_LEFT);
@@ -180,6 +212,7 @@
     //       TODO: No estamos guardando ivacomicion en compras
             echo $lineaCompra."</br>";
         }
+        $totalMovimientosBancariosExportados = 0;
         if(isset($cuentascliente[0])) {
             if (count($cuentascliente[0]) > 0) {
                 foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
@@ -201,6 +234,7 @@
                     $lineaCompra .= str_pad($nombreamostrar, 30, " ", STR_PAD_RIGHT);
                     $neto = 0;
                     $subsaldo = $movimientosbancario['debito']-$movimientosbancario['credito'];
+                    $totalMovimientosBancariosExportados+=$subsaldo;
                     if ($movimientosbancario['alicuota'] == '0') {
 
                     } elseif ($movimientosbancario['alicuota'] == '2.5') {
@@ -240,7 +274,7 @@
                         case 'Caja de Ahorro en U$S':
                         case 'Cuenta Corriente en U$S':
                         case 'Plazo Fijo en U$S':
-                        $moneda = "USD";
+                        $moneda = "DOL";
                             break;
                     }
                     $lineaCompra .= str_pad($moneda, 3, " ", STR_PAD_LEFT);
@@ -260,9 +294,15 @@
     ?></div>
     <h2>Txt Compras Alicuotas</h2>
     <div class="index" style="overflow-x: auto;" id="divAlicuotas" ><?php
+    $totalIVAAlicuotaExportados=0;
+       
         foreach($alicuotas as $c => $alicuota ) {
+            //El tema es que si tengo 2 alicuotas 
             $lineaAlicuota = "";
-
+            //si el codigo del comprobante es 011 no debemos mostrar alicuota
+            if($alicuota["Comprobante"]['codigo']=='011'){continue;}
+            //si el codigo del comprobante es 006 no debemos mostrar alicuota
+            if($alicuota["Comprobante"]['codigo']=='006'){continue;}
 //            $lineAlicuota['comprobantetipo'] = substr($line, 0, 3);
             $lineaAlicuota .= str_pad($alicuota["Comprobante"]['codigo'], 3, "0", STR_PAD_LEFT);
 //            $lineAlicuota['puntodeventa'] = substr($line, 3, 5);
@@ -290,6 +330,11 @@
                 $lineaAlicuota .= str_pad($alicCodigoAMostrar, 4, "0", STR_PAD_LEFT);
             }
 //            $lineAlicuota['impuestoliquidado'] = substr($line, 69, 13).'.'.substr($line, 82, 2);
+            If($alicuota['Compra']["tipocredito"]=='Restitucion credito fiscal'){
+                $totalIVAAlicuotaExportados -= $alicuota['Compra']['iva'] ;
+            }else{
+                $totalIVAAlicuotaExportados += $alicuota['Compra']['iva'] ;
+            }
             $lineaAlicuota .= str_pad(number_format($alicuota['Compra']['iva'], 2, "", ""), 15, "0", STR_PAD_LEFT);
             echo $lineaAlicuota."</br>";
         }
@@ -336,7 +381,11 @@
 
         ?></div>
 </div>
-
+<?php
+echo "Total de facturas exportadas: ".$totalComprasExportados."</br>";
+echo "Total de IVA en alicuotas exportadas: ".$totalIVAAlicuotaExportados."</br>";
+echo "Total de IVA en movimientos bancarios: ".$totalMovimientosBancariosExportados."</br>";
+?>
 
 
 

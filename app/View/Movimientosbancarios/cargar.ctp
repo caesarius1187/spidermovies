@@ -181,7 +181,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
             );
             echo $this->Form->submit('+', array('type'=>'image',
                 'src' => $this->webroot.'img/add_view.png',
-                'class'=>'imgedit',
+                'class'=>'img_edit',
                 'title' => 'Agregar',
                 'style'=>'width:25px;height:25px;margin-top:8px'));
             echo $this->Html->image('ii.png',array(

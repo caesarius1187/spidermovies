@@ -26,9 +26,6 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
 <!--<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>-->
 <!--<script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>-->
 
-<script src="https://cdn.datatables.net/buttons/1.1.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
 <?php
 /**
  * Created by PhpStorm.
@@ -77,7 +74,7 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
             array('type' => 'button',
                 'class' =>"buttonImpcli",
                 'style' =>"width: initial;",
-                'onClick' => "location.href = serverLayoutURL+'/cuentasclientes/plancuentas/". $cliente["Cliente"]['id']."';"
+                'onClick' => "location.href = serverLayoutURL+'/cuentas/view/". $cliente["Cliente"]['id']."';"
             )
         );
         echo $this->Form->button('Imprimir',
@@ -120,12 +117,13 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
             <tr class="trnoclickeable">
                 <td rowspan="2">N&uacute;mero</td>
                 <td rowspan="2">Cuenta</td>
+                <td rowspan="2">Apertura</td>
                 <?php
                 $arrayPeriodos=[];
                 $mesAMostrar = date('Y/m/d', strtotime($fechaInicioConsulta));
                 while($mesAMostrar<$fechaFinConsulta){
                     $periodoMesAMostrar = date('m-Y', strtotime($mesAMostrar));
-                    echo "<td>Saldo</td>";
+                    echo '<td class="saldosMensuales">Saldo</td>';
                     $mesAMostrar = date('Y/m/d', strtotime($mesAMostrar." +1 months"));
                 }
                 ?>
@@ -138,11 +136,10 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
                 $mesAMostrar = date('Y/m/d', strtotime($fechaInicioConsulta));
                 while($mesAMostrar<$fechaFinConsulta){
                     $periodoMesAMostrar = date('m-Y', strtotime($mesAMostrar));
-                    echo "<td>".$periodoMesAMostrar."</td>";
+                    echo '<td class="saldosMensuales">'.$periodoMesAMostrar.'</td>';
                     $mesAMostrar = date('Y/m/d', strtotime($mesAMostrar." +1 months"));
                 }
                 ?>
-
 <!--                <td >Debe</td>-->
 <!--                <td >Haber</td>-->
             </tr>
@@ -150,7 +147,6 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
 
         <tbody>
         <?php
-        $arrayTotales=[];
         foreach ($cliente['Cuentascliente'] as $cuentascliente){
             //si no hay movimientos para esta cuentacliente no la vamos a mostrar en el suma y saldos
             if(count($cuentascliente['Movimiento'])==0){
@@ -167,10 +163,12 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
                     $arrayPeriodos[$periodoAImputar]['debes']=0;
                     $arrayPeriodos[$periodoAImputar]['haberes']=0;
                 }
-                if(!isset($arrayTotales[$periodoAImputar])){
-                    $arrayTotales[$periodoAImputar]=[];
-                    $arrayTotales[$periodoAImputar]['debes']=0;
-                    $arrayTotales[$periodoAImputar]['haberes']=0;
+                if(!isset($arrayPeriodos['apertura'])){
+                    $arrayPeriodos['apertura']=0;
+                }
+                if($movimiento['Asiento']['tipoasiento']=='Apertura'){
+                    $arrayPeriodos['apertura']+=round($movimiento['debe'], 2);
+                    $arrayPeriodos['apertura']-=round($movimiento['haber'], 2);
                 }
                 $arrayPeriodos[$periodoAImputar]['debes']+=round($movimiento['debe'], 2);
                 $arrayPeriodos[$periodoAImputar]['haberes']+=round($movimiento['haber'], 2);
@@ -178,10 +176,7 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
                 $haberes+= round($movimiento['haber'], 2);
                 $saldoCalculado += round($movimiento['debe'], 2);
                 $saldoCalculado -= round($movimiento['haber'], 2);
-                $arrayTotales[$periodoAImputar]['debes']+= round($movimiento['debe'], 2);
-                $arrayTotales[$periodoAImputar]['haberes']+= round($movimiento['haber'], 2);
             }
-
             //Saldos de cuentas esperados
             //1 +
             //2 -
@@ -222,9 +217,8 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
                 <td>
                     <?php echo $cuentascliente['nombre']; ?>
                 </td>
-
-                
                 <?php
+                echo '<td  class="numericTD">'.number_format($arrayPeriodos['apertura'], 2, ",", ".")."</td>";
                 $mesAMostrar = date('Y/m/d', strtotime($fechaInicioConsulta));
                 while($mesAMostrar<$fechaFinConsulta){
                     $periodoMesAMostrar = date('m-Y', strtotime($mesAMostrar));
@@ -254,6 +248,7 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
         </tbody>
         <tfoot>
         <tr class="trnoclickeable">
+            <td></td>
             <td></td>
             <td></td>
             <?php
@@ -308,31 +303,32 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                         'controller'=>'asientos','action'=>'add',
                         'id'=>'FormAgregarAsiento',
                     ]);
-                    echo $this->Form->input('Asiento.0.id',[
+                    echo $this->Form->input('Asiento.1.id',[
                             'value'=>0,
                         ]
                     );
-                    echo $this->Form->input('Asiento.0.cliente_id',[
+                    echo $this->Form->input('Asiento.1.cliente_id',[
                             'value'=>$cliente['Cliente']['id'],
                             'type'=>'hidden',
                         ]
                     );
-                    echo $this->Form->input('Asiento.0.nombre',
+                    echo $this->Form->input('Asiento.1.nombre',
                         ['value'=>"",'required'=>"required",
                             'style'=>"width:300px"]);
-                    echo $this->Form->input('Asiento.0.periodo',
+                    echo $this->Form->input('Asiento.1.periodo',
                         ['value'=>$periodo,'type'=>"hidden",
                             'style'=>"width:300px"]);
-                    echo $this->Form->input('Asiento.0.descripcion',
-                        ['value'=>"",
+                    echo $this->Form->input('Asiento.1.descripcion',
+                        ['value'=>"Manual",
                             'required'=>"required",
+                            'readonly'=>"readonly",
                             'style'=>"width:300px"]);
-                    echo $this->Form->input('Asiento.0.fecha',
+                    echo $this->Form->input('Asiento.1.fecha',
                         ['value'=>"",'class'=>"datepickerOneYear",
                             'required'=>"required",
                             'readonly'=>"readonly",
                             'style'=>"width:120px"]);
-                    echo $this->Form->input('Asiento.0.tipoasiento',
+                    echo $this->Form->input('Asiento.1.tipoasiento',
                         [
                             'type'=>"select",
                             'options'=>[
@@ -435,7 +431,7 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                                     <?php
                                     if(number_format($totalDebe, 2, ".", "")==number_format($totalHaber, 2, ".", "")){
                                         echo $this->Html->image('test-pass-icon.png',array(
-                                                'id' => 'iconDebeHaber',
+                                                'id' => 'iconDebeHaberAdd',
                                                 'alt' => 'open',
                                                 'class' => 'btn_exit',
                                                 'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
@@ -443,7 +439,7 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                                         );
                                     }else{
                                         echo $this->Html->image('test-fail-icon.png',array(
-                                                'id' => 'iconDebeHaber',
+                                                'id' => 'iconDebeHaberAdd',
                                                 'alt' => 'open',
                                                 'class' => 'btn_exit',
                                                 'title' => 'Debe distinto al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),

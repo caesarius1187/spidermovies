@@ -1,6 +1,7 @@
 /**
  * Created by caesarius on 04/01/2017.
  */
+var tblsys ;
 $(document).ready(function() {
     var nombrecliente = $('#clientenombre').val();
     var periodo = $('#periododefault').val();
@@ -9,7 +10,7 @@ $(document).ready(function() {
             // exclude CSS class
             exclude: ".noExl",
             name: "Conveniomultilateral",
-            filename:$('#clientenombre').val()+"-"+ $('#periodo').val()+"-"+"IVA"
+            filename:$('#clientenombre').val()+"-"+ $('#periodo').val()+"-"+"IVA",
         });
     });
 
@@ -32,7 +33,7 @@ $(document).ready(function() {
                             if ($('#myModal').is(":visible")){
                                 return;
                             }
-                            $('#myModal').find('.modal-title').html('Asientos de la cuenta');
+                            $('#myModal').find('.modal-title').html('Libro Mayor');
                             $('#myModal').find('.modal-body').html(response);
                             // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
                         });
@@ -100,7 +101,7 @@ $(document).ready(function() {
                         });
                         $("#myModal #cargarAsiento").hide();
                         $("#tblAsientos").DataTable( {
-                            scrollY: '20vh',
+                            iDisplayLength: -1,
                             scrollCollapse: true,
                             dom: 'Bfrtip',
                             lengthMenu: [
@@ -171,7 +172,8 @@ $(document).ready(function() {
                                 $(this).addClass('selected');
                             }
                         } );
-                        $('.my-div').css('height', window.innerHeight);
+                           
+
                     },
                     error:function (XMLHttpRequest, textStatus, errorThrown) {
                         alert(textStatus);
@@ -180,7 +182,7 @@ $(document).ready(function() {
             });
         }
     });
-    var tblsys = $('#tblsys').DataTable( {
+    tblsys = $('#tblsys').DataTable( {
         dom: 'Bfrtip',
         fixedHeader: true,
         lengthMenu: [
@@ -239,10 +241,28 @@ $(document).ready(function() {
                 customize: function ( win ) {
                 },
             },
+            {
+                text: 'Ver saldo mensual',
+                action: function ( e, dt, node, config ) {
+                    toogleColumns();
+                }
+            },
         ],
+        iDisplayLength: -1
     });
-    $('#tblsys').floatThead();
+    //$('#tblsys').floatThead();
 });
+var visiblesaldosMensuales = 1;
+function toogleColumns(){    
+    if(visiblesaldosMensuales){
+        tblsys.columns( '.saldosMensuales' ).visible( false );
+        visiblesaldosMensuales = 0;
+    }else{
+        tblsys.columns( '.saldosMensuales' ).visible( true );
+        visiblesaldosMensuales = 1;    
+    }
+    $('#tblsys').width("100%");
+}
 function imprimir(){
     window.print();
 }

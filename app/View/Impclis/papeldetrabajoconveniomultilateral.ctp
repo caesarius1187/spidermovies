@@ -148,7 +148,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     'class' =>"btn_imprimir",
                 )
             );?>
-            <table class="tbl_tareas aimprimir" style="border-collapse: collapse;" id="pdtconveniomultilateral">
+            <table class="tbl_tareas aimprimir toExcelTable" style="border-collapse: collapse;" id="pdtconveniomultilateral">
                 <tr id="1">
                     <td colspan="3"> </td>
                     <?php
@@ -476,17 +476,17 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         $liquidacionProvincia[$impcliprovincia['Impcliprovincia']['id']."-impuestoAMostrar"][$actividadcliente['Actividadcliente']['id']]+=$impuestoAMostrar;
                         $liquidacionProvincia[$impcliprovincia['Impcliprovincia']['id']."-minimoAMostrar"][$actividadcliente['Actividadcliente']['id']]+= $minimoAMostrar;
                         if($impcli['Impcli']['impuesto_id']==21){ ?>
-                        <td class="baseImponibleProrrateada"><!-- Impuesto Bases Imponibles Prorrateadas -->
-                            <?php
-                            echo number_format($impuestoAMostrar, 2, ",", ".");
-                            ?>
-                        </td>
-                        <td class="baseImponibleProrrateada"><!-- Minimo Bases Imponibles Prorrateadas -->
-                            <?php
-                            echo number_format($minimoAMostrar, 2, ",", ".");
-                            $liquidacionProvincia[$impcliprovincia['Impcliprovincia']['id']."-minimoAMostrar"][$actividadcliente['Actividadcliente']['id']]+= $minimoAMostrar;
-                            ?>
-                        </td>
+                            <td class="baseImponibleProrrateada"><!-- Impuesto Bases Imponibles Prorrateadas -->
+                                <?php
+                                echo number_format($impuestoAMostrar, 2, ",", ".");
+                                ?>
+                            </td>
+                            <td class="baseImponibleProrrateada"><!-- Minimo Bases Imponibles Prorrateadas -->
+                                <?php
+                                echo number_format($minimoAMostrar, 2, ",", ".");
+                                $liquidacionProvincia[$impcliprovincia['Impcliprovincia']['id']."-minimoAMostrar"][$actividadcliente['Actividadcliente']['id']]+= $minimoAMostrar;
+                                ?>
+                            </td>
                     <?php } ?>
                     <td ><!-- Impuesto Determinado Bases Imponibles Prorrateadas -->
                             <?php
@@ -1051,7 +1051,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             $movId[$asientoestandarCM['cuenta_id']]=0;
                         }
                         $cuentaclienteid=0;
-                        $cuentaclientenombre="0";
+                        $cuentaclientenombre=$asientoestandarCM['Cuenta']['nombre'];
                         foreach ($impcli['Cliente']['Cuentascliente'] as $cuentaclientaCm){
                             if($cuentaclientaCm['cuenta_id']==$asientoestandarCM['cuenta_id']){
                                 $cuentaclienteid=$cuentaclientaCm['id'];

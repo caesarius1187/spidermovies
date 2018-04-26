@@ -149,12 +149,13 @@ if(!isset($error)){ ?>
                     <tr id="#rowDeduccion<?php echo $deduccion['Deduccione']['id']; ?>">  
                             <td><?php echo $deduccion['Deduccione']['clase'];?></td>
                             <td><?php echo $deduccion['Deduccione']['nombre']
-                                    ." ".$deduccion['Deduccione']['cuit']
-                                    ." ".$deduccion['Deduccione']['documento']
+                                    ." CUIT: ".$deduccion['Deduccione']['cuit']
+                                    ." CUIL: ".$deduccion['Deduccione']['cuil']
+                                    ." DNI: ".$deduccion['Deduccione']['documento']
                                     ?></td>
                             <td>
                                 <a href="#"  onclick="deleteDeduccion(<?php echo $deduccion['Deduccione']['id']; ?>)" class="button_view"> 
-                                    <?php echo $this->Html->image('delete.png', array('alt' => 'open','title' => 'Eliminar','class'=>'imgedit'));?>
+                                    <?php echo $this->Html->image('delete.png', array('alt' => 'open','title' => 'Eliminar','class'=>'img_edit'));?>
                                 </a>
                             </td>
                     </tr>            

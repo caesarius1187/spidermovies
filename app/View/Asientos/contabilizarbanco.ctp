@@ -7,7 +7,7 @@
     return;
 }
 ?>
-<div class="index">
+<div class="">
     <h2><?php echo __('Contabilizar Bancos : '.$cliente['Cliente']['nombre'] ); ?></h2>
     <h3><?php echo __('Banco '.$cliente['Impcli'][0]['Impuesto']['nombre'].' CBU: '.$cliente['Impcli'][0]['Cbu'][0]['cbu']); ?></h3>
     <?php

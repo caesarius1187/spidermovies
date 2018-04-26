@@ -370,7 +370,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 echo $this->Form->submit('+', array(
                           'type'=>'image',
                           'src' => $this->webroot.'img/add_view.png',
-                          'class'=>'imgedit',
+                          'class'=>'img_edit',
                           'style'=>'width:25px;height:25px;margin-top:8px',
                           'title'=>'Agregar'
                           )
@@ -603,7 +603,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               echo $this->Form->submit('+', array('type'=>'image',
                   'src' => $this->webroot.'img/add_view.png',
-                  'class'=>'imgedit',
+                  'class'=>'img_edit',
                   'style'=>'width:25px;height:25px;margin-top:10px; cursor: pointer;',
                   ));
               echo $this->Form->end();  ?>
@@ -962,7 +962,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 echo $this->Form->input('ordendepago',array());
                 echo $this->Form->submit('+', array('type'=>'image',
                     'src' => $this->webroot.'img/add_view.png',
-                    'class'=>'imgedit',
+                    'class'=>'img_edit',
                     'title' => 'Agregar',
                     'style'=>'width:25px;height:25px;margin-top:8px'));
                 echo $this->Form->end();  ?>
@@ -1177,7 +1177,7 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
             echo $this->Form->input('codigoafip', array('label'=> 'AFIP Codigo',));
             echo $this->Form->submit('+', array('type'=>'image',
                 'src' => $this->webroot.'img/add_view.png',
-                'class'=>'imgedit',
+                'class'=>'img_edit',
                 'title' => 'Agregar',
                 'style'=>'width:25px;height:25px;margin-top:8px'));
             echo $this->Form->end();  ?>

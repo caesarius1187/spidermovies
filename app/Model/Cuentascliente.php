@@ -15,7 +15,7 @@ class Cuentascliente extends AppModel {
 	public $validate = array(
 		
 	);
-
+ 
 //The Associations below have been created with all possible keys, those that are not needed can be removed
 
 /**
@@ -24,44 +24,52 @@ class Cuentascliente extends AppModel {
  * @var array
  */
 	public function altabiendeuso($cliid,$prefijo,$descripcion,$nombre){
-        $Cuenta = ClassRegistry::init('Cuenta');
-        //hay que buscar las cuentas que tengan el prefijo y que se llamen como el parametro descripcion
-        //la primera que no tenga cuenta cliente la activamos, reemplazando XX por el nombre
-        $optionCuentas=[
-            'contain'=>[
-                'Cuentascliente'=>[
-                    'conditions'=>[
-                        'Cuentascliente.cliente_id'=>$cliid
+            $Cuenta = ClassRegistry::init('Cuenta');
+            //hay que buscar las cuentas que tengan el prefijo y que se llamen como el parametro descripcion
+            //la primera que no tenga cuenta cliente la activamos, reemplazando XX por el nombre
+            $optionCuentas=[
+                'contain'=>[
+                    'Cuentascliente'=>[
+                        'conditions'=>[
+                            'Cuentascliente.cliente_id'=>$cliid
+                        ]
                     ]
+                ],
+                'conditions'=>[
+                    'Cuenta.numero LIKE "'.$prefijo.'%"',
+                    'Cuenta.nombre'=>$descripcion,
                 ]
-            ],
-            'conditions'=>[
-                'Cuenta.numero LIKE "'.$prefijo.'%"',
-                'Cuenta.nombre'=>$descripcion,
-            ]
-        ];
-        $cuentas = $Cuenta->find('all',$optionCuentas);
-        $respuesta=[];
-        $respuesta['respuesta']="";
-        foreach ($cuentas as $micuenta) {
-            if(count($micuenta['Cuentascliente'])==0){
-                //podemos usar esta cuenta
-                $this->create();
-                $nombreCuentaClie = str_replace("XX", $nombre, $descripcion);
-                $this->set('cliente_id',$cliid);
-                $this->set('cuenta_id',$micuenta['Cuenta']['id']);
-                $this->set('nombre',$nombreCuentaClie);
-                if ($this->save()){
-                    $respuesta['respuesta'].="Se dio de alta la cuenta del Bien de Uso: ".$nombreCuentaClie."</br>";
-                    $respuesta['cuenta_id']=$this->getLastInsertID();;
-                }else{
-                    $respuesta['respuesta'].="NO se dio de alta la cuenta del Bien de Uso: ".$nombreCuentaClie."</br>";
+            ];
+            $cuentas = $Cuenta->find('all',$optionCuentas);
+            $respuesta=[];
+            $respuesta['respuesta']="";
+            $encontreCuentas = false;
+            foreach ($cuentas as $micuenta) {
+                if(count($micuenta['Cuentascliente'])==0){
+                    //podemos usar esta cuenta
+                    $this->create();
+                    $nombreCuentaClie = str_replace("XX", $nombre, $descripcion);
+                    $this->set('cliente_id',$cliid);
+                    $this->set('cuenta_id',$micuenta['Cuenta']['id']);
+                    $this->set('nombre',$nombreCuentaClie);
+                    if ($this->save()){
+                        $respuesta['respuesta'].="Se dio de alta la cuenta del Bien de Uso: ".$nombreCuentaClie."</br>";
+                        $respuesta['cuenta_id']=$this->getLastInsertID();;
+                    }else{
+                        $respuesta['respuesta'].="Error al guardar: NO se dio de alta la cuenta del Bien de Uso: ".$nombreCuentaClie."</br>";
+                    }
+                    $encontreCuentas = true;
+                    return $respuesta;
+                    break;
                 }
-				return $this->getLastInsertID();
-                break;
             }
-        }
-
+            if(!$encontreCuentas){
+                $respuesta['respuesta'].="Error No hay cuentas disponibles para "
+                        . "registrar el bien de uso en el plan de cuentas. "
+                        . "Comuniquiese con el administrador del sistema</br>";
+                $respuesta['cuenta_id']=0;
+                return $respuesta;
+            }
 	}
 	public $belongsTo = array(
 		'Cliente' => array(
@@ -84,6 +92,19 @@ class Cuentascliente extends AppModel {
 	public $hasMany = array(
 		'Saldocuentacliente' => array(
 			'className' => 'Saldocuentacliente',
+			'foreignKey' => 'cuentascliente_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
+		'Bienespersonale' => array(
+			'className' => 'Bienespersonale',
 			'foreignKey' => 'cuentascliente_id',
 			'dependent' => false,
 			'conditions' => '',

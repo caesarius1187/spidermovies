@@ -8,7 +8,7 @@ if(!$showTheForm){?>
     <td><?php echo $this->request->data['Honorario']['estado']; ?></td>
     <td >
        <a href="#"  onclick="loadFormHonorario(<?php echo $this->request->data['Honorario']['id']; ?>)" class="btn_edit"> 
-         <?php echo $this->Html->image('edit.png', array('alt' => 'open','class'=>'imgedit'));?>
+         <?php echo $this->Html->image('edit.png', array('alt' => 'open','class'=>'img_edit'));?>
         </a>
     </td>
 <?php 

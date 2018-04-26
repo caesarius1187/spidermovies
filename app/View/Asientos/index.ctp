@@ -156,8 +156,8 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 						'edit_view.png',
 						array(
 							'alt' => 'edit',
-							'class'=>'imgedit',
-							'style'=>'color:red;float:left;margin-top:10px',
+							'class'=>'img_edit',
+							'style'=>'color:red;float:left;margin: 0px;',
 							'onClick' => 'editarMovimientos('.$asiento['Asiento']['id'].')'
 						)
 					);
@@ -165,8 +165,8 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 						'ic_delete_black_24dp.png',
 						array(
 							'alt' => 'edit',
-							'class'=>'imgedit',
-							'style'=>'color:red;float:left;margin-top:10px',
+							'class'=>'img_trash',
+							'style'=>'color:red;float:left;margin: 0px;',
 							'onClick' => 'eliminarAsiento('.$asiento['Asiento']['id'].')'
 						)
 					);
@@ -194,29 +194,29 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 	</table>
 	<div id="divEditarAsiento"></div>
 </div>
-	<!-- Popin Modal para edicion de ventas a utilizar por datatables-->
-	<div class="modal fade" id="myModalAsientos" tabindex="-1" role="dialog">
-		<div class="modal-dialog" style="width:90%;">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<!-- Popin Modal para edicion de ventas a utilizar por datatables-->
+<div class="modal fade" id="myModalAsientos" tabindex="-1" role="dialog">
+        <div class="modal-dialog" style="width:90%;">
+                <div class="modal-content">
+                        <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 <!--						<span aria-hidden="true">&times;</span>-->
-					</button>
-					<h4 class="modal-title">Modal title</h4>
-				</div>
-				<div class="modal-body">
-					<p>One fine body&hellip;</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-					<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
-				</div>
-			</div>
-			<!-- /.modal-content -->
-		</div>
-		<!-- /.modal-dialog -->
-	</div>
-	<!-- /.modal -->
+                                </button>
+                                <h4 class="modal-title">Modal title</h4>
+                        </div>
+                        <div class="modal-body">
+                                <p>One fine body&hellip;</p>
+                        </div>
+                        <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                                <!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+                        </div>
+                </div>
+                <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
 <?php
 $hiddenCuentasValue= "";
 $hiddenDebe=0;
@@ -254,31 +254,31 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
 							'controller'=>'asientos','action'=>'add',
 							'id'=>'FormAgregarAsiento',
 						]);
-						echo $this->Form->input('Asiento.0.id',[
+						echo $this->Form->input('Asiento.1.id',[
 								'value'=>0,
 							]
 						);
-						echo $this->Form->input('Asiento.0.cliente_id',[
+						echo $this->Form->input('Asiento.1.cliente_id',[
 								'value'=>$cliente['Cliente']['id'],
 								'type'=>'hidden',
 							]
 						);
-						echo $this->Form->input('Asiento.0.nombre',
+						echo $this->Form->input('Asiento.1.nombre',
 							['value'=>"",'required'=>"required",
 								'style'=>"width:300px"]);
-						echo $this->Form->input('Asiento.0.periodo',
+						echo $this->Form->input('Asiento.1.periodo',
 							['value'=>$periodo,'type'=>"hidden",
 								'style'=>"width:300px"]);
-						echo $this->Form->input('Asiento.0.descripcion',
+						echo $this->Form->input('Asiento.1.descripcion',
 							['value'=>"",
 								'required'=>"required",
 								'style'=>"width:300px"]);
-						echo $this->Form->input('Asiento.0.fecha',
+						echo $this->Form->input('Asiento.1.fecha',
 							['value'=>"",'class'=>"datepickerOneYear",
 								'required'=>"required",
 								'readonly'=>"readonly",
 								'style'=>"width:120px"]);
-						echo $this->Form->input('Asiento.0.tipoasiento',
+						echo $this->Form->input('Asiento.1.tipoasiento',
 							[
 								'type'=>"select",
 								'options'=>[
@@ -304,24 +304,24 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                                         echo $this->Form->label('','Total a debe: $',[
                                             'style'=>"display: inline;"
                                         ]);
-                                        echo $this->Form->label('lblTotalDebe',
+                                        echo $this->Form->label('lblTotalDebeAdd',
                                             number_format(0, 2, ".", ""),
                                             [
-                                                'id'=>'lblTotalDebe',
+                                                'id'=>'lblTotalDebeAdd',
                                                 'style'=>"display: inline;"
                                             ]
                                         );
                                         echo $this->Form->label('',' Total Haber: $',['style'=>"display: inline;"]);
-                                        echo $this->Form->label('lblTotalHaber',
+                                        echo $this->Form->label('lblTotalHaberAdd',
                                             number_format(0, 2, ".", ""),
                                             [
-                                                'id'=>'lblTotalHaber',
+                                                'id'=>'lblTotalHaberAdd',
                                                 'style'=>"display: inline;"
                                             ]
                                         );
                                         if(number_format(0, 2, ".", "")==number_format(0, 2, ".", "")){
                                             echo $this->Html->image('test-pass-icon.png',array(
-                                                    'id' => 'iconDebeHaber',
+                                                    'id' => 'iconDebeHaberAdd',
                                                     'alt' => 'open',
                                                     'class' => 'btn_exit',
                                                     'title' => 'Debe igual al Haber diferencia: '.number_format((0-0), 2, ".", ""),
@@ -329,7 +329,7 @@ echo $this->Form->input('Asiento.0.Movimiento.kkk.hidencuentascliente_id',
                                             );
                                         }else{
                                             echo $this->Html->image('test-fail-icon.png',array(
-                                                    'id' => 'iconDebeHaber',
+                                                    'id' => 'iconDebeHaberAdd',
                                                     'alt' => 'open',
                                                     'class' => 'btn_exit',
                                                     'title' => 'Debe distinto al Haber diferencia: '.number_format((0-0), 2, ".", ""),

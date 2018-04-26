@@ -20,22 +20,25 @@ class CuentasController extends AppController {
  */
 	public function view($ClienteId) 
 	{
+        set_time_limit (360);
         $this->Components->unload('DebugKit.Toolbar');
         $options = array(
 			'contain'=>[],
 			'fields'=> [
-                'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.level,
-                Cuentascliente.id,Cuentascliente.nombre'],
+                            'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.level,
+                            Cuentascliente.id,Cuentascliente.nombre'
+                        ],
 			'joins'=>array(
-				array('table'=>'cuentasclientes', 
-	                  'alias' => 'Cuentascliente',
-	                  'type'=>'left',
-	                  'conditions'=> [
-	                 		'Cuentascliente.cuenta_id = Cuenta.id',
-						    'Cuentascliente.cliente_id'=>$ClienteId
-	           		   ]
-                 	),
-				),
+                            array(
+                                'table'=>'cuentasclientes', 
+                                'alias' => 'Cuentascliente',
+                                'type'=>'left',
+                                'conditions'=> [
+                                    'Cuentascliente.cuenta_id = Cuenta.id',
+                                    'Cuentascliente.cliente_id'=>$ClienteId
+                                ]
+                            ),
+                        ),
 //            'limit'=>1000,
 //            'page'=>1,
             'order'=>['numero'],
@@ -98,11 +101,11 @@ class CuentasController extends AppController {
 			$this->Cuentascliente->set('activada',1);
 			if ($this->Cuentascliente->save())
 			{ 				
-				$data['respuesta']='Cuenta activada correctamente.';
+                            $data['respuesta']='Cuenta activada correctamente.';
 			}
 			else
 			{				
-				$data['respuesta']='Error al guardar cuenta. Por favor intente nuevamente.';			
+                            $data['respuesta']='Error al guardar cuenta. Por favor intente nuevamente.';			
 			}
 		}
 		else
@@ -111,40 +114,28 @@ class CuentasController extends AppController {
 			Esto deberia disparar un alerta cuando hay Asientos relacionados a esta cuenta por que podriamos
 			eliminarlos y desactivarlos horriblemente*/
 			//Desactivar
-
-
-
 			$optionsCuentascliente = [
 				'contain'=>['Movimiento'],
-				'conditions' => ['Cuentascliente.id' => $CuentaclienteId],
+				'conditions' => [
+                                    'Cuentascliente.cuenta_id' => $CuentaId,
+                                    'Cuentascliente.cliente_id' => $ClienteId
+                                ],
 				'fields'=> ['Cuentascliente.nombre']
 			];
 			$CuentaClienteDesc = $this->Cuentascliente->find('first', $optionsCuentascliente);
-
-			if(count($CuentaClienteDesc)==0){
-				if ($this->Cuentascliente->deleteAll(array(
-						'Cuentascliente.cliente_id' => $ClienteId,
-						'Cuentascliente.cuenta_id' => $CuentaId
-					),false
-					)
-				)
-					$data['respuesta']='Cuenta desactivada correctamente.';
-				else
-					$data['respuesta']='Error al desactivar cuenta.';
+			if(count($CuentaClienteDesc['Movimiento'])==0){
+                            if ($this->Cuentascliente->deleteAll(array(
+                                    'Cuentascliente.cuenta_id' => $CuentaId,
+                                    'Cuentascliente.cliente_id' => $ClienteId
+                                    ),false
+                                )
+                            )
+                                $data['respuesta']='Cuenta desactivada correctamente.';
+                            else
+                                $data['respuesta']='Error al desactivar cuenta.';
 			}else{
-				if(count($CuentaClienteDesc['Movimiento'])>0){
-					$data['respuesta']='Error al desactivar cuenta. Esta cuenta tiene Movimientos Cargados y no se puede borrar hasta que se eliminen';
-				}else{
-					$deleted= true;
-				$this->Cuentascliente->deleteAll([
-					'Cuentascliente.id' => $CuentaclienteId,
-				],false
-				);
-					if ($deleted)
-						$data['respuesta']='Cuenta desactivada correctamente.';
-					else
-						$data['respuesta']='Error al desactivar cuenta.';
-				}
+                            $data['error']=1;
+                            $data['respuesta']='Error al desactivar cuenta. Esta cuenta tiene Movimientos Cargados y no se puede borrar hasta que se eliminen';
 			}
 
 		}

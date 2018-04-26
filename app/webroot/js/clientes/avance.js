@@ -284,6 +284,9 @@ $(document).ready(function() {
     function verPapelDeTrabajoGanancias(periodo,cliid){
         var win = window.open(serverLayoutURL+'/papelesdetrabajos/ganancias/'+cliid+'/'+periodo , '_blank');
     }
+    function verPapelDeTrabajoBP(periodo,cliid){
+        var win = window.open(serverLayoutURL+'/papelesdetrabajos/bienespersonales/'+cliid+'/'+periodo , '_blank');
+    }
     function verCuentasDepuradas(cliid,periodo){
         var win = window.open(serverLayoutURL+'/controles/cuentasdepuradas/'+cliid+'/'+periodo , '_blank');
     }
@@ -769,6 +772,9 @@ $(document).ready(function() {
       return false;
   }
 /* 19 Tarea Contabilizar*/
+    function crearAsApertura(clienteid,periodo){
+        var win = window.open(serverLayoutURL+'/asientos/crearapertura/'+clienteid+'/'+periodo , '_blank');
+    }
     function abrirestadoscontables(clienteid,periodo){
         var win = window.open(serverLayoutURL+'/papelesdetrabajos/estadoderesultado/'+clienteid+'/'+periodo , '_blank');
     }

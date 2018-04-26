@@ -19,6 +19,7 @@ $(document).ready(function() {
         return false;
     });
     tblAsientos = $("#tblAsientos").DataTable( {
+        order: [[ 7, "desc" ]],
         dom: 'Bfrtip',
         select: true,
         lengthMenu: [
@@ -79,10 +80,8 @@ $(document).ready(function() {
                 },
             },
         ],
+        iDisplayLength: -1
     });
-
-   
-
     $("#cargarMovimiento").click(function(){
         cargarMovimiento();
         return false;
@@ -111,7 +110,7 @@ $(document).ready(function() {
             });
             if( $('#peranio').length>0){
                  $("input.datepickerOneYear").datepicker({ 
-                    minDate: new Date($('#peranio').val()-1, 12, 31), 
+                    minDate: new Date($('#peranio').val()-1, 12, 1), 
                     dateFormat: 'dd-mm-yy',
                     maxDate: new Date($('#peranio').val(), 11, 31),
                     changeMonth: true,
@@ -140,21 +139,25 @@ function agregarMovimiento()
     alert(CuentaCliente);
 }
 function eliminarAsiento(asientoID){
-     var data ="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/asientos/eliminar/"+asientoID,
-        // URL to request
-        data: data,  // post data
-        success: function(mirespuesta) {
-            var respuesta = JSON.parse(mirespuesta);          
-            callAlertPopint(respuesta.respuesta);
-            location.reload();
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
-        }
-    });
+    var r = confirm("Esta seguro que desea eliminar este asiento?");
+    if(r){
+        var data ="";
+        $.ajax({
+            type: "post",  // Request method: post, get
+            url: serverLayoutURL+"/asientos/eliminar/"+asientoID,
+            // URL to request
+            data: data,  // post data
+            success: function(mirespuesta) {
+                var respuesta = JSON.parse(mirespuesta);          
+                callAlertPopint(respuesta.respuesta);
+                location.reload();
+            },
+            error:function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        });
+    }
+    
 }
 function editarMovimientos(asientoID){
     var data ="";
@@ -193,13 +196,21 @@ function editarMovimientos(asientoID){
             }else{
                 //Si no existe voy a buscar el div "divEditarAsiento" que deberia estar en asientos/index
                 $('#divEditarAsiento').html(mirespuesta);
+              
+                $("#myModal").animate({ 
+                              scrollTop: $("#myModal").height() 
+                          }, 
+                          "slow"
+                      );      
             }
 
             $('.selectedAsiento').removeClass('selectedAsiento');
             $('#rowasiento'+asientoID).addClass('selectedAsiento');
 
             $('.chosen-select').chosen({search_contains:true});
-            $("#FormEditaMovimientoCuentascliente_chosen").css('width','300px');
+            //$("#FormEditaMovimientoCuentascliente_chosen").css('width','300px');
+            $('.chosen-container').css('width','300px');
+
             $('#FormAgregaMovimiento').submit(function(){
                 cargarMovimientoEdit();
                 return false;
@@ -305,13 +316,34 @@ function catchFormAsiento(idForm){
             data: formData,
             success: function(data,textStatus,xhr){
                 var respuesta = JSON.parse(data);
-                 $('#myModalAsientos').modal('hide');
-                 $('#myModalFormAgregarAsiento').modal('hide');
+                 //$('#myModalAsientos').modal('hide');
+                 //$('#myModalFormAgregarAsiento').modal('hide');
                 if(respuesta.error!=0){
-                    callAlertPopint(respuesta.respuesta);
-                    $('#myModalAsientos').modal('show');
-                    $('#myModalFormAgregarAsiento').modal('show');
+                    //callAlertPopint(respuesta.respuesta);
+                    var divRespueta = $('<div>')
+                            .append(
+                                $('<h4>').html(
+                                   "Error:"
+                                )
+                            )
+                           .append(
+                                $('<label>').html(
+                                    respuesta.respuesta
+                                )
+                            )
+                            .addClass('index');;
+                    if($('#myModalFormAgregarAsiento').length>0){
+                        $('#myModalFormAgregarAsiento').find('.modal-body').prepend(divRespueta);
+                    }else{
+                        $('#myModalAsientos').find('.modal-body').prepend(divRespueta);
+                        $("#myModalAsientos").scrollTop(0);
+                    }
                 }else{
+                    if($('#myModalFormAgregarAsiento').length>0){
+                        $('#myModalFormAgregarAsiento').modal('hide');
+                    }else{
+                        $('#myModalAsientos').modal('hide');
+                    }
                     callAlertPopint(respuesta.respuesta);
                 }
                  // reiniciarFormAgregarAsiento()
@@ -328,7 +360,6 @@ function catchFormAsiento(idForm){
         return false;
     });
 }
-
 function deleteMovimiento(movid){
     var data ="";
     $.ajax({
@@ -370,42 +401,42 @@ function cargarMovimiento(){
                 $("<td>").append(
                     $("<input>")
                         .val(0)
-                        .attr('id','Asiento0Movimiento'+movimientonumero+'Id')
-                        .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][id]')
+                        .attr('id','Asiento1Movimiento'+movimientonumero+'Id')
+                        .attr('name','data[Asiento][1][Movimiento]['+movimientonumero+'][id]')
                         .attr('type','hidden')
                 ).append(
                     $("<input>")
                         .val(cuentaclienteid)
-                        .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteId')
-                        .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][cuentascliente_id]')
+                        .attr('id','Asiento1Movimiento'+movimientonumero+'CuentasclienteId')
+                        .attr('name','data[Asiento][1][Movimiento]['+movimientonumero+'][cuentascliente_id]')
                         .attr('type','hidden')
                 ).append(
                     $("<input>")
                         .val(cuentanombre)
                         .css('width','300px')
-                        .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteNombre')
-                        .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][nombre]')
+                        .attr('id','Asiento1Movimiento'+movimientonumero+'CuentasclienteNombre')
+                        .attr('name','data[Asiento][1][Movimiento]['+movimientonumero+'][nombre]')
                 ).append(
                     $("<input>")
                         .val(debe)
-                        .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteDebe')
-                        .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][debe]')
+                        .attr('id','Asiento1Movimiento'+movimientonumero+'CuentasclienteDebe')
+                        .attr('name','data[Asiento][1][Movimiento]['+movimientonumero+'][debe]')
                         .attr('type','number')
                         .attr('step','any')
                         .addClass("inputDebeAdd movimientoConValor")
                 ).append(
                     $("<input>")
                         .val(haber)
-                        .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteHaber')
-                        .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][haber]')
+                        .attr('id','Asiento1Movimiento'+movimientonumero+'CuentasclienteHaber')
+                        .attr('name','data[Asiento][1][Movimiento]['+movimientonumero+'][haber]')
                         .attr('type','number')
                         .attr('step','any')
                         .addClass("inputHaberAdd movimientoConValor")
                 ).append(
                     $("<input>")
                         .val(fecha)
-                        .attr('id','Asiento0Movimiento'+movimientonumero+'CuentasclienteFecha')
-                        .attr('name','data[Asiento][0][Movimiento]['+movimientonumero+'][fecha]')
+                        .attr('id','Asiento1Movimiento'+movimientonumero+'CuentasclienteFecha')
+                        .attr('name','data[Asiento][1][Movimiento]['+movimientonumero+'][fecha]')
                         .attr('type','hidden')
                 ).append(
                     $("<img>")
@@ -423,10 +454,10 @@ function cargarMovimiento(){
     $("#Asiento0MovimientoKkkDebe").val(0);
     $("#Asiento0MovimientoKkkHaber").val(0);
     $(".inputDebeAdd").each(function () {
-        $(this).change(addTolblTotalDebeAsieto);
+        $(this).change(addTolblTotalDebeAsietoAdd);
     });
     $(".inputHaberAdd").each(function () {
-        $(this).change(addTolblTotalhaberAsieto);
+        $(this).change(addTolblTotalHaberAsietoAdd);
     });
     $(".inputDebeAdd").each(function () {
         $(this).trigger("change");
@@ -514,10 +545,10 @@ function cargarMovimientoEdit(){
     );
 
     $(".inputDebe").each(function () {
-        $(this).change(addTolblTotalDebeAsieto);
+        $(this).change(addTolblTotalDebeAsietoAdd);
     });
     $(".inputHaber").each(function () {
-        $(this).change(addTolblTotalhaberAsieto);
+        $(this).change(addTolblTotalHaberAsietoAdd);
     });
     $("#topmovimiento").val(movimientonumero*1);
     $("#FormEditaMovimientoCuentascliente option:selected").remove();
@@ -533,7 +564,7 @@ function cargarMovimientoEdit(){
         return;
     });
 }
-function addTolblTotalDebeAsieto(event) {
+function addTolblTotalDebeAsietoAdd(event) {
     var debesubtotal = 0;
     $(".inputDebe").each(function () {
         debesubtotal = debesubtotal*1 + this.value*1;
@@ -560,9 +591,9 @@ function addTolblTotalDebeAsieto(event) {
 
     });
     $("#lblTotalDebeAdd").text(parseFloat(debesubtotalAdd).toFixed(2)) ;
-    showIconDebeHaber()
+    showIconDebeHaberAdd()
 }
-function addTolblTotalhaberAsieto(event) {
+function addTolblTotalHaberAsietoAdd(event) {
     //        $("#lblTotalAFavor").val(0) ;
     var habersubtotal = 0;
     $(".inputHaber").each(function () {
@@ -588,9 +619,9 @@ function addTolblTotalhaberAsieto(event) {
         }
     });
     $("#lblTotalHaberAdd").text(parseFloat(habersubtotalAdd).toFixed(2)) ;
-    showIconDebeHaber()
+    showIconDebeHaberAdd()
 }
-function showIconDebeHaber(){
+function showIconDebeHaberAdd(){
     //Este es del edit
     if($("#lblTotalHaber").text()==$("#lblTotalDebe").text()){
         $("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-pass-icon.png');

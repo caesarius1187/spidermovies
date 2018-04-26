@@ -13,7 +13,7 @@ if(isset($error)){ ?>
     return;
 }
 ?>
-<div class="index">
+<div class="">
     <h3><?php echo __('Contabilizar Compras:'.$cliente['Cliente']['nombre'] ); ?></h3>
     <?php
     $id = 0;
@@ -159,6 +159,21 @@ if(isset($error)){ ?>
                     $cuenta110405102+=$comprasgravada[0]['actvspercep']*$suma;
                 }
                 $debe = $cuenta110405102;
+                break;
+            case '267'/*Ganancias Percepciones*/:
+                $cuentagp = 0;
+                //Cargar la compra actvspercep
+                foreach ($comprasgravadas as $comprasgravada) {
+                    /*if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
+                        continue;
+                    }*/
+                    $suma = 1;
+                    if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                        $suma=-1;
+                    }
+                    $cuentagp+=$comprasgravada[0]['ganapercep']*$suma;
+                }
+                $debe = $cuentagp;
                 break;
             case '316'/*110404201 IIBB Percepciones*/:
                 $cuenta110404201 = 0;
@@ -323,18 +338,22 @@ if(isset($error)){ ?>
                     //Debugger::dump($ActividadesGeneros);
                     $genero = $ActividadesGeneros[$comprasgravada['Actividadcliente']['actividade_id']];                    
                     if(!in_array($genero[0],$cuentasTipoActividad[$asientoestandar['Cuenta']['id']])){
+                        //Debugger::dump('sali por genero');
                         continue;
                     }
                     if($comprasgravada['Compra']['imputacion']=='Bs Uso'){
+                        //Debugger::dump('bien de uso');
                         continue;
                     }
                     if(!in_array($comprasgravada['Compra']['tipogasto_id'],$cuentasTipoGastos[$asientoestandar['Cuenta']['id']])){
+                        //Debugger::dump('sali tipo gasto');
                         continue;
                     }
                     if($comprasgravada['Compra']['tipocredito']=='Restitucion credito fiscal'){
+                        //Debugger::dump('reste un credito');
                         $suma=-1;
                     }
-                    $cuentatercera+=$comprasgravada[0]['neto']*$suma+$comprasgravada[0]['nogravados']*$suma+$comprasgravada[0]['exentos']*$suma;
+                    $cuentatercera+=($comprasgravada[0]['neto']+$comprasgravada[0]['nogravados']+$comprasgravada[0]['exentos'])*$suma;
                 }
                 $debe = $cuentatercera;
                 break;

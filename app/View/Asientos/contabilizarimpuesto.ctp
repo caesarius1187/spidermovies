@@ -15,6 +15,8 @@
     $fecha = date('d-m-Y');
     $miAsiento=array();
     $numeroAsiento = 0;
+    $totalDebe=0;
+    $totalHaber=0;
     if(!isset($miAsiento['Movimiento'])){
         $miAsiento['Movimiento']=array();
     }
@@ -60,16 +62,17 @@
                 $key=$kMov;
                 $movid=$movimiento['id'];
                 $asiento_id=$movimiento['asiento_id'];
-                //$debe=$movimiento['debe'];
-                //$haber=$movimiento['haber'];
+                $debe=$movimiento['debe'];
+                $haber=$movimiento['haber'];
                 $miAsiento['Movimiento'][$kMov]['cargado']=true;
             }
         }
-        //este asiento estandar carece de esta cuenta para este cliente por lo que hay que agregarla
-        //echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.key',['default'=>$key]);
         echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.id',['default'=>$movid]);
         echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
-        echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',['default'=>$cuentaclienteid]);
+        echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',[
+            'default'=>$cuentaclienteid,
+            //'class'=>'chosen-select-cuenta'
+            ]);
         echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuenta_id',[
             'readonly'=>'readonly',
             'type'=>'hidden',
@@ -77,11 +80,15 @@
             'value'=>$cuentaid,
             'id'=>$numeroAsiento.'cuenta'.$cuentaid]);
         echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.debe',[
+            'class'=>'inputDebe',
             'default'=>number_format($debe, 2, ".", ""),]);
         echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.haber',[
+             'class'=>'inputHaber',
             'default'=>number_format($haber, 2, ".", ""),]);
         echo "</br>";
         $i++;
+        $totalDebe += $debe;
+        $totalHaber += $haber;
     }
     /*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
     entonces tenemos que recorrer los movimientos y aquellos que esten marcados como cargado=false se deben mostrar*/
@@ -94,20 +101,26 @@
         if( $miAsiento['Movimiento'][$kMov]['cargado']==false){
             $movid=$movimiento['id'];
             $asiento_id=$movimiento['asiento_id'];
-            //$debe=$movimiento['debe'];
-            //$haber=$movimiento['haber'];
+            $debe=$movimiento['debe'];
+            $haber=$movimiento['haber'];
             $cuentaclienteid=$movimiento['cuentascliente_id'];
             echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.id',['default'=>$movid]);
             echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
-            echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',['default'=>$cuentaclienteid,'disabled'=>'disabled']);
-            
+            echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',[
+                'default'=>$cuentaclienteid,'disabled'=>'disabled',
+                'class'=>'chosen-select-cuenta'
+                ]);
             echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.debe',[
+                 'class'=>'inputDebe',
                 'default'=>number_format($debe, 2, ".", ""),]);
             echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.haber',[
+                 'class'=>'inputHaber',
                 'default'=>number_format($haber, 2, ".", ""),]);
             echo "</br>";
             $i++;
         }
+        $totalDebe += $debe;
+        $totalHaber += $haber;
     }
     //Bueno aca vamos a poner el segundo asiento de impuesto
     if(count($impcli2['Impuesto']['Asientoestandare'])>0){
@@ -165,8 +178,8 @@
                     $key=$kMov;
                     $movid=$movimiento['id'];
                     $asiento_id=$movimiento['asiento_id'];
-                    //$debe=$movimiento['debe'];
-                    //$haber=$movimiento['haber'];
+                    $debe=$movimiento['debe'];
+                    $haber=$movimiento['haber'];
                     $miAsiento['Movimiento'][$kMov]['cargado']=true;
                 }
             }
@@ -174,7 +187,9 @@
             //echo $this->Form->input('Asiento.0.Movimiento.'.$i.'.key',['default'=>$key]);
             echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.id',['default'=>$movid]);
             echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
-            echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',['default'=>$cuentaclienteid]);
+            echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',[
+                'default'=>$cuentaclienteid,
+                'class'=>'chosen-select-cuenta',]);
             echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuenta_id',[
                 'readonly'=>'readonly',
                 'type'=>'hidden',
@@ -182,11 +197,15 @@
                 'value'=>$cuentaid,
                 'id'=>$numeroAsiento.'cuenta'.$cuentaid]);
             echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.debe',[
+                 'class'=>'inputDebe',
                 'default'=>number_format($debe, 2, ".", ""),]);
             echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.haber',[
+                 'class'=>'inputHaber',
                 'default'=>number_format($haber, 2, ".", ""),]);
             echo "</br>";
             $i++;
+            $totalDebe += $debe;
+            $totalHaber += $haber;
         }
         /*aca sucede que pueden haber movimientos extras para este asieto estandar, digamos agregados a mano
         entonces tenemos que recorrer los movimientos y aquellos que esten marcados como cargado=false se deben mostrar*/
@@ -199,23 +218,31 @@
             if( $miAsiento['Movimiento'][$kMov]['cargado']==false){
                 $movid=$movimiento['id'];
                 $asiento_id=$movimiento['asiento_id'];
-                //$debe=$movimiento['debe'];
-                //$haber=$movimiento['haber'];
+                $debe=$movimiento['debe'];
+                $haber=$movimiento['haber'];
                 $cuentaclienteid=$movimiento['cuentascliente_id'];
                 echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.id',['default'=>$movid]);
                 echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
-                echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',['default'=>$cuentaclienteid,'disabled'=>'disabled']);
+                echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',[
+                    'default'=>$cuentaclienteid,
+                    'disabled'=>'disabled',
+                    'class'=>'chosen-select-cuenta',]);
 
                 echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.debe',[
+                     'class'=>'inputDebe',
                     'default'=>number_format($debe, 2, ".", ""),]);
                 echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.haber',[
+                     'class'=>'inputHaber',
                     'default'=>number_format($haber, 2, ".", ""),]);
                 echo "</br>";
                 $i++;
+                $totalDebe += $debe;
+                $totalHaber += $haber;
             }
         }
     }
     //Bueno aca vamos a poner el asiento de PAGO
+    if(count($impclipago['Impuesto']['Asientoestandare'])>0){
     ?>
     <h3><?php echo __('Asiento de Pago de : '.$impclipago['Impuesto']['nombre']); ?></h3>
     <?php
@@ -225,8 +252,7 @@
     $descripcion = "Automatico";
     $fecha = date('t-m-Y',strtotime('01-'.$periodo));
     $miAsiento=array();
-    $totalDebe=0;
-    $totalHaber=0;
+    
     if(!isset($miAsiento['Movimiento'])){
         $miAsiento['Movimiento']=array();
     }
@@ -271,18 +297,18 @@
                 $key=$kMov;
                 $movid=$movimiento['id'];
                 $asiento_id=$movimiento['asiento_id'];
-                //$debe=$movimiento['debe'];
-                //$haber=$movimiento['haber'];
+                $debe=$movimiento['debe'];
+                $haber=$movimiento['haber'];
                 $miAsiento['Movimiento'][$kMov]['cargado']=true;
             }
         }
         echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.id',['default'=>$movid]);
         echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
         echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',[
-            'label' => ($i != 0) ? false : 'Cuenta',
-            'default'=>$cuentaclienteid,
-                            'defaultoption'=>$cuentaclienteid,
-                            'class'=>'chosen-select-cuenta',
+                        'label' => ($i != 0) ? false : 'Cuenta',
+                        'default'=>$cuentaclienteid,
+                        'defaultoption'=>$cuentaclienteid,
+                        'class'=>'chosen-select-cuenta',
                     ]);
         echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuenta_id',[
             'readonly'=>'readonly',
@@ -382,12 +408,15 @@
             if( $miAsiento['Movimiento'][$kMov]['cargado']==false){
                 $movid=$movimiento['id'];
                 $asiento_id=$movimiento['asiento_id'];
-                //$debe=$movimiento['debe'];
-                //$haber=$movimiento['haber'];
+                $debe=$movimiento['debe'];
+                $haber=$movimiento['haber'];
                 $cuentaclienteid=$movimiento['cuentascliente_id'];
                 echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.id',['default'=>$movid]);
                 echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.asiento_id',['default'=>$asiento_id,'type'=>'hidden']);
-                echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',['default'=>$cuentaclienteid,'disabled'=>'disabled']);
+                echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.'.$i.'.cuentascliente_id',[
+                    'default'=>$cuentaclienteid,
+                    'disabled'=>'disabled',
+                    'class'=>'chosen-select-cuenta',]);
                 echo $this->Form->input('Asiento.'.$numeroAsiento.'.Movimiento.' . $i . '.debe', [
                     'label' => ($i != 0) ? false : 'Debe',
                     'class'=>'inputDebe',
@@ -405,6 +434,7 @@
             }
         }
         echo $this->Form->end();
+    }
         echo $this->Form->label('','&nbsp; ',[
             'style'=>"display: -webkit-inline-box;width:330px;"
         ]);
@@ -428,7 +458,7 @@
                     'id' => 'iconDebeHaber',
                     'alt' => 'open',
                     'class' => 'btn_exit',
-                    'title' => 'Debe igual al Haber diferencia: '.number_format(($totalDebe-$totalHaber), 2, ".", ""),
+                    'title' => 'Debe igual al Haber',
                 )
             );
         }else{

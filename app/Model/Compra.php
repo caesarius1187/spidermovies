@@ -16,15 +16,24 @@ class Compra extends AppModel {
  * @var string
  */
 	public $displayField = 'numerocomprobante';
-
-
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
-
 /**
  * belongsTo associations
  *
  * @var array
  */
+        public $codigooperacion =[
+            '0', //NO CORRESPONDE
+            'A', //NO ALCANZADO
+            'C', //OPERAC. CANJE / DEVOL. IVA TURISTAS EXTR.
+            'E', //OPERACIONES EXENTAS
+            'N', //NO GRAVADO
+            'T', //REINTEGRO DECRETO 1043/2016
+            'X', //IMPORTACION DEL EXTERIOR
+            'Z', //IMPORTACION DE ZONA FRANCA
+        ];
+            
+
 	public $belongsTo = array(
 		'Cliente' => array(
 			'className' => 'Cliente',

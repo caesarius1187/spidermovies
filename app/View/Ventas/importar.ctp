@@ -12,28 +12,26 @@ function toNumber($target){
     <SCRIPT>
         //$("#loading").css('visibility','visible');
     </SCRIPT>
-    <div class="index" style="width: inherit;float: left;height: 250px;">
+    <div class="index" style="">
 
         <?php
         $labelClifch = $cliente['Cliente']['nombre'];
         ?>
-        <div style="position: relative;height: 100%;">
-            <h1><?php echo __($labelClifch); ?></h1>
-            <label><?php echo $periodo; ?></label>
-            <?php  echo $this->Html->link("<- Volver",array(
-                'controller' => 'ventas',
-                'action' => 'cargar',
-                $cliid,
-                $periodo,
-            ),
-                array(
-                    'class'=>"btn_aceptar",
-                    'style'=>'position: absolute;bottom: 0px;'
-                )
-            );  ?>
-        </div>
+        <h1 style="float: right;"><?php echo __($labelClifch); ?></h1>
+        <label style="float: right;margin-right: 20px;"><?php echo $periodo; ?></label>
+        <?php  echo $this->Html->link("<- Volver",array(
+            'controller' => 'ventas',
+            'action' => 'cargar',
+            $cliid,
+            $periodo,
+        ),
+            array(
+                'class'=>"btn_aceptar",
+                'style'=>'bottom: 0px;float: left;margin-top: 0px;'
+            )
+        );  ?>
     </div>
-    <div class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
+    <div class="index" style="width: inherit;float: left;height: 171px;">
         <?php
         echo $this->Form->create('Venta', array('enctype' => 'multipart/form-data'));
         ?>
@@ -41,28 +39,26 @@ function toNumber($target){
         Cargar Archivo de Facturas:</br>
         <?php
         echo $this->Form->file('Venta.archivoventa');
-        ?>
-        </br></br> </br></br></br>Cargar Archivo de Alicuotas:</br>
+        ?></br>
+        Cargar Archivo de Alicuotas:</br>
         <?php
         echo $this->Form->file('Venta.archivoalicuota');
         echo $this->Form->input('Venta.cliid',array('type'=>'hidden','value'=>$cliid));
         echo $this->Form->input('Venta.periodo',array('type'=>'hidden','value'=>$periodo));?>
-        <div style="height: 75px;text-align: -webkit-right;">
-            <?php
-            echo $this->Form->submit('Subir',
-                array(
-                    'class'=>"btn_aceptar",
-                    'div'=>array(
-                        "style"=>"position: relative;height: 100%;"
-                    ),
-                )
-            );
-            echo $this->Form->end();
-            ?>
-        </div>
+        <?php
+        echo $this->Form->submit('Subir',
+            array(
+                'class'=>"btn_aceptar",
+                'div'=>array(
+                    "style"=>"margin: 0px;float: inherit;"
+                ),
+            )
+        );
+        echo $this->Form->end();
+        ?>
     </div>
 
-    <div class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;">
+    <div class="index" style="width: inherit;float: left;margin-left: -10px;height: 171px;">
         <?php
         $dirVentas = new Folder($folderVentas, true, 0777);
         $dirAlicuotas = new Folder($folderAlicuotas, true, 0777);
@@ -324,7 +320,7 @@ function toNumber($target){
             }
         }
         ?>
-        </br></br></br></br></br>Alicuotas:</br>
+        </br>Alicuotas:</br>
         <?php
         //ACA VAMOS A BUSCAR LOS TXT
         $filesAlicuotas = $dirAlicuotas->find('.*\.txt');
@@ -395,7 +391,7 @@ function toNumber($target){
         ?>
 
     </div>
-    <div  class="index" style="width: inherit;float: left;margin-left: -10px;height: 250px;overflow: auto">
+    <div  class="index" style="width: inherit;float: left;margin-left: -10px;height: 171px;overflow: auto">
         Ultimas ventas cargadas en el sistema
         <table>
             <tr>
@@ -627,22 +623,22 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
         ?>
         <table id="filtros" >
             <tr>
-                <td style="width:106px;padding: 4px 0px;">
+                <td style="width:94px;padding: 4px 0px;">
                     Filtros
                 </td>
-                <td style="width:50px">
+                <td style="width:28px">
                     <?php
                     echo $this->Form->input('Filtro.0.comprobante_id', array(
                             'empty' => 'Comprobante',
-                            'style'=>"width: 50px;",
+                            'style'=>"width: 28px;",
                         )
                     );?>
                 </td>
-                <td style="width:65px;padding: 4px 0px;">
+                <td style="width:44px;padding: 4px 0px;">
                     <?php
                     echo $this->Form->input('Filtro.0.puntosdeventa_id', array(
                             'empty' => 'Punto de V.',
-                            'style'=>"width: 65px;",
+                            'style'=>"width: 44px;",
                         )
                     );?>
                 </td>
@@ -651,7 +647,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                     <?php
                     echo $this->Form->input('Filtro.0.subcliente_id', array(
                             'empty' => 'Cliente',
-                            'style'=>"width: 176px;",
+                            'style'=>"width: 187px;",
                         )
                     );?>
                 </td>
@@ -673,7 +669,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                         )
                     );?>
                 </td>
-                <td style="width:150px"></td>
+                <td style="width:144px"></td>
                 <td style="width:55px;padding: 4px 0px;">
                     <?php
                     echo $this->Form->input('Filtro.0.alicuota', array(
@@ -719,10 +715,11 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             return 0;
         }
         $ventaNumero = 1;
+        $respuestaVentasCargadas = " Ventas ya cargadas: ";
         ?>
-        Ventas ya cargadas :
+       
 
-        <table style="width: 100%;padding: 0px;margin: 0px;" id="tablaFormVentas" >
+        <table style="width: 100%;padding: 0px;margin: 0px;    border-collapse: collapse;" id="tablaFormVentas" >
             <?php
             $i=1;
             $cantVentasYaguardadas = 0;
@@ -778,8 +775,10 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                         if($pdvNuevo==$ventaYaCargada['Venta']['puntosdeventa_id']){
                             $igualPuntoDV = true;
                         }
-                        if($alicuotaNuevo==$ventaYaCargada['Venta']['alicuota']){
+                        if($alicuotaNuevo*1==$ventaYaCargada['Venta']['alicuota']*1){
                             $igualAlicuota = true;
+                        }else{
+                            //echo $alicuotaNuevo."!=".$ventaYaCargada['Venta']['alicuota']."</br>";
                         }
                         if($numeroComprobante*1==$ventaYaCargada['Venta']['numerocomprobante']*1){
                             $igualNumeroComprobante = true;
@@ -807,14 +806,14 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                         $ventaNumero++;
                         ?>
                         <tr>
-                            <td style="width: 100%;padding: 0px;margin: 0px; ">
-                                <div style="margin-top: 1px;" class="ventaFormVertical <?php echo $class;?>" >
+                            <td style="width: 100%;padding: 0px;margin: 0px;border-bottom: 0px; ">
+                                <div style="" class="ventaFormVertical <?php //echo $class;?>" >
                                     <?php
-                                    echo $this->Form->input('Venta.' . $i . '.i', array(
-                                            'label' => ($i + 9) % 10 == 0 ? 'N°' : '',
-                                            'value' => $i,
-                                            'style' => "width: 20px;",
-                                        )
+                                    
+                                    echo $this->Form->label('Venta.' . $i . '.i',str_pad($i, 2, "0", STR_PAD_LEFT), 
+                                            [
+                                                "style"=>"display:inline"
+                                            ]
                                     );
                                     echo $this->Form->input('Venta.' . $i . '.id', array('type' => 'hidden'));
                                     echo $this->Form->input('Venta.' . $i . '.cliente_id', array('type' => 'hidden', 'value' => $cliid));
@@ -829,18 +828,32 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                     );
                                     //Este Array de comprobantes debe incluir array{id,codigo} y se debe seleccionar por codigo
                                     echo $this->Form->input('Venta.' . $i . '.comprobante_id', array(
-                                        'default' => $comprobanteTipoNuevo,
-                                        'style' => "width: 50px;",
+                                        'value' => $comprobanteTipoNuevo,
+                                        'type' => "hidden",
+                                    ));
+                                    echo $this->Form->input('Venta.' . $i . '.comprobanteid', array(
+                                        'value' => $comprobantes[$comprobanteTipoNuevo],
+                                        'style' => "width: 31px;",
                                         'label' => ($i + 9) % 10 == 0 ? 'Comp.' : '',
-                                        'class' => 'filtrocomprobante'
+                                        'class' => 'filtrocomprobante',
+                                        'type'=>'text',
+                                        'disabled' => 'disabled',
                                     ));
                                     //seleccionar el punto de venta por "numero(nombre)"
                                     echo $this->Form->input('Venta.' . $i . '.puntosdeventa_id', array(
-                                        'options' => $puntosdeventas,
+                                        //'options' => $puntosdeventas,
                                         'default' => $pdvNuevo,
+                                        //'label' => ($i + 9) % 10 == 0 ? 'P.Vent.' : '',
+                                        //'style' => 'width:65px;',
+                                        'type' => 'hidden',
+                                    ));
+                                    echo $this->Form->input('Venta.' . $i . '.puntosdeventaid', array(
+                                        'value' => $puntosdeventas[$pdvNuevo],
                                         'label' => ($i + 9) % 10 == 0 ? 'P.Vent.' : '',
-                                        'style' => 'width:65px;',
+                                        'style' => 'width:42px;',
                                         'class' => 'filtropuntodeventa',
+                                        'type' => 'text',
+                                        'disabled' => 'disabled',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.numerocomprobante', array(
 
@@ -848,6 +861,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         'value' => $peanio = substr($numeroComprobante, -8),
                                         'label' => ($i + 9) % 10 == 0 ? 'Num.' : '',
                                         'style' => 'width:60px;',
+                                        'readonly' => 'readonly',
+                                        
                                     ));
                                     //se supone que cuando generemos este formulario ya van a estar creados todos los subclientes
                                     //asi que solo tendriamos queseleccionar por numero de idenficicacion
@@ -856,7 +871,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'defaultmio' => $clienteNuevo,
                                             'required' => true,
                                             'type' => 'hidden',
-                                            'div'=>['style'=>'display:none']
+                                            'div'=>['style'=>'display:none'],
                                         )
                                     );
                                     echo $this->Form->input('Venta.' . $i . '.subclientenombre', array(
@@ -865,15 +880,17 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'class' => 'filtrosubcliente',
                                             'paraFiltrar' => $venta['Venta']['nombre']." ".$venta['Venta']['identificacionnumero']." ".$venta['Venta']['identificacionnumero'],
                                             'disabled' => 'disabled',
-                                            'value' => $venta['Venta']['nombre']
+                                            'value' => $venta['Venta']['nombre'],
+                                            'readonly' => 'readonly',
                                         )
                                     );
                                     echo $this->Form->input('Venta.' . $i . '.subclientecuit', array(
                                             'label' => ($i + 9) % 10 == 0 ? 'CUIT' : '',
-                                            'style' => 'width:84px;',
+                                            'style' => 'width:90px;',
                                             'disabled' => 'disabled',
                                             'class' => 'cuitConsultaAFIP',
-                                            'value' => $venta['Venta']['identificacionnumero']*1
+                                            'value' => $venta['Venta']['identificacionnumero']*1,
+                                            'readonly' => 'readonly',
                                         )
                                     );
                                     $condicioniva = 'Monotributista';//defaultavalue
@@ -913,7 +930,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'div' => array('class' => 'inputAControlar'),
                                             'defaultoption' => $condicioniva,
                                             'class' => 'aplicableATodos filtrocondicioniva '.$classcondicionIVA,
-                                            'inputclass' => 'VentaAddCondicionIVA',
+                                            'inputclass' => 'VentaAddCondicionIVA'
                                         )
                                     );
                                     //esto no trae asi que vamos a tener que elegir
@@ -926,7 +943,6 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'class' => 'aplicableATodos filtroactividadcliente inputactividad',
                                             'inputclass' => 'VentaAddActividad',
                                             'ordeventa'=>$i
-
                                         )
                                     );
                                     //si no tiene categorizado ganancias no se debe poder cargar ventas
@@ -971,11 +987,24 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                     );
                                     //esto no trae asi que vamos a tener que elegir
                                     echo $this->Form->input('Venta.' . $i . '.alicuota', array(
-                                        'defaultoption' => $alicuota['alicuotaiva'],
-                                        'label' => ($i + 9) % 10 == 0 ? 'Alicuota' : '',
-                                        'style' => 'width:55px',
-                                        'class' => 'aplicableATodos filtroalicuota',
+                                        'value' => $alicuotaNuevo,
+                                        'defaultoption' => $alicuotaNuevo,
+                                        'type' => 'hidden',
+                                    ));
+                                    $showalicuota=$alicuota['alicuotaiva'];
+                                    if(isset($alicuotascodigoreverse[$alicuota['alicuotaiva']])){
+                                        //entonces la alicuota es de un txt (0005)
+                                        $idalicuota = $alicuotascodigoreverse[$alicuota['alicuotaiva']];
+                                        $showalicuota  = $alicuotas[$idalicuota];
+                                    }
+                                    echo $this->Form->input('Venta.' . $i . '.showalicuota', array(
+                                        'value' => $showalicuota,
+                                        'label' => ($i + 9) % 10 == 0 ? 'Alic.' : '',
+                                        'style' => 'width:30px',
                                         'inputclass' => 'VentaAddAlicuota',
+                                        'class' => 'filtroalicuota',
+                                        'type' => 'text',
+                                        'readonly' => 'readonly',
                                     ));
                                     $importenetogravado = 0;
                                     if ($tieneMonotributo) {
@@ -987,51 +1016,61 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         'style' => 'max-width: 100px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'Neto' : '',
                                         'value' => $importenetogravado,
+                                        'readonly' => 'readonly',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.iva', array(
                                         'style' => 'max-width: 100px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'IVA' : '',
                                         'value' => $alicuota['impuestoliquidado']*1,
+                                        'readonly' => 'readonly',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.ivapercep', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'IVA Perc.' : '',
                                         'value' => $numalicuota==0?$venta['Venta']['percepcionesnocategorizados']*1:0,
+                                        'readonly' => 'readonly',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.iibbpercep', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'IIBB Perc.' : '',
                                         'value' => $numalicuota==0?$venta['Venta']['importeingresosbrutos']*1:0,
+                                        'readonly' => 'readonly',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.actvspercep', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'Ac.Vs. Perc.' : '',
                                         'value' => $numalicuota==0?$venta['Venta']['importeimpuestosmunicipales']*1:0,
+                                        'readonly' => 'readonly',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.impinternos', array(
                                         'label' => ($i + 9) % 10 == 0 ? 'Imp.Inter.' : '',
                                         'style' => 'max-width: 70px;',
                                         'value' => $numalicuota==0?$venta['Venta']['importeimpuestosinternos']*1:0,
+                                        'readonly' => 'readonly',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.nogravados', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'No Gravado' : '',
                                         'value' => $numalicuota==0?$venta['Venta']['importeconceptosprecionetogravado']*1:0,
+                                        'readonly' => 'readonly',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.excentos', array(
                                         'style' => 'max-width: 70px;',
                                         'label' => ($i + 9) % 10 == 0 ? 'Exento IVA' : '',
                                         'value' => $numalicuota==0?$venta['Venta']['importeoperacionesexentas']*1:0,
+                                        'readonly' => 'readonly',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.exentosactividadeseconomicas', array(
                                         'label' => ($i + 9) % 10 == 0 ? 'Exen. Ac.Ec' : '',
                                         'style' => 'max-width: 70px;',
                                         'value' => 0,
+                                        'readonly' => 'readonly',
                                     ));
                                     echo $this->Form->input('Venta.' . $i . '.exentosactividadesvarias', array(
                                         'style' => 'max-width: 70px;',
-                                        'label' => ($i + 9) % 10 == 0 ? 'Exento Ac.Vs' : '',
+                                        'label' => ($i + 9) % 10 == 0 ? 'Exen. Ac.Vs' : '',
                                         'value' => 0,
+                                        'readonly' => 'readonly',
                                     ));
                                     //$lineVenta['importepercepcionespagosacuenta']=substr($line, 168,15);
                                     echo $this->Form->input('Venta.' . $i . '.periodo', array('type' => 'hidden', 'value' => $periodo));
@@ -1054,6 +1093,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         'label' => ($i + 9) % 10 == 0 ? 'Total.' : '',
                                         'style' => 'max-width: 100px;',
                                         'value' => $totalrecalculado,
+                                        'readonly' => 'readonly',
                                     ));
                                     $numalicuota++;
                                     //echo "<label>".json_encode($venta)."</label>";
@@ -1067,10 +1107,10 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                 }
                 if($i==100){
                     if(count($ventasArray)>100){
-                        echo $cantVentasYaguardadas." Ventas ya cargadas, faltan importar estas 100 ventas y ".(count($ventasArray)-$i-$cantVentasYaguardadas)." ventas mas, por favor continue cargando hasta que
+                        $respuestaVentasCargadas .= $cantVentasYaguardadas." Ventas ya cargadas, faltan importar estas 100 ventas y ".(count($ventasArray)-$i-$cantVentasYaguardadas)." ventas mas, por favor continue cargando hasta que
                             finalize la carga de todas las ventas del archivo";
                     }else{
-                        echo $cantVentasYaguardadas." Ventas ya cargadas, faltan importar estas ".$i." ventas por favor continue cargando hasta que
+                        $respuestaVentasCargadas .= $cantVentasYaguardadas." Ventas ya cargadas, faltan importar estas ".$i." ventas por favor continue cargando hasta que
                             finalize la carga de todas las ventas del archivo";
                     }
                     break ;
@@ -1079,12 +1119,13 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             ?>
         </table>
         <?php
+        echo $respuestaVentasCargadas;
         if ($i > 1){
             echo $this->Form->submit('Importar', array(
                     'type'=>'image',
                     'title'=>'Importar',
                     'src' => $this->webroot.'img/check.png',
-                    'class'=>'imgedit',
+                    'class'=>'img_edit',
                     'style'=>'width:25px;height:25px;'
                 )
             );

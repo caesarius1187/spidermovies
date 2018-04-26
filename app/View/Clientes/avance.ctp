@@ -114,7 +114,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
           <?php
           $HayImpuestosHabilitados = false;
           //Aqui se pinta la caja que identifica a que impuesto pertenece cada row.
-        foreach ($cliente["Impcli"] as $impcli){  
+            foreach ($cliente["Impcli"] as $impcli){  
               if(Count($impcli['Periodosactivo'])!=0&&($impcli['Impuesto']['organismo']!='banco')){
                 $HayImpuestosHabilitados = true;
               }  
@@ -210,9 +210,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                     if($cliente['impuestosactivos']['contabiliza']){
                         $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodoSel."'";
                         //si es cliente del estudio 2(Manjon) o 16(Alejandro Farah) vamos a permitir ver balance hasta la fecha
-                         if(in_array($cliente['Grupocliente']['estudio_id'],['2','16','5'])&&($cliente['Cliente']['tipopersona']=='juridica')){
-//            $esPersonaJuridica=true;
-//        })){
+                         if(($cliente['Cliente']['id']=='56'||($cliente['Cliente']['tipopersona']=='juridica'))){
                             echo $this->Form->button(
                                 'Estados Contables',
                                 array(
@@ -236,6 +234,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                         $tieneasientodecompras=false;
                         $tieneasientoderetenciones=false;
                         $tieneasientodeamortizacion=false;
+                        $tieneasientodeapertura=false;
                         foreach ($cliente["Asiento"] as $asiento ){
                             if($asiento['tipoasiento']=='ventas'){
                                 $tieneasientodeventas=true;
@@ -248,6 +247,9 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                             }
                             if($asiento['tipoasiento']=='amortizacion'){
                                 $tieneasientodeamortizacion=true;
+                            }
+                            if($asiento['tipoasiento']=='apertura'){
+                                $tieneasientodeapertura=true;
                             }
                         }
                         if($tieneasientodeventas){
@@ -357,7 +359,8 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                         $peMesCorte = substr($diamesCorteEjFiscal, 3);
 
                         $ultimoPeriodo = $peMesCorte."-".$peanio;
-
+                        
+                        $primerPeriodo = date('m', strtotime($diamesCorteEjFiscal."-".$peanio." +1 days"));
                         if($ultimoPeriodo == $periodoSel){
                            if($tieneasientodeamortizacion){
                             $buttonclass="buttonImpcliRealizado";
@@ -370,6 +373,21 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                                   'class'=>$buttonclass." progress-button state-loading",
                                   'onClick'=>"contabilizaramortizacion(".$paramsPrepPapeles.")",
                                   'id'=>'buttonAsAmortizacion'.$cliente['Cliente']['id'],
+                              ),
+                              array());
+                        }                       
+                        if($primerPeriodo == $pemes){
+                           if($tieneasientodeapertura){
+                            $buttonclass="buttonImpcliRealizado";
+                          }else{
+                              $buttonclass="buttonImpcliListo";
+                          }
+                          echo $this->Form->button(
+                              'As. Apertura',
+                              array(
+                                  'class'=>$buttonclass." progress-button state-loading",
+                                  'onClick'=>"crearAsApertura(".$paramsPrepPapeles.")",
+                                  'id'=>'buttonAsApertura'.$cliente['Cliente']['id'],
                               ),
                               array());
                         }                       
@@ -1028,7 +1046,7 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
             break;
         case 14/*Autonomo*/:
             $onclick = 'verPapelDeTrabajoAutonomo('."'".$periodo."'".','."'".$impcliid."'".')';
-            break;
+            break;       
         case 19/*IVA*/:
             $onclick = 'verPapelDeTrabajoIVA('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
             break;
@@ -1041,6 +1059,9 @@ function mostrarBotonImpuesto($context, $cliente, $impcli,$montoevento, $periodo
             break;
         case 160/*Ganancias PF*/:
             $onclick = 'verPapelDeTrabajoGanancias('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
+            break;
+         case 159/*Bienes Personales*/:
+            $onclick = 'verPapelDeTrabajoBP('."'".$periodo."'".','."'".$cliente['Cliente']['id']."'".')';
             break;
         default:
             if($impcli['Impuesto']['organismo']=='sindicato'){

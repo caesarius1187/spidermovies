@@ -136,13 +136,13 @@ class DepositosController extends AppController {
 		$this->set('cliid', $cliid);
 
 		$cliente = $this->Cliente->find('first',array(
-										'contain'=>[],
-										'conditions' => array(
-								 			'Cliente.id' => $cliid,
-								 			),
-										'fields'=>array('Cliente.id','Cliente.grupocliente_id','Cliente.honorario')
-										)
-									);
+                        'contain'=>[],
+                        'conditions' => array(
+                                'Cliente.id' => $cliid,
+                                ),
+                        'fields'=>array('Cliente.id','Cliente.grupocliente_id','Cliente.honorario')
+                        )
+                );
 		$this->set('gcliid', $cliente['Cliente']['grupocliente_id']);
 		$this->set('honorariocliente', $cliente['Cliente']['honorario']);
 		$this->set('cliid', $cliente['Cliente']['id']);

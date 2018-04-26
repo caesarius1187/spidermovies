@@ -204,6 +204,19 @@ class Impcli extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
+		'Liquidaciondetalle' => array(
+			'className' => 'Liquidaciondetalle',
+			'foreignKey' => 'impcli_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
 		
 	);
 

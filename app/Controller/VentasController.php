@@ -328,7 +328,7 @@ class VentasController extends AppController {
 	 	$this->autoRender=false;
 	 	if ($this->request->is('post')) {
 	 		$optionsVenta = array( );
-	 		//controlar que no se repita la factura para el mismo cluente(subcliente), punto de venta, numero de comprobante y alicuota(si tiene iva)
+	 		//controlar que no se repita la factura para el mismo cliente(subcliente), punto de venta, numero de comprobante y alicuota(si tiene iva)
 	 		if($this->request->data['Venta']['tieneMonotributo']){
 	 			//Es Monotributista comprobar solo por numero de comprobante
  				$optionsVenta = array(
@@ -351,15 +351,17 @@ class VentasController extends AppController {
 			$ventaAnterior = $this->Venta->hasAny($optionsVenta);
 			
 			if($ventaAnterior){
-				$data = array(
-		            "respuesta" => "La Venta ".$this->request->data['Venta']['numerocomprobante']." ya ha sido registrada en el periodo".$this->request->data['Venta']['periodo'].". Por favor cambie el numero de comprobante o la alicuota",
-		            "venta_id" => 0,
-		            "venta"=> array(),		            
-		        );
-		        $this->layout = 'ajax';
-		        $this->set('data', $data);
-				$this->render('serializejson');
-				return ;
+                            $data = array(
+                                "respuesta" => "La Venta ".$this->request->data['Venta']['numerocomprobante']." ya ha sido registrada en un periodo anterior. Por favor cambie el numero de comprobante o la alicuota",
+                                "datos" => $this->Venta->find('first',$optionsVenta),		            
+                                "optionsVenta" => $optionsVenta,		            
+                                "venta_id" => 0,
+                                "venta"=> array(),		            
+                            );
+                            $this->layout = 'ajax';
+                            $this->set('data', $data);
+                            $this->render('serializejson');
+                            return ;
 	 		}
 			$this->Venta->create();
 			if($this->request->data['Venta']['fecha']!="")				
@@ -511,13 +513,32 @@ class VentasController extends AppController {
                             $optionsPuntosDeVenta = array('contain'=>[],'conditions'=>array('Puntosdeventa.id' => $this->request->data['Venta']['puntosdeventa_id']));
                             $optionsSubCliente = array('contain'=>[],'conditions'=>array('Subcliente.id'=>$this->request->data['Venta']['subcliente_id']));
                             $optionsLocalidade = array('contain'=>[],'conditions'=>array('Localidade.id'=>$this->request->data['Venta']['localidade_id']));
-                            $optionsActividadCliente = array('contain'=>['Actividade'],'conditions'=>array('Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id']));
-            $optionstipogasto = array(
-                                    'contain'=>[],
-                                    'conditions'=>array(
-                                            'Tipogasto.id'=>$this->request->data['Venta']['tipogasto_id'],
-                                            'Tipogasto.tipo'=>'ventas'
+                            $pemes = substr($this->request->data['Venta']['periodo'], 0, 2);
+                            $peanio = substr($this->request->data['Venta']['periodo'], 3);
+                            $bajaMayorQuePeriodo = array(
+                                    //HASTA es mayor que el periodo
+                                    'OR'=>array(
+                                            'Actividadcliente.baja'=>['','0000-00-00'],
+                                            'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+                                            'AND'=>array(
+                                                    'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+                                                    'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+                                            ),
                                     )
+                            );
+                            $optionsActividadCliente = array(
+                                'contain'=>['Actividade'],
+                                'conditions'=>array(
+                                    'Actividadcliente.id'=>$this->request->data['Venta']['actividadcliente_id'],
+                                    //$bajaMayorQuePeriodo
+                                    )
+                                );
+                            $optionstipogasto = array(
+                                'contain'=>[],
+                                'conditions'=>array(
+                                    'Tipogasto.id'=>$this->request->data['Venta']['tipogasto_id'],
+                                    'Tipogasto.tipo'=>'ventas'
+                                )
                             );
             $this->request->data['Venta']['fecha'] = date('d',strtotime($this->request->data['Venta']['fecha']));
                             $data = array(
@@ -530,9 +551,9 @@ class VentasController extends AppController {
                                     "subcliente"=> $this->Subcliente->find('first',$optionsSubCliente),
                                     "localidade"=> $this->Localidade->find('first',$optionsLocalidade),
                                     "actividadcliente"=> $this->Actividadcliente->find('first',$optionsActividadCliente),
-                        "actividadcliente_id"=> $this->request->data['Venta']['actividadcliente_id'],
-                "tipogasto"=> $this->Tipogasto->find('first',$optionstipogasto),
-                /*AFIP*/
+                                    "actividadcliente_id"=> $this->request->data['Venta']['actividadcliente_id'],
+                                    "tipogasto"=> $this->Tipogasto->find('first',$optionstipogasto),
+                                    /*AFIP*/
                                     "tieneMonotributo"=> $this->request->data['Venta']['tieneMonotributo'],
                                     "tieneIVA"=> $this->request->data['Venta']['tieneIVA'],
                                     "tieneIVAPercepciones"=> $this->request->data['Venta']['tieneIVAPercepciones'],
@@ -668,7 +689,7 @@ class VentasController extends AppController {
 					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
 				),
 			)
-		);
+		);		
 		//B: Es mayor que periodo Desde
 		$esMayorQueDesde = array(
 			'OR'=>array(
@@ -736,14 +757,25 @@ class VentasController extends AppController {
 			)
 		);
 		$this->set(compact('subclientes'));
-
+                
+                $bajaMayorQuePeriodo = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'Actividadcliente.baja'=>['','0000-00-00'],
+                                'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
 		$clienteActividadList=$this->Cliente->Actividadcliente->find('list', array(
 				'contain' => array(
 					'Actividade',
-
 				),
 				'conditions' => array(
 					'Actividadcliente.cliente_id' => $id,
+                                        $bajaMayorQuePeriodo
 				),
 				'fields' => array(
 					'Actividadcliente.id','Actividade.nombre','Actividadcliente.descripcion'
@@ -1037,20 +1069,36 @@ class VentasController extends AppController {
 		$this->set(compact('comprobantes', 'supercomprobantes', 'partidos', 'localidades','puntosdeventasdomicilio','puntosdeventas','subclientes'));
 		//Alicuotas
 		$this->set('alicuotas', $this->alicuotascodigo);
+        	$alicuotascodigoreverse = $this->alicuotascodigoreverse;
+                $this->set('alicuotascodigoreverse', $this->alicuotascodigoreverse);    
 		//Condicion IVA
 		$this->set('condicionesiva',$this->condicionesiva);
 		//Tipo Debito
 		$this->set('tipodebitos', $this->tipodebitos);
 		//Actividades del Cliente
-		$clienteActividadList=$this->Actividadcliente->find('list', array(
+                $pemes = substr($periodo, 0, 2);
+		$peanio = substr($periodo, 3);
+                $bajaMayorQuePeriodo = array(
+			//HASTA es mayor que el periodo
+			'OR'=>array(
+				'Actividadcliente.baja'=>['','0000-00-00'],
+                                'SUBSTRING(Actividadcliente.baja,4,7)*1 > '.$peanio.'*1',
+				'AND'=>array(
+					'SUBSTRING(Actividadcliente.baja,4,7)*1 >= '.$peanio.'*1',
+					'SUBSTRING(Actividadcliente.baja,1,2) >= '.$pemes.'*1'
+				),
+			)
+		);
+		$clienteActividadList=$this->Cliente->Actividadcliente->find('list', array(
 				'contain' => array(
-					'Actividade'
+					'Actividade',
 				),
 				'conditions' => array(
-					'Actividadcliente.cliente_id' =>  $cliid,
+					'Actividadcliente.cliente_id' => $cliid,
+                                        $bajaMayorQuePeriodo
 				),
 				'fields' => array(
-					'Actividadcliente.id','Actividade.nombre'
+					'Actividadcliente.id','Actividade.nombre','Actividadcliente.descripcion'
 				)
 			)
 		);
@@ -1263,16 +1311,16 @@ class VentasController extends AppController {
 		);
 		$ventasperiodo = $this->Venta->find('all',$optionsventasdelperiodo);
 		$this->set('ventasperiodo',$ventasperiodo);
-        $this->set('cliente', $cliente);
-        $optionsTipoGastos=array(
-            'conditions'=>array(
-                'Tipogasto.tipo'=>'ventas'
-			),
-            'fields'=>array('id','nombre','categoria'),
-            'contain'=>[],
-        );
-        $tipogastos = $this->Venta->Tipogasto->find('list',$optionsTipoGastos);
-        $this->set('tipogastos', $tipogastos);
+                $this->set('cliente', $cliente);
+                $optionsTipoGastos=array(
+                    'conditions'=>array(
+                        'Tipogasto.tipo'=>'ventas'
+                                ),
+                    'fields'=>array('id','nombre','categoria'),
+                    'contain'=>[],
+                );
+                $tipogastos = $this->Venta->Tipogasto->find('list',$optionsTipoGastos);
+                $this->set('tipogastos', $tipogastos);
 	}
 	public function cargarventas(){
 		$data=array();

@@ -22,35 +22,35 @@ if(!$showTheForm){?>
     <td >
         <a href="#"  onclick="
           loadFormImpuesto(<?php echo $this->request->data['Impcli']['id']; ?>,<?php echo $this->request->data['Impcli']['cliente_id'];?>)" class="button_view"> 
-          <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+          <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
         </a>
         <a href="#"  onclick="loadFormImpuestoPeriodos(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view"> 
-            <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'imgedit'));?>
+            <?php echo $this->Html->image('calendario.png', array('alt' => 'open','class'=>'img_calendario'));?>
         </a>
         <a href="#"  onclick="deleteImpcli(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
-            <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'imgedit'));?>
+            <?php echo $this->Html->image('delete.png', array('alt' => 'open','class'=>'img_trash'));?>
         </a>
         <?php
         //aca vamos a agregar la opcion de manejar las Provincias de un impuesto que debe relacionar Provincias
         if($this->request->data['Impuesto']['id']==6/*Actividades Varias*/){ ?>
             <a href="#"  onclick="loadFormImpuestoLocalidades(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
-                <?php echo $this->Html->image('localidad.png', array('alt' => 'open','class'=>'imgedit'));?>
+                <?php echo $this->Html->image('localidad.png', array('alt' => 'open','class'=>'img_localidad'));?>
             </a>
         <?php }
         //aca vamos a agregar la opcion de manejar las Provincias de un impuesto que debe relacionar Provincias
         if($this->request->data['Impuesto']['id']==174/*Convenio Multilateral*/||$this->request->data['Impuesto']['id']==21/*Convenio Multilateral*/){?>
             <a href="#"  onclick="loadFormImpuestoProvincias(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
-                <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'imgedit'));?>
+                <?php echo $this->Html->image('mapa_regiones.png', array('alt' => 'open','class'=>'img_edit'));?>
             </a>
         <?php }
             if($this->request->data['Impuesto']['id']==5/*Ganancias Sociedades*/||$this->request->data['Impuesto']['id']==160/*Ganancias Personas Físicas*/){?>
             <a href="#"  onclick="loadFormImpuestoCuentasganancias(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
-                <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'imgedit'));?>
+                <?php echo $this->Html->image('cuentas.png', array('alt' => 'open','class'=>'img_edit'));?>
             </a>
         <?php }
         if( $this->request->data['Impuesto']['organismo']=='banco'){ ?>
         <a href="#"  onclick="loadCbus(<?php echo $this->request->data['Impcli']['id']; ?>)" class="button_view">
-            <?php echo $this->Html->image('cuentabancaria.png', array('alt' => 'open','class'=>'imgedit'));?>
+            <?php echo $this->Html->image('cuentabancaria.png', array('alt' => 'open','class'=>'img_cbu'));?>
         </a>
         <?php } ?>
     </td>
@@ -70,10 +70,18 @@ if(!$showTheForm){?>
             if( $this->request->data['Impuesto']['id']==10/*SUSS*/){?>
                 <td>
                 <?php
+                echo $this->Form->input('aplicaley27430',
+                    [
+                        'label' => 'Aplica Ley 27430',
+                        'div'=>['style'=>"width: 88px;"]
+                    ]);?>
+                </td>
+                <td>
+                <?php
                 echo $this->Form->input('alicuotaart',
                     [
                         'label' => 'Alicuota ART',
-                        'div'=>['style'=>"width: 200px;"]
+                        'div'=>['style'=>"width: 88px;"]
                     ]);?>
                 </td>
                 <td>
@@ -81,7 +89,7 @@ if(!$showTheForm){?>
                 echo $this->Form->input('fijoart',
                     [
                         'label' => 'Cuota Fija LRT',
-                        'div'=>['style'=>"width: 200px;"]
+                        'div'=>['style'=>"width: 85px;"]
                     ]);?>
                 </td>
                 <td>
@@ -89,7 +97,7 @@ if(!$showTheForm){?>
                 echo $this->Form->input('segurodevida',
                     [
                         'label' => 'Seguro de vida',
-                        'div'=>['style'=>"width: 200px;"]
+                        'div'=>['style'=>"width: 92px;"]
                     ]);?>
                 </td>
                 <td>
@@ -97,7 +105,7 @@ if(!$showTheForm){?>
                 echo $this->Form->input('padron',
                     [
                         'label' => 'Padron',
-                        'div'=>['style'=>"width: 200px;"]
+                        'div'=>['style'=>"width: 55px;"]
                     ]);?>
                 </td>
             <?php }

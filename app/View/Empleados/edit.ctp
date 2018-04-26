@@ -12,9 +12,15 @@
 		echo $this->Form->input('dni',array('label'=>'DNI'));
 		echo $this->Form->input('localidade_id',array(
 			'label'=>'Localidad',
-			'options'=>$localidades,
-			));
+                        'type'=>'select',
+                        'class'=>'chosen-select',
+                        'options'=>$localidades,
+                        'style'=>'width:250px'
+			)
+                    );
 		echo $this->Form->input('domicilio',array('label'=>'Domicilio','type'=>'text','style'=>'width:250px'));
+		echo $this->Form->input('titulosecundario',array('label'=>'Titulo Secundario'));
+		echo $this->Form->input('titulouniversitario',array('label'=>'Titulo Universitario'));
 		?>
 	</fieldset>
 	<fieldset style="border: 1px solid #1e88e5;">
@@ -95,16 +101,21 @@
 		echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
 
 		echo $this->Form->input('adherente',array('label'=>'Adherentes','value'=>0));
+		echo $this->Form->input('obrassociale_id',array(
+                            'label'=>'Obra Social',
+                            'class'=>'chosen-select',
+                            )
+                        );
 		echo $this->Form->input('obrasocialsindical',array(
 			'label'=>'Obra social Sindical',
 			'title'=>'Indicar si el empleado tiene una obra social que no sea sindical'));
-		echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad));
-		echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion'));
-		echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion'));
-		echo $this->Form->input('codigozona',array('label'=>'Codigo Zona','options'=>$codigozona));
-		echo $this->Form->input('codigomodalidadcontratacion',array('label'=>'Codigo Modalidad Contratacion','options'=>$codigomodalidadcontratacion));
-		echo $this->Form->input('codigosiniestrado',array('label'=>'Codigo Siniestrado','options'=>$codigosiniestrado));
-		echo $this->Form->input('tipoempresa',array('label'=>'Tipo empresa','options'=>$tipoempresa))."</br>";
+		echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad,'class'=>'chosen-select',));
+                echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion','options'=>$codigorevista,'class'=>'chosen-select',));
+                echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion','options'=>$codigocondicion,'class'=>'chosen-select',));
+                echo $this->Form->input('codigozona',array('label'=>'Codigo Zona','options'=>$codigozona,'class'=>'chosen-select',));
+                echo $this->Form->input('codigomodalidadcontratacion',array('label'=>'Codigo Modalidad Contratacion','options'=>$codigomodalidadcontratacion,'class'=>'chosen-select',));
+                echo $this->Form->input('codigosiniestrado',array('label'=>'Codigo Siniestrado','options'=>$codigosiniestrado,'class'=>'chosen-select',));
+                echo $this->Form->input('tipoempresa',array('label'=>'Tipo empresa','options'=>$tipoempresa,'class'=>'chosen-select',))."</br>";
 
 	echo $this->Form->end(__('Aceptar')); ?>
 </div>

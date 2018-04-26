@@ -4,7 +4,7 @@
 $(document).ready(function() {    
     
     $( "#clickExcel" ).click(function() {
-        //showAllDivs();
+        showAllDivs();
         setTimeout(
         function() 
         {
@@ -71,6 +71,9 @@ $(document).ready(function() {
     catchAjustescontablesAdd();
     catchEditFormsAjusteContable();
     reloadDatePickers();
+    catchEditFormsLiquidacionDetalles();
+    loadInformeAuditor();
+    //loadNotasYDatos();
 });
 function ajustarheadeepn() {
         var header_height = 0;
@@ -344,11 +347,11 @@ function reloadDatePickers(){
     });		
 }
 function loadNotasYDatos(){
-    var nota1 = $('#datosynotasNota1').val();
+    var nota1 = $('#liquidaciondetalleNota1').val();
     $('#spnESPNota1').html(nota1);
 }
 function loadInformeAuditor(){
-    var date = $('#fechainforme').val();
+    var date = $('#liquidaciondetalleFechainforme').val();
     var parts = date.split("-");
     var dt = new Date(parts[2], parts[1]-1 , parts[0]);                            
     var dia = $.datepicker.formatDate('dd', dt);
@@ -536,6 +539,31 @@ function catchEditFormsAjusteContable(){
 
              return false;
          });
+    });
+}
+function catchEditFormsLiquidacionDetalles(){
+    $("#liquidaciondetalle").submit(function(){
+        //serialize form data
+        var formData = $(this).serialize();
+        //get form action
+        var formUrl = $(this).attr('action');
+        $.ajax({
+            type: 'POST',
+            url: formUrl,
+            data: formData,
+            success: function(data,textStatus,xhr){
+                var respuesta = jQuery.parseJSON(data);
+                callAlertPopint(respuesta.respuesta);
+                location.reload();
+            },
+            error: function(xhr,textStatus,error){
+                $('#myModal').modal('show');
+                alert(textStatus);
+                callAlertPopint(textStatus);
+                return false;
+            }
+        });
+        return false;
     });
 }
 function contabilizarexistenciafinal (clienteid,periodo) {

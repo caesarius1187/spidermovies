@@ -111,6 +111,7 @@ class CuentasgananciasController extends AppController {
 
 		if($cliente['Cliente']['tipopersona']=='fisica'){
 			$categorias = [
+				'monotributo'=>'Monotributo',
 				'primeracateg'=>'Primera',
 				'segundacateg'=>'Segunda',
 				'terceracateg'=>'Tercera Empresas',
@@ -124,9 +125,7 @@ class CuentasgananciasController extends AppController {
 		}
 		$this->set(compact('cliente','categorias'));
 		$this->layout = 'ajax';
-
 	}
-
 /**
  * delete method
  *

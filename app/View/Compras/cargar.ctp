@@ -359,6 +359,9 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
               echo $this->Form->input('actvspercep',array(
                   'label'=> 'Act vs Percep',
                 ));
+              echo $this->Form->input('ganapercep',array(
+                  'label'=> 'Gana Percep',
+                ));
               echo $this->Form->input('impinternos',array('label'=>'Imp. Int.'));
               echo $this->Form->input('impcombustible',array('label'=>'Imp Comb'));
               echo $this->Form->input('nogravados',array());
@@ -385,12 +388,13 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
               echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
               echo $this->Form->submit('+', array('type'=>'image',
                   'src' => $this->webroot.'img/add_view.png',
-                  'class'=>'imgedit',
+                  'class'=>'img_edit',
                   'style'=>'width:25px;height:25px;margin-top:10px; cursor: pointer;',
                   ));
-              echo $this->Form->end();  ?>
+              echo $this->Form->end(); 
+              ?>
         </div>
-        <div style="overflow:auto;width:96%; float:left; margin-top:10px;min-height: 400px;" class="tareaCargarIndexTable tabCompras index">
+        <div style="overflow:auto;width:96%; float:left; margin-top:10px;min-height: 400px;" class="tareaCargarIndexTable tabCompras index">                              
           <table class="display" id="tablaCompras" cellpadding="0" cellspacing="0" border="0">
             <thead>
               <tr>
@@ -411,14 +415,15 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                 <th class="sum printable" style="width: 76px;">IVA Percep</th><!--15-->
                 <th class="sum printable" style="width: 76px;">IIBB Percep</th><!--16-->
                 <th class="sum printable" style="width: 76px;">Act Vs Perc</th><!--17-->
-                <th class="sum printable" style="width: 76px;">Imp Interno</th><!--18-->
-                <th class="sum printable" style="width: 76px;">Imp Comb</th><!--19-->
-                <th class="sum printable" style="width: 76px;">No Gravados</th><!--20-->
-                <th class="sum printable" style="width: 76px;">Exentos</th><!--21-->
-                <th class="sum printable" style="width: 76px;">Total</th><!--22-->
-                <th class="sum notPrintable" style="width: 76px;" >KW</th><!--23-->
-                <th class="notPrintable">Acciones</th><!--24-->
-                <th class="notPrintable">Creado</th><!--25-->
+                <th class="sum printable" style="width: 76px;">Gana Perc</th><!--18-->
+                <th class="sum printable" style="width: 76px;">Imp Interno</th><!--19-->
+                <th class="sum printable" style="width: 76px;">Imp Comb</th><!--20-->
+                <th class="sum printable" style="width: 76px;">No Gravados</th><!--21-->
+                <th class="sum printable" style="width: 76px;">Exentos</th><!--22-->
+                <th class="sum printable" style="width: 76px;">Total</th><!--23-->
+                <th class="sum notPrintable" style="width: 76px;" >KW</th><!--24-->
+                <th class="notPrintable">Acciones</th><!--25-->
+                <th class="notPrintable">Creado</th><!--26-->
               </tr>
             </thead>
             <tbody id="bodyTablaCompras">
@@ -434,6 +439,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                       $compra["ivapercep"] = $compra["ivapercep"]*-1;
                       $compra["iibbpercep"] = $compra["iibbpercep"]*-1;
                       $compra["actvspercep"] = $compra["actvspercep"]*-1;
+                      $compra["ganapercep"] = $compra["ganapercep"]*-1;
                       $compra["impinternos"] = $compra["impinternos"]*-1;
                       $compra["impcombustible"] = $compra["impcombustible"]*-1;
                       $compra["exentos"] = $compra["exentos"]*-1;
@@ -475,12 +481,13 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                   <td class="<?php echo $tdClass?>"><?php echo number_format($compra["ivapercep"], 2, ",", ".")?></td><!--15-->
                   <td class="<?php echo $tdClass?>"><?php echo number_format($compra["iibbpercep"], 2, ",", ".")?></td><!--16-->
                   <td class="<?php echo $tdClass?>"><?php echo number_format($compra["actvspercep"], 2, ",", ".")?></td><!--17-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impinternos"], 2, ",", ".")?></td><!--18-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impcombustible"], 2, ",", ".")?></td><!--19-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["nogravados"], 2, ",", ".")?></td><!--20-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["exentos"], 2, ",", ".")?></td><!--21-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["total"], 2, ",", ".")?></td><!--22-->
-                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["kw"], 2, ",", ".")?></td><!--23-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["ganapercep"], 2, ",", ".");          ?></td><!--18-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impinternos"], 2, ",", ".")?></td><!--19-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["impcombustible"], 2, ",", ".")?></td><!--20-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["nogravados"], 2, ",", ".")?></td><!--21-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["exentos"], 2, ",", ".")?></td><!--22-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["total"], 2, ",", ".")?></td><!--23-->
+                  <td class="<?php echo $tdClass?>"><?php echo number_format($compra["kw"], 2, ",", ".")?></td><!--24-->
                   <td class="<?php echo $tdClass?>">
                     <?php
                     $paramsCompra=$compra["id"];
@@ -491,8 +498,8 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     }
                     echo $this->Form->end();
                     ?>
-                  </td><!--24-->
-                    <td class="<?php echo $tdClass?>"><?php echo $compra["created"]; ?></td><!--25-->
+                  </td><!--25-->
+                   <td class="<?php echo $tdClass?>"><?php echo $compra["created"]; ?></td><!--26-->
                 </tr>
                 <?php
               }
@@ -555,12 +562,13 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                               <td class="<?php echo $tdClass ?>">0,00</td><!--18-->
                               <td class="<?php echo $tdClass ?>">0,00</td><!--19-->
                               <td class="<?php echo $tdClass ?>">0,00</td><!--20-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--21-->
                               <td class="<?php echo $tdClass ?>">
                                   <p id="nosuma">
                                       <?php echo number_format($neto * 1 + $subsaldo * 1, 2, ",", ".") ?>
                                   </p>
                               </td><!--22-->
-                              <td class="<?php echo $tdClass ?>">0,00</td><!--21-->
+                              <td class="<?php echo $tdClass ?>">0,00</td><!--23-->
                               <td><?php
                                   $mensajeAlerta = "Esta compra se importo desde Movimientos bancarios ";
                                   $movNeto+=$neto;
@@ -570,7 +578,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                                   ?>
                               </td>
                               <td><span style='display: none;'> <?php echo $movimientosbancario["created"] ?></span>
-                                  <?php echo date('d-m-Y', strtotime($movimientosbancario["created"])) ?></td>
+                                  <?php echo date('d-m-Y', strtotime($movimientosbancario["created"])) ?></td><!--24-->
                           </tr>
                           <?php
                           $movimientonumero++;
@@ -602,8 +610,9 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     <th ></th><!--20-->
                     <th ></th><!--21-->
                     <th></th><!--22-->
-                    <th></th><!--23 Acciones-->
-                    <th></th><!--24 Creado-->
+                    <th></th><!--23 -->
+                    <th></th><!--24 Acciones-->
+                    <th></th><!--25 Creado-->
                 </tr>
                 <tr>
                     <th colspan = 3>Total Mov. Banc.</th><!--1-->
@@ -625,10 +634,11 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     <th ><?php echo number_format(0, 2, ".", "") ?></th><!--18-->
                     <th ><?php echo number_format(0, 2, ".", "") ?></th><!--19-->
                     <th ><?php echo number_format(0, 2, ".", "") ?></th><!--20-->
-                    <th >   <?php echo number_format($movTotal * 1, 2, ".", "") ?></th><!--13-->
-                    <th></th><!--22-->
-                    <th></th><!--23 Acciones-->
-                    <th></th><!--24 Creado-->
+                    <th ><?php echo number_format(0, 2, ".", "") ?></th><!--21-->
+                    <th >   <?php echo number_format($movTotal * 1, 2, ".", "") ?></th><!--22-->
+                    <th></th><!--23-->
+                    <th></th><!--24 Acciones-->
+                    <th></th><!--25 Creado-->
                 </tr>
                 <tr>
                     <th colspan = 3>Total</th><!--1-->
@@ -650,10 +660,11 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     <th ></th><!--18-->
                     <th ></th><!--19-->
                     <th ></th><!--20-->
-                    <th ><?php echo number_format($movTotal * 1, 2, ",", ".") ?></th><!--13-->
-                    <th></th><!--22-->
-                    <th></th><!--23 Acciones-->
-                    <th></th><!--24 Creado-->
+                    <th ></th><!--21-->
+                    <th ><?php echo number_format($movTotal * 1, 2, ",", ".") ?></th><!--22-->
+                    <th></th><!--23-->
+                    <th></th><!--24 Acciones-->
+                    <th></th><!--25 Creado-->
                 </tr>
               </tfoot>
           </table>

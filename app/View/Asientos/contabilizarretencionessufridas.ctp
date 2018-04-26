@@ -7,7 +7,7 @@
     return;
 }
 ?>
-<div class="index">
+<div class="">
     <h2><?php echo __('Contabilizar Retenciones: '.$cliente['Cliente']['nombre'] ); ?></h2>
 
 
@@ -45,7 +45,6 @@
                         }
                     }
                 }
-                
             }
         }
         if(!isset($miAsiento['Movimiento'])){

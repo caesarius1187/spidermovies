@@ -371,7 +371,7 @@ if(!isset($error)){ ?>
                         <td><?php echo $quebranto['Quebranto']['saldo'];?></td>
                         <td>
                             <a href="#"  onclick="deleteQuebranto(<?php echo $quebranto['Quebranto']['id']; ?>)" class="button_view"> 
-                                <?php echo $this->Html->image('delete.png', array('alt' => 'open','title' => 'Eliminar','class'=>'imgedit'));?>
+                                <?php echo $this->Html->image('delete.png', array('alt' => 'open','title' => 'Eliminar','class'=>'img_edit'));?>
                             </a>
                         </td>
                 </tr>            

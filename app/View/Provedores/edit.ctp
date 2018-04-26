@@ -7,7 +7,7 @@ if(!$showform) { ?>
     <td class="<?php echo $tdClass?>"><?php echo $this->data['Provedore']["cuit"]?></td>    
     <td class="<?php echo $tdClass?>">
         <a href="#"  onclick="loadFormProvedore(<?php echo $this->data['Provedore']["id"]; ?>)" class="button_view">
-         <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'imgedit'));?>
+         <?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
         </a>
         <?php echo $this->Form->postLink(
             $this->Html->image('ic_delete_black_24dp.png', array(

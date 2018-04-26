@@ -75,12 +75,13 @@ class CuentasclientesController extends AppController {
 	public function GuardarDescripcion($CuentaClienteId, $Descripcion)
 	{
 		$this->Cuentascliente->id = $CuentaClienteId;
-		if($this->Cuentascliente->saveField('nombre', $Descripcion))
+		if($this->Cuentascliente->saveField('nombre', $this->request->data['descripcion']))
 		{
 			$data['respuesta']='Descripcion modificada exitosamente.';
 		}
 		else
 		{
+			$data['error']=1;
 			$data['respuesta']='Error al modificar la descripcion.';
 		}
 		$this->set('data',$data);
@@ -139,7 +140,7 @@ class CuentasclientesController extends AppController {
 //					],
                                     'Movimiento'=>[
                                             'Asiento'=>[
-                                                    'fields'=>['id','fecha']
+                                                    'fields'=>['id','fecha','tipoasiento']
                                             ],
                                             'conditions'=>[
                                                     //tengo que traer los movimientos que tengan asientos con fechas posteriores

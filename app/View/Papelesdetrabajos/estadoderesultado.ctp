@@ -15,10 +15,10 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 /*
 01 esp
 02 eerr
-03 evpn
+03 eepn
 04 efe
 05 nesp
-06 abdu
+06 abduv
 07 neerr
 08 aeerr
 09 nefe
@@ -43,7 +43,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
     $periodoActual =  date('Y', strtotime($fechaFinConsulta));
 ?>
 <div id="contentEstadosContables">
-<div class="index" style="padding: 0px 1%; margin-bottom: 11px;" id="headerCliente">
+<div class="index" style="padding: 0px 4%; margin-bottom: 11px;margin-left: 16px;float: left;width: 89%" id="headerCliente">
     <div style="width:30%; float: left;padding-top:11px">
         Contribuyente: <?php echo $cliente["Cliente"]['nombre'];
         echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);
@@ -83,7 +83,10 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             )
         );
         $paramsPrepPapeles="'".$cliente['Cliente']['id']."','".$periodo."'";
-        $paramsPrepPapeles2="'".$cliente['Impcli'][0]['id']."','".$periodo."'";
+        if(isset($cliente['Impcli'][0])){
+            $paramsPrepPapeles2="'".$cliente['Impcli'][0]['id']."','".$periodo."'";
+        }
+        
         $tieneasientodeApertura=false;
         $tieneasientodeexistenciafinal=false;
         foreach ($cuentasclientes as $kc => $cuentascliente){
@@ -123,14 +126,16 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             ),
         array());
         $buttonclass="buttonImpcliListo";
-        echo $this->Form->button(
-            'As. Ganancias',
-            array(
-                'class'=>$buttonclass." progress-button state-loading",
-                'onClick'=>"contabilizarganancias(".$paramsPrepPapeles2.")",
-                'id'=>'buttonAsExistenciaFinal',
-            ),
-        array());?>
+        if(isset($cliente['Impcli'][0])){
+            echo $this->Form->button(
+                'As. Ganancias',
+                array(
+                    'class'=>$buttonclass." progress-button state-loading",
+                    'onClick'=>"contabilizarganancias(".$paramsPrepPapeles2.")",
+                    'id'=>'buttonAsExistenciaFinal',
+                ),
+            array());
+        }?>
     </div>
 </div>
 <div style="width:100%; height:30px; margin-left: 11px;"  class="Formhead noExl" id="divTabs" >
@@ -183,7 +188,9 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             <tr class="trnoclickeable">
                 <td>N&uacute;mero</td>
                 <td>Cuenta</td>
+                <td>Apertura Actual</td>
                 <td>Saldo Actual</td>
+                <td>Apertura Anterior</td>
                 <td>Saldo Anterior</td>
             </tr>
         </thead>
@@ -318,6 +325,10 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                     $arrayPeriodos[$periodoPrevio]['Absorcion de perdida acumulada']=0;
                 }
                 $saldo = $arrayPeriodos[$periodoActual]['debes']-$arrayPeriodos[$periodoActual]['haberes'];
+                $apertura = $arrayPeriodos[$periodoActual]['apertura'];
+                echo '<td  class="numericTD">'.
+                    number_format($apertura, 2, ",", ".")
+                    ."</td>";
                 echo '<td  class="numericTD">'.
                     number_format($saldo, 2, ",", ".")
                     ."</td>";
@@ -339,6 +350,10 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                 $arrayCuentasxPeriodos[$numerodecuenta]['movimiento'][$periodoActual]=$arrayPeriodos[$periodoActual]['movimiento'];
                 
                 $saldo = $arrayPeriodos[$periodoPrevio]['debes']-$arrayPeriodos[$periodoPrevio]['haberes'];
+                $apertura = $arrayPeriodos[$periodoPrevio]['apertura'];
+                echo '<td  class="numericTD">'.
+                    number_format($apertura, 2, ",", ".")
+                    ."</td>";
                 echo '<td  class="numericTD">'.
                     number_format($saldo, 2, ",", ".")
                     ."</td>";
@@ -391,7 +406,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['periodo']=$cuentascliente['Cuentaclienteactualizacion'][0]['periodo'];                
                     $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio']=$cuentascliente['Cuentaclienteactualizacion'][0]['importeamorteizaciondelperiodo']+
                             $cuentascliente['Cuentaclienteactualizacion'][0]['importeamortizacionaceleradadelperiodo'];    
-                    foreach ($cuentascliente['Cuentaclientevalororigen'][0]['Amortizacione'] as $ka => $amortizacione) {
+                    foreach ($cuentascliente['Cuentaclienteactualizacion'][0]['Amortizacione'] as $ka => $amortizacione) {
                         if(!isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
                             $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial']=[];
                         }
@@ -407,7 +422,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['periodo']=$cuentascliente['Cuentaclienteterreno'][0]['periodo'];                
                     $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio']=$cuentascliente['Cuentaclienteterreno'][0]['importeamorteizaciondelperiodo']+
                             $cuentascliente['Cuentaclienteterreno'][0]['importeamortizacionaceleradadelperiodo'];            
-                    foreach ($cuentascliente['Cuentaclientevalororigen'][0]['Amortizacione'] as $ka => $amortizacione) {
+                    foreach ($cuentascliente['Cuentaclienteterreno'][0]['Amortizacione'] as $ka => $amortizacione) {
                         if(!isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
                             $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial']=[];
                         }
@@ -423,7 +438,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['periodo']=$cuentascliente['Cuentaclienteedificacion'][0]['periodo'];                
                     $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio']=$cuentascliente['Cuentaclienteedificacion'][0]['importeamorteizaciondelperiodo']+
                             $cuentascliente['Cuentaclienteedificacion'][0]['importeamortizacionaceleradadelperiodo'];                
-                    foreach ($cuentascliente['Cuentaclientevalororigen'][0]['Amortizacione'] as $ka => $amortizacione) {
+                    foreach ($cuentascliente['Cuentaclienteedificacion'][0]['Amortizacione'] as $ka => $amortizacione) {
                         if(!isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
                             $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial']=[];
                         }
@@ -439,7 +454,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                     $arrayCuentasxPeriodos[$numerodecuenta]['periodo']=$cuentascliente['Cuentaclientemejora'][0]['periodo'];                
                     $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio']=$cuentascliente['Cuentaclientemejora'][0]['importeamorteizaciondelperiodo']+
                             $cuentascliente['Cuentaclientemejora'][0]['importeamortizacionaceleradadelperiodo'];                
-                    foreach ($cuentascliente['Cuentaclientevalororigen'][0]['Amortizacione'] as $ka => $amortizacione) {
+                    foreach ($cuentascliente['Cuentaclientemejora'][0]['Amortizacione'] as $ka => $amortizacione) {
                         if(!isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
                             $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial']=[];
                         }
@@ -456,6 +471,8 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
         </tbody>
         <tfoot>
             <tr class="trnoclickeable">
+                <td></td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -2055,151 +2072,158 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
         <?php
         $numeroDeNota = 2;
         $totalCajayBancos = [];
-            $arrayPrefijos=[];
-            $arrayPrefijos['Caja y Valores']=[];
-            $arrayPrefijos['Caja y Valores']['prefijocorriente']='110101';
+        $arrayPrefijos=[];
+        $arrayPrefijos['Caja y Valores']=[];
+        $arrayPrefijos['Caja y Valores']['prefijocorriente']='110101';
 
-            $arrayPrefijos['Bancos']=[];
-            $arrayPrefijos['Bancos']['prefijocorriente']='110102';
+        $arrayPrefijos['Bancos']=[];
+        $arrayPrefijos['Bancos']['prefijocorriente']='110102';
 
-            $arrayPrefijos['Cheques en Cartera']=[];
-            $arrayPrefijos['Cheques en Cartera']['prefijocorriente']='110103';
+        $arrayPrefijos['Cheques en Cartera']=[];
+        $arrayPrefijos['Cheques en Cartera']['prefijocorriente']='110103';
 
-            $arrayPrefijos['Moneda Extranjera']=[];
-            $arrayPrefijos['Moneda Extranjera']['prefijocorriente']='110104';
+        $arrayPrefijos['Moneda Extranjera']=[];
+        $arrayPrefijos['Moneda Extranjera']['prefijocorriente']='110104';
 
-            $totalCajayBancos = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Caja y Bancos",$fechaInicioConsulta,$fechaFinConsulta);
-          /*
-        <tr class="trnoclickeable">
-            <td colspan="4">Nota <?php //echo $numeroDeNota; ?>: Inversiones</h3>**TEXTO*</td>
-            <?php //$numeroDeNota++; ?>
-        </tr>
-        <tr class="trnoclickeable">
-            <td colspan="4">Composicion y Evolucion del Rubro</br>(Ver Anexo Inversiones)</td>
-        </tr>*/        
-            $totalCreditosxVentas = [];
-            $arrayPrefijos=[];
-            $arrayPrefijos['Creditos por Ventas']=[];
-            $arrayPrefijos['Creditos por Ventas']['prefijocorriente']='11030';
-            $arrayPrefijos['Creditos por Ventas']['prefijonocorriente']='12030';
-            $totalCreditosxVentas = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Creditos por Ventas",$fechaInicioConsulta,$fechaFinConsulta);
+        $totalCajayBancos = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Caja y Bancos",$fechaInicioConsulta,$fechaFinConsulta);
+      /*
+    <tr class="trnoclickeable">
+        <td colspan="4">Nota <?php //echo $numeroDeNota; ?>: Inversiones</h3>**TEXTO*</td>
+        <?php //$numeroDeNota++; ?>
+    </tr>
+    <tr class="trnoclickeable">
+        <td colspan="4">Composicion y Evolucion del Rubro</br>(Ver Anexo Inversiones)</td>
+    </tr>*/        
+        $totalInversiones = [];
+        $arrayPrefijos=[];
+        $arrayPrefijos['Inversiones']=[];
+        $arrayPrefijos['Inversiones']['prefijocorriente']='1102';
+        $arrayPrefijos['Inversiones']['prefijonocorriente']='1202';
+        $totalInversiones = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Inversiones",$fechaInicioConsulta,$fechaFinConsulta);
+        
+        $totalCreditosxVentas = [];
+        $arrayPrefijos=[];
+        $arrayPrefijos['Creditos por Ventas']=[];
+        $arrayPrefijos['Creditos por Ventas']['prefijocorriente']='11030';
+        $arrayPrefijos['Creditos por Ventas']['prefijonocorriente']='12030';
+        $totalCreditosxVentas = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Creditos por Ventas",$fechaInicioConsulta,$fechaFinConsulta);
         
         $totalOtrosCreditos = [];
-     
-                $arrayPrefijos=[];
-                $arrayPrefijos['Sociedades Vinculadas']=[];
-                $arrayPrefijos['Sociedades Vinculadas']['prefijocorriente']='110401';
-                $arrayPrefijos['Sociedades Vinculadas']['prefijonocorriente']='120401';
-                
-                $arrayPrefijos['Cta. Particular y Aporte Socio']=[];
-                $arrayPrefijos['Cta. Particular y Aporte Socio']['prefijocorriente']='110402';
-                $arrayPrefijos['Cta. Particular y Aporte Socio']['prefijonocorriente']='120402';
-                
-                $arrayPrefijos['Ganancias - Creditos']=[];
-                $arrayPrefijos['Ganancias - Creditos']['TituloRubro']='Creditos Impositivos - AFIP';
-                $arrayPrefijos['Ganancias - Creditos']['prefijocorriente']='1104031';
-                $arrayPrefijos['Ganancias - Creditos']['prefijonocorriente']='1204031';
-                
-                $arrayPrefijos['Ganancia M&iacute;n. Presunta - Credi']=[];
-                $arrayPrefijos['Ganancia M&iacute;n. Presunta - Credi']['prefijocorriente']='1104032';
-                $arrayPrefijos['Ganancia M&iacute;n. Presunta - Credi']['prefijonocorriente']='1204032';
-                
-                $arrayPrefijos['Bienes Personales - Creditos']=[];
-                $arrayPrefijos['Bienes Personales - Creditos']['prefijocorriente']='1104033';
-                $arrayPrefijos['Bienes Personales - Creditos']['prefijonocorriente']='1204033';
-                
-                $arrayPrefijos['Impuesto al Valor Agregado - C']=[];
-                $arrayPrefijos['Impuesto al Valor Agregado - C']['prefijocorriente']='1104034';
-                $arrayPrefijos['Impuesto al Valor Agregado - C']['prefijonocorriente']='1204034';
-                
-                $arrayPrefijos['Otros Impuestos Nacionales - C']=[];
-                $arrayPrefijos['Otros Impuestos Nacionales - C']['prefijocorriente']='1104038';
-                $arrayPrefijos['Otros Impuestos Nacionales - C']['prefijonocorriente']='1204038';
-                
-                $arrayPrefijos['Seguridad Social - Creditos']=[];
-                $arrayPrefijos['Seguridad Social - Creditos']['prefijocorriente']='1104039';
-                $arrayPrefijos['Seguridad Social - Creditos']['prefijonocorriente']='1204039';
 
-                $arrayPrefijos['Ingresos Brutos - Creditos']=[];
-                $arrayPrefijos['Ingresos Brutos - Creditos']['TituloRubro']='Creditos Impositivos - DGR';
-                $arrayPrefijos['Ingresos Brutos - Creditos']['prefijocorriente']='1104041';
-                $arrayPrefijos['Ingresos Brutos - Creditos']['prefijonocorriente']='1204041';
-                
-                $arrayPrefijos['Cooperadoras Asistenciales - C']=[];
-                $arrayPrefijos['Cooperadoras Asistenciales - C']['prefijocorriente']='1104044';
-                $arrayPrefijos['Cooperadoras Asistenciales - C']['prefijonocorriente']='1204044';
-                
-                $arrayPrefijos['Impuesto a los Sellos - Credit']=[];
-                $arrayPrefijos['Impuesto a los Sellos - Credit']['prefijocorriente']='1104045';
-                $arrayPrefijos['Impuesto a los Sellos - Credit']['prefijonocorriente']='1204045';
-                
-                $arrayPrefijos['Actividades Varias - Creditos']=[];
-                $arrayPrefijos['Actividades Varias - Creditos']['TituloRubro']='Creditos Impositivos - DGRM';
-                $arrayPrefijos['Actividades Varias - Creditos']['prefijocorriente']='1104051';
-                $arrayPrefijos['Actividades Varias - Creditos']['prefijonocorriente']='1204051';
-                
-                $arrayPrefijos['Otros Cr&eacute;ditos']=[];
-                $arrayPrefijos['Otros Cr&eacute;ditos']['prefijocorriente']='110406';
-                $arrayPrefijos['Otros Cr&eacute;ditos']['prefijonocorriente']='120406';
-                
-                $arrayPrefijos['Cr&eacute;ditos Varios']=[];
-                $arrayPrefijos['Cr&eacute;ditos Varios']['prefijocorriente']='110407';
-                $arrayPrefijos['Cr&eacute;ditos Varios']['prefijonocorriente']='120407';
-                
-                $arrayPrefijos['Anticipo a Proveedores']=[];
-                $arrayPrefijos['Anticipo a Proveedores']['prefijocorriente']='110408';
-                $arrayPrefijos['Anticipo a Proveedores']['prefijonocorriente']='120408';
-                
-                $arrayPrefijos['Previsiones Otros Creditos']=[];
-                $arrayPrefijos['Previsiones Otros Creditos']['prefijocorriente']='110409';
-                $arrayPrefijos['Previsiones Otros Creditos']['prefijonocorriente']='120409';
-                
-                $totalOtrosCreditos = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Otros Creditos",$fechaInicioConsulta,$fechaFinConsulta);
-          
-                $totalBienesdeCambio = [];
-     
-                $arrayPrefijos=[];
-                $arrayPrefijos['Mercaderias']=[];
-                $arrayPrefijos['Mercaderias']['prefijocorriente']='1105000';
-                $arrayPrefijos['Mercaderias']['prefijonocorriente']='1205000';
-                
-                $arrayPrefijos['Producto Terminado']=[];
-                $arrayPrefijos['Producto Terminado']['prefijocorriente']='1105020';
-                $arrayPrefijos['Producto Terminado']['prefijonocorriente']='1205020';
-                              
-                $arrayPrefijos['Producto en Proceso']=[];
-                $arrayPrefijos['Producto en Proceso']['prefijocorriente']='1105040';
-                $arrayPrefijos['Producto en Proceso']['prefijonocorriente']='1205040';
-                
-                $arrayPrefijos['Materias Primas y Materiales']=[];
-                $arrayPrefijos['Materias Primas y Materiales']['prefijocorriente']='1105060';
-                $arrayPrefijos['Materias Primas y Materiales']['prefijonocorriente']='1205060';
-                
-                $arrayPrefijos['Otros bienes de cambio']=[];
-                $arrayPrefijos['Otros bienes de cambio']['prefijocorriente']='1105070';
-                $arrayPrefijos['Otros bienes de cambio']['prefijonocorriente']='1205070';
-                              
-                $totalBienesdeCambio = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Bienes de Cambio",$fechaInicioConsulta,$fechaFinConsulta);
-         
-                $totalOtrosActivos = [];
-        
-                $arrayPrefijos=[];
-                
-                $arrayPrefijos['Otros Activos Corrientes']=[];
-                $arrayPrefijos['Otros Activos Corrientes']['prefijocorriente']='110600';
-                $arrayPrefijos['Otros Activos Corrientes']['prefijonocorriente']='120900';
-                
-                $totalOtrosActivos = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Otros Activos",$fechaInicioConsulta,$fechaFinConsulta);
-       
-                $totalLlavenegocio = [];
-       
-                $arrayPrefijos=[];
-                
-                $arrayPrefijos['Llave de negocio']=[];
-                $arrayPrefijos['Llave de negocio']['prefijocorriente']='110700';
-                $arrayPrefijos['Llave de negocio']['prefijonocorriente']='121000';
-                              
-                $totalLlavenegocio = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Llave de Negocio",$fechaInicioConsulta,$fechaFinConsulta);
+        $arrayPrefijos=[];
+        $arrayPrefijos['Sociedades Vinculadas']=[];
+        $arrayPrefijos['Sociedades Vinculadas']['prefijocorriente']='110401';
+        $arrayPrefijos['Sociedades Vinculadas']['prefijonocorriente']='120401';
+
+        $arrayPrefijos['Cta. Particular y Aporte Socio']=[];
+        $arrayPrefijos['Cta. Particular y Aporte Socio']['prefijocorriente']='110402';
+        $arrayPrefijos['Cta. Particular y Aporte Socio']['prefijonocorriente']='120402';
+
+        $arrayPrefijos['Ganancias - Creditos']=[];
+        $arrayPrefijos['Ganancias - Creditos']['TituloRubro']='Creditos Impositivos - AFIP';
+        $arrayPrefijos['Ganancias - Creditos']['prefijocorriente']='1104031';
+        $arrayPrefijos['Ganancias - Creditos']['prefijonocorriente']='1204031';
+
+        $arrayPrefijos['Ganancia M&iacute;n. Presunta - Credi']=[];
+        $arrayPrefijos['Ganancia M&iacute;n. Presunta - Credi']['prefijocorriente']='1104032';
+        $arrayPrefijos['Ganancia M&iacute;n. Presunta - Credi']['prefijonocorriente']='1204032';
+
+        $arrayPrefijos['Bienes Personales - Creditos']=[];
+        $arrayPrefijos['Bienes Personales - Creditos']['prefijocorriente']='1104033';
+        $arrayPrefijos['Bienes Personales - Creditos']['prefijonocorriente']='1204033';
+
+        $arrayPrefijos['Impuesto al Valor Agregado - C']=[];
+        $arrayPrefijos['Impuesto al Valor Agregado - C']['prefijocorriente']='1104034';
+        $arrayPrefijos['Impuesto al Valor Agregado - C']['prefijonocorriente']='1204034';
+
+        $arrayPrefijos['Otros Impuestos Nacionales - C']=[];
+        $arrayPrefijos['Otros Impuestos Nacionales - C']['prefijocorriente']='1104038';
+        $arrayPrefijos['Otros Impuestos Nacionales - C']['prefijonocorriente']='1204038';
+
+        $arrayPrefijos['Seguridad Social - Creditos']=[];
+        $arrayPrefijos['Seguridad Social - Creditos']['prefijocorriente']='1104039';
+        $arrayPrefijos['Seguridad Social - Creditos']['prefijonocorriente']='1204039';
+
+        $arrayPrefijos['Ingresos Brutos - Creditos']=[];
+        $arrayPrefijos['Ingresos Brutos - Creditos']['TituloRubro']='Creditos Impositivos - DGR';
+        $arrayPrefijos['Ingresos Brutos - Creditos']['prefijocorriente']='1104041';
+        $arrayPrefijos['Ingresos Brutos - Creditos']['prefijonocorriente']='1204041';
+
+        $arrayPrefijos['Cooperadoras Asistenciales - C']=[];
+        $arrayPrefijos['Cooperadoras Asistenciales - C']['prefijocorriente']='1104044';
+        $arrayPrefijos['Cooperadoras Asistenciales - C']['prefijonocorriente']='1204044';
+
+        $arrayPrefijos['Impuesto a los Sellos - Credit']=[];
+        $arrayPrefijos['Impuesto a los Sellos - Credit']['prefijocorriente']='1104045';
+        $arrayPrefijos['Impuesto a los Sellos - Credit']['prefijonocorriente']='1204045';
+
+        $arrayPrefijos['Actividades Varias - Creditos']=[];
+        $arrayPrefijos['Actividades Varias - Creditos']['TituloRubro']='Creditos Impositivos - DGRM';
+        $arrayPrefijos['Actividades Varias - Creditos']['prefijocorriente']='1104051';
+        $arrayPrefijos['Actividades Varias - Creditos']['prefijonocorriente']='1204051';
+
+        $arrayPrefijos['Otros Cr&eacute;ditos']=[];
+        $arrayPrefijos['Otros Cr&eacute;ditos']['prefijocorriente']='110406';
+        $arrayPrefijos['Otros Cr&eacute;ditos']['prefijonocorriente']='120406';
+
+        $arrayPrefijos['Cr&eacute;ditos Varios']=[];
+        $arrayPrefijos['Cr&eacute;ditos Varios']['prefijocorriente']='110407';
+        $arrayPrefijos['Cr&eacute;ditos Varios']['prefijonocorriente']='120407';
+
+        $arrayPrefijos['Anticipo a Proveedores']=[];
+        $arrayPrefijos['Anticipo a Proveedores']['prefijocorriente']='110408';
+        $arrayPrefijos['Anticipo a Proveedores']['prefijonocorriente']='120408';
+
+        $arrayPrefijos['Previsiones Otros Creditos']=[];
+        $arrayPrefijos['Previsiones Otros Creditos']['prefijocorriente']='110409';
+        $arrayPrefijos['Previsiones Otros Creditos']['prefijonocorriente']='120409';
+
+        $totalOtrosCreditos = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Otros Creditos",$fechaInicioConsulta,$fechaFinConsulta);
+
+        $totalBienesdeCambio = [];
+
+        $arrayPrefijos=[];
+        $arrayPrefijos['Mercaderias']=[];
+        $arrayPrefijos['Mercaderias']['prefijocorriente']='1105000';
+        $arrayPrefijos['Mercaderias']['prefijonocorriente']='1205000';
+
+        $arrayPrefijos['Producto Terminado']=[];
+        $arrayPrefijos['Producto Terminado']['prefijocorriente']='1105020';
+        $arrayPrefijos['Producto Terminado']['prefijonocorriente']='1205020';
+
+        $arrayPrefijos['Producto en Proceso']=[];
+        $arrayPrefijos['Producto en Proceso']['prefijocorriente']='1105040';
+        $arrayPrefijos['Producto en Proceso']['prefijonocorriente']='1205040';
+
+        $arrayPrefijos['Materias Primas y Materiales']=[];
+        $arrayPrefijos['Materias Primas y Materiales']['prefijocorriente']='1105060';
+        $arrayPrefijos['Materias Primas y Materiales']['prefijonocorriente']='1205060';
+
+        $arrayPrefijos['Otros bienes de cambio']=[];
+        $arrayPrefijos['Otros bienes de cambio']['prefijocorriente']='1105070';
+        $arrayPrefijos['Otros bienes de cambio']['prefijonocorriente']='1205070';
+
+        $totalBienesdeCambio = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Bienes de Cambio",$fechaInicioConsulta,$fechaFinConsulta);
+
+        $totalOtrosActivos = [];
+
+        $arrayPrefijos=[];
+
+        $arrayPrefijos['Otros Activos Corrientes']=[];
+        $arrayPrefijos['Otros Activos Corrientes']['prefijocorriente']='110600';
+        $arrayPrefijos['Otros Activos Corrientes']['prefijonocorriente']='120900';
+
+        $totalOtrosActivos = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Otros Activos",$fechaInicioConsulta,$fechaFinConsulta);
+
+        $totalLlavenegocio = [];
+
+        $arrayPrefijos=[];
+
+        $arrayPrefijos['Llave de negocio']=[];
+        $arrayPrefijos['Llave de negocio']['prefijocorriente']='110700';
+        $arrayPrefijos['Llave de negocio']['prefijonocorriente']='121000';
+
+        $totalLlavenegocio = mostrarNotaDeESP($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$numeroDeNota,"Llave de Negocio",$fechaInicioConsulta,$fechaFinConsulta);
          
         $totalBienesdeUso = [];
         ?>
@@ -2582,13 +2606,16 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
         $rowsCorriente=[];
         $rowsCorriente['Activo']=[];
         $rowsCorriente['Activo']['Corriente']=[];
-        $rowsCorriente['Activo']['noCorriente']=[];
+        $rowsCorriente['Activo']['NoCorriente']=[];
         $rowsCorriente['Pasivo']=[];
         $rowsCorriente['Pasivo']['Corriente']=[];
         $rowsCorriente['Pasivo']['NoCorriente']=[];
         //Activo Corriente
         if(isset($totalCajayBancos['numeronota'])){
              $rowsCorriente['Activo']['Corriente'][]= showRowESP($totalCajayBancos,'Cajas y Bancos',$fechaFinConsulta,$totalActivoCorriente,'corriente');
+        }
+        if(isset($totalInversiones['numeronota'])){
+             $rowsCorriente['Activo']['Corriente'][]= showRowESP($totalInversiones,'Inversiones',$fechaFinConsulta,$totalActivoCorriente,'corriente');
         }
         if(isset($totalCreditosxVentas['numeronota'])){
              $rowsCorriente['Activo']['Corriente'][]= showRowESP($totalCreditosxVentas,'Creditos por Ventas',$fechaFinConsulta,$totalActivoCorriente,'corriente');
@@ -2702,6 +2729,9 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             <th class="numericTD" style="width: 70px"></th>
         </tr>
         <?php
+        if(isset($totalInversiones['numeronota'])){
+             $rowsCorriente['Activo']['NoCorriente'][]=showRowESP($totalInversiones,'Inversiones',$fechaFinConsulta,$totalActivoNOCorriente,'nocorriente');
+        }
         if(isset($totalCreditosxVentas['numeronota'])){
              $rowsCorriente['Activo']['NoCorriente'][]=showRowESP($totalCreditosxVentas,'Creditos por Ventas',$fechaFinConsulta,$totalActivoNOCorriente,'nocorriente');
         }
@@ -3165,7 +3195,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
 
             $totalAltaBDUInicio=[]; 
             $totalAltaBDUInicio[$periodoActual]=$totalBienesDeUso['altas']*-1;
-            $totalAltaBDUInicio[$periodoPrevio]=$totalBienesDeUso['altas']*-1*0;
+            $totalAltaBDUInicio[$periodoPrevio]=$totalBienesDeUso['altasAnterior']*-1;
             //NO TENGO PARA EL EJ ANTERIOR DE BDU 
             
             /*$notaPagoaprovedores['conceptos']['Alta y Baja de Bienes de Uso']['valores']=$totalAltaBDUInicio;
@@ -4812,33 +4842,64 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
 ?>
 
 </div>
+ <?php
+ echo $this->Form->create('liquidaciondetalle',['id'=>'liquidaciondetalle','action' => 'add']);
+ ?>
 <div class="index noprint estadocontable" id="divAuditor" >    
     <?php
-    echo $this->Form->create('informeauditor',['id'=>'informeauditorForm','action' => '']);
+    $id=0;
+    $fechainforme= date('d-m-Y');
+    $nota1="";
+    if(isset($cliente['Impcli'][0]['Liquidaciondetalle'][0])){
+        $id=$cliente['Impcli'][0]['Liquidaciondetalle'][0]['id'];
+        $fechainforme= date('d-m-Y',strtotime($cliente['Impcli'][0]['Liquidaciondetalle'][0]['fechainforme']));
+        $nota1=$cliente['Impcli'][0]['Liquidaciondetalle'][0]['nota1'];
+    }
+    echo $this->Form->input('id',
+        [
+            'type'=>"hidden",            
+            'value'=>$id,
+        ]);
+    echo $this->Form->input('periodo',
+        [
+            'type'=>"hidden",            
+            'value'=>$periodoActual,
+        ]);
+    echo $this->Form->input('impcli_id',
+        [
+            'type'=>"hidden",            
+            'value'=>$cliente['Impcli'][0]['id'],
+        ]);
     echo $this->Form->input('fechainforme',
         [
-            'value'=>"",'class'=>"datepicker",
+            'type'=>"text",
+            'class'=>"datepicker",
             'required'=>"required",
             'readonly'=>"readonly",
-            'id'=>"fechainforme",
             'style'=>"width:120px",
             'onChange'=>"loadInformeAuditor()",
             'label'=>"Fecha Informe Auditor",
+            'value'=>$fechainforme,
         ]);
-     echo $this->Form->end();
+    
+   
+      echo $this->Form->submit('Guardar');
     ?>
 </div>
 <div class="index noprint estadocontable" id="divNotasAclaratorias" >    
     <?php
-    echo $this->Form->create('datosynotas',['id'=>'datosynotasForm','action' => '']);
     echo $this->Form->input('nota1',
         [
             'type'=>'textarea',
+            'value'=>$nota1,
             'onChange'=>'loadNotasYDatos()'
         ]);
-     echo $this->Form->end();
+    echo $this->Form->submit('Guardar');
     ?>
 </div>
+<?php
+echo $this->Form->end();
+?>
 <div class="divFooter" style="/*display:block*/">
     <div style="" class="divToLeft">
         <?php
@@ -4911,16 +4972,16 @@ function mostrarNotaEFE(&$nota,$periodoPrevio, $periodoActual,&$numeroNota){
         switch ($total['composicion']){
             case 'periodos':
                 if(!isset($total['valores'][$periodoPrevio])){
-                    Debugger::dump($nombreConcepto);
-                    Debugger::dump($total);
+                    //Debugger::dump($nombreConcepto);
+                    //Debugger::dump($total);
                 }
                 $valorPrevio = $total['valores'][$periodoPrevio]*$suma;
                 $valorActual = $total['valores'][$periodoActual]*$suma;
                 break;
             case 'corriente':
                 if(!isset($total['valores']['corriente'][$periodoPrevio])){
-                    Debugger::dump($nombreConcepto);
-                    Debugger::dump($total);
+                    //Debugger::dump($nombreConcepto);
+                    //Debugger::dump($total);
                 }
                 $valorPrevio = $total['valores']['corriente'][$periodoPrevio]*$suma;
                 $valorActual = $total['valores']['corriente'][$periodoActual]*$suma;
@@ -5075,7 +5136,7 @@ function initializeRubtoEEPN(&$rubro){
 function sumarCuentasEnPeriodo($arrayCuentasxPeriodos,$arrayCuentas,$periodoparasumar,$keysCuentas,$tipoasiento,$suma=null){
     
     $total = 0;
-    $suma = ($suma==null)?0:$suma;
+    $suma = ($suma==null)?1:$suma;
     foreach ($arrayCuentas as $prefijo) {       
         $numerofijo = $prefijo;
         $indexCuentasNumeroFijo = array_keys(
@@ -5256,6 +5317,8 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
     $totalNota['depreciacionalcierre'] = 0;
     $totalNota['ejercicioActual'] = 0;
     $totalNota['ejercicioAnterior'] = 0;
+    $totalNota['alinicioAnterior'] = 0;
+    $totalNota['altasAnterior'] = 0;
 
     foreach ($arrayPrefijos as $nombreprefijo => $valoresPrefijo) {                   
         $totalPrefijo = [];
@@ -5275,6 +5338,8 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
         $totalPrefijo['depreciacionalcierre'] = 0;
         $totalPrefijo['ejercicioActual'] = 0;
         $totalPrefijo['ejercicioAnterior'] = 0;
+        $totalPrefijo['alinicioAnterior'] = 0;
+        $totalPrefijo['altasAnterior'] = 0;
 
         $numerofijo = $valoresPrefijo['prefijocorriente'];
         $indexCuentasNumeroFijo = array_keys(
@@ -5307,8 +5372,6 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
         foreach ($indexCuentasNumeroFijo as $index) {
             $numerodecuenta = $keysCuentas[$index];
             $titleRow="Cuentas incluidas en las notas: ".$numerodecuenta."/";
-
-            
             if(isset($arrayCuentasxPeriodos[$numerodecuenta]['periodo'])){
                 $periodoBDU = $arrayCuentasxPeriodos[$numerodecuenta]['periodo'];  
             }else{
@@ -5349,7 +5412,7 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $valororigen =  $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];                
             $valororigenAnterior =  $arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];                
             $porcentajeamortizacion =  1;                
-            if(isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionacumulada'])){
+            if(isset($arrayCuentasxPeriodos[$numerodecuenta]['porcentajeamortizacion'])){
                 $amortizacionacumulada =  $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionacumulada'];
                 $porcentajeamortizacion =  $arrayCuentasxPeriodos[$numerodecuenta]['porcentajeamortizacion'];
                 $amortizacionEjercicio =  $arrayCuentasxPeriodos[$numerodecuenta]['amortizacionejercicio'];
@@ -5368,8 +5431,18 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $interval2 = $d3->diff($d1);
             $aniosamortizados = $interval->format('%y')*1 + (($interval->format('%m')*1>0)?1:0);
             $aniosamortizadosAnterior = $interval2->format('%y')*1 + (($interval2->format('%m')*1>0)?1:0);
-            $topeAmortizacion = ($porcentajeamortizacion!=0)?(100/$porcentajeamortizacion):1000;
+            if($d2<$d1){
+                 $aniosamortizados = 0;
+            }
+            if($d3<$d1){
+                 $aniosamortizadosAnterior = 0;
+            }
             
+            $topeAmortizacion = ($porcentajeamortizacion!=0)?(100/$porcentajeamortizacion):1000;
+            //Debugger::dump($arrayCuentasxPeriodos[$numerodecuenta]);
+            //Debugger::dump($porcentajeamortizacion);
+            //Debugger::dump($aniosamortizados);
+            //Debugger::dump($topeAmortizacion);
             if($aniosamortizados<$topeAmortizacion){
                 if(($aniosamortizados)<=1){
                     $amortizacionacumulada = 0;
@@ -5380,6 +5453,8 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
                     $amortizacionEjercicio = 0;
                 }else{
                     $amortizacionEjercicio = ($porcentajeamortizacion/100)*$valororigen;
+                    //Debugger::dump("aniosamort < tope=>(".$porcentajeamortizacion."/100)*".$valororigen);
+                    //Debugger::dump($amortizacionEjercicio);
                 }
             }else{
                 $amortizacionacumulada = $valororigen;
@@ -5413,28 +5488,19 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $pemes = date('m', strtotime($fechaFinConsulta));
             $peanio = date('Y', strtotime($fechaFinConsulta));
             $peanioAnterior=  date('Y', strtotime($fechaFinConsulta." -1 Years"));
-             Debugger::dump($peanio);
-                        Debugger::dump($peanioAnterior);
             if(isset($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'])){
-                Debugger::dump($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial']);
                 foreach ($arrayCuentasxPeriodos[$numerodecuenta]['amortizacionespecial'] as $kae => $amortespecial) {
                     if($kae==$peanio){
                         //aca podemos estar seguros q hay una amortizacion esecial para este periodo 
                         $amortizacionEjercicio = $amortespecial['ejercicio'];
                         $amortizacionacumulada = $amortespecial['amortizacion'];
-                        Debugger::dump("especial actual");
-                        Debugger::dump($amortizacionEjercicio);
-                        Debugger::dump($amortizacionacumulada);
-
+                        //Debugger::dump("alv todo tengo amort esp");
+                        //Debugger::dump($amortespecial['ejercicio']);
                     }
                     if($kae==$peanioAnterior){
                         //aca podemos estar seguros q hay una amortizacion esecial para este periodo 
                         $amortizacionEjercicioAnterior = $amortespecial['ejercicio'];
                         $amortizacionacumuladaAnterior = $amortespecial['amortizacion'];
-                        Debugger::dump("especial anterior");
-                        Debugger::dump("kae:".$kae);
-                        Debugger::dump($amortizacionEjercicioAnterior);
-                        Debugger::dump($amortizacionacumuladaAnterior);
                     }
                 }
             }         
@@ -5507,6 +5573,8 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $totalPrefijo['depreciacionalcierre'] += $depreciacionalcierre;
             $totalPrefijo['ejercicioActual'] += $ejercicioActual;
             $totalPrefijo['ejercicioAnterior'] += $ejercicioAnterior;
+            $totalPrefijo['alinicioAnterior'] += $alinicioAnterior;
+            $totalPrefijo['altasAnterior'] += $altasAnterior;
             
             $totalNota['alinicio'] += $alinicio;
             $totalNota['altas'] += $altas;
@@ -5524,6 +5592,9 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
             $totalNota['depreciacionalcierre'] += $depreciacionalcierre;
             $totalNota['ejercicioActual'] += $ejercicioActual;
             $totalNota['ejercicioAnterior'] += $ejercicioAnterior;
+            $totalNota['alinicioAnterior'] += $alinicioAnterior;
+            $totalNota['altasAnterior'] += $altasAnterior;
+            $titleEjAnterior = "Al Inicio: ".$alinicioAnterior." - Altas : ".$altasAnterior." - Depreciacion: ".$depreciacionalcierreAnterior;
             ?>
             <tr>
                 <td style="border-right: 2px black solid"><?php echo $arrayCuentasxPeriodos[$numerodecuenta]['nombrecuenta'];?></td>
@@ -5542,7 +5613,7 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
                 <td class="tdWithNumber" style="display: none"><?php echo number_format($depreciacionrecuperodesvalorizacion, 2, ",", ".") ?></td>
                 <td class="tdWithNumber" style="border-right: 2px black solid"><?php echo number_format($depreciacionalcierre, 2, ",", ".") ?></td>
                 <td class="tdWithNumber"><?php echo number_format($ejercicioActual, 2, ",", ".") ?></td>
-                <td class="tdWithNumber"><?php echo number_format($ejercicioAnterior, 2, ",", ".") ?></td>
+                <td class="tdWithNumber" title="<?php echo $titleEjAnterior?> "><?php echo number_format($ejercicioAnterior, 2, ",", ".") ?></td>
             </tr>
             <?php
            
@@ -5568,7 +5639,6 @@ function mostrarBienDeUso($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$fe
                 <td class="tdWithNumber"><?php echo number_format($totalPrefijo['ejercicioAnterior'], 2, ",", ".") ?></td>
             </tr>
            <?php
-        
     }
     ?>
             <tr>
@@ -5759,7 +5829,7 @@ function mostrarNotaDelGrupo($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,
     return $totalNota;
 }
 function mostrarNotaDeESP($arrayCuentasxPeriodos,&$arrayPrefijos,$keysCuentas,&$numeroDeNota,$nombreNota,$fechaInicioConsulta,$fechaFinConsulta){
-    //vamos a extender la funcionalidad de esta funcion para que abarque tmb mostrary no solo calcular
+    //vamos a extender la funcionalidad de esta funcion para que abarque tmb mostrar y no solo calcular
     //$numerofijo = "60101";
     //Una nota puede tener muchos prefijos y vamos a totalizar los prefijos por separado
     //y devolver el total de la nota.
@@ -5839,7 +5909,7 @@ function mostrarNotaDeESP($arrayCuentasxPeriodos,&$arrayPrefijos,$keysCuentas,&$
         foreach ($indexCuentasNumeroFijoCorriente as $ki =>$index) {              
             $numeroCuentaCorriente = $keysCuentas[$index];
             if(!isset($arrayCuentasxPeriodos[$numeroCuentaCorriente][$periodoActual])){
-                Debugger::dump($arrayCuentasxPeriodos[$numeroCuentaCorriente]);
+                //Debugger::dump($arrayCuentasxPeriodos[$numeroCuentaCorriente]);
             }
             $tieneValores+=$arrayCuentasxPeriodos[$numeroCuentaCorriente][$periodoActual];
             $tieneValores+=$arrayCuentasxPeriodos[$numeroCuentaCorriente][$periodoPrevio];
@@ -6203,6 +6273,18 @@ function mostrarNotasDeGastos($arrayCuentasxPeriodos,$nombreNota,$numerofijo,$fe
                     }
                 )
             );
+    if(!isset($totalAnexoII[$mesAMostrar])) {
+        $totalAnexoII[$mesAMostrar]=0;
+    }
+    if(!isset($subtotal[$mesAMostrar])) {
+        $subtotal[$mesAMostrar];
+    }
+     if(!isset($totalAnexoII[$mesAMostrarPrevio])) {
+        $totalAnexoII[$mesAMostrarPrevio]=0;
+    }
+    if(!isset($subtotal[$mesAMostrarPrevio])) {
+        $subtotal[$mesAMostrarPrevio];
+    }
      if(count($indexCuentas)!=0) {                   
         
     ?>
