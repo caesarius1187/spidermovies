@@ -33,10 +33,10 @@ if(!$mostrarFormulario){ ?>
 	echo $this->Form->input('id');
 	echo $this->Form->input('cliente_id',array('type'=>'hidden'));
 	?>
-	<h3><?php echo __('Editar Actividad del Contribuyente'); ?></h3>
+	
 	<table cellpadding="0" cellspacing="0" border="0">
 		<tr>
-			<td colspan="2">
+			<td>
 				<?php echo $this->Form->input('actividadseleccionada',array(
 						'label'=>'Actividad',
 						'readonly'=>'readonly',
@@ -45,10 +45,10 @@ if(!$mostrarFormulario){ ?>
 					)
 				);?>
 			</td>
-			<td colspan="2">
+			<td>
 				<?php echo $this->Form->input('descripcion');?>
 			</td>
-			<td colspan="2">
+			<td>
 				<?php
 				$fechabaja = $this->request->data['Actividadcliente']['baja'];
 				echo $this->Form->input('baja'.$this->request->data['Actividadcliente']['id'], array(
@@ -68,7 +68,7 @@ if(!$mostrarFormulario){ ?>
 				<a href="#close" onclick="" class="btn_cancelar" style="margin-top:15px">Cancelar</a>
 			</td>
 			<td>
-				<?php echo $this->Form->end(__('Modficar',array('class' =>'btn_aceptar'))); ?>
+				<?php echo $this->Form->end(__('Aceptar',array('class' =>'btn_aceptar'))); ?>
 			</td>
 		</tr>
 	</table>
