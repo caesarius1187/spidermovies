@@ -413,6 +413,8 @@ function activateLabelsFunctionality(){
 			if($('.datosPersonales').is(":visible")){
 			 	 $('.datosPersonales').hide();
 			 	 $("#imgDatosPersonales").attr('src',serverLayoutURL+"/img/menos2.png");
+                 $("#img1").attr('src',serverLayoutURL+"/img/edit_view.png");
+                 $("#img15").attr('src',serverLayoutURL+"/img/ic_delete_black_24dp.png");
                  $("#viewTh1").css("background-color","#FFF");
                  $("#viewTh2").css("background-color","#FFF");
                  $("#viewTh3").css("background-color","#FFF");
@@ -421,6 +423,8 @@ function activateLabelsFunctionality(){
 		 	}else{
 	 			 $('.datosPersonales').show();
 			 	 $("#imgDatosPersonales").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                 $("#img1").attr('src',serverLayoutURL+"/img/edit_view_white.png");
+                 $("#img15").attr('src',serverLayoutURL+"/img/ic_delete_white_24dp.png");
                  $("#viewTh1").css("background-color","#2196f3");
                  $("#viewTh2").css("background-color","#2196f3");
                  $("#viewTh3").css("background-color","#2196f3");
@@ -429,31 +433,36 @@ function activateLabelsFunctionality(){
 		 	}
 		});
 		$( "#lblDomicilio" ).click(function() {		
-		 if($('.domicilios').is(":visible")){
-		 	 $('.domicilios').hide();
-		 	 $("#imgDomicilio").attr('src',serverLayoutURL+"/img/menos2.png");
-             $("#viewTh4").css("background-color","#FFF");
-             $("#viewTh5").css("background-color","#FFF");
-             $("#lblDomicilio").css("color","#000");
-             
+            if($('.domicilios').is(":visible")){
+    		 	$('.domicilios').hide();
+    		 	$("#imgDomicilio").attr('src',serverLayoutURL+"/img/menos2.png");
+                $("#img2").attr('src',serverLayoutURL+"/img/add_view.png");
+                $("#viewTh4").css("background-color","#FFF");
+                $("#viewTh5").css("background-color","#FFF");
+                $("#lblDomicilio").css("color","#000");
+               
 		 	}else{
-	 		 $('.domicilios').show();
-			 	 $("#imgDomicilio").attr('src',serverLayoutURL+"/img/mas2_white.png");
-                 $("#viewTh4").css("background-color","#2196f3");
-                 $("#viewTh5").css("background-color","#2196f3");
-                 $("#lblDomicilio").css("color","#FFF");
+	 		    $('.domicilios').show();
+    		 	$("#imgDomicilio").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                $("#img2").attr('src',serverLayoutURL+"/img/add_view_white.png");
+                $("#viewTh4").css("background-color","#2196f3");
+                $("#viewTh5").css("background-color","#2196f3");
+                $("#lblDomicilio").css("color","#FFF");
+               
 		 	}
 		});
 		$( "#lblActividad" ).click(function() {		
 		 if($('.actividades').is(":visible")){
 		 	 $('.actividades').hide();
 		 	 $("#imgActividad").attr('src',serverLayoutURL+"/img/menos2.png");
+             $("#img4").attr('src',serverLayoutURL+"/img/add_view.png");
              $("#viewTh8").css("background-color","#FFF");
              $("#viewTh9").css("background-color","#FFF");
              $("#lblActividad").css("color","#000");
 		 	}else{
 	 		 $('.actividades').show();
 			 	 $("#imgActividad").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                 $("#img4").attr('src',serverLayoutURL+"/img/add_view_white.png");
                  $("#viewTh8").css("background-color","#2196f3");
                  $("#viewTh9").css("background-color","#2196f3");
                  $("#lblActividad").css("color","#FFF");
@@ -463,12 +472,14 @@ function activateLabelsFunctionality(){
 		 if($('.personas').is(":visible")){
 		 	 $('.personas').hide();
 		 	 $("#imgPersona").attr('src',serverLayoutURL+"/img/menos2.png");
+             $("#img3").attr('src',serverLayoutURL+"/img/add_view.png");
              $("#viewTh6").css("background-color","#FFF");
              $("#viewTh7").css("background-color","#FFF");
              $("#lblPersona").css("color","#000");
 		 	}else{
 	 		 $('.personas').show();
 			 	 $("#imgPersona").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                 $("#img3").attr('src',serverLayoutURL+"/img/add_view_white.png");
                  $("#viewTh6").css("background-color","#2196f3");
                  $("#viewTh7").css("background-color","#2196f3");
                  $("#lblPersona").css("color","#FFF");
@@ -486,97 +497,180 @@ function activateLabelsFunctionality(){
 		$( "#lblAFIP" ).click(function() {		
 		 if($('.afip').is(":visible")){
 		 	 $('.afip').hide();
-			 	 $("#imgAFIP").attr('src',serverLayoutURL+"/img/menos2.png");
+			 	$("#imgAFIP").attr('src',serverLayoutURL+"/img/menos2.png");
+                $("#img5").attr('src',serverLayoutURL+"/img/add_view.png");
+                $("#viewTh10").css("background-color","#FFF");
+                $("#viewTh11").css("background-color","#FFF");
+                $("#lblAFIP").css("color","#000");
 		 	}else{
 	 		 $('.afip').show();
-			 	 $("#imgAFIP").attr('src',serverLayoutURL+"/img/mas2.png");	 		 
+			 	$("#imgAFIP").attr('src',serverLayoutURL+"/img/mas2_white.png");	
+                $("#img5").attr('src',serverLayoutURL+"/img/add_view_white.png");
+                $("#viewTh10").css("background-color","#2196f3"); 	
+                $("#viewTh11").css("background-color","#2196f3"); 
+                $("#lblAFIP").css("color","#FFF");	 
 		 	}
 		});
 		$( "#lblDGRM" ).click(function() {		
 		 if($('.dgrm').is(":visible")){
-		 	 $('.dgrm').hide();
-			 	 $("#imgDGRM").attr('src',serverLayoutURL+"/img/menos2.png");
+		 	    $('.dgrm').hide();
+			    $("#imgDGRM").attr('src',serverLayoutURL+"/img/menos2.png");
+                $("#img7").attr('src',serverLayoutURL+"/img/add_view.png");
+                $("#viewTh14").css("background-color","#FFF");
+                $("#viewTh15").css("background-color","#FFF");
+                $("#lblDGRM").css("color","#000");
+                
 		 	}else{
-	 		 $('.dgrm').show();
-			 	 $("#imgDGRM").attr('src',serverLayoutURL+"/img/mas2.png");	 		 
+	 		    $('.dgrm').show();
+			    $("#imgDGRM").attr('src',serverLayoutURL+"/img/mas2_white.png");	 
+                $("#img7").attr('src',serverLayoutURL+"/img/add_view_white.png");
+                $("#viewTh14").css("background-color","#2196f3");  
+                $("#viewTh15").css("background-color","#2196f3"); 		
+                $("#lblDGRM").css("color","#FFF");
 		 	}
 		});
 		$( "#lblDGR" ).click(function() {		
 		 if($('.dgr').is(":visible")){
 		 	 $('.dgr').hide();
 			 	 $("#imgDGR").attr('src',serverLayoutURL+"/img/menos2.png");
+                 $("#img6").attr('src',serverLayoutURL+"/img/add_view.png");
+                 $("#viewTh12").css("background-color","#FFF");
+                 $("#viewTh13").css("background-color","#FFF");
+                  $("#lblDGR").css("color","#000");
 		 	}else{
 	 		 $('.dgr').show();
-			 	 $("#imgDGR").attr('src',serverLayoutURL+"/img/mas2.png");	 		 
+			 	 $("#imgDGR").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                 $("#img6").attr('src',serverLayoutURL+"/img/add_view_white.png");	
+                 $("#viewTh12").css("background-color","#2196f3");  
+                 $("#viewTh13").css("background-color","#2196f3");
+                 $("#lblDGR").css("color","#FFF");   		 
 		 	}
 		});	
 		$( "#lblBANCO" ).click(function() {		
 		 if($('.bancos').is(":visible")){
 		 	 $('.bancos').hide();
 			 	 $("#imgBancos").attr('src',serverLayoutURL+"/img/menos2.png");
+                 $("#img9").attr('src',serverLayoutURL+"/img/add_view.png");
+                 $("#viewTh18").css("background-color","#FFF");
+                 $("#viewTh19").css("background-color","#FFF");
+                 $("#lblBANCO").css("color","#000");
+                
 		 	}else{
 	 		 $('.bancos').show();
-			 	 $("#imgBancos").attr('src',serverLayoutURL+"/img/mas2.png");	 		 
+			 	 $("#imgBancos").attr('src',serverLayoutURL+"/img/mas2_white.png");	
+                 $("#img9").attr('src',serverLayoutURL+"/img/add_view_white.png");    
+                 $("#viewTh18").css("background-color","#2196f3");
+                 $("#viewTh19").css("background-color","#2196f3");
+                 $("#lblBANCO").css("color","#FFF"); 
 		 	}
 		});
 		$( "#lblSINDICATO" ).click(function() {		
 		 if($('.sindicatos').is(":visible")){
 		 	 $('.sindicatos').hide();
 			 	 $("#ImgSindicatos").attr('src',serverLayoutURL+"/img/menos2.png");
+                 $("#img8").attr('src',serverLayoutURL+"/img/add_view.png");  
+                 $("#viewTh16").css("background-color","#FFF");
+                 $("#viewTh17").css("background-color","#FFF");
+                 $("#lblSINDICATO").css("color","#000");
 		 	}else{
 	 		 $('.sindicatos').show();
-			 	 $("#ImgSindicatos").attr('src',serverLayoutURL+"/img/mas2.png");	 		 
+			 	 $("#ImgSindicatos").attr('src',serverLayoutURL+"/img/mas2_white.png");	 
+                 $("#img8").attr('src',serverLayoutURL+"/img/add_view_white.png");  
+                 $("#viewTh16").css("background-color","#2196f3");  
+                 $("#viewTh17").css("background-color","#2196f3");
+                 $("#lblSINDICATO").css("color","#FFF");           		 
 		 	}	 	
 		});	
 		$( "#lblPuntosdeventas").click(function() {		
 		 if($('.puntosdeventa').is(":visible")){
 	 	 	$("#imgPuntosdeventas").attr('src',serverLayoutURL+"/img/menos2.png");
-				$('.puntosdeventa').hide();
+            $("#img10").attr('src',serverLayoutURL+"/img/add_view.png");  
+			$('.puntosdeventa').hide();
+            $("#viewTh20").css("background-color","#FFF");
+            $("#viewTh21").css("background-color","#FFF");
+            $("#lblPuntosdeventas").css("color","#000");
+
 	 	 }else{
-				 $('.puntosdeventa').show();
-		 	 $("#imgPuntosdeventas").attr('src',serverLayoutURL+"/img/mas2.png");	 		 
+			$('.puntosdeventa').show();
+		 	$("#imgPuntosdeventas").attr('src',serverLayoutURL+"/img/mas2_white.png");	
+            $("#img10").attr('src',serverLayoutURL+"/img/add_view_white.png");
+            $("#viewTh20").css("background-color","#2196f3");
+            $("#viewTh21").css("background-color","#2196f3"); 	
+             $("#lblPuntosdeventas").css("color","#FFF"); 	 
 	 	 } 
 		});
 		$( "#lblSubclientes" ).click(function() {
 			if($('.subcliente').is(":visible")){
 				$('.subcliente').hide();
 				$("#imgSubclientes").attr('src',serverLayoutURL+"/img/menos2.png");
+                $("#img11").attr('src',serverLayoutURL+"/img/add_view.png"); 
+                $("#viewTh22").css("background-color","#FFF");
+                $("#viewTh23").css("background-color","#FFF");
+                $("#lblSubclientes").css("color","#000");
 			}else{
 				$('.subcliente').show();
                 if($('#tablaSubclienteVacia').val()*1){
                     loadSubclientes($("#ClienteId").val());
                 }
-				$("#imgSubclientes").attr('src',serverLayoutURL+"/img/mas2.png");
+				$("#imgSubclientes").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                $("#img11").attr('src',serverLayoutURL+"/img/add_view_white.png"); 
+                $("#viewTh22").css("background-color","#2196f3");
+                $("#viewTh23").css("background-color","#2196f3");   
+                $("#lblSubclientes").css("color","#FFF");    
 			}
 		});
 		$( "#lblProvedores" ).click(function() {
 			if($('.provedor').is(":visible")){
 				$('.provedor').hide();
 				$("#imgProvedores").attr('src',serverLayoutURL+"/img/menos2.png");
+                $("#img12").attr('src',serverLayoutURL+"/img/add_view.png"); 
+                $("#viewTh24").css("background-color","#FFF");
+                $("#viewTh25").css("background-color","#FFF");
+                $("#lblProvedores").css("color","#000");
 			}else{
 				$('.provedor').show();
                 if($('#tablaProvedoresVacia').val()*1){
                     loadProvedores($("#ClienteId").val());
                 }
-				$("#imgProvedores").attr('src',serverLayoutURL+"/img/mas2.png");
+				$("#imgProvedores").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                $("#img12").attr('src',serverLayoutURL+"/img/add_view_white.png"); 
+                $("#viewTh24").css("background-color","#2196f3");
+                $("#viewTh25").css("background-color","#2196f3");   
+                $("#lblProvedores").css("color","#FFF"); 
 			}
 		});
 		$( "#lblEmpleados" ).click(function() {
 			if($('.empleado').is(":visible")){
 				$('.empleado').hide();
 				$("#imgEmpleados").attr('src',serverLayoutURL+"/img/menos2.png");
+                $("#img13").attr('src',serverLayoutURL+"/img/add_view.png"); 
+                $("#viewTh26").css("background-color","#FFF");
+                $("#viewTh27").css("background-color","#FFF");
+                $("#lblEmpleados").css("color","#000");
 			}else{
 				$('.empleado').show();
-				$("#imgEmpleados").attr('src',serverLayoutURL+"/img/mas2.png");
+				$("#imgEmpleados").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                $("#img13").attr('src',serverLayoutURL+"/img/add_view_white.png");
+                $("#viewTh26").css("background-color","#2196f3");
+                $("#viewTh27").css("background-color","#2196f3");   
+                $("#lblEmpleados").css("color","#FFF"); 
 			}
 		});
         $( "#lblBienesdeusos" ).click(function() {
 			if($('.biendeuso').is(":visible")){
 				$('.biendeuso').hide();
 				$("#imgBienesdeusos").attr('src',serverLayoutURL+"/img/menos2.png");
+                $("#img14").attr('src',serverLayoutURL+"/img/add_view.png");
+                $("#viewTh28").css("background-color","#FFF");
+                $("#viewTh29").css("background-color","#FFF");
+                $("#lblBienesdeusos").css("color","#000");
 			}else{
 				$('.biendeuso').show();
-				$("#imgBienesdeusos").attr('src',serverLayoutURL+"/img/mas2.png");
+				$("#imgBienesdeusos").attr('src',serverLayoutURL+"/img/mas2_white.png");
+                $("#img14").attr('src',serverLayoutURL+"/img/add_view_white.png");
+                $("#viewTh28").css("background-color","#2196f3");
+                $("#viewTh29").css("background-color","#2196f3");   
+                $("#lblBienesdeusos").css("color","#FFF"); 
 			}
 		});
 	});
@@ -640,6 +734,7 @@ function showDatosImpuesto(){
         $("#viewTh7").css("background-color","#FFF");
         $("#viewTh8").css("background-color","#FFF");
         $("#viewTh9").css("background-color","#FFF");
+        $("#viewTh10").css("background-color","#FFF");
 	});
 }
 function showDatosVenta(){
@@ -846,8 +941,9 @@ function loadFormActividadcliente(actcliid,cliid){
 			data: data,  // post data
 			success: function(response) {
                 $('#myModal').on('show.bs.modal', function() {
-                    $('#myModal').find('.modal-title').html('Modificar Actividad del Cliente');
+                    $('#myModal').find('.modal-title').html('Editar Actividades del Contribuyente');
                     $('#myModal').find('.modal-body').html(response);
+                    $('#myModal').find('.modal-footer').html("");
                 });
                 $('#myModal').modal('show');
 				reloadDatePickers();

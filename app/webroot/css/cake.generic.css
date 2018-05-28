@@ -68,7 +68,7 @@ h3 {
 	margin: 0px 0px 5px 2px;
 }
 h4 {
-	color: #993;
+	color: #000;
 	font-weight: normal;
 }
 ul, li {
@@ -478,17 +478,35 @@ form .submit input[type=submit] {
 	height: 32px;
 	line-height: 32px;
 	border-radius: 2px;
-	background-color: #FFF;
-	color: #4285F4;
+	background-color: #fff;
+	color: #009ae1;
 	float: right;
 	text-transform: uppercase;
-	font-size: 20px;
+	font-size: 18px;
 	text-decoration: none;
 	text-align: center;
 	/*margin-top: 14px;*/
 	border: 1px solid #FFF;
 	cursor: pointer;
 }
+
+.btn_contribuyente input[type=submit]{
+	display: inline-block;
+	position: relative;
+	width: 130px;
+	height: 32px;
+	border-radius: 2px;
+	background-color: #009ae1;
+	color: #fff;
+	float: right;
+	text-transform: uppercase;
+	font-size: 16px;
+	text-decoration: none;
+	text-align: center;
+	border: 1px solid #009ae1;
+	cursor: pointer;
+}
+
 form .submit input[type=submit]:hover {
 	color: #CCC;
 }
@@ -3088,3 +3106,4 @@ div.index_pdt{
 	text-overflow:ellipsis;
 	width:150px; 
 }
+

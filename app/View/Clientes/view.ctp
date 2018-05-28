@@ -237,7 +237,8 @@ if($mostrarView){?>
                                             'edit_view.png', 
                                             array(
                                                 'alt' => 'edit',
-                                                'class'=>'img_edit'
+                                                'class'=>'img_edit',
+                                                'id' => 'img1'
                                                 //,'style'=>'color:red;float:left;margin-top:10px'                                            
                                                 )
                                             );
@@ -248,7 +249,8 @@ if($mostrarView){?>
                 <?php echo $this->Form->postLink(
                                          $this->Html->image('ic_delete_black_24dp.png', array(
                                             'alt'   => 'DESHABILITAR',
-                                            'class' => 'img_trash'
+                                            'class' => 'img_trash',
+                                            'id'    => 'img15'
                                         )),
                                         array(
                                             'controller' => 'Clientes',
@@ -378,7 +380,7 @@ if($mostrarView){?>
             </th>
             <th class="tbl_view_th2" id = "viewTh5">
                     <a href="#nuevo_domicilio" class="button_view"> 
-                        <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add'));?>
+                        <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add','id' => 'img2'));?>
                     </a>
             </th>
         </tr>
@@ -446,7 +448,7 @@ if($mostrarView){?>
             </th>
             <th class="tbl_view_th2" id = "viewTh7">
                 <a href="#nuevo_persona" class="button_view"> 
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add','id'=> 'img3'));?>
                 </a>
             </th>
         </tr>
@@ -510,7 +512,7 @@ if($mostrarView){?>
             </th>
             <th class="tbl_view_th2" id="viewTh9">
                 <a href="#nuevo_actividad" class="button_view"> 
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add','id'=>'img4'));?>
                 </a>
             </th>
         </tr>
@@ -574,16 +576,16 @@ if($mostrarView){?>
  <?php /*****************************AFIP*****************************************/ ?>
  <?php /**************************************************************************/ ?>
  	<tr class="rowheaderafip" style="display: none/*inicialmente no se muestra*/"> <!--7. AFIP-->
-    	<th colspan="7" class="tbl_view_th1">
+    	<th colspan="7" class="tbl_view_th1" id="viewTh10">
     		<h2 class="h2header" id="lblAFIP">
    				<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgAFIP','class'=>'imgOpenClose'));?>
-    			<?php echo __('AFIP'); ?></h2></th>
-   		<th class="tbl_view_th2">
-            <th>
+    			<?php echo __('AFIP'); ?></h2>
+        </th>
+   		<th class="tbl_view_th2" id="viewTh11">
+            
                     <a href="#nuevoImpcliAfip" class="button_view"> 
-                        <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add','title'=>'Agregar impuesto'));?>
+                        <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add','id'=>'img5','title'=>'Agregar impuesto'));?>
                     </a>                                            
-            </th>
         </th>    		
     </tr> 
     <tr class="afip" style="display: none/*inicialmente no se muestra*/">
@@ -601,7 +603,12 @@ if($mostrarView){?>
                     <tr>      
                          <td><?php echo $this->Form->input('usuario',array('default'=>$organizmo['usuario'],'label'=>'CUIT')); ?></td>
                          <td><?php echo $this->Form->input('clave',array('default'=>$organizmo['clave'],'label'=>'Clave')); ?></td>
-                         <td><?php echo $this->Form->end('Guardar');?></td>
+                         <td><?php echo $this->Form->end([
+                                    'label'=>'Guardar',
+                                    'div'=>[
+                                        'class'=>'btn_contribuyente',    
+                                    ]
+                                 ]);?></td>
                     </tr>
                 </table>  
             </td>    
@@ -681,16 +688,14 @@ if($mostrarView){?>
 <?php /*****************************DGR******************************************/ ?>
 <?php /**************************************************************************/ ?>        
         <tr class="rowheaderdgr"  style="display: none/*inicialmente no se muestra*/"><!--8. DGR-->
-        	<th  colspan="7" class="tbl_view_th1">
+        	<th  colspan="7" class="tbl_view_th1" id="viewTh12">
         		<h2 class="h2header" id="lblDGR">
        				<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgDGR','class'=>'imgOpenClose'));?>
         			<?php echo __('DGR'); ?></h2></th>
-	   		<th class="tbl_view_th2">
-                <th>
-                    <a href="#nuevo_DGR" class="button_view"> 
-                        <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add'));?>
-                    </a>
-                </th>
+	   		<th class="tbl_view_th2" id="viewTh13">
+                <a href="#nuevo_DGR" class="button_view"> 
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'edit','class'=>'img_add','id'=>'img6'));?>
+                </a>
             </th>		
         </tr>
         <tr class="dgr"  style="display: none/*inicialmente no se muestra*/">
@@ -708,7 +713,12 @@ if($mostrarView){?>
                             <tr>      
                                  <td><?php echo $this->Form->input('usuario',array('default'=>$organizmo['usuario'],'label'=>'CUIT')); ?></td>
                                  <td><?php echo $this->Form->input('clave',array('default'=>$organizmo['clave'],'label'=>'Clave')); ?></td>
-                                 <td><?php echo $this->Form->end('Guardar');?></td>
+                                 <td><?php echo $this->Form->end([
+                                    'label'=>'Guardar',
+                                    'div'=>[
+                                        'class'=>'btn_contribuyente',    
+                                    ]
+                                 ]);?></td>
                             </tr>
                         </table>  
                     </td>    
@@ -772,16 +782,15 @@ if($mostrarView){?>
  <?php /*****************************DGRM*****************************************/ ?>
  <?php /**************************************************************************/ ?>
         <tr class="rowheaderdgrm" style="display: none/*inicialmente no se muestra*/"><!--9. DGRM-->
-        	<th  colspan="7" class="tbl_view_th1">
+        	<th  colspan="7" class="tbl_view_th1" id="viewTh14">
         		<h2 class="h2header" id="lblDGRM">
        				<?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgDGRM','class'=>'imgOpenClose'));?>
         			<?php echo __('DGRM'); ?></h2></th>
-	   		<th class="tbl_view_th2">
-                <th>
+	   		<th class="tbl_view_th2"id="viewTh15">           
                     <a href="#nuevo_DGRM" class="button_view"> 
-                                <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                                <?php echo $this->Html->image('add_view.png', array('alt' => 'add','id'=>'img7','class'=>'img_add'));?>
                     </a>
-                </th>
+               
             </th>                                                                                       
         </tr> 
         <tr class="dgrm" style="display: none/*inicialmente no se muestra*/"><!--9.1 Tabla DGRM -->
@@ -799,7 +808,11 @@ if($mostrarView){?>
                             <tr>      
                                  <td><?php echo $this->Form->input('usuario',array('default'=>$organizmo['usuario'],'label'=>'Usuario')); ?></td>
                                  <td><?php echo $this->Form->input('clave',array('default'=>$organizmo['clave'],'label'=>'Clave')); ?></td>
-                                 <td><?php echo $this->Form->end('Guardar',array(),array('style'=>'margin:0px'));?></td>
+                                 <td><?php echo $this->Form->end([
+                                    'label'=>'Guardar',
+                                    'div'=>['class'=>'btn_contribuyente']
+                                    ]);?></td>
+
                             </tr>
                         </table>  
                     </td>    
@@ -862,16 +875,14 @@ if($mostrarView){?>
  <?php /*****************************Sindicatos***********************************/ ?>
  <?php /**************************************************************************/ ?>        
         <tr  class="rowheadersindicatos" style="display: none/*inicialmente no se muestra*/" ><!--9.1. SINDICATO-->
-            <th  colspan="7" class="tbl_view_th1">
+            <th  colspan="7" class="tbl_view_th1"  id="viewTh16">
                 <h2 class="h2header" id="lblSINDICATO">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'ImgSindicatos','class'=>'imgOpenClose'));?>
                     <?php echo __('Sindicatos'); ?></h2></th>
-            <th class="tbl_view_th2">
-                <th>
+            <th class="tbl_view_th2"  id="viewTh17">
                     <a href="#nuevo_SINDICATO" class="button_view"> 
-                        <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                        <?php echo $this->Html->image('add_view.png', array('alt' => 'add','id'=>'img8','class'=>'img_add'));?>
                     </a>
-                </th>
             </th>
         </tr>
         <!--9.2 Impuestos del Organismo -->        
@@ -924,18 +935,17 @@ if($mostrarView){?>
  <?php /*****************************Bancos***************************************/ ?>      
  <?php /**************************************************************************/ ?>                   
         <tr  class="rowheaderbancos" style="display: none/*inicialmente no se muestra*/" ><!--9.1. BANCO-->
-            <th  colspan="7" class="tbl_view_th1">
+            <th  colspan="7" class="tbl_view_th1" id="viewTh18">
                 <h2 class="h2header" id="lblBANCO">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgBancos','class'=>'imgOpenClose'));?>
                     <?php echo __('Bancos'); ?>
                 </h2>
             </th>
-            <th class="tbl_view_th2">
-                <th>
+            <th class="tbl_view_th2" id="viewTh19">
+                
                     <a href="#nuevo_Banco" class="button_view"> 
-                        <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                        <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add','id'=>'img9'));?>
                     </a>
-                </th>
             </th>        
         </tr> 
         <tr class="bancos" style="display: none/*inicialmente no se muestra*/">
@@ -990,15 +1000,15 @@ if($mostrarView){?>
  <?php /*****************************Puntos de Ventas*****************************/ ?>
  <?php /**************************************************************************/ ?>                
         <tr class="rowheaderpuntosdeventas" style="display: none/*inicialmente no se muestra*/" ><!--15. Puntos de Ventas-->
-            <th colspan="7" class="tbl_view_th1">
+            <th colspan="7" class="tbl_view_th1" id="viewTh20">
                 <h2 class="h2header" id="lblPuntosdeventas">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgPuntosdeventas','class'=>'imgOpenClose'));?>
                     <?php echo __('Puntos de Ventas'); ?>                    
                 </h2>
             </th>
-            <th class="tbl_view_th2">
+            <th class="tbl_view_th2" id="viewTh21">
                 <a href="#nuevo_puntodeventa" class="button_view"> 
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','id'=>'img10', 'class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1038,15 +1048,15 @@ if($mostrarView){?>
         <?php /*****************************SubClientes***********************************/ ?>
         <?php /**************************************************************************/ ?>
         <tr class="rowheadersubclientes" style="display: none/*inicialmente no se muestra*/" ><!--15. Sub Clientes-->
-            <th colspan="7" class="tbl_view_th1">
+            <th colspan="7" class="tbl_view_th1" id="viewTh22">
                 <h2 class="h2header" id="lblSubclientes">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgSubclientes','class'=>'imgOpenClose'));?>
                     <?php echo __('Clientes'); ?>
                 </h2>
             </th>
-            <th class="tbl_view_th2">
+            <th class="tbl_view_th2" id="viewTh23">
                 <a href="#nuevo_subcliente" class="button_view">
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','id'=>'img11','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1080,15 +1090,15 @@ if($mostrarView){?>
         <?php /*****************************Provedores***********************************/ ?>
         <?php /**************************************************************************/ ?>
         <tr class="rowheaderprovedores" style="display: none/*inicialmente no se muestra*/" ><!--16. Provedores-->
-            <th colspan="7" class="tbl_view_th1">
+            <th colspan="7" class="tbl_view_th1" id="viewTh24">
                 <h2 class="h2header" id="lblProvedores">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgProvedores','class'=>'imgOpenClose'));?>
                     <?php echo __('Proveedores'); ?>
                 </h2>
             </th>
-            <th class="tbl_view_th2">
+            <th class="tbl_view_th2"id="viewTh25">
                 <a href="#nuevo_provedor" class="button_view">
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','id'=>'img12','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1123,15 +1133,15 @@ if($mostrarView){?>
         <?php /*****************************Empleados***********************************/ ?>
         <?php /**************************************************************************/ ?>
         <tr class="rowheaderempleados" style="display: none/*inicialmente no se muestra*/" ><!--17. Empleados-->
-            <th colspan="7" class="tbl_view_th1">
+            <th colspan="7" class="tbl_view_th1" id="viewTh26">
                 <h2 class="h2header" id="lblEmpleados">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgEmpleados','class'=>'imgOpenClose'));?>
                     <?php echo __('Empleados'); ?>
                 </h2>
             </th>
-            <th class="tbl_view_th2">
+            <th class="tbl_view_th2" id="viewTh27">
                 <a class="button_view" onclick="loadFormAddEmpleado();">
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','id'=>'img13','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1197,15 +1207,15 @@ if($mostrarView){?>
         <?php /*****************************Bienes de Uso********************************/ ?>
         <?php /**************************************************************************/ ?>
         <tr class="rowheaderbienesdeusos" style="display: none/*inicialmente no se muestra*/" ><!--18. Bienes de usos-->
-            <th colspan="7" class="tbl_view_th1">
+            <th colspan="7" class="tbl_view_th1" id="viewTh28">
                 <h2 class="h2header" id="lblBienesdeusos">
                     <?php echo $this->Html->image('mas2.png', array('alt' => 'open','id'=>'imgBienesdeusos','class'=>'imgOpenClose'));?>
                     <?php echo __('Bienes de usos'); ?>
                 </h2>
             </th>
-            <th class="tbl_view_th2">
+            <th class="tbl_view_th2" id="viewTh29">
                 <a class="button_view" onclick="loadFormBiendeuso(<?php echo $cliente['Cliente']['id'].",0,0"?>);">
-                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','class'=>'img_add'));?>
+                    <?php echo $this->Html->image('add_view.png', array('alt' => 'add','id'=>'img14','class'=>'img_add'));?>
                 </a>
             </th>
         </tr>
@@ -1488,7 +1498,7 @@ if($mostrarView){?>
                 ?>
                 <table cellpadding="0" cellspacing="0" border="0">
                     <tr>
-                        <td colspan="2">
+                        <td>
                             <?php echo $this->Form->input('actividade_id',array(
                                                                 'label'=>'Actividad',
                                                                 'class'=>'chosen-select',
@@ -1496,10 +1506,10 @@ if($mostrarView){?>
                                                                 )
                             );?>
                         </td>
-                        <td colspan="2">
+                        <td>
                             <?php echo $this->Form->input('descripcion');?>
                         </td>
-                        <td colspan="2">
+                        <td>
                             <?php
                             echo $this->Form->input('baja', array(
                                     'class'=>'datepicker-month-year',
@@ -1512,7 +1522,7 @@ if($mostrarView){?>
                         </td>
                     </tr>                                                                                                                                        
                     <tr>
-                        <td width="350">&nbsp;</td>
+                        <td>&nbsp;</td>
                         <td>
                             <a href="#close" onclick="" class="btn_cancelar" style="margin-top:15px">Cancelar</a>
                         </td>
