@@ -117,19 +117,14 @@ class CuentasController extends AppController {
 			$optionsCuentascliente = [
 				'contain'=>['Movimiento'],
 				'conditions' => [
-                                    'Cuentascliente.cuenta_id' => $CuentaId,
-                                    'Cuentascliente.cliente_id' => $ClienteId
+                                    'Cuentascliente.id' => $CuentaclienteId,
+                                    //'Cuentascliente.cliente_id' => $ClienteId
                                 ],
 				'fields'=> ['Cuentascliente.nombre']
 			];
 			$CuentaClienteDesc = $this->Cuentascliente->find('first', $optionsCuentascliente);
 			if(count($CuentaClienteDesc['Movimiento'])==0){
-                            if ($this->Cuentascliente->deleteAll(array(
-                                    'Cuentascliente.cuenta_id' => $CuentaId,
-                                    'Cuentascliente.cliente_id' => $ClienteId
-                                    ),false
-                                )
-                            )
+                            if ($this->Cuentascliente->delete($CuentaclienteId))
                                 $data['respuesta']='Cuenta desactivada correctamente.';
                             else
                                 $data['respuesta']='Error al desactivar cuenta.';

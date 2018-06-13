@@ -420,7 +420,7 @@ class ConceptosrestantesController extends AppController {
 			$this->request->data['Conceptosrestante']['fecha'] = $this->request->data['Conceptosrestante']['conceptofecha'.$id];
 			$this->request->data('Conceptosrestante.fecha',date('Y-m-d',strtotime($this->request->data['Conceptosrestante']['fecha'])));
 			if ($this->Conceptosrestante->save($this->request->data)) {
-				$respuesta='El concepto a sido guardado con exito. Pero no se puede actualizar la Tabla por favor recargue la pagina para ver los cambios';
+				$respuesta='El concepto ha sido guardado con exito. Pero no se puede actualizar la Tabla por favor recargue la pagina para ver los cambios';
 			} else {
 				$respuesta='El concepto NO a sido guardado con exito.Por intente nuevamente mas tarde';
 			}

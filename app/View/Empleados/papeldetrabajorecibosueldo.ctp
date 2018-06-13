@@ -112,8 +112,7 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                                 <b> Empleado: </b>Legajo <?php echo $empleado['Empleado']['legajo'] ?>
                                 <b>Apellido y nombre: </b> <?php echo $empleado['Empleado']['nombre'] ?>
                                 <b>CUIL: </b><?php echo $empleado['Empleado']['cuit']; ?>
-                                <b>Fecha de ingreso: </b> <?php echo date('d/m/Y',strtotime($empleado['Empleado']['fechaingreso'])); ?>
-                                <b>O.S.: </b> <?php echo $valores['33']['concepto']; ?>
+                                <b>Fecha de ingreso: </b> <?php echo date('d/m/Y',strtotime($empleado['Empleado']['fechaingreso'])); ?>                                
                                 <b>Condición: </b> <?php echo $empleado['Empleado']['codigoafip']; ?>
                                 <b>Banco: </b> <p id="pbancoempleado" style="display: inline;"></p>
                                     <?php
@@ -130,6 +129,13 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                                 <b>Cargo: </b><?php echo $empleado['Cargo']['nombre'] ?>
                                 <b>Jornada: </b><?php echo $empleado['Empleado']['jornada']=='0.5'?"Media":"Completa" ?>
                                 <b>Basico: </b><?php echo number_format($empleado['Cargo']['sueldobasico']+$empleado['Cargo']['preciohora'], 2, ",", "."); ?>
+                                <b>O.S.: </b> <?php 
+                                if($empleado['Obrassociale']['nombre']!=""){
+                                     echo $empleado['Obrassociale']['nombre']; 
+                                }else{
+                                    echo $valores['33']['concepto'];
+                                }
+                                ?>
                             </td>
                         </tr>
                         <tr>
@@ -181,7 +187,14 @@ if($empleado['Empleado']['conveniocolectivotrabajo_id']=='10'){
                                     <?php echo $valor['codigorecibo']; ?>
                                 </td>
                                 <td class="tdWithLeftRightBorder">
-                                    <?php echo $valor['concepto']; ?>
+                                    <?php 
+                                    if($valor['numero']*1==33&&$empleado['Obrassociale']['nombre']!=""){
+                                                 echo substr($empleado['Obrassociale']['nombre'],0,45 ); 
+                                            }else{
+                                                 echo $valor['concepto']; 
+                                            }
+                                   
+                                    ?>
                                 </td>
                                 <td class="tdWithLeftRightBorder tdWithNumber">
                                     <?php echo $valor['cantidad']; ?>

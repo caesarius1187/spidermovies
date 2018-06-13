@@ -234,11 +234,56 @@ if($mostrarInforme){
             }
         }
     }  
-    echo $this->Form->input('movimientosbancarios',[
-            'value'=>json_encode($ventasxPeriodo),
-            'type'=>'hidden'
-        ]
-    );
+    $totalPercepProvincia = [];
+    $totalPercepBancProvincia = [];
+    $totalRetencionProvincia = [];
+    $totalSaldoAFavorProvincia = [];
+    $totalPercep = 0;
+    foreach ($compras as $kc=>$compra) {
+        $periodoCompra = $compra['Compra']['periodo'];
+        $periodoAnioCompra = $compra[0]['anio'];
+        $periodoMesCompra = $compra[0]['mes'];
+        
+        $localidad = $compra['Localidade']['Partido']['nombre'];
+       
+        if(!isset($totalPercepProvincia[$localidad])){
+            $totalPercepProvincia[$localidad]=0;      
+        } 
+     
+        $iibbPercep = $compra[0]['iibbpercep'];
+        if($compra['Comprobante']['tipodebitoasociado']=='Debito fiscal o bien de uso'){
+            $totalPercepProvincia[$localidad]+=$iibbPercep;
+            $totalPercep+=$iibbPercep;
+        }else if($venta['Comprobante']['tipodebitoasociado']=='Restitucion de debito fiscal'){
+            $totalPercepProvincia[$localidad]-=$iibbPercep;
+            $totalPercep-=$iibbPercep;
+        }
+    }  
+    foreach ($conceptosrestantes as $kcr=>$conceptosrestante) {
+        $provincia = $conceptosrestante['Partido']['nombre'];
+        if($conceptosrestante['Conceptosrestante']['conceptostipo_id']=='3'){
+            if(!isset($totalPercepBancProvincia[$provincia])){
+                $totalPercepBancProvincia[$provincia]=0;      
+            } 
+            $totalPercepBancProvincia[$provincia]+=$conceptosrestante[0]['montoretenido'];
+            $totalPercep+=$conceptosrestante[0]['montoretenido'];
+        }
+        if($conceptosrestante['Conceptosrestante']['conceptostipo_id']=='2'){
+            if(!isset($totalRetencionProvincia[$provincia])){
+                $totalRetencionProvincia[$provincia]=0;      
+            } 
+            $totalRetencionProvincia[$provincia]+=$conceptosrestante[0]['montoretenido'];
+        }        
+    }
+    foreach ($saldosAFavor as $ksaf=>$saldoAFavor) {
+        $provincia = $saldoAFavor['Partido']['nombre'];       
+        if($saldoAFavor['Conceptosrestante']['conceptostipo_id']=='1'){
+            if(!isset($totalSaldoAFavorProvincia[$provincia])){
+                $totalSaldoAFavorProvincia[$provincia]=0;      
+            } 
+            $totalSaldoAFavorProvincia[$provincia]+=$saldoAFavor[0]['montoretenido'];
+        }       
+    }
     ?>
 
     <div class="index" style="">
@@ -246,7 +291,7 @@ if($mostrarInforme){
         //esta tabla tendria que mostrar años fiscales uno al lado del otro
         //tal ves toda la consulta sea eligiendo años fiscales
         ?>
-        <table id="VentasDatatable" class="tbl_border toExcelTable">
+        <table id="VentasDatatable" class="tbl_tareas aimprimir toExcelTable" style="border-collapse: collapse;">
             <thead>
                 <tr>
                     <td></td>
@@ -316,6 +361,49 @@ if($mostrarInforme){
                          if($provincia=='nBuenos Aires'||$provincia=='nSalta'||$provincia=='nCordoba')
                             die("die".$provincia);
                         ?>
+                    </tr><!--fin Cabecera Periodos-->    
+                    <?php
+                      
+
+                }
+                ?>
+            </tbody>
+        </table>
+        <table id="PercepcionesDatatable" class="tbl_tareas aimprimir toExcelTable" style="border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <td>Provincia</td>
+                    <td>Percepciones IIBB Compras</td>               
+                    <td>Percepciones Bancarias</td>               
+                    <td>Total Percepciones</td>               
+                    <td>Total Retenciones</td>               
+                    <td>Total Saldo A Favor en <?php echo $periodomeshasta.'-'.$periodoaniohasta?></td>               
+                </tr><!--fin Cabecera Periodos-->
+            </thead>
+            <tbody>
+                <?php
+                $p = 1;
+                foreach ($provincias as $kp => $provincia) {
+                    if(!isset($totalPercepProvincia[$provincia])){
+                        $totalPercepProvincia[$provincia]=0;      
+                    } 
+                    if(!isset($totalPercepBancProvincia[$provincia])){
+                        $totalPercepBancProvincia[$provincia]=0;      
+                    } 
+                    if(!isset($totalRetencionProvincia[$provincia])){
+                        $totalRetencionProvincia[$provincia]=0;      
+                    } 
+                    if(!isset($totalSaldoAFavorProvincia[$provincia])){
+                        $totalSaldoAFavorProvincia[$provincia]=0;      
+                    } 
+                    ?>
+                    <tr>
+                        <td><?php echo $provincia?></td>
+                        <td><?php echo number_format($totalPercepProvincia[$provincia], 2, ",", ".")?></td>                   
+                        <td><?php echo number_format($totalPercepBancProvincia[$provincia], 2, ",", ".")?></td>                   
+                        <td><?php echo number_format($totalPercepProvincia[$provincia]+$totalPercepBancProvincia[$provincia], 2, ",", ".")?></td>                   
+                        <td><?php echo number_format($totalRetencionProvincia[$provincia], 2, ",", ".")?></td>                   
+                        <td><?php echo number_format($totalSaldoAFavorProvincia[$provincia], 2, ",", ".")?></td>                   
                     </tr><!--fin Cabecera Periodos-->    
                     <?php
                 }

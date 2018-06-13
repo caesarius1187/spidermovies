@@ -13,7 +13,7 @@ class UsersController extends AppController {
  *
  * @var array
  */
-	public $components = array('Paginator','Auth');
+    public $components = array('Paginator','Auth');
 
 /**
  * index method
@@ -21,31 +21,73 @@ class UsersController extends AppController {
  * @return void
  */
 	
-	public function beforeFilter() {
+    public function beforeFilter() {
     	parent::beforeFilter();
     	$this->Auth->allow('logout');
-	}
+    }
 
     public function login() {
+        $this->loadModel('Cliente');
+        $this->loadModel('Notification');
+        $this->loadModel('Estudio');
     	$this->layout="default_login";
-
-	    if ($this->request->is('post')) {
-	        if ($this->Auth->login()) {
-	            return $this->redirect($this->Auth->redirectUrl());
-	        }
-	        $this->Session->setFlash(__('Nombre de usuario o contrase&ncaron;a inv&aacute;lida.'));
-	    }
-	}
+        if ($this->request->is('post')) {
+            if ($this->Auth->login()) {
+                //vamos a cargar las notificaciones del cliente
+                $today = date('Y-m-d');
+                $peanio = date('Y');
+                $pemes = date('m');
+                
+                //primero vamos a preguntar si este estudio ya genero sus notificaciones
+                $optionsEstudio=[
+                    'contain'=>[],
+                    'conditions'=>[
+                        'Estudio.id'=>$this->Session->read('Auth.User.estudio_id')
+                    ],
+                ];
+                $miEstudio = $this->Estudio->find('first', $optionsEstudio);
+                $ultimaNotificacionGenerada = date('Y-m-d', strtotime($miEstudio['Estudio']['notificaciongenerada']));
+                if($ultimaNotificacionGenerada<$today){
+                    $containCliAuth = array(
+                        'Grupocliente',
+                    );
+                    $clientesAuth = $this->Cliente->find('all',array(
+                            'contain' =>$containCliAuth,
+                            'conditions' => array(
+                                'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),                            
+                                'Grupocliente.estado' => 'habilitado' ,              
+                                'Cliente.estado' => 'habilitado' ,
+                            )
+                        )
+                    );
+                    foreach ($clientesAuth as $kcli => $cliente) {
+                        $this->Notification->checkNotificationsFor($cliente);
+                    }
+                    $this->Estudio->id = $this->Session->read('Auth.User.estudio_id');
+                    $this->Estudio->saveField('notificaciongenerada' , $today);
+                }else{
+                    /*Debugger::dump("no genere");
+                    Debugger::dump($miEstudio);
+                    Debugger::dump($ultimaNotificacionGenerada);
+                    Debugger::dump($today);
+                    die();*/
+                }
+                //fin creacion de notificaciones
+                return $this->redirect($this->Auth->redirectUrl());
+            }
+            $this->Session->setFlash(__('Nombre de usuario o contrase&ntilde;a inv&aacute;lida.'));
+        }
+    }
 
 	public function logout() {
 	    return $this->redirect($this->Auth->logout());
 	}
 
 	public function index() {
-		$this->User->recursive = 0;
-		$conditionsUsu = array('User.estudio_id' => $this->Session->read('Auth.User.estudio_id'),);
-		$users = $this->User->find('all',array('conditions' =>$conditionsUsu));
-		$this->set('users', $users);
+            $this->User->recursive = 0;
+            $conditionsUsu = array('User.estudio_id' => $this->Session->read('Auth.User.estudio_id'),);
+            $users = $this->User->find('all',array('conditions' =>$conditionsUsu));
+            $this->set('users', $users);
 
 	}
 

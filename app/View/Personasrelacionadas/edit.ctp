@@ -1,6 +1,6 @@
 <div class="personasrelacionadas" >
 <?php echo $this->Form->create('Personasrelacionada',array('controller'=>'Personasrelacionadas','action'=>'edit')); ?>
-    <h3><?php echo __('Editar contacto'); ?></h3>
+    <h3><?php echo __('Editar persona relacionada'); ?></h3>
     <?php
         echo $this->Form->input('id',array('type'=>'hidden'));
         echo $this->Form->input('cliente_id',array('type'=>'hidden'));

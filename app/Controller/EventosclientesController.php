@@ -227,10 +227,10 @@ class EventosclientesController extends AppController {
 		}
 		if ($this->request->is('post')) {
 			if ($this->Eventoscliente->save($this->request->data)) {
-				$this->Session->setFlash(__('La tarea a sido guardada'));
+				$this->Session->setFlash(__('La tarea ha sido guardada'));
 				return $this->redirect(array('controller'=>'clientes','action' => 'avance',$this->request->data['Eventoscliente']['cliid']));
 			} else {
-				$this->Session->setFlash(__('La tarea NO a sido guardada. Por favor intente mas tarde.'));
+				$this->Session->setFlash(__('La tarea NO ha sido guardada. Por favor intente mas tarde.'));
 				return $this->redirect(array('controller'=>'clientes','action' => 'avance',$this->request->data['Eventoscliente']['cliid']));
 			}
 		} else {

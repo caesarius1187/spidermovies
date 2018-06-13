@@ -1923,6 +1923,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     $TotalBnGral['Neto']['total'] += $compra[0]['neto']*$suma;
                     if($compra['Compra']['alicuota']=='0'){
                         $TotalBnGral['Neto']['0'] += $compra[0]['neto']*$suma;
+                        $TotalBnGral['Neto']['total'] -= $compra[0]['neto']*$suma;
                     }elseif ($compra['Compra']['alicuota']=='2.5'){
                         $TotalBnGral['Neto']['2.5'] += $compra[0]['neto']*$suma;
                     }elseif ($compra['Compra']['alicuota']=='5'){
@@ -1939,6 +1940,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalBnGral['Directo']['total'] += $compra[0]['iva']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
                             $TotalBnGral['Directo']['0'] += $compra[0]['iva']*$suma;
+                            $TotalBnGral['Directo']['total'] -= $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='2.5'){
                             $TotalBnGral['Directo']['2.5'] += $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='5'){
@@ -1956,6 +1958,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalBnGral['Prorateable']['total'] += $compra[0]['iva']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
                             $TotalBnGral['Prorateable']['0'] += $compra[0]['iva']*$suma;
+                            $TotalBnGral['Prorateable']['total'] -= $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='2,5'){
                             $TotalBnGral['Prorateable']['2.5'] += $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='5'){
@@ -1976,6 +1979,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     $TotalLocaciones['Neto']['total'] += $compra[0]['neto']*$suma;
                     if($compra['Compra']['alicuota']=='0'){
                         $TotalLocaciones['Neto']['0'] += $compra[0]['neto']*$suma;
+                        $TotalLocaciones['Neto']['total'] -= $compra[0]['neto']*$suma;
                     }elseif ($compra['Compra']['alicuota']=='2.5'){
                         $TotalLocaciones['Neto']['2.5'] += $compra[0]['neto']*$suma;
                     }elseif ($compra['Compra']['alicuota']=='5'){
@@ -1992,6 +1996,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalLocaciones['Directo']['total'] += $compra[0]['iva']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
                             $TotalLocaciones['Directo']['0'] += $compra[0]['iva']*$suma;
+                            $TotalLocaciones['Directo']['total'] -= $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='2,5'){
                             $TotalLocaciones['Directo']['2.5'] += $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2009,6 +2014,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalLocaciones['Prorateable']['total'] += $compra[0]['iva']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
                             $TotalLocaciones['Prorateable']['0'] += $compra[0]['iva']*$suma;
+                            $TotalLocaciones['Prorateable']['total'] -= $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='2,5'){
                             $TotalLocaciones['Prorateable']['2.5'] += $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2029,6 +2035,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     $TotalPresServ['Neto']['total'] += $compra[0]['neto']*$suma;
                     if($compra['Compra']['alicuota']=='0'){
                         $TotalPresServ['Neto']['0'] += $compra[0]['neto']*$suma;
+                        $TotalPresServ['Neto']['total'] -= $compra[0]['neto']*$suma;
                     }elseif ($compra['Compra']['alicuota']=='2.5'){
                         $TotalPresServ['Neto']['2.5'] += $compra[0]['neto']*$suma;
                     }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2045,6 +2052,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalPresServ['Directo']['total'] += $compra[0]['iva']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
                             $TotalPresServ['Directo']['0'] += $compra[0]['iva']*$suma;
+                            $TotalPresServ['Directo']['total'] -= $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='2,5'){
                             $TotalPresServ['Directo']['2.5'] += $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2062,6 +2070,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalPresServ['Prorateable']['total'] += $compra[0]['iva']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
                             $TotalPresServ['Prorateable']['0'] += $compra[0]['iva']*$suma;
+                            $TotalPresServ['Prorateable']['total'] -= $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='2,5'){
                             $TotalPresServ['Prorateable']['2.5'] += $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2082,6 +2091,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     $TotalBsUso['Neto']['total'] += $compra[0]['neto']*$suma;
                     if($compra['Compra']['alicuota']=='0'){
                         $TotalBsUso['Neto']['0'] += $compra[0]['neto']*$suma;
+                        $TotalBsUso['Neto']['total'] -= $compra[0]['neto']*$suma;
                     }elseif ($compra['Compra']['alicuota']=='2.5'){
                         $TotalBsUso['Neto']['2.5'] += $compra[0]['neto']*$suma;
                     }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2098,6 +2108,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalBsUso['Directo']['total'] += $compra[0]['iva']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
                             $TotalBsUso['Directo']['0'] += $compra[0]['iva']*$suma;
+                            $TotalBsUso['Directo']['total'] -= $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='2,5'){
                             $TotalBsUso['Directo']['2.5'] += $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2115,6 +2126,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalBsUso['Prorateable']['total'] += $compra[0]['iva']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
                             $TotalBsUso['Prorateable']['0'] += $compra[0]['iva']*$suma;
+                            $TotalBsUso['Prorateable']['total'] -= $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='2,5'){
                             $TotalBsUso['Prorateable']['2.5'] += $compra[0]['iva']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2137,6 +2149,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         $TotalOtrosConceptos['Neto']['total'] += $compra[0]['neto']*$suma;
                         if($compra['Compra']['alicuota']=='0'){
                             $TotalOtrosConceptos['Neto']['0'] += $compra[0]['neto']*$suma;
+                            $TotalOtrosConceptos['Neto']['total'] -= $compra[0]['neto']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='2.5'){
                             $TotalOtrosConceptos['Neto']['2.5'] += $compra[0]['neto']*$suma;
                         }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2153,6 +2166,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             $TotalOtrosConceptos['Directo']['total'] += $compra[0]['iva']*$suma;
                             if($compra['Compra']['alicuota']=='0'){
                                 $TotalOtrosConceptos['Directo']['0'] += $compra[0]['iva']*$suma;
+                                $TotalOtrosConceptos['Directo']['total'] -= $compra[0]['iva']*$suma;
                             }elseif ($compra['Compra']['alicuota']=='2,5'){
                                 $TotalOtrosConceptos['Directo']['2.5'] += $compra[0]['iva']*$suma;
                             }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2170,6 +2184,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             $TotalOtrosConceptos['Prorateable']['total'] += $compra[0]['iva']*$suma;
                             if($compra['Compra']['alicuota']=='0'){
                                 $TotalOtrosConceptos['Prorateable']['0'] += $compra[0]['iva']*$suma;
+                                $TotalOtrosConceptos['Prorateable']['total'] -= $compra[0]['iva']*$suma;
                             }elseif ($compra['Compra']['alicuota']=='2,5'){
                                 $TotalOtrosConceptos['Prorateable']['2.5'] += $compra[0]['iva']*$suma;
                             }elseif ($compra['Compra']['alicuota']=='5'){
@@ -2188,6 +2203,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     $TotalOperacionesExentasYNoGravadas['Neto']['total'] += $compra[0]['nogravados']*$suma;
                     $TotalOperacionesExentasYNoGravadas['mostrar']=true;
                 }
+                 if($compra['Compra']['alicuota']=='0'){
+                      $TotalOperacionesExentasYNoGravadas['Neto']['total']+= $compra[0]['neto']*$suma;
+                 }
             }
             //en 'Otros Conceptos' tengo q acumular los DEBE de los movimientos bancarios
             //que serian los movimientos que apuntan a la cuentacliente de la cuenta
@@ -2273,6 +2291,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td>Computable Total</td>
                     </tr>
                     <?php
+                    /*
                     if($TotalBnGral['Neto']['0']+$TotalBnGral['Directo']['0']+$TotalBnGral['Prorateable']['0'] != 0){ ?>
                         <tr>
                             <td><?php echo "0%" ?></td>
@@ -2283,7 +2302,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             <td><?php echo number_format($TotalBnGral['Directo']['0'] + $TotalBnGral['Prorateable']['0'] , 2, ",", ".")?></td>
                             <td><?php echo number_format($TotalBnGral['Directo']['0'] + ($TotalBnGral['Prorateable']['0'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                         </tr>
-                    <?php }
+                    <?php 
+                    } */
                     if($TotalBnGral['Neto']['2.5']+$TotalBnGral['Directo']['2.5']+$TotalBnGral['Prorateable']['2.5'] != 0) { ?>
                         <tr>
                             <td><?php echo "2.5%" ?></td>
@@ -2378,6 +2398,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td>Computable Total</td>
                     </tr>
                     <?php
+                    /*
                     if($TotalComprasBienesConsFinales['Neto']['0']+$TotalComprasBienesConsFinales['Directo']['0']+$TotalComprasBienesConsFinales['Prorateable']['0'] != 0){ ?>
                         <tr>
                             <td><?php echo "0%" ?></td>
@@ -2388,7 +2409,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['0'] + $TotalComprasBienesConsFinales['Prorateable']['0'] , 2, ",", ".")?></td>
                             <td><?php echo number_format($TotalComprasBienesConsFinales['Directo']['0'] + ($TotalComprasBienesConsFinales['Prorateable']['0'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                         </tr>
-                    <?php }
+                    <?php
+                     *  }
+                     */
                     if($TotalComprasBienesConsFinales['Neto']['2.5']+$TotalComprasBienesConsFinales['Directo']['2.5']+$TotalComprasBienesConsFinales['Prorateable']['2.5'] != 0) { ?>
                         <tr>
                             <td><?php echo "2.5%" ?></td>
@@ -2483,7 +2506,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td>Facturado</td>
                         <td>Computable Total</td>
                     </tr>
-                    <?php
+                    <?php /*
                     if($TotalLocaciones['Neto']['0']+$TotalLocaciones['Directo']['0']+$TotalLocaciones['Prorateable']['0'] != 0) { ?>
                         <tr>
                             <td><?php echo "0%" ?></td>
@@ -2495,7 +2518,9 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             <td><?php echo number_format($TotalLocaciones['Directo']['0'] + ($TotalLocaciones['Prorateable']['0'] * $coeficienteapropiacion) , 2, ",", ".")?></td>
                         </tr>
                         <?php
-                    }
+                    } 
+                     * 
+                     */
                     if($TotalLocaciones['Neto']['2.5']+$TotalLocaciones['Directo']['2.5']+$TotalLocaciones['Prorateable']['2.5'] != 0) { ?>
                     <tr>
                         <td><?php echo "2.5%" ?></td>
@@ -2589,6 +2614,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td>Computable Total</td>
                     </tr>
                     <?php
+                    /*
                     if($TotalPresServ['Neto']['0']+$TotalPresServ['Directo']['0']+$TotalPresServ['Prorateable']['0'] != 0) { ?>
                         <tr>
                             <td><?php echo "0%" ?></td>
@@ -2601,6 +2627,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         </tr>
                         <?php
                     }
+                     * 
+                     */
                     if($TotalPresServ['Neto']['2.5']+$TotalPresServ['Directo']['2.5']+$TotalPresServ['Prorateable']['2.5'] != 0) { ?>
                         <tr>
                             <td><?php echo "2.5%" ?></td>
@@ -2694,6 +2722,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td>Computable Total</td>
                     </tr>
                     <?php
+                    /*
                     if($TotalBsUso['Neto']['0']+$TotalBsUso['Directo']['0']+$TotalBsUso['Prorateable']['0'] != 0) { ?>
                         <tr>
                             <td><?php echo "0%" ?></td>
@@ -2706,6 +2735,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         </tr>
                         <?php
                     }
+                     * 
+                     */
                     if($TotalBsUso['Neto']['2.5']+$TotalBsUso['Directo']['2.5']+$TotalBsUso['Prorateable']['2.5'] != 0) { ?>
                     <tr>
                         <td><?php echo "2.5%" ?></td>
@@ -2799,6 +2830,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         <td>Computable Total</td>
                     </tr>
                     <?php
+                    /*
                     if($TotalOtrosConceptos['Neto']['0']+$TotalOtrosConceptos['Directo']['0']+$TotalOtrosConceptos['Prorateable']['0'] != 0) { ?>
                         <tr>
                             <td><?php echo "0%" ?></td>
@@ -2811,6 +2843,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         </tr>
                         <?php
                     }
+                     * 
+                     */
                     if($TotalOtrosConceptos['Neto']['2.5']+$TotalOtrosConceptos['Directo']['2.5']+$TotalOtrosConceptos['Prorateable']['2.5'] != 0) { ?>
                     <tr>
                         <td><?php echo "2.5%" ?></td>

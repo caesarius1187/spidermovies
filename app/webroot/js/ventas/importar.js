@@ -1,12 +1,12 @@
+var ventasACargar ;
 $(document).ready(function() {
-    window.addEventListener("beforeunload", function (e) {
+    /*window.addEventListener("beforeunload", function (e) {
         var confirmationMessage = "Esta seguro?";
-
         e.returnValue = confirmationMessage;     // Gecko, Trident, Chrome 34+
         return confirmationMessage;              // Gecko, WebKit, Chrome <34
-    });
+    });*/
     $("#loading").css('visibility','visible')
-    callAlertPopint("Automatizando Seleccion");
+    //callAlertPopint("Automatizando Seleccion");
     $("#VentaImportar").find('select').each(function(){
         //$(this).find('option[text="'+$(this).attr( "defaultoption" )+'"]').val();
         var defaultoption = $(this).attr( "defaultoption" );
@@ -20,9 +20,10 @@ $(document).ready(function() {
             $('#puntosdeventasdomicilio').val(attr);
             var defaultlocalidad = $( "#puntosdeventasdomicilio option:selected" ).text();
             $(this).val(defaultlocalidad);
-        }
+        }       
     });
-    callAlertPopint("Mejorando Visibilidad de campos");
+    ventasACargar = jQuery.parseJSON($('#ventasACargar').val());
+    //callAlertPopint("Mejorando Visibilidad de campos");
     $('.chosen-select').chosen(
         {
             search_contains:true,
@@ -30,31 +31,32 @@ $(document).ready(function() {
         }
     );
     $('#VentaImportar').submit(function(){
-        //serialize form data
-        var formData = $(this).serialize();
-        //get form action
-        var formUrl = $(this).attr('action');
-        $("#VentaImportarAEnviar #Venta0Jsonencript").val(formData);
-        var formJsonData = $("#VentaImportarAEnviar").serialize();
-        $.ajax({
-            type: 'POST',
-            url: formUrl,
-            data: formJsonData,
-            success: function(data,textStatus,xhr){
-                var midata = jQuery.parseJSON(data);
-                callAlertPopint(midata.respuesta);
-                var cliid = $("#VentaCliid").val();
-                var periodo = $("#VentaPeriodo").val();
-                callAlertPopint('Recargando formulario por favor espere');
-                window.location.reload(true);
-                setTimeout(function(){
-                    window.location.reload(true);
-                },4000);
-            },
-            error: function(xhr,textStatus,error){
-                callAlertPopint(textStatus);
-            }
-        });
+        var r = confirm("Esta seguro que desea importar estas ventas?");
+        if (r == true) {
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+            $("#VentaImportarAEnviar #Venta0Jsonencript").val(formData);
+            var formJsonData = $("#VentaImportarAEnviar").serialize();
+            $.ajax({
+                type: 'POST',
+                url: formUrl,
+                data: formJsonData,
+                success: function(data,textStatus,xhr){
+                    var midata = jQuery.parseJSON(data);
+                    callAlertPopint(midata.respuesta);
+                    var cliid = $("#VentaCliid").val();
+                    var periodo = $("#VentaPeriodo").val();
+                    callAlertPopint('Recargando formulario por favor espere');
+                    cargarCompras();
+                    borrarPrimerasVentas();
+                },
+                error: function(xhr,textStatus,error){
+                    callAlertPopint(textStatus);
+                }
+            });
+        }
         return false;
     });
     //seleccion de tipos gastos por actividad
@@ -81,7 +83,105 @@ $(document).ready(function() {
     agregarConsultaCondicionAFIP();
     $("#loading").css('visibility','hidden');
     actividadCategoria();
+    callAlertPopint("Formulario de importacion listo!");
 });
+function borrarPrimerasVentas(){
+    var ventaNumero=0;
+    $.each(ventasACargar, function (indexVenta, venta) {
+        var numalicuota = 0;
+        $.each(venta.Alicuota, function (indexAlicuota, alicuota) {
+            ventaNumero++;
+            delete ventasACargar[indexAlicuota];
+            if(ventaNumero>99){
+                return false;
+            }
+        });
+        delete ventasACargar[indexVenta];
+        if(ventaNumero>99){
+            return false;
+        }
+    });    
+}
+function cargarCompras(){
+    //vamos a cargar 100 ventas en el formulario
+    //vamos a eliminar las 100 ventas del array de ventas a cargar cuando la importacion se haga con exito
+    //borrar las 100 solo si fueron cargadas desde aca
+    var ventaNumero = 1;
+    var tieneMonotributo = $("#tieneMonotributo").val();
+    if(Object.keys(ventasACargar).length==0){
+        callAlertPopint('No hay mas ventas para importar.');
+         $('#VentaImportar').hide('slow');
+        location.reload();
+        return false;
+    }
+    if(Object.keys(ventasACargar).length<100){
+        callAlertPopint('quedan '+Object.keys(ventasACargar).length+' ventas para importar recargando formulario.');
+         $('#VentaImportar').hide('slow');
+        location.reload();
+        return false;
+    }
+    $.each(ventasACargar, function (indexVenta, venta) {
+        var numalicuota = 0;
+        $.each(venta.Alicuota, function (indexAlicuota, alicuota) {
+            $("#Venta"+ventaNumero+"Fecha").val(venta.Venta.fecha);        
+            $("#Venta"+ventaNumero+"ComprobanteId").val(venta.Venta.comprobanteTipoNuevo);        
+            $("#Venta"+ventaNumero+"Comprobanteid").val(venta.Venta.comprobantetipo);        
+            $("#Venta"+ventaNumero+"PuntosdeventaId").val(venta.Venta.pdvNuevo);        
+            $("#Venta"+ventaNumero+"Puntosdeventaid").val(venta.Venta.puntodeventa);        
+            $("#Venta"+ventaNumero+"Numerocomprobante").val(venta.Venta.comprobantenumero);        
+            $("#Venta"+ventaNumero+"SubclienteId").val(venta.Venta.clienteNuevo);        
+            //cliente _ ID
+            $("#Venta"+ventaNumero+"Subclientenombre").val(venta.Venta.nombre);        
+            $("#Venta"+ventaNumero+"Subclientecuit").val(venta.Venta.identificacionnumero);        
+            $("#Venta"+ventaNumero+"Condicioniva").val();//????????????
+            $('#Venta'+ventaNumero+'Condicioniva option:contains("' + venta.Venta.condicioniva + '")').prop('selected', true);
+            $("#Venta"+ventaNumero+"Condicioniva").removeClass('controlarInput');
+            $("#Venta"+ventaNumero+"Condicioniva").addClass(venta.Venta.classcondicionIVA);
+            //Actividad no vamos a poner
+            //Tipo Ingreso no vamos a poner
+            //Localidad tampoco vamos a cambiar
+            $("#Venta"+ventaNumero+"Alicuota").val(alicuota.alicuotaNuevo);    
+            var neto = 0;
+            if(tieneMonotributo==1){
+                neto = venta.Venta.importetotaloperacion;
+            }else{
+                neto = alicuota.importenetogravado;
+            }
+            $("#Venta"+ventaNumero+"Neto").val(neto*1);        
+            $("#Venta"+ventaNumero+"Iva").val(alicuota.impuestoliquidado*1);        
+            $("#Venta"+ventaNumero+"Ivapercep").val(venta.Venta.percepcionesnocategorizados*1);        
+            $("#Venta"+ventaNumero+"Iibbpercep").val(venta.Venta.importeingresosbrutos*1);        
+            $("#Venta"+ventaNumero+"Actvspercep").val(venta.Venta.importeimpuestosmunicipales*1);        
+            $("#Venta"+ventaNumero+"Impinternos").val(venta.Venta.importeimpuestosinternos*1);        
+            $("#Venta"+ventaNumero+"Nogravados").val(venta.Venta.importeconceptosprecionetogravado*1);        
+            $("#Venta"+ventaNumero+"Excentos").val(venta.Venta.importeoperacionesexentas*1);        
+            $("#Venta"+ventaNumero+"Exentosactividadeseconomicas").val(0);        
+            $("#Venta"+ventaNumero+"Exentosactividadesvarias").val(0);        
+            if(venta.Alicuota.length>=2){
+                var totalrecalculado = 0;
+                totalrecalculado += alicuota.importenetogravado*1;
+                totalrecalculado += alicuota.impuestoliquidado*1;
+                if(numalicuota==0){
+                    totalrecalculado += venta.Venta.percepcionesnocategorizados*1;
+                    totalrecalculado += venta.Venta.importeingresosbrutos*1;
+                    totalrecalculado += venta.Venta.importeimpuestosmunicipales*1;
+                    totalrecalculado += venta.Venta.importeimpuestosinternos*1;
+                    totalrecalculado += venta.Venta.importeconceptosprecionetogravado*1;
+                }
+            }else{
+                totalrecalculado = venta.Venta.importetotaloperacion*1;
+            }
+            $("#Venta"+ventaNumero+"Total").val(totalrecalculado*1);        
+            ventaNumero++;
+            numalicuota++;
+            if(ventaNumero>100){
+                return false;
+            }
+        });
+    });
+    callAlertPopint('Formulario Recargado, faltan importar '+Object.keys(ventasACargar).length+' ventas');
+
+}
 //vamos a inicalizar los Filtros
 function reducirFiltros(filtroID,filtroClase){
     //vamos a reducir el filtro a los elementos presentes en el formulario.
@@ -109,7 +209,7 @@ function reducirFiltros(filtroID,filtroClase){
     });
 }
 function comportamientoDeFiltros(){
-    callAlertPopint("Cargando filtros");
+    //callAlertPopint("Cargando filtros");
 
     $('#Filtro0ComprobanteId').change(function() {
         aplicarFiltros();
@@ -138,7 +238,7 @@ function comportamientoDeFiltros(){
     reducirFiltros("Filtro0Alicuota","filtroalicuota");
 }
 function aplicarFiltros(){
-    callAlertPopint("Aplicando filtros");
+    //callAlertPopint("Aplicando filtros");
     $("#tablaFormVentas tr").each(function(){
         aplicarControlFiltro($(this));
     });

@@ -386,16 +386,16 @@ class ClientesController extends AppController {
 							 'Grupocliente',
 							 );
 		$lclis = $this->Cliente->find('list',array(
-									'contain' =>$conditionsCli,
-									'conditions' => array(
-							 			'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
-        								'Cliente.estado' => 'habilitado' , 
-        								'Grupocliente.estado' => 'habilitado' , 
-							 			),
-									'order'=>array('Grupocliente.nombre','Cliente.nombre'),
-									'fields'=>array('Cliente.id','Cliente.nombre','Grupocliente.nombre')
-							 		)
-								);
+                        'contain' =>$conditionsCli,
+                        'conditions' => array(
+                                'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id'),
+                        'Cliente.estado' => 'habilitado' , 
+                        'Grupocliente.estado' => 'habilitado' , 
+                                ),
+                        'order'=>array('Grupocliente.nombre','Cliente.nombre'),
+                        'fields'=>array('Cliente.id','Cliente.nombre','Grupocliente.nombre')
+                    )
+                );
 		$this->set(compact('lclis'));
 		$this->set(compact('gclis'));
 	}
@@ -1824,9 +1824,9 @@ class ClientesController extends AppController {
 		$this->set('fchfincliente',$mesDefault.'-'.$añoDefault);
 
 		if($this->Cliente->saveField('estado', 'deshabilitado')&&$this->Cliente->saveField('fchfincliente', $mesDefault.'-'.$añoDefault)){
-			$this->Session->setFlash(__('El cliente a sido deshabilitado.'));
+			$this->Session->setFlash(__('El cliente ha sido deshabilitado.'));
 		}else{
-			$this->Session->setFlash(__('El cliente NO a sido deshabilitado	.'));
+			$this->Session->setFlash(__('El cliente NO ha sido deshabilitado	.'));
 		}
 		$this->redirect(array('action' => 'view'));	
 	}
@@ -1852,7 +1852,7 @@ class ClientesController extends AppController {
 			//	$this->request->data('Cliente.vtocaic',date('Y-m-d',strtotime($this->request->data['Cliente']['vtocaic'])));
 
 			if ($this->Cliente->save($this->request->data)) {
-				$this->Session->setFlash(__('El cliente a sido guardado	.'));
+				$this->Session->setFlash(__('El cliente ha sido guardado	.'));
 
 				//Debemos crear 
 				$this->Organismosxcliente->create();

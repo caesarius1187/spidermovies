@@ -120,7 +120,7 @@ class ClientesxcomprobantesController extends AppController {
 		}
 		if ($this->request->is('post')) {
 			if ($this->Domicilio->save($this->request->data)) {
-				$this->Session->setFlash(__('La direccion a sido modificada.'));
+				$this->Session->setFlash(__('La direccion ha sido modificada.'));
 				return $this->redirect(array('controller'=>'clientes', 'action' => 'view',$this->request->data['Domicilio']['cliente_id']));
 			} else {
 				$this->Session->setFlash(__('La direccion no a podido ser modificada, por favor intente de nuevo.'));

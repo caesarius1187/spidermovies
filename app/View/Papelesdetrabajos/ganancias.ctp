@@ -523,7 +523,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
              */
             
             initializeConcepto($arrayPrefijos,'60201','Gravado IVA');
-            initializeConcepto($arrayPrefijos,'60202','Gravado IVA');            
+            initializeConcepto($arrayPrefijos,'60202','No Gravado IVA');            
             if(!$tienetercera&&$tieneprimera){
                 initializeConcepto($arrayPrefijos,'6010','Gravado IVA');
             }
@@ -550,7 +550,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'60301','Gravado IVA');
-            initializeConcepto($arrayPrefijos,'60302','Gravado IVA');
+            initializeConcepto($arrayPrefijos,'60302','No Gravado IVA');
             if(!$tienetercera&&!$tieneprimera&&$tienesegunda){
                 initializeConcepto($arrayPrefijos,'6010','Gravado IVA');
             }
@@ -589,7 +589,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'60401','Gravado IVA');
-            initializeConcepto($arrayPrefijos,'60402','Gravado IVA');
+            initializeConcepto($arrayPrefijos,'60402','No Gravado IVA');
             if(!$tienetercera&&!$tieneprimera&&!$tienesegunda&&$tieneterceraauxiliar){
                 initializeConcepto($arrayPrefijos,'6010','Gravado IVA');
             }
@@ -673,7 +673,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'60501','Gravado IVA');
-            initializeConcepto($arrayPrefijos,'60502','Gravado IVA');
+            initializeConcepto($arrayPrefijos,'60502','No Gravado IVA');
             if(!$tienetercera&&!$tieneprimera&&!$tienesegunda&&!$tieneterceraauxiliar&&$tienecuarta){
                 initializeConcepto($arrayPrefijos,'6010','Gravado IVA');
             }
@@ -3288,7 +3288,7 @@ function mostrarPatrimonio3ra($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas
     $totalNota['apertura']=0;   
     $totalNota['bienpersonal']=0;   
     $totalNota['exento']=0;   
-    if (!isset($total[$periodoActual])){
+     if (!isset($total[$periodoActual])){
         $total[$periodoActual]=0;    
         $total['apertura']=0;   
         $total['bienpersonal']=0;   
@@ -3705,6 +3705,7 @@ function mostrarBienDeUsoTercera($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
             if(!isset($total['exento']))$total['exento']=0;
             $total['apertura']+=$arrayCuentasxPeriodos[$numerodecuenta]['apertura'][$periodoActual];
             $total[$periodoActual]+=$arrayCuentasxPeriodos[$numerodecuenta][$periodoActual];
+            $total['bienpersonal']+=$arrayCuentasxPeriodos[$numerodecuenta]['bienpersonal'];
             $total['exento']+=$arrayCuentasxPeriodos[$numerodecuenta]['exento'];
         }
          ?>
@@ -4201,12 +4202,15 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
         <tr class="trnoclickeable">
             <th class="tdborder">Total de  <?php  echo $nombreNota; ?></th>
             <?php
+                $totalGeneral=0;
                 foreach ($columnas as $kc => $columna) {
                     if(!in_array($columna,$columnasAgrupadoras)&&!in_array($columna, $columnasInicio)){
                          echo '<th  class="numericTD tdborder" style="width:90px">'. number_format($totalNota[$columna], 2, ",", ".").'</td>';
+                         $totalGeneral += $totalNota[$columna];
                     } 
                 }
             ?>
+            <th  class="numericTD tdborder" style="width:90px"><?php echo number_format($totalGeneral, 2, ",", "."); ?></td>
         </tr>
         <?php
         if($totalIngreso!=null){?>

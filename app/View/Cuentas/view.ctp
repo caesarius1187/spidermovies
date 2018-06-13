@@ -55,6 +55,15 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
                 $(".cuenta").show();
             }
         });
+        $('#cbxOcultarcuentasinactivas').change(function () {
+            $(".checkboxCuenta").each(function(){
+                if($(this).is(':checked')){
+                    $(this).closest('tr').show();
+                }else{
+                    $(this).closest('tr').hide();
+                }
+            });
+        });
 
         /**
          * Jumps to the element matching the currentIndex
@@ -209,7 +218,12 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
 	<?php
 	echo $this->Form->input('ocultarcuentas',[
 		'id'=>'cbxOcultarcuentas',
-		'label'=>'Ocultar cuentas',
+		'label'=>'Ocultar todas las cuentas',
+		'type'=>'checkbox'
+	]);
+	echo $this->Form->input('ocultarinactivas',[
+		'id'=>'cbxOcultarcuentasinactivas',
+		'label'=>'Ocultar cuentas inactivas',
 		'type'=>'checkbox'
 	]);
 	?>
@@ -324,9 +338,9 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
                         <?php
                         if($cuenta['Cuenta']['tipo']=='cuenta'){
                             if ($CuentaClienteId!=0)
-                                echo '<input id="chkCuenta_'.$CuentaId.'_'.$CuentaClienteId.'" checked="checked" onclick="FnActivarCuenta(this)" type="checkbox" value="'.$CuentaId.'" />';
+                                echo '<input id="chkCuenta_'.$CuentaId.'_'.$CuentaClienteId.'" checked="checked" onclick="FnActivarCuenta(this)" type="checkbox" value="'.$CuentaId.'" class="checkboxCuenta" />';
                             else
-                                echo '<input id="chkCuenta_'.$CuentaId.'_'.$CuentaClienteId.'" type="checkbox" onclick="FnActivarCuenta(this)" value="'.$CuentaId.'" />';
+                                echo '<input id="chkCuenta_'.$CuentaId.'_'.$CuentaClienteId.'" type="checkbox" onclick="FnActivarCuenta(this)" value="'.$CuentaId.'" class="checkboxCuenta" />';
                         }
                         ?>
                     </td>

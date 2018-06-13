@@ -1009,7 +1009,7 @@ class VentasController extends AppController {
 
 	}
 	public function importar($cliid=null,$periodo=null){
-		set_time_limit (360);
+		set_time_limit (60);
 		ini_set('memory_limit', '2560M');
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');
@@ -1079,7 +1079,9 @@ class VentasController extends AppController {
 		//Alicuotas
 		$this->set('alicuotas', $this->alicuotascodigo);
         	$alicuotascodigoreverse = $this->alicuotascodigoreverse;
+        	$alicuotascodigo = $this->alicuotascodigo;
                 $this->set('alicuotascodigoreverse', $this->alicuotascodigoreverse);    
+                $this->set('alicuotascodigo', $this->alicuotascodigo);    
 		//Condicion IVA
 		$this->set('condicionesiva',$this->condicionesiva);
 		//Tipo Debito
@@ -1332,35 +1334,35 @@ class VentasController extends AppController {
                 $this->set('tipogastos', $tipogastos);
 	}
 	public function cargarventas(){
-		$data=array();
-		if ($this->request->is('post')) {
-            $params = array();
-            $myParser = new ParserUnlimited();
-            $myParser->my_parse_str($this->request->data['Venta'][0]['jsonencript'],$params);
-            foreach ($params['data']['Venta'] as $k => $miventa){
-				$mifecha = $miventa['fecha'];
-                $params['data']['Venta'][$k]['fecha'] = date('Y-m-d',strtotime($mifecha));
-			}
-			$this->Venta->create();
-			if ($this->Venta->saveAll($params['data']['Venta'])) {
-            //$data['params'] = $params;
-            //if (1==1) {
-                $data['respuesta'] = 'Las Ventas han sido guardadas.';
-			} else {
-                $data['respuesta'] = 'Error al guardar ventas, por favor intende de nuevo mas tarde.';
-			}
-		}else{
-			$data['respuesta'] = 'acceso denegado';
-		}
-		$this->layout = 'ajax';
-		$this->set('data', $data);
-		$this->render('serializejson');
-		/*return $this->redirect(
-			array(
-				'controller'=>'clientes',
-				'action' => 'tareacargar',
-				$this->request->data['Venta'][0]['cliente_id'],
-				$this->request->data['Venta'][0]['periodo']));*/
+            $data=array();
+            if ($this->request->is('post')) {
+                $params = array();
+                $myParser = new ParserUnlimited();
+                $myParser->my_parse_str($this->request->data['Venta'][0]['jsonencript'],$params);
+                foreach ($params['data']['Venta'] as $k => $miventa){
+                    $mifecha = $miventa['fecha'];                    
+                    $params['data']['Venta'][$k]['fecha'] = date('Y-m-d',strtotime($mifecha));
+                }
+                $this->Venta->create();
+                if ($this->Venta->saveAll($params['data']['Venta'])) {
+                    //$data['params'] = $params;
+                    //if (1==1) {
+                        $data['respuesta'] = 'Las Ventas han sido guardadas.';
+                } else {
+                    $data['respuesta'] = 'Error al guardar ventas, por favor intende de nuevo mas tarde.';
+                }
+            }else{
+                    $data['respuesta'] = 'acceso denegado';
+            }
+            $this->layout = 'ajax';
+            $this->set('data', $data);
+            $this->render('serializejson');
+            /*return $this->redirect(
+                    array(
+                            'controller'=>'clientes',
+                            'action' => 'tareacargar',
+                            $this->request->data['Venta'][0]['cliente_id'],
+                            $this->request->data['Venta'][0]['periodo']));*/
 	}
 	public function deletefile($name=null,$cliid=null,$folder=null,$periodo=null){
 		App::uses('Folder', 'Utility');

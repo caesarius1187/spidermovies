@@ -1,7 +1,7 @@
 <div id="form_empleado" class="" style="width: 94%;">
 	<?php echo $this->Form->create('Empleado',array('class'=>'formTareaCarga','controller'=>'Empelados','action'=>'add','id'=>'EmpleadoEditForm')); ?>
 	<h3><?php echo __('Editar Empleado'); ?></h3>
-	<fieldset style="border: 1px solid #1e88e5;">
+        <fieldset style="">
 		<legend style="color:#1e88e5;font-weight:normal;">Datos Personales</legend>
 		<?php
 		echo $this->Form->input('id',array('type'=>'hidden'));
@@ -19,11 +19,14 @@
 			)
                     );
 		echo $this->Form->input('domicilio',array('label'=>'Domicilio','type'=>'text','style'=>'width:250px'));
+		echo $this->Form->input('hijos',array('label'=>'Hijos','value'=>0));
+                echo "</br>";
 		echo $this->Form->input('titulosecundario',array('label'=>'Titulo Secundario'));
 		echo $this->Form->input('titulouniversitario',array('label'=>'Titulo Universitario'));
+                echo $this->Form->input('conyugue',array('label'=>'Conyugue','value'=>0));
 		?>
 	</fieldset>
-	<fieldset style="border: 1px solid #1e88e5;">
+	<fieldset style="">
 		<legend style="color:#1e88e5;font-weight:normal;">Laborales</legend>
 		<?php
 		echo $this->Form->input('fechaingreso', array('type'=>'hidden'));
@@ -64,6 +67,8 @@
 		));
 		echo $this->Form->input('conveniocolectivotrabajo_id',array('label'=>'Convenio Colectivo de Trabajo'));
 		echo $this->Form->input('cargo_id',array('label'=>'Cargo', 'required'=>true,));
+                echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
+
 		echo $this->Form->label("Liquidaciones:");
 		echo $this->Form->input('liquidaprimeraquincena',array('label'=>'Primera Quincena'));
 		echo $this->Form->input('liquidasegundaquincena',array('label'=>'Segunda Quincena'));
@@ -72,21 +77,16 @@
 		echo $this->Form->input('liquidapresupuestoprimera',array('label'=>'Presupuesto 1'));
 		echo $this->Form->input('liquidapresupuestosegunda',array('label'=>'Presupuesto 2'));
 		echo $this->Form->input('liquidapresupuestomensual',array('label'=>'Presupuesto 3'));
+                echo "</br>";
+                echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
+                echo $this->Form->input('fallodecaja',array('label'=>'Paga Fallo de Caja'));
+
 		?>
-	</fieldset>
-	<fieldset style="border: 1px solid #1e88e5;">
-		<legend style="color:#1e88e5;font-weight:normal;">Familiares</legend>
-		<?php
-		echo $this->Form->input('conyugue',array('label'=>'Conyugue','value'=>0));
-		echo $this->Form->input('hijos',array('label'=>'Hijos','value'=>0));
-		?>
-	</fieldset>
-	<fieldset style="border: 1px solid #1e88e5;">
+	</fieldset>	
+	<fieldset style="">
 		<legend style="color:#1e88e5;font-weight:normal;">Datos AFIP</legend>
 		<?php
 
-		echo $this->Form->input('jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
-		echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial'));
 		echo $this->Form->input('codigoafip',array(
 				'label'=>'Codigo Afip',
 				'options'=>array(
@@ -98,17 +98,20 @@
 				)
 			)
 		);
-		echo $this->Form->input('afiliadosindicato',array('label'=>'Afiliado al sindicato'));
 
 		echo $this->Form->input('adherente',array('label'=>'Adherentes','value'=>0));
-		echo $this->Form->input('obrassociale_id',array(
+                echo "</br>";
+                echo $this->Form->input('exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial'));
+		
+		echo $this->Form->input('obrasocialsindical',array(
+			'label'=>'Obra social Sindical',
+			'title'=>'Indicar si el empleado tiene una obra social que no sea sindical'));
+                echo "</br>";
+                echo $this->Form->input('obrassociale_id',array(
                             'label'=>'Obra Social',
                             'class'=>'chosen-select',
                             )
                         );
-		echo $this->Form->input('obrasocialsindical',array(
-			'label'=>'Obra social Sindical',
-			'title'=>'Indicar si el empleado tiene una obra social que no sea sindical'));
 		echo $this->Form->input('codigoactividad',array('label'=>'Codigo Actividad','options'=>$codigoactividad,'class'=>'chosen-select',));
                 echo $this->Form->input('codigosituacion',array('label'=>'Codigo Situacion','options'=>$codigorevista,'class'=>'chosen-select',));
                 echo $this->Form->input('codigocondicion',array('label'=>'Codigo Condicion','options'=>$codigocondicion,'class'=>'chosen-select',));

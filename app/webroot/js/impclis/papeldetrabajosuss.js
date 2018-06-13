@@ -27,7 +27,7 @@ $(document).ready(function() {
 			// exclude CSS class
 			exclude: ".noExl",
 			name: "SUSS",
-			filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","")+"_"+$('#periodoPDT').val().replace(/-/g,"_")+"_SUSS"			
+			filename:"Exportacion_SUSS"			
 		});
 	});
 	papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());

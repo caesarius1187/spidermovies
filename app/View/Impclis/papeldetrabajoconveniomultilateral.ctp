@@ -335,7 +335,13 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             case 11:
                             case 12:
                             //O(E$8=7;E$8=10;E$8=11;E$8=12);E9*80%
-                            $prorrateoPorAplicacionArticulo = $subtotalProvinciaxActividad * 0.80;
+                                 if ($impcliprovincia['Impcliprovincia']['sede'] == 1/*Es Sede*/) {
+                                     $prorrateoPorAplicacionArticulo = $subtotalProvinciaxActividad * 0.80;
+                                     //adicionalmente se suma el 20% de las otras jurisdicciones y tambien la de la sede
+                                     $prorrateoPorAplicacionArticulo+=$subtotalVentaxActividad[$actividadcliente['Actividadcliente']['id']]*0.2;
+                                 }else{
+                                     $prorrateoPorAplicacionArticulo = $subtotalProvinciaxActividad * 0.80;
+                                 }
                             break;
                             default:
                             //0
@@ -363,6 +369,11 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         <?php
                     }
                     $subTotalBaseImponibleProrrateada = array();
+                    foreach ($eventosimpuestos as $evenimp){
+                        if($evenimp['Eventosimpuesto']['partido_id']== $impcliprovincia['Impcliprovincia']['partido_id']){
+                            $pagadoDuranteElAño += $evenimp['0']['montovto']*1;
+                        }
+                    }
                     /*Recorremos actividades para calcular Bases Prorrateadas de la provincia que estamos recorriendo*/
                     foreach ($actividadclientes as $actividadcliente) {
                         $baseProrrateada = 0;
@@ -395,8 +406,11 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                 case 11:
                                 case 12:
                                     if ($impcliprovincia['Impcliprovincia']['sede'] == 1/*Es Sede*/) {
-                                        $title = "Articulo 12, Sede :(".$liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']]."/ 0.8) * 0.2";
-                                            $baseProrrateada = ($liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] / 0.8) * 0.2;
+                                        $title = "Articulo 10,11 o 12, Sede :".$liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']];
+                                            $baseProrrateada = $liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']] ;
+                                    }else{
+                                        $title = "Articulo 10,11 o 12: ".$liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']];
+                                            $baseProrrateada = $liquidacionActividadProrrateada[$actividadcliente['Actividadcliente']['id']];
                                     }
                                     break;
                                 case 6:
@@ -413,7 +427,6 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                     }
                                     break;
                                 case 9:
-
                                     $baseProrrateada = $liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
                                     $title = "Articulo 9:".$liquidacionActividad[$actividadcliente['Actividadcliente']['id']];
                                     break;
@@ -454,14 +467,11 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             }
                         }
                     }
-                    //ya tenemos el minimo que vamos a mostrar(si existe, ahora vamos a comparar con lo ya cargado en el año para esta provincia
-                    foreach ($eventosimpuestos as $evenimp){
-                        if($evenimp['Eventosimpuesto']['partido_id']== $impcliprovincia['Impcliprovincia']['partido_id']){
-                            $minimoACargado = $minimoAMostrar*12;
-                            $pagadoDuranteElAño += $evenimp['0']['montovto']*1;
-                            if(($evenimp['0']['montovto']*1)>($minimoAMostrar*12)){
-                                $minimoAMostrar=0;
-                            }
+                 
+                    if($evenimp['Eventosimpuesto']['partido_id']== $impcliprovincia['Impcliprovincia']['partido_id']){
+                        $minimoACargado = $minimoAMostrar*12;                                                        
+                        if(($pagadoDuranteElAño*1)>($minimoAMostrar*12)){
+                            $minimoAMostrar=0;
                         }
                     }
                         ?>
@@ -999,7 +1009,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             </table>
         <?php
         if($impcli['Impcli']['impuesto_id']==21) {/*Actividades Economicas*/
-        echo "Lo pagado durante el año fue $".number_format($pagadoDuranteElAño, 2, ",", ".").", y el minimo es $".number_format($minimoACargado, 2, ",", ".");
+             echo "Lo pagado durante el año fue $".number_format($pagadoDuranteElAño, 2, ",", ".").", y el minimo es $".number_format($minimoACargado, 2, ",", ".");
         }
         //echo json_encode($liquidacionProvincia);
         ?>	

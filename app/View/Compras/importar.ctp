@@ -79,7 +79,7 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
     //aca vamos a crear un string id para las compras del periodo para que la busqueda sea mas facil y rapida
     foreach ($comprasperiodo as $c => $compraYaCargada) {
         $stringID = $compraYaCargada['Compra']['comprobante_id']."-".
-            $compraYaCargada['Compra']['puntosdeventa']."-".
+            ($compraYaCargada['Compra']['puntosdeventa']*1)."-".
             $compraYaCargada['Compra']['numerocomprobante']."-".
             $compraYaCargada['Compra']['provedore_id'];
 
@@ -193,7 +193,7 @@ echo $this->Form->input('Compra.periodo',array('type'=>'hidden','value'=>$period
                     $lineCompra['puntodeventa']."-".
                     $numeroComprobante." // ";
                 $compraCargadaPreviamente = true;
-                $cantComprasYaguardadas++;
+                $cantComprasYaguardadas++;                
             }
             if(!$compraCargadaPreviamente&&$i<=100){
                 //la compra no estaba entre las ya guardadas entonces la agrego y subo una posicion

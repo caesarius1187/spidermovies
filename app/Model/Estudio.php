@@ -70,7 +70,20 @@ class Estudio extends AppModel {
 			'exclusive' => '',
 			'finderQuery' => '',
 			'counterQuery' => ''
-		)
+		),
+                'Notification' => array(
+                    'className' => 'Notification',
+                    'foreignKey' => 'estudio_id',
+                    'dependent' => false,
+                    'conditions' => '',
+                    'fields' => '',
+                    'order' => '',
+                    'limit' => '',
+                    'offset' => '',
+                    'exclusive' => '',
+                    'finderQuery' => '',
+                    'counterQuery' => ''
+                )
 	);
 
 	public $validate = array(
