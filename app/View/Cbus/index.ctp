@@ -1,29 +1,44 @@
-<div class="cbuses index">
-    <h2><?php echo __('CBUs del banco: '.$impcli['Impuesto']['nombre']); ?></h2>
-    <h2><?php echo __('Agregar uno nuevo');?></h2>
-    <?php
-        echo $this->Form->create('Cbu',['action'=>'add']);
-        echo $this->Form->input('impcli_id',['default'=>$impcli['Impcli']['id'],'type'=>'hidden']);
-        echo $this->Form->input('numerocuenta',[]);
-        echo $this->Form->input('cbu',['type'=>'text']);
-        echo $this->Form->input('tipocuenta',[
-			'options'=>[
-				'Caja de Ahorro en Euros'=>'Caja de Ahorro en Euros',
-				'Caja de Ahorro en Moneda Local'=>'Caja de Ahorro en Moneda Local',
-				'Caja de Ahorro en U$S'=>'Caja de Ahorro en U$S',
-				'Cuenta Corriente en Euros'=>'Cuenta Corriente en Euros',
-				'Cuenta Corriente en Moneda Local'=>'Cuenta Corriente en Moneda Local',
-				'Cuenta Corriente en U$S'=>'Cuenta Corriente en U$S',
-				'Otras'=>'Otras',
-				'Plazo Fijo en Euros'=>'Plazo Fijo en Euros',
-				'Plazo Fijo en Moneda Local'=>'Plazo Fijo en Moneda Local',
-				'Plazo Fijo en U$S'=>'Plazo Fijo en U$S'
-			]
-		]);
-		echo $this->Form->input('noasociadoaactividad',['label'=>'No Asociado a Actividad']);
-        echo $this->Form->end('Agregar');
-    ?>
-	<table cellpadding="0" cellspacing="0">
+<div class="cbuses">
+    <h3><?php echo __('CBUs del banco: '.$impcli['Impuesto']['nombre']); ?></h3>
+    <h3><?php echo __('Agregar uno nuevo');?></h3>
+    <table cellpadding="0" cellspacing="0">
+    	 <?php
+        	echo $this->Form->create('Cbu',['action'=>'add']);
+        	echo $this->Form->input('impcli_id',['default'=>$impcli['Impcli']['id'],'type'=>'hidden']);
+     	?> 
+    	<tr>
+    		<td><?php echo $this->Form->input('numerocuenta',[]);?></td>
+    		<td><?php echo $this->Form->input('cbu',['type'=>'text']);?></td>
+    	</tr>
+    	<tr>
+    		<td>
+    			<?php 
+    			echo $this->Form->input('tipocuenta',[
+					'options'=>[
+					'Caja de Ahorro en Euros'=>'Caja de Ahorro en Euros',
+					'Caja de Ahorro en Moneda Local'=>'Caja de Ahorro en Moneda Local',
+					'Caja de Ahorro en U$S'=>'Caja de Ahorro en U$S',
+					'Cuenta Corriente en Euros'=>'Cuenta Corriente en Euros',
+					'Cuenta Corriente en Moneda Local'=>'Cuenta Corriente en Moneda Local',
+					'Cuenta Corriente en U$S'=>'Cuenta Corriente en U$S',
+					'Otras'=>'Otras',
+					'Plazo Fijo en Euros'=>'Plazo Fijo en Euros',
+					'Plazo Fijo en Moneda Local'=>'Plazo Fijo en Moneda Local',
+					'Plazo Fijo en U$S'=>'Plazo Fijo en U$S'
+					]
+				]);
+    			?>
+    		</td>
+    		<td><?php echo $this->Form->input('noasociadoaactividad',['label'=>'No Asociado a Actividad']);?></td>
+    	</tr>
+   		<tr>
+   			<td></td>
+   			<td><?php echo $this->Form->end('Aceptar');?></td>
+   		</tr>	
+        
+	 
+	</table>
+	<table cellpadding="0" cellspacing="0" class="tbl_popup">
 		<thead>
 			<tr>
 				<th><?php echo 'Cuenta asociada'; ?></th>
@@ -42,7 +57,7 @@
 				<td><?php echo h($cbu['Cbu']['tipocuenta']); ?></td>
 				<td class="actions">
 					<a href="#"  onclick="loadModificarCbu(<?php echo $impcli['Impcli']['id'];?>,<?php echo $cbu['Cbu']['id'];?>)" class="button_view">
-						<?php echo $this->Html->image('edit.png', array('alt' => 'open','class'=>'img_cbu'));?>
+						<?php echo $this->Html->image('edit_view.png', array('alt' => 'open','class'=>'img_edit'));?>
 					</a>
 				</td>
 			</tr>

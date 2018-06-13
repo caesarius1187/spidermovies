@@ -2267,7 +2267,7 @@ if($mostrarView){?>
                 <p>One fine body&hellip;</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <!--<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>-->
                 <!--                <button type="button" class="btn btn-primary">Save changes</button>-->
             </div>
         </div>

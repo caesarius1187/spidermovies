@@ -46,7 +46,7 @@
 	height: 30px;
 	margin-left: -125px;
 	margin-top: -15px;
-	padding: 14px 0 2px 0;
+	padding: 14px 0 2px 
 	border: 1px solid #ddd;
 	text-align: center;
 	color: #999;
@@ -84,6 +84,9 @@
 	text-align: right;
 }
 
+.dataTable th{
+	border: 1px solid #FFF;
+}
 /* Pagination nested */
 .paginate_disabled_previous, .paginate_enabled_previous, .paginate_disabled_next, .paginate_enabled_next {
 	height: 19px;
@@ -487,49 +490,49 @@ tr.even.gradeU td.sorting_3 {
  * Row highlighting example
  */
 tbody tr.even:hover, tbody tr.even td.highlighted {
-	background-color: #004B8B;
+	background-color: #B6B6B6;
 	color:#FFFFFF;
 }
 
 tbody tr.odd:hover, tbody tr.odd td.highlighted {
-	background-color:  #004B8B;
+	background-color:  #B6B6B6;
 	color:#FFFFFF;
 }
 
 tr.even:hover {
-	background-color:  #004B8B;
+	background-color:  #B6B6B6;
 }
 
 tr.even:hover td.sorting_1 {
-	background-color:  #004B8B;
+	background-color:  #B6B6B6;
 }
 
 tr.even:hover td.sorting_1 {
-	background-color:  #004B8B;
+	background-color:  #B6B6B6;
 }
 
 tr.even:hover td.sorting_2 {
-	background-color:  #004B8B;
+	background-color:  #B6B6B6;
 }
 
 tr.even:hover td.sorting_3 {
-	background-color: #004B8B;
+	background-color: #B6B6B6;
 }
 
 tr.odd:hover {
-	background-color: #004B8B;
+	background-color: #B6B6B6;
 }
 
 tr.odd:hover td.sorting_1 {
-	background-color: #004B8B;
+	background-color: #B6B6B6;
 }
 
 tr.odd:hover td.sorting_2 {
-	background-color: #004B8B;
+	background-color: #B6B6B6;
 }
 
 tr.odd:hover td.sorting_3 {
-	background-color: #004B8B;
+	background-color: #B6B6B6;
 }
 
 

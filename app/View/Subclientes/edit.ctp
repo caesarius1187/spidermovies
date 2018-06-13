@@ -11,6 +11,7 @@ if(!$showform) { ?>
         <?php echo $this->Form->postLink(
             $this->Html->image('ic_delete_black_24dp.png', array(
                 'alt' => 'Eliminar',
+                'class' => 'img_trash'
             )),
             array(
                 'controller' => 'Subclientes',

@@ -17,7 +17,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 	});
 
 </script>
-<div class="estudios index">
+<div class="estudios index" style="margin-bottom:5px">
 	<div class="fab blue" style="float: right;">
 		<core-icon icon="add" align="center" style="margin: 8px 14px;position: absolute;">
 			<?php echo $this->Form->button(
@@ -72,7 +72,10 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 			&nbsp;
 		</dd>
 	</dl>
-<h2><?php echo __('Mi Estudio en el periodo '.$periodomes.'-'.$periodoanio); ?></h2>
+</div>
+
+<div class="estudios index">
+    <h2><?php echo __('Mi Estudio en el periodo '.$periodomes.'-'.$periodoanio); ?></h2>
     <dl>
         <dt><?php echo __('Monotributistas'); ?></dt>
         <dd>

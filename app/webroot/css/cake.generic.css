@@ -139,7 +139,7 @@ div.view {
 
 div.index{
 	float:right;
-	width: 95%;
+	width: 94%;
 	border:1px solid #E4E4E4; /**/
 	padding:10px 2%;
 	background-color: #FFF;
@@ -1899,46 +1899,54 @@ transition: all 0.4s ease-in-out;
 	width: 25px;
 	height: 25px;
 	margin: 5px 2px;
+	cursor: pointer;
 }
 
 .img_add{
 	width: 25px;
 	height: 25px;
 	margin: 5px 2px;
+	cursor: pointer;
 }
 
 .img_edit{
 	width: 25px;
 	height: 25px;
 	margin: 5px 2px;
+	cursor: pointer;
 }
 
 .img_ganancias{
 	width: 25px;
 	height: 25px;
 	margin: 5px 2px;
+	cursor: pointer;
 }
 
 .img_prov{
 	width: 25px;
 	height: 25px;
 	margin: 5px 2px;
+	cursor: pointer;
 }
 
 .img_calendario{
 	width: 25px;
 	height: 25px;
 	margin: 5px 2px;
+	cursor: pointer;
 }
 .img_localidad{
 	width: 25px;
 	height: 25px;
 	margin: 5px 2px;
+	cursor: pointer;
 }
 .img_cbu{
 	width: 20px;
 	height: 25px;
 	margin: 5px 2px;
+	cursor: pointer;
 }
 
 /*.tbl_view th a {
@@ -2417,8 +2425,9 @@ transition: all 0.4s ease-in-out;
 }
 .formAddImpcliprovincia input {
 	display: inline;
-	height: 20px;
+	height: 15px;
 	width: 90px;
+	font-size: 14px;
 }
 .formAddImpcliprovincia div label {
 	width: 90px;
@@ -3107,3 +3116,28 @@ div.index_pdt{
 	width:150px; 
 }
 
+.tbl_prueba td{
+	border: #000 solid 1px;
+}
+
+.tbl_popup{
+	/*width: 63%;*/
+	float: left;
+}
+
+.tbl_popup th{
+	border-bottom: 1px solid #B6B6B6;
+	border-top: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	border-left : 1px solid #FFF;
+}
+
+.contenedor{
+	float:right;
+	width: 95%;
+	border:1px solid #E4E4E4; /**/
+	padding:10px 2%;
+	background-color: #FFF;
+	margin: 0px 1%;
+	border-radius: 3px;
+}

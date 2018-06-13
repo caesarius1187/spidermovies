@@ -153,9 +153,11 @@
 			'value'=>$cliente['Cliente']['id'],
 		]);
         ?>
-    <div class="index">
+    <div class="contenedor">
         <h3>Cuentas Relacionadas al Bien de Uso</h3>
-        <?php     /*Estas son las cuentas que se asignaron/asignaran automaticamente a los bienes de uso
+        <?php     
+        $haycuentarelacionada = false;
+        /*Estas son las cuentas que se asignaron/asignaran automaticamente a los bienes de uso
          *Si el bien de uso ya estaba creado vamos a necesitar editar estas cuentas y cambiarlas por las viejas
          * con la opciion de borrar las nuevas despues desde el plan de cuentas
          * si estas cuentas tiene valores vamos a darle la posibilidad de editarlas
@@ -168,6 +170,7 @@
                 'label'=>'Cuenta Valor Origen',
                 'style'=>'width:200px'
             ]);
+            $haycuentarelacionada = true;
         }else{
             echo $this->Form->input('Bienesdeuso.0.cuentaclientevalororigen_id',[
                 'class'=>'all',
@@ -183,6 +186,7 @@
                 'style'=>'width:200px'
 
             ]);
+            $haycuentarelacionada = true;
         }else{
             echo $this->Form->input('Bienesdeuso.0.cuentaclienteactualizacion_id', [
                 'class' => 'all',
@@ -197,6 +201,7 @@
                 'label'=>'Cuenta %Terreno',
                 'style'=>'width:200px'
             ]);
+            $haycuentarelacionada = true;
         }else{
             echo $this->Form->input('Bienesdeuso.0.cuentaclienteterreno_id', [
                 'class' => 'all',
@@ -211,6 +216,7 @@
                 'label'=>'Cuenta %Edificacion',
                 'style'=>'width:200px'
             ]);
+            $haycuentarelacionada = true;
         }else{
             echo $this->Form->input('Bienesdeuso.0.cuentaclienteedificacion_id', [
                 'class' => 'all',
@@ -225,16 +231,20 @@
                  'label'=>'Cuenta Mejora',
                 'style'=>'width:200px'
              ]);
+             $haycuentarelacionada = true;
         }else{
             echo $this->Form->input('Bienesdeuso.0.cuentaclientemejora_id', [
                 'class' => 'all',
                 'type' => 'hidden',
             ]);
         }
+        if(!$haycuentarelacionada){
+            echo '<label>No hay cuentas relacionadas aún.</label>';
+        }
         /**/
         ?>
     </div>
-    <div class="index">
+    <div class="contenedor">
         <h3>Datos del Bien de Uso</h3>
         <?php
         if(isset($compra['Actividadcliente'])){
@@ -622,7 +632,7 @@
         ]);
         ?>
 	</div>
-        <div id="amortizacionesespeciales" class="index" style="display: none">
+        <div id="amortizacionesespeciales" class="contenedor" style="display: none">
             <h3>Amortizaciones Especiales</h3>
             <label>Si se utiliza una amortizacion especial en este bien de uso, 
                 deberá cargar este formulario periodo a periodo. Sino por 
@@ -683,7 +693,7 @@
             </table>
             <?php } ?>
         </div>
-	<div class="index">
+	<div class="contenedor">
 		<h3>Bienes Personales</h3>
 		<?php
 		$optionsmotivoexencion = [
@@ -723,7 +733,7 @@
 		]);
 		?>
 	</div>
-	<div class="index">
+	<div class="contenedor">
 		<h3>Ganancias Persona Fisica</h3>
 		<?php
                 echo $this->Form->input('Bienesdeuso.0.bienusopersonal',[
@@ -755,6 +765,7 @@
                 ]);            
 		?>
 	</div>
+<a href="#close" class="btn_cancelar" style="margin-top:12px">Cancelar</a>
 <?php echo $this->Form->end(__('Aceptar')); ?>
 </div>
 

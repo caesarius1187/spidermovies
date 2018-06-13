@@ -2685,7 +2685,7 @@ function loadFormBiendeuso(cliid,biendeusoid){
                 $('#myModal').on('show.bs.modal', function () {
                     $('#myModal').find('.modal-title').html('Agregar Bien de uso de la compra');
                     $('#myModal').find('.modal-body').html(response);
-                    // $('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
+                    //$('#myModal').find('.modal-footer').html("<button type='button' data-content='remove' class='btn btn-primary' id='editRowBtn'>Modificar</button>");
                 });
 
                 $('#myModal').modal('show');

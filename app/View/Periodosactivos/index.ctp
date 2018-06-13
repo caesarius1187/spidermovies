@@ -42,17 +42,15 @@
 </div>
 
 <div class="periodosactivos form">
-	<table cellpadding="0" cellspacing="0" class="tabla">
+	<table cellpadding="0" cellspacing="0" class="tbl_popup">
 	<tr>
 		<th>Altas</th>
 		<th>Bajas</th>
-		<th width="177">&nbsp;</th>
 	</tr>
 	<?php foreach ($periodosactivos as $periodosactivo): ?>
 	<tr>
 		<td><?php echo h($periodosactivo['Periodosactivo']['desde']); ?></td>
 		<td><?php echo h($periodosactivo['Periodosactivo']['hasta']); ?></td>	
-		<td>&nbsp;</td>
 	</tr>
 <?php endforeach; ?>
 	</table>	

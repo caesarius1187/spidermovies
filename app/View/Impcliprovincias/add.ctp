@@ -3,19 +3,15 @@
 	echo $error;
 }else{	
  	echo $this->Form->create('Impcliprovincia',array('class'=>'formTareaCarga formAddImpcliprovincia','type' => 'post')); ?>
-	<h3><?php
+	<?php
 	$cargarProvincia=true;
 	if(isset($partidos)){
 		$cargarProvincia=true;
 	}else{
 		$cargarProvincia=false;
 	}
-	if($cargarProvincia){
-		echo __('Relacionar Provincia al Impuesto');
-	}else{
-		echo __('Relacionar Localidad al Impuesto');
-	}
-		?></h3>
+	
+		?>
 
 <table class="tabla">
 	<tr>
@@ -96,7 +92,7 @@
 					}
 				}
 			}
-			echo '<div class="div_view index">';
+			echo '<div class="div_view contenedor">';
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.id',array('type'=>'hidden','value'=>$encuadreAlicuotaId));
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_id',array('type'=>'hidden','value'=>$actividadClienteId));
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_codigo',array(
@@ -109,15 +105,26 @@
 			);
 			echo $this->Form->input('Encuadrealicuota.'.$key.'.actividadcliente_nombre',array(
 				'label'=>'Nombre',
-				'style'=>'width:400px',
+				'style'=>'width:300px',
 				'readonly'=>'readonly',
 				'value'=>$actividadClienteNombre,
 				'div'=>array(
-					'style'=>'width:410px'
+					'style'=>'width:315px'
 				),
 			));
-			echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota_id',array('type' => 'select','label'=>'Sugerida'));
-			echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota',array('value'=>$encuadreAlicuotaAlicuota));
+			echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota_id',array(
+					'type' => 'select',
+					'label'=>'Sugerida',
+					'style'=>'width:70px',
+					'div'=>['style'=>'width:75px'],
+				)
+			);
+			echo $this->Form->input('Encuadrealicuota.'.$key.'.alicuota',array(
+					'value'=>$encuadreAlicuotaAlicuota,
+					'style'=>'width:40px',
+					'div'=>['style'=>'width:45px']
+				)
+			);
 			if($impuestoid==21/*Actividades Economicas*/||$impuestoid==6/*Actividades Varias*/){
                 $title = "Para actividades no conexas: cargar un minimo para cada actividad.</br>
                           Para actividades conexas: solo cargar el minimo cuyo importe sea mayor, el resto en 0";
@@ -137,13 +144,14 @@
 			echo '</div>';
 		}
 	?>
-	</div>
-	</td>
+			</div>
+		</td>
+	</tr>
 	<tr>
-		<td>&nbsp;</td>
+		<td width="900">&nbsp;</td>
 		<td>
 			<a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a>  
-		</td>s
+		</td>
 		<td>
 			<?php echo $this->Form->end(__('Aceptar')); ?>
 		</td>
@@ -154,24 +162,26 @@
 }
 
 if($mostrarLista&&!isset($error)){ ?>
-	<table cellpadding="0" cellspacing="0" border="0">
+	<table cellpadding="0" cellspacing="0" border="0" class="tbl_popup">
 	    	<thead>
- 				<?php if($cargarProvincia){?>
- 				<td>Provincia</td>
-				<?php }else{ ?>
- 				<td>Localidad</td>
-				<?php } ?>
- 				<td>Periodo Desde</td>
-				<td>Coeficiente</td>
-<!--				<td>Minimo</td>-->
- 				<td>Sede</td>
- 				<td>Ejercicio</td>
- 				<?php
-	           foreach ($actividadclientes as $key => $actividadcliente) {
-					echo "<td>".$actividadcliente['Actividade']['descripcion']."</td>";
-					}
-				?>
- 				<td>Acciones</td>
+	    		<tr>
+	 				<?php if($cargarProvincia){?>
+	 				<th>Provincia</th>
+					<?php }else{ ?>
+	 				<th>Localidad</th>
+					<?php } ?>
+	 				<th>Periodo Desde</th>
+					<th>Coeficiente</th>
+	<!--				<td>Minimo</td>-->
+	 				<th>Sede</th>
+	 				<th>Ejercicio</th>
+	 				<?php
+		           foreach ($actividadclientes as $key => $actividadcliente) {
+						echo "<th>".$actividadcliente['Actividade']['descripcion']."</th>";
+						}
+					?>
+	 				<th>Acciones</th>
+	 			</tr>
 	    	</thead>
 	    	<tbody>
 		 	<?php
@@ -194,10 +204,10 @@ if($mostrarLista&&!isset($error)){ ?>
 						?>
          				<td>
          					<a href="#"  onclick="deleteImpcliProvincia(<?php echo $impcliprovincia['Impcliprovincia']['id']; ?>)" class="button_view"> 
-                                 <?php echo $this->Html->image('delete.png', array('alt' => 'open','title' => 'Eliminar','class'=>'img_trash'));?>
+                                 <?php echo $this->Html->image('delete.png', array('alt' => 'open','title' => 'Eliminar','class'=>'img_trash','style'=>'margin:0px;'));?>
                             </a>
 							<a href="#"  onclick="editImpcliProvincia('<?php echo $impcliprovincia['Impcliprovincia']['id']?>','<?php echo $impcliprovincia['Impcliprovincia']['impcli_id']?>')" class="button_view">
-								<?php echo $this->Html->image('edit_view.png', array('alt' => 'open','title' => 'Editar','class'=>'img_edit'));?>
+								<?php echo $this->Html->image('edit_view.png', array('alt' => 'open','title' => 'Editar','class'=>'img_edit','style'=>'margin:0px;'));?>
 							</a>
                     	</td>
          			</tr>            
