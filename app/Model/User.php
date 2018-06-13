@@ -110,22 +110,22 @@ class User extends AppModel {
  * @var array
  */
 	public $hasMany = array(
-		'Tareasxclientesxestudio' => array(
-			'className' => 'Tareasxclientesxestudio',
-			'foreignKey' => 'user_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		)
+            'Tareasxclientesxestudio' => array(
+                'className' => 'Tareasxclientesxestudio',
+                'foreignKey' => 'user_id',
+                'dependent' => false,
+                'conditions' => '',
+                'fields' => '',
+                'order' => '',
+                'limit' => '',
+                'offset' => '',
+                'exclusive' => '',
+                'finderQuery' => '',
+                'counterQuery' => ''
+            ),            
 	);
 
-	public function beforeSave($options = array()) {
+    public function beforeSave($options = array()) {
         // hash our password
         if (isset($this->data[$this->alias]['password'])) {
             $this->data[$this->alias]['password'] = AuthComponent::password($this->data[$this->alias]['password']);

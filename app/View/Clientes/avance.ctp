@@ -42,6 +42,7 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
                     '2016'=>'2016',
                     '2017'=>'2017',
                     '2018'=>'2018',
+                    '2019'=>'2019',
                 ),
                 'empty' => 'Elegir año',
                 'label'=> 'Año',
@@ -126,10 +127,11 @@ echo $this->Html->script('clientes/avance',array('inline'=>false));
           foreach ($tareas as $tarea){
               $tareaNombre=$tarea["Tareascliente"]['nombre'];
               $tareaFild='tarea'.$tarea["Tareasxclientesxestudio"]["tareascliente_id"]; //nombre de la tarea que estoy recorriendo
-            $Tareahabilitado=false;                                                   //por defecto no esta habilitada la tarea
-            if($tarea["Tareasxclientesxestudio"]['user_id']==$this->Session->read('Auth.User.id')){ 
+            $Tareahabilitado=true;                                                   //por defecto no esta habilitada la tarea
+            //vamos a habilitar todas las tareas para todos los usuarios
+            /*if($tarea["Tareasxclientesxestudio"]['user_id']==$this->Session->read('Auth.User.id')){ 
               $Tareahabilitado=true;
-            }   
+            }*/   
             if($tarea["Tareasxclientesxestudio"]['tipo']=="cliente"){
               /**************************************************************************/
               /*******************************tarea tipo cliente*************************/

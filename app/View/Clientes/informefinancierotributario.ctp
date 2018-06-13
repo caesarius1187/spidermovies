@@ -222,7 +222,7 @@
         }        
     }
     $totalAnterior=$recibosHistoricos*1-$deudasHistoricos*1-$honorariosHistoricos*1;
-
+    $titleAnterior = "Depositos: ".$recibosHistoricos." - Impuestos: ".$deudasHistoricos." - Honorarios: ".$honorariosHistoricos;
     $totalGral = $totalActual+ $totalAnterior
     ?>
 <div class="index" id="index" style="font-size:14px;">
@@ -274,7 +274,7 @@
                         </span>-
                         <span title="Acumulado de Depositos del Periodo" style='color:#FF0000;display: inline-block;width:100px' width="100"><?php echo "$".number_format($deudasActuales, 2, ",", "."); ?></span>-
                         <span title="Acumulado de Honorarios del Periodo" style='color:#FF0000;display: inline-block;width:100px' width="100"><?php echo "$".number_format($honorariosActuales, 2, ",", "."); ?></span>+
-                        <span  title="Acumulado de Depositos-Impuestos-Honorarios del los Periodos Anteriores" 
+                        <span  title="<?php echo $titleAnterior ?>" 
                         <?php if($totalAnterior>=0){
                             echo "style='color:#0C0;display: inline-block;width:100px'";} 
                         else{

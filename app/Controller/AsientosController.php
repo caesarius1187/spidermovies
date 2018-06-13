@@ -140,6 +140,102 @@ class AsientosController extends AppController {
             $this->set('isajaxrequest',0);
         }
     }
+    public function librodiario($ClienteId = null,$periodo = null)
+    {
+        $this->loadModel('Movimiento');
+        $this->loadModel('Cliente');
+        $this->loadModel('Cuentascliente');
+
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+
+        $clienteOpc = array(
+            'conditions' => array(
+                'Cliente.id'=> $ClienteId
+            ),
+            'contain' => [
+                'Domicilio'
+            ],
+        );
+        $cliente = $this->Cliente->find('first', $clienteOpc);
+        $this->set('cliente',$cliente);
+        $this->set('periodo',$periodo);
+
+        $fechadeconsulta = date('Y/m/d',strtotime("01-".$pemes."-".$peanio));
+
+        if(!isset($cliente['Cliente']['fchcorteejerciciofiscal'])||is_null($cliente['Cliente']['fchcorteejerciciofiscal'])||$cliente['Cliente']['fchcorteejerciciofiscal']==""){
+            $this->Session->setFlash(__('No se ha configurado fecha decorte de ejercicio fiscal para este
+			 ccontribuyente .'));
+            $fechadecorteAñoActual = date('Y/m/d',strtotime("01-01-".$peanio));
+
+        }else{
+            $fechadecorteAñoActual = date('Y/m/d',strtotime($cliente['Cliente']['fchcorteejerciciofiscal']."-".$peanio));
+        }
+        $fechaInicioConsulta = "";
+        $fechaFinConsulta = "";
+        if($fechadeconsulta<$fechadecorteAñoActual){
+            $fechaInicioConsulta =  date('Y/m/d',strtotime($fechadecorteAñoActual." - 1 Years + 1 days"));
+        //			$fechaFinConsulta =  $fechadecorteAñoActual;
+        }else {
+            $fechaInicioConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 days"));;
+        //			$fechaFinConsulta = date('Y/m/d', strtotime($fechadecorteAñoActual . " + 1 Years"));
+        }
+        //la fecha fin consulta es esta por quesolo vamos a ver hasta el ultimo dia del periodo que estamos
+        // consultando
+        $fechaFinConsulta =  date('Y/m/t',strtotime($fechadeconsulta));
+        $this->set('fechaInicioConsulta',$fechaInicioConsulta);
+        $this->set('fechaFinConsulta',$fechaFinConsulta);
+        $AsientosOpt = [
+            'contain' => [
+                'Movimiento'=>[
+                    'Cuentascliente'=>[
+                        'Cuenta'
+                    ],
+                    'conditions'=>[
+                    ]
+                ]
+            ],
+            'conditions'=>[
+                'Asiento.cliente_id'=>$ClienteId,
+                "Asiento.fecha >= '".date('Y-m-d', strtotime($fechaInicioConsulta))."'",
+                "Asiento.fecha <= '".date('Y-m-d', strtotime($fechaFinConsulta))."'",
+            ],
+            'order'=>[
+                "Asiento.fecha"
+            ]
+        ];
+        $asientos = $this->Asiento->find('all', $AsientosOpt);
+
+        $this->set('asientos',$asientos);
+        $cuentaclienteOptions = [
+            'conditions' => [
+                'Cuentascliente.cliente_id'=> $ClienteId
+            ],
+            'fields' => [
+                'Cuentascliente.id',
+                'Cuentascliente.nombre',
+                'Cuenta.numero',
+            ],
+            'order'=>['Cuenta.numero'],
+            'joins'=>[
+                ['table'=>'cuentas',
+                    'alias' => 'Cuenta',
+                    'type'=>'inner',
+                    'conditions'=> [
+                        'Cuentascliente.cuenta_id = Cuenta.id',
+                        'Cuenta.tipo'=>'cuenta',
+                    ]
+                ],
+            ],
+        ];
+        $cuentasclientes=$this->Cuentascliente->find('list',$cuentaclienteOptions);
+        $this->set('cuentasclientes',$cuentasclientes);
+        if($this->request->is('ajax')){
+            $this->set('isajaxrequest',1);
+        }else{
+            $this->set('isajaxrequest',0);
+        }
+    }
     
     public function eliminar($asiid = null) {
         $borreMovimientos = $this->Asiento->Movimiento->deleteAll(['Movimiento.asiento_id' => $asiid], false);
@@ -1542,14 +1638,24 @@ class AsientosController extends AppController {
                     'conditions'=>[
 
                     ]
+                ],
+                'Actividadcliente'=>[
+                    'Cuentasganancia'
                 ]
             ],
             'conditions' => [
                 'Cliente.' . $this->Cliente->primaryKey => $cliid,
             ],
         ];
+        $tiene3ra = false;
         $cliente = $this->Cliente->find('first', $options);
-
+        foreach ($cliente['Actividadcliente'] as $actividadcliente){
+            foreach ($actividadcliente['Cuentasganancia'] as $cuentasganancia){
+                if( $cuentasganancia['categoria'] == 'terceracateg'){
+                    $tiene3ra = true;
+                }
+            }
+        }
         $cuentaclienteOptions = [
             'conditions' => [
                 'Cuentascliente.cliente_id'=> $cliid
@@ -1607,7 +1713,7 @@ class AsientosController extends AppController {
             ],
         ];
         $asientosyacargados = $this->Asiento->find('all', $options);
-        $this->set(compact('cliid','cliente','periodo','cuentasclientes','asientosyacargados','cuentaxcuentacliente'));
+        $this->set(compact('cliid','cliente','periodo','cuentasclientes','asientosyacargados','cuentaxcuentacliente','tiene3ra'));
         $this->layout = 'ajax';
     }
     public function crearapertura($clienteid = null, $periodo = null){

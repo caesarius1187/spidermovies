@@ -644,6 +644,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $reduccionPorCodigoContratacion = 0;
             }
             $rem10 = $rem2;
+            $porcentajeReduccionPorJornada = $jornada;
+            if($jornada<=0.66){
+                $porcentajeReduccionPorJornada = 0.66;
+            }
             
             if(isset($alicuotasContribuciones[$peanio])&&$codigoafip=='0'&&$impcli['Impcli']['aplicaley27430']=='1'){
                 //si tiene vacaciones NO se multiplica por la jornada
@@ -651,8 +655,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     $reduccion = (12000*$alicuotasContribuciones[$peanio]*$porcentajeSAC);
                     $titleRem10 .= " monto reduccion: (12000*".$alicuotasContribuciones[$peanio]."*".$porcentajeSAC.")=".$reduccion;
                 }else{
-                    $reduccion = (12000*$alicuotasContribuciones[$peanio]*$jornada*$porcentajeSAC);
-                    $titleRem10 .= " monto reduccion: (12000*".$alicuotasContribuciones[$peanio]."*".$jornada."*".$porcentajeSAC.")=".$reduccion;
+                    $reduccion = (12000*$alicuotasContribuciones[$peanio]*$porcentajeReduccionPorJornada*$porcentajeSAC);
+                    $titleRem10 .= " monto reduccion: (12000[monto total reduccion]*".$alicuotasContribuciones[$peanio]."[porcentaje anual habilitado]*".$porcentajeReduccionPorJornada."[jornada][".$jornada."]*".$porcentajeSAC."[incremental por SAC])=".$reduccion;
                 }
                
                 $rem10 = ($rem2 - $reduccion);
@@ -1376,8 +1380,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td>Rem. 10 </td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo '<td title="'.$empleadoDatos[$empleadoid]['titleRem10'].'">';
                         $empleadoid = $empleado['id'];
+                        echo '<td title="'.$empleadoDatos[$empleadoid]['titleRem10'].'">';
                         echo number_format($empleadoDatos[$empleadoid]['rem10'], 2, ",", ".")."</td>";
                     }
                     ?>
@@ -2043,7 +2047,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //54Remuneracion Imponible 9 439 - 12
                 $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['rem9'], 2, ",", ""), 12, " ", STR_PAD_LEFT);
                 //54Contribucion tarea diferencial (%) 451 - 9
-                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif']/100, 2, ",", ""), 9, " ", STR_PAD_LEFT);
+                $lineaEmpleado .= str_pad(number_format($empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif'], 2, ",", ""), 9, " ", STR_PAD_LEFT);
                 //55Horas trabajadas 460 - 3
                 $horasTrabajados = 0;
                 if($empleado['Cargo']['formapago']=='hora'){

@@ -878,6 +878,7 @@ class PapelesdetrabajosController extends AppController {
         $this->loadModel('Venta');
         $this->loadModel('Compra');
         $this->loadModel('Cliente');
+        $this->loadModel('Conceptosrestante');
         $mostrarInforme=false;
         if ($this->request->is('post')) {
             $pemesdesde=$this->request->data['papelesdetrabajos']['periodomesdesde'];
@@ -888,6 +889,7 @@ class PapelesdetrabajosController extends AppController {
             $peaniohasta=$this->request->data['papelesdetrabajos']['periodoaniohasta'];
             $this->set('periodomeshasta', $pemeshasta);
             $this->set('periodoaniohasta', $peaniohasta);
+            $periodoPosteriorDesde  = date('m-Y', strtotime('01-'.$pemeshasta."-".$peaniohasta." +1 months"));
 
             //A: Es menor que periodo Hasta
             $esMayorQueDesde = array(
@@ -960,6 +962,68 @@ class PapelesdetrabajosController extends AppController {
                 )
             ));
             $this->set(compact('ventas'));
+            
+            //A: Es menor que periodo Hasta
+            $esMayorQueDesdeCompra = array(
+                //HASTA es mayor que el periodo
+                'OR'=>array(
+                    'SUBSTRING(Compra.periodo,4,7)*1 > '.$peaniodesde.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Compra.periodo,4,7)*1 >= '.$peaniodesde.'*1',
+                        'SUBSTRING(Compra.periodo,1,2) >= '.$pemesdesde.'*1'
+                    ),
+                )
+            );
+            //B: Es mayor que periodo Desde
+            $esMenorQueHastaCompra= array(
+                'OR'=>array(
+                    'SUBSTRING(Compra.periodo,4,7)*1 < '.$peaniohasta.'*1',
+                    'AND'=>array(
+                        'SUBSTRING(Compra.periodo,4,7)*1 <= '.$peaniohasta.'*1',
+                        'SUBSTRING(Compra.periodo,1,2) <= '.$pemeshasta.'*1'
+                    ),
+                )
+            );
+
+            $compras = $this->Compra->find('all',array(
+                'fields' => array(
+                    'SUM(Compra.iibbpercep) AS iibbpercep',                   
+                    'SUBSTRING(Compra.periodo,4,7) as anio',
+                    'SUBSTRING(Compra.periodo,1,2) as mes',
+                    'Compra.periodo',
+                    'Compra.comprobante_id',
+                    'Comprobante.tipodebitoasociado',
+                    'Compra.actividadcliente_id',
+                    'Compra.localidade_id',
+                    'Localidade.partido_id',
+                ),
+                'contain'=>array(
+                    'Comprobante',
+                    'Actividadcliente'=>[
+                        'Actividade'=>[
+                            'fields'=>['nombre']
+                        ]
+                    ],
+                    'Localidade'=>[
+                        'Partido'=>[
+                            'fields'=>['nombre']
+                        ]
+                    ],
+                ),
+                'conditions'=>array(
+                    'Compra.cliente_id'=> $this->request->data['papelesdetrabajos']['cliente_id'],
+                    $esMayorQueDesdeCompra,
+                    $esMenorQueHastaCompra
+                ),
+                'group'=>array(
+                    'Compra.periodo','Compra.actividadcliente_id','Compra.localidade_id','Compra.comprobante_id'
+                ),
+                'order'=>array(
+                    'SUBSTRING(Compra.periodo,4,7)','SUBSTRING(Compra.periodo,1,2)'
+                )
+            ));
+            $this->set(compact('compras'));
+            
             $cliente = $this->Cliente->find('first',array(
                     'contain' =>[
                         'Impcli'=>[
@@ -968,7 +1032,8 @@ class PapelesdetrabajosController extends AppController {
                             ],
                             'Eventosimpuesto',
                             'conditions'=>[
-                                'Impcli.impuesto_id' => 174
+                                'Impcli.impuesto_id' => 174,
+                                'Impcli.cliente_id' => $this->request->data['papelesdetrabajos']['cliente_id']
                             ],
                         ],
                         'Actividadcliente'=>[
@@ -982,6 +1047,79 @@ class PapelesdetrabajosController extends AppController {
                 )
             );
             $this->set(compact('cliente'));
+            
+            //si tiene convenio vamos a traer estos datos sino no
+            if(isset($cliente['Impcli'][0])){
+                //A: Es menor que periodo Hasta
+                $esMayorQueDesdeConceptosrestantes = array(
+                    //HASTA es mayor que el periodo
+                    'OR'=>array(
+                        'SUBSTRING(Conceptosrestante.periodo,4,7)*1 > '.$peaniodesde.'*1',
+                        'AND'=>array(
+                            'SUBSTRING(Conceptosrestante.periodo,4,7)*1 >= '.$peaniodesde.'*1',
+                            'SUBSTRING(Conceptosrestante.periodo,1,2) >= '.$pemesdesde.'*1'
+                        ),
+                    )
+                );
+                //B: Es mayor que periodo Desde
+                $esMenorQueHastaConceptosrestantes= array(
+                    'OR'=>array(
+                        'SUBSTRING(Conceptosrestante.periodo,4,7)*1 < '.$peaniohasta.'*1',
+                        'AND'=>array(
+                            'SUBSTRING(Conceptosrestante.periodo,4,7)*1 <= '.$peaniohasta.'*1',
+                            'SUBSTRING(Conceptosrestante.periodo,1,2) <= '.$pemeshasta.'*1'
+                        ),
+                    )
+                );
+                $conditionsConceptosrestantes=[
+                    'fields' => array(
+                            'SUM(Conceptosrestante.montoretenido) AS montoretenido',     
+                            'Conceptosrestante.conceptostipo_id',
+                            'Partido.id',
+                            'Partido.nombre',
+                        ),
+                    'contain'=>[
+                        'Localidade',
+                        'Partido',
+                    ],
+                    'conditions'=>[
+                        $esMayorQueDesdeConceptosrestantes,
+                        $esMenorQueHastaConceptosrestantes,
+                        'Conceptosrestante.impcli_id'=>$cliente['Impcli'][0]['id'],
+                        'Conceptosrestante.conceptostipo_id'=>[3,2],
+                    ],
+                     'group'=>array(
+                        'Conceptosrestante.partido_id','Conceptosrestante.conceptostipo_id'
+                    ),
+                ];
+                $conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
+                $conditionsSaldoAFavor=[
+                    'fields' => array(
+                            'SUM(Conceptosrestante.montoretenido) AS montoretenido',     
+                            'Conceptosrestante.conceptostipo_id',
+                            'Partido.id',
+                            'Partido.nombre',
+                        ),
+                    'contain'=>[
+                        'Localidade',
+                        'Partido',
+                    ],
+                    'conditions'=>[
+                        'Conceptosrestante.periodo'=>$periodoPosteriorDesde,
+                        'Conceptosrestante.impcli_id'=>$cliente['Impcli'][0]['id'],
+                        'Conceptosrestante.conceptostipo_id'=>[1],
+                    ],
+                     'group'=>array(
+                        'Conceptosrestante.partido_id','Conceptosrestante.conceptostipo_id'
+                    ),
+                ];
+                $saldosAFavor = $this->Conceptosrestante->find('all',$conditionsSaldoAFavor);
+            }else{
+                $conceptosrestantes = [];
+                $saldosAFavor = [];
+            }
+            $this->set(compact('conceptosrestantes','saldosAFavor'));
+            
             $mostrarInforme=true;
         }
         $conditionsCli = array(

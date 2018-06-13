@@ -762,7 +762,7 @@ class EventosimpuestosController extends AppController {
             $data['numeroAMostrar'] = $numeroAMostrar;
             $data['respuesta'] = "El evento ha sido eliminado";
 		} else {
-			$data['respuesta'] = "El evento NO a sido eliminado";
+			$data['respuesta'] = "El evento NO ha sido eliminado";
 		}
 		$this->set(compact('data'));
 		$this->layout = 'ajax';

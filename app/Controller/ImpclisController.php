@@ -1417,7 +1417,7 @@ class ImpclisController extends AppController {
                                                         'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
                                                         'Empleado.fechaegreso is null' ,
                                                 ],
-                                                'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                                                'Empleado.fechaingreso <= '=>date('Y-m-t',strtotime("01-".$periodo)),
                                         ),
                                         'order'=>['Empleado.cuit']
                                 )
@@ -1551,7 +1551,7 @@ class ImpclisController extends AppController {
                                             'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
                                             'Empleado.fechaegreso is null' ,
                                         ],
-                                        'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                                        'Empleado.fechaingreso <= '=>date('Y-m-t',strtotime("01-".$periodo)),
                                     ],
                                 ]
                             ],

@@ -2,14 +2,14 @@
 jQuery(document).ready(function() {
 
     $('.page-container form').submit(function(){
-        var username = $(this).find('.username').val();
-        var password = $(this).find('.password').val();
+        var username = $('#UserUsername').val();
+        var password = $('#UserPassword').val();
         if(username == '') {
             $(this).find('.error').fadeOut('fast', function(){
                 $(this).css('top', '27px');
             });
             $(this).find('.error').fadeIn('fast', function(){
-                $(this).parent().find('.username').focus();
+                $('#UserUsername').focus();
             });
             return false;
         }
@@ -18,7 +18,7 @@ jQuery(document).ready(function() {
                 $(this).css('top', '96px');
             });
             $(this).find('.error').fadeIn('fast', function(){
-                $(this).parent().find('.password').focus();
+                $('#UserPassword').focus();
             });
             return false;
         }

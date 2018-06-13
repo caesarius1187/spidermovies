@@ -51,7 +51,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 		echo $this->fetch('script');
 	?>
 	<SCRIPT TYPE="text/javascript">
-	var serverLayoutURL = "/contasynfotech";
+	var serverLayoutURL = "/conta";
 		function callAlertPopint(message){
 			//todo callAlertPopint
 			//deberiamos cambiar la forma en la que mostramos esto por que te mueve el scroll
@@ -242,16 +242,16 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 						</ul>
 					</li>
 					<li class=' has-sub' id='ligestion'><a href='#'><span>Gestion</span></a>
-				      	<ul>
+                                            <ul>
 					    	<li class='has-sub'>
-								<?php
-									echo $this->Html->link("Mi Estudio",
-																	array(
-																		'controller' => 'clientes', 
-																		'action' => 'avance', 
-																		)
-														); 	
-								?>	
+                                                    <?php
+                                                        echo $this->Html->link("Mi Estudio",
+                                                            array(
+                                                                'controller' => 'clientes', 
+                                                                'action' => 'avance', 
+                                                            )
+                                                        ); 	
+                                                    ?>	
 							</li>
 							<li class='has-sub'>
 								<?php
@@ -263,14 +263,29 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 														); 	
 								?>	
 							</li>	       						
-				      	</ul>
+                                            </ul>
 				   	</li>
 
 				</ul>
 				<div style="float:right;">
-					<?php if ($this->Session->read('Auth.User.username')) { ?>
-						<?php echo 'Bienvenido '.$this->Session->read('Auth.User.username').'!'; ?>
-						<?php echo $this->Html->image('exit.png',array(
+					<?php if ($this->Session->read('Auth.User.username')) { 
+                                               
+                                                if($cantNotifications>0){
+                                                    echo " Tienes ".$cantNotifications." notificaciones sin leer";
+                                                }                                                
+                                                echo $this->Html->image('bell_icon.png',array(
+                                                        'alt' => 'open',
+                                                        'class' => 'btn_exit',
+                                                        'style' => 'width:20px;height:20px;margin-top: 5px;',
+                                                        'onClick' => "window.location.href='".Router::url(array(
+                                                                                'controller'=>'notifications',
+                                                                                'action'=>'index')
+                                                                )."'"
+                                                    )
+
+						);
+                                                echo ' Bienvenido '.$this->Session->read('Auth.User.username').'!'; 
+                                                echo $this->Html->image('exit.png',array(
 								'alt' => 'open',
 								'class' => 'btn_exit',
 								'onClick' => "window.location.href='".Router::url(array(

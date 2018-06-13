@@ -7,6 +7,14 @@ function toNumber($target){
     $switched = str_replace(',', '.', $switched);
     return floatval($switched);
 }
+function customSearch($keyword, $arrayToSearch){
+    foreach($arrayToSearch as $key => $arrayItem){
+        if( stristr( $arrayItem, $keyword ) ){
+            return $key;
+        }
+    }
+    return 0;
+}
 
 ?>
     <SCRIPT>
@@ -67,12 +75,33 @@ function toNumber($target){
         Ventas:</br>
         <?php
         $ventasArray = array();
+        $ventasArraySinCargar = array();
+        $cantidadDeVentasEnArchivos = 0;
+        $cantVentasYaguardadas = 0;
         /*************************************************************************************************************/
         //Aca vamos a leer los TXT y ponerlos en el array de ventas
         $filesVentas = $dirVentas->find('.*\.txt');
         $i=0;
         $errorInFileVenta=false;
         $mostrarTabla = false;
+       
+        //vamos a crear el array identificatorio de las ventas
+        $ventasIdentificacion=[];
+        $ventasSubIdentificacion=[];
+        
+         foreach ($ventasperiodo as $ventaYaCargada) {                        
+            $StringIdentificacion = $ventaYaCargada['Venta']['comprobante_id']."-".
+                    $ventaYaCargada['Venta']['puntosdeventa_id']."-".
+                    $ventaYaCargada['Venta']['numerocomprobante']*1 ."-".
+                    $ventaYaCargada['Venta']['alicuota']*1;
+            $ventasIdentificacion[] = $StringIdentificacion;                                  
+            $StringSubIdentificacion = $ventaYaCargada['Venta']['comprobante_id']."-".
+                    $ventaYaCargada['Venta']['puntosdeventa_id']."-".
+                    $ventaYaCargada['Venta']['numerocomprobante']*1;
+            $ventasSubIdentificacion[] = $StringSubIdentificacion;                                  
+        }               
+        $ventasNuevas = 0;
+        $sigoAgreganto = true;
         foreach ($filesVentas as $dirVenta) {
             if(is_readable($dirVentas->pwd() . DS . $dirVenta)){
                 $mostrarTabla = true;
@@ -94,9 +123,12 @@ function toNumber($target){
                     //echo strlen($line)."line lenght";
                     //break;
                 }
-                $ventasArray[$i] = array();
-                $ventasArray[$i]['Venta'] = array();
-                $ventasArray[$i]['Alicuota'] = array();
+               /* if(!$sigoAgreganto){
+                    $cantidadDeVentasEnArchivos++;
+                    $i++;
+                    $j++;
+                    continue;
+                }                */
                 // process the line read.
                 $lineVenta = array();
                 $lineVenta['fecha']=date('d-m-Y',strtotime(substr($line, 0,8)));
@@ -105,7 +137,7 @@ function toNumber($target){
                 $lineVenta['comprobantenumero']=substr($line, 16,20);
                 $lineVenta['comprobantenumerohasta']=substr($line, 36,20);
                 $lineVenta['codigodocumento']=substr($line, 56,2);
-                $lineVenta['identificacionnumero']=substr($line, 58,20);
+                $lineVenta['identificacionnumero']=ltrim(substr($line, 58,20),0);
                 $lineVenta['nombre']=substr($line, 78,30);
                 //aveces la identificacionnumero viene vacia (todos 0) entonces vamos a poner el nombre
                 // en estos casos como identificacion numero
@@ -137,12 +169,56 @@ function toNumber($target){
                 $lineVenta['otrostributos']=substr($line, 243,13).'.'.substr($line, 256, 2);
                 $lineVenta['fechavencimientopago']=substr($line, 258,8);
                 //$lineVenta['lineacompleta']=$line;
-                $ventasArray[$i]['Venta']=$lineVenta;
+                
+                $comprobanteTipoNuevo = ltrim(customSearch($lineVenta['comprobantetipo'],$comprobantes), '0');
+                $pdvNuevo = ltrim(customSearch($lineVenta['puntodeventa'],$puntosdeventas), '0');
+                $numeroComprobante = ltrim($lineVenta['comprobantenumero'],0);
+                $clienteNuevo = customSearch(ltrim($lineVenta['identificacionnumero'], '0'),$subclientes);
+                $lineVenta['clienteNuevo']=$clienteNuevo;
+                $lineVenta['comprobanteTipoNuevo']=$comprobanteTipoNuevo;
+                $lineVenta['pdvNuevo']=$pdvNuevo;
+
+                $stringIdentificacion = $comprobanteTipoNuevo."-".
+                        $pdvNuevo."-".
+                        $numeroComprobante*1;
+                $esVentaNueva=false;
+                if(!in_array($stringIdentificacion, $ventasSubIdentificacion)){
+                    $ventasNuevas++;
+                    $esVentaNueva=true;
+                }else{ }                
+                if($ventasNuevas<101){
+                    if($esVentaNueva||$lineVenta['cantidadalicuotas']*1>1){
+                        if($sigoAgreganto){
+                            $ventasArray[$i] = array();
+                            $ventasArray[$i]['Venta'] = array();
+                            $ventasArray[$i]['Alicuota'] = array();
+                            $ventasArray[$i]['Venta']=$lineVenta;
+                        }
+                        //Debugger::dump($ventasNuevas." venta nueva. si agregue");
+                    }else{
+                        // Debugger::dump($ventasNuevas." venta vieja con 1 alicuota. no agregue");
+                    }
+                }else{
+                    $sigoAgreganto=false;
+                    if($esVentaNueva){
+                        $ventasArraySinCargar[$i] = array();
+                        $ventasArraySinCargar[$i]['Venta'] = array();
+                        $ventasArraySinCargar[$i]['Alicuota'] = array();
+                        $ventasArraySinCargar[$i]['Venta']=$lineVenta;
+                    }else{
+                        // Debugger::dump($ventasNuevas." venta vieja no agregue");
+                    }
+                }
+                $cantidadDeVentasEnArchivos++;
                 $i++;
                 $j++;
+                //hay que controlar que las venas anteriores cargadas no contengan la venta que estamos por mostrar
+                
+               
                 // $line="";
                 unset($lineVenta);
             }
+            
             $tituloButton= $errorInFileVenta?$dirVenta->name." Archivo con Error": $dirVenta->name;
             echo $this->Form->button(
                 $tituloButton .'</br>
@@ -162,7 +238,6 @@ function toNumber($target){
                 //echo "handler cerrado ABIERTO!";
             }
         }
-
         /*************************************************************************************************************/
         //Aca vamos a leer los CSV y ponerlos en el array de ventas
         $errorInFileMovimientosbancarios=false;
@@ -186,8 +261,15 @@ function toNumber($target){
             // $file->delete(); // I am deleting this file
             $handler = $dirVenta->handle;
             $j=0;
-
+            $ventasNuevas =0;
+            $sigoAgregando=true;
             while (($line = fgetcsv($handler, 1000, ";")) !== false) {
+                /*if(!$sigoAgregando){
+                    $cantidadDeVentasEnArchivos++;
+                    $i++;
+                    $j++;
+                    continue;
+                }*/
 //                $line = utf8_decode($line);
                 $date = date_parse($line[0]."-".$line[1]."-".$line[2]);
                 if ($date["error_count"] == 0 && checkdate($date["month"], $date["day"], $date["year"]))
@@ -202,18 +284,20 @@ function toNumber($target){
                 // process the line read.
                 $lineVenta = array();
 
-
                 $lineVenta['fecha']=date('d-m-Y',strtotime($line[0]."-".$line[1]."-".$line[2]));
                 $lineVenta['comprobantetipo']=$line[3];
                 $lineVenta['puntodeventa']=$line[4];
                 $lineVenta['comprobantenumero']=$line[5];
                 $lineVenta['codigodocumento']=80;
-                $lineVenta['identificacionnumero']=$line[7];
+                $lineVenta['identificacionnumero']= ltrim($line[7],0);
+                $clienteNuevo = customSearch(ltrim($lineVenta['identificacionnumero'], '0'),$subclientes);
+                $lineVenta['clienteNuevo']=$clienteNuevo;
                 $lineVenta['nombre']=$line[6];
 
                 //todo primero que nada tengo que buscar si esta venta no existe ya con otra alicuota
                 $numeroVenta = $i;
                 $ventayacargadaenformulario = false;
+                
                 foreach ($ventasArray as $v => $venta) {
                     if(isset($venta['Venta']['comprobantenumero'])){
                         $mismocomprobante = $venta['Venta']['comprobantenumero']==$lineVenta['comprobantenumero'];
@@ -227,11 +311,8 @@ function toNumber($target){
                         }
                     }
                 }
-                if(!$ventayacargadaenformulario){
-                    $ventasArray[$numeroVenta] = array();
-                    $ventasArray[$numeroVenta]['Venta'] = array();
-                }
-
+                
+                
                 //aveces la identificacionnumero viene vacia (todos 0) entonces vamos a poner el nombre
                 // en estos casos como identificacion numero
                 if(ltrim($lineVenta['identificacionnumero'],'0')==''){
@@ -278,28 +359,83 @@ function toNumber($target){
 //                $lineVenta['operacioncodigo']=$line[19];
 //                $lineVenta['otrostributos']=$line[20];
 //                $lineVenta['fechavencimientopago']=$line[21];
-
-                $ventasArray[$numeroVenta]['Venta']=$lineVenta;
-
+                
+                $comprobanteTipoNuevo = ltrim(customSearch($lineVenta['comprobantetipo'],$comprobantes), '0');
+                $pdvNuevo = ltrim(customSearch($lineVenta['puntodeventa'],$puntosdeventas), '0');
+                $numeroComprobante = $lineVenta['comprobantenumero'];
+                $alicuotaNuevo = customSearch($line[8],$alicuotas);
+                $clienteNuevo = customSearch(ltrim($lineVenta['identificacionnumero'], '0'),$subclientes);
+                $lineVenta['clienteNuevo']=$clienteNuevo;
+                $lineVenta['comprobanteTipoNuevo']=$comprobanteTipoNuevo;
+                $lineVenta['pdvNuevo']=$pdvNuevo;
+                
+                $stringIdentificacion = $comprobanteTipoNuevo."-".
+                        $pdvNuevo."-".
+                        $numeroComprobante*1 ."-".
+                        $alicuotaNuevo*1;
+                $esVentaNueva=false;
+                if(!in_array($stringIdentificacion, $ventasIdentificacion)){
+                    $ventasNuevas++;
+                    $esVentaNueva=true;
+                    //Debugger::dump("Venta Nueva");
+                }else{
+                     $cantVentasYaguardadas++;
+                }
+                $agregue = false;
+                if($ventasNuevas<101){
+                    if($esVentaNueva||$lineVenta['cantidadalicuotas']*1>1){
+                        if($sigoAgregando){
+                             if(!$ventayacargadaenformulario){
+                                $ventasArray[$numeroVenta] = array();
+                                $ventasArray[$numeroVenta]['Venta'] = array();
+                            }
+                            $ventasArray[$numeroVenta]['Venta']=$lineVenta;
+                        }
+                        $agregue = true;
+                        //Debugger::dump($ventasNuevas." venta nueva. si agregue");
+                    }else{
+                         //Debugger::dump($ventasNuevas." venta vieja con 1 alicuota. no agregue");
+                    }
+                }else{
+                    //Debugger::dump($ventasNuevas." supere. no agregue");
+                    $sigoAgregando=false;
+                    if($esVentaNueva){
+                        if(!$ventayacargadaenformulario){
+                            $ventasArraySinCargar[$numeroVenta] = array();
+                            $ventasArraySinCargar[$numeroVenta]['Venta'] = array();
+                        }
+                    $ventasArraySinCargar[$numeroVenta]['Venta']=$lineVenta;
+                    }
+                }
                 $lineAlicuota = array();
                 $lineAlicuota['comprobantetipo'] = $lineVenta['comprobantetipo'];
                 $lineAlicuota['puntodeventa'] = $lineVenta['puntodeventa'];
                 $lineAlicuota['comprobantenumero'] = $lineVenta['comprobantenumero'];
                 $lineAlicuota['importenetogravado'] = toNumber($line[9]);
                 $lineAlicuota['alicuotaiva'] = $line[8];
-
+                $alicuotaNuevo = customSearch($line[8],$alicuotascodigo);
+                $lineAlicuota['alicuotaNuevo'] = $alicuotaNuevo;
                 $lineAlicuota['impuestoliquidado'] = toNumber($line[10]);
-
-                if(!isset($ventasArray[$numeroVenta]['Alicuota'])){
-                    $ventasArray[$numeroVenta]['Alicuota']=array();
-                }
-                array_push($ventasArray[$numeroVenta]['Alicuota'], $lineAlicuota);
-
+                if($agregue){
+                    if(!isset($ventasArray[$numeroVenta]['Alicuota'])){
+                        $ventasArray[$numeroVenta]['Alicuota']=array();
+                    }
+                    array_push($ventasArray[$numeroVenta]['Alicuota'], $lineAlicuota);
+                }else{
+                    if($esVentaNueva||($lineVenta['cantidadalicuotas']*1)>1){
+                        if(!isset($ventasArraySinCargar[$numeroVenta]['Alicuota'])){
+                            $ventasArraySinCargar[$numeroVenta]['Alicuota']=array();
+                        }
+                      array_push($ventasArraySinCargar[$numeroVenta]['Alicuota'], $lineAlicuota);
+                    }
+                }               
+                $cantidadDeVentasEnArchivos++;
                 $i++;
                 $j++;
                 // $line="";
-                unset($lineVenta);
+                unset($lineVenta);              
             }
+            
             $tituloButton= $errorInFileVenta?$dirVenta->name." Archivo con Error": $dirVenta->name;
             echo $this->Form->button(
                 $tituloButton .'</br>
@@ -318,7 +454,12 @@ function toNumber($target){
             }else{
                 //echo "handler cerrado ABIERTO!";
             }
+            
         }
+       
+        //Debugger::dump(count($ventasArray));
+        //Debugger::dump(count($ventasArraySinCargar));
+        
         ?>
         </br>Alicuotas:</br>
         <?php
@@ -350,11 +491,14 @@ function toNumber($target){
                 $lineAlicuota['importenetogravado'] = substr($line, 28, 13).'.'.substr($line, 41, 2);
                 $lineAlicuota['alicuotaiva'] = substr($line, 43, 4);
                 $lineAlicuota['impuestoliquidado'] = substr($line, 47, 13).'.'.substr($line, 60, 2);
+                $alicuotaNuevo = customSearch($lineAlicuota['alicuotaiva'],$alicuotas);
+                $lineAlicuota['alicuotaNuevo'] = $alicuotaNuevo;                
                 $i++;
                 $j++;
                 //ahora que tenemos la alicuota en un array tenemos que buscar la venta a la que pertenece y agregarla
                 $k=0;
-                foreach ($ventasArray as $venta) {
+                $encontre=false;
+                foreach ($ventasArray as $kva => $venta) {
                     $mismocomprobante = $venta['Venta']['comprobantenumero']==$lineAlicuota['comprobantenumero'];
                     $mismopuntodeventa = $venta['Venta']['puntodeventa']==$lineAlicuota['puntodeventa'];
                     $mismotipocomprobante = $venta['Venta']['comprobantetipo']==$lineAlicuota['comprobantetipo'];
@@ -364,9 +508,26 @@ function toNumber($target){
                         }
                         array_push($venta['Alicuota'], $lineAlicuota);
                         $ventasArray[$k]=$venta;
+                        $encontre=true;
                         break;
-                    }
+                    }                    
                     $k++;
+                }
+                if(!$encontre){
+                    foreach ($ventasArraySinCargar as $kva => $venta) {
+                        $mismocomprobante = $venta['Venta']['comprobantenumero']==$lineAlicuota['comprobantenumero'];
+                        $mismopuntodeventa = $venta['Venta']['puntodeventa']==$lineAlicuota['puntodeventa'];
+                        $mismotipocomprobante = $venta['Venta']['comprobantetipo']==$lineAlicuota['comprobantetipo'];
+                        if($mismocomprobante&&$mismopuntodeventa&&$mismotipocomprobante){
+                            if(!isset($venta['Alicuota'])){
+                                $venta['Alicuota']=array();
+                            }
+                            array_push($venta['Alicuota'], $lineAlicuota);
+                            $ventasArraySinCargar[$k]=$venta;
+                            break;
+                        }                    
+                        $k++;
+                    }
                 }
             }
             echo $this->Form->button(
@@ -387,9 +548,8 @@ function toNumber($target){
                 //echo "handler cerrado ABIERTO! 2";
             }
         }
-
+       
         ?>
-
     </div>
     <div  class="index" style="width: inherit;float: left;margin-left: -10px;height: 171px;overflow: auto">
         Ultimas ventas cargadas en el sistema
@@ -427,12 +587,12 @@ function toNumber($target){
         </table>
     </div>
 <?php
-//die("pre puntos de ventas no cargados");
 $PuntoDeVentaNoCargado=array();
 $SubclienteNoCargado=array();
 $VentasConFechasIncorrectas = array();
 
-foreach ($ventasArray as $venta) {
+$todasLasVentas = array_merge($ventasArray, $ventasArraySinCargar);
+foreach ($todasLasVentas as $venta) {
     $agregarPuntoDeVenta=true;
     foreach ($puntosdeventas as $puntosdeventa) {
         if($venta['Venta']['puntodeventa']== $puntosdeventa){
@@ -471,8 +631,8 @@ foreach ($ventasArray as $venta) {
         //esta venta no es del periodo
         $VentasConFechasIncorrectas[]=$venta['Venta']['fecha'];
     }
-
 }
+unset($todasLasVentas);
 if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($VentasConFechasIncorrectas)!=0||!$mostrarTabla){ ?>
     <div class="index">
         <?php
@@ -590,6 +750,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
     ?>
     <div class="index" style="overflow:auto;">
         <?php
+        
 
         echo $this->Form->input('puntosdeventasdomicilio', array(
             'options' => $puntosdeventasdomicilio,
@@ -693,7 +854,81 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             </tr>
         </table>
         <?php
+        $tieneMonotributo = $cliente['Cliente']['tieneMonotributo'];
+        echo $this->Form->input('tieneMonotributo',array(
+                'value'=>$tieneMonotributo?1:0,
+                'type'=>'hidden',
+            )
+        );
         //formulario donde se van a llenar todos los datos importados, que luego seran enviador por ajax a traves del formulario anterior
+        //vamos a buscar la condicion IVA de todas las ventas
+                                            
+        foreach ($ventasArray as $keyVenta => $venta) {
+            $condicioniva = 'Monotributista';
+            $classcondicionIVA = "";
+            $codigoComprobanteVenta = substr($venta['Venta']['comprobantetipo'],0,3);
+            foreach ($supercomprobantes as $micomprobante) {
+                if ($codigoComprobanteVenta == $micomprobante['Comprobante']['codigo']) {
+                    if ($micomprobante['Comprobante']['tipo'] == 'A' ) {
+                        $condicioniva = 'Responsable Inscripto';//defaultavalue
+                    } else  if ($micomprobante['Comprobante']['tipo'] == 'B'){
+                        //aca me tengo que fijar si no tiene cuit es consumidor final
+                        //y si no tiene cuit voy a marcar monotributista pero tengo q resaltarlo
+                        //para que se chekee si hay que buscar ese cuit y chekiar q no sea excento
+                        if($venta['Venta']['identificacionnumero'] == '20000000001'){
+                        }else{
+                            $classcondicionIVA="controlarInput";
+                        }
+                        $condicioniva = 'Cons. F/Exento/No Alcanza';
+                    }else{
+                        $condicioniva = 'Cons. F/Exento/No Alcanza';
+                    }
+                    break;
+                }
+            }
+            if($venta['Venta']['identificacionnumero'] == '20000000001'||$venta['Venta']['identificacionnumero'] == ''){
+                $condicioniva = 'Cons. F/Exento/No Alcanza';
+            }
+
+            $ventasArray[$keyVenta]['Venta']['condicioniva']=$condicioniva;
+            $ventasArray[$keyVenta]['Venta']['classcondicionIVA']=$classcondicionIVA;
+        }
+        foreach ($ventasArraySinCargar as $keyVenta => $venta) {
+            $condicioniva = 'Monotributista';
+            $classcondicionIVA = "";
+            $codigoComprobanteVenta = substr($venta['Venta']['comprobantetipo'],0,3);
+            foreach ($supercomprobantes as $micomprobante) {
+                if ($codigoComprobanteVenta == $micomprobante['Comprobante']['codigo']) {
+                    if ($micomprobante['Comprobante']['tipo'] == 'A' ) {
+                        $condicioniva = 'Responsable Inscripto';//defaultavalue
+                    } else  if ($micomprobante['Comprobante']['tipo'] == 'B'){
+                        //aca me tengo que fijar si no tiene cuit es consumidor final
+                        //y si no tiene cuit voy a marcar monotributista pero tengo q resaltarlo
+                        //para que se chekee si hay que buscar ese cuit y chekiar q no sea excento
+                        if($venta['Venta']['identificacionnumero'] == '20000000001'){
+                        }else{
+                            $classcondicionIVA="controlarInput";
+                        }
+                        $condicioniva = 'Cons. F/Exento/No Alcanza';
+                    }else{
+                        $condicioniva = 'Cons. F/Exento/No Alcanza';
+                    }
+                    break;
+                }
+            }
+            if($venta['Venta']['identificacionnumero'] == '20000000001'||$venta['Venta']['identificacionnumero'] == ''){
+                $condicioniva = 'Cons. F/Exento/No Alcanza';
+            }
+
+            $ventasArraySinCargar[$keyVenta]['Venta']['condicioniva']=$condicioniva;
+            $ventasArraySinCargar[$keyVenta]['Venta']['classcondicionIVA']=$classcondicionIVA;
+        }
+
+
+        echo $this->Form->input('ventasACargar',[
+             'type'=>'hidden',
+             'value'=> json_encode($ventasArraySinCargar)
+         ]);
         echo $this->Form->create('Venta',array(
                 'controller'=>'Venta',
                 'action'=>'cargarventas',
@@ -706,23 +941,14 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                 ),
             )
         );
-        function customSearch($keyword, $arrayToSearch){
-            foreach($arrayToSearch as $key => $arrayItem){
-                if( stristr( $arrayItem, $keyword ) ){
-                    return $key;
-                }
-            }
-            return 0;
-        }
+        
         $ventaNumero = 1;
         $respuestaVentasCargadas = " Ventas ya cargadas: ";
         ?>
-       
-
         <table style="width: 100%;padding: 0px;margin: 0px;    border-collapse: collapse;" id="tablaFormVentas" >
             <?php
             $i=1;
-            $cantVentasYaguardadas = 0;
+            
             $misVentasYaCargadas = "";
             //aca tengo que recorrer las actividades del cliente para relacionar las actividades con sus categorias de
             // ganancias para que por javascript  las limite solo a las que tienen q ser
@@ -750,21 +976,37 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                     $actividadesCategorias[$actividadcliente['id']]= $cuentaGananciaTraducida;
                 }
             }
+            
             foreach ($ventasArray as $keyVenta => $venta) {
                 $numalicuota=0;
                 foreach ($venta['Alicuota'] as $keyAlicuota => $alicuota) {
                     //hay que controlar que las venas anteriores cargadas no contengan la venta que estamos por mostrar
                     $ventaCargadaPreviamente = false;
-                    $comprobanteTipoNuevo = ltrim(customSearch($venta['Venta']['comprobantetipo'],$comprobantes), '0');
-                    if($comprobanteTipoNuevo==0){
-                        Debugger::dump("ERROR:: no se encontro el comprobante: ".$venta['Venta']['comprobantetipo']);
-                    }
-                    $pdvNuevo = ltrim(customSearch($venta['Venta']['puntodeventa'],$puntosdeventas), '0');
-                    $alicuotaNuevo = customSearch($alicuota['alicuotaiva'],$alicuotas);
+                    $comprobanteTipoNuevo = $venta['Venta']['comprobanteTipoNuevo'];                    
+                    $pdvNuevo = $venta['Venta']['pdvNuevo'];
+                    $alicuotaNuevo = $alicuota['alicuotaNuevo'];
                     $numeroComprobante = $venta['Venta']['comprobantenumero'];
-                    $clienteNuevo = customSearch(ltrim($venta['Venta']['identificacionnumero'], '0'),$subclientes);
+                    $clienteNuevo = $venta['Venta']['clienteNuevo'];
 
-                    foreach ($ventasperiodo as $ventaYaCargada) {
+                    $stringIdentificacion = $comprobanteTipoNuevo."-".
+                            $pdvNuevo."-".
+                            $numeroComprobante*1 ."-".
+                            $alicuotaNuevo*1;
+                 
+                    if(in_array($stringIdentificacion, $ventasIdentificacion)){
+                        $misVentasYaCargadas .=
+                            $venta['Venta']['comprobantetipo']."-".
+                            $venta['Venta']['puntodeventa']."-".
+                            $numeroComprobante."-".
+                            $alicuotaNuevo*1 ."//"    ;
+                        $ventaCargadaPreviamente = true;
+                        $cantVentasYaguardadas++;
+                        unset($alicuota[$keyAlicuota]);
+                        unset($venta[$keyVenta]);
+                        continue;
+                    }else{
+                    }
+                    /*foreach ($ventasperiodo as $ventaYaCargada) {
                         $igualTipoComprobante=false;
                         $igualPuntoDV=false;
                         $igualAlicuota=false;
@@ -794,7 +1036,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                             unset($venta[$keyVenta]);
                             break;
                         }
-                    }
+                    }*/
                     if(!$ventaCargadaPreviamente) {
                         $class = "par";
                         if ($ventaNumero%2==0){
@@ -893,35 +1135,10 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                             'readonly' => 'readonly',
                                         )
                                     );
-                                    $condicioniva = 'Monotributista';//defaultavalue
-                                    $classcondicionIVA="";
+                                    $condicioniva = $venta['Venta']['condicioniva'];
+                                    $classcondicionIVA=$venta['Venta']['classcondicionIVA'];;
 
-
-                                    $codigoComprobanteVenta = substr($venta['Venta']['comprobantetipo'],0,3);
-                                    foreach ($supercomprobantes as $micomprobante) {
-                                        if ($codigoComprobanteVenta == $micomprobante['Comprobante']['codigo']) {
-                                            if ($micomprobante['Comprobante']['tipo'] == 'A' ) {
-                                                $condicioniva = 'Responsable Inscripto';//defaultavalue
-                                            } else  if ($micomprobante['Comprobante']['tipo'] == 'B'){
-                                                //aca me tengo que fijar si no tiene cuit es consumidor final
-                                                //y si no tiene cuit voy a marcar monotributista pero tengo q resaltarlo
-                                                //para que se chekee si hay que buscar ese cuit y chekiar q no sea excento
-                                                if($venta['Venta']['identificacionnumero'] == '20000000001'){
-                                                }else{
-                                                    $classcondicionIVA="controlarInput";
-                                                }
-                                                $condicioniva = 'Cons. F/Exento/No Alcanza';
-                                            }else{
-                                                $condicioniva = 'Cons. F/Exento/No Alcanza';
-                                            }
-
-
-                                            break;
-                                        }
-                                    }
-                                    if($venta['Venta']['identificacionnumero'] == '20000000001'||$venta['Venta']['identificacionnumero'] == ''){
-                                        $condicioniva = 'Cons. F/Exento/No Alcanza';
-                                    }
+                                   
                                     echo $this->Form->input('Venta.' . $i . '.condicioniva', array(
                                             'type' => 'select',
                                             'label' => ($i + 9) % 10 == 0 ? 'Cond.IVA' : '',
@@ -957,7 +1174,7 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                         ]
                                     ]);
                                     $display="content;";
-                                    $tieneMonotributo = $cliente['Cliente']['tieneMonotributo'];
+                                    
                                     if($tieneMonotributo){
                                         $display="none;";
                                     }
@@ -1098,6 +1315,9 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                                     $numalicuota++;
                                     //echo "<label>".json_encode($venta)."</label>";
                                     $i++;
+                                    if($i>10){
+                                        //di e("10 venta");    
+                                    }
                                     ?>
                                 </div>
                             </td>
@@ -1105,21 +1325,19 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                         <?php
                     }
                 }
-                if($i==100){
-                    if(count($ventasArray)>100){
-                        $respuestaVentasCargadas .= $cantVentasYaguardadas." Ventas ya cargadas, faltan importar estas 100 ventas y ".(count($ventasArray)-$i-$cantVentasYaguardadas)." ventas mas, por favor continue cargando hasta que
-                            finalize la carga de todas las ventas del archivo";
-                    }else{
-                        $respuestaVentasCargadas .= $cantVentasYaguardadas." Ventas ya cargadas, faltan importar estas ".$i." ventas por favor continue cargando hasta que
-                            finalize la carga de todas las ventas del archivo";
-                    }
-                    break ;
-                }
+            }
+            if($cantidadDeVentasEnArchivos>100){
+                $respuestaVentasCargadas .= $cantVentasYaguardadas." Ventas ya cargadas, faltan importar estas 100 ventas y ".($cantidadDeVentasEnArchivos-$i-$cantVentasYaguardadas)." ventas mas, por favor continue cargando hasta que
+                    finalize la carga de todas las ventas del archivo";
+            }else{
+                $respuestaVentasCargadas .= $cantVentasYaguardadas." Ventas ya cargadas, faltan importar estas ".$i." ventas por favor continue cargando hasta que
+                    finalize la carga de todas las ventas del archivo";
             }
             ?>
         </table>
         <?php
         echo $respuestaVentasCargadas;
+        echo $cantidadDeVentasEnArchivos;
         if ($i > 1){
             echo $this->Form->submit('Importar', array(
                     'type'=>'image',
@@ -1131,7 +1349,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
             );
         }
         echo $this->Form->end();
-        echo $misVentasYaCargadas; ?>
+        //echo $misVentasYaCargadas; 
+        //Debugger::dump($misVentasYaCargadas)?>
     </div>
     <?php
 }

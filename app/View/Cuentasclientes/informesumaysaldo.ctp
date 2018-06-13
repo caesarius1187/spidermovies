@@ -62,6 +62,30 @@ echo $this->Html->script('buttons.html5.min.js',array('inline'=>false));?>
             )
         );
         echo $this->Html->link(
+            "Libro Diario",
+            array(
+                'controller' => 'asientos',
+                'action' => 'librodiario',
+                $cliente["Cliente"]['id'],
+                $periodo
+            ),
+            array('class' => 'buttonImpcli',
+                'style'=> 'margin-right: 8px;width: initial;'
+            )
+        );
+        echo $this->Html->link(
+            "Informe Asientos Realizados",
+            array(
+                'controller' => 'cuentasclientes',
+                'action' => 'informeasientos',
+                $cliente["Cliente"]['id'],
+                $periodo
+            ),
+            array('class' => 'buttonImpcli',
+                'style'=> 'margin-right: 8px;width: initial;'
+            )
+        );
+        echo $this->Html->link(
             "Agregar Asiento",
             array(
             ),

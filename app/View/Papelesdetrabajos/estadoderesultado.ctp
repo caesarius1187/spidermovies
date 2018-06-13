@@ -3141,8 +3141,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             //$notaPagoaprovedores['conceptos']['Costo de vta, producc. y adquis de bs de uso, intang. y otros activos']['resta']=false;
             $notaPagoaprovedores['conceptos']['Costo de vta, producc. y adquis de bs de uso, intang. y otros activos']['title']='Costo de los Bienes, de los Servicios y de Producci&oacute;n del Anexo I Costos';
             $totalAnexoIIAdministracion=[]; 
-            $totalAnexoIIAdministracion[$periodoActual]=$totalAnexoII[$periodoActual]*0.25;
-            $totalAnexoIIAdministracion[$periodoPrevio]=$totalAnexoII[$periodoPrevio]*0.25;
+            $totalAnexoIIAdministracion[$periodoActual]=$totalAnexoII['actual']['administracion'];
+            $totalAnexoIIAdministracion[$periodoPrevio]=$totalAnexoII['previo']['administracion'];
             
             $notaPagoaprovedores['conceptos']['Gastos de Administracion']['valores']=  $totalAnexoIIAdministracion;
             $notaPagoaprovedores['conceptos']['Gastos de Administracion']['composicion']='periodos';
@@ -3150,8 +3150,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $notaPagoaprovedores['conceptos']['Gastos de Administracion']['title']='Total de Anexo II Administracion';
 
             $totalAnexoIIComercializacion=[]; 
-            $totalAnexoIIComercializacion[$periodoActual]=$totalAnexoII[$periodoActual]*0.75;
-            $totalAnexoIIComercializacion[$periodoPrevio]=$totalAnexoII[$periodoPrevio]*0.75;
+            $totalAnexoIIComercializacion[$periodoActual]=$totalAnexoII['actual']['comercializacion'];
+            $totalAnexoIIComercializacion[$periodoPrevio]=$totalAnexoII['previo']['comercializacion'];
             
             $notaPagoaprovedores['conceptos']['Gastos de Comercializacion']['valores']=  $totalAnexoIIComercializacion;
             $notaPagoaprovedores['conceptos']['Gastos de Comercializacion']['composicion']='periodos';
@@ -3159,8 +3159,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $notaPagoaprovedores['conceptos']['Gastos de Comercializacion']['title']='Total de Anexo II Comercializacion';
 
             $totalAnexoIIOperatios=[]; 
-            $totalAnexoIIOperatios[$periodoActual]=$totalAnexoII[$periodoActual]*0;
-            $totalAnexoIIOperatios[$periodoPrevio]=$totalAnexoII[$periodoPrevio]*0;
+            $totalAnexoIIOperatios[$periodoActual]=$totalAnexoII['actual']['venta'];
+            $totalAnexoIIOperatios[$periodoPrevio]=$totalAnexoII['previo']['venta'];
             
             $notaPagoaprovedores['conceptos']['Gastos de Operativos']['valores']=  $totalAnexoIIOperatios;
             $notaPagoaprovedores['conceptos']['Gastos de Operativos']['composicion']='periodos';

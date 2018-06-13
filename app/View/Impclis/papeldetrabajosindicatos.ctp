@@ -47,6 +47,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $remuneracionSDExceptoIndemnizatorio = 0;
                 $remuneracionSDIndemnizatorio = 0;
                 $remuneracionTotal = 0;
+                $remuneracionMinima = 0;
                 $aportes = 0;
                 $neto = 0;
                 $miempleado = array();
@@ -65,6 +66,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     $miempleado['remuneracionSDExceptoIndemnizatorio'] = 0;
                     $miempleado['remuneracionSDIndemnizatorio'] = 0;
                     $miempleado['remuneracionTotal'] = 0;
+                    $miempleado['remuneracionMinima'] = 0;
                     $miempleado['aportes'] = 0;
                     $miempleado['neto'] = 0;
                     $miempleado['cuotasindical'] = 0;
@@ -127,6 +129,13 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         array('44'/*Remuneración Total	*/), true)
                     ) {
                         $remuneracionTotal += $valorrecibo['valor'];
+                    }
+                    //Remuneracion Minima
+                    if (
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
+                        array('161'/*Basico Categoria Minima*/), true)
+                    ) {
+                        $remuneracionMinima += $valorrecibo['valor'];
                     }
                     //Total Aportes
                     if (
@@ -223,6 +232,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $miempleado['remuneracionSDExceptoIndemnizatorio'] = $remuneracionSDExceptoIndemnizatorio;
                 $miempleado['remuneracionSDIndemnizatorio'] = $remuneracionSDIndemnizatorio;
                 $miempleado['remuneracionTotal'] = $remuneracionTotal;
+                $miempleado['remuneracionMinima'] = $remuneracionMinima;
                 $miempleado['aportes'] = $aportes;
                 $miempleado['neto'] = $neto;
                 $miempleado['cuotasindical'] = $cuotasindical;
@@ -423,6 +433,23 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 }
                 ?>
                 <td><?php  echo number_format($totalTotal, 2, ",", "."); ?></td>
+            </tr>
+            <tr>
+                <td>Remuneración Minima</td>
+                <?php
+                $totalMinima = 0;
+                foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                    foreach ($conveniocolectivo['Empleado'] as $empleado){
+                        $empleadoid = $empleado['id'];
+                        //en este primer loop vamos a calcular todos los siguientes totales
+                        echo "<td>";
+                        echo $empleadoDatos[$empleadoid]['remuneracionMinima'];
+                        $totalMinima += $empleadoDatos[$empleadoid]['remuneracionMinima'];
+                        echo "</td>";
+                    }
+                }
+                ?>
+                <td><?php  echo number_format($totalMinima, 2, ",", "."); ?></td>
             </tr>
             <tr>
                 <td>Aportes</td>
@@ -928,6 +955,62 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     </tr>
                 <?php
                     break;
+                case '197':/*UECARA*/ ?>
+                    <tr>
+                        <td>
+                            Contribucion Empresarial
+                        </td>
+                        <?php
+                        $totalContribucionEmpresarial =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+
+                                $contribucionEmpresarial = $empleadoDatos[$empleadoid]['remuneracionMinima']*0.015;
+                                echo '<td>';
+                                echo number_format($contribucionEmpresarial, 2, ",", ".");
+                                $totalContribucionEmpresarial += $contribucionEmpresarial ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td >
+                            <?php
+                            echo number_format($totalContribucionEmpresarial, 2, ",", ".");
+                            $apagarcontribuciones += $totalContribucionEmpresarial ;
+                            ?>
+                        </td>
+                    </tr>
+                <?php
+                    break;
+                case '198':/*SUTHERN*/ ?>
+                    <tr>
+                        <td>
+                            Contribucion Empresarial
+                        </td>
+                        <?php
+                        $totalContribucionEmpresarial =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+
+                                $contribucionEmpresarial = $empleadoDatos[$empleadoid]['remuneracionTotal']*0.015;
+                                echo '<td>';
+                                echo number_format($contribucionEmpresarial, 2, ",", ".");
+                                $totalContribucionEmpresarial += $contribucionEmpresarial ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td >
+                            <?php
+                            echo number_format($totalContribucionEmpresarial, 2, ",", ".");
+                            $apagarcontribuciones += $totalContribucionEmpresarial ;
+                            ?>
+                        </td>
+                    </tr>
+                <?php
+                    break;
             }
             ?>
                 <?php
@@ -967,6 +1050,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         $impuestoDeterminado += $totalContribucionIERIC;
                         break;
                     case '177':/*ACARA*/
+                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
+                        $impuestoDeterminado += $totalContribucionEmpresarial;
+                        break;
+                    case '197':/*UECARA*/
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
                         $impuestoDeterminado += $totalContribucionEmpresarial;
                         break;

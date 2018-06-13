@@ -166,11 +166,11 @@ class DepositosController extends AppController {
 		$this->loadModel('Domicilio');
 		$this->loadModel('Puntosdeventa');
 		$estudio = $this->Estudio->find('first',array(
-										'conditions' => array(
-								 			'Estudio.id' => $this->Session->read('Auth.User.estudio_id'),								 		
-								 			),	
-										)
-									);
+                        'conditions' => array(
+                                'Estudio.id' => $this->Session->read('Auth.User.estudio_id'),								 		
+                                ),	
+                        )
+                );
 		$this->set('estudio', $estudio);
 
 		$options = array(
@@ -185,23 +185,23 @@ class DepositosController extends AppController {
 		$this->set('deposito', $depositos);
 
 		$domicilios = $this->Domicilio->find('list',array(
-										'fields' => array('Domicilio.id', 'Domicilio.calle','Localidade.nombre'),
-										'conditions' => array(
-								 			'Domicilio.cliente_id' => $depositos['Deposito']['cliente_id'],								 		
-								 			),	
-										'contain' => array('Localidade',
-											),
-										)
-									);
+                            'fields' => array('Domicilio.id', 'Domicilio.calle','Localidade.nombre'),
+                            'conditions' => array(
+                                    'Domicilio.cliente_id' => $depositos['Deposito']['cliente_id'],								 		
+                                    ),	
+                            'contain' => array('Localidade',
+                                    ),
+                            )
+                    );
 		$this->set('domicilios', $domicilios);
 
 		$puntosdeventas = $this->Puntosdeventa->find('list',array(
-										'fields' => array('Puntosdeventa.id', 'Puntosdeventa.nombre'),
-										'conditions' => array(
-								 			'Puntosdeventa.cliente_id' => $depositos['Deposito']['cliente_id'],								 		
-								 			),	
-										)
-									);
+                            'fields' => array('Puntosdeventa.id', 'Puntosdeventa.nombre'),
+                            'conditions' => array(
+                                    'Puntosdeventa.cliente_id' => $depositos['Deposito']['cliente_id'],								 		
+                                    ),	
+                            )
+                    );
 		$this->set('puntosdeventas', $puntosdeventas);
 		
 	}
@@ -371,7 +371,7 @@ class DepositosController extends AppController {
 		if ($this->Deposito->delete()) {
 			$this->set("data","El Deposito ha sido eliminado");
 		} else {
-			$this->set("data","El Deposito NO a sido eliminado");			
+			$this->set("data","El Deposito NO ha sido eliminado");			
 		}
 
 		$this->layout = 'ajax';

@@ -87,12 +87,31 @@
             //ahora vamos a sumar las retenciones de este impuesto
             $debe=0;
             $haber=0;
-            if($asientoestandarCM['cuenta_id']=='5'){
-                //movimiento estandar que suma to do al haber
-                $haber=$conceptosTotal;
-            }else{
-                $debe=$conceptosTotal;
+            if($tiene3ra){
+                if($asientoestandarCM['cuenta_id']=='5'){
+                    //movimiento estandar que suma to do al haber 
+                    //Caja de 3ra
+                    $haber=$conceptosTotal;
+                }else{
+                    $debe=$conceptosTotal;
+                }
+                if($asientoestandarCM['cuenta_id']=='1069'){
+                    continue;
+                }
             }
+            if(!$tiene3ra){
+                if($asientoestandarCM['cuenta_id']=='1069'){
+                    //movimiento estandar que suma to do al haber
+                    //Caja no tercera
+                    $haber=$conceptosTotal;
+                }else{
+                    $debe=$conceptosTotal;
+                }
+                if($asientoestandarCM['cuenta_id']=='5'){
+                    continue;
+                }
+            }
+                                           
             $movimientoConValor = "movimientoSinValor";
             if(($debe*1) != 0 || ($haber*1) != 0){
                 $movimientoConValor = "movimientoConValor";

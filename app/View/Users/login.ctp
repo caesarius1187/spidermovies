@@ -1,15 +1,27 @@
 <div class="page-container">
-	<form action="/contasynfotech/users/login" id="UserLoginForm" method="post" accept-charset="utf-8" class="form_login">
-		<img src="../img/logo_conta_transparente.png" width="200px" height="200px">
-		<div style="display:none;">
-			<input type="hidden" name="_method" value="POST">
-		</div>
-		<fieldset>
-			<input type="text" name="data[User][username]" class="username" placeholder="Usuario">
-	        <input type="password" name="data[User][password]" class="password" placeholder="Contraseña">
-	        <button type="submit">INGRESAR</button>
-	        <div class="error"><span>+</span></div>
-		</fieldset>
-	</form>
+    
+    
+    <?php echo $this->Form->create('User',[
+        'action'=>'login',
+        'id'=>'UserLoginForm',
+        'class'=>'form_login',
+    ]); ?>
+    <img src="../img/logo_conta_transparente.png" width="200px" height="200px">
+	<?php
+		echo $this->Form->input('username',[
+                    'label'=>false,
+                    'placeholder'=>"Usuario"
+                ]);
+		echo $this->Form->input('password',[
+                    'label'=>false,
+                    'placeholder'=>"Contrase&ntilde;a"
+                ]);
+        echo $this->Form->button('Ingresar',[
+            'type'=>'submit'
+            ]);
+	?>	        
+    <div class="error"><span>+</span></div>
+<?php echo $this->Form->end(); ?>
+	
 </div>
 

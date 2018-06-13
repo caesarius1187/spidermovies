@@ -13,218 +13,218 @@ class EmpleadosController extends AppController {
  *
  * @var array
  */
-	public $components = array('Paginator','RequestHandler');
-	public function index() {
-		$this->Empleado->recursive = 0;
-		$this->set('empleados', $this->Paginator->paginate());
-	}
-	public function cargar($id=null,$periodo=null){
-		$this->loadModel('Cliente');
-		$this->loadModel('Impcli');
-		$pemes = substr($periodo, 0, 2);
-		$peanio = substr($periodo, 3);
-		//A: Es menor que periodo Hasta
-		$esMenorQueHasta = array(
-			//HASTA es mayor que el periodo
-			'OR'=>array(
-				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
-				'AND'=>array(
-					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
-					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
-				),
-			)
-		);
-		//B: Es mayor que periodo Desde
-		$esMayorQueDesde = array(
-			'OR'=>array(
-				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
-				'AND'=>array(
-					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
-					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
-				),
-			)
-		);
-		//C: Tiene Periodo Hasta 0 NULL
-		$periodoNull = array(
-			'OR'=>array(
-				array('Periodosactivo.hasta'=>null),
-				array('Periodosactivo.hasta'=>""),
-			)
-		);
-		$conditionsImpCliHabilitados = array(
-			//El periodo esta dentro de un desde hasta
-			'AND'=> array(
-				$esMayorQueDesde,
-				'OR'=> array(
-					$esMenorQueHasta,
-					$periodoNull
-				)
-			)
-		);
-		$this->set('periodo',$periodo);
-		$cliente=$this->Cliente->find('first', array(
-				'contain'=>array(
-					'Sueldo'=>array(
-						'conditions' => array(
-							'Sueldo.periodo'=>$periodo
-						),
-					),
-					'Empleado'=>array(
-						'Valorrecibo'=>array(
-							'conditions'=>array(
-								'Valorrecibo.periodo'=>$periodo,
-							),
-							'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
-						),
-						'conditions'=>array(
-							'OR'=>[
-								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
-								'Empleado.fechaegreso is null' ,
-							],
-							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
-						),
-						'order'=>[
-							'Empleado.legajo*1'
-						],
-					),
-					'Impcli'=>[
-						'Impuesto',
-						'Periodosactivo'=>[
-							'conditions'=>$conditionsImpCliHabilitados
-						]
-					]
-				),
-				'conditions' => array(
-					'id' => $id,
-				),
-			)
-		);
-		/*AFIP*/
-		$tieneMonotributo=False;
-		$tieneIVA=False;
-		$tieneIVAPercepciones=False;
-		$tieneImpuestoInterno=False;
-		/*DGR*/
-		$tieneAgenteDePercepcionIIBB=False;
-		/*DGRM*/
-		$tieneAgenteDePercepcionActividadesVarias=False;
-		foreach ($cliente['Impcli'] as $impcli) {
-			/*AFIP*/
-			if($impcli['impuesto_id']==4/*Monotributo*/){
-				//Tiene Monotributo asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que es un Monotributista Activo en este periodo
-					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
-					$tieneMonotributo=True;
-					$tieneIVA=False;
-				}
-			}
-			if($impcli['impuesto_id']==19/*IVA*/){
-				//Tiene IVA asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que es un Responsable Inscripto Activo en este periodo
-					//Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
-					$tieneMonotributo=False;
-					$tieneIVA=True;
-				}
-			}
-			if($impcli['impuesto_id']==184/*IVA Percepciones*/){
-				//Tiene IVA Percepciones asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que tiene IVA Percepciones Activo en este periodo
-					$tieneIVAPercepciones=True;
-				}
-			}
-			if($impcli['impuesto_id']==185/*Impuesto Interno*/){
-				//Tiene Impuesto Interno asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que tiene Impuesto Interno Activo en este periodo
-					$tieneImpuestoInterno=True;
-				}
-			}
-			/*DGR*/
-			if($impcli['impuesto_id']==173/*Agente de Percepcion IIBB*/){
-				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que tiene Agente de Percepcion IIBB Activo en este periodo
-					$tieneAgenteDePercepcionIIBB=True;
-				}
-			}
-			/*DGRM*/
-			if($impcli['impuesto_id']==186/*Agente de Percepcion de Actividades Varias*/){
-				//Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
-				if(Count($impcli['Periodosactivo'])!=0){
-					//Aca estamos Seguros que tiene Agente de Percepcion de Actividades Varias Activo en este periodo
-					$tieneAgenteDePercepcionActividadesVarias=True;
-				}
-			}
-		}
-		$cliente['Cliente']['tieneMonotributo'] = $tieneMonotributo;
-		$cliente['Cliente']['tieneIVA'] = $tieneIVA;
-		$cliente['Cliente']['tieneIVAPercepciones'] = $tieneIVAPercepciones;
-		$cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;
-		$cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;
-		$cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;
-		$this->set(compact('cliente'));
+    public $components = array('Paginator','RequestHandler');
+    public function index() {
+            $this->Empleado->recursive = 0;
+            $this->set('empleados', $this->Paginator->paginate());
+    }
+    public function cargar($id=null,$periodo=null){
+            $this->loadModel('Cliente');
+            $this->loadModel('Impcli');
+            $pemes = substr($periodo, 0, 2);
+            $peanio = substr($periodo, 3);
+            //A: Es menor que periodo Hasta
+            $esMenorQueHasta = array(
+                    //HASTA es mayor que el periodo
+                    'OR'=>array(
+                            'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+                            'AND'=>array(
+                                    'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+                                    'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+                            ),
+                    )
+            );
+            //B: Es mayor que periodo Desde
+            $esMayorQueDesde = array(
+                    'OR'=>array(
+                            'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+                            'AND'=>array(
+                                    'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+                                    'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+                            ),
+                    )
+            );
+            //C: Tiene Periodo Hasta 0 NULL
+            $periodoNull = array(
+                    'OR'=>array(
+                            array('Periodosactivo.hasta'=>null),
+                            array('Periodosactivo.hasta'=>""),
+                    )
+            );
+            $conditionsImpCliHabilitados = array(
+                    //El periodo esta dentro de un desde hasta
+                    'AND'=> array(
+                            $esMayorQueDesde,
+                            'OR'=> array(
+                                    $esMenorQueHasta,
+                                    $periodoNull
+                            )
+                    )
+            );
+            $this->set('periodo',$periodo);
+            $cliente=$this->Cliente->find('first', array(
+                            'contain'=>array(
+                                    'Sueldo'=>array(
+                                            'conditions' => array(
+                                                    'Sueldo.periodo'=>$periodo
+                                            ),
+                                    ),
+                                    'Empleado'=>array(
+                                            'Valorrecibo'=>array(
+                                                    'conditions'=>array(
+                                                            'Valorrecibo.periodo'=>$periodo,
+                                                    ),
+                                                    'fields'=>array('Distinct(Valorrecibo.tipoliquidacion)'),
+                                            ),
+                                            'conditions'=>array(
+                                                    'OR'=>[
+                                                            'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                                                            'Empleado.fechaegreso is null' ,
+                                                    ],
+                                                    'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                                            ),
+                                            'order'=>[
+                                                    'Empleado.legajo*1'
+                                            ],
+                                    ),
+                                    'Impcli'=>[
+                                            'Impuesto',
+                                            'Periodosactivo'=>[
+                                                    'conditions'=>$conditionsImpCliHabilitados
+                                            ]
+                                    ]
+                            ),
+                            'conditions' => array(
+                                    'id' => $id,
+                            ),
+                    )
+            );
+            /*AFIP*/
+            $tieneMonotributo=False;
+            $tieneIVA=False;
+            $tieneIVAPercepciones=False;
+            $tieneImpuestoInterno=False;
+            /*DGR*/
+            $tieneAgenteDePercepcionIIBB=False;
+            /*DGRM*/
+            $tieneAgenteDePercepcionActividadesVarias=False;
+            foreach ($cliente['Impcli'] as $impcli) {
+                    /*AFIP*/
+                    if($impcli['impuesto_id']==4/*Monotributo*/){
+                            //Tiene Monotributo asignado pero hay que ver si tiene periodos activos
+                            if(Count($impcli['Periodosactivo'])!=0){
+                                    //Aca estamos Seguros que es un Monotributista Activo en este periodo
+                                    //Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+                                    $tieneMonotributo=True;
+                                    $tieneIVA=False;
+                            }
+                    }
+                    if($impcli['impuesto_id']==19/*IVA*/){
+                            //Tiene IVA asignado pero hay que ver si tiene periodos activos
+                            if(Count($impcli['Periodosactivo'])!=0){
+                                    //Aca estamos Seguros que es un Responsable Inscripto Activo en este periodo
+                                    //Tenemos que asegurarnos que no existan periodos activos que coincidan entre Monotributo e IVA
+                                    $tieneMonotributo=False;
+                                    $tieneIVA=True;
+                            }
+                    }
+                    if($impcli['impuesto_id']==184/*IVA Percepciones*/){
+                            //Tiene IVA Percepciones asignado pero hay que ver si tiene periodos activos
+                            if(Count($impcli['Periodosactivo'])!=0){
+                                    //Aca estamos Seguros que tiene IVA Percepciones Activo en este periodo
+                                    $tieneIVAPercepciones=True;
+                            }
+                    }
+                    if($impcli['impuesto_id']==185/*Impuesto Interno*/){
+                            //Tiene Impuesto Interno asignado pero hay que ver si tiene periodos activos
+                            if(Count($impcli['Periodosactivo'])!=0){
+                                    //Aca estamos Seguros que tiene Impuesto Interno Activo en este periodo
+                                    $tieneImpuestoInterno=True;
+                            }
+                    }
+                    /*DGR*/
+                    if($impcli['impuesto_id']==173/*Agente de Percepcion IIBB*/){
+                            //Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+                            if(Count($impcli['Periodosactivo'])!=0){
+                                    //Aca estamos Seguros que tiene Agente de Percepcion IIBB Activo en este periodo
+                                    $tieneAgenteDePercepcionIIBB=True;
+                            }
+                    }
+                    /*DGRM*/
+                    if($impcli['impuesto_id']==186/*Agente de Percepcion de Actividades Varias*/){
+                            //Tiene Agente de Percepcion IIBB asignado pero hay que ver si tiene periodos activos
+                            if(Count($impcli['Periodosactivo'])!=0){
+                                    //Aca estamos Seguros que tiene Agente de Percepcion de Actividades Varias Activo en este periodo
+                                    $tieneAgenteDePercepcionActividadesVarias=True;
+                            }
+                    }
+            }
+            $cliente['Cliente']['tieneMonotributo'] = $tieneMonotributo;
+            $cliente['Cliente']['tieneIVA'] = $tieneIVA;
+            $cliente['Cliente']['tieneIVAPercepciones'] = $tieneIVAPercepciones;
+            $cliente['Cliente']['tieneImpuestoInterno'] = $tieneImpuestoInterno;
+            $cliente['Cliente']['tieneAgenteDePercepcionIIBB'] = $tieneAgenteDePercepcionIIBB;
+            $cliente['Cliente']['tieneAgenteDePercepcionActividadesVarias'] = $tieneAgenteDePercepcionActividadesVarias;
+            $this->set(compact('cliente'));
 
-		//aca vamos a listar los impclis que tenga activos el cliente pero con el nombre del impuesto
-		$conditionsImpCliHabilitadosImpuestos = array(
-			//El periodo esta dentro de un desde hasta
-			'AND'=> array(
-				'Periodosactivo.impcli_id = Impcli.id',
-				$esMayorQueDesde,
-				'OR'=> array(
-					$esMenorQueHasta,
-					$periodoNull
-				)
-			)
+            //aca vamos a listar los impclis que tenga activos el cliente pero con el nombre del impuesto
+            $conditionsImpCliHabilitadosImpuestos = array(
+                    //El periodo esta dentro de un desde hasta
+                    'AND'=> array(
+                            'Periodosactivo.impcli_id = Impcli.id',
+                            $esMayorQueDesde,
+                            'OR'=> array(
+                                    $esMenorQueHasta,
+                                    $periodoNull
+                            )
+                    )
 
-		);
-		$clienteImpuestosOptions = array(
-			'conditions' => array(
-				'Impcli.cliente_id'=> $id
-			),
-			'fields'=>array('Impcli.id','Impuesto.nombre'),
-			'joins'=>array(
-				array('table'=>'impuestos',
-					'alias' => 'Impuesto',
-					'type'=>'inner',
-					'conditions'=> array(
-						'Impcli.impuesto_id = Impuesto.id',
-						'AND'=>array(
-							'Impuesto.organismo <> "sindicato"',
-							'Impuesto.organismo <> "banco"'
-						)
-					)
-				),
-				array('table'=>'periodosactivos',
-					'alias' => 'Periodosactivo',
-					'type'=>'inner',
-					'conditions'=> array(
-						$conditionsImpCliHabilitadosImpuestos
-					)
-				),
-			),
+            );
+            $clienteImpuestosOptions = array(
+                    'conditions' => array(
+                            'Impcli.cliente_id'=> $id
+                    ),
+                    'fields'=>array('Impcli.id','Impuesto.nombre'),
+                    'joins'=>array(
+                            array('table'=>'impuestos',
+                                    'alias' => 'Impuesto',
+                                    'type'=>'inner',
+                                    'conditions'=> array(
+                                            'Impcli.impuesto_id = Impuesto.id',
+                                            'AND'=>array(
+                                                    'Impuesto.organismo <> "sindicato"',
+                                                    'Impuesto.organismo <> "banco"'
+                                            )
+                                    )
+                            ),
+                            array('table'=>'periodosactivos',
+                                    'alias' => 'Periodosactivo',
+                                    'type'=>'inner',
+                                    'conditions'=> array(
+                                            $conditionsImpCliHabilitadosImpuestos
+                                    )
+                            ),
+                    ),
 
-		);
-		$impclis=$this->Impcli->find('list',$clienteImpuestosOptions);
-		$this->set('impclis', $impclis);
+            );
+            $impclis=$this->Impcli->find('list',$clienteImpuestosOptions);
+            $this->set('impclis', $impclis);
 
-		$conditionsCli = array(
-			'Grupocliente',
-		);
-		$lclis = $this->Cliente->find('list',array(
-			'contain' =>$conditionsCli,
-			'conditions' => array(
-				'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id')
-			),
-			'order' => array(
-				'Grupocliente.nombre','Cliente.nombre'
-			),
-		));
-		$this->set(compact('lclis'));
-	}
-	public function cargamasiva($id=null,$periodo=null,$convenio=null,$tipoliquidacion=null){
+            $conditionsCli = array(
+                    'Grupocliente',
+            );
+            $lclis = $this->Cliente->find('list',array(
+                    'contain' =>$conditionsCli,
+                    'conditions' => array(
+                            'Grupocliente.estudio_id' => $this->Session->read('Auth.User.estudio_id')
+                    ),
+                    'order' => array(
+                            'Grupocliente.nombre','Cliente.nombre'
+                    ),
+            ));
+            $this->set(compact('lclis'));
+    }
+    public function cargamasiva($id=null,$periodo=null,$convenio=null,$tipoliquidacion=null){
 		$this->loadModel('Cliente');
 		$this->loadModel('Impcli');
 		//A: Es menor que periodo Hasta
@@ -248,7 +248,7 @@ class EmpleadosController extends AppController {
 								'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
 								'Empleado.fechaegreso is null' ,
 							],
-							'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+							'Empleado.fechaingreso <= '=>date('Y-m-t',strtotime("01-".$periodo)),
 						),
 						'order'=>[
 							'Empleado.legajo*1'
@@ -262,6 +262,94 @@ class EmpleadosController extends AppController {
 		);
 		$this->set(compact('cliente'));
 	}
+    public function liquidacionmasiva($id=null,$periodo=null,$conid=null,$tipoliquidacion=null){
+        $this->loadModel('Cliente');
+        $this->loadModel('Conveniocolectivotrabajo');
+        $this->loadModel('Impcli');
+        $this->loadModel('Concepto');
+        //A: Es menor que periodo Hasta
+        $this->set('periodo',$periodo);
+        $this->set('tipoliquidacion',$tipoliquidacion);
+        $this->set('convenio',$conid);
+
+        if($conid!=null){
+            //vamos a mandar los convenios
+            $convenio=$this->Conveniocolectivotrabajo->find('first', [
+                'contain'=>[
+                    'Cctxconcepto'=>[
+                        'Concepto'=>[],
+                        'conditions'=>[]
+                    ]
+                ],
+                'conditions'=>[
+                    'Conveniocolectivotrabajo.id'=>$conid
+                ],
+            ]);
+
+            //vamos a mandar los empleados de ese convenio
+            $empleados=$this->Empleado->find('all', array(
+                    'contain'=>array(                      
+                        'Cargo',
+                        'Conveniocolectivotrabajo'=>[
+                        ],                           
+                        'Valorrecibo'=>array(
+                            'conditions'=>array(
+                                'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
+                                'Valorrecibo.periodo'=>$periodo,
+                            )                            
+                        ),
+                    ),
+                    'conditions'=>array(
+                            'OR'=>[
+                                'Empleado.fechaegreso >= ' => date('Y-m-t',strtotime("01-".$periodo)),
+                                'Empleado.fechaegreso is null' ,
+                            ],
+                            'Empleado.fechaingreso <= '=>date('Y-m-t',strtotime("01-".$periodo)),
+                            'Empleado.conveniocolectivotrabajo_id'=>$conid,
+                            'Empleado.cliente_id' => $id,
+                    ),
+                    'order'=>[
+                        'Empleado.legajo*1'
+                    ],
+                )
+            );
+            $this->set(compact('empleados','convenio'));
+        }else{
+           
+        }
+        //vamos a mandar los convenios
+        $cliente=$this->Cliente->find('first', array(
+                'contain'=>array(
+                    'Empleado'=>array(
+                        'Conveniocolectivotrabajo'=>[
+                        ],                            
+                        'conditions'=>array(
+                            'OR'=>[
+                                'Empleado.fechaegreso >= ' => date('Y-m-t',strtotime("01-".$periodo)),
+                                'Empleado.fechaegreso is null' ,
+                            ],
+                            'Empleado.fechaingreso <= '=>date('Y-m-t',strtotime("01-".$periodo)),
+                        ),
+                        'order'=>[
+                            'Empleado.legajo*1'
+                        ],
+                    ),
+                ),
+                'conditions' => array(
+                    'id' => $id,
+                ),
+            )
+        );
+        $optionsConceptos = [
+            'contain'=>[],
+            'conditions'=>[
+                'Concepto.cargamasiva'=>1,
+                'Concepto.seccion'=>'DATOS',
+            ],
+        ];
+        $conceptos = $this->Concepto->find('list',$optionsConceptos);
+        $this->set(compact('cliente','conceptos'));
+    }
 	public function exportacion($cliid=null,$periodo=null,$tipoliquidacion=null){
             ini_set('memory_limit', '2560M');
             $this->Components->unload('DebugKit.Toolbar');
@@ -346,7 +434,7 @@ class EmpleadosController extends AppController {
             $options = array('conditions' => array('Empleado.' . $this->Empleado->primaryKey => $id));
             $this->set('empleado', $this->Empleado->find('first', $options));
     }
-    public function papeldetrabajosueldos($cliid=null,$periodo=null ,$empleadoamostrar=null, $tipoliquidacion=null) {
+    public function papeldetrabajosueldos($cliid=null,$periodo=null ,$empleadoamostrar=null, $tipoliquidacion=null, $liquidacionCompleta=null) {
             $this->loadModel('Impcli');
             $this->loadModel('Empleado');
             $this->loadModel('Concepto');
@@ -439,18 +527,28 @@ class EmpleadosController extends AppController {
                         $numeroliquidacion = 7;
                         break;
 		}
+            $conditionConcepto=[];
+            /*if($liquidacionCompleta=='false'){
+               $conditionConcepto['conditions']=[
+                    'Concepto.seccion'=>'DATOS'
+                ];
+            }else{
+                
+            }*/
             $optionsempleados = array(
                 'contain'=>array(
                     'Cargo',
                     'Conveniocolectivotrabajo'=>array(
                         'Cctxconcepto'=>array(
-                            'Concepto',
+                            'Concepto'=>
+                               $conditionConcepto
+                            ,
                             'Valorrecibo'=>array(
                                 'conditions'=>array(
                                         'Valorrecibo.empleado_id'=>$empleadoamostrar,
                                         'Valorrecibo.tipoliquidacion'=>$numeroliquidacion,
                                         'Valorrecibo.periodo'=>$periodo,
-                                )
+                                )                            
                             ),
                             'conditions'=>array(
                                 'OR'=>array(
@@ -458,7 +556,7 @@ class EmpleadosController extends AppController {
                                                 'Cctxconcepto.cliente_id' => $cliid,
                                                 'Cctxconcepto.campopersonalizado' => 1,
                                         ),
-                                        'Cctxconcepto.campopersonalizado' => 0,
+                                        'Cctxconcepto.campopersonalizado' => 0,                                        
                                 ),
                             ),
                             'order'=>array('Cctxconcepto.orden'),
@@ -485,7 +583,7 @@ class EmpleadosController extends AppController {
          * Primero vamos a ordenar los cctxconcepto en base a la seccion a la que pertenece
          * */
         $this->set('empleadobeforeorden',$empleado);
-        if(isset($empleado['Conveniocolectivotrabajo'])){
+        if(isset($empleado['Conveniocolectivotrabajo']) /*&& $liquidacionCompleta!='false'*/){
 			//si el convenio es de UTGHRA entonces tenemos que buscar el valor del basico mas bajo
             $basicoMinimoCargo = 0;
             if($empleado['Conveniocolectivotrabajo']['id']=='7'){
@@ -514,6 +612,26 @@ class EmpleadosController extends AppController {
                     'contain'=>[
                     ],
                     'conditions' => array('Cargo.id' => '195')/*Administrativo de segunda*/
+                ];
+                $cargoMinimo = $this->Cargo->find('first', $options);
+                $basicoMinimoCargo = $cargoMinimo['Cargo']['sueldobasico'];
+            }
+             if($empleado['Conveniocolectivotrabajo']['id']=='21'){
+                //UECARA
+                $options = [
+                    'contain'=>[
+                    ],
+                    'conditions' => array('Cargo.id' => '269')/*Grupo 3 Ayudante Técnico*/
+                ];
+                $cargoMinimo = $this->Cargo->find('first', $options);
+                $basicoMinimoCargo = $cargoMinimo['Cargo']['sueldobasico'];
+            }
+            if($empleado['Conveniocolectivotrabajo']['id']=='22'){
+                //SUTHERN
+                $options = [
+                    'contain'=>[
+                    ],
+                    'conditions' => array('Cargo.id' => '301')/*4 Cat Ayudante Permanente sin vivienda*/
                 ];
                 $cargoMinimo = $this->Cargo->find('first', $options);
                 $basicoMinimoCargo = $cargoMinimo['Cargo']['sueldobasico'];
@@ -721,6 +839,9 @@ class EmpleadosController extends AppController {
                     'conditions'=>[
                         'Valorrecibo.periodo'=>$periodo,
 						'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
+                    ],
+                    'order'=>[
+                        'Valorrecibo.id'
                     ]
                 ],
             ],
@@ -734,38 +855,39 @@ class EmpleadosController extends AppController {
         $this->render('papeldetrabajolibrosueldo');
     }
     public function papeldetrabajorecibosueldo($empid=null,$periodo=null,$tipoliquidacion=null){
-		$this->loadModel('Vencimiento');
-		$this->loadModel('Impcli');
-		$this->loadModel('Impuesto');
+        $this->loadModel('Vencimiento');
+        $this->loadModel('Impcli');
+        $this->loadModel('Impuesto');
 
-		$timePeriodo = strtotime("01-".$periodo ." -1 months");
-		$periodoPrevio = date("m-Y",$timePeriodo);
-		$fchvto = date('d-m-Y',$timePeriodo);
-		$fchvtoOrigen="diaDeHoy";
-		$pemesActual = substr($periodo, 0, 2);
-		$peanioActual = substr($periodo, 3);
+        $timePeriodo = strtotime("01-".$periodo ." -1 months");
+        $periodoPrevio = date("m-Y",$timePeriodo);
+        $fchvto = date('d-m-Y',$timePeriodo);
+        $fchvtoOrigen="diaDeHoy";
+        $pemesActual = substr($periodo, 0, 2);
+        $peanioActual = substr($periodo, 3);
 
-		$pemes = substr($periodoPrevio, 0, 2);
-		$peanio = substr($periodoPrevio, 3);
+        $pemes = substr($periodoPrevio, 0, 2);
+        $peanio = substr($periodoPrevio, 3);
 
         $this->set(compact('pemes','peanio'));
         $options = array(
             'contain'=>array(
-				'Cargo',
-				'Domicilio'=>array(
+                'Cargo',
+                'Domicilio'=>array(
                     'Localidade'=>array(
                         'Partido'
                     )
                 ),
+                'Obrassociale',
                 'Cliente'=>[
-					'Impcli'=>[
-						'Impuesto'=>[
+                    'Impcli'=>[
+                            'Impuesto'=>[
 
-						],
-						'conditions'=>[
-							'Impcli.impuesto_id'=>'10'/*SUSS*/
-						]
-					],
+                            ],
+                            'conditions'=>[
+                                    'Impcli.impuesto_id'=>'10'/*SUSS*/
+                            ]
+                    ],
                     'Actividadcliente'=>[
                         'Actividade'
                     ]
@@ -779,9 +901,11 @@ class EmpleadosController extends AppController {
                     ),
                     'conditions'=>array(
                         'Valorrecibo.periodo'=>$periodo,
-						'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
-
-					)
+                        'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
+                    ),
+                    'order'=>[
+                        'Valorrecibo.id'
+                    ]
                 ),
             ),
             'conditions' => array('Empleado.id' => $empid)
@@ -789,106 +913,106 @@ class EmpleadosController extends AppController {
         $empleado = $this->Empleado->find('first', $options);
         $this->set('empleado',$empleado);
         $this->set(compact('empid','periodo'));
-		//Aca vamos a hacer las busquedas pertinentes para mostrar la ultima fecha de vencimiento del SUSS
-		// para este contribuyente y para que seleccione el banco en el que lo hizo
+        //Aca vamos a hacer las busquedas pertinentes para mostrar la ultima fecha de vencimiento del SUSS
+        // para este contribuyente y para que seleccione el banco en el que lo hizo
 
-		$cliusuarioafip = $empleado["Cliente"]["cuitcontribullente"];
-		$id = 0;
-		if(count($empleado['Cliente']['Impcli'])>0){
-			$id = $empleado['Cliente']['Impcli'][0]["Impuesto"]["id"];
-		}
-		$optionsVencimientoImpuesto = array(
-			'conditions'=>array(
-                $peanioActual.'*1 = Vencimiento.ano*1',
-				'Vencimiento.desde <= SUBSTRING("'.$cliusuarioafip.'",-1)',
-				'Vencimiento.hasta >= SUBSTRING("'.$cliusuarioafip.'",-1)',
-				'Vencimiento.impuesto_id'=>$id,
-			),
-		);
-		$vencimiento = $this->Vencimiento->find('first',$optionsVencimientoImpuesto);
-		if(isset($vencimiento['Vencimiento']['p'.$pemesActual])&&$vencimiento['Vencimiento']['p'.$pemesActual]!=0){
-			$strfchvto = strtotime($vencimiento['Vencimiento']['ano'].'-'.$pemesActual.'-'.$vencimiento['Vencimiento']['p'.$pemesActual]);
-			$fchvto = date('d-m-Y',$strfchvto);
-			$fchvtoOrigen="VencimientoRecomendado";
-		}
-		$this->set(compact('fchvto','fchvtoOrigen'));
+        $cliusuarioafip = $empleado["Cliente"]["cuitcontribullente"];
+        $id = 0;
+        if(count($empleado['Cliente']['Impcli'])>0){
+                $id = $empleado['Cliente']['Impcli'][0]["Impuesto"]["id"];
+        }
+        $optionsVencimientoImpuesto = array(
+                'conditions'=>array(
+        $peanioActual.'*1 = Vencimiento.ano*1',
+                        'Vencimiento.desde <= SUBSTRING("'.$cliusuarioafip.'",-1)',
+                        'Vencimiento.hasta >= SUBSTRING("'.$cliusuarioafip.'",-1)',
+                        'Vencimiento.impuesto_id'=>$id,
+                ),
+        );
+        $vencimiento = $this->Vencimiento->find('first',$optionsVencimientoImpuesto);
+        if(isset($vencimiento['Vencimiento']['p'.$pemesActual])&&$vencimiento['Vencimiento']['p'.$pemesActual]!=0){
+                $strfchvto = strtotime($vencimiento['Vencimiento']['ano'].'-'.$pemesActual.'-'.$vencimiento['Vencimiento']['p'.$pemesActual]);
+                $fchvto = date('d-m-Y',$strfchvto);
+                $fchvtoOrigen="VencimientoRecomendado";
+        }
+        $this->set(compact('fchvto','fchvtoOrigen'));
 
-		//A: Es menor que periodo Hasta
-		$esMenorQueHasta = array(
-			//HASTA es mayor que el periodo
-			'OR'=>array(
-				'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
-				'AND'=>array(
-					'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
-					'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
-				),
-			)
-		);
-		//B: Es mayor que periodo Desde
-		$esMayorQueDesde = array(
-			'OR'=>array(
-				'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
-				'AND'=>array(
-					'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
-					'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
-				),
-			)
-		);
-		//C: Tiene Periodo Hasta 0 NULL
-		$periodoNull = array(
-			'OR'=>array(
-				array('Periodosactivo.hasta'=>null),
-				array('Periodosactivo.hasta'=>""),
-			)
-		);
-		$conditionsImpCliHabilitadosImpuestos = array(
-			//El periodo esta dentro de un desde hasta
-			'AND'=> array(
-				'Periodosactivo.impcli_id = Impcli.id',
-				$esMayorQueDesde,
-				'OR'=> array(
-					$esMenorQueHasta,
-					$periodoNull
-				)
-			)
+        //A: Es menor que periodo Hasta
+        $esMenorQueHasta = array(
+                //HASTA es mayor que el periodo
+                'OR'=>array(
+                        'SUBSTRING(Periodosactivo.hasta,4,7)*1 > '.$peanio.'*1',
+                        'AND'=>array(
+                                'SUBSTRING(Periodosactivo.hasta,4,7)*1 >= '.$peanio.'*1',
+                                'SUBSTRING(Periodosactivo.hasta,1,2) >= '.$pemes.'*1'
+                        ),
+                )
+        );
+        //B: Es mayor que periodo Desde
+        $esMayorQueDesde = array(
+                'OR'=>array(
+                        'SUBSTRING(Periodosactivo.desde,4,7)*1 < '.$peanio.'*1',
+                        'AND'=>array(
+                                'SUBSTRING(Periodosactivo.desde,4,7)*1 <= '.$peanio.'*1',
+                                'SUBSTRING(Periodosactivo.desde,1,2) <= '.$pemes.'*1'
+                        ),
+                )
+        );
+        //C: Tiene Periodo Hasta 0 NULL
+        $periodoNull = array(
+                'OR'=>array(
+                        array('Periodosactivo.hasta'=>null),
+                        array('Periodosactivo.hasta'=>""),
+                )
+        );
+        $conditionsImpCliHabilitadosImpuestos = array(
+                //El periodo esta dentro de un desde hasta
+                'AND'=> array(
+                        'Periodosactivo.impcli_id = Impcli.id',
+                        $esMayorQueDesde,
+                        'OR'=> array(
+                                $esMenorQueHasta,
+                                $periodoNull
+                        )
+                )
 
-		);
-		$clienteImpuestosOptions = array(
-			'conditions' => array(
-				'Impcli.cliente_id'=> $empleado['Cliente']['id']
-			),
-			'fields'=>array('Impcli.id','Impuesto.nombre'),
-			'joins'=>array(
-				array('table'=>'impuestos',
-					'alias' => 'Impuesto',
-					'type'=>'inner',
-					'conditions'=> array(
-						'Impcli.impuesto_id = Impuesto.id',
-						'AND'=>array(
-							'Impuesto.organismo = "banco"'
-						)
-					)
-				),
-				array('table'=>'periodosactivos',
-					'alias' => 'Periodosactivo',
-					'type'=>'inner',
-					'conditions'=> array(
-						$conditionsImpCliHabilitadosImpuestos
-					)
-				),
-			),
+        );
+        $clienteImpuestosOptions = array(
+                'conditions' => array(
+                        'Impcli.cliente_id'=> $empleado['Cliente']['id']
+                ),
+                'fields'=>array('Impcli.id','Impuesto.nombre'),
+                'joins'=>array(
+                        array('table'=>'impuestos',
+                                'alias' => 'Impuesto',
+                                'type'=>'inner',
+                                'conditions'=> array(
+                                        'Impcli.impuesto_id = Impuesto.id',
+                                        'AND'=>array(
+                                                'Impuesto.organismo = "banco"'
+                                        )
+                                )
+                        ),
+                        array('table'=>'periodosactivos',
+                                'alias' => 'Periodosactivo',
+                                'type'=>'inner',
+                                'conditions'=> array(
+                                        $conditionsImpCliHabilitadosImpuestos
+                                )
+                        ),
+                ),
 
-		);
-		$impclis=$this->Impcli->find('list',$clienteImpuestosOptions);
-		$this->set('impclis', $impclis);
+        );
+        $impclis=$this->Impcli->find('list',$clienteImpuestosOptions);
+        $this->set('impclis', $impclis);
 
-		$bancosOptions = array(
-			'conditions' => array(
-				'Impuesto.organismo'=> 'banco'
-			),
-		);
-		$impuestos=$this->Impuesto->find('list',$bancosOptions);
-		$this->set('impuestos', $impuestos);
+        $bancosOptions = array(
+                'conditions' => array(
+                        'Impuesto.organismo'=> 'banco'
+                ),
+        );
+        $impuestos=$this->Impuesto->find('list',$bancosOptions);
+        $this->set('impuestos', $impuestos);
 
 
         $this->autoRender=false;

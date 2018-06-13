@@ -396,6 +396,9 @@ if(count($empleado)==0){
                                        $valordefault = '01';
                                    }
                                     break;    
+                                case 197:/*Paga Fallo de Caja*/                                  
+                                   $valor = $empleado['Empleado']['fallodecaja'];
+                                    break;    
                                 /*case 36:/*Cuota Sindical aca estabamos guardando la cuota sindical extra en el empleado pero
                                 debe ser la misma para todos dependiendo del convenio
                                     $conceptoobligatorio['nombre'] = $empleado['Empleado']['cuotasindical'];

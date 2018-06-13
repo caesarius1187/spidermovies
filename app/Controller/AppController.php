@@ -33,7 +33,7 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller {
 
 	public $components = array(
-            'DebugKit.Toolbar',
+		//'DebugKit.Toolbar',
 	    'Session',
 	    'Auth' => array(
             'loginAction' => array(
@@ -53,8 +53,19 @@ class AppController extends Controller {
 
 	public function beforeFilter() {
 //		set_time_limit(0);
-        $this->Auth->allow('login');
-    }
+            $this->Auth->allow('login');
+            $this->loadModel('Notification');
+            $notificationsOptions = [
+                'contain'=>[],
+                //'fields'=>["*"],					
+                'conditions'=>[
+                    'Notification.estudio_id'=>$this->Session->read('Auth.User.estudio_id'),			                    
+                    'Notification.readed'=>0,			                    
+                ],		                
+            ]; 
+            $notifications = $this->Notification->find('all',$notificationsOptions);	
+            $this->set('cantNotifications',count($notifications));
+        }
 
 	public function isAuthorized($user) {
 	    // Admin can access every action

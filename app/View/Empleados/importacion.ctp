@@ -238,7 +238,7 @@ if(!$mostrarTabla){
                         <?php
                         echo $this->Form->input('Empleado.' . $i . '.id',array('type'=>'hidden'));
                         echo $this->Form->input('Empleado.' . $i . '.cliente_id',array('default'=>$cliente['Cliente']['id'],'type'=>'hidden'));
-                        echo $this->Form->input('Empleado.' . $i . '.legajo',array('label'=>'Legajo'));
+                        echo $this->Form->input('Empleado.' . $i . '.legajo',array('label'=>'Legajo','style'=>'width:30px'));
                         echo $this->Form->input('Empleado.' . $i . '.nombre',array(
                             'style'=>'width:150px',
                             'label'=>'Apellido y nombre',
@@ -248,8 +248,12 @@ if(!$mostrarTabla){
                             'label'=>'CUIL',
                             'maxlength'=>'11',
                             'value'=>$empleado['cuil'],
+                            'style'=>'width:95px',
                             ));
-                        echo $this->Form->input('Empleado.' . $i . '.dni',array('label'=>'DNI'));
+                        echo $this->Form->input('Empleado.' . $i . '.dni',array(
+                            'label'=>'DNI',
+                            'value'=> substr($empleado['cuil'], 2, 8),
+                            ));
                         echo $this->Form->input('Empleado.' . $i . '.localidade_id',array(
                             'label'=>'Localidad',
                             'type'=>'select',
@@ -259,16 +263,17 @@ if(!$mostrarTabla){
                             )
                         );
                         echo $this->Form->input('Empleado.' . $i . '.domicilio',array('label'=>'Domicilio','type'=>'text','style'=>'width:250px'));
+                        echo $this->Form->input('Empleado.' . $i . '.hijos',array('label'=>'Hijos','value'=>0));
+                        echo "</br>";
                         echo $this->Form->input('Empleado.' . $i . '.titulosecundario',array('label'=>'Titulo Secundario'));
                         echo $this->Form->input('Empleado.' . $i . '.titulouniversitario',array('label'=>'Titulo Universitario'));
                         echo $this->Form->input('Empleado.' . $i . '.conyugue',array('label'=>'Conyugue','value'=>0));
-                        echo $this->Form->input('Empleado.' . $i . '.hijos',array('label'=>'Hijos','value'=>0));
+                        
                         ?>
                     </fieldset>
                     <fieldset style="/*border: 1px solid #1e88e5;*/">
                         <legend style="color:#1e88e5;font-weight:normal;">Laborales</legend>
                         <?php
-                        echo $this->Form->input('Empleado.' . $i . '.jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));
                         echo $this->Form->input('Empleado.' . $i . '.fechaingreso', array(
                                 'class'=>'datepicker',
                                 'type'=>'text',
@@ -301,7 +306,7 @@ if(!$mostrarTabla){
                             )
                         );
 
-                        echo $this->Form->input('Empleado.' . $i . '.domicilio_id',array('label'=>'Domicilio'));
+                        echo $this->Form->input('Empleado.' . $i . '.domicilio_id',array('label'=>'Domicilio de explotacion'));
                         echo $this->Form->input('Empleado.' . $i . '.impuesto_id',array(
                             'label'=>'Banco',
                             'title'=>'Elija el banco donde se va a pagarle al empleado',
@@ -319,7 +324,7 @@ if(!$mostrarTabla){
                             'orden'=>$i,
                             'class'=>'cargo'
                             ));
-                        echo $this->Form->input('Empleado.' . $i . '.afiliadosindicato',array('label'=>'Afiliado al sindicato'));
+                        echo $this->Form->input('Empleado.' . $i . '.jornada',array('label'=>'Jornada','type'=>'select','options'=>array('0.5'=>"Media Jornada",'1'=>"Jornada Completa")));                        
                         echo $this->Form->label("Liquidaciones:");
                         echo $this->Form->input('Empleado.' . $i . '.liquidaprimeraquincena',array(
                             'label'=>'Primera Quincena',
@@ -333,13 +338,15 @@ if(!$mostrarTabla){
                             'label'=>'Mensual',
                              'checked'=>($empleado['modliq']=='MES')?'checked':FALSE,
                             ));
-                        echo $this->Form->input('Empleado.' . $i . '.liquidasac',array('label'=>'SAC'));                       
+                        echo $this->Form->input('Empleado.' . $i . '.liquidasac',array('label'=>'SAC(Solo si se liquida en recibo de sueldo separado)'));                       
+                        echo "</br>";
+                        echo $this->Form->input('Empleado.' . $i . '.afiliadosindicato',array('label'=>'Afiliado al sindicato'));
+                        echo $this->Form->input('Empleado.' . $i . '.fallodecaja',array('label'=>'Paga Fallo de Caja'));
                         ?>
                     </fieldset>                   
                     <fieldset style="/*border: 1px solid #1e88e5;*/">
                         <legend style="color:#1e88e5;font-weight:normal;">Datos Impositivos</legend>
                         <?php
-                        echo $this->Form->input('Empleado.' . $i . '.exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial','value'=>0));
                         echo $this->Form->input('Empleado.' . $i . '.codigoafip',array(
                                 'label'=>'Codigo Afip',
                                 'options'=>array(
@@ -352,6 +359,15 @@ if(!$mostrarTabla){
                             )
                         );
                         echo $this->Form->input('Empleado.' . $i . '.adherente',array('label'=>'Adherentes','value'=>0));
+                        echo "</br>";
+                        echo $this->Form->input('Empleado.' . $i . '.exentocooperadoraasistencial',array('label'=>'Exento Coop. Asistencial','value'=>0));
+                        echo $this->Form->input('Empleado.' . $i . '.obrasocialsindical',array(
+                            'label'=>'Obra social Sindical',
+                            'value'=>1,
+                            'checked'=>'checked',
+                            'title'=>'Indicar si el empleado tiene una obra social que no sea sindical'
+                            ));
+                        echo "</br>";
                         echo $this->Form->input('Empleado.' . $i . '.obrassociale_id',array(
                                     'label'=>'Obra Social',
                                     'class'=>'chosen-select autoselect',                            
@@ -359,12 +375,7 @@ if(!$mostrarTabla){
                            
                                     )
                                 );
-                        echo $this->Form->input('Empleado.' . $i . '.obrasocialsindical',array(
-                            'label'=>'Obra social Sindical',
-                            'value'=>1,
-                            'checked'=>'checked',
-                            'title'=>'Indicar si el empleado tiene una obra social que no sea sindical'
-                            ));
+                        
                         echo $this->Form->input('Empleado.' . $i . '.codigoactividad',array(
                             'label'=>'Codigo Actividad',
                             'options'=>$codigoactividad,
