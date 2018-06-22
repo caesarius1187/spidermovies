@@ -1597,6 +1597,8 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                             2780=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000008'],$periodoActual,$keysCuentas,'noDedGeneral',1),
                             2782=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000010'],$periodoActual,$keysCuentas,'noDedGeneral',1),
                             2783=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000011'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2784=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000012'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2785=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000013'],$periodoActual,$keysCuentas,'noDedGeneral',1),
                             2789=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000017'],$periodoActual,$keysCuentas,'noDedGeneral',1),
                         ];
                         foreach ($asientoestandares as $asientoestandar) {
@@ -3032,7 +3034,7 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             $totalBP['gravado'] = 0;
             $totalBP['exento'] = 0;
             function showRowDetBP($nombre,$rowToShow,&$totalBP){
-                if($rowToShow['bienpersonal']==0&&$rowToShow['exento']==0)
+                if(($rowToShow['bienpersonal']==0&&$rowToShow['exento']==0)||($rowToShow['bienpersonal']<0||$rowToShow['exento']<0))
                     return;
                 $totalBP['gravado']+=$rowToShow['bienpersonal'];
                 $totalBP['exento']+=$rowToShow['exento'];
@@ -4301,7 +4303,7 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                             +(isset($totalDiferencia['Compras y Gastos No Imp. al costo'])?$totalDiferencia['Compras y Gastos No Imp. al costo']:0);
 
                             if(isset($totalDiferencia['Que Imp. Erog.'])){
-                                $importenetoquemuevefondos-=$totalDiferencia['Que Imp. Erog.'];
+                                $importenetoquemuevefondos+=$totalDiferencia['Que Imp. Erog.'];
                             }else{
                                 };
                             if(isset($totalDiferencia['Instrumentos Fcieros. deriv.'])){
@@ -4354,7 +4356,7 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                 ?>
                 <th class="" colspan="2">Total</th>
                 <?php
-                    $total2 =$importenetoquemuevefondos+$importenetoquenomuevefondos;                          
+                    $total2 = $importenetoquemuevefondos+$importenetoquenomuevefondos;                          
                     //falta restar Costo de ventas
                     echo '<th  class="numericTD tdborder" style="width:90px">'. number_format($total2, 2, ",", ".").'</td>';
                 ?>

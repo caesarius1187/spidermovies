@@ -3,18 +3,145 @@ echo $this->Html->css('bootstrapmodal');
 echo $this->Html->script('jquery-ui',array('inline'=>false));
 echo $this->Html->script('estudios/view',array('inline'=>false));
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
+echo $this->Html->script('Chart',array('inline'=>false));
+
 ?>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		$( "input.datepicker" ).datepicker({
-			yearRange: "-100:+50",
-			changeMonth: true,
-			changeYear: true,
-			constrainInput: false,
-			dateFormat: 'dd-mm-yy',
-		});
-	});
+    $(document).ready(function() {
+        $( "input.datepicker" ).datepicker({
+                yearRange: "-100:+50",
+                changeMonth: true,
+                changeYear: true,
+                constrainInput: false,
+                dateFormat: 'dd-mm-yy',
+        });
+        var ventasDiarias = JSON.parse($("#ventasDiarias").val());
+        var labelsv = [];
+        var valuesv = [];
+        $.each(ventasDiarias, function(index, value) {
+                labelsv.push(index);
+                valuesv.push(value);
+            });
+        var ctxbar = $("#myChartVentas");
+        /**/
+        var comprasDiarias = JSON.parse($("#comprasDiarias").val());
+        var labelsc = [];
+        var valuesc = [];
+        $.each(comprasDiarias, function(index, value) {
+                labelsc.push(index);
+                valuesc.push(value);
+            });
+        /**/
+        var myVentasChartbar = new Chart(ctxbar, {
+            type: 'bar',
+            data: {
+                labels: labelsv,
+                datasets: [{
+                    label: 'Ventas',
+                    data: valuesv,
+                    borderWidth: 1
+                },
+                {
+                    label: 'Compras',
+                    data: valuesc,
+                    borderWidth: 1
+                }],
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Ventas/dia'
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });    
+       
+        var ctxbar = $("#myChartCompras");
+        var myVentasChartbar = new Chart(ctxbar, {
+            type: 'bar',
+            data: {
+                labels: labelsc,
+                datasets: [{
+                    label: labelsc,
+                    data: valuesc,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Compras/dia'
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });    
+    });
+       
 
 </script>
 <div class="estudios index" style="margin-bottom:5px">
@@ -85,6 +212,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             $topEmpleados=0;
             $convenios=[];
             $nombreClientes = [];
+            $nombreEmpleados = "";
             foreach ($estudio['Grupocliente'] as $grupocliente) {
                 foreach ($grupocliente['Cliente'] as $cliente) {
                     $nombreClientes[$cliente['id']]=$cliente['nombre'];
@@ -232,6 +360,48 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                 &nbsp;
         </dd>
     </dl>
+</div>
+<div class="index">
+    <div class="index" style="width:42%;height:700px;float:left">
+        <canvas id="myChartVentas" width="250" height="250"></canvas>
+    </div>
+<?php
+    $ventasDiarias = [];
+    $dia = 01;
+    $ultimoDia = date('t', strtotime('01-'.$periodomes.'-'.$periodoanio));
+    while ($dia<=$ultimoDia) {
+        foreach ($misVentasDiarias as $kvd => $venta) {
+            $diaVenta = date('d', strtotime($venta['Venta']['created']));
+            if($diaVenta==$dia){
+               $ventasDiarias[$diaVenta*1] = $venta[0]['diario'];
+            }
+        }
+        if(!isset( $ventasDiarias[$dia*1]))
+            $ventasDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('ventasDiarias',['type'=>'hidden','value'=> json_encode($ventasDiarias)]);
+?>
+    <div class="index" style="width:42%;height:700px;float:right">
+        <canvas id="myChartCompras" width="250" height="250"></canvas>
+    </div>
+<?php
+    $comprasDiarias = [];
+    $dia = 01;
+    $ultimoDia = date('t', strtotime('01-'.$periodomes.'-'.$periodoanio));
+    while ($dia<=$ultimoDia) {
+        foreach ($misComprasDiarias as $kvd => $compra) {
+            $diaCompra= date('d', strtotime($compra['Compra']['created']));
+            if($diaCompra==$dia){
+               $comprasDiarias[$diaCompra*1] = $compra[0]['diario'];              
+            }
+        }
+        if(!isset( $comprasDiarias[$dia*1]))
+            $comprasDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('comprasDiarias',['type'=>'hidden','value'=> json_encode($comprasDiarias)]);
+?>
 </div>
 <!-- Popin Modal para edicion de ventas a utilizar por datatables-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">

@@ -23,31 +23,24 @@ class CuentasController extends AppController {
         set_time_limit (360);
         //$this->Components->unload('DebugKit.Toolbar');
         $options = array(
-			'contain'=>[],
-			'fields'=> [
-                            'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.level,
-                            Cuentascliente.id,Cuentascliente.nombre'
-                        ],
-			'joins'=>array(
-                            array(
-                                'table'=>'cuentasclientes', 
-                                'alias' => 'Cuentascliente',
-                                'type'=>'left',
-                                'conditions'=> [
-                                    'Cuentascliente.cuenta_id = Cuenta.id',
-                                    'Cuentascliente.cliente_id'=>$ClienteId
-                                ]
-                            ),
-                        ),
-//            'limit'=>1000,
+            'contain'=>[
+                'Cuentascliente'=>[
+                    'conditions'=>['Cuentascliente.cliente_id'=>$ClienteId],
+                    'fields'=>['Cuentascliente.id,Cuentascliente.nombre']
+                ]
+            ],
+            'fields'=> [
+                'Cuenta.id,Cuenta.numero,Cuenta.nombre,Cuenta.tipo,Cuenta.level'
+            ],          
+            //'limit'=>1000,
 //            'page'=>1,
             'order'=>['numero'],
         );
-		$cuentas = $this->Cuenta->find('all', $options);
+        $cuentas = $this->Cuenta->find('all', $options);
 
         $this->set('cuentas',$cuentas);
-		$this->set('clienteId',$ClienteId);
-	}
+        $this->set('clienteId',$ClienteId);
+    }
     public function loadCuentas($ClienteId,$pagina)
     {
         $this->Components->unload('DebugKit.Toolbar');

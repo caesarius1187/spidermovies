@@ -864,3 +864,7 @@ function realizarEventoCliente(periodo,clienteid,estadotarea){
     return false;
 }
 
+function liquidacionMasiva(clienteid,periodo){
+    var win = window.open(serverLayoutURL+'/empleados/liquidacionmasiva/'+clienteid+'/'+periodo , '_blank');
+}
+

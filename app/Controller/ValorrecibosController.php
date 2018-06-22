@@ -20,90 +20,44 @@ class ValorrecibosController extends AppController {
  *
  * @return void
  */
-	public function index() {
-		$this->Valorrecibo->recursive = 0;
-		$this->set('valorrecibos', $this->Paginator->paginate());
-	}
-
-/**
- * view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function view($id = null) {
-		if (!$this->Valorrecibo->exists($id)) {
-			throw new NotFoundException(__('Invalid valorrecibo'));
-		}
-		$options = array('conditions' => array('Valorrecibo.' . $this->Valorrecibo->primaryKey => $id));
-		$this->set('valorrecibo', $this->Valorrecibo->find('first', $options));
-	}
-
-/**
- * add method
- *
- * @return void
- */
-	public function add() {
-		if ($this->request->is('post')) {
-			$this->Valorrecibo->create();
-			if ($this->Valorrecibo->save($this->request->data)) {
-				$this->Session->setFlash(__('The valorrecibo has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The valorrecibo could not be saved. Please, try again.'));
-			}
-		}
-		$cctxconceptos = $this->Valorrecibo->Cctxconcepto->find('list');
-		$empleados = $this->Valorrecibo->Empleado->find('list');
-		$this->set(compact('cctxconceptos', 'empleados'));
-	}
-
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function edit($id = null) {
-		if (!$this->Valorrecibo->exists($id)) {
-			throw new NotFoundException(__('Invalid valorrecibo'));
-		}
-		if ($this->request->is(array('post', 'put'))) {
-			if ($this->Valorrecibo->save($this->request->data)) {
-				$this->Session->setFlash(__('The valorrecibo has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The valorrecibo could not be saved. Please, try again.'));
-			}
-		} else {
-			$options = array('conditions' => array('Valorrecibo.' . $this->Valorrecibo->primaryKey => $id));
-			$this->request->data = $this->Valorrecibo->find('first', $options);
-		}
-		$cctxconceptos = $this->Valorrecibo->Cctxconcepto->find('list');
-		$empleados = $this->Valorrecibo->Empleado->find('list');
-		$this->set(compact('cctxconceptos', 'empleados'));
-	}
-
-/**
- * delete method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function delete($id = null) {
-		$this->Valorrecibo->id = $id;
-		if (!$this->Valorrecibo->exists()) {
-			throw new NotFoundException(__('Invalid valorrecibo'));
-		}
-		$this->request->onlyAllow('post', 'delete');
-		if ($this->Valorrecibo->delete()) {
-			$this->Session->setFlash(__('The valorrecibo has been deleted.'));
-		} else {
-			$this->Session->setFlash(__('The valorrecibo could not be deleted. Please, try again.'));
-		}
-		return $this->redirect(array('action' => 'index'));
-	}}
+    public function guardardatosmasivos() {
+        if (isset($this->request->data['Valorrecibo'])) {
+            $this->loadModel('Valorrecibo');
+            $this->Valorrecibo->create();
+            $respuesta = [];
+            $respuesta['respuesta']="";
+            $respuesta['error']="";
+            $respuesta['nuevos']=[];
+            $respuesta['ya existian']=[];
+            foreach ($this->request->data['Valorrecibo'] as $kvr => $valorRecibo) {
+                $conditions = array(
+                    'Valorrecibo.periodo' => $valorRecibo['periodo'],
+                    'Valorrecibo.tipoliquidacion' => $valorRecibo['tipoliquidacion'],
+                    'Valorrecibo.cctxconcepto_id' => $valorRecibo['cctxconcepto_id'],
+                    'Valorrecibo.empleado_id' => $valorRecibo['empleado_id'],
+                );
+                if ($this->Valorrecibo->hasAny($conditions)){
+                    $optionVR = [
+                        'conditions'=>$conditions,
+                        'contain'=>[]
+                    ];
+                    $myVR = $this->Valorrecibo->find('first',$optionVR);
+                    $valorRecibo['id']=$myVR['Valorrecibo']['id'];
+                    $respuesta['ya existian'][]=$valorRecibo;
+                    $respuesta['ya existian'][]=$myVR;
+                }else{
+                    $respuesta['nuevos'][]=$valorRecibo;
+                }
+                if ($this->Valorrecibo->save($valorRecibo)) {
+                    $respuesta['respuesta'].=" Si guarde";
+                } else {
+                    $respuesta['error'].=" no se pudo guardar un Valor del sueldo";
+                }
+            }
+            $this->set('data',$respuesta);
+            $this->autoRender=false;
+            $this->layout = 'ajax';
+            $this->render('serializejson');
+        }
+    }
+}

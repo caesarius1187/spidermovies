@@ -42,6 +42,31 @@
 			?>
 		</div>
 		<div style="width:30%; float:left">
+                    <?php
+                    echo $this->Form->input('dni', array('div' => false,'style' => 'width:80%'));
+                    ?>
+		</div>
+		<div style="width:30%; float:left">
+                    <?php
+                    echo $this->Form->input('telefono', array('div' => false,'style' => 'width:80%'));
+                    ?>
+		</div>
+		<div style="width:30%; float:left">
+                    <?php
+                    echo $this->Form->input('cel', array('div' => false,'style' => 'width:80%'));
+                    ?>
+		</div>
+		<div style="width:30%; float:left">
+                    <?php
+                    echo $this->Form->input('matricula', array('div' => false,'style' => 'width:80%'));
+                    ?>
+		</div>
+		<div style="width:30%; float:left">
+                    <?php
+                    echo $this->Form->input('folio', array('div' => false,'style' => 'width:80%'));
+                    ?>
+		</div>
+		<div style="width:30%; float:left">
 			<?php
 				echo $this->Form->input('ingresosbrutos', array('div' => false, 
 																'style' => 'width:80%')

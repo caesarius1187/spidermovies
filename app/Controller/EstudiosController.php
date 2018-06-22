@@ -130,6 +130,7 @@ class EstudiosController extends AppController {
                 }
                 
                 $optionsVentas = array(
+                    'contain'=>[],
                     'fields'=>[
                         'Venta.cliente_id , count(*) as total'
                     ],
@@ -142,6 +143,20 @@ class EstudiosController extends AppController {
                         )
                     );
                 $misVentas = $this->Venta->find('all', $optionsVentas);
+                $optionsVentasDiarias = array(
+                    'contain'=>[],
+                    'fields'=>[
+                        'Venta.created,count(*) as diario'
+                    ],
+                    'group'=>[
+                        'DAY(Venta.created)'
+                    ],
+                    'conditions' => array(
+                        'Venta.cliente_id' => $idClientesDelEstudio,
+                        'Venta.periodo' =>  $pemes.'-'.$peanio
+                        )
+                    );
+                $misVentasDiarias = $this->Venta->find('all', $optionsVentasDiarias);
                 $optionsCompras = array(
                     'fields'=>[
                         'Compra.cliente_id , count(*) as total'
@@ -155,8 +170,24 @@ class EstudiosController extends AppController {
                         )
                     );
                 $misCompras = $this->Compra->find('all', $optionsCompras);
+                $optionsComprasDiarias = array(
+                    'contain'=>[],
+                    'fields'=>[
+                        'Compra.created,count(*) as diario'
+                    ],
+                    'group'=>[
+                        'DAY(Compra.created)'
+                    ],
+                    'conditions' => array(
+                        'Compra.cliente_id' => $idClientesDelEstudio,
+                        'Compra.periodo' =>  $pemes.'-'.$peanio
+                        )
+                    );
+                $misComprasDiarias = $this->Compra->find('all', $optionsComprasDiarias);
                 $this->set('ventas', $misVentas);
+                $this->set('misVentasDiarias', $misVentasDiarias);
                 $this->set('compras', $misCompras);
+                $this->set('misComprasDiarias', $misComprasDiarias);
                 
                 
 
@@ -236,6 +267,11 @@ class EstudiosController extends AppController {
 			$PrimerUsuario = $this->request->data['Estudio']['usuario'];
 			$PassPrimerUsuario = $this->request->data['Estudio']['password'];
 			$EstudioEmail = $this->request->data['Estudio']['email'];
+			$dniUsuario = $this->request->data['Estudio']['dni'];
+			$telefonoUsuario = $this->request->data['Estudio']['telefono'];
+			$celUsuario = $this->request->data['Estudio']['cel'];
+			$matriculaUsuario = $this->request->data['Estudio']['matricula'];
+			$folioUsuario = $this->request->data['Estudio']['folio'];
 
 			if ($this->Estudio->save($this->request->data)) 
 			{
@@ -244,40 +280,51 @@ class EstudiosController extends AppController {
 				$this->User->create();
 				$this->User->set('estudio_id', $EstudioId);
 				$this->User->set('mail', $EstudioEmail);
+				$this->User->set('dni', $dniUsuario);
+				$this->User->set('telefono', $telefonoUsuario);
+				$this->User->set('cel', $celUsuario);
+				$this->User->set('matricula', $matriculaUsuario);
+				$this->User->set('folio', $folioUsuario);
 				$this->User->set('nombre', $EtudioNombre);
 				$this->User->set('username',$PrimerUsuario);
 				//$RandomPass = 'Conta2017_'.rand(1,4);
 				$this->User->set('password',$PassPrimerUsuario); 
 				$this->User->set('tipo','administrador'); 
-				$this->User->set('etado','habilitado'); 
-				$this->User->save();
-				$UserInertedId = $this->User->getLastInsertID();
+				$this->User->set('estado','habilitado'); 
+                                if($this->User->save()){
+                                    $UserInertedId = $this->User->getLastInsertID();
+                                    //cargar la tareas.
+                                    $this->loadModel('Tareascliente');
+                                    $tareasclientesOpciones = array(
+                                        'conditions' => array('Tareascliente.estado' => 'habilitado'), 
+                                        'fields' => array('Tareascliente.id','Tareascliente.orden','Tareascliente.descripcion', 'Tareascliente.tipo')
+                                        //'group' => 'Deposito.id'
+                                        );
+                                    $tareascliente = $this->Tareascliente->find('all',$tareasclientesOpciones);
+                                    $this->loadModel('Tareasxclientesxestudio');
 
-				//cargar la tareas.
-				$this->loadModel('Tareascliente');
-				$tareasclientesOpciones = array(
-				    'conditions' => array('Tareascliente.estado' => 'habilitado'), 
-				    'fields' => array('Tareascliente.id','Tareascliente.orden','Tareascliente.descripcion', 'Tareascliente.tipo')
-				    //'group' => 'Deposito.id'
-				    );
-				$tareascliente = $this->Tareascliente->find('all',$tareasclientesOpciones);
-				$this->loadModel('Tareasxclientesxestudio');
+                                    foreach ($tareascliente as $tareacliente) {
+                                            $this->Tareasxclientesxestudio->create();
+                                            $this->Tareasxclientesxestudio->set('orden',$tareacliente['Tareascliente']['orden']); 
+                                            $this->Tareasxclientesxestudio->set('descripcion',$tareacliente['Tareascliente']['descripcion']); 
+                                            $this->Tareasxclientesxestudio->set('tareascliente_id',$tareacliente['Tareascliente']['id']); 
+                                            $this->Tareasxclientesxestudio->set('estado','habilitado'); 
+                                            $this->Tareasxclientesxestudio->set('tipo',$tareacliente['Tareascliente']['tipo']); 
+                                            $this->Tareasxclientesxestudio->set('estudio_id',$EstudioId);
+                                            $this->Tareasxclientesxestudio->set('user_id', $UserInertedId);
+                                            if($this->Tareasxclientesxestudio->save()){
+                                                
+                                            }else{
+                                                $this->Session->setFlash(__('No se pudo registrar la tarea, intente más tarde.'));
+                                            }
+                                    }
+                                    $this->Session->setFlash(__('El Etudio se ha registrado con exito.'));
+                                    return $this->redirect(array('controller' => 'superadmins',
+                                                                                             'action' => 'index'));
+                                }else{
+                                    $this->Session->setFlash(__('No se pudo registrar el Usuario, intente más tarde.'));
+                                }
 				
-				foreach ($tareascliente as $tareacliente) {
-					$this->Tareasxclientesxestudio->create();
-					$this->Tareasxclientesxestudio->set('orden',$tareacliente['Tareascliente']['orden']); 
-					$this->Tareasxclientesxestudio->set('descripcion',$tareacliente['Tareascliente']['descripcion']); 
-					$this->Tareasxclientesxestudio->set('tareascliente_id',$tareacliente['Tareascliente']['id']); 
-					$this->Tareasxclientesxestudio->set('estado','habilitado'); 
-					$this->Tareasxclientesxestudio->set('tipo',$tareacliente['Tareascliente']['tipo']); 
-					$this->Tareasxclientesxestudio->set('estudio_id',$EstudioId);
-					$this->Tareasxclientesxestudio->set('user_id', $UserInertedId);
-					$this->Tareasxclientesxestudio->save();
-				}
-
-				$this->Session->setFlash(__('El Etudio se ha registrado con exito.'));
-				return $this->redirect(array('controller' => 'superadmins',
-											 'action' => 'index'));
 			} 
 			else 
 			{

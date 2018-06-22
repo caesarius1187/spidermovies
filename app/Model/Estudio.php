@@ -86,17 +86,5 @@ class Estudio extends AppModel {
                 )
 	);
 
-	public $validate = array(
-	    'nombre' => array(
-            'allowEmpty' => false,
-            'required' => true,
-            'message' => "Nombre del Estuidio es requerido."	        
-	    ),
-	    'email' => array(	        
-	        'rule' => 'email',
-            'allowEmpty' => false,
-            'required' => true,
-            'message' => "E-mail es requerido."	        
-	    )	    
-	);
+	
 }
