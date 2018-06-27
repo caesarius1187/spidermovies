@@ -192,9 +192,6 @@ class CbusController extends AppController {
         if ($this->request->is('post')) {
             $respuesta['respuesta']="";
             $this->Cbu->create();
-
-
-
             if ($this->Cbu->save($this->request->data))
             {
                 $respuesta['respuesta']="El CBU se ha modificado correctamente.";
@@ -209,7 +206,7 @@ class CbusController extends AppController {
             $this->layout = 'ajax';
             $this->render('serializejson');
             return;
-        }	else {
+        }else {
             $optionsImpcli = [
                 'contain'=>[
                     'Impuesto'
@@ -219,7 +216,6 @@ class CbusController extends AppController {
                 ]
             ];
             $impcli = $this->Impcli->find('first',$optionsImpcli);
-
             $this->request->data = $this->Cbu->find('first',[
                 'conditions'=>[
                     'Cbu.id'=>$cbuid
@@ -236,6 +232,12 @@ class CbusController extends AppController {
                 $this->Cuenta->cuentasDeBancoNoRelacionadosAActividadActivables
             );
             $optionsCuentascliente=[
+                'fields'=>[
+                    'Cuentascliente.id','Cuentascliente.nombre', 'Cuenta.numero'
+                    ],
+                'contain'=>[
+                    'Cuenta'
+                ],
                 'conditions'=>[
                     'Cuentascliente.cliente_id'=>$impcli['Impcli']['cliente_id'],
                     'Cuentascliente.cuenta_id'=>

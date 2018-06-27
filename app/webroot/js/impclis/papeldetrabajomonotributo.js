@@ -234,8 +234,15 @@ function loadFormImpuesto(impcliid,cliid){
 				$('#ImpcliEditForm'+impcliid+' input[type="submit"]').hide();
 				var alertMsg  = "";
 				var mesParaProximaRecategorizacion = $("#mesParaProximaRecategorizacion").val();
+				var version = $("#versio").val();
 				var recategoriza = false;
-				if(mesParaProximaRecategorizacion==4){
+                                var mesesRecategorizacion = 4;
+                                if(version==1){
+                                    mesesRecategorizacion = 4;
+                                }else{
+                                    mesesRecategorizacion = 1;
+                                }
+				if(mesParaProximaRecategorizacion==mesesRecategorizacion){
 					//Aca se recategoriza sino no hay q cambiar nada en el impcli
 					recategoriza = true;
 					alertMsg = 'Se cambiara de la categoria '+$('#ImpcliCategoriamonotributo').val()+' a la categoria '+$('#topCategoria').val();

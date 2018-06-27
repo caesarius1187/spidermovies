@@ -964,7 +964,7 @@ class EmpleadosController extends AppController {
         }
         $optionsVencimientoImpuesto = array(
                 'conditions'=>array(
-        $peanioActual.'*1 = Vencimiento.ano*1',
+                        $peanioActual.'*1 = Vencimiento.ano*1',
                         'Vencimiento.desde <= SUBSTRING("'.$cliusuarioafip.'",-1)',
                         'Vencimiento.hasta >= SUBSTRING("'.$cliusuarioafip.'",-1)',
                         'Vencimiento.impuesto_id'=>$id,
