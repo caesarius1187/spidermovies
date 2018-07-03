@@ -22,10 +22,11 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 		<core-icon icon="add" align="center" style="margin: 8px 14px;position: absolute;">
 			<?php echo $this->Form->button(
 				$this->Html->image(
-					'edit_view.png',
+					'edit_view_white_1.png',
 					array(
 						'alt' => 'edit',
 						'class'=>'img_edit',
+                        'style' => 'width: 27px; height: 27px; margin: -5px -10px;'
 					)
 				),
 				array('type' => 'button',
@@ -244,30 +245,42 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 				<h4 class="modal-title">Editar Datos Estudio</h4>
 			</div>
 			<div class="modal-body">
-				<div class="estudios form">
-					<?php echo $this->Form->create('Estudio',['class'=>'formTareaCarga']); ?>
-						<?php
-						echo $this->Form->input('id',['type'=>'hidden']);
-						echo $this->Form->input('nombre',['style'=>'width:250px']);
-						echo $this->Form->input('propietario',['style'=>'width:250px']);
-						echo $this->Form->input('direccion',['style'=>'width:250px']);
-						echo $this->Form->input('cuit',['style'=>'width:100px']);
-						echo $this->Form->input('ingresosbrutos',['style'=>'width:100px']);
-						echo $this->Form->input('inicioactividades', array(
-								'class'=>'datepicker',
-								'type'=>'text',
-								'label'=>'inicio de Actividades',
-								'required'=>true,
-								'default'=>date('d-m-Y',strtotime($this->request->data['Estudio']['inicioactividades'])),
-								'readonly'=>'readonly')
-						);
-						?>
-					<?php echo $this->Form->end(__('Modificar')); ?>
-				</div>
-			</div>
+                    <?php echo $this->Form->create('Estudio',['class'=>'formTareaCarga']); ?>
+                    <?php echo $this->Form->input('id',['type'=>'hidden']); ?>
+                    <table cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td ><?php echo $this->Form->input('nombre',['style'=>'width:250px']); ?></td>
+                                <td colspan="2"><?php echo $this->Form->input('propietario',['style'=>'width:250px']);?></td>   
+                            </tr>
+                            <tr>
+                                <td><?php echo $this->Form->input('direccion',['style'=>'width:350px']);?></td>
+                                <td  colspan="2"><?php echo $this->Form->input('cuit',['style'=>'width:100px']);?></td>   
+                            </tr>
+                            <tr>
+                                <td><?php echo $this->Form->input('ingresosbrutos',['style'=>'width:100px','label'=>'Ingresos brutos']);?></td>
+                                <td colspan="2"><?php   echo $this->Form->input('inicioactividades', array(
+                                        'class'=>'datepicker',
+                                        'type'=>'text',
+                                        'label'=>'Inicio de Actividades',
+                                        'required'=>true,
+                                        'default'=>date('d-m-Y',strtotime($this->request->data['Estudio']['inicioactividades'])),
+                                        'readonly'=>'readonly')
+                                    );?>
+                                </td>   
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td><a href="#close"  onclick="" class="btn_cancelar" style="margin-top:14px">Cancelar</a></td>
+                                <td><?php echo $this->Form->end(__('ACEPTAR')); ?></td>
+
+                            </tr>
+                    </table>
+					
+            
+                   
+					
+            
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-				<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
 			</div>
 		</div>
 		<!-- /.modal-content -->
