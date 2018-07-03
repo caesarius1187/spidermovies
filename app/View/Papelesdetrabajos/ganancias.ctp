@@ -686,7 +686,6 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             initializeConcepto($arrayPrefijos,'513000002','Que No Imp. Erog.');
             initializeConcepto($arrayPrefijos,'513000003','Que No Imp. Erog.');
             initializeConcepto($arrayPrefijos,'513000004','Que No Imp. Erog.');
-            initializeConcepto($arrayPrefijos,'513000005','Que Imp. Erog.');
             initializeConcepto($arrayPrefijos,'51300100','Amortiz.');
             initializeConcepto($arrayPrefijos,'51300200','Amortiz.');
             initializeConcepto($arrayPrefijos,'51300300','Amortiz.');
@@ -1584,6 +1583,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                             2782=>$resultadoNetoTotal5,
                             2783=>"20.000,",
                             2789=>$montoActualGanancias,
+                            3799=>0,
                         ];
                         //aca vamos a guardar los valores de la contabilidad para despues rellenarlos cuando mostremos el asiento
                         $valorContabilidad=[
@@ -1597,7 +1597,10 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                             2780=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000008'],$periodoActual,$keysCuentas,'noDedGeneral',1),
                             2782=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000010'],$periodoActual,$keysCuentas,'noDedGeneral',1),
                             2783=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000011'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2784=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000012'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            2785=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000013'],$periodoActual,$keysCuentas,'noDedGeneral',1),
                             2789=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['514000017'],$periodoActual,$keysCuentas,'noDedGeneral',1),
+                            3799=>sumarCuentasEnPeriodo($arrayCuentasxPeriodos,['513000005'],$periodoActual,$keysCuentas,'noDedGeneral',1),
                         ];
                         foreach ($asientoestandares as $asientoestandar) {
                             $cuentaclienteid = $asientoestandar['Cuenta']['Cuentascliente'][0]['id'];
@@ -1783,7 +1786,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $DeduccionSepelio = mostrarDeduccionGeneral($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Gastos de sepelio',$tope,$fechaInicioConsulta,$fechaFinConsulta,$totalDeudasGenerales);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'514000003','');
-            $tope=996.31;
+            $tope=0;
             $DeduccionObraSocial = mostrarDeduccionGeneral($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Aporte a Obras Sociales',$tope,$fechaInicioConsulta,$fechaFinConsulta,$totalDeudasGenerales);
             $arrayPrefijos=[];
             initializeConcepto($arrayPrefijos,'514000004','');
@@ -1813,6 +1816,10 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             initializeConcepto($arrayPrefijos,'514000013','');
             $tope=0 ;
             $DeduccionOtras = mostrarDeduccionGeneral($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Otras',$tope,$fechaInicioConsulta,$fechaFinConsulta,$totalDeudasGenerales);
+            $arrayPrefijos=[];
+            initializeConcepto($arrayPrefijos,'513000005','');
+            $tope=0 ;
+            $DeduccionOtras = mostrarDeduccionGeneral($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,'Gastos 4ta',$tope,$fechaInicioConsulta,$fechaFinConsulta,$totalDeudasGenerales);
             ?>
             <tr>
                 <td>Subtotal Deducciones Generales, Excepto: Donaciones, cuota m&eacute;dico-asistencial y honorarios m&eacute;d.</td>
@@ -3032,7 +3039,7 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             $totalBP['gravado'] = 0;
             $totalBP['exento'] = 0;
             function showRowDetBP($nombre,$rowToShow,&$totalBP){
-                if($rowToShow['bienpersonal']==0&&$rowToShow['exento']==0)
+                if(($rowToShow['bienpersonal']==0&&$rowToShow['exento']==0)||($rowToShow['bienpersonal']<0||$rowToShow['exento']<0))
                     return;
                 $totalBP['gravado']+=$rowToShow['bienpersonal'];
                 $totalBP['exento']+=$rowToShow['exento'];
@@ -4301,7 +4308,7 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                             +(isset($totalDiferencia['Compras y Gastos No Imp. al costo'])?$totalDiferencia['Compras y Gastos No Imp. al costo']:0);
 
                             if(isset($totalDiferencia['Que Imp. Erog.'])){
-                                $importenetoquemuevefondos-=$totalDiferencia['Que Imp. Erog.'];
+                                $importenetoquemuevefondos+=$totalDiferencia['Que Imp. Erog.'];
                             }else{
                                 };
                             if(isset($totalDiferencia['Instrumentos Fcieros. deriv.'])){
@@ -4354,7 +4361,7 @@ function mostrarIngresos($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuentas,$nom
                 ?>
                 <th class="" colspan="2">Total</th>
                 <?php
-                    $total2 =$importenetoquemuevefondos+$importenetoquenomuevefondos;                          
+                    $total2 = $importenetoquemuevefondos+$importenetoquenomuevefondos;                          
                     //falta restar Costo de ventas
                     echo '<th  class="numericTD tdborder" style="width:90px">'. number_format($total2, 2, ",", ".").'</td>';
                 ?>
@@ -4432,7 +4439,7 @@ function mostrarDeduccionGeneral($arrayCuentasxPeriodos,$arrayPrefijos,$keysCuen
                     echo '<td  class="numericTD tdborder" style="width:90px">'. number_format($topeRestante, 2, ",", ".").'</td>';
                     
                     if($tope==0){
-                        $computable=$topeRestante;
+                        $computable=$subtotal;
                     }else{
                         if($topeRestante>$subtotal){
                             $topeRestante-=$subtotal;                           

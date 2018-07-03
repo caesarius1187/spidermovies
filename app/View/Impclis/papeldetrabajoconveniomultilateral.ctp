@@ -467,13 +467,15 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                             }
                         }
                     }
-                 
-                    if($evenimp['Eventosimpuesto']['partido_id']== $impcliprovincia['Impcliprovincia']['partido_id']){
-                        $minimoACargado = $minimoAMostrar*12;                                                        
-                        if(($pagadoDuranteElAño*1)>($minimoAMostrar*12)){
-                            $minimoAMostrar=0;
+                    if(isset($evenimp)){
+                        if($evenimp['Eventosimpuesto']['partido_id']== $impcliprovincia['Impcliprovincia']['partido_id']){
+                            $minimoACargado = $minimoAMostrar*12;                                                        
+                            if(($pagadoDuranteElAño*1)>($minimoAMostrar*12)){
+                                $minimoAMostrar=0;
+                            }
                         }
-                    }
+                    }   
+                    
                         ?>
                     <td class="baseImponibleProrrateada" ><!-- Alicuota Bases Imponibles Prorrateadas -->
                         <?php

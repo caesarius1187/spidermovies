@@ -22,7 +22,10 @@ $(document).ready(function() {
             $(this).val(defaultlocalidad);
         }       
     });
-    ventasACargar = jQuery.parseJSON($('#ventasACargar').val());
+    if($('#ventasACargar').val()!=""){
+        ventasACargar = jQuery.parseJSON($('#ventasACargar').val());
+    }
+    
     //callAlertPopint("Mejorando Visibilidad de campos");
     $('.chosen-select').chosen(
         {

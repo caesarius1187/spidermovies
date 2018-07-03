@@ -267,6 +267,7 @@ class EmpleadosController extends AppController {
         $this->loadModel('Conveniocolectivotrabajo');
         $this->loadModel('Impcli');
         $this->loadModel('Concepto');
+        $this->loadModel('Cctxconcepto');
         //A: Es menor que periodo Hasta
         $this->set('periodo',$periodo);
         $this->set('tipoliquidacion',$tipoliquidacion);
@@ -313,7 +314,41 @@ class EmpleadosController extends AppController {
                     ],
                 )
             );
-            $this->set(compact('empleados','convenio'));
+            $selectConceptos =
+                'Select id from Conceptos as Concepto '
+                . 'where Concepto.cargamasiva = 1 AND Concepto.seccion = "DATOS"'
+                ;
+            $optionsConceptos = [
+                  'contain'=>['Concepto'],
+                  'fields'=>['Cctxconcepto.id','Concepto.nombre'],
+                  'conditions'=>[
+                      'Cctxconcepto.concepto_id IN ('.$selectConceptos.')',
+                      'Cctxconcepto.conveniocolectivotrabajo_id'=>$conid,
+                  ],
+              ];
+            $conceptos = $this->Cctxconcepto->find('list',$optionsConceptos);
+            $listaempleados=[];
+            foreach ($empleados as $kemp => $empleado) {
+                $listaempleados[]=$empleado['Empleado']['id'];
+            }
+            $optionsCctxConceptos = [
+                'contain'=>[
+                    'Valorrecibo'=>[
+                        'conditions'=>[
+                            'Valorrecibo.empleado_id'=>$listaempleados,
+                            'Valorrecibo.tipoliquidacion'=>$tipoliquidacion,
+                            'Valorrecibo.periodo'=>$periodo
+                        ]
+                    ]
+                ],
+                'conditions'=>[
+                    'Cctxconcepto.concepto_id IN ('.$selectConceptos.')',
+                    'Cctxconcepto.conveniocolectivotrabajo_id'=>$conid,
+                ],
+            ];
+            $cctxconceptos = $this->Cctxconcepto->find('all',$optionsCctxConceptos);
+            $this->set(compact('empleados','convenio','conceptos'));
+            
         }else{
            
         }
@@ -340,71 +375,77 @@ class EmpleadosController extends AppController {
                 ),
             )
         );
-        $optionsConceptos = [
-            'contain'=>[],
-            'conditions'=>[
-                'Concepto.cargamasiva'=>1,
-                'Concepto.seccion'=>'DATOS',
-            ],
-        ];
-        $conceptos = $this->Concepto->find('list',$optionsConceptos);
-        $this->set(compact('cliente','conceptos'));
+        $this->set(compact('cliente'));
     }
-	public function exportacion($cliid=null,$periodo=null,$tipoliquidacion=null){
-            ini_set('memory_limit', '2560M');
-            $this->Components->unload('DebugKit.Toolbar');
-            $this->loadModel('Empleado');
-            $this->loadModel('Cliente');            
-            $this->set('periodo',$periodo);
-            $this->set('cliid',$cliid);
-            $options = array(
-                'contain'=>array(
-                    'Empleado'=>array(
-                        'Conveniocolectivotrabajo'=>[
-                            'Impuesto'
-                        ],
-                        'Valorrecibo'=>array(
-                            'Cctxconcepto'=>array(
-                                'Concepto',
-                                'Conveniocolectivotrabajo'=>[]
-                            ),
-                            'conditions'=>array(
-                                'Valorrecibo.periodo'=>$periodo,
-                                'Valorrecibo.tipoliquidacion'=>array(1,2,3,7)
-                            )
+    public function guardardatosmasivos() {
+        if (isset($this->request->data['Valorrecibo'])) {
+            $this->loadModel('Valorrecibo');
+            $this->Valorrecibo->create();
+            Debugger::dump($this->request->data);
+            /*if ($this->Valorrecibo->saveAll($this->request->data['Valorrecibo'])) {
+
+            } else {
+                    $this->Session->setFlash(__('Error al guardar el recibo de sueldo por favor intente de nuevo mas tarde.'));
+            }*/
+            $this->autoRender=false;
+            $this->layout = 'ajax';
+        }
+    }
+    public function exportacion($cliid=null,$periodo=null,$tipoliquidacion=null){
+        ini_set('memory_limit', '2560M');
+        $this->Components->unload('DebugKit.Toolbar');
+        $this->loadModel('Empleado');
+        $this->loadModel('Cliente');            
+        $this->set('periodo',$periodo);
+        $this->set('cliid',$cliid);
+        $options = array(
+            'contain'=>array(
+                'Empleado'=>array(
+                    'Conveniocolectivotrabajo'=>[
+                        'Impuesto'
+                    ],
+                    'Valorrecibo'=>array(
+                        'Cctxconcepto'=>array(
+                            'Concepto',
+                            'Conveniocolectivotrabajo'=>[]
                         ),
                         'conditions'=>array(
-                            'Empleado.conveniocolectivotrabajo_id <> 10',//este convenio no debe impactar en suss por que es
-                            //servicio domestico
-                            'Empleado.cliente_id' => $impcliSolicitado['Impcli']['cliente_id'],
-                            'OR'=>[
-                                'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
-                                'Empleado.fechaegreso is null' ,
-                            ],
-                            'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
-                        ),
-                        'order'=>['Empleado.cuit']
-                    )
-                ),
-                'conditions' => array('Cliente.' . $this->Cliente->primaryKey => $cliid)
-            );
+                            'Valorrecibo.periodo'=>$periodo,
+                            'Valorrecibo.tipoliquidacion'=>array(1,2,3,7)
+                        )
+                    ),
+                    'conditions'=>array(
+                        'Empleado.conveniocolectivotrabajo_id <> 10',//este convenio no debe impactar en suss por que es
+                        //servicio domestico
+                        'Empleado.cliente_id' => $impcliSolicitado['Impcli']['cliente_id'],
+                        'OR'=>[
+                            'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                            'Empleado.fechaegreso is null' ,
+                        ],
+                        'Empleado.fechaingreso <= '=>date('Y-m-d',strtotime("28-".$periodo)),
+                    ),
+                    'order'=>['Empleado.cuit']
+                )
+            ),
+            'conditions' => array('Cliente.' . $this->Cliente->primaryKey => $cliid)
+        );
 
-            $cliente = $this->Cliente->find('first', $options);
-            $this->set('cliente',$cliente);
+        $cliente = $this->Cliente->find('first', $options);
+        $this->set('cliente',$cliente);
 
-            $this->set(compact('cliid','periodo'));           
-            $this->set('codigorevista',$this->Empleado->codigorevista);
-            $this->set('codigoactividad',$this->Empleado->codigoactividad);
-            $this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
-            $this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
-            $this->set('tipoempresa',$this->Empleado->tipoempresa);
-            $this->set('codigozona',$this->Empleado->codigozona);
+        $this->set(compact('cliid','periodo'));           
+        $this->set('codigorevista',$this->Empleado->codigorevista);
+        $this->set('codigoactividad',$this->Empleado->codigoactividad);
+        $this->set('codigomodalidadcontratacion',$this->Empleado->codigomodalidadcontratacion);
+        $this->set('codigosiniestrado',$this->Empleado->codigosiniestrado);
+        $this->set('tipoempresa',$this->Empleado->tipoempresa);
+        $this->set('codigozona',$this->Empleado->codigozona);
 
-            //Aca vamos a buscar si tiene Monotributo
-            $pemes = substr($periodo, 0, 2);
-            $peanio = substr($periodo, 3);
-        }	
-        public function deletefile($name=null,$cliid=null,$folder=null){
+        //Aca vamos a buscar si tiene Monotributo
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+    }	
+    public function deletefile($name=null,$cliid=null,$folder=null){
 		App::uses('Folder', 'Utility');
 		App::uses('File', 'Utility');
 		$file = WWW_ROOT.'files'.DS.'empleados'.DS.$cliid.DS.$folder.DS.$name;
@@ -923,7 +964,7 @@ class EmpleadosController extends AppController {
         }
         $optionsVencimientoImpuesto = array(
                 'conditions'=>array(
-        $peanioActual.'*1 = Vencimiento.ano*1',
+                        $peanioActual.'*1 = Vencimiento.ano*1',
                         'Vencimiento.desde <= SUBSTRING("'.$cliusuarioafip.'",-1)',
                         'Vencimiento.hasta >= SUBSTRING("'.$cliusuarioafip.'",-1)',
                         'Vencimiento.impuesto_id'=>$id,

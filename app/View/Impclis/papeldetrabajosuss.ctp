@@ -645,9 +645,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             }
             $rem10 = $rem2;
             $porcentajeReduccionPorJornada = $jornada;
-            if($jornada<=0.66){
+            /*if($jornada<=0.66){
                 $porcentajeReduccionPorJornada = 0.66;
-            }
+            }*/
             
             if(isset($alicuotasContribuciones[$peanio])&&$codigoafip=='0'&&$impcli['Impcli']['aplicaley27430']=='1'){
                 //si tiene vacaciones NO se multiplica por la jornada
@@ -705,11 +705,17 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 2021=>0.19,
                 2022=>0.195,
             ];
+            /*$proporcionContribuciones = [
+                'inssjp'=>0.088235,//0,088034
+                'sipa'=>0.598235,//0,59852
+                'FNE'=>0.052353,//0,052594
+                'AsigFliar'=>0.261176//0,261247
+            ];*/
             $proporcionContribuciones = [
-                'inssjp'=>0.088235,
-                'sipa'=>0.598235,
-                'FNE'=>0.052353,
-                'AsigFliar'=>0.261176
+                'inssjp'=>0.088034,
+                'sipa'=>0.59852,
+                'FNE'=>0.052594,
+                'AsigFliar'=>0.261247,
             ];
             
             $nuevaContSSJubSIPA = $porcentajes[$peanio]*$proporcionContribuciones['sipa'];

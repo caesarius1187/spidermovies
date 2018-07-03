@@ -47,13 +47,24 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
       echo $this->Form->input('periododefault',['type'=>'hidden','value'=>$periodo])?>
   </div>
   <div style="float:right; width:45%">
-  <?php echo $this->Form->button('Finalizar',
+    <?php 
+    echo $this->Form->button('Liquidacion Masiva',
           array('type' => 'button',
             'class' =>"btn_realizar_tarea",
             'div' => false,
-            'style' => array('style' => 'float:right'),
-            'onClick' => "realizarEventoCliente('".$periodo."',".$cliente["Cliente"]['id'].",'realizado')"
+            'style' => array(
+                'style' => 'float:right;width:178px;margin-left: 5px;'
+                ),
+            'onClick' => "liquidacionMasiva('".$cliente["Cliente"]['id']."','".$periodo."')"
             )
+    );
+    echo $this->Form->button('Finalizar',
+       array('type' => 'button',
+         'class' =>"btn_realizar_tarea",
+         'div' => false,
+         'style' => array('style' => 'float:right'),
+         'onClick' => "realizarEventoCliente('".$periodo."',".$cliente["Cliente"]['id'].",'realizado')"
+         )
   );?>
   </div>
 </div>

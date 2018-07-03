@@ -276,7 +276,9 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
                 }
 
                 $CuentaId = $cuenta['Cuenta']['id'];
-                $CuentaClienteId = isset($cuenta['Cuentascliente']['id'])?$cuenta['Cuentascliente']['id']:0;
+                $CuentaClienteId = isset($cuenta['Cuentascliente'][0]['id'])?$cuenta['Cuentascliente'][0]['id']:0;
+                $CuentaClienteNombre = isset($cuenta['Cuentascliente'][0]['nombre'])?$cuenta['Cuentascliente'][0]['nombre']:0;
+              
                 if($cuenta['Cuenta']['tipo']=='rubro'){
                     $lastRubro=$cuenta['Cuenta']['numero'];
                 }
@@ -315,19 +317,18 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
                     </td>
                     <td style="width:60%">
                         <?php
-                        $DescCuenta = h($cuenta['Cuentascliente']['nombre']==""?$cuenta['Cuenta']['nombre']:$cuenta['Cuentascliente']['nombre']);
-                        $CuentaCliId = $cuenta['Cuentascliente']['id'];
-                        if($cuenta['Cuenta']['tipo']=='cuenta'&&$CuentaCliId!=''){
+                        $DescCuenta = h($CuentaClienteNombre==""?$cuenta['Cuenta']['nombre']:$CuentaClienteNombre);
+                        if($cuenta['Cuenta']['tipo']=='cuenta'&&$CuentaClienteId!=0){
                             //Debugger::dump($cuenta);
                             ?>
-                            <label id="lblDescripcionCuenta_<?php echo $CuentaCliId;?>" onclick="EditarDescripcion('<?php echo $CuentaCliId;?>')" />
+                            <label id="lblDescripcionCuenta_<?php echo $CuentaClienteId;?>" onclick="EditarDescripcion('<?php echo $CuentaClienteId;?>')" />
                             <?php echo $DescCuenta;?>
                             </label>				
-                            <input id="txtDescripcionCuenta_<?php echo $CuentaCliId;?>" type="text" value="" style="display:none;"/>
-                             <a id="lnkGuardarDesc_<?php echo $CuentaCliId;?>" style="<?php echo $trStyle?> cursor:pointer; display:none" onclick="GuardarDescripcion('<?php echo $CuentaCliId;?>')">
+                            <input id="txtDescripcionCuenta_<?php echo $CuentaClienteId;?>" type="text" value="" style="display:none;"/>
+                             <a id="lnkGuardarDesc_<?php echo $CuentaClienteId;?>" style="<?php echo $trStyle?> cursor:pointer; display:none" onclick="GuardarDescripcion('<?php echo $CuentaClienteId;?>')">
                                 Guardar
                             </a>
-                            <a id="lnkCancelarDesc_<?php echo $CuentaCliId;?>" style="<?php echo $trStyle?> cursor:pointer; display:none" onclick="CancelarDescripcion('<?php echo $CuentaCliId;?>')">Cancelar</a>
+                            <a id="lnkCancelarDesc_<?php echo $CuentaClienteId;?>" style="<?php echo $trStyle?> cursor:pointer; display:none" onclick="CancelarDescripcion('<?php echo $CuentaClienteId;?>')">Cancelar</a>
                             <?php
                         }else{
                             echo $DescCuenta;
@@ -346,9 +347,9 @@ echo $this->Html->script('mark.min.js',array('inline'=>false));
                     </td>
             </tr>
                     <?php
-                    /*if($cuenta['Cuenta']['level']==5){
-			die("me mori");
-                    }*/
+//                    if($cuenta['Cuenta']['level']==5){
+//			die("me mori");
+//                    }
                 } ?>
 		</tbody>
 		<tfoot>

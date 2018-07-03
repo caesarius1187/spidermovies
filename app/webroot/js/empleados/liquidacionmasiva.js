@@ -2,8 +2,11 @@
  * Created by caesarius on 04/04/2017.
  */
 var numeroliquidacion = [];
+var nombreliquidacion = [];
 var ajaxAbierto = false;
 var empleado1=0;
+
+
 $(document).ready(function() {
     numeroliquidacion["liquidaprimeraquincena"] = 1;
     numeroliquidacion["liquidasegundaquincena"] = 2;
@@ -12,6 +15,15 @@ $(document).ready(function() {
     numeroliquidacion["liquidapresupuestosegunda"] = 5;
     numeroliquidacion["liquidapresupuestomensual"] = 6;
     numeroliquidacion["liquidasac"] = 7;
+    
+    nombreliquidacion[1]="liquidaprimeraquincena" ;
+    nombreliquidacion[2]="liquidasegundaquincena" ;
+    nombreliquidacion[3]="liquidamensual";
+    nombreliquidacion[4]="liquidapresupuestoprimera" ;
+    nombreliquidacion[5]="liquidapresupuestosegunda" ;
+    nombreliquidacion[6]="liquidapresupuestomensual" ;
+    nombreliquidacion[7]="liquidasac" ;
+    
     jQuery(document).ready(function($) {
         $(document).ajaxStart(function () {
             ajaxAbierto = true;
@@ -30,26 +42,68 @@ $(document).ready(function() {
             }
         };
     });
-    /*
-    $("#buscarempleado").keyup(function( event ){
-        $(".parafiltrarempleados").each(function () {
-           var valorparafiltrar =  $(this).attr('valorparafiltrar');
-            var contienefiltro =  valorparafiltrar.toLowerCase().indexOf($("#buscarempleado").val().toLowerCase());
-            if(valorparafiltrar!=""&&contienefiltro==-1){
-                $(this).hide();
-            }else{
-                $(this).show();
+    //$("#tipoliquidacion").val('0');       
+    $('.chosen-select').chosen({search_contains:true});
+    $("#conceptos").on('change',function(){
+        var options = $(this).val();
+        $(options).each(function(i,o){
+            if($.inArray(o,seleccionados)==-1){
+                //nuevo seleccionado
+                //alert(o);
+                seleccionados.push(o);
+                var conNom = $('#conceptos option[value="' + o + '"]').html();
+                //loadNewTR(conNom,o);
+                loadNewTD(conNom,o);
+            }
+        });
+        $(seleccionados).each(function(i,s){
+            if($.inArray(s,options)==-1){
+                //nuevo DesSeleccionado
+                //alert(s);
+                seleccionados.remove(s);
+                unloadTR(s);
             }
         });
     });
-    */
-    $("#tipoliquidacion").val('0');
-    $("#ddlEmpleados").val('0');
-    $("#divTabEmpleados").removeClass('cliente_view_tab').addClass('cliente_view_tab_active'); 
-    $('#form_empleados').hide();   
-    $('.chosen-select').chosen({search_contains:true});
+    if($("#tipoliquidacionAguardar").length>0){
+        $("#tipoliquidacion").val(nombreliquidacion[$("#tipoliquidacionAguardar").val()]);
+        $("#tipoliquidacion").trigger('change');
+    }
+    
+    $("#ValorreciboGuardardatosmasivosForm").submit(function(){
+        //serialize form data
+        var formData = $(this).serialize();
+        //get form action
+        var formUrl = $(this).attr('action');
+        $.ajax({
+            type: 'POST',
+            url: formUrl,
+            data: formData,
+            success: function(data,textStatus,xhr){                
+                callAlertPopint("Datos Guardados.");
+                
+            },
+            error: function(xhr,textStatus,error){
+                callAlertPopint(textStatus);
+            }
+        });
+        return false;
+    });
+    empleadosArray = JSON.parse($("#empleadosJson").val());   
 });
+Array.prototype.remove = function() {
+    var what, a = arguments, L = a.length, ax;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
 
+var seleccionados = [];
+var numeroVR = 0;
 function cargarTodosLosSueldos(convenio, pagina){
     var liquidacion = $("#tipoliquidacion").val();
     var cliid = $("#cliid").val();
@@ -60,40 +114,127 @@ function cargarTodosLosSueldos(convenio, pagina){
     var url = serverLayoutURL+"/empleados/liquidacionmasiva/"+cliid+"/"+periodo+"/"+convenio+"/"+numeroliquidacion[liquidacion];
     document.location = url;
 }
-function SeleccionarTab (sTabActive)
-{
-    $("#divTabEmpleados").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
-    $("#divTabLibrosSueldos").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
-    $("#divTabRecibosSueldo").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
-    $("#divSueldoForm").html("");
-    switch(sTabActive)
-    {
-        case '1':
-            $('#divTabEmpleados').removeClass('cliente_view_tab').addClass('cliente_view_tab_active');    
-            $('#form_empleados').hide();
-            $('#form_FuncionImprimir').show();
-        break;    
-        case '2':
-            $('#divTabLibrosSueldos').removeClass('cliente_view_tab').addClass('cliente_view_tab_active');    
-            $('#form_empleados').show();
-            $('#form_FuncionImprimir').hide();            
-            $("#ddlTipoLiquidacionReportes").val('0');
-        break;    
-        case '3':
-            $('#divTabRecibosSueldo').removeClass('cliente_view_tab').addClass('cliente_view_tab_active');    
-            $('#form_empleados').show();
-            $('#form_FuncionImprimir').hide();            
-            $("#ddlTipoLiquidacionReportes").val('0');
-        break;    
-    }
+function loadNewTD(nombreConcepto,cctxconceptoID){
+    var empleados = JSON.parse($("#empleadosALiquidar").val());   
+    var periodo = $("#periododefault").val();
+    var tipoliquidacion = $("#tipoliquidacionAguardar").val();
     
+    //a la primer fila le vamos a agregar el nombre del concepto
+    
+    var VRtr = $("#tblLiquidacionMasiva tr:first")
+            .append(
+                $('<td>')
+                    .html(nombreConcepto)
+                    .addClass('tdCctxc'+cctxconceptoID)
+                );
+    $("#tblLiquidacionMasiva tr").each(function(){
+        var header = $(this).attr('header');
+        if(header==1){
+            return true;
+        }
+        var empid = $(this).attr('empid');
+        var index = $(this).index();
+        $(this).append(loadValorRecibo(index,empid,cctxconceptoID,periodo,tipoliquidacion));
+    });
+    //despues para cada fila vamos a agregar un td
+    /*$(empleados).each(function(i,e){
+        VRtr.append(loadValorRecibo(e,cctxconceptoID,periodo,tipoliquidacion));
+    });
+    $("#tblLiquidacionMasiva").append(VRtr);
+    */
 }
-function cargarReporte()
-{
-    if ($('#divTabLibrosSueldos').hasClass('cliente_view_tab_active'))
-        cargarTodosLosLibros();
-    else if ($('#divTabRecibosSueldo').hasClass('cliente_view_tab_active'))
-            cargarTodosLosRecibos();
+function unloadTR(cctxcid){
+   $(".tdCctxc"+cctxcid).each(function(){
+               $(this).remove();
+    });   
+}
+var empleadosArray;
+function getValorGuardado(empid,cctxconceptoID){
+    var valorGuardado = 0;
+    $(empleadosArray).each(function(i,e){
+        i;
+        if(e.Empleado.id==empid){
+            $(e.Valorrecibo).each(function(j,d){
+               if(d.cctxconcepto_id==cctxconceptoID){
+                   //encontre el cctxconceptoID
+                   valorGuardado =  d.valor;
+               }
+            });
+        }
+    });
+    return valorGuardado * 1;
+}
+
+function loadValorRecibo(index,empid,cctxconceptoID,periodo,tipoliquidacion){
+    var valorReciboGuardado = getValorGuardado(empid,cctxconceptoID,periodo,tipoliquidacion);
+    var VRtd = $('<td>')
+                .css('width','30px')
+                .css('height','30px')
+                .addClass('tdvalor')
+                .addClass('tdCctxc'+cctxconceptoID)
+                .append(
+                    $('<input>')
+                        .attr('type','hidden')
+                        .attr('name','data[Valorrecibo]['+numeroVR+'][id]')
+                        .attr('id','Valorrecibo'+numeroVR+'Id')
+                )
+                .append(
+                    $('<input>')
+                        .attr('type','hidden')
+                        .attr('name','data[Valorrecibo]['+numeroVR+'][periodo]')
+                        .attr('id','Valorrecibo'+numeroVR+'Periodo')
+                        .val(periodo)
+                )
+                .append(
+                    $('<input>')
+                        .attr('type','hidden')
+                        .attr('name','data[Valorrecibo]['+numeroVR+'][tipoliquidacion]')
+                        .attr('id','Valorrecibo'+numeroVR+'Tipoliquidacion')
+                        .val(tipoliquidacion)
+                )
+                .append(
+                    $('<input>')
+                        .attr('type','hidden')
+                        .attr('name','data[Valorrecibo]['+numeroVR+'][cctxconcepto_id]')
+                        .attr('id','Valorrecibo'+numeroVR+'CctxconceptoId')
+                        .val(cctxconceptoID)
+                )
+                .append(
+                    $('<input>')
+                        .attr('type','hidden')
+                        .attr('name','data[Valorrecibo]['+numeroVR+'][empleado_id]')
+                        .attr('id','Valorrecibo'+numeroVR+'EmpleadoId')
+                        .val(empid)
+                )
+                .append(
+                    $('<input>')
+                        .attr('type','text')
+                        .css('width','100%')
+                        .attr('name','data[Valorrecibo]['+numeroVR+'][valor]')
+                        .attr('id','Valorrecibo'+numeroVR+'Valor')
+                        .val(valorReciboGuardado)
+                        .addClass('inputValue')
+                        .addClass('inputCctxc'+cctxconceptoID)
+                );
+        if(index==1){
+            var span = $('<span />')
+                .attr('class', 'tooltiptext') 
+                //.attr('style', 'padding: 0px')                         
+                .html(
+                    $('<input />',{
+                        'type':'button',
+                        'value':"Aplicar a todos",
+                        'onclick':"aplicarATodos('"+cctxconceptoID+"')"
+                    })
+                );
+            VRtd.addClass( "tooltip" )
+                .append(
+                    span
+                )
+                .css('display','table-cell');
+        }
+    numeroVR++;
+    return VRtd;
 }
 function cargarPaginasPorConvenio (oObj)
 {   
@@ -144,15 +285,23 @@ function cargarPaginasPorConvenio (oObj)
          }
      });   
 }
-function guardarTodosLosSueldos(){
-    var liquidacion = $("#tipoliquidacion").val();
-    var  deferredCollection = [];
-    $("div[id^='divEmpleado_']").each(function() {        
-        var sEmpleadoId = ($(this).attr('id')).split('_')[1];        
-        if($('#ValorreciboPapeldetrabajosueldosForm'+sEmpleadoId).length>0){
-            deferredCollection.push($('#ValorreciboPapeldetrabajosueldosForm'+sEmpleadoId).submit());
-        }
-    });    
+var EmpleadosLiquidados = 0;
+
+function GenerarYGuardarTodosLosSueldos(){
+    //cargar el primer sueldo
+    var empleados = JSON.parse($("#empleadosALiquidar").val());   
+    var periodo = $("#periododefault").val();
+    var tipoliquidacion = nombreliquidacion[$("#tipoliquidacionAguardar").val()];
+    var clienteid = $("#cliid").val();
+    cargarSueldoEmpleado(clienteid,periodo,empleados[0],tipoliquidacion,0)
+    //guardar liquidacion
+    //mostrar respuesta
+    //cargar siguiente sueldo y repetir       
+}
+function guardarElSueldo(empid){
+    $('#ValorreciboPapeldetrabajosueldosForm'+empid).submit();
+    //mostrar respuesta
+    //cargar siguiente sueldo y repetir   
 }
 function showHideEmpleadoOnClick(){
     $(".snapempleado").click(function(){
@@ -223,37 +372,13 @@ function showHideColumnsEmpleado(empid){
         }
     });
 }
-function ddlCargarunsueldoempleado(oObj)
-{    
-    if (oObj.value != "0")
-    {        
-        var liquidacion = $("#tipoliquidacion").val();    
-        if (liquidacion != '0')
-        {
-            var aEmp = (oObj.value).split("_");
-            var EmpId = aEmp[0];
-            var CliId = aEmp[1];
-            var periodo = $("#periododefault").val();            
-            var indice = 0;
-            var convenioId = "";
-            $("#divSueldoForm").html("");
-            $("#divSueldoForm").css('width','auto');
-            empleado1=EmpId;
-            cargarSueldoEmpleado(CliId,periodo,EmpId,liquidacion,indice,convenioId,false);
-        }else{
-            alert('Seleccione tipo de liquidacion');
-            $("#ddlEmpleados").val('0');
-        }            
-    }else{
-        alert('Seleccione Empleado');
-    }
-}
-function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice,convenioId,liquidacioncompleta){
-    var liquidacion = $("#tipoliquidacion").val();
+
+function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice){
+    
     var data ="";
     $.ajax({
         type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/empleados/papeldetrabajosueldos/"+clienteid+"/"+periodo+"/"+empid+"/"+liquidacion+"/"+liquidacioncompleta, // URL to request
+        url: serverLayoutURL+"/empleados/papeldetrabajosueldos/"+clienteid+"/"+periodo+"/"+empid+"/"+liquidacion, // URL to request
         data: data,  // post data
         success: function(response) {            
             if(indice==0){
@@ -280,25 +405,7 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice,conveni
                     )
                 );
 
-                $('#ValorreciboPapeldetrabajosueldosForm'+empid).find('.aplicableATodos').each(function(){
-                    //$(this).css('background','blue');
-                    var myselect = $(this).attr('id');
-                    var span = $('<span />')
-                        .attr('class', 'tooltiptext') 
-                        //.attr('style', 'padding: 0px')                         
-                        .html(
-                            $('<input />',{
-                                'type':'button',
-                                'value':"Aplicar a todos",
-                                'onclick':"aplicarATodos('"+empid+"','"+myselect+"')"
-                            })
-                        );
-                    $(this).closest('div')
-                        .addClass( "tooltip" )
-                        .append(
-                            span
-                        );
-                });
+                
 
                 $("#divEmpleado_"+empid).removeClass("divempleado");
                 $("#divConvenio_"+empid).removeClass("divempleado");
@@ -331,6 +438,12 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice,conveni
             activarCalXOnSueldos(empid);
             showHideColumnsEmpleado(empid);
             showHideEmpleadoOnClick()
+            
+            //guardar liquidacion
+            guardarElSueldo(empid);
+            
+            //mostrar respuesta
+            //cargar siguiente sueldo y repetir     
         },
         error:function (XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus);
@@ -339,19 +452,12 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice,conveni
     });
     return false;
 }
-function aplicarATodos(empid,miinput){
-    $("#loading").css('visibility','visible')
-    var valueAAplicar = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #'+miinput).val();
-    var inputclass = $('#ValorreciboPapeldetrabajosueldosForm'+empid+' #'+miinput).attr('inputclass');
-    $('input[inputclass="'+inputclass+'"]').each(function() {
-        // $(this).val(valueAAplicar);
-        var mysheet = $(this).closest('form').calx("getSheet");
-        var cell = mysheet.getCell($(this).attr('data-cell'));
-        cell.setValue(valueAAplicar);
-        cell.calculate();
-        mysheet.calculate();
-        // $(this).val(valueAAplicar).trigger('change');
-        // $(this).closest('form').calx({ });
+function aplicarATodos(cctxcid){
+    var value = $('.inputCctxc'+cctxcid+":first").val()
+    $("#loading").css('visibility','visible');
+    alert(value);
+    $('.inputCctxc'+cctxcid).each(function() {
+        $(this).val(value);
     });
     $("#loading").css('visibility','hidden');
 }
@@ -495,69 +601,28 @@ function activarCalXOnSueldos(empid){
             url: formUrl,
             data: formData,
             success: function(data,textStatus,xhr){                
-                callAlertPopint("Sueldo guardado, los totales se han recalculado.");
+                var empleados = JSON.parse($("#empleadosALiquidar").val());   
+                var indice = $("#indiceLiquidacion").val();
+                callAlertPopint("Se han guardado "+(indice+1)+" de "+empleados.length+" sueldos");
                 //var empleados = JSON.parse($("#arrayEmpleados").val());
-                var indice = $("#indiceCargaEmpleado"+empid).val();
+                
                 //de este formulario borrar el div mas cercano con clase divsueldomasivo
                 $('#ValorreciboPapeldetrabajosueldosForm'+empid).closest('div.divsueldomasivo').remove();
-
                 //Update DDL Empleados                
-                var cli_Id = $("#cliid").val();
-                $("#ddlEmpleados").val(empid+"_"+cli_Id);
-                var selectedOpts = $('#ddlEmpleados option:selected');                
-                $('#ddlEmpleados').append($('<optgroup label="Liquidados Recientemente">')).append($(selectedOpts).clone());
-                $(selectedOpts).remove();
-
-                if(indice==0){
-                    $("#divSueldoForm").prepend(
-                        $("<div>")
-                            .append(data)
-                            .addClass('divsueldomasivo')
-                    );
-                    $('#ValorreciboPapeldetrabajosueldosForm'+empid).find('.aplicableATodos').each(function(){
-                        //$(this).css('background','blue');
-                        var myselect = $(this).attr('id');
-                        var span = $('<span />')
-                            .attr('class', 'tooltiptext')
-                            .html(
-                                $('<input />',{
-                                    'type':'button',
-                                    'value':"Aplicar a todos",
-                                    'onclick':"aplicarATodos('"+empid+"','"+myselect+"')"
-                                })
-                            );
-                        $(this).closest('div')
-                            .addClass( "tooltip" )
-                            .append(
-                                span
-                            );
-                    });
-                }else if(indice==4) { //if(indice==empleados.length-1) {
-                    $("#divSueldoForm").append(
-                        $("<div>")
-                            .append(data)
-                            .addClass('divsueldomasivo')
-                    );
-                    // }else if(indice==empleados.length-1){
+               
+                if(indice < empleados.length){
+                    var empleados = JSON.parse($("#empleadosALiquidar").val());   
+                    var periodo = $("#periododefault").val();
+                    var tipoliquidacion = nombreliquidacion[$("#tipoliquidacionAguardar").val()];
+                    var clienteid = $("#cliid").val();
+                    indice++;
+                    cargarSueldoEmpleado(clienteid,periodo,empleados[indice],tipoliquidacion);
+                    $("#indiceLiquidacion").val(indice);                    
                 }else{
-                    if($( ".divsueldomasivo").first().length>0){
-                        $("<div>")
-                            .append(data)
-                            .addClass('divsueldomasivo')
-                            .insertAfter($( ".divsueldomasivo").first())
-                    }else{
-                        $("#divSueldoForm").append(
-                            $("<div>")
-                                .append(response)
-                                .addClass('divsueldomasivo')
-                        );
-                    }
+                    callAlertPopint("Se han guardado "+empleados.length+' sueldos, puede controlar las liquidaciones presionando el boton "volver"');
                 }
-                $("#indiceCargaEmpleado"+empid).val(indice);
-
-                showHideColumnsEmpleado(empid)
-                activarCalXOnSueldos(empid);
-                showHideEmpleadoOnClick()
+                //mostrar respuesta
+                //cargar siguiente sueldo y repetir   
             },
             error: function(xhr,textStatus,error){
                 callAlertPopint(textStatus);
@@ -571,229 +636,6 @@ function activarCalXOnSueldos(empid){
         var mysheet = $(this).closest('form').calx("getSheet");
         mysheet.calculate();
     });
-}
-
-function cargarTodosLosRecibos(){    
-    $("#divSueldoForm").html("");
-    $("#divSueldoForm").css('width','auto');
-    var liquidacion = numeroliquidacion[$("#ddlTipoLiquidacionReportes").val()];
-    if (liquidacion != undefined && liquidacion != '0')
-    {
-        empleado1=0;
-        var empleados = JSON.parse($("#arrayEmpleados").val());    
-        var periodo = $('#periodo').val();
-        jQuery.each(empleados, function(name, value) {
-            value.forEach(function (valor, indice, array) {
-                cargarUnReciboSueldo(valor,periodo,liquidacion);
-            });
-        });
-    }
-}
-function cargarUnReciboSueldo(empid,periodo,liquidacion){
-    var data ="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/empleados/papeldetrabajorecibosueldo/"+empid+"/"+periodo+"/"+liquidacion, // URL to request
-        data: data,  // post data
-        success: function(response) {
-            $("#divSueldoForm").append(
-                response
-            );
-
-            $("#reciboDuplicado"+empid).html($("#reciboOriginal"+empid).html());
-            $("#reciboDuplicado"+empid+" #firmaempleador").html("<b>Firma empleador</b>");
-
-            $("#reciboOriginal"+empid+" #bancos").change(function () {
-                $("#reciboOriginal"+empid+" #pbanco").html($("#reciboOriginal"+empid+" #bancos option:selected").text());
-                $("#reciboDuplicado"+empid+" #pbanco").html($("#reciboOriginal"+empid+" #bancos option:selected").text());
-            });
-            $("#reciboOriginal"+empid+" #bancoempleados").change(function () {
-                $("#reciboOriginal"+empid+" #pbancoempleado").html($("#reciboOriginal"+empid+" #bancoempleados option:selected").text());
-                $("#reciboDuplicado"+empid+" #pbancoempleado").html($("#reciboOriginal"+empid+" #bancoempleados option:selected").text());
-            });
-            $("#reciboDuplicado"+empid+" #bancos").remove();
-            $("#reciboDuplicado"+empid+" #bancoempleados").remove();
-
-            $("#reciboOriginal"+empid+" #bancos").trigger('change');
-            $("#reciboOriginal"+empid+" #bancoempleados").trigger('change');
-
-
-            $('.btn_imprimir').each(function (index) {
-                if(index==0){
-                    $(this).attr('onClick','openWinRecibosSueldos()');
-                }else{
-                    $(this).hide();
-                }
-            });
-
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus);
-            return false;
-        }
-    });
-    return false;
-}
-
-function cargarTodosLosLibros(){    
-    $("#divSueldoForm").html("");
-    $("#divSueldoForm").css('width','auto');
-    var liquidacion = numeroliquidacion[$("#ddlTipoLiquidacionReportes").val()];
-    if (liquidacion != undefined && liquidacion != '0')
-    {
-        empleado1=0;
-        var empleados = JSON.parse($("#arrayEmpleados").val());
-        //var aEmpleados = ($("#hdnConvenioEmpleados_"+convenio+"_"+pagina).val()).split(',');    
-        var periodo = $('#periodo').val();
-        jQuery.each(empleados, function(name, value) {
-            value.forEach(function (valor, indice, array) {
-                cargarUnLibroSueldo(valor,periodo,liquidacion,indice);
-            });
-        });
-    }
-}
-function cargarUnLibroSueldo(empid,periodo,liquidacion,indice){
-    var data ="";
-    $.ajax({
-        type: "post",  // Request method: post, get
-        url: serverLayoutURL+"/empleados/papeldetrabajolibrosueldo/"+empid+"/"+periodo+"/"+liquidacion, // URL to request
-        data: data,  // post data
-        success: function(response) {
-            $("#divSueldoForm").append(response);
-            $("#libroSueldoContent"+empid+" #hoja").val(indice+1);
-
-            $("#libroSueldoContent"+empid+" #hoja").change(function () {
-                $("#libroSueldoContent"+empid+" label[for='hoja']").html("Hoja: "+$(this).val());
-            });
-            $("#libroSueldoContent"+empid+" #tomo").change(function () {
-                $("#libroSueldoContent"+empid+" label[for='tomo']").html("Padron: "+$(this).val());
-            });
-            $("#libroSueldoContent"+empid+" #tomo").trigger('change');
-            $("#libroSueldoContent"+empid+" #hoja").trigger('change');
-            $('.btn_imprimir').each(function (index) {
-                if(index==0){
-                    $(this).attr('onClick','openWinRecibosSueldos()');
-                }else{
-                    $(this).hide();
-                }
-            });
-        },
-        error:function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus + " : " + errorThrown);
-            //return false;
-        }
-    });
-    return false;
-}
-function openWin()
-{
-    $('.btn_imprimir').each(function (index) {
-        $(this).hide();
-    });
-    $('.hideOnPrint').each(function (index) {
-        $(this).hide();
-    });
-    var myWindow=window.open('','','width=1010,height=1000px');
-    myWindow.document.write('<html><head><title>Recibo de sueldo</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
-    myWindow.document.write($("#divToPrintRecibo").html());
-    myWindow.document.close();
-    myWindow.focus();
-    setTimeout(
-        function()
-        {
-            myWindow.print();
-            myWindow.close();
-            $('.hideOnPrint').each(function (index) {
-                $(this).show();
-            });
-            $('.btn_imprimir').each(function (index) {
-                if(index==0){
-                    $(this).show();
-                }else{
-                    $(this).hide();
-                }
-            });
-        }, 1000);
-}
-function openWinRecibosSueldos()
-{
-    $('.btn_imprimir').each(function (index) {
-        $(this).hide();
-    });
-    $('.hideOnPrint').each(function (index) {
-        $(this).hide();
-    });
-    var myWindow=window.open('','','width=1010,height=1000px');
-    myWindow.document.write('<html><head><title>Recibos de sueldos</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
-    myWindow.document.write($("#divSueldoForm").html());
-    myWindow.document.close();
-    myWindow.focus();
-    setTimeout(
-        function()
-        {
-            myWindow.print();
-            myWindow.close();
-            // $("#divSueldoForm").css('float','left');
-            // $(".index").css('float','left');
-            $('.hideOnPrint').each(function (index) {
-                $(this).show();
-            });
-            $('.btn_imprimir').each(function (index) {
-                if(index==0){
-                    $(this).show();
-                }else{
-                    $(this).hide();
-                }
-            });
-        }, 1000);
-}
-function openWinLibroSueldo()
-{
-    $("#sueldoContent #tomo").hide();
-    $("#sueldoContent #hoja").hide();
-    var myWindow=window.open('','','width=1010,height=1000px');
-    myWindow.document.write('<html><head><title>Libro de sueldo</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
-    myWindow.document.write($("#divLibroSueldo").html());
-    myWindow.document.close();
-    myWindow.focus();
-    setTimeout(
-        function()
-        {
-            myWindow.print();
-            myWindow.close();
-            $("#sueldoContent #tomo").show();
-            $("#sueldoContent #hoja").show();
-        }, 1000);
-}
-function openWinLibrosSueldos()
-{
-    $('.btn_imprimir').each(function (index) {
-        $(this).hide();
-    });
-    $('.hideOnPrint').each(function (index) {
-        $(this).hide();
-    });
-    var myWindow=window.open('','','width=1010,height=1000px');
-    myWindow.document.write('<html><head><title>Libro de sueldo</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
-    myWindow.document.write($("#sheetCooperadoraAsistencial").html());
-    myWindow.document.close();
-    myWindow.focus();
-    setTimeout(
-        function()
-        {
-            myWindow.print();
-            myWindow.close();
-            $('.btn_imprimir').each(function (index) {
-                if(index==0){
-                    $(this).show();
-                }else{
-                    $(this).hide();
-                }
-            });
-            $('.hideOnPrint').each(function (index) {
-                $(this).show();
-            });
-        }, 1000);
 }
 function reloadInputDates(){
     var d = new Date( );

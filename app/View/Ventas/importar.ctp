@@ -886,7 +886,8 @@ if(count($PuntoDeVentaNoCargado)!=0||count($SubclienteNoCargado)!=0||count($Vent
                     break;
                 }
             }
-            if($venta['Venta']['identificacionnumero'] == '20000000001'||$venta['Venta']['identificacionnumero'] == ''){
+            $primerchar = substr($venta['Venta']['identificacionnumero'],0,1);
+            if($venta['Venta']['identificacionnumero'] == '20000000001'||$venta['Venta']['identificacionnumero'] == ''||$primerchar=='5'){
                 $condicioniva = 'Cons. F/Exento/No Alcanza';
             }
 

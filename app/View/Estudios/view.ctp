@@ -3,20 +3,102 @@ echo $this->Html->css('bootstrapmodal');
 echo $this->Html->script('jquery-ui',array('inline'=>false));
 echo $this->Html->script('estudios/view',array('inline'=>false));
 echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
+echo $this->Html->script('Chart',array('inline'=>false));
+
 ?>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		$( "input.datepicker" ).datepicker({
-			yearRange: "-100:+50",
-			changeMonth: true,
-			changeYear: true,
-			constrainInput: false,
-			dateFormat: 'dd-mm-yy',
-		});
-	});
+    $(document).ready(function() {
+        $( "input.datepicker" ).datepicker({
+                yearRange: "-100:+50",
+                changeMonth: true,
+                changeYear: true,
+                constrainInput: false,
+                dateFormat: 'dd-mm-yy',
+        });
+        var ventasDiarias = JSON.parse($("#ventasDiarias").val());
+        var labelsv = [];
+        var valuesv = [];
+        $.each(ventasDiarias, function(index, value) {
+                labelsv.push(index);
+                valuesv.push(value);
+            });
+        var ctxbar = $("#myChartVentas");
+        /**/
+        var comprasDiarias = JSON.parse($("#comprasDiarias").val());
+        var labelsc = [];
+        var valuesc = [];
+        $.each(comprasDiarias, function(index, value) {
+                labelsc.push(index);
+                valuesc.push(value);
+            });
+        /**/
+        /**/
+        var sueldosDiarias = JSON.parse($("#sueldosDiarias").val());
+        var labelss = [];
+        var valuess = [];
+        $.each(sueldosDiarias, function(index, value) {
+                labelss.push(index);
+                valuess.push(value);
+            });
+        /**/
+        /**/
+        var impuestosDiarias = JSON.parse($("#impuestosDiarias").val());
+        var labelsi = [];
+        var valuesi = [];
+        $.each(impuestosDiarias, function(index, value) {
+                labelsi.push(index);
+                valuesi.push(value);
+            });
+        /**/
+        var myVentasChartbar = new Chart(ctxbar, {
+            type: 'bar',
+            data: {
+                labels: labelsv,
+                datasets: [{
+                    label: 'Ventas',
+                    data: valuesv,
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)'     
+                },
+                {
+                    label: 'Compras',
+                    data: valuesc,
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)'   
+                },
+                {
+                    label: 'Sueldos',
+                    data: valuess,
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)'   
+                },
+                {
+                    label: 'Impuestos',
+                    data: valuesi,
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)'   
+                }],
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Carga de Ventas/dia;Compras/dia - Liquidacion de Sueldos/dia;Impuestos/dia'
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });                  
+    });
+       
 
 </script>
+<<<<<<< HEAD
 <div class="estudios index" style="margin-bottom:5px">
 	<div class="fab blue" style="float: right;">
 		<core-icon icon="add" align="center" style="margin: 8px 14px;position: absolute;">
@@ -73,11 +155,83 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 			&nbsp;
 		</dd>
 	</dl>
+=======
+<div class="estudios index" style="margin-bottom:5px;width: 43%;float:left">
+    <div class="fab blue" style="float: right;">
+        <core-icon icon="add" align="center" style="margin: 8px 14px;position: absolute;">
+                <?php echo $this->Form->button(
+                        $this->Html->image(
+                                'edit_view.png',
+                                array(
+                                        'alt' => 'edit',
+                                        'class'=>'img_edit',
+                                )
+                        ),
+                        array('type' => 'button',
+                                'style' =>"padding:0px;",
+                                'class' =>"btn_add",
+                                'escape' =>false,
+                                'onClick' => "$('#myModal').modal('show');"
+                                        )
+                        );
+                ?>
+        </core-icon>
+        <paper-ripple class="circle recenteringTouch" fit></paper-ripple>
+    </div>
+    <h2><?php echo __('Mi Cuenta'); ?></h2>
+    <dl style="width: 100%">
+        <dt><?php echo __('Nombre'); ?></dt>
+        <dd>
+            <?php echo h($estudio['Estudio']['nombre']); ?>
+            &nbsp;
+        </dd>
+        <dt><?php echo __('Propietario'); ?></dt>
+        <dd>
+            <?php echo h($estudio['Estudio']['propietario']); ?>
+            &nbsp;
+        </dd>
+        <dt><?php echo __('Direccion'); ?></dt>
+        <dd>
+            <?php echo h($estudio['Estudio']['direccion']); ?>
+            &nbsp;
+        </dd>
+        <dt><?php echo __('CUIT'); ?></dt>
+        <dd>
+            <?php echo h($estudio['Estudio']['cuit']); ?>
+            &nbsp;
+        </dd>
+        <dt><?php echo __('Ingresos Brutos'); ?></dt>
+        <dd>
+            <?php echo h($estudio['Estudio']['cuit']); ?>
+            &nbsp;
+        </dd>
+        <dt><?php echo __('Inicio de actividades'); ?></dt>
+        <dd>
+            <?php echo h($estudio['Estudio']['inicioactividades']); ?>
+            &nbsp;
+        </dd>
+    </dl>
+>>>>>>> 3507456144cd7ce48a12bc11adf4b47b5cb44c0b
 </div>
 
-<div class="estudios index">
+<div class="estudios index" style="width: 43%;float:left">
     <h2><?php echo __('Mi Estudio en el periodo '.$periodomes.'-'.$periodoanio); ?></h2>
-    <dl>
+    <?php  ?>
+    <?php 
+         echo $this->Html->link("<- Ver Periodo Anterior",array(
+            'controller' => 'estudios',
+            'action' => 'view',
+            $estudio['Estudio']['id'],
+            date('m-Y', strtotime('01-'.$periodomes.'-'.$periodoanio.' -1 months')),
+        ),
+            array(
+                'class'=>"btn_aceptar",
+                'style'=>'bottom: 0px;float: right;margin-top: 0px;width:100%'
+            )
+        ); 
+        ?>
+    <dl  style="width: 100%">
+        
         <dt><?php echo __('Monotributistas'); ?></dt>
         <dd>
             <?php
@@ -86,6 +240,7 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
             $topEmpleados=0;
             $convenios=[];
             $nombreClientes = [];
+            $nombreEmpleados = "";
             foreach ($estudio['Grupocliente'] as $grupocliente) {
                 foreach ($grupocliente['Cliente'] as $cliente) {
                     $nombreClientes[$cliente['id']]=$cliente['nombre'];
@@ -233,6 +388,126 @@ echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
                 &nbsp;
         </dd>
     </dl>
+</div>
+<div class="estudios index" style="margin-bottom:5px;width: 43%;float:left">
+    <?php
+    $ventasDiarias = [];
+    $dia = 01;
+    $ultimoDia = date('t', strtotime('01-'.$periodomes.'-'.$periodoanio));
+    $totalVenta = 0;
+    $totalCompra = 0;
+    $totalSueldos = 0;
+    $totalImpuestos = 0;
+    while ($dia<=$ultimoDia) {
+        foreach ($misVentasDiarias as $kvd => $venta) {
+            $diaVenta = date('d', strtotime($venta['Venta']['created']));
+            if($diaVenta==$dia){
+               $ventasDiarias[$diaVenta*1] = $venta[0]['diario'];
+               $totalVenta+=$venta[0]['diario'];
+            }
+        }
+        if(!isset( $ventasDiarias[$dia*1]))
+            $ventasDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('ventasDiarias',['type'=>'hidden','value'=> json_encode($ventasDiarias)]);
+
+    $comprasDiarias = [];
+    $dia = 01;
+    while ($dia<=$ultimoDia) {
+        foreach ($misComprasDiarias as $kvd => $compra) {
+            $diaCompra= date('d', strtotime($compra['Compra']['created']));
+            if($diaCompra==$dia){
+               $comprasDiarias[$diaCompra*1] = $compra[0]['diario'];        
+               $totalCompra+=$compra[0]['diario'];
+            }
+           
+        }
+        if(!isset( $comprasDiarias[$dia*1]))
+            $comprasDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('comprasDiarias',['type'=>'hidden','value'=> json_encode($comprasDiarias)]);
+    
+    $sueldosDiarias = [];
+    $dia = 01;
+    while ($dia<=$ultimoDia) {
+        foreach ($misSueldosDiarias as $kvr => $valorrecibo) {
+            $diaValorRecibo= date('d', strtotime($valorrecibo['Valorrecibo']['created']));
+            if($diaValorRecibo==$dia){
+               $sueldosDiarias[$diaValorRecibo*1] = $valorrecibo[0]['diario'];     
+               $totalSueldos+=$valorrecibo[0]['diario'];
+            }
+        }
+        if(!isset( $sueldosDiarias[$dia*1]))
+            $sueldosDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('sueldosDiarias',['type'=>'hidden','value'=> json_encode($sueldosDiarias)]);
+    
+    $impuestosDiarias = [];
+    $dia = 01;
+    while ($dia<=$ultimoDia) {
+        foreach ($misImpuestosDiarias as $kei => $eventoimpuesto) {
+            $diaEventoImpuesto = date('d', strtotime($eventoimpuesto['Eventosimpuesto']['created']));
+            if($diaEventoImpuesto==$dia){
+               $impuestosDiarias[$diaEventoImpuesto*1] = $eventoimpuesto[0]['diario'];        
+               $totalImpuestos+=$eventoimpuesto[0]['diario'];
+            }
+        }
+        if(!isset( $impuestosDiarias[$dia*1]))
+            $impuestosDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('impuestosDiarias',['type'=>'hidden','value'=> json_encode($impuestosDiarias)]);
+    ?>
+    <dl style="width: 100%">
+        <dt><h2><?php echo __('Reindimiento'); ?></h2></dt>
+        <dd style="margin-left: 33%">
+            Total 
+        </dd>        
+        <dd style="margin-left: 66%">
+            Promedio 
+        </dd>        
+        <dt><?php echo __('Ventas'); ?></dt>
+        <dd style="margin-left: 33%">
+            <?php echo number_format($totalVenta,2,",","."); ?>
+        </dd>        
+        <dd style="margin-left: 66%">
+            <?php echo number_format($totalVenta/$ultimoDia,2,",","."); ?>
+        </dd>        
+        <dt><?php echo __('Compras'); ?></dt>
+        <dd style="margin-left: 33%">
+            <?php echo number_format($totalCompra,2,",","."); ?>
+        </dd>        
+        <dd style="margin-left: 66%">
+            <?php echo number_format($totalCompra/$ultimoDia,2,",","."); ?>
+        </dd>        
+        <dt><?php echo __('Sueldos'); ?></dt>
+        <dd style="margin-left: 33%">
+            <?php echo number_format($totalSueldos,2,",","."); ?>
+        </dd>        
+        <dd style="margin-left: 66%">
+            <?php echo number_format($totalSueldos/$ultimoDia,2,",","."); ?>
+        </dd>        
+        <dt><?php echo __('Impuestos'); ?></dt>
+        <dd style="margin-left: 33%">
+            <?php echo number_format($totalImpuestos,2,",","."); ?>
+        </dd>        
+        <dd style="margin-left: 66%">
+            <?php echo number_format($totalImpuestos/$ultimoDia,2,",","."); ?>
+        </dd>        
+    </dl>
+</div>
+<div class="index">
+    <h2>Rendimiendo diario de Mi Estudio</h2>
+    <div class="index" style="/*width:42%;height:700px;float:left*/">
+        <canvas id="myChartVentas" ></canvas>
+    </div>
+<?php
+    
+?>
+   
 </div>
 <!-- Popin Modal para edicion de ventas a utilizar por datatables-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
