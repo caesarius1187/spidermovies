@@ -57,7 +57,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
 <script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
 <!--<div class="" style="float:none; width: 100%; margin: 0px 4px">  -->
-  <div class="index" style="padding: 0px 1%; margin-bottom: 10px; width:96%" id="headerCliente">
+  <div class="index" style="padding: 0px 1%; margin-bottom: 10px; width:96%;" id="headerCliente">
       <div style="width:30%; float: left;padding-top:10px">
         Cliente: <?php echo $cliente["Cliente"]['nombre'];
           echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);?>
@@ -81,14 +81,12 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
     
   <!--</div>-->
     <div id="bodyCarga" style="width:100%;height:35px;">
-   
         <?php /**************************************************************************/ ?>
         <?php /*****************************Ventas***************************************/ ?>
         <?php /**************************************************************************/ ?>
         <div id="form_venta" class="tabVentas index" style="width:94%;float:left;">
           <h2>Ventas</h2>
-          
-           <?php
+          <?php
               //****Aca vamos a controlar los Impuestos con periodo activo que influyen en los campos que se van a mostrar en el formulario de ventas******/
               /*
                 AFIP(Venta)
@@ -378,13 +376,11 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     'type'=>'hidden'
                 ));
                 echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
-                echo $this->Form->submit('Agregar', array(
-                          )
-                    );
+                echo $this->Form->submit('AGREGAR');
                 echo $this->Form->end();
           ?>
         </div>
-        <div style="overflow-x:auto;width:94%; float:left;margin-top:10px;" class="tareaCargarIndexTable tabVentas index" id="divTablaVentas">
+        <div style="overflow-x:auto;width:94%; float:left;margin-top:10px; font-size:90%" class="tareaCargarIndexTable tabVentas index" id="divTablaVentas">
         </div>
     </div>
 </div>

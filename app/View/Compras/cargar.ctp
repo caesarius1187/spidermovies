@@ -384,7 +384,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
               echo $this->Form->end(); 
               ?>
         </div>
-        <div style="overflow:auto;width:94%; float:left; margin-top:10px;min-height: 400px;" class="tareaCargarIndexTable tabCompras index tbl_compras_det">                              
+        <div style="overflow:auto;width:94%; float:left; margin-top:10px;min-height: 400px; font-size:90%" class="tareaCargarIndexTable tabCompras index tbl_compras_det">                              
           <table class="display" id="tablaCompras" cellpadding="0" cellspacing="0" border="0">
             <thead>
               <tr>
@@ -482,7 +482,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     <?php
                     $paramsCompra=$compra["id"];
                     echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarCompra(".$paramsCompra.")"));
-                    echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarCompra(".$paramsCompra.")"));
+                    echo $this->Html->image('ic_delete_black_24dp.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarCompra(".$paramsCompra.")"));
                     if($compra["imputacion"]=='Bs Uso'){
                         echo $this->Html->image('biendeuso.png',array('width' => '20', 'height' => '20','onClick'=>"abrirBiendeuso(".$cliente['Cliente']['id'].",".$paramsCompra.")"));
                     }
