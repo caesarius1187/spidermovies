@@ -101,7 +101,7 @@
                 <?php
                 $paramsVenta = $venta['Venta']["id"];
                 echo $this->Html->image('edit_view.png',array('width' => '20', 'height' => '20','onClick'=>"modificarVenta(".$paramsVenta.")"));
-                echo $this->Html->image('eliminar.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarVenta(".$paramsVenta.")"));
+                echo $this->Html->image('ic_delete_black_24dp.png',array('width' => '20', 'height' => '20','onClick'=>"eliminarVenta(".$paramsVenta.")"));
                 if(in_array($venta["Tipogasto"]["id"],$ingresosBienDeUso)){
                     echo $this->Html->image('biendeuso.png',array('width' => '20', 'height' => '20','onClick'=>"relacionarBienesdeuso('".$paramsVenta."','".$titleComprobante."')"));
                 }

@@ -57,7 +57,7 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
 <script src="https://cdn.datatables.net/select/1.1.2/js/dataTables.select.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.0.2/js/dataTables.responsive.min.js"></script>
 <!--<div class="" style="float:none; width: 100%; margin: 0px 4px">  -->
-  <div class="index" style="padding: 0px 1%; margin-bottom: 10px;" id="headerCliente">
+  <div class="index" style="padding: 0px 1%; margin-bottom: 10px; width:96%;" id="headerCliente">
       <div style="width:30%; float: left;padding-top:10px">
         Cliente: <?php echo $cliente["Cliente"]['nombre'];
           echo $this->Form->input('clientenombre',['type'=>'hidden','value'=>$cliente["Cliente"]['nombre']]);?>
@@ -81,17 +81,11 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
     
   <!--</div>-->
     <div id="bodyCarga" style="width:100%;height:35px;">
-        <div class="" style="width:100%;height:30px; margin-left:10px " id="divAllTabs">
-            <div class="cliente_view_tab" style="width:18.5%;margin-right:0px"  onClick="" id="tabVentas">
-                <?php
-                echo $this->Form->label(null, $text = 'Ventas',array('style'=>'text-align:center;margin-top:5px;cursor:pointer'));
-                ?>
-            </div>
-        </div>
         <?php /**************************************************************************/ ?>
         <?php /*****************************Ventas***************************************/ ?>
         <?php /**************************************************************************/ ?>
-        <div id="form_venta" class="tabVentas index" style="width:96%;float:left; ">
+        <div id="form_venta" class="tabVentas index" style="width:94%;float:left;">
+          <h2>Ventas</h2>
           <?php
               //****Aca vamos a controlar los Impuestos con periodo activo que influyen en los campos que se van a mostrar en el formulario de ventas******/
               /*
@@ -382,18 +376,11 @@ echo $this->Form->input('domiciliocliente',array('default'=>$domicilio,'type'=>'
                     'type'=>'hidden'
                 ));
                 echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
-                echo $this->Form->submit('+', array(
-                          'type'=>'image',
-                          'src' => $this->webroot.'img/add_view.png',
-                          'class'=>'img_edit',
-                          'style'=>'width:25px;height:25px;margin-top:8px',
-                          'title'=>'Agregar'
-                          )
-                    );
+                echo $this->Form->submit('AGREGAR');
                 echo $this->Form->end();
           ?>
         </div>
-        <div style="overflow-x:auto;width:96%; float:left;margin-top:10px;min-height: 1400px" class="tareaCargarIndexTable tabVentas index" id="divTablaVentas">
+        <div style="overflow-x:auto;width:94%; float:left;margin-top:10px; font-size:90%" class="tareaCargarIndexTable tabVentas index" id="divTablaVentas">
         </div>
     </div>
 </div>

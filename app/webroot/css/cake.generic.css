@@ -33,7 +33,9 @@ body {
 	font-family:'Open Sans',sans-serif;
 	font-size:90%;
 	margin: 0;
+	height: 100vh;
 }
+
 a {
 	color: #2196f3;
 	text-decoration: none;
@@ -82,6 +84,7 @@ p {
 #container {
 	text-align: left;
 	background-color: #e5e5e5;
+	height: 100%;
 }
 
 #header{
@@ -118,7 +121,8 @@ p {
 	color: #333;
 	/*padding: 10px 20px 40px 20px;*/
 	overflow: auto;
-	min-height: 400px;
+	/*min-height: 400px;*/
+	height: 100%;
 }
 #footer {
 	clear: both;
@@ -338,7 +342,11 @@ table td.actions a {
 dl {
 	line-height: 2em;
 	margin: 0em 0em;
+<<<<<<< HEAD
+	width: 65%;
+=======
 	/*width: 60%;*/
+>>>>>>> 3507456144cd7ce48a12bc11adf4b47b5cb44c0b
 }
 dl dd:nth-child(4n+2),
 dl dt:nth-child(4n+1) {
@@ -1227,8 +1235,8 @@ pre {
   right: 10px;
   width: 4px;
   height: 4px;
-  border-bottom: 1px solid #000000;
-  border-right: 1px solid #000000;
+  border-bottom: 1px solid #ffffff;
+  border-right: 1px solid #ffffff;
   content: "";
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
@@ -3141,3 +3149,5 @@ div.index_pdt{
 	margin: 0px 1%;
 	border-radius: 3px;
 }
+
+
