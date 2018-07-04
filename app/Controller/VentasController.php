@@ -32,7 +32,29 @@ class VentasController extends AppController {
 		'0005' => "21" ,
 		'0006' => "27" ,
 	];
+        public function ejemplo(){
+            App::import('Vendor', 'Afip/Afip');
+            
+            $afip = new Afip([
+                'CUIT' => 20330462478,
+                'cert' => 'cert',
+                'key' => 'key',
+                'passphrase'=>'UNSA2006'
+                ]);
+//            production	(bool) (default FALSE) (Opcional) TRUE para usar los Web Services en modo producción
+//            cert	(string) (default 'cert') (Opcional) ruta donde se encuentra el certificado, desde Afip_res/
+//            key         (string) (default 'key') (Opcional) ruta donde se encuentra el certificado, desde Afip_res/
+//            passphrase	(string) (default 'xxxxx') (Opcional) Frase de contraseña para usar en el Web Service de Autenticación
+            $server_status = $afip->RegisterScopeFour->GetServerStatus();
 
+            $respuesta =  'Este es el estado del servidor:';
+            $respuesta.= '<pre>';
+            $respuesta.= print_r($server_status);
+            $respuesta.= '</pre>';
+            Debugger::dump($respuesta);
+            $taxpayer_details = $afip->RegisterScopeFour->GetTaxpayerDetails(20330462478);
+            Debugger::dump($taxpayer_details);
+        }
 	public function index($id=null,$periodo=null,$page=null)
 	{
 		ini_set('memory_limit', '2560M');

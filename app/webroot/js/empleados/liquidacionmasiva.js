@@ -5,7 +5,7 @@ var numeroliquidacion = [];
 var nombreliquidacion = [];
 var ajaxAbierto = false;
 var empleado1=0;
-
+var empleados;
 
 $(document).ready(function() {
     numeroliquidacion["liquidaprimeraquincena"] = 1;
@@ -90,6 +90,16 @@ $(document).ready(function() {
         return false;
     });
     empleadosArray = JSON.parse($("#empleadosJson").val());   
+    $("#tblLiquidacionMasiva tr").each(function(){
+       $(this).dblclick(function(){
+            var r = confirm("Eliminara este empleado de la liquidacion");
+            if (r == true) {
+                var empid = $(this).attr('empid');
+                deleteRowEmpleado(empid);
+            }
+       });
+    });
+    empleados = JSON.parse($("#empleadosALiquidar").val());   
 });
 Array.prototype.remove = function() {
     var what, a = arguments, L = a.length, ax;
@@ -115,7 +125,6 @@ function cargarTodosLosSueldos(convenio, pagina){
     document.location = url;
 }
 function loadNewTD(nombreConcepto,cctxconceptoID){
-    var empleados = JSON.parse($("#empleadosALiquidar").val());   
     var periodo = $("#periododefault").val();
     var tipoliquidacion = $("#tipoliquidacionAguardar").val();
     
@@ -289,7 +298,6 @@ var EmpleadosLiquidados = 0;
 
 function GenerarYGuardarTodosLosSueldos(){
     //cargar el primer sueldo
-    var empleados = JSON.parse($("#empleadosALiquidar").val());   
     var periodo = $("#periododefault").val();
     var tipoliquidacion = nombreliquidacion[$("#tipoliquidacionAguardar").val()];
     var clienteid = $("#cliid").val();
@@ -455,7 +463,7 @@ function cargarSueldoEmpleado(clienteid,periodo,empid,liquidacion,indice){
 function aplicarATodos(cctxcid){
     var value = $('.inputCctxc'+cctxcid+":first").val()
     $("#loading").css('visibility','visible');
-    alert(value);
+    
     $('.inputCctxc'+cctxcid).each(function() {
         $(this).val(value);
     });
@@ -601,9 +609,8 @@ function activarCalXOnSueldos(empid){
             url: formUrl,
             data: formData,
             success: function(data,textStatus,xhr){                
-                var empleados = JSON.parse($("#empleadosALiquidar").val());   
                 var indice = $("#indiceLiquidacion").val();
-                callAlertPopint("Se han guardado "+(indice+1)+" de "+empleados.length+" sueldos");
+                callAlertPopint("Se han guardado "+(indice*1+1)+" de "+empleados.length+" sueldos");
                 //var empleados = JSON.parse($("#arrayEmpleados").val());
                 
                 //de este formulario borrar el div mas cercano con clase divsueldomasivo
@@ -611,7 +618,6 @@ function activarCalXOnSueldos(empid){
                 //Update DDL Empleados                
                
                 if(indice < empleados.length){
-                    var empleados = JSON.parse($("#empleadosALiquidar").val());   
                     var periodo = $("#periododefault").val();
                     var tipoliquidacion = nombreliquidacion[$("#tipoliquidacionAguardar").val()];
                     var clienteid = $("#cliid").val();
@@ -636,6 +642,11 @@ function activarCalXOnSueldos(empid){
         var mysheet = $(this).closest('form').calx("getSheet");
         mysheet.calculate();
     });
+}
+function deleteRowEmpleado(empid){
+    $( "tr[empid='"+empid+"']" ).remove();
+    empleados.splice( $.inArray(empid, empleados), 1 );
+
 }
 function reloadInputDates(){
     var d = new Date( );

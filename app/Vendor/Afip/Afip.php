@@ -188,12 +188,20 @@ class Afip {
 		$TRA->asXML($this->RES_FOLDER.'TRA-'.$this->options['CUIT'].'-'.$service.'.xml');
 
 		//Signing TRA
-		$STATUS = openssl_pkcs7_sign($this->RES_FOLDER."TRA-".$this->options['CUIT'].'-'.$service.".xml", $this->RES_FOLDER."TRA-".$this->options['CUIT'].'-'.$service.".tmp", "file://".$this->CERT,
+                Debugger::dump(realpath($this->RES_FOLDER."TRA-".$this->options['CUIT'].'-'.$service.".xml"));
+                Debugger::dump($this->RES_FOLDER."TRA-".$this->options['CUIT'].'-'.$service.".tmp");
+                Debugger::dump("file://".$this->CERT);
+		$STATUS = openssl_pkcs7_sign(
+                        realpath($this->RES_FOLDER."TRA-".$this->options['CUIT'].'-'.$service.".xml"), 
+                        $this->RES_FOLDER."TRA-".$this->options['CUIT'].'-'.$service.".tmp", 
+                        "file://".$this->CERT,
 			array("file://".$this->PRIVATEKEY, $this->PASSPHRASE),
 			array(),
 			!PKCS7_DETACHED
 		);
 		if (!$STATUS) {return FALSE;}
+                Debugger::dump($this->RES_FOLDER."TRA-".$this->options['CUIT'].'-'.$service.".tmp");
+                die();
 		$inf = fopen($this->RES_FOLDER."TRA-".$this->options['CUIT'].'-'.$service.".tmp", "r");
 		$i = 0;
 		$CMS="";

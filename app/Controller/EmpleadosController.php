@@ -315,7 +315,7 @@ class EmpleadosController extends AppController {
                 )
             );
             $selectConceptos =
-                'Select id from Conceptos as Concepto '
+                'Select id from conceptos as Concepto '
                 . 'where Concepto.cargamasiva = 1 AND Concepto.seccion = "DATOS"'
                 ;
             $optionsConceptos = [
@@ -894,6 +894,62 @@ class EmpleadosController extends AppController {
         $this->autoRender=false;
        // $this->layout = 'ajax';
         $this->render('papeldetrabajolibrosueldo');
+    }
+    public function resumenlibrosueldo($cliid=null,$periodo=null){
+        $this->loadModel('Cliente');
+        $pemes = substr($periodo, 0, 2);
+        $peanio = substr($periodo, 3);
+        $esMayorQueBaja = array(
+                //HASTA es mayor que el periodo
+                'OR'=>array(
+                        'SUBSTRING(Actividadcliente.baja,4,7)*1 < '.$peanio.'*1',
+                        'AND'=>array(
+                                'SUBSTRING(Actividadcliente.baja,4,7)*1 <= '.$peanio.'*1',
+                                'SUBSTRING(Actividadcliente.baja,1,2) <= '.$pemes.'*1'
+                        ),
+                )
+        );
+        $options = [
+            'contain'=>[
+                'Valorrecibo'=>[
+                    'Cctxconcepto'=>[
+                        'Concepto',
+                        'Conveniocolectivotrabajo'=>[
+
+                        ]
+                    ],
+                    'conditions'=>[
+                        'Valorrecibo.periodo'=>$periodo,						
+                    ],
+                    'order'=>[
+                        'Valorrecibo.id'
+                    ]
+                ],
+            ],
+            'conditions' => array('Empleado.cliente_id' => $cliid)
+        ];
+        $empleados = $this->Empleado->find('all', $options);
+        $this->set('empleados',$empleados);
+        $cliente=$this->Cliente->find('first', array(
+                'contain'=>array(
+                    'Domicilio'=>[
+                        'Localidade'=>[
+                            'Partido'
+                        ]
+                    ],
+                    'Actividadcliente'=>[
+                        'Actividade'
+                    ],
+                ),
+                'conditions' => array(
+                    'id' => $cliid,
+                ),
+            )
+        );
+        $this->set(compact('cliid','periodo','cliente'));
+        $this->autoRender=false;
+       // $this->layout = 'ajax';
+        $this->render('resumenlibrosueldo');
     }
     public function papeldetrabajorecibosueldo($empid=null,$periodo=null,$tipoliquidacion=null){
         $this->loadModel('Vencimiento');

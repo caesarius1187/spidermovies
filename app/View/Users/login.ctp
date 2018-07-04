@@ -22,6 +22,6 @@
 	?>	        
     <div class="error"><span>+</span></div>
 <?php echo $this->Form->end(); ?>
-	
+	                
 </div>
 

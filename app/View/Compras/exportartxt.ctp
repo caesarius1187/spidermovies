@@ -216,10 +216,22 @@
         if(isset($cuentascliente[0])) {
             if (count($cuentascliente[0]) > 0) {
                 foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
+                    $neto = 0;
+                    $subsaldo = $movimientosbancario['debito']-$movimientosbancario['credito'];
+                    $totalMovimientosBancariosExportados+=$subsaldo;
+                    $tipoFactura = 39;
+                    //OTROS COMPROBANTES A QUE CUMPLEN CON LA R G  1415
+                    if($subsaldo<0){
+                        $subsaldo = $subsaldo*-1;
+                        //siempre positivos los saldos papa
+                        $tipoFactura = 90;
+                        //NOTA DE CREDITO OTROS COMP  QUE NO CUMPLEN CON LA R G  1415 Y SUS MODIF
+                    }
+                    
                     $lineaCompra = "";
                     //0-8
                     $lineaCompra .= date('Y', strtotime($movimientosbancario['fecha'])) . date('m', strtotime($movimientosbancario['fecha'])) . date('d', strtotime($movimientosbancario['fecha']));
-                    $lineaCompra .= str_pad(39, 3, "0", STR_PAD_LEFT);
+                    $lineaCompra .= str_pad($tipoFactura, 3, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad("00001", 5, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad($movimientosbancario['id'], 20, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad(" ", 16, " ", STR_PAD_LEFT);
@@ -232,9 +244,7 @@
                     $nombreamostrar = substr($movimientosbancario['Cbu']['Impcli']['Impuesto']['nombre'], 0, 29);
                     $lineaCompra .= str_pad($identificacionnumero, 20, "0", STR_PAD_LEFT);
                     $lineaCompra .= str_pad($nombreamostrar, 30, " ", STR_PAD_RIGHT);
-                    $neto = 0;
-                    $subsaldo = $movimientosbancario['debito']-$movimientosbancario['credito'];
-                    $totalMovimientosBancariosExportados+=$subsaldo;
+                    
                     if ($movimientosbancario['alicuota'] == '0') {
 
                     } elseif ($movimientosbancario['alicuota'] == '2.5') {
@@ -341,16 +351,24 @@
         if(isset($cuentascliente[0])) {
             if (count($cuentascliente[0]) > 0) {
                 foreach ($cuentascliente[0]['Movimientosbancario'] as $movimientosbancario) {
+                    $neto = 0;
+                    $subsaldo = $movimientosbancario['debito']-$movimientosbancario['credito'];
+                    $tipoFactura = 39;
+                    //OTROS COMPROBANTES A QUE CUMPLEN CON LA R G  1415
+                    if($subsaldo<0){
+                        $subsaldo = $subsaldo*-1;
+                        //siempre positivos los saldos papa
+                        $tipoFactura = 90;
+                        //NOTA DE CREDITO OTROS COMP  QUE NO CUMPLEN CON LA R G  1415 Y SUS MODIF
+                    }
                     $lineaAlicuota = "";
-                    $lineaAlicuota .= str_pad(39, 3, "0", STR_PAD_LEFT);
+                    $lineaAlicuota .= str_pad($tipoFactura, 3, "0", STR_PAD_LEFT);
                     $lineaAlicuota .= str_pad("00001", 5, "0", STR_PAD_LEFT);
                     $lineaAlicuota .= str_pad($movimientosbancario['id'], 20, "0", STR_PAD_LEFT);
                     $lineaAlicuota .= str_pad(80, 2, "0", STR_PAD_LEFT);//todo: reemplazar codigo documento
                     $identificacionnumero = $movimientosbancario['Cbu']['Impcli']['Impuesto']['cuit'];
                     $lineaAlicuota .= str_pad($identificacionnumero, 20, "0", STR_PAD_LEFT);
-                    $neto = 0;
-                    $codigoAlicuota = "0001";
-                    $subsaldo = $movimientosbancario['debito']-$movimientosbancario['credito'];
+                    $codigoAlicuota = "0001";                   
                     if ($movimientosbancario['alicuota'] == '0') {
 
                     } elseif ($movimientosbancario['alicuota'] == '2.5') {

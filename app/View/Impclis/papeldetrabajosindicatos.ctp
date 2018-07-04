@@ -762,15 +762,21 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                 $fechaIngreso = new DateTime(date('Y-m-d',strtotime($empleado['fechaingreso'])));
                                 $diff = $periodoALiquidar->diff($fechaIngreso);
                                 $titleUOCRAFdoCeseLaboral = "";
+                                $baseUOCRAFdoCeseLaboral = 0;
+                                $alicuotaUOCRAFdoCeseLaboral = 0;
                                 if($diff->y >= 1){
                                     $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.08";
                                     $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.08 ;
+                                    $baseUOCRAFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1);
+                                    $alicuotaUOCRAFdoCeseLaboral = 0.08 ;
                                 }else{
                                     $titleUOCRAFdoCeseLaboral .= "Antiguedad: ".$diff->y ." =>(".$empleadoDatos[$empleadoid]['remuneracionCD']."-".$empleadoDatos[$empleadoid]['SACremunerativo'].")*0.12";
                                     $contUocraFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1)*0.12 ;
+                                    $baseUOCRAFdoCeseLaboral = ($empleadoDatos[$empleadoid]['remuneracionCD']*1-$empleadoDatos[$empleadoid]['SACremunerativo']*1) ;
+                                    $alicuotaUOCRAFdoCeseLaboral = 0.12 ;
                                 }
                                 echo '<td title="'.$titleUOCRAFdoCeseLaboral.'">';
-                                echo number_format($contUocraFdoCeseLaboral, 2, ",", ".");
+                                echo number_format($baseUOCRAFdoCeseLaboral, 2, ",", ".")."*".number_format($alicuotaUOCRAFdoCeseLaboral, 2, ",", ".")."=".number_format($contUocraFdoCeseLaboral, 2, ",", ".");
                                 $totalContribucionFdoCeseLaboral += $contUocraFdoCeseLaboral ;
                                 echo "</td>";
                             }

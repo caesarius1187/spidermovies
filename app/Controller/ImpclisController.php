@@ -889,72 +889,72 @@ class ImpclisController extends AppController {
         }else{
             switch ($mesPeriodo) {
                 case '01':
-                        $mesParaProximaRecategorizacion= 6;
-                        $mesinicioDelCuatrimestre = '01';
-                        $mesinicioDelAño= '07';
-                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-                        break;
-                case '02':
                         $mesParaProximaRecategorizacion= 5;
                         $mesinicioDelCuatrimestre = '01';
                         $mesinicioDelAño= '07';
                         $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
                         break;
-                case '03':
+                case '02':
                         $mesParaProximaRecategorizacion= 4;
                         $mesinicioDelCuatrimestre = '01';
                         $mesinicioDelAño= '07';
                         $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
                         break;
-                case '04':/*Abril*/
+                case '03':
                         $mesParaProximaRecategorizacion= 3;
+                        $mesinicioDelCuatrimestre = '01';
+                        $mesinicioDelAño= '07';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        break;
+                case '04':/*Abril*/
+                        $mesParaProximaRecategorizacion= 2;
                         $mesinicioDelCuatrimestre = '01';
                         $mesinicioDelAño= '07';
                         $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
                         $showBtnChangeRecategorizacion = true;
                         break;
                 case '05':
-                        $mesParaProximaRecategorizacion= 2;
-                        $mesinicioDelCuatrimestre = '01';
-                        $mesinicioDelAño= '07';
-                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
-                        break;
-                case '06':
                         $mesParaProximaRecategorizacion= 1;
                         $mesinicioDelCuatrimestre = '01';
                         $mesinicioDelAño= '07';
                         $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
                         break;
-                case '07':
+                case '06':
                         $mesParaProximaRecategorizacion= 6;
+                        $mesinicioDelCuatrimestre = '01';
+                        $mesinicioDelAño= '07';
+                        $añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
+                        break;
+                case '07':
+                        $mesParaProximaRecategorizacion= 5;
                         $mesinicioDelCuatrimestre = '07';
                         $mesinicioDelAño= '01';
                         //$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
                         break;
                 case '08':/*Agosto*/
-                        $mesParaProximaRecategorizacion= 5;
+                        $mesParaProximaRecategorizacion= 4;
                         $mesinicioDelCuatrimestre = '07';
                         $mesinicioDelAño= '01';
                         //$añoinicioDelAño = date('Y',strtotime($strDatePeriodo.' -1 year'));
                         $showBtnChangeRecategorizacion = true;
                         break;
                 case '09':
-                        $mesParaProximaRecategorizacion= 4;
-                        $mesinicioDelCuatrimestre = '07';
-                        $mesinicioDelAño= '01';
-                        break;
-                case '10':
                         $mesParaProximaRecategorizacion= 3;
                         $mesinicioDelCuatrimestre = '07';
                         $mesinicioDelAño= '01';
                         break;
+                case '10':
+                        $mesParaProximaRecategorizacion= 5;
+                        $mesinicioDelCuatrimestre = '07';
+                        $mesinicioDelAño= '01';
+                        break;
                 case '11':
-                        $mesParaProximaRecategorizacion= 2;
+                        $mesParaProximaRecategorizacion= 1;
                         $mesinicioDelCuatrimestre = '07';
                         $mesinicioDelAño= '01';
                         break;
                 case '12':/*Diciembre*/
-                        $mesParaProximaRecategorizacion= 1;
+                        $mesParaProximaRecategorizacion= 6;
                         $mesinicioDelCuatrimestre = '07';
                         $mesinicioDelAño= '01';
                         $showBtnChangeRecategorizacion = true;

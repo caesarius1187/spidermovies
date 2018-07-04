@@ -174,6 +174,16 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                         <legend style="color:#1e88e5;font-weight:normal;">Segunda Quincena</legend>
                         <?php
                         echo $this->Form->button(
+                            "Resumen",
+                            array(
+                                'class'=>'btn_sueldo',
+                                'style'=>'width:inherit;min-width: 141px;',
+                                'onClick'=>"cargarResumenLibros()",
+                                'id'=>'buttonImprimirRecibos',
+                            ),
+                            array()
+                        );
+                        echo $this->Form->button(
                             "Libros de sueldos",
                             array(
                                 'class'=>'btn_sueldo',

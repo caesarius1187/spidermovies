@@ -23,7 +23,7 @@ class EstudiosController extends AppController {
 	public function index() {
 		$this->Estudio->recursive = 0;
 		$this->set('estudios', $this->Paginator->paginate());
-	}
+	}	
 
 /**
  * view method

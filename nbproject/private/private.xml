@@ -3,11 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/conta/app/webroot/js/Chart.js</file>
-            <file>file:/C:/wamp/www/conta/app/Controller/EstudiosController.php</file>
-            <file>file:/C:/wamp/www/conta/app/View/Ventas/resumen.ctp</file>
-            <file>file:/C:/wamp/www/conta/app/webroot/js/ventas/cargar.js</file>
-            <file>file:/C:/wamp/www/conta/app/View/Estudios/view.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Impclis/papeldetrabajomonotributo.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Papelesdetrabajos/autonomo.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Estudios/superadminestudioadd.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/webroot/js/impclis/papeldetrabajomonotributo.js</file>
+            <file>file:/C:/wamp/www/conta/app/Controller/EmpleadosController.php</file>
+            <file>file:/C:/wamp/www/conta/app/Controller/ImpclisController.php</file>
+            <file>file:/C:/wamp/www/conta/app/Controller/PapelesdetrabajosController.php</file>
+            <file>file:/C:/wamp/www/conta/app/View/Impclis/papeldetrabajosuss.ctp</file>
         </group>
     </open-files>
 </project-private>

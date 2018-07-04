@@ -153,6 +153,242 @@ echo $this->Html->script('Chart',array('inline'=>false));
             &nbsp;
         </dd>
     </dl>
+    
+    <?php
+    $ventasDiarias = [];
+    $dia = 01;
+    $ultimoDia = date('t', strtotime('01-'.$periodomes.'-'.$periodoanio));
+    $totalVenta = 0;
+    $totalCompra = 0;
+    $totalSueldos = 0;
+    $totalImpuestos = 0;
+    while ($dia<=$ultimoDia) {
+        foreach ($misVentasDiarias as $kvd => $venta) {
+            $diaVenta = date('d', strtotime($venta['Venta']['created']));
+            if($diaVenta==$dia){
+               $ventasDiarias[$diaVenta*1] = $venta[0]['diario'];
+               $totalVenta+=$venta[0]['diario'];
+            }
+        }
+        if(!isset( $ventasDiarias[$dia*1]))
+            $ventasDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('ventasDiarias',['type'=>'hidden','value'=> json_encode($ventasDiarias)]);
+
+    $comprasDiarias = [];
+    $dia = 01;
+    while ($dia<=$ultimoDia) {
+        foreach ($misComprasDiarias as $kvd => $compra) {
+            $diaCompra= date('d', strtotime($compra['Compra']['created']));
+            if($diaCompra==$dia){
+               $comprasDiarias[$diaCompra*1] = $compra[0]['diario'];        
+               $totalCompra+=$compra[0]['diario'];
+            }
+           
+        }
+        if(!isset( $comprasDiarias[$dia*1]))
+            $comprasDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('comprasDiarias',['type'=>'hidden','value'=> json_encode($comprasDiarias)]);
+    
+    $sueldosDiarias = [];
+    $dia = 01;
+    while ($dia<=$ultimoDia) {
+        foreach ($misSueldosDiarias as $kvr => $valorrecibo) {
+            $diaValorRecibo= date('d', strtotime($valorrecibo['Valorrecibo']['created']));
+            if($diaValorRecibo==$dia){
+               $sueldosDiarias[$diaValorRecibo*1] = $valorrecibo[0]['diario'];     
+               $totalSueldos+=$valorrecibo[0]['diario'];
+            }
+        }
+        if(!isset( $sueldosDiarias[$dia*1]))
+            $sueldosDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('sueldosDiarias',['type'=>'hidden','value'=> json_encode($sueldosDiarias)]);
+    
+    $impuestosDiarias = [];
+    $dia = 01;
+    while ($dia<=$ultimoDia) {
+        foreach ($misImpuestosDiarias as $kei => $eventoimpuesto) {
+            $diaEventoImpuesto = date('d', strtotime($eventoimpuesto['Eventosimpuesto']['created']));
+            if($diaEventoImpuesto==$dia){
+               $impuestosDiarias[$diaEventoImpuesto*1] = $eventoimpuesto[0]['diario'];        
+               $totalImpuestos+=$eventoimpuesto[0]['diario'];
+            }
+        }
+        if(!isset( $impuestosDiarias[$dia*1]))
+            $impuestosDiarias[$dia*1]=0;
+        $dia++;
+    }
+    echo $this->Form->input('impuestosDiarias',['type'=>'hidden','value'=> json_encode($impuestosDiarias)]);
+    ?>
+    <dl style="width: 100%">
+        <dt><h2><?php echo __('Reindimiento'); ?></h2></dt>
+        <dd style="margin-left: 33%">
+            Total 
+        </dd>        
+        <dd style="margin-left: 66%">
+            Promedio 
+        </dd>        
+        <dt><?php echo __('Ventas'); ?></dt>
+        <dd style="margin-left: 33%">
+            <?php echo number_format($totalVenta,2,",","."); ?>
+        </dd>        
+        <dd style="margin-left: 66%">
+            <?php echo number_format($totalVenta/$ultimoDia,2,",","."); ?>
+        </dd>        
+        <dt><?php echo __('Compras'); ?></dt>
+        <dd style="margin-left: 33%">
+            <?php echo number_format($totalCompra,2,",","."); ?>
+        </dd>        
+        <dd style="margin-left: 66%">
+            <?php echo number_format($totalCompra/$ultimoDia,2,",","."); ?>
+        </dd>        
+        <dt><?php echo __('Sueldos'); ?></dt>
+        <dd style="margin-left: 33%">
+            <?php echo number_format($totalSueldos,2,",","."); ?>
+        </dd>        
+        <dd style="margin-left: 66%">
+            <?php echo number_format($totalSueldos/$ultimoDia,2,",","."); ?>
+        </dd>        
+        <dt><?php echo __('Impuestos'); ?></dt>
+        <dd style="margin-left: 33%">
+            <?php echo number_format($totalImpuestos,2,",","."); ?>
+        </dd>        
+        <dd style="margin-left: 66%">
+            <?php echo number_format($totalImpuestos/$ultimoDia,2,",","."); ?>
+        </dd>        
+    </dl>
+    
+    <?php
+    
+    $boton375 = 'none';
+    $boton500 = 'none';
+    $boton1000 = 'none';
+    $boton1500 = 'none';
+    $boton2000 = 'none';
+    switch ($estudio['Estudio']['preciosubscripcion']) {
+        case '375':
+            $boton375 = 'inherit';
+            break;
+        case '500':
+            $boton500 = 'inherit';
+            break;
+        case '1000':
+            $boton1000 = 'inherit';
+            break;
+        case '1500':
+            $boton1500 = 'inherit';
+            break;
+        case '2000':
+            $boton2000 = 'inherit';
+            break;
+        default:
+            break;
+    }
+    ?>
+    
+    <div id="boton375" style="display:<?php echo $boton375;?>">
+        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-00199da9-3ced-4c98-ba1e-ea2a0bf1616a" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+        <script type="text/javascript">
+        (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
+        </script>
+    </div>
+    <div id="boton500" style="display:<?php echo $boton500;?>">
+        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-c4af7c46-b3d9-4e4f-a860-aacb0cf59047" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+        <script type="text/javascript">
+        (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
+        </script>
+        <a mp-mode="dftl" href="http://mpago.la/nFNC" name="MP-payButton" class='blue-ar-l-rn-none'>Suscribirme</a>
+        <script type="text/javascript">
+            (function() {
+                function $MPC_load() {
+                    window.$MPC_loaded !== true && (function() {
+                        var s = document.createElement("script");
+                        s.type = "text/javascript";
+                        s.async = true;
+                        s.src = document.location.protocol + "//secure.mlstatic.com/mptools/render.js";
+                        var x = document.getElementsByTagName('script')[0];
+                        x.parentNode.insertBefore(s, x);
+                        window.$MPC_loaded = true;
+                    })();
+                }
+                window.$MPC_loaded !== true ? (window.attachEvent ? window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;
+            })();
+        </script>
+    </div>
+    <div id="boton1000" style="display:<?php echo $boton1000;?>">
+        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-23f78119-ec1e-4eba-8ad1-1ea660e6ba0d" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+        <script type="text/javascript">
+        (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
+        </script>
+        <a mp-mode="dftl" href="http://mpago.la/1PHK" name="MP-payButton" class='blue-ar-l-sq-undefined'>Suscribirme</a>
+        <script type="text/javascript">
+            (function() {
+                function $MPC_load() {
+                    window.$MPC_loaded !== true && (function() {
+                        var s = document.createElement("script");
+                        s.type = "text/javascript";
+                        s.async = true;
+                        s.src = document.location.protocol + "//secure.mlstatic.com/mptools/render.js";
+                        var x = document.getElementsByTagName('script')[0];
+                        x.parentNode.insertBefore(s, x);
+                        window.$MPC_loaded = true;
+                    })();
+                }
+                window.$MPC_loaded !== true ? (window.attachEvent ? window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;
+            })();
+        </script>
+    </div>
+    <div id="boton1500" style="display:<?php echo $boton1500;?>">
+        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-f2fd35fd-0ea7-4420-b4cb-268f61b8ba07" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+        <script type="text/javascript">
+        (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
+        </script>
+        <a mp-mode="dftl" href="http://mpago.la/RMnv" name="MP-payButton" class='blue-ar-l-sq-undefined'>Suscribirme</a>
+        <script type="text/javascript">
+            (function() {
+                function $MPC_load() {
+                    window.$MPC_loaded !== true && (function() {
+                        var s = document.createElement("script");
+                        s.type = "text/javascript";
+                        s.async = true;
+                        s.src = document.location.protocol + "//secure.mlstatic.com/mptools/render.js";
+                        var x = document.getElementsByTagName('script')[0];
+                        x.parentNode.insertBefore(s, x);
+                        window.$MPC_loaded = true;
+                    })();
+                }
+                window.$MPC_loaded !== true ? (window.attachEvent ? window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;
+            })();
+        </script>
+    </div>
+    <div id="boton2000" style="display:<?php echo $boton2000;?>">
+        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-631743ab-3d36-4cf5-bdc9-a8e8b9a5f3f7" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+        <script type="text/javascript">
+        (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
+        </script>
+        <a mp-mode="dftl" href="http://mpago.la/hbeb" name="MP-payButton" class='blue-ar-l-sq-undefined'>Suscribirme</a>
+        <script type="text/javascript">
+            (function() {
+                function $MPC_load() {
+                    window.$MPC_loaded !== true && (function() {
+                        var s = document.createElement("script");
+                        s.type = "text/javascript";
+                        s.async = true;
+                        s.src = document.location.protocol + "//secure.mlstatic.com/mptools/render.js";
+                        var x = document.getElementsByTagName('script')[0];
+                        x.parentNode.insertBefore(s, x);
+                        window.$MPC_loaded = true;
+                    })();
+                }
+                window.$MPC_loaded !== true ? (window.attachEvent ? window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;
+            })();
+        </script>
+    </div>
 </div>
 
 <div class="estudios index" style="width: 43%;float:left">
@@ -328,116 +564,6 @@ echo $this->Html->script('Chart',array('inline'=>false));
                 <?php echo h(count($convenios)); ?>
                 &nbsp;
         </dd>
-    </dl>
-</div>
-<div class="estudios index" style="margin-bottom:5px;width: 43%;float:left">
-    <?php
-    $ventasDiarias = [];
-    $dia = 01;
-    $ultimoDia = date('t', strtotime('01-'.$periodomes.'-'.$periodoanio));
-    $totalVenta = 0;
-    $totalCompra = 0;
-    $totalSueldos = 0;
-    $totalImpuestos = 0;
-    while ($dia<=$ultimoDia) {
-        foreach ($misVentasDiarias as $kvd => $venta) {
-            $diaVenta = date('d', strtotime($venta['Venta']['created']));
-            if($diaVenta==$dia){
-               $ventasDiarias[$diaVenta*1] = $venta[0]['diario'];
-               $totalVenta+=$venta[0]['diario'];
-            }
-        }
-        if(!isset( $ventasDiarias[$dia*1]))
-            $ventasDiarias[$dia*1]=0;
-        $dia++;
-    }
-    echo $this->Form->input('ventasDiarias',['type'=>'hidden','value'=> json_encode($ventasDiarias)]);
-
-    $comprasDiarias = [];
-    $dia = 01;
-    while ($dia<=$ultimoDia) {
-        foreach ($misComprasDiarias as $kvd => $compra) {
-            $diaCompra= date('d', strtotime($compra['Compra']['created']));
-            if($diaCompra==$dia){
-               $comprasDiarias[$diaCompra*1] = $compra[0]['diario'];        
-               $totalCompra+=$compra[0]['diario'];
-            }
-           
-        }
-        if(!isset( $comprasDiarias[$dia*1]))
-            $comprasDiarias[$dia*1]=0;
-        $dia++;
-    }
-    echo $this->Form->input('comprasDiarias',['type'=>'hidden','value'=> json_encode($comprasDiarias)]);
-    
-    $sueldosDiarias = [];
-    $dia = 01;
-    while ($dia<=$ultimoDia) {
-        foreach ($misSueldosDiarias as $kvr => $valorrecibo) {
-            $diaValorRecibo= date('d', strtotime($valorrecibo['Valorrecibo']['created']));
-            if($diaValorRecibo==$dia){
-               $sueldosDiarias[$diaValorRecibo*1] = $valorrecibo[0]['diario'];     
-               $totalSueldos+=$valorrecibo[0]['diario'];
-            }
-        }
-        if(!isset( $sueldosDiarias[$dia*1]))
-            $sueldosDiarias[$dia*1]=0;
-        $dia++;
-    }
-    echo $this->Form->input('sueldosDiarias',['type'=>'hidden','value'=> json_encode($sueldosDiarias)]);
-    
-    $impuestosDiarias = [];
-    $dia = 01;
-    while ($dia<=$ultimoDia) {
-        foreach ($misImpuestosDiarias as $kei => $eventoimpuesto) {
-            $diaEventoImpuesto = date('d', strtotime($eventoimpuesto['Eventosimpuesto']['created']));
-            if($diaEventoImpuesto==$dia){
-               $impuestosDiarias[$diaEventoImpuesto*1] = $eventoimpuesto[0]['diario'];        
-               $totalImpuestos+=$eventoimpuesto[0]['diario'];
-            }
-        }
-        if(!isset( $impuestosDiarias[$dia*1]))
-            $impuestosDiarias[$dia*1]=0;
-        $dia++;
-    }
-    echo $this->Form->input('impuestosDiarias',['type'=>'hidden','value'=> json_encode($impuestosDiarias)]);
-    ?>
-    <dl style="width: 100%">
-        <dt><h2><?php echo __('Reindimiento'); ?></h2></dt>
-        <dd style="margin-left: 33%">
-            Total 
-        </dd>        
-        <dd style="margin-left: 66%">
-            Promedio 
-        </dd>        
-        <dt><?php echo __('Ventas'); ?></dt>
-        <dd style="margin-left: 33%">
-            <?php echo number_format($totalVenta,2,",","."); ?>
-        </dd>        
-        <dd style="margin-left: 66%">
-            <?php echo number_format($totalVenta/$ultimoDia,2,",","."); ?>
-        </dd>        
-        <dt><?php echo __('Compras'); ?></dt>
-        <dd style="margin-left: 33%">
-            <?php echo number_format($totalCompra,2,",","."); ?>
-        </dd>        
-        <dd style="margin-left: 66%">
-            <?php echo number_format($totalCompra/$ultimoDia,2,",","."); ?>
-        </dd>        
-        <dt><?php echo __('Sueldos'); ?></dt>
-        <dd style="margin-left: 33%">
-            <?php echo number_format($totalSueldos,2,",","."); ?>
-        </dd>        
-        <dd style="margin-left: 66%">
-            <?php echo number_format($totalSueldos/$ultimoDia,2,",","."); ?>
-        </dd>        
-        <dt><?php echo __('Impuestos'); ?></dt>
-        <dd style="margin-left: 33%">
-            <?php echo number_format($totalImpuestos,2,",","."); ?>
-        </dd>        
-        <dd style="margin-left: 66%">
-            <?php echo number_format($totalImpuestos/$ultimoDia,2,",","."); ?>
-        </dd>        
     </dl>
 </div>
 <div class="index">

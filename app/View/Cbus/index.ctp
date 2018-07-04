@@ -1,9 +1,9 @@
 <div class="cbuses">
     <h3><?php echo __('CBUs del banco: '.$impcli['Impuesto']['nombre']); ?></h3>
     <h3><?php echo __('Agregar uno nuevo');?></h3>
+    <?php echo $this->Form->create('Cbu',['action'=>'add']); ?>
     <table cellpadding="0" cellspacing="0">
     	 <?php
-        	echo $this->Form->create('Cbu',['action'=>'add']);
         	echo $this->Form->input('impcli_id',['default'=>$impcli['Impcli']['id'],'type'=>'hidden']);
      	?> 
     	<tr>

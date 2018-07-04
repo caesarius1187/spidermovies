@@ -83,6 +83,7 @@ function SeleccionarTab (sTabActive)
     $("#divTabEmpleados").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
     $("#divTabLibrosSueldos").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
     $("#divTabRecibosSueldo").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
+    $("#divTabResumenLibrosSueldos").removeClass('cliente_view_tab_active').addClass('cliente_view_tab');    
     $("#divSueldoForm").html("");
     switch(sTabActive)
     {
@@ -99,6 +100,12 @@ function SeleccionarTab (sTabActive)
         break;    
         case '3':
             $('#divTabRecibosSueldo').removeClass('cliente_view_tab').addClass('cliente_view_tab_active');    
+            $('#form_empleados').show();
+            $('#form_FuncionImprimir').hide();            
+            $("#ddlTipoLiquidacionReportes").val('0');
+        break;    
+        case '4':
+            $('#divTabResumenLibrosSueldos').removeClass('cliente_view_tab').addClass('cliente_view_tab_active');    
             $('#form_empleados').show();
             $('#form_FuncionImprimir').hide();            
             $("#ddlTipoLiquidacionReportes").val('0');
@@ -670,6 +677,26 @@ function cargarTodosLosLibros(){
         });
     }
 }
+function cargarResumenLibros(){
+    var data ="";
+    var cliid = $('#cliid').val();var periodo = $('#periodo').val();        
+    $.ajax({
+        type: "post",  // Request method: post, get
+        url: serverLayoutURL+"/empleados/resumenlibrosueldo/"+cliid+"/"+periodo, // URL to request
+        data: data,  // post data
+        success: function(response) {
+            $("#divSueldoForm").append(response);
+            $('.btn_imprimir').each(function (index) {
+                $(this).attr('onClick','openWinResumenSueldos()');
+            });
+        },
+        error:function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(textStatus + " : " + errorThrown);
+            //return false;
+        }
+    });
+    return false;
+    }
 function cargarUnLibroSueldo(empid,periodo,liquidacion,indice){
     var data ="";
     $.ajax({
@@ -733,8 +760,8 @@ function openWin()
             });
         }, 1000);
 }
-function openWinRecibosSueldos()
-{
+function openWinRecibosSueldos(){
+    {
     $('.btn_imprimir').each(function (index) {
         $(this).hide();
     });
@@ -743,6 +770,39 @@ function openWinRecibosSueldos()
     });
     var myWindow=window.open('','','width=1010,height=1000px');
     myWindow.document.write('<html><head><title>Recibos de sueldos</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
+    myWindow.document.write($("#divSueldoForm").html());
+    myWindow.document.close();
+    myWindow.focus();
+    setTimeout(
+        function()
+        {
+            myWindow.print();
+            myWindow.close();
+            // $("#divSueldoForm").css('float','left');
+            // $(".index").css('float','left');
+            $('.hideOnPrint').each(function (index) {
+                $(this).show();
+            });
+            $('.btn_imprimir').each(function (index) {
+                if(index==0){
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            });
+        }, 1000);
+}
+}
+function openWinResumenSueldos()
+{
+    $('.btn_imprimir').each(function (index) {
+        $(this).hide();
+    });
+    $('.hideOnPrint').each(function (index) {
+        $(this).hide();
+    });
+    var myWindow=window.open('','','width=1010,height=1000px');
+    myWindow.document.write('<html><head><title>Resumen de libros de sueldos</title><link rel="stylesheet" type="text/css" href="'+serverLayoutURL+'/css/cake.generic.css"></head><body>');
     myWindow.document.write($("#divSueldoForm").html());
     myWindow.document.close();
     myWindow.focus();

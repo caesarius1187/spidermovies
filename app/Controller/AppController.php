@@ -36,24 +36,24 @@ class AppController extends Controller {
 		//'DebugKit.Toolbar',
 	    'Session',
 	    'Auth' => array(
-            'loginAction' => array(
-                'controller' => 'users',
-                'action' => 'login'
-            ),
-            'loginRedirect' => array(
-                'controller' => 'clientes',
-                'action' => 'index'
-            ),
-            'logoutRedirect' => array(
-                'controller' => 'users',
-                'action' => 'login'               
-            ),           
-        )
+                'loginAction' => array(
+                    'controller' => 'users',
+                    'action' => 'login'
+                ),
+                'loginRedirect' => array(
+                    'controller' => 'clientes',
+                    'action' => 'index'
+                ),
+                'logoutRedirect' => array(
+                    'controller' => 'users',
+                    'action' => 'login'               
+                ),           
+            )
 	);
 
 	public function beforeFilter() {
 //		set_time_limit(0);
-            $this->Auth->allow('login');
+            $this->Auth->allow('login','terminosycondiciones');
             $this->loadModel('Notification');
             $notificationsOptions = [
                 'contain'=>[],

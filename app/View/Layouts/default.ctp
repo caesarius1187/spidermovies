@@ -99,205 +99,211 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 <body>
 	<div id="container">
 		<div id="header">
-			<div id='cssmenu' style="text-align: center">
-				<div style="float:left;">
-					<?php echo $this->Html->image('logosolo.png', array('style' => 'width: 46px;margin-top: 6px;')) ?>
-				</div>
-				<ul style="float:left;" >
-					<!--<li><a>
-						<span>
-							<?php echo $this->Html->image('SIGESEC.png', array('width' => '120')) ?>
-						</span>
-						</a>
-					</li>	-->			  
-				   	<li class='has-sub ' id='liparametros'><a href='#'><span>Configuracion</span></a>
-				      <ul>
-					    <li class='has-sub'>
-							<?php
-								echo $this->Html->link("Mi cuenta",
-																array(
-																	'controller' => 'estudios',
-																	'action' => 'view',
-																	$this->Session->read('Auth.User.estudio_id')
-																	)
-													); 	
-							?>	
-					    </li>
-					  	<li class='has-sub'>
-							<?php
-								echo $this->Html->link("Usuarios",
-																array(
-																	'controller' => 'users',
-																	'action' => 'index',
-																	)
-													);
-							?>
-					    </li>
-						<li class='has-sub'>
-				         	<?php
-								echo $this->Html->link("Tareas",
-																array(
-																	'controller' => 'tareasxclientesxestudios', 
-																	'action' => 'index', 
-																	)
-													); 	
-							?>		
-				        </li>
-				      </ul>
-				   	</li>			   
-				   	<li class=' has-sub' id='liclientes'><a href='#'><span>Contribuyentes</span></a>
-				      <ul>
-				        <li class='has-sub'>
-			         		<?php
-								echo $this->Html->link("Contribuyentes",
-																array(
-																	'controller' => 'clientes', 
-																	'action' => 'index', 
-																	)
-													); 	
-							?>	
-				         </li>
-			         	<li class='has-sub'>		
-				         	<?php
-								echo $this->Html->link("Grupos",
-																array(
-																	'controller' => 'grupoclientes', 
-																	'action' => 'index', 
-																	)
-													); 	
-							?>	
-						</li>	
-				      </ul>
-				   	</li>
-					<li class='has-sub' id='liinformes'>
-						<?php
-								echo $this->Html->link("Informes",
-																array(
-																	'controller' => 'clientes',
-																	'action' => 'index', 
-																	)
-													); 	
-							?>	
-						<ul>							
-							<li class='has-sub'>
-								<?php
-								echo $this->Html->link("Tributario Financiero",
-																array(
-																	'controller' => 'clientes', 
-																	'action' => 'informefinancierotributario', 
-																	)
-													); 	
-								?>
-							</li>
-							<li class='has-sub'>
-								<?php
-								echo $this->Html->link("Resumen Ventas",
-																array(
-																	'controller' => 'ventas',
-																	'action' => 'resumen',
-																	)
-													);
-								?>
-							</li>
-							<li class='has-sub'>
-								<?php
-								echo $this->Html->link("Resumen Compras",
-																array(
-																	'controller' => 'compras',
-																	'action' => 'resumen',
-																	)
-													);
-								?>
-							</li>
-							<li class='has-sub'>
-								<?php
-								echo $this->Html->link("Pagos del Mes",
-																array(
-																	'controller' => 'clientes', 
-																	'action' => 'pagosdelmes', 
-																	)
-													); 	
-								?>
-							</li>	 
-							<li class='has-sub'>
-								<?php
-								echo $this->Html->link("Comparativo",
-																array(
-																	'controller' => 'clientes', 
-																	'action' => 'comparativo', 
-																	)
-													); 	
-								?>
-							</li>
-							<li class='has-sub'>
-								<?php
-								echo $this->Html->link("CM05",
-																array(
-																	'controller' => 'papelesdetrabajos', 
-																	'action' => 'cm05', 
-																	)
-													); 	
-								?>
-							</li>
-						</ul>
-					</li>
-					<li class=' has-sub' id='ligestion'><a href='#'><span>Gestion</span></a>
-                                            <ul>
-					    	<li class='has-sub'>
+                    <div id='cssmenu' style="text-align: center">
+                        <ul style="float:left;" >
+                            <li>
+                                <div style="float:left;">
+                                    <?php echo $this->Html->image('logosolo.png', array('style' => 'width: 46px;margin-top: 6px;')) ?>
+                                </div>
+                            </li>				  
+                            <li class='has-sub ' id='liparametros'><a href='#'><span>Configuracion</span></a>
+                                <ul>
+                                    <li class='has-sub'>
+                                        <?php
+                                        echo $this->Html->link("Mi cuenta",
+                                            array(
+                                                'controller' => 'estudios',
+                                                'action' => 'view',
+                                                $this->Session->read('Auth.User.estudio_id')
+                                            )
+                                        ); 	
+                                        ?>	
+                                    </li>
+                                          <li class='has-sub'>
+                                              <?php
+                                              echo $this->Html->link("Usuarios",
+                                                  array(
+                                                      'controller' => 'users',
+                                                      'action' => 'index',
+                                                      )
+                                                  );
+                                              ?>
+                                          </li>
+                                          <li class='has-sub'>
+                                              <?php
+                                                  echo $this->Html->link("Tareas",
+                                                      array(
+                                                          'controller' => 'tareasxclientesxestudios', 
+                                                          'action' => 'index', 
+                                                          )
+                                                  ); 	
+                                              ?>		
+                                          </li>
+                                          <li class='has-sub'>
+                                              <?php
+                                                  echo $this->Html->link("Terminos y Condiciones",
+                                                      array(
+                                                          'controller' => 'users', 
+                                                          'action' => 'terminosycondiciones', 
+                                                          )
+                                                  ); 	
+                                              ?>		
+                                          </li>
+                                      </ul>
+                                </li>			   
+                                    <li class=' has-sub' id='liclientes'><a href='#'><span>Contribuyentes</span></a>
+                                  <ul>
+                                    <li class='has-sub'>
+                                        <?php
+                                        echo $this->Html->link("Contribuyentes",
+                                            array(
+                                                'controller' => 'clientes', 
+                                                'action' => 'index', 
+                                            )
+                                        ); 	
+                                                ?>	
+                                     </li>
+                                    <li class='has-sub'>		
+                                        <?php
+                                        echo $this->Html->link("Grupos",
+                                            array(
+                                                'controller' => 'grupoclientes', 
+                                                'action' => 'index', 
+                                            )
+                                        ); 	
+                                        ?>	
+                                    </li>	
+                                  </ul>
+                                    </li>
+                                    <li class='has-sub' id='liinformes'>
+                                    <?php
+                                        echo $this->Html->link("Informes",
+                                            array(
+                                                'controller' => 'clientes',
+                                                'action' => 'index', 
+                                            )
+                                        ); 	
+                                    ?>	
+                                        <ul>							
+                                            <li class='has-sub'>
+                                                <?php
+                                                echo $this->Html->link("Tributario Financiero",
+                                                    array(
+                                                        'controller' => 'clientes', 
+                                                        'action' => 'informefinancierotributario', 
+                                                    )
+                                                ); 	
+                                                ?>
+                                            </li>
+                                            <li class='has-sub'>
+                                                <?php
+                                                echo $this->Html->link("Resumen Ventas",
+                                                    array(
+                                                        'controller' => 'ventas',
+                                                        'action' => 'resumen',
+                                                    )
+                                                );
+                                                ?>
+                                            </li>
+                                            <li class='has-sub'>
+                                                <?php
+                                                echo $this->Html->link("Resumen Compras",
+                                                    array(
+                                                        'controller' => 'compras',
+                                                        'action' => 'resumen',
+                                                    )
+                                                );
+                                                ?>
+                                            </li>
+                                            <li class='has-sub'>
+                                                <?php
+                                                echo $this->Html->link("Pagos del Mes",
+                                                    array(
+                                                        'controller' => 'clientes', 
+                                                        'action' => 'pagosdelmes', 
+                                                    )
+                                                ); 	
+                                                ?>
+                                            </li>	 
+                                            <li class='has-sub'>
                                                     <?php
-                                                        echo $this->Html->link("Mi Estudio",
-                                                            array(
-                                                                'controller' => 'clientes', 
-                                                                'action' => 'avance', 
-                                                            )
-                                                        ); 	
-                                                    ?>	
-							</li>
-							<li class='has-sub'>
-								<?php
-									echo $this->Html->link("Planes de Pago",
-																	array(
-																		'controller' => 'plandepagos', 
-																		'action' => 'index', 
-																		)
-														); 	
-								?>	
-							</li>	       						
-                                            </ul>
-				   	</li>
+                                                    echo $this->Html->link("Comparativo",
+                                                        array(
+                                                            'controller' => 'clientes', 
+                                                            'action' => 'comparativo', 
+                                                        )
+                                                    ); 	
+                                                    ?>
+                                            </li>
+                                            <li class='has-sub'>
+                                                <?php
+                                                echo $this->Html->link("CM05",
+                                                    array(
+                                                        'controller' => 'papelesdetrabajos', 
+                                                        'action' => 'cm05', 
+                                                    )
+                                                ); 	
+                                                ?>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class=' has-sub' id='ligestion'><a href='#'><span>Gestion</span></a>
+                                        <ul>
+                                            <li class='has-sub'>
+                                                <?php
+                                                    echo $this->Html->link("Mi Estudio",
+                                                        array(
+                                                            'controller' => 'clientes', 
+                                                            'action' => 'avance', 
+                                                        )
+                                                    ); 	
+                                                ?>	
+                                                    </li>
+                                                    <li class='has-sub'>
+                                                            <?php
+                                                                echo $this->Html->link("Planes de Pago",
+                                                                    array(
+                                                                        'controller' => 'plandepagos', 
+                                                                        'action' => 'index', 
+                                                                        )
+                                                                ); 	
+                                                        ?>	
+                                                    </li>	       						
+                                        </ul>
+                                    </li>
 
-				</ul>
-				<div style="float:right;">
-					<?php if ($this->Session->read('Auth.User.username')) { 
-                                               
-                                                if($cantNotifications>0){
-                                                    echo " Tienes ".$cantNotifications." notificaciones sin leer";
-                                                }                                                
-                                                echo $this->Html->image('bell_icon.png',array(
-                                                        'alt' => 'open',
-                                                        'class' => 'btn_exit',
-                                                        'style' => 'width:20px;height:20px;margin-top: 5px;',
-                                                        'onClick' => "window.location.href='".Router::url(array(
-                                                                                'controller'=>'notifications',
-                                                                                'action'=>'index')
-                                                                )."'"
+                            </ul>
+                            <div style="float:right;">
+                                    <?php if ($this->Session->read('Auth.User.username')) { 
+
+                                            if($cantNotifications>0){
+                                                echo " Tienes ".$cantNotifications." notificaciones sin leer";
+                                            }                                                
+                                            echo $this->Html->image('bell_icon.png',array(
+                                                    'alt' => 'open',
+                                                    'class' => 'btn_exit',
+                                                    'style' => 'width:20px;height:20px;margin-top: 5px;',
+                                                    'onClick' => "window.location.href='".Router::url(array(
+                                                                            'controller'=>'notifications',
+                                                                            'action'=>'index')
+                                                            )."'"
+                                                )
+
+                                            );
+                                            echo ' Bienvenido '.$this->Session->read('Auth.User.username').'!'; 
+                                            echo $this->Html->image('exit.png',array(
+                                                            'alt' => 'open',
+                                                            'class' => 'btn_exit',
+                                                            'onClick' => "window.location.href='".Router::url(array(
+                                                                                    'controller'=>'users',
+                                                                                    'action'=>'logout')
+                                                                    )."'"
                                                     )
 
-						);
-                                                echo ' Bienvenido '.$this->Session->read('Auth.User.username').'!'; 
-                                                echo $this->Html->image('exit.png',array(
-								'alt' => 'open',
-								'class' => 'btn_exit',
-								'onClick' => "window.location.href='".Router::url(array(
-											'controller'=>'users',
-											'action'=>'logout')
-									)."'"
-							)
-
-						);?>
-					<?php } ?>
-				</div>
-			</div>
+                                            );?>
+                                    <?php } ?>
+                            </div>
+                    </div>
 		</div>
 		<div id="content">
 			

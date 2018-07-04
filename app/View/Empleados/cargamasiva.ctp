@@ -111,6 +111,22 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 );
                 ?>
             </div>
+            <div class="cliente_view_tab" id="divTabResumenLibrosSueldos" style="width:18.5%;margin-right:0px" onClick="SeleccionarTab('4');">
+                <?php
+                echo $this->Form->label(
+                    null,
+                    "Resumen Libros de sueldos",
+                    array(
+                        //'class'=>'btn_sueldo',
+                        //'style'=>'width:inherit;min-width: 141px;',
+                        'onClick'=>"cargarResumenLibros()",
+                        'id'=>'buttonImprimirRecibos',
+                        'style'=>'text-align:center;margin-top:5px;cursor:pointer'
+                    ),
+                    array()
+                );
+                ?>
+            </div>
             <div class="cliente_view_tab" id="divTabRecibosSueldo" style="width:18.5%;margin-right:0px" onClick="SeleccionarTab('3');">
                 <?php
                 echo $this->Form->label(

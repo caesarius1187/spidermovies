@@ -188,5 +188,12 @@ button:active {
     padding: 40px;
     border-radius: 5px;
 }
-
+.terminos {
+    background-color: rgb(255, 255, 255, 0.6);
+    padding: 40px;
+    border-radius: 5px;
+    width: 60%;
+    color: black;
+    margin-left: 15%;
+}
 
