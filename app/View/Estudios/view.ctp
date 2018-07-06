@@ -98,64 +98,6 @@ echo $this->Html->script('Chart',array('inline'=>false));
        
 
 </script>
-<<<<<<< HEAD
-<div class="estudios index" style="margin-bottom:5px">
-	<div class="fab blue" style="float: right;">
-		<core-icon icon="add" align="center" style="margin: 8px 14px;position: absolute;">
-			<?php echo $this->Form->button(
-				$this->Html->image(
-					'edit_view_white_1.png',
-					array(
-						'alt' => 'edit',
-						'class'=>'img_edit',
-                        'style' => 'width: 27px; height: 27px; margin: -5px -10px;'
-					)
-				),
-				array('type' => 'button',
-					'style' =>"padding:0px;",
-					'class' =>"btn_add",
-					'escape' =>false,
-					'onClick' => "$('#myModal').modal('show');"
-						)
-				);
-			?>
-		</core-icon>
-		<paper-ripple class="circle recenteringTouch" fit></paper-ripple>
-	</div>
-<h2><?php echo __('Mi Cuenta'); ?></h2>
-	<dl>
-		<dt><?php echo __('Nombre'); ?></dt>
-		<dd>
-			<?php echo h($estudio['Estudio']['nombre']); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Propietario'); ?></dt>
-		<dd>
-			<?php echo h($estudio['Estudio']['propietario']); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Direccion'); ?></dt>
-		<dd>
-			<?php echo h($estudio['Estudio']['direccion']); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('CUIT'); ?></dt>
-		<dd>
-			<?php echo h($estudio['Estudio']['cuit']); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Ingresos Brutos'); ?></dt>
-		<dd>
-			<?php echo h($estudio['Estudio']['cuit']); ?>
-			&nbsp;
-		</dd>
-		<dt><?php echo __('Inicio de actividades'); ?></dt>
-		<dd>
-			<?php echo h($estudio['Estudio']['inicioactividades']); ?>
-			&nbsp;
-		</dd>
-	</dl>
-=======
 <div class="estudios index" style="margin-bottom:5px;width: 43%;float:left">
     <div class="fab blue" style="float: right;">
         <core-icon icon="add" align="center" style="margin: 8px 14px;position: absolute;">
@@ -211,7 +153,6 @@ echo $this->Html->script('Chart',array('inline'=>false));
             &nbsp;
         </dd>
     </dl>
-<<<<<<< HEAD
     
     <?php
     $ventasDiarias = [];
@@ -351,17 +292,18 @@ echo $this->Html->script('Chart',array('inline'=>false));
     ?>
     
     <div id="boton375" style="display:<?php echo $boton375;?>">
-        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-00199da9-3ced-4c98-ba1e-ea2a0bf1616a" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=334169085-b2bdb039-1a32-480a-aece-9918632129c1" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
         <script type="text/javascript">
         (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
         </script>
     </div>
     <div id="boton500" style="display:<?php echo $boton500;?>">
-        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-c4af7c46-b3d9-4e4f-a860-aacb0cf59047" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=334169085-8898772b-982b-47e0-a81d-f73a11341be0" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
         <script type="text/javascript">
         (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
         </script>
-        <a mp-mode="dftl" href="http://mpago.la/nFNC" name="MP-payButton" class='blue-ar-l-rn-none'>Suscribirme</a>
+        <!--subsctipcion 500-->
+        <a mp-mode="dftl" href="http://mpago.la/zjNn" name="MP-payButton" class='blue-ar-l-sq-undefined'>Suscribirme</a>
         <script type="text/javascript">
             (function() {
                 function $MPC_load() {
@@ -378,13 +320,17 @@ echo $this->Html->script('Chart',array('inline'=>false));
                 window.$MPC_loaded !== true ? (window.attachEvent ? window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;
             })();
         </script>
+
+
     </div>
     <div id="boton1000" style="display:<?php echo $boton1000;?>">
-        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-23f78119-ec1e-4eba-8ad1-1ea660e6ba0d" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
-        <script type="text/javascript">
-        (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
-        </script>
+    <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=334169085-cdfecbb5-24f3-45a3-b42d-080c47eaff67" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+    <script type="text/javascript">
+    (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
+    </script>
         <a mp-mode="dftl" href="http://mpago.la/1PHK" name="MP-payButton" class='blue-ar-l-sq-undefined'>Suscribirme</a>
+        <!--subsctipcion 1000-->
+        <a mp-mode="dftl" href="http://mpago.la/eGkv" name="MP-payButton" class='blue-ar-l-sq-undefined'>Suscribirme</a>
         <script type="text/javascript">
             (function() {
                 function $MPC_load() {
@@ -403,11 +349,12 @@ echo $this->Html->script('Chart',array('inline'=>false));
         </script>
     </div>
     <div id="boton1500" style="display:<?php echo $boton1500;?>">
-        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-f2fd35fd-0ea7-4420-b4cb-268f61b8ba07" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=334169085-4ca816b0-0301-4f36-a3d8-4a3a88b68635" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
         <script type="text/javascript">
         (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
         </script>
-        <a mp-mode="dftl" href="http://mpago.la/RMnv" name="MP-payButton" class='blue-ar-l-sq-undefined'>Suscribirme</a>
+        <!--subsctipcion 1500-->
+        <a mp-mode="dftl" href="http://mpago.la/6frY" name="MP-payButton" class='blue-ar-l-rn-none'>Suscribirme</a>
         <script type="text/javascript">
             (function() {
                 function $MPC_load() {
@@ -426,11 +373,12 @@ echo $this->Html->script('Chart',array('inline'=>false));
         </script>
     </div>
     <div id="boton2000" style="display:<?php echo $boton2000;?>">
-        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=305401686-631743ab-3d36-4cf5-bdc9-a8e8b9a5f3f7" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
+        <a mp-mode="dftl" href="https://www.mercadopago.com/mla/checkout/start?pref_id=334169085-dfd5bdde-faa8-45ee-9c5b-1d5658b4caaa" name="MP-payButton" class='blue-ar-l-sq-arall'>Pagar</a>
         <script type="text/javascript">
         (function(){function $MPC_load(){window.$MPC_loaded !== true && (function(){var s = document.createElement("script");s.type = "text/javascript";s.async = true;s.src = document.location.protocol+"//secure.mlstatic.com/mptools/render.js";var x = document.getElementsByTagName('script')[0];x.parentNode.insertBefore(s, x);window.$MPC_loaded = true;})();}window.$MPC_loaded !== true ? (window.attachEvent ?window.attachEvent('onload', $MPC_load) : window.addEventListener('load', $MPC_load, false)) : null;})();
         </script>
-        <a mp-mode="dftl" href="http://mpago.la/hbeb" name="MP-payButton" class='blue-ar-l-sq-undefined'>Suscribirme</a>
+        <!--subsctipcion 2000-->
+        <a mp-mode="dftl" href="http://mpago.la/sXUk" name="MP-payButton" class='blue-ar-l-sq-undefined'>Suscribirme</a>
         <script type="text/javascript">
             (function() {
                 function $MPC_load() {
@@ -448,9 +396,6 @@ echo $this->Html->script('Chart',array('inline'=>false));
             })();
         </script>
     </div>
-=======
->>>>>>> 3507456144cd7ce48a12bc11adf4b47b5cb44c0b
->>>>>>> a275d4bf69d70d7d8a3fce9f78306a58f2b4610f
 </div>
 
 <div class="estudios index" style="width: 43%;float:left">

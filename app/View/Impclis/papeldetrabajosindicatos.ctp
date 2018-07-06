@@ -1017,6 +1017,36 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     </tr>
                 <?php
                     break;
+                case '205':/*Sindicato de Panaderos de Salta*/ ?>
+                    <tr>
+                        <td>
+                            Fondo Convencional
+                        </td>
+                        <?php
+                        $totalContribucionEmpresarial =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+
+                                $contribucionEmpresarial = $empleadoDatos[$empleadoid]['remuneracionTotal']*0.015;
+                                echo '<td>';
+                                echo number_format($contribucionEmpresarial, 2, ",", ".");
+                                $totalContribucionEmpresarial += $contribucionEmpresarial ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td >
+                            <?php
+                            echo number_format($totalContribucionEmpresarial, 2, ",", ".");
+                            $apagarcontribuciones += $totalContribucionEmpresarial ;
+                            ?>
+                        </td>
+                    </tr>
+                <?php
+                    break;
+                    $totalContribucion += (18835.58*0.005+1883.55*0.005);
+                    $apagarcontribuciones +=(18835.58*0.005+1883.55*0.005);
             }
             ?>
                 <?php
@@ -1060,6 +1090,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         $impuestoDeterminado += $totalContribucionEmpresarial;
                         break;
                     case '197':/*UECARA*/
+                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
+                        $impuestoDeterminado += $totalContribucionEmpresarial;
+                        break;
+                    case '205':/*SOPS*/
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
                         $impuestoDeterminado += $totalContribucionEmpresarial;
                         break;
@@ -1213,6 +1247,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     '1442',
                     '1443',
                     '3437',
+                    '3472',
+                    '3484',
+                    '3485',
+                    '3970',                    
                 ];
                 //aca vamos a ver si el monto va al debe o al haber
                 $debe=0;

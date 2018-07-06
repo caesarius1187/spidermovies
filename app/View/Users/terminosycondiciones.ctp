@@ -1,16 +1,29 @@
 <div class="terminos">
     <h1><?php echo __('Terminos y Condiciones'); ?></h1>
     <p style="font-size: 20px;text-align: left">
-        Señores 
-        CONTA SOFTWARE S.R.L.
-        Presente.- <br/> 
-        Tengo el agrado de dirigirme a CONTA SOFTWARE S.R.L. –en adelante 
-        “CONTA”- a fin de dejar constancia de haber recibido, de manera 
-        telefónica y personal, en forma cierta, clara y detallada la 
-        información relativa al programa piloto de prestaciones, y los términos 
-        y condiciones de suscripción para su utilización.<br/> 
-        En virtud de lo manifestado anteriormente, solicito mi suscripción al 
-        mismo, de acuerdo a los siguientes términos y condiciones:<br/> 
+        Estas condiciones de uso, incluyendo sus anexos (“Condiciones Generales”)
+        constituyen un contrato entre cualquier persona (en adelante, “Usuario” 
+        o, en plural, “Usuarios”) que desee acceder y/o usar el servicio CONTA 
+        S.R.L. CUIT: 30-71574628-6 (“en adelante CONTA”, nosotros, nuestro y 
+        términos similares según corresponda), en cuyo caso el Usuario estará 
+        sujeto a los términos y condiciones que rigen CONTA.<br/> 
+        En estas Condiciones Generales se describen los derechos, 
+        responsabilidades y obligaciones del Usuario y de Mercado Pago al 
+        utilizar el servicio de procesamiento de pagos, la Plataforma 
+        (conforme es definida en estas Condiciones Generales) y cualquier 
+        producto o servicio relacionado que ofrezca Mercado Pago (cualquiera de 
+        ellos, indistintamente, el “Servicio” y, conjuntamente, los “Servicios”, 
+        según corresponda).<br/> 
+        El Usuario debe leer, entender y aceptar todas las condiciones 
+        establecidas en estas Condiciones Generales y demás políticas y 
+        principios incorporados a las mismas por referencia, previo a su 
+        registro como Usuario de Mercado Pago y/o la utilización del Servicio. 
+        En cualquier caso, la utilización del Servicio implica la aceptación por
+        parte del usuario de las Condiciones Generales.<br/> 
+        Cualquier persona que no acepte estos términos y condiciones generales, 
+        los cuales tiene un carácter obligatorio y vinculante, deberá abstenerse
+        de utilizar el sitio y/o los servicios.<br/> 
+
         1.	el sistema CONTA opera bajo un plan piloto que provee un aporte 
         de información que es actualizada periódicamente, por lo tanto, el 
         usuario debe cotejar en cada caso si la información brindada se 

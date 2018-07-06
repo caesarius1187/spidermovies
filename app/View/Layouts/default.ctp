@@ -51,7 +51,7 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 		echo $this->fetch('script');
 	?>
 	<SCRIPT TYPE="text/javascript">
-	var serverLayoutURL = "/contasynfotech";
+	var serverLayoutURL = "/conta";
 		function callAlertPopint(message){
 			//todo callAlertPopint
 			//deberiamos cambiar la forma en la que mostramos esto por que te mueve el scroll

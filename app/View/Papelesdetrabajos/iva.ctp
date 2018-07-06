@@ -665,17 +665,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                 </tr>
                                 <tr>
                                     <?php
-    //                                    if($Alicuota0)
-    //                                    {
-    //                                        echo '<tr>
-    //                                                  <td style="width:20%">0</td>
-    //                                                  <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
-    //                                                  <td style="width:20%"></td>
-    //                                                  <td style="width:20%"></td>
-    //                                                  <td style="width:20%"></td>
-    //                                                  </tr>
-    //                                            ';
-    //                                    }
+                                        if($Alicuota0)
+                                        {
+                                            echo '<tr>
+                                                      <td style="width:20%">0</td>
+                                                      <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+                                                      <td style="width:20%"></td>
+                                                      <td style="width:20%"></td>
+                                                      <td style="width:20%"></td>
+                                                      </tr>
+                                                ';
+                                        }
                                         if($Alicuota2_5)
                                         {
                                             echo '<tr>
@@ -838,17 +838,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                                 <tr>
 
                                     <?php
-    //                                if($Alicuota0)
-    //                                {
-    //                                    echo '<tr>
-    //                                  <td style="width:20%">0</td>
-    //                                  <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
-    //                                  <td style="width:20%">0</td>
-    //                                  <td style="width:20%"></td>
-    //                                  <td style="width:20%">0</td>
-    //                                  </tr>
-    //                            ';
-    //                                }
+                                    if($Alicuota0)
+                                    {
+                                        echo '<tr>
+                                      <td style="width:20%">0</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+                                      <td style="width:20%">0</td>
+                                      <td style="width:20%"></td>
+                                      <td style="width:20%">0</td>
+                                      </tr>
+                                ';
+                                    }
                                     if ($Alicuota2_5) {
                                         echo '<tr>
                                       <td style="width:20%">2.5</td>
@@ -1005,17 +1005,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 
                                 <?php
                                     //no debo mostrar alicuota 0
-    //                                if($Alicuota0)
-    //                                {
-    //                                    echo '<tr>
-    //                                              <td style="width:20%">0</td>
-    //                                              <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
-    //                                              <td style="width:20%"></td>
-    //                                              <td style="width:20%"></td>
-    //                                              <td style="width:20%"></td>
-    //                                          </tr>
-    //                                                ';
-    //                                }
+                                    if($Alicuota0)
+                                    {
+                                        echo '<tr>
+                                                  <td style="width:20%">0</td>
+                                                  <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+                                                  <td style="width:20%"></td>
+                                                  <td style="width:20%"></td>
+                                                  <td style="width:20%"></td>
+                                              </tr>
+                                                    ';
+                                    }
                                     if($Alicuota2_5)
                                     {
                                         echo '<tr>
@@ -1252,17 +1252,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             <tr>
 
                                 <?php
-    //                            if($Alicuota0)
-    //                            {
-    //                                echo '<tr>
-    //                                  <td style="width:20%">0</td>
-    //                                  <td style="width:20%">'.number_format($TotalAlicuota0  , 2, ",", ".").'</td>
-    //                                  <td style="width:20%">0</td>
-    //                                  <td style="width:20%">0</td>
-    //                                  <td style="width:20%">0</td>
-    //                                  </tr>
-    //                            ';
-    //                            }
+                                if($Alicuota0)
+                                {
+                                    echo '<tr>
+                                      <td style="width:20%">0</td>
+                                      <td style="width:20%">'.number_format($TotalAlicuota0  , 2, ",", ".").'</td>
+                                      <td style="width:20%">0</td>
+                                      <td style="width:20%">0</td>
+                                      <td style="width:20%">0</td>
+                                      </tr>
+                                ';
+                                }
                                 if ($Alicuota2_5) {
                                     echo '<tr>
                                       <td style="width:20%">2.5</td>
@@ -1414,17 +1414,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             <tr>
 
                             <?php
-    //                            if($Alicuota0)
-    //                            {
-    //                                echo '<tr>
-    //                                      <td style="width:20%">0</td>
-    //                                      <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
-    //                                      <td style="width:20%"></td>
-    //                                      <td style="width:20%"></td>
-    //                                      <td style="width:20%"></td>
-    //                                      </tr>
-    //                                ';
-    //                            }
+                                if($Alicuota0)
+                                {
+                                    echo '<tr>
+                                          <td style="width:20%">0</td>
+                                          <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+                                          <td style="width:20%"></td>
+                                          <td style="width:20%"></td>
+                                          <td style="width:20%"></td>
+                                          </tr>
+                                    ';
+                                }
                                 if($Alicuota2_5)
                                 {
                                     echo '<tr>
@@ -1583,17 +1583,17 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                             <tr>
 
                             <?php
-    //                            if($Alicuota0)
-    //                            {
-    //                                echo '<tr>
-    //                                          <td style="width:20%">0</td>
-    //                                          <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
-    //                                          <td style="width:20%"></td>
-    //                                          <td style="width:20%"></td>
-    //                                          <td style="width:20%"></td>
-    //                                          </tr>
-    //                                    ';
-    //                            }
+                                if($Alicuota0)
+                                {
+                                    echo '<tr>
+                                              <td style="width:20%">0</td>
+                                              <td style="width:20%">'.number_format($TotalAlicuota0, 2, ",", ".").'</td>
+                                              <td style="width:20%"></td>
+                                              <td style="width:20%"></td>
+                                              <td style="width:20%"></td>
+                                              </tr>
+                                        ';
+                                }
                                 if($Alicuota2_5)
                                 {
                                     echo '<tr>
@@ -1826,6 +1826,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
             $TotalBsUso=[];
             $TotalOtrosConceptos=[];
             $TotalOperacionesExentasYNoGravadas=[];
+            $TotalOperacionesMonotributistas=[];
             $TotalDcto814=[];
 
             $TotalComprasBienesConsFinales=inicializarArrayCompras($TotalComprasBienesConsFinales);
@@ -1848,6 +1849,8 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 
             $TotalOperacionesExentasYNoGravadas=inicializarArrayCompras($TotalOperacionesExentasYNoGravadas);
             $TotalOperacionesExentasYNoGravadas['mostrar']=false;
+            $TotalOperacionesMonotributistas=inicializarArrayCompras($TotalOperacionesMonotributistas);
+            $TotalOperacionesMonotributistas['mostrar']=false;
 
             $TotalDcto814=inicializarArrayCompras($TotalDcto814);
             $TotalDcto814['mostrar']=false;
@@ -2199,13 +2202,23 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                         }
                     }
                 if ((($compra[0]['exentos']*1)>0)||(($compra[0]['nogravados']*1)>0)){
-                    $TotalOperacionesExentasYNoGravadas['Neto']['total'] += $compra[0]['exentos']*$suma;
-                    $TotalOperacionesExentasYNoGravadas['Neto']['total'] += $compra[0]['nogravados']*$suma;
-                    $TotalOperacionesExentasYNoGravadas['mostrar']=true;
+                    if($compra['Compra']['condicioniva'] == 'responsableinscripto'){
+                        $TotalOperacionesExentasYNoGravadas['Neto']['total'] += $compra[0]['exentos']*$suma;
+                        $TotalOperacionesExentasYNoGravadas['Neto']['total'] += $compra[0]['nogravados']*$suma;
+                        $TotalOperacionesExentasYNoGravadas['mostrar']=true;
+                    }else{                        
+                        $TotalOperacionesMonotributistas['Neto']['total'] += $compra[0]['neto']*$suma;
+                        $TotalOperacionesMonotributistas['mostrar']=true;
+                    }
+                   
                 }
-                 if($compra['Compra']['alicuota']=='0'){
-                      $TotalOperacionesExentasYNoGravadas['Neto']['total']+= $compra[0]['neto']*$suma;
-                 }
+                if($compra['Compra']['alicuota']=='0'){
+                    if($compra['Compra']['condicioniva'] == 'responsableinscripto'){
+                        $TotalOperacionesExentasYNoGravadas['Neto']['total']+= $compra[0]['neto']*$suma;
+                    }else{                        
+                        $TotalOperacionesMonotributistas['Neto']['total']+= $compra[0]['neto']*$suma;
+                    }
+                }
             }
             //en 'Otros Conceptos' tengo q acumular los DEBE de los movimientos bancarios
             //que serian los movimientos que apuntan a la cuentacliente de la cuenta
@@ -2989,7 +3002,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
     <!--                <td></td>-->
     <!--            </tr>-->
                 <?php
-                if($TotalOperacionesExentasYNoGravadas['mostrar']) {
+                if($TotalOperacionesExentasYNoGravadas['mostrar']||$TotalOperacionesMonotributistas['mostrar']) {
                 ?>
                 <tr>
                     <td colspan="7" style='background-color:#87cfeb'>
@@ -3006,11 +3019,20 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
                     <td></td>
                 </tr>
                 <tr>
+                    <td>Responsables Inscriptos</td>
                     <td><?php
                         echo number_format($TotalOperacionesExentasYNoGravadas['Neto']['total'] , 2, ",", ".");
                         ?></td>
                     <td></td>
                     <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                 <tr>
+                    <td>Monotributustas-Consum.Finales</td>
+                    <td><?php
+                        echo number_format($TotalOperacionesMonotributistas['Neto']['total'] , 2, ",", ".");
+                        ?></td>
                     <td></td>
                     <td></td>
                     <td></td>
