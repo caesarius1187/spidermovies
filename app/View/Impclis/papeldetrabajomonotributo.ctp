@@ -89,7 +89,7 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
                         $subtotalCuatrimestreAlquiler=0;
 
                         $TotalCuatrimestreIngresoBruto=0;
-                        /*La mayor de estas dos variables decidirá si se aplica monotributo de Locacion o de Venta de cosa mueble*/
+                        /*La mayor de estas dos variables decidir� si se aplica monotributo de Locacion o de Venta de cosa mueble*/
                         $TotalCuatrimestreIngresoBrutolocacion=0;
                         $TotalCuatrimestreIngresoBrutoMueble=0;
                         //Vamos a usar las dos de arriba para categorizar el monotributo pero las dos de abajo para elegir si aplica
@@ -368,7 +368,7 @@ function validateDate($date, $format = 'Y-m-d H:i:s')
                                     </td>
                             </tr></tbody>
 			</table>
-			<h1>Tabla Indicativa de la Categoria en la cual quedará encuadrado el Monotibutista para el cuatrimestre siguiente (siempre se encuadra en la categoria con parámetro superior).</h1>
+			<h1>Tabla Indicativa de la Categoria en la cual quedar� encuadrado el Monotibutista para el cuatrimestre siguiente (siempre se encuadra en la categoria con parámetro superior).</h1>
 			<table id="categoriamonotributo" class="tbl_tareas" style="border-collapse: collapse; width:50%">
 				<thead>
 				<td>Categoria</td>

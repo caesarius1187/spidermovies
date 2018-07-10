@@ -1,233 +1,152 @@
-<?php
-/**
- *
- *
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.View.Pages
- * @since         CakePHP(tm) v 0.10.0.1076
- */
+    <?php
+        echo $this->Html->css('bootstrap/bootstrap.min.css');
+        echo $this->Html->css('scrolling-nav.css');
+        echo $this->Html->css('bootstrap/bootstrapmodal');
+        echo $this->Html->script('home/jquery/jquery.min.js',array('inline'=>false));
+        echo $this->Html->script('home/bootstrap/bootstrap.bundle.min.js',array('inline'=>false));
+        echo $this->Html->script('home/jquery-easing/jquery.easing.min.js',array('inline'=>false));
+        ?>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+      <div class="container">
+        <!--
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Start Bootstrap</a>
+        -->
+        <img src="img/logosolo.png" width="68" height="50">
 
-if (!Configure::read('debug')):
-	throw new NotFoundException();
-endif;
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#about">Nosotros</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#services">Funcionalidades</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#contact">Contactanos</a>
+            </li>
+            <li class="nav-item">
+               <?php
+                echo $this->Html->link("Iniciar Sesion",
+                    array(
+                        'controller' => 'users',
+                        'action' => 'login',                        
+                    ),
+                    [
+                        'class'=>'nav-link js-scroll-trigger'
+                    ]
+                ); 	
+                ?>	
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-App::uses('Debugger', 'Utility');
-?>
-<h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
-<p>
-	<a href="http://cakephp.org/changelogs/<?php echo Configure::version(); ?>"><?php echo __d('cake_dev', 'Read the changelog'); ?> </a>
-</p>
-<?php
-if (Configure::read('debug') > 0):
-	Debugger::checkSecurityKeys();
-endif;
-?>
-<?php
-if (file_exists(WWW_ROOT . 'css' . DS . 'cake.generic.css')):
-?>
-<p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
-	<?php echo __d('cake_dev', 'URL rewriting is not properly configured on your server.'); ?>
-	1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
-	2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
-</p>
-<?php
-endif;
-?>
-<p>
-<?php
-	if (version_compare(PHP_VERSION, '5.2.8', '>=')):
-		echo '<span class="notice success">';
-			echo __d('cake_dev', 'Your version of PHP is 5.2.8 or higher.');
-		echo '</span>';
-	else:
-		echo '<span class="notice">';
-			echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.2.8 or higher to use CakePHP.');
-		echo '</span>';
-	endif;
-?>
-</p>
-<p>
-	<?php
-		if (is_writable(TMP)):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your tmp directory is writable.');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your tmp directory is NOT writable.');
-			echo '</span>';
-		endif;
-	?>
-</p>
-<p>
-	<?php
-		$settings = Cache::settings();
-		if (!empty($settings)):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit %s', '<em>'. $settings['engine'] . 'Engine</em>', 'APP/Config/core.php');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in %s', 'APP/Config/core.php');
-			echo '</span>';
-		endif;
-	?>
-</p>
-<p>
-	<?php
-		$filePresent = null;
-		if (file_exists(APP . 'Config' . DS . 'database.php')):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your database configuration file is present.');
-				$filePresent = true;
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your database configuration file is NOT present.');
-				echo '<br/>';
-				echo __d('cake_dev', 'Rename %s to %s', 'APP/Config/database.php.default', 'APP/Config/database.php');
-			echo '</span>';
-		endif;
-	?>
-</p>
-<?php
-if (isset($filePresent)):
-	App::uses('ConnectionManager', 'Model');
-	try {
-		$connected = ConnectionManager::getDataSource('default');
-	} catch (Exception $connectionError) {
-		$connected = false;
-		$errorMsg = $connectionError->getMessage();
-		if (method_exists($connectionError, 'getAttributes')):
-			$attributes = $connectionError->getAttributes();
-			if (isset($errorMsg['message'])):
-				$errorMsg .= '<br />' . $attributes['message'];
-			endif;
-		endif;
-	}
-?>
-<p>
-	<?php
-		if ($connected && $connected->isConnected()):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'CakePHP is able to connect to the database.');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'CakePHP is NOT able to connect to the database.');
-				echo '<br /><br />';
-				echo $errorMsg;
-			echo '</span>';
-		endif;
-	?>
-</p>
-<?php endif; ?>
-<?php
-	App::uses('Validation', 'Utility');
-	if (!Validation::alphaNumeric('cakephp')):
-		echo '<p><span class="notice">';
-			echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');
-			echo '<br/>';
-			echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
-		echo '</span></p>';
-	endif;
-?>
+    <header class="bg-primary text-white">
+      <div class="container text-center">
+        
+        <h1>Bienvenidos CONTA</h1>
+        <p class="lead">Sistema de Gestion de Estudios Contables</p>
+        <img src="img/logosolo.png" style="width:27.32vw;height:20vw">        
 
-<p>
-	<?php
-		if (CakePlugin::loaded('DebugKit')):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'DebugKit plugin is present');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'DebugKit is not installed. It will help you inspect and debug different aspects of your application.');
-				echo '<br/>';
-				echo __d('cake_dev', 'You can install it from %s', $this->Html->link('GitHub', 'https://github.com/cakephp/debug_kit'));
-			echo '</span>';
-		endif;
-	?>
-</p>
+      </div>
+    </header>
+    <section id="about">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <!--
+            <h2>About this page</h2>
+            <p class="lead">This is a great place to talk about your webpage. This template is purposefully unstyled so you can use it as a boilerplate or starting point for you own landing page designs! This template features:</p>
+            <ul>
+              <li>Clickable nav links that smooth scroll to page sections</li>
+              <li>Responsive behavior when clicking nav links perfect for a one page website</li>
+              <li>Bootstrap's scrollspy feature which highlights which section of the page you're on in the navbar</li>
+              <li>Minimal custom CSS so you are free to explore your own unique design options</li>
+            </ul>
+            -->
+            <h2>CONTA</h2>
+            <p class="lead">Conta es un sistema WEB que satisface todas las necesidades en la vida de un Estudio Contable.</p>
+            <ul>
+              <li>
+                Sin inversion inicial, actualizaciones ni instalacion de software, ofrece inmediata implementación y disponibilidad los 365 dias del año.
+              </li>
+              <li>
+                Propone pasos sucesivos para la organización y liquidación de impuestos, sueldos y contabilidad. Generando asientos automáticos e informes para enviar al contribuyente.
+              </li>              
+            </ul>
 
-<h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>
-<p>
-<?php
-echo __d('cake_dev', 'To change the content of this page, edit: %s.<br />
-To change its layout, edit: %s.<br />
-You can also add some CSS styles for your pages at: %s.',
-	'APP/View/Pages/home.ctp', 'APP/View/Layouts/default.ctp', 'APP/webroot/css');
-?>
-</p>
+            <p class="lead">Permitir a los Estudios Contables, el control en tiempo real del proceso.</p>
+            <ul>
+              <li>
+                Las fechas de vencimiento de los impuestos, convenios colectivos de trabajo (fórmulas y escalas salariales) estan pre cargadas y son actualizadas por CONTA
+              </li>              
+            </ul>
 
-<h3><?php echo __d('cake_dev', 'Getting Started'); ?></h3>
-<p>
-	<?php
-		echo $this->Html->link(
-			sprintf('<strong>%s</strong> %s', __d('cake_dev', 'New'), __d('cake_dev', 'CakePHP 2.0 Docs')),
-			'http://book.cakephp.org/2.0/en/',
-			array('target' => '_blank', 'escape' => false)
-		);
-	?>
-</p>
-<p>
-	<?php
-		echo $this->Html->link(
-			__d('cake_dev', 'The 15 min Blog Tutorial'),
-			'http://book.cakephp.org/2.0/en/tutorials-and-examples/blog/blog.html',
-			array('target' => '_blank', 'escape' => false)
-		);
-	?>
-</p>
+            <p class="lead">Todos los archivos son generados en la web por lo cual no necesita resguardar la información.</p>
+            <ul>
+              <li>
+                Tambien cuenta con soporte en tiempo real y backup automáticos diarios.
+              </li>              
+            </ul>
+            
+          </div>
+        </div>
+      </div>
+    </section>
 
-<h3><?php echo __d('cake_dev', 'Official Plugins'); ?></h3>
-<p>
-<ul>
-	<li>
-		<?php echo $this->Html->link('DebugKit', 'https://github.com/cakephp/debug_kit') ?>:
-		<?php echo __d('cake_dev', 'provides a debugging toolbar and enhanced debugging tools for CakePHP applications.'); ?>
-	</li>
-	<li>
-		<?php echo $this->Html->link('Localized', 'https://github.com/cakephp/localized') ?>:
-		<?php echo __d('cake_dev', 'contains various localized validation classes and translations for specific countries'); ?>
-	</li>
-</ul>
-</p>
+    <section id="services" class="bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>Modulos del sistema</h2>
+            <p class="lead">Conta integra sueldos, impuestos y contabilidad en un solo 
+                proceso.</p>                        
+          </div>
+          <div class="col-lg-8 mx-auto">
+            <p class="lead">Importando Ventas.</p>
+            <div class="video">
+              <iframe src="https://drive.google.com/file/d/17CHpfeaX0C-jJj3mkavsZ4QKgQsX9WL8/preview" width="640" height="480"></iframe>
+            </div>
+            <p class="lead">Importando Compras.</p>
+            <div class="video">
+              <iframe src="https://drive.google.com/file/d/1Z-g8QI4DVxtTjeL_P1E6Lp2TggJzGH2t/preview" width="640" height="480"></iframe>
+            </div>
+            <p class="lead">Liquidando IVA.</p>
+            <div class="video">
+              <iframe src="https://drive.google.com/file/d/1cQqpdF-Gd6SCGTSoPtiGKToQzvfY_IyO/preview" width="640" height="480"></iframe>
+            </div>
+            <p class="lead">Generando Balances con CONTA.</p>
+            <div class="video">
+              <iframe src="https://drive.google.com/file/d/1TUvuHA13psciK6HLT7VVFKMETDjsW5am/preview" width="640" height="480"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<h3><?php echo __d('cake_dev', 'More about CakePHP'); ?></h3>
-<p>
-<?php echo __d('cake_dev', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
-</p>
-<p>
-<?php echo __d('cake_dev', 'Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
-</p>
+    <section id="contact">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>Contactanos completando el formulario de la derecha</h2>
+            <p class="lead">Estamos ansiosos por conocelos y darnos a conocer. No dude en 
+            enviarnos un mensaje, nos comunicaremos con usted a la brevedad</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<ul>
-	<li><a href="http://cakephp.org">CakePHP</a>
-	<ul><li><?php echo __d('cake_dev', 'The Rapid Development Framework'); ?></li></ul></li>
-	<li><a href="http://book.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Documentation'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Your Rapid Development Cookbook'); ?></li></ul></li>
-	<li><a href="http://api.cakephp.org"><?php echo __d('cake_dev', 'CakePHP API'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Quick API Reference'); ?></li></ul></li>
-	<li><a href="http://bakery.cakephp.org"><?php echo __d('cake_dev', 'The Bakery'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Everything CakePHP'); ?></li></ul></li>
-	<li><a href="http://plugins.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Plugins'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'A comprehensive list of all CakePHP plugins created by the community'); ?></li></ul></li>
-	<li><a href="http://community.cakephp.org"><?php echo __d('cake_dev', 'CakePHP Community Center'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Everything related to the CakePHP community in one place'); ?></li></ul></li>
-	<li><a href="https://groups.google.com/group/cake-php"><?php echo __d('cake_dev', 'CakePHP Google Group'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Community mailing list'); ?></li></ul></li>
-	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
-	<ul><li><?php echo __d('cake_dev', 'Live chat about CakePHP'); ?></li></ul></li>
-	<li><a href="https://github.com/cakephp/"><?php echo __d('cake_dev', 'CakePHP Code'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Find the CakePHP code on GitHub and contribute to the framework'); ?></li></ul></li>
-	<li><a href="https://github.com/cakephp/cakephp/issues"><?php echo __d('cake_dev', 'CakePHP Issues'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'CakePHP Issues'); ?></li></ul></li>
-	<li><a href="https://github.com/cakephp/cakephp/wiki#roadmaps"><?php echo __d('cake_dev', 'CakePHP Roadmaps'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'CakePHP Roadmaps'); ?></li></ul></li>
-	<li><a href="http://training.cakephp.org"><?php echo __d('cake_dev', 'Training'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Join a live session and get skilled with the framework'); ?></li></ul></li>
-	<li><a href="http://cakefest.org"><?php echo __d('cake_dev', 'CakeFest'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Don\'t miss our annual CakePHP conference'); ?></li></ul></li>
-	<li><a href="http://cakefoundation.org"><?php echo __d('cake_dev', 'Cake Software Foundation'); ?> </a>
-	<ul><li><?php echo __d('cake_dev', 'Promoting development related to CakePHP'); ?></li></ul></li>
-</ul>
+    <!-- Footer -->
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">Copyright &copy; Conta S.R.L. 2018</p>
+      </div>
+      <!-- /.container -->
+    </footer>
+
+   

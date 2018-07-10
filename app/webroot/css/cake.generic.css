@@ -342,11 +342,7 @@ table td.actions a {
 dl {
 	line-height: 2em;
 	margin: 0em 0em;
-<<<<<<< HEAD
-	width: 65%;
-=======
-	/*width: 60%;*/
->>>>>>> 3507456144cd7ce48a12bc11adf4b47b5cb44c0b
+/*width: 60%;*/
 }
 dl dd:nth-child(4n+2),
 dl dt:nth-child(4n+1) {

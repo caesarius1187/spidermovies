@@ -1,6 +1,4 @@
 <div class="page-container">
-    
-    
     <?php echo $this->Form->create('User',[
         'action'=>'login',
         'id'=>'UserLoginForm',
