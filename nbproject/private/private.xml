@@ -3,14 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/conta/app/View/Impclis/papeldetrabajomonotributo.ctp</file>
-            <file>file:/C:/wamp/www/conta/app/View/Papelesdetrabajos/autonomo.ctp</file>
-            <file>file:/C:/wamp/www/conta/app/View/Estudios/superadminestudioadd.ctp</file>
-            <file>file:/C:/wamp/www/conta/app/webroot/js/impclis/papeldetrabajomonotributo.js</file>
-            <file>file:/C:/wamp/www/conta/app/Controller/EmpleadosController.php</file>
-            <file>file:/C:/wamp/www/conta/app/Controller/ImpclisController.php</file>
-            <file>file:/C:/wamp/www/conta/app/Controller/PapelesdetrabajosController.php</file>
-            <file>file:/C:/wamp/www/conta/app/View/Impclis/papeldetrabajosuss.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Layouts/default_home.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Asientos/index.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/Controller/AppController.php</file>
+            <file>file:/C:/wamp/www/conta/app/webroot/js/cuentasclientes/informesumaysaldo.js</file>
+            <file>file:/C:/wamp/www/conta/app/View/Users/terminosycondiciones.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/webroot/css/cake.generic.css</file>
+            <file>file:/C:/wamp/www/conta/app/webroot/css/scrolling-nav.css</file>
+            <file>file:/C:/wamp/www/conta/app/View/Cuentasclientes/informesumaysaldo.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Pages/home.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/Controller/UsersController.php</file>
+            <file>file:/C:/wamp/www/conta/app/webroot/js/home/scrolling-nav.js</file>
+            <file>file:/C:/wamp/www/conta/app/Controller/PagesController.php</file>
         </group>
     </open-files>
 </project-private>

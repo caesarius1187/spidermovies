@@ -45,7 +45,12 @@ class PagesController extends AppController {
  *	or MissingViewException in debug mode.
  */
         public function home(){
-            $this->layout="default_home";
+                if ($this->Session->read('Auth.User.username')) { 
+                     return $this->redirect(
+                            array('controller' => 'clientes', 'action' => 'view')
+                            );
+                }
+                $this->layout="default_home";
         }
 	public function display() {
 		$path = func_get_args();

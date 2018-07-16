@@ -25,9 +25,7 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             return;
         });
         catchAsientoIVA();
-
         $( "#clickExcel" ).click(function() {
-
             if (!document.getElementById("pdtIVA_tr1"))
             {
                 $("#tblExcelHeader").prepend(
@@ -65,11 +63,13 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             $('#divPrepararPapelesDeTrabajo').hide();            
             $('#btnImprimir').hide();
             $('#clickExcel').hide();
+            $('#content').css('height','auto');
+            return false;
 
-            $('#index').css('float','left');
+            /*$('#index').css('float','left');
             $('#padding').css('padding','0px');
             $('#index').css('font-size','10px');
-            $('#index').css('border-color','#FFF');
+            $('#index').css('border-color','#FFF');*/
         };
         var afterPrint = function() {
             $('#index').css('font-size','14px');
@@ -78,8 +78,8 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
             $('#divPrepararPapelesDeTrabajo').show();            
             $('#btnImprimir').show();
             $('#clickExcel').show();
-            $('#index').css('float','right');
-            $('#padding').css('padding','10px 1%');
+            /*$('#index').css('float','right');
+            $('#padding').css('padding','10px 1%');*/   
             CambiarTab('ventas')
         };
         if (window.matchMedia) {
@@ -97,38 +97,38 @@ echo $this->Html->script('jquery.table2excel',array('inline'=>false));?>
         CambiarTab('ventas');
     });
    
-	function CambiarTab(sTab)	{
-		$("#tabVentas_Iva").attr("class", "cliente_view_tab");
-		$("#tabCompras_Iva").attr("class", "cliente_view_tab");
+    function CambiarTab(sTab)	{
+        $("#tabVentas_Iva").attr("class", "cliente_view_tab");
+        $("#tabCompras_Iva").attr("class", "cliente_view_tab");
         $("#tabLiquidacion_Iva").attr("class", "cliente_view_tab");
         $("#tabContabilidad_Iva").attr("class", "cliente_view_tab");
 
         if(sTab == "ventas")
-		{
-			$("#tabVentas_Iva").attr("class", "cliente_view_tab_active");
-			$("#divContenedorVentas").show();    
-			$("#divContenedorCompras").hide();    	
-			$("#divContenedorLiquidacion").hide();
+                {
+                        $("#tabVentas_Iva").attr("class", "cliente_view_tab_active");
+                        $("#divContenedorVentas").show();    
+                        $("#divContenedorCompras").hide();    	
+                        $("#divContenedorLiquidacion").hide();
 //            $("#divContenedorContabilidad").hide();
         }
-		if(sTab == "compras")
-		{
-			$("#tabCompras_Iva").attr("class", "cliente_view_tab_active");
-			$("#divContenedorVentas").hide();    
-			$("#divContenedorCompras").show();    	
-			$("#divContenedorLiquidacion").hide();
+        if(sTab == "compras")
+        {
+                $("#tabCompras_Iva").attr("class", "cliente_view_tab_active");
+                $("#divContenedorVentas").hide();    
+                $("#divContenedorCompras").show();    	
+                $("#divContenedorLiquidacion").hide();
 //            $("#divContenedorContabilidad").hide();
         }
-		if (sTab == "liquidacion")
-		{
+        if (sTab == "liquidacion")
+        {
 
-			$("#tabLiquidacion_Iva").attr("class", "cliente_view_tab_active");
-			$("#divContenedorVentas").hide();
-			$("#divContenedorCompras").hide();
-			$("#divContenedorLiquidacion").show();
-//            $("#divContenedorContabilidad").hide();
+            $("#tabLiquidacion_Iva").attr("class", "cliente_view_tab_active");
+            $("#divContenedorVentas").hide();
+            $("#divContenedorCompras").hide();
+            $("#divContenedorLiquidacion").show();
+//              $("#divContenedorContabilidad").hide();
         }
-	}
+    }
     function papelesDeTrabajo(periodo,impcli){
         var data = "";
         $.ajax({
@@ -506,7 +506,7 @@ echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
 echo $this->Form->input('impcliidPDT',array('value'=>$cliente['Impcli'][0]['id'],'type'=>'hidden'));
 echo $this->Form->input('clinombre',array('value'=>$cliente['Cliente']['nombre'],'type'=>'hidden'));
 echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=>'hidden'));?>
-<div class="eventosclientes index" id="contenedor">
+<div class="eventosclientes" id="contenedor">
     <div id="divLiquidarIVA" class="noExl">
 
     </div>
@@ -3441,6 +3441,7 @@ echo $this->Form->input('cliid',array('value'=>$cliente['Cliente']['id'],'type'=
 
         </div> <!--COMPRAS-->
         <?php //endforeach; ?>
+
         <div id="divContenedorLiquidacion" style="margin-top:10px">
             <div>
                 <?php

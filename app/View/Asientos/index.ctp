@@ -41,158 +41,156 @@ echo $this->Html->script('asientos/index',array('inline'=>false));
 	</div>
 </div>
 <div class="index" style="float:none;">
-	<table >
-		<tr>
-			<td style="text-align: left;">
-				<?php
-				if(isset($cuentasclienteseleccionada)){
-					echo "<h2>Mayor de cuenta: ".$cuentasclienteseleccionada['Cuentascliente']['nombre']."</h2>";
-				}else{
-					echo "<h2>Asientos</h2>";
-				}
-				echo "<h3>del periodo  ".$fechaInicioConsulta." hasta ".$fechaFinConsulta."</h3>";
-				?>
-			</td>
-			<td style="text-align: right; cursor:pointer;" title="Agregar Movimiento">
-				<?php  echo $this->Html->link(
-					"Agregar Asiento",
-					array(
-					),
-					array('class' => 'buttonImpcli',
-						'id'=>'cargarAsiento',
-						'style'=> 'margin-right: 8px;width: initial;'
-					)
-				);?>
-			</td>
+    <table >
+        <tr>
+            <td style="text-align: left;">
+                <?php
+                if(isset($cuentasclienteseleccionada)){
+                        echo "<h2>Mayor de cuenta: ".$cuentasclienteseleccionada['Cuentascliente']['nombre']."</h2>";
+                }else{
+                        echo "<h2>Asientos</h2>";
+                }
+                echo "<h3>del periodo  ".$fechaInicioConsulta." hasta ".$fechaFinConsulta."</h3>";
+                ?>
+            </td>
+            <td style="text-align: right; cursor:pointer;" title="Agregar Movimiento">
+                <?php  echo $this->Html->link(
+                        "Agregar Asiento",
+                        array(
+                        ),
+                        array('class' => 'buttonImpcli',
+                                'id'=>'cargarAsiento',
+                                'style'=> 'margin-right: 8px;width: initial;'
+                        )
+                );?>
+            </td>
 
-		</tr>
-	</table>
-	<table id="tblAsientos" cellpadding="0" cellspacing="0" border="0" class="tbl_border" >
-		<thead>
-			<tr>
-				<th>Fecha</th>
-				<th>Nombre</th>
-				<th>Descripcion</th>
-				<th>Debe</th>
-				<th>Haber</th>
-				<th>Saldo</th>
-				<th>Periodo</th>
-				<th>Numero</th>
-				<th>Tipo</th>
-				<th class="actions" style="text-align:center"><?php echo __('Acciones'); ?></th>
-			</tr>
-		</thead>
-
-		<tbody>
+        </tr>
+    </table>
+    <table id="tblAsientos" cellpadding="0" cellspacing="0" border="0" class="tbl_border" >
+        <thead>
+            <tr>
+                <th class="printable">Fecha</th>
+                <th class="printable">Nombre</th>
+                <th>Descripcion</th>
+                <th class="printable">Debe</th>
+                <th class="printable">Haber</th>
+                <th class="printable">Saldo</th>
+                <th>Periodo</th>
+                <th class="printable">Numero</th>
+                <th>Tipo</th>
+                <th class="actions" style="text-align:center"><?php echo __('Acciones'); ?></th>
+            </tr>
+        </thead>
+            <tbody>
 		<?php
 		$totalDebe=0;
 		$totalHaber=0;
 		$saldoacumulado=0;
 		foreach ($asientos as $asiento)
 		{
-			$debe=0;
-			$haber=0;
-			$colorTR="";
-			foreach ($asiento['Movimiento'] as $movimiento) {
-				if(isset($cuentasclienteseleccionada)){
-					if($cuentasclienteseleccionada['Cuentascliente']['id']==$movimiento['cuentascliente_id']){
-						$debe+=$movimiento['debe'];
-						$haber+=$movimiento['haber'];
-						$totalDebe+=$movimiento['debe'];
-						$totalHaber+=$movimiento['haber'];
-					}
-				}else{
-					$debe+=$movimiento['debe'];
-					$haber+=$movimiento['haber'];
-					$totalDebe+=$movimiento['debe'];
-					$totalHaber+=$movimiento['haber'];
-				}
-			}
-			if(!isset($cuentasclienteseleccionada)){
-				if(abs($debe-$haber)>0.01){
-					$colorTR= "background-color:#ffae00";
-				}
-			}
-			?>
-			<tr class="rowasiento" style=" <?php echo $colorTR?>" id="rowasiento<?php echo $asiento['Asiento']['id']?>">
-				<td>
-					<span style='display: none;'> <?php echo $asiento['Asiento']['fecha']?></span>
-					<?php echo date("d-m-Y", strtotime($asiento['Asiento']['fecha'])); ?>
-				</td>
-				<td>
-					<?php echo $asiento['Asiento']['nombre']; ?>
-				</td>
-				<td>
-					<?php echo $asiento['Asiento']['descripcion']; ?>
-				</td>
-				<td class="tdWithNumber">
-					<?php echo number_format($debe, 2, ",", "."); ?>
-				</td>
-				<td class="tdWithNumber">
-					<?php echo number_format($haber, 2, ",", "."); ?>
-				</td>
-				<td class="tdWithNumber">
-					<?php
-						if(isset($cuentasclienteseleccionada)){
-							$saldoacumulado += $debe-$haber;
-							echo number_format($saldoacumulado, 2, ",", ".");
-						}else{
-							echo number_format($debe-$haber, 2, ",", ".");
-						}
-					?>
-				</td>
-				<td>
-					<?php echo $asiento['Asiento']['periodo']; ?>
-				</td>
-				<td>
-					<?php echo $asiento['Asiento']['numero']; ?>
-				</td>
-
-				<td>
-					<?php echo $asiento['Asiento']['tipoasiento']; ?>
-				</td>
-				<td class="actions">
-					<?php echo $this->Html->image(
-						'edit_view.png',
-						array(
-							'alt' => 'edit',
-							'class'=>'img_edit',
-							'style'=>'color:red;float:left;margin: 0px;',
-							'onClick' => 'editarMovimientos('.$asiento['Asiento']['id'].')'
-						)
-					);
-					echo $this->Html->image(
-						'ic_delete_black_24dp.png',
-						array(
-							'alt' => 'edit',
-							'class'=>'img_trash',
-							'style'=>'color:red;float:left;margin: 0px;',
-							'onClick' => 'eliminarAsiento('.$asiento['Asiento']['id'].')'
-						)
-					);
-					?>
-				</td>
-			</tr>
-			<?php
+                    $debe=0;
+                    $haber=0;
+                    $colorTR="";
+                    foreach ($asiento['Movimiento'] as $movimiento) {
+                        if(isset($cuentasclienteseleccionada)){
+                            if($cuentasclienteseleccionada['Cuentascliente']['id']==$movimiento['cuentascliente_id']){
+                                $debe+=$movimiento['debe'];
+                                $haber+=$movimiento['haber'];
+                                $totalDebe+=$movimiento['debe'];
+                                $totalHaber+=$movimiento['haber'];
+                            }
+                        }else{
+                            $debe+=$movimiento['debe'];
+                            $haber+=$movimiento['haber'];
+                            $totalDebe+=$movimiento['debe'];
+                            $totalHaber+=$movimiento['haber'];
+                        }
+                    }
+                    if(!isset($cuentasclienteseleccionada)){
+                        if(abs($debe-$haber)>0.01){
+                            $colorTR= "background-color:#ffae00";
+                        }
+                    }
+                    ?>
+                    <tr class="rowasiento" style=" <?php echo $colorTR?>" id="rowasiento<?php echo $asiento['Asiento']['id']?>">
+                        <td>
+                            <span style='display: none;' class="deleteOnPrint"> <?php echo $asiento['Asiento']['fecha']?></span>
+                            <?php echo date("d-m-Y", strtotime($asiento['Asiento']['fecha'])); ?>
+                        </td>
+                        <td>
+                            <?php echo $asiento['Asiento']['nombre']; ?>
+                        </td>
+                        <td>
+                            <?php echo $asiento['Asiento']['descripcion']; ?>
+                        </td>
+                        <td class="tdWithNumber">
+                            <?php echo number_format($debe, 2, ",", "."); ?>
+                        </td>
+                        <td class="tdWithNumber">
+                            <?php echo number_format($haber, 2, ",", "."); ?>
+                        </td>
+                        <td class="tdWithNumber">
+                            <?php
+                            if(isset($cuentasclienteseleccionada)){
+                                $saldoacumulado += $debe-$haber;
+                                echo number_format($saldoacumulado, 2, ",", ".");
+                            }else{
+                                echo number_format($debe-$haber, 2, ",", ".");
+                            }
+                            ?>
+                        </td>
+                        <td>
+                            <?php echo $asiento['Asiento']['periodo']; ?>
+                        </td>
+                        <td>
+                            <?php echo $asiento['Asiento']['numero']; ?>
+                        </td>
+                        <td>
+                            <?php echo $asiento['Asiento']['tipoasiento']; ?>
+                        </td>
+                        <td class="actions">
+                            <?php echo $this->Html->image(
+                                'edit_view.png',
+                                array(
+                                    'alt' => 'edit',
+                                    'class'=>'img_edit',
+                                    'style'=>'color:red;float:left;margin: 0px;',
+                                    'onClick' => 'editarMovimientos('.$asiento['Asiento']['id'].')'
+                                )
+                            );
+                            echo $this->Html->image(
+                                'ic_delete_black_24dp.png',
+                                array(
+                                    'alt' => 'edit',
+                                    'class'=>'img_trash',
+                                    'style'=>'color:red;float:left;margin: 0px;',
+                                    'onClick' => 'eliminarAsiento('.$asiento['Asiento']['id'].')'
+                                )
+                            );
+                            ?>
+                        </td>
+                    </tr>
+                    <?php
 		}
 		?>
-		</tbody>
-		<tfoot>
-		<tr>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th> <?php echo number_format($totalDebe, 2, ",", "."); ?> </th>
-			<th> <?php echo number_format($totalHaber, 2, ",", "."); ?> </th>
-			<th> <?php echo number_format($totalDebe-$totalHaber, 2, ",", "."); ?> </th>
-			<th></th>
-			<th></th>
-			<th></th>
-			<th></th>
-		</tr>
-		</tfoot>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th> <?php echo number_format($totalDebe, 2, ",", "."); ?> </th>
+                    <th> <?php echo number_format($totalHaber, 2, ",", "."); ?> </th>
+                    <th> <?php echo number_format($totalDebe-$totalHaber, 2, ",", "."); ?> </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </tfoot>
 	</table>
-	<div id="divEditarAsiento"></div>
+        <div id="divEditarAsiento"></div>
 </div>
 <!-- Popin Modal para edicion de ventas a utilizar por datatables-->
 <div class="modal fade" id="myModalAsientos" tabindex="-1" role="dialog">

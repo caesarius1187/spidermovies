@@ -1411,6 +1411,11 @@ class VentasController extends AppController {
 	}
 	public function resumen(){
 		$this->loadModel('Cliente');
+		$this->loadModel('Compra');
+		$this->loadModel('Eventosimpuesto');
+		$this->loadModel('Impcli');
+		$this->loadModel('Empleado');
+		$this->loadModel('Valorrecibo');
 		$mostrarInforme=false;
 		if ($this->request->is('post')) {
 			$pemesdesde=$this->request->data['ventas']['periodomesdesde'];
@@ -1446,24 +1451,25 @@ class VentasController extends AppController {
 
 			$ventas = $this->Venta->find('all',array(
 				'fields' => array(
-                    'SUM(Venta.total) AS total',
-                    'SUM(Venta.neto) AS neto',
-                    'SUM(Venta.iva) AS iva',
-                    'SUM(Venta.ivapercep) AS ivapercep',
-                    'SUM(Venta.iibbpercep) AS iibbpercep',
-                    'SUM(Venta.actvspercep) AS actvspercep',
-                    'SUM(Venta.impinternos) AS impinternos',
-                    'SUM(Venta.nogravados) AS nogravados',
-                    'SUM(Venta.excentos) AS excentos',
-                    'SUM(Venta.exentosactividadeseconomicas) AS exentosactividadeseconomicas',
-                    'SUM(Venta.exentosactividadesvarias) AS exentosactividadesvarias',
-                    'SUM(Venta.comercioexterior) AS comercioexterior',
-                    'SUBSTRING(Venta.periodo,4,7) as anio',
-                    'SUBSTRING(Venta.periodo,1,2) as mes',
-                    'Venta.periodo',
-                    'Venta.comprobante_id',
-                    'Comprobante.tipodebitoasociado',
-                    'Venta.actividadcliente_id'),
+                                    'SUM(Venta.total) AS total',
+                                    'SUM(Venta.neto) AS neto',
+                                    'SUM(Venta.iva) AS iva',
+                                    'SUM(Venta.ivapercep) AS ivapercep',
+                                    'SUM(Venta.iibbpercep) AS iibbpercep',
+                                    'SUM(Venta.actvspercep) AS actvspercep',
+                                    'SUM(Venta.impinternos) AS impinternos',
+                                    'SUM(Venta.nogravados) AS nogravados',
+                                    'SUM(Venta.excentos) AS excentos',
+                                    'SUM(Venta.exentosactividadeseconomicas) AS exentosactividadeseconomicas',
+                                    'SUM(Venta.exentosactividadesvarias) AS exentosactividadesvarias',
+                                    'SUM(Venta.comercioexterior) AS comercioexterior',
+                                    'SUBSTRING(Venta.periodo,4,7) as anio',
+                                    'SUBSTRING(Venta.periodo,1,2) as mes',
+                                    'Venta.periodo',
+                                    'Venta.comprobante_id',
+                                    'Comprobante.tipodebitoasociado',
+                                    'Venta.actividadcliente_id'
+                                ),
 				'contain'=>array(
 					'Comprobante',
 					'Actividadcliente',
@@ -1481,6 +1487,193 @@ class VentasController extends AppController {
 				)
 			));
 			$this->set(compact('ventas'));
+                        //Consulta de Compras
+                        //A: Es menor que periodo Hasta
+			$esMayorQueDesdeCompra = array(
+				//HASTA es mayor que el periodo
+				'OR'=>array(
+					'SUBSTRING(Compra.periodo,4,7)*1 > '.$peaniodesde.'*1',
+					'AND'=>array(
+						'SUBSTRING(Compra.periodo,4,7)*1 >= '.$peaniodesde.'*1',
+						'SUBSTRING(Compra.periodo,1,2) >= '.$pemesdesde.'*1'
+					),
+				)
+			);
+			//B: Es mayor que periodo Desde
+			$esMenorQueHastaCompra= array(
+				'OR'=>array(
+					'SUBSTRING(Compra.periodo,4,7)*1 < '.$peaniohasta.'*1',
+					'AND'=>array(
+						'SUBSTRING(Compra.periodo,4,7)*1 <= '.$peaniohasta.'*1',
+						'SUBSTRING(Compra.periodo,1,2) <= '.$pemeshasta.'*1'
+					),
+				)
+			);
+
+			$compras = $this->Compra->find('all',array(
+				'fields' => array(
+					'SUM(Compra.total) AS total',
+					'SUM(Compra.neto) AS neto',
+					'SUM(Compra.iva) AS iva',
+					'SUM(Compra.ivapercep) AS ivapercep',
+					'SUM(Compra.iibbpercep) AS iibbpercep',
+					'SUM(Compra.actvspercep) AS actvspercep',
+					'SUM(Compra.impinternos) AS impinternos',
+					'SUM(Compra.impcombustible) AS impcombustible',
+					'SUM(Compra.nogravados) AS nogravados',
+					'SUM(Compra.exentos) AS excentos',
+					'SUBSTRING(Compra.periodo,4,7) as anio',
+					'SUBSTRING(Compra.periodo,1,2) as mes',
+					'Compra.periodo',
+					'Compra.comprobante_id',
+					'Comprobante.tipodebitoasociado',
+					'Compra.actividadcliente_id'),
+				'contain'=>array(
+					'Comprobante',
+					'Actividadcliente',
+				),
+				'conditions'=>array(
+					'Compra.cliente_id'=> $this->request->data['ventas']['cliente_id'],
+					$esMayorQueDesdeCompra,
+					$esMenorQueHastaCompra
+				),
+				'group'=>array(
+					'Compra.periodo','Compra.comprobante_id','Compra.actividadcliente_id'
+				),
+				'order'=>array(
+					'SUBSTRING(Compra.periodo,4,7)','SUBSTRING(Compra.periodo,1,2)'
+				)
+			));
+			$this->set(compact('compras'));
+                        //Impclis
+                        $impclis = $this->Impcli->find('all',array(
+				'fields' => array(					
+					'Impcli.id',
+                                ),
+				'contain'=>array(
+				),
+				'conditions'=>array(
+					'Impcli.cliente_id'=> $this->request->data['ventas']['cliente_id'],
+				),				
+			));
+                        $misImpclis = [];
+                        foreach ($impclis as $kimp => $impcli) {
+                            $impcliid = $impcli['Impcli']['id'];
+                            if(!in_array($impcliid,$misImpclis)){
+                                $misImpclis[]=$impcliid;
+                            }
+                        }
+                        //Impuestos 
+                        //A: Es menor que periodo Hasta
+			$esMayorQueDesdeImpcli = array(
+				//HASTA es mayor que el periodo
+				'OR'=>array(
+					'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 > '.$peaniodesde.'*1',
+					'AND'=>array(
+						'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 >= '.$peaniodesde.'*1',
+						'SUBSTRING(Eventosimpuesto.periodo,1,2) >= '.$pemesdesde.'*1'
+					),
+				)
+			);
+			//B: Es mayor que periodo Desde
+			$esMenorQueHastaImpcli= array(
+				'OR'=>array(
+					'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 < '.$peaniohasta.'*1',
+					'AND'=>array(
+						'SUBSTRING(Eventosimpuesto.periodo,4,7)*1 <= '.$peaniohasta.'*1',
+						'SUBSTRING(Eventosimpuesto.periodo,1,2) <= '.$pemeshasta.'*1'
+					),
+				)
+			);
+                        $eventosimpuestos = $this->Eventosimpuesto->find('all',array(
+				'fields' => array(
+					'SUM(Eventosimpuesto.montovto) AS montovto',					
+					'SUBSTRING(Eventosimpuesto.periodo,4,7) as anio',
+					'SUBSTRING(Eventosimpuesto.periodo,1,2) as mes',
+					'Eventosimpuesto.periodo',
+                                ),
+				'contain'=>array(
+					'Impcli',
+				),
+				'conditions'=>array(
+					'Eventosimpuesto.impcli_id'=> $misImpclis,
+					$esMayorQueDesdeImpcli,
+					$esMenorQueHastaImpcli
+				),
+				'group'=>array(
+					'Eventosimpuesto.periodo'
+				),
+				'order'=>array(
+					'SUBSTRING(Eventosimpuesto.periodo,4,7)','SUBSTRING(Eventosimpuesto.periodo,1,2)'
+				)
+			));
+                        $this->set(compact('eventosimpuestos'));
+                        //Sueldos
+                        $empleados = $this->Empleado->find('all',array(
+				'fields' => array(					
+					'Empleado.id',
+                                ),
+				'contain'=>array(
+				),
+				'conditions'=>array(
+					'Empleado.cliente_id'=> $this->request->data['ventas']['cliente_id'],
+				),				
+			));
+                        $misEmpleados = [];
+                        foreach ($empleados as $kimp => $empleado) {
+                            $empid = $empleado['Empleado']['id'];
+                            if(!in_array($empid,$misEmpleados)){
+                                $misEmpleados[]=$empid;
+                            }
+                        }
+                        //Impuestos 
+                        //A: Es menor que periodo Hasta
+			$esMayorQueDesdeValorrecibo = array(
+				//HASTA es mayor que el periodo
+				'OR'=>array(
+					'SUBSTRING(Valorrecibo.periodo,4,7)*1 > '.$peaniodesde.'*1',
+					'AND'=>array(
+						'SUBSTRING(Valorrecibo.periodo,4,7)*1 >= '.$peaniodesde.'*1',
+						'SUBSTRING(Valorrecibo.periodo,1,2) >= '.$pemesdesde.'*1'
+					),
+				)
+			);
+			//B: Es mayor que periodo Desde
+			$esMenorQueHastaValorrecibo= array(
+				'OR'=>array(
+					'SUBSTRING(Valorrecibo.periodo,4,7)*1 < '.$peaniohasta.'*1',
+					'AND'=>array(
+						'SUBSTRING(Valorrecibo.periodo,4,7)*1 <= '.$peaniohasta.'*1',
+						'SUBSTRING(Valorrecibo.periodo,1,2) <= '.$pemeshasta.'*1'
+					),
+				)
+			);
+                        $valorrecibos = $this->Valorrecibo->find('all',array(
+				'fields' => array(
+					'SUM(Valorrecibo.valor) AS valor',					
+					'SUBSTRING(Valorrecibo.periodo,4,7) as anio',
+					'SUBSTRING(Valorrecibo.periodo,1,2) as mes',
+					'Valorrecibo.periodo',
+                                ),
+				'contain'=>array(
+					
+				),
+				'conditions'=>array(
+					'Valorrecibo.empleado_id'=> $misEmpleados,
+                                        'Valorrecibo.cctxconcepto_id IN (
+                                                select id from cctxconceptos where concepto_id = 46
+                                        )',/*Solo los valores recibos de cct x coneptos del Concepto Neto*/
+					$esMayorQueDesdeValorrecibo,
+					$esMenorQueHastaValorrecibo
+				),
+				'group'=>array(
+					'Valorrecibo.periodo'
+				),
+				'order'=>array(
+					'SUBSTRING(Valorrecibo.periodo,4,7)','SUBSTRING(Valorrecibo.periodo,1,2)'
+				)
+			));
+                        $this->set(compact('valorrecibos'));
 			$cliente = $this->Cliente->find('first',array(
 					'contain' =>[],
 					'conditions' => array(

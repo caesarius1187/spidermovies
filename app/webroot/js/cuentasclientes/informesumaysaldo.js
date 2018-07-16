@@ -28,7 +28,6 @@ $(document).ready(function() {
                     url: serverLayoutURL+"/asientos/index/"+cliid+"/"+periodo+"/"+cuecliid, // URL to request
                     data: data,  // post data
                     success: function(response) {
-
                         $('#myModal').on('show.bs.modal', function() {
                             if ($('#myModal').is(":visible")){
                                 return;
@@ -62,7 +61,7 @@ $(document).ready(function() {
                                     text: 'Excel',
                                     title: 'Asientos-'+nombrecliente+'-'+periodo,
                                     exportOptions: {
-                                        columns: ':visible'
+                                        columns: '.printable'
                                     }
                                 },
                                 {
@@ -70,12 +69,16 @@ $(document).ready(function() {
                                     text: 'PDF',
                                     title: 'Asientos-'+nombrecliente+'-'+periodo,
                                     exportOptions: {
-                                        columns: ':visible'
+                                        columns: '.printable',
                                     },
-                                    orientation: 'landscape',
+                                    orientation: '.printable',
                                     download: 'open',
-                                    message: 'Asientos-'+nombrecliente+'-'+periodo,
-
+                                    message: 'Asientos-'+nombrecliente+'-'+periodo,                                    
+                                    customize: function ( win ) {
+                                        $(".deleteOnPrint").each(function(){
+                                            $(this).remove();
+                                        });
+                                    },
                                 },
                                 {
                                     extend: 'copy',
@@ -91,10 +94,12 @@ $(document).ready(function() {
                                         columns: '.printable'
                                     },
                                     orientation: 'landscape',
-                                    footer: true,
                                     autoPrint: true,
-                                    message: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    message: 'messageAsientos-'+nombrecliente+'-'+periodo,
                                     customize: function ( win ) {
+                                        $(".deleteOnPrint").each(function(){
+                                            $(this).remove();
+                                        });
                                     },
                                 },
                             ],
@@ -134,11 +139,19 @@ $(document).ready(function() {
                                     text: 'PDF',
                                     title: 'Asientos-'+nombrecliente+'-'+periodo,
                                     exportOptions: {
-                                        columns: ':visible'
+                                        columns: '.printable'
                                     },
                                     orientation: 'landscape',
                                     download: 'open',
-                                    message: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    message: 'Cliente:'+nombrecliente+'-'+periodo+'-:',
+                                    customize: function ( win ) {
+                                        $(win.document.body).find(".deleteOnPrint").each(function(){
+                                            $(this).remove();
+                                        });
+                                        $(win.document.body).find( 'table' )
+                                        .addClass( 'compact' )
+                                        .css( 'font-size', 'inherit' );
+                                    },
 
                                 },
                                 {
@@ -154,11 +167,13 @@ $(document).ready(function() {
                                     exportOptions: {
                                         columns: '.printable'
                                     },
-                                    orientation: 'landscape',
-                                    footer: true,
+                                    orientation: 'landscape',                                   
                                     autoPrint: true,
-                                    message: 'Asientos-'+nombrecliente+'-'+periodo,
+                                    message: 'Asientos-'+nombrecliente+'-'+periodo,                                   
                                     customize: function ( win ) {
+                                        $(".deleteOnPrint").each(function(){
+                                            $(this).remove();
+                                        });
                                     },
                                 },
                             ],

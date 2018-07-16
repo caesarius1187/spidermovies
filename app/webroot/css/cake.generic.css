@@ -84,7 +84,7 @@ p {
 #container {
 	text-align: left;
 	background-color: #e5e5e5;
-	height: 100%;
+	/*height: 100%;*/
 }
 
 #header{
@@ -121,7 +121,7 @@ p {
 	color: #333;
 	/*padding: 10px 20px 40px 20px;*/
 	overflow: auto;
-	/*min-height: 400px;*/
+	min-height: 400px;
 	height: 100%;
 }
 #footer {

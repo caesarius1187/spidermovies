@@ -25,5 +25,16 @@
     target: '#mainNav',
     offset: 54
   });
-
+  var prevScrollpos = window.pageYOffset;
+        window.onscroll = function() {
+          var currentScrollPos = window.pageYOffset;
+          if (prevScrollpos > currentScrollPos) {
+            //$(".hideOnTop").css("top","0"); 
+            $(".hideOnTop").animate({top: "0"}, 10);
+          } else {
+            //$(".hideOnTop").css("top","-66px");
+            $(".hideOnTop").animate({top: "-66px"}, 10);
+          }
+          prevScrollpos = currentScrollPos;
+        }
 })(jQuery); // End of use strict

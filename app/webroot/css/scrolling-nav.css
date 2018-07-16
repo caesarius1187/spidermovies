@@ -22,3 +22,9 @@ header {
 section {
   padding: 120px 0;
 }
+
+.contenedorvideo {
+    width: 40%;
+    float: left;
+    margin: 0px 5px;
+}
