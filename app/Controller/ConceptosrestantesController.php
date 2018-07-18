@@ -372,21 +372,28 @@ class ConceptosrestantesController extends AppController {
 	            		)
 	            	);
 				$conceptoguardado = $this->Conceptosrestante->find('first', $conditionsConceptosRestantes);
-				$data = array(
-		            "respuesta" => "El concepto ha sido guardado.",
-		            "conceptosrestante_id" => $this->Conceptosrestante->getLastInsertID(),
-		            "conceptosrestante" => $conceptoguardado,
-		           	//"localidade"=> $this->Localidade->find('first',$optionsLocalidade),
+                            $data = array(
+                                "respuesta" => "El concepto ha sido guardado.",
+                                "conceptosrestante_id" => $this->Conceptosrestante->getLastInsertID(),
+                                "conceptosrestante" => $conceptoguardado,
+                                 );
+                                    //"localidade"=> $this->Localidade->find('first',$optionsLocalidade),
 		            /*AFIP*/
-		            "tieneMonotributo"=> $this->request->data['Conceptosrestante']['tieneMonotributo'],
-		            "tieneIVA"=> $this->request->data['Conceptosrestante']['tieneIVA'],
-		            "tieneIVAPercepciones"=> $this->request->data['Conceptosrestante']['tieneIVAPercepciones'],
-		            "tieneImpuestoInterno"=> $this->request->data['Conceptosrestante']['tieneImpuestoInterno'],
-			        /*DGR*/
-		            "tieneAgenteDePercepcionIIBB"=> $this->request->data['Conceptosrestante']['tieneAgenteDePercepcionIIBB'],
-			        /*DGRM*/
-		            "tieneAgenteDePercepcionActividadesVarias"=> $this->request->data['Conceptosrestante']['tieneAgenteDePercepcionActividadesVarias'],
-		        );
+                            if(isset($this->request->data['Conceptosrestante']['tieneMonotributo'])){
+                                $data = array(
+                                    "respuesta" => "El concepto ha sido guardado.",
+                                    "conceptosrestante_id" => $this->Conceptosrestante->getLastInsertID(),
+                                    "conceptosrestante" => $conceptoguardado,
+                                    "tieneMonotributo"=> $this->request->data['Conceptosrestante']['tieneMonotributo'],
+                                    "tieneIVA"=> $this->request->data['Conceptosrestante']['tieneIVA'],
+                                    "tieneIVAPercepciones"=> $this->request->data['Conceptosrestante']['tieneIVAPercepciones'],
+                                    "tieneImpuestoInterno"=> $this->request->data['Conceptosrestante']['tieneImpuestoInterno'],
+                                        /*DGR*/
+                                    "tieneAgenteDePercepcionIIBB"=> $this->request->data['Conceptosrestante']['tieneAgenteDePercepcionIIBB'],
+                                        /*DGRM*/
+                                    "tieneAgenteDePercepcionActividadesVarias"=> $this->request->data['Conceptosrestante']['tieneAgenteDePercepcionActividadesVarias'],
+                                );
+                            }
 			}
 			else{
 				$data = array(
@@ -620,6 +627,7 @@ class ConceptosrestantesController extends AppController {
 		$this->render('serializejson');
 
 	}
+        
 	public function exportartxtretencionessifere($cliid,$periodo,$impcli){
 		$this->loadModel('Cliente');
 		$optionsConceptosrestantes=[

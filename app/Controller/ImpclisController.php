@@ -1432,6 +1432,7 @@ class ImpclisController extends AppController {
         $this->loadModel('Cuenta');
         $this->loadModel('Asiento');
         $this->loadModel('Cliente');
+        $this->loadModel('Conceptosrestante');
         $cuentasdeSUSS = $this->Cuenta->cuentasdeSUSS;
         $asientodevengamientoSUSS = $this->Asiento->devengamientoSUSS;
         $contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
@@ -1546,6 +1547,21 @@ class ImpclisController extends AppController {
 
         $impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
         $this->set(compact('impuestosactivos'));
+        //si tiene IVA vamos a mandar el concepto restante de este periodo 
+        if($impuestosactivos['ivaId']!=0){
+            $optionsConceptosrestante = array(
+                'contain' => [
+                    
+                    ],
+                'conditions' => [
+                    'Conceptosrestante.impcli_id'=>$impuestosactivos['ivaId'],
+                    'Conceptosrestante.periodo'=>$periodo,
+                    'Conceptosrestante.conceptostipo_id'=>12
+                ]
+            );
+            $conceptosrestante = $this->Conceptosrestante->find('first', $optionsConceptosrestante);
+            $this->set(compact('conceptosrestante'));
+        }
     }
     public function papeldetrabajosindicatos($impcliid=null,$periodo=null){
 //		$this->Components->unload('DebugKit.Toolbar');

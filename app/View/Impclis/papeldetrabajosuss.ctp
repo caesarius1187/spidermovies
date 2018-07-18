@@ -1,6 +1,11 @@
-<?php echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
+<?php 
+echo $this->Html->css('bootstrapmodal');
+
+echo $this->Html->script('http://code.jquery.com/ui/1.10.1/jquery-ui.js',array('inline'=>false));
 echo $this->Html->script('jquery.table2excel',array('inline'=>false));
 echo $this->Html->script('impclis/papeldetrabajosuss',array('inline'=>false));
+echo $this->Html->script('jquery-ui',array('inline'=>false));
+echo $this->Html->script('bootstrapmodal.js',array('inline'=>false));
 
 echo $this->Form->input('periodoPDT',array('value'=>$periodo,'type'=>'hidden'));
 echo $this->Form->input('impcliidPDT',array('value'=>$impcliid,'type'=>'hidden'));
@@ -42,6 +47,17 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 'onClick' => "openWin()"
             )
         );?>
+        <?php         
+        if($impuestosactivos['ivaId']!=0){ 
+            echo $this->Form->button('Generar Dcto 814',
+                array('type' => 'button',
+                    'id'=>"btnImprimir",
+                    'class' =>"btn_imprimir",
+                    'style' =>"width: auto;",
+                    'onClick' => "guardarDcto814()"
+                )
+            );
+        }?>
         <?php echo $this->Form->button('Excel',
             array('type' => 'button',
                 'id'=>"clickExcel",
@@ -679,7 +695,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $titlerem4="Aporte adicional > 0, entonces Rem 4 = Rem 1 ";
                 $rem4 = $rem1;
             }else{
-                $titlerem4="Aporte adicional < 0, ";
+                $titlerem4="Aporte adicional <= 0, ";
                 if($rem4aportenegativo<=$minimoOS){
                     $titlerem4 .= $rem4aportenegativo."<=".$minimoOS." entonces Rem 4 = minimo OS:".$minimoOS;
                     $rem4=$minimoOS;
@@ -2425,3 +2441,157 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
     </div>
     <?php } ?>
 </div>
+<?php
+    //Aca vamos a definir la tabla de la que se va a sacar los valores del Dcto814
+    $tablaDcto814 = [];
+    $tablaDcto814['2018'] = [];
+    $tablaDcto814['2019'] = [];
+    $tablaDcto814['2020'] = [];
+    $tablaDcto814['2021'] = [];
+    $tablaDcto814['2022'] = [];
+    
+    function inicializarArrayProvincias(&$arrayAnio){
+        $arrayAnio['60 Salta']=0;
+        $arrayAnio['61 Resto de Salta']=0;
+    }
+    inicializarArrayProvincias($tablaDcto814['2018']);
+    inicializarArrayProvincias($tablaDcto814['2019']);
+    inicializarArrayProvincias($tablaDcto814['2020']);
+    inicializarArrayProvincias($tablaDcto814['2021']);
+    inicializarArrayProvincias($tablaDcto814['2022']);
+    $tablaDcto814['2018']['60 Salta']=9.70;
+    $tablaDcto814['2018']['61 Resto de Salta']=10.75;
+
+    $tablaDcto814['2019']['60 Salta']=7.3;
+    $tablaDcto814['2019']['61 Resto de Salta']=8.05;
+    $tablaDcto814['2020']['60 Salta']=4.85;
+    $tablaDcto814['2020']['61 Resto de Salta']=5.40;
+    $tablaDcto814['2021']['60 Salta']=2.45;
+    $tablaDcto814['2021']['61 Resto de Salta']=2.70;
+    $tablaDcto814['2022']['60 Salta']=0;
+    $tablaDcto814['2022']['61 Resto de Salta']=0;
+
+?>
+<!-- Popin Modal para edicion de ventas a utilizar por datatables-->
+<div class="modal fade" id="myModalAddConceptosrestante" tabindex="-1" role="dialog">
+    <div class="modal-dialog" style="width:90%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<!--                    <span aria-hidden="true">&times;</span>-->
+                </button>
+                <h4 class="modal-title">Generar Dcto 814</h4>
+            </div>
+            <div class="modal-body">
+                <div id="Div_form_Conceptosrestante" class="form" style="width: 94%;float: none; ">
+                    <?php
+                    echo $this->Form->create('Conceptosrestante',array(
+                            'controller'=>'conceptosrestantes',
+                            'id'=>'saveConceptosrestantesForm',
+                            'action'=>'addajax',
+                            'class'=>'formTareaCarga',
+                        )
+                    );
+                    $conceptosrestanteId=0;
+                    if(isset($conceptosrestante)){
+                        $conceptosrestanteId = $conceptosrestante['Conceptosrestante']['id'];
+                    }
+                    //Suma de Remunerativos sujetos a Descuentos x empleado
+                    //la 10 si la 10 es != de 0 sino la 8
+                    $titleRemSujDesc = "Se usara la Remuneracion ";
+                    $remSujetaADescuento = 0;
+                    if($impcli['Impcli']['aplicaley27430']=='1'){
+                        $titleRemSujDesc = "10 por que aplica ley 27430";
+                        $remSujetaADescuento = $rem10;
+                    }else{
+                        $titleRemSujDesc = "8 por que no aplica ley 27430";
+                        $remSujetaADescuento = $rem8;
+                    }
+                    $peanio = substr($periodo, 3)*1;
+                    
+                    echo $this->Form->input('id',array('default'=>$conceptosrestanteId,'type'=>'hidden'));
+                    echo $this->Form->input('cliente_id',array('default'=>$impcli['Cliente']['id'],'type'=>'hidden'));
+                    //Vamos a enviar la situacion del cliente para no recalcularla en el controlador cada ves que guardemos un concepto que resta                    
+                    echo $this->Form->input('impclisid',array('type'=>'select','options'=>$impcliid,'style'=>'display:none','div'=>false,'label'=>false));
+                    //aca tenemos que poner el impcliId de IVA
+                    echo $this->Form->input('impcli_id',array(
+                        'type' => 'hidden',
+                        'label' => 'Impuesto',
+                        'value' => $impuestosactivos['ivaId'],
+                        'style' => 'width:150px;'));
+                    echo $this->Form->input('partido_id',array('type'=>'hidden'));
+                    echo $this->Form->input('localidade_id', ['type'=>'hidden']);
+                    echo $this->Form->input('conceptostipo_id',array(
+                        'type'=>'hidden',
+                        'value'=>12/*Decreto 814*/,
+                        ));
+                    echo $this->Form->input('periodo',array('value'=>$periodo,'type'=>'hidden'));
+                    echo $this->Form->input('concepto',array('type'=>'hidden'));
+                    echo $this->Form->input('numerocomprobante',array('type'=>'hidden'));
+                    echo $this->Form->input('comprobante_id', ['type'=>'hidden']);
+                    echo $this->Form->input('puntosdeventa', array('type'=>'hidden'));
+                    echo $this->Form->input('numerofactura', array('type'=>'hidden'));
+                    echo $this->Form->input('rectificativa', array('type'=>'hidden'));
+                    echo $this->Form->input('razonsocial',array('type'=>'hidden'));
+                    
+                    $optionsAlicuota = [];
+                    foreach ($tablaDcto814[$peanio] as $key => $value) {
+                        $optionsAlicuota[$value." "] = $key." ".$value;
+                    }   
+                    echo $this->Form->input('alicuota', array(
+                        'type'=>'select',
+                        'options'=>$optionsAlicuota,
+                    ));
+                    echo $this->Form->input('baseimponible', array(
+                        'type'=>'text',
+                        'title'=>$titleRemSujDesc,
+                        'value'=>$remSujetaADescuento
+                    ));
+                    
+                    echo $this->Form->input('monto', array('type'=>'hidden'));
+                    echo $this->Form->input('montoretenido', array(
+                            'label'=> 'Monto Retenido',
+                            'value'=>0
+                        )
+                    );
+                    echo $this->Form->input('cuit',array('type'=>'hidden'));
+                    echo $this->Form->input('fecha', array(
+                            'class'=>'datepicker',
+                            'type'=>'text',
+                            'label'=>'Fecha',
+                            'default'=>date('d-m-Y'),
+                            'readonly'=>'readonly',
+                            'required'=>true,
+                            'style'=> 'width:80px;'
+                        )
+                    );
+                    echo $this->Form->input('numerodespachoaduanero',array('type'=>'hidden'));
+                    echo $this->Form->input('anticipo',array('type'=>'hidden'));
+                    echo $this->Form->input('cbu',array('type'=>'hidden'));
+                    echo $this->Form->input('tipocuenta',array('type'=>'hidden'));
+                    echo $this->Form->input('tipomoneda',array('type'=>'hidden'));
+                    echo $this->Form->input('agente',array('type'=>'hidden'));
+                    echo $this->Form->input('enterecaudador',array('type'=>'hidden'));
+                    echo $this->Form->input('regimen',array('type'=>'hidden'));
+                    echo $this->Form->input('descripcion',array('type'=>'hidden'));
+                    echo $this->Form->input('numeropadron',array('type'=>'hidden'));
+                    echo $this->Form->input('ordendepago',array('type'=>'hidden'));
+                    echo $this->Form->submit('+', array('type'=>'image',
+                        'src' => $this->webroot.'img/add_view.png',
+                        'class'=>'img_edit',
+                        'title' => 'Agregar',
+                        'style'=>'width:25px;height:25px;margin-top:8px'));                    
+                    echo $this->Form->end();  ?>
+                 
+                </div>        
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

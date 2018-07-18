@@ -197,24 +197,14 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
                                             </li>
                                             <li class='has-sub'>
                                                 <?php
-                                                echo $this->Html->link("Resumen Ventas",
+                                                echo $this->Html->link("Resumen Movimiento Neto",
                                                     array(
                                                         'controller' => 'ventas',
                                                         'action' => 'resumen',
                                                     )
                                                 );
                                                 ?>
-                                            </li>
-                                            <li class='has-sub'>
-                                                <?php
-                                                echo $this->Html->link("Resumen Compras",
-                                                    array(
-                                                        'controller' => 'compras',
-                                                        'action' => 'resumen',
-                                                    )
-                                                );
-                                                ?>
-                                            </li>
+                                            </li>                                            
                                             <li class='has-sub'>
                                                 <?php
                                                 echo $this->Html->link("Pagos del Mes",

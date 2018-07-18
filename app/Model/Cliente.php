@@ -392,6 +392,7 @@ class Cliente extends AppModel {
         $impuestosactivos['ganancias'] = false;
         $impuestosactivos['monotributo'] = false;
         $impuestosactivos['iva'] = false;
+        $impuestosactivos['ivaId'] = 0;
         $impuestosactivos['ivapercepciones'] = false;
         $impuestosactivos['impuestointerno'] = false;
         $impuestosactivos['agenteDePercepcionIIBB'] = false;
@@ -413,6 +414,7 @@ class Cliente extends AppModel {
                 }
                 if( in_array($impcli['Impuesto']['id'], ['19'])){
                     $impuestosactivos['iva']=true;
+                    $impuestosactivos['ivaId']=$impcli['id'];
                 }
                 if( in_array($impcli['Impuesto']['id'], ['184'])){
                     $impuestosactivos['ivapercepciones']=true;
@@ -426,6 +428,7 @@ class Cliente extends AppModel {
                 if( in_array($impcli['Impuesto']['id'], ['186'])){
                     $impuestosactivos['agenteDePercepcionActividadesVarias']=true;
                 }
+                $impuestosactivos[$impcli['impuesto_id']]=true;
             }else{
                 $impuestosactivos[$impcli['impuesto_id']]=false;
             }

@@ -68,6 +68,20 @@ $(document).ready(function() {
 
 	cargarAsiento();
 	catchAsiento();
+    $("#ConceptosrestanteAlicuota").on('change',function(){
+        var alicuota = $(this).val();
+        var baseImponible = $("#ConceptosrestanteBaseimponible").val();
+        var dcto814=baseImponible*alicuota/100;
+         $("#ConceptosrestanteMontoretenido").val(dcto814);
+    });    
+    $("#ConceptosrestanteBaseimponible").on('change',function(){
+        var alicuota = $("#ConceptosrestanteAlicuota").val();
+        var baseImponible = $(this).val();
+        var dcto814=baseImponible*alicuota/100;
+         $("#ConceptosrestanteMontoretenido").val(dcto814.toFixed(2));
+    });    
+    $("#ConceptosrestanteBaseimponible").trigger('change');
+    addFormSubmitCatchs();
 });
 function openWin(){
 	window.print();
@@ -90,6 +104,58 @@ function openWin()
 		}, 1000);
 }
 */
+function guardarDcto814(){
+    $('#myModalAddConceptosrestante').on('show.bs.modal', function() {
+        //$('#myModalAddConceptosrestante').find('.modal-title').html('Asiento automatico de venta');
+        //$('#myModalAddConceptosrestante').find('.modal-body').html(response);
+        // $('#myModal').find('.modal-footer').append($('<button>', {
+        //     type:'button',
+        //     datacontent:'remove',
+        //     class:'btn btn-primary',
+        //     id:'editRowBtn',
+        //     onclick:"$('#BienesdeusoRelacionarventaForm').submit()",
+        //     text:"Aceptar"
+        // }));
+        $('#myModalAddConceptosrestante').find('.modal-footer').append($('<button>', {
+            type:'button',
+            datacontent:'remove',
+            class:'btn btn-primary',
+            id:'editRowBtn',
+            onclick:" $('#myModal').modal('hide')",
+            text:"Cerrar"
+        }));
+    });
+    $('#myModalAddConceptosrestante').modal('show');
+    $('.chosen-select-cuenta').chosen({
+        search_contains:true,
+        include_group_label_in_selected:true
+    });
+    $('#AsientoAddForm').submit(function(){
+        $('#myModal').modal('hide');
+        //serialize form data
+        var formData = $(this).serialize();
+        //get form action
+        var formUrl = $(this).attr('action');
+        //aca tenemos que sacar todos los disabled para que se envien los campos
+        $('#AsientoAddForm input').each(function(){
+            $(this).removeAttr('disabled');
+        });
+        $.ajax({
+            type: 'POST',
+            url: formUrl,
+            data: formData,
+            success: function(data,textStatus,xhr){
+                var respuesta = JSON.parse(data);
+                callAlertPopint(respuesta.respuesta);
+            },
+            error: function(xhr,textStatus,error){
+                $('#myModal').modal('show');
+                alert(textStatus);
+            }
+        });
+        return false;
+    });
+}
 function cargarAsiento(){
 	// 503020017	Mano de Obra Salta
 	if($('#cuenta2250').length > 0){
@@ -486,3 +552,25 @@ function showIconDebeHaber(){
 		$("#iconDebeHaber").attr('src',serverLayoutURL+'/img/test-fail-icon.png');
 	}
 }
+function addFormSubmitCatchs(){
+        $('#saveConceptosrestantesForm').submit(function(){
+            //serialize form data
+            var formData = $(this).serialize();
+            //get form action
+            var formUrl = $(this).attr('action');
+            //Controles de inputs
+            $.ajax({
+                type: 'POST',
+                url: formUrl,
+                data: formData,
+                success: function(data,textStatus,xhr){
+                    var respuesta = JSON.parse(data);
+                    callAlertPopint(respuesta.respuesta);
+                },
+                error: function(xhr,textStatus,error){
+                    alert(error);
+                }
+            });
+            return false;
+        });
+    }
