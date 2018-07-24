@@ -34,6 +34,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
         $nombrecuotaSindical2 = "";
         $nombrecuotaSindical3 = "";
         $nombrecuotaSindical4 = "";
+        $nombrecuotaSindical5 = "";
+        $nombreAporte = "";
         $pagaINACAP = false;
         foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
             /*Aca vamos a ver si para o no paga algunas contribuciones sindicales segun que convenio tenga*/
@@ -56,6 +58,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $cuotasindical2 = 0;
                 $cuotasindical3 = 0;
                 $cuotasindical4 = 0;
+                $cuotasindical5 = 0;
+                $aporte = 0;
                 if (!isset($miempleado['horasDias'])) {
                     $miempleado['jornada'] = 0;
                     $miempleado['horasDias'] = 0;
@@ -74,6 +78,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     $miempleado['cuotasindical2'] = 0;
                     $miempleado['cuotasindical3'] = 0;
                     $miempleado['cuotasindical4'] = 0;
+                    $miempleado['cuotasindical5'] = 0;
+                    $miempleado['aporte'] = 0;
                 }
                 foreach ($empleado['Valorrecibo'] as $valorrecibo) {
                     //Horas Diarias
@@ -187,6 +193,13 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     ) {
                         $cuotasindical4 += $valorrecibo['valor'];
                     }
+                    //Total Cuota Sindical 4
+                    if (
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
+                        array('225'/*Cuota Sindical Extra 4	*/), true)
+                    ) {
+                        $cuotasindical5 += $valorrecibo['valor'];
+                    }
                     //Nombre Cuota Sindical
                     if (
                     in_array($valorrecibo['Cctxconcepto']['concepto_id'],
@@ -222,6 +235,28 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     ) {
                         $nombrecuotaSindical4 = $valorrecibo['Cctxconcepto']['nombre'];
                     }
+                    //Nombre Cuota Sindical 5
+                    if (
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
+                        array('225'/*Cuota extra Sindical 5	*/), true)
+                    ) {
+                        $nombrecuotaSindical5 = $valorrecibo['Cctxconcepto']['nombre'];
+                    }
+                   
+                    //RENATEA Aporte (U otros aportes)
+                    if (
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
+                        array('121'/*Cuota extra Sindical 4	*/), true)
+                    ) {
+                        $aporte = $valorrecibo['valor'];
+                    }
+                    //Nombre RENATEA Aporte
+                    if (
+                    in_array($valorrecibo['Cctxconcepto']['concepto_id'],
+                        array('121'/*Cuota extra Sindical 4	*/), true)
+                    ) {
+                        $nombreAporte = $valorrecibo['Cctxconcepto']['nombre'];
+                    }
                 }
                 $miempleado['jornada'] = $jornada;
                 $miempleado['horasDias'] = $horasDias;
@@ -240,6 +275,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 $miempleado['cuotasindical2'] = $cuotasindical2;
                 $miempleado['cuotasindical3'] = $cuotasindical3;
                 $miempleado['cuotasindical4'] = $cuotasindical4;
+                $miempleado['cuotasindical5'] = $cuotasindical5;
+                $miempleado['aporte'] = $aporte;
 
                 $empleadoid = $empleado['id'];
                 $empleadoDatos[$empleadoid] = $miempleado;
@@ -600,6 +637,50 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 }
                 ?>
                 <td><?php  echo number_format($totalCuotaSindical4, 2, ",", "."); ?></td>
+                <?php } ?>
+            </tr>
+            <tr>
+                <?php
+                $totalCuotaSindical5 = 0;
+                if($nombrecuotaSindical5!="") {
+                    echo "<td>";
+                    echo $nombrecuotaSindical5;
+                    echo "</td>";
+
+                foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                    foreach ($conveniocolectivo['Empleado'] as $empleado){
+                        $empleadoid = $empleado['id'];
+                        //en este primer loop vamos a calcular todos los siguientes totales
+                        echo "<td>";
+                        echo $empleadoDatos[$empleadoid]['cuotasindical5'];
+                        $totalCuotaSindical5 += $empleadoDatos[$empleadoid]['cuotasindical5'];
+                        echo "</td>";
+                    }
+                }
+                ?>
+                <td><?php  echo number_format($totalCuotaSindical5, 2, ",", "."); ?></td>
+                <?php } ?>
+            </tr>
+            <tr>
+                <?php
+                $totalAporte = 0;
+                if($nombreAporte!="") {
+                    echo "<td>";
+                    echo $nombreAporte;
+                    echo "</td>";
+
+                foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                    foreach ($conveniocolectivo['Empleado'] as $empleado){
+                        $empleadoid = $empleado['id'];
+                        //en este primer loop vamos a calcular todos los siguientes totales
+                        echo "<td>";
+                        echo $empleadoDatos[$empleadoid]['aporte'];
+                        $totalAporte += $empleadoDatos[$empleadoid]['aporte'];
+                        echo "</td>";
+                    }
+                }
+                ?>
+                <td><?php  echo number_format($totalAporte, 2, ",", "."); ?></td>
                 <?php } ?>
             </tr>
             <tr>
@@ -1044,6 +1125,34 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         </td>
                     </tr>
                 <?php
+               break;
+                case '206':/*Pasteleros*/ ?>
+                    <tr>
+                        <td>
+                            Contribucion Permanente
+                        </td>
+                        <?php
+                        $totalContribucionEmpresarial =0;
+                        foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                            foreach ($conveniocolectivo['Empleado'] as $empleado) {
+                                $empleadoid = $empleado['id'];
+
+                                $contribucionEmpresarial = $empleadoDatos[$empleadoid]['remuneracionTotal']*0.05;
+                                echo '<td>';
+                                echo number_format($contribucionEmpresarial, 2, ",", ".");
+                                $totalContribucionEmpresarial += $contribucionEmpresarial ;
+                                echo "</td>";
+                            }
+                        }
+                        ?>
+                        <td >
+                            <?php
+                            echo number_format($totalContribucionEmpresarial, 2, ",", ".");
+                            $apagarcontribuciones += $totalContribucionEmpresarial ;
+                            ?>
+                        </td>
+                    </tr>
+                <?php
                     break;
                     $totalContribucion += (18835.58*0.005+1883.55*0.005);
                     $apagarcontribuciones +=(18835.58*0.005+1883.55*0.005);
@@ -1095,6 +1204,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         break;
                     case '205':/*SOPS*/
                         $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4;
+                        $impuestoDeterminado += $totalContribucionEmpresarial;
+                        break;
+                    case '206':/*SOPS*/
+                        $impuestoDeterminado = $totalCuotaSindical+$totalCuotaSindical1+$totalCuotaSindical2+$totalCuotaSindical3+$totalCuotaSindical4+$totalCuotaSindical5+$totalAporte;
                         $impuestoDeterminado += $totalContribucionEmpresarial;
                         break;
 
@@ -1183,6 +1296,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             //aca vamos a recorrer las cuentas que estan en el asiento estandar tipo impuesto de este carahito
             $totalDebe=0;
             $totalHaber=0;
+
             foreach ($impcliSolicitado['Impuesto']['Asientoestandare'] as $asientoestandarsindicato) {
                 if(!isset($movId[$asientoestandarsindicato['cuenta_id']])){
                     $movId[$asientoestandarsindicato['cuenta_id']]=0;
@@ -1196,8 +1310,8 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         break;
                     }
                 }
-
-                $cuentasSindicatoPerdidas = [
+                
+                /*$cuentasSindicatoPerdidas = [
                     '2258',
                     '2259',
                     '2260',
@@ -1225,8 +1339,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     '2281',
                     '2282',
                     '2283',
-                ];
-                $cuentasSindicatoPasivo = [
+                ];*/
+                
+                /*$cuentasSindicatoPasivo = [
                     '1425',
                     '1426',
                     '1427',
@@ -1251,7 +1366,9 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     '3484',
                     '3485',
                     '3970',                    
-                ];
+                    '3970',                  
+                ];*/
+                
                 //aca vamos a ver si el monto va al debe o al haber
                 $debe=0;
                 $haber=0;

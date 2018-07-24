@@ -116,12 +116,13 @@ function guardarDcto814(){
         //     onclick:"$('#BienesdeusoRelacionarventaForm').submit()",
         //     text:"Aceptar"
         // }));
+         $('#myModalAddConceptosrestante').find('.modal-footer').html("");
         $('#myModalAddConceptosrestante').find('.modal-footer').append($('<button>', {
             type:'button',
             datacontent:'remove',
             class:'btn btn-primary',
             id:'editRowBtn',
-            onclick:" $('#myModal').modal('hide')",
+            onclick:" $('#myModalAddConceptosrestante').modal('hide')",
             text:"Cerrar"
         }));
     });

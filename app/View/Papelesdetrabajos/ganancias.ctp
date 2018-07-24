@@ -97,29 +97,29 @@ echo $this->Html->css('progressbarstyle');
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Balance de Sumas y Saldos</label>
     </div>
     <div id="tabPrimeraCategoria" class="cliente_view_tab" onclick="CambiarTab('primeracategoria');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">1&#176;,2&#176;,3&#176;,3&#176;EU,4&#176; Cat.</label>
+        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Rentas</label>
     </div>
-    <div id="tabPatrimoniotercera" class="cliente_view_tab" onclick="CambiarTab('patrimoniotercera');" style="width:14%;">
+    <!--<div id="tabPatrimoniotercera" class="cliente_view_tab" onclick="CambiarTab('patrimoniotercera');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Pat 3&#176;(EU)</label>
-    </div>
+    </div>-->
     <div id="tabTercerarRestoCategoria" class="cliente_view_tab" onclick="CambiarTab('tercerarestocategoria');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Patrimonio</label>
+        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Bienes y deudas</label>
     </div>
-    <div id="tabTerceraCategoria" class="cliente_view_tab" onclick="CambiarTab('terceracategoria');" style="width:14%;">
+    <div id="tabJustVarPat" class="cliente_view_tab" onclick="CambiarTab('justificacionvarpat');" style="width:14%;">
+        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Variaciones Patrimoniales</label>
+    </div>
+    <div id="tabCuartaDEFCategoria" class="cliente_view_tab" onclick="CambiarTab('cuartadefcategoria');" style="width:14%;">
+        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Determinacion del impuesto G</label>
+    </div>  
+    <!--<div id="tabTerceraCategoria" class="cliente_view_tab" onclick="CambiarTab('terceracategoria');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Ded. Grales.</label>
     </div>
     <div id="tabCuartaABCCategoria" class="cliente_view_tab" onclick="CambiarTab('cuartaabccategoria');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Ded. Pers.</label>
     </div>
-    <div id="tabCuartaDEFCategoria" class="cliente_view_tab" onclick="CambiarTab('cuartadefcategoria');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Determinacion del impuesto G</label>
-    </div>    
-    <div id="tabJustVarPat" class="cliente_view_tab" onclick="CambiarTab('justificacionvarpat');" style="width:14%;">
-        <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Just. Var. Pat.</label>
-    </div>
     <div id="tabQuebranto" class="cliente_view_tab" onclick="CambiarTab('quebrantos');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Quebrantos</label>
-    </div>   
+    </div>   -->
     <div id="tabDetImpBP" class="cliente_view_tab" onclick="CambiarTab('detImpBP');" style="width:14%;">
         <label style="text-align:center;margin-top:5px;cursor:pointer" for="">Determinacion del impuesto BP</label>
     </div>
@@ -398,8 +398,11 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
 ?>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divPrimeraCategoria" >
+    <h2>Rentas</h2>
+    <h2>Rentas de fuenta argentina</h2>
     <?php
     //todo esto vamos a mostrar solo si es 3ra nomas che 
+    
     if($tienetercera){
     ?>
     <table style="display:none">
@@ -494,8 +497,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 <td class="tdWithNumber"><?php echo number_format($totalAmortizaciones, 2, ",", ".");?></td>
             </tr>
         </tbody>
-    </table>
-    
+    </table>    
     <?php
     }
     //Fin de Anexos de calculo de costos y cuadro de gastos para tercer categoria emppresas
@@ -506,7 +508,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
                 <td>
                     Contribuyente <?php echo $cliente["Cliente"]['nombre'] ?>
                 </td>
-                <td>
+                <td colspan="20">
                      Anexo I: Ingresos y Gastos por categoria Año Fiscal <?php echo $periodoActual ?>
                 </td>               
             </tr>
@@ -713,213 +715,211 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
     <?php
     if($tienetercera){
         ?>
-    <table   style="display:none" id="tblAnexoI"  class="toExcelTable tblEstadoContable tbl_verticalborder tblAnexoI" cellspacing="0">
-        <thead>
-            <tr class="trnoclickeable trTitle">
-                <th colspan="6" style="text-align: left">
-                    Contribuyente <?php echo $cliente['Cliente']['nombre'];?>
+        <table   style="display:none" id="tblAnexoI"  class="toExcelTable tblEstadoContable tbl_verticalborder tblAnexoI" cellspacing="0">
+            <thead>
+                <tr class="trnoclickeable trTitle">
+                    <th colspan="6" style="text-align: left">
+                        Contribuyente <?php echo $cliente['Cliente']['nombre'];?>
+                    </th>
+                </tr>
+                <tr class="trnoclickeable trTitle">
+                    <th colspan="6" style="text-align: center">
+                        Anexo II: Costo de los Bienes Vendidos, Servicios Prestados y de Producci&oacute;n al
+                        <?php echo date('d-m-Y', strtotime($fechaFinConsulta)); ?>  
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr class="trTitle">
+                <th colspan="2">
+                    Existencia Inicial
                 </th>
-            </tr>
-            <tr class="trnoclickeable trTitle">
-                <th colspan="6" style="text-align: center">
-                    Anexo II: Costo de los Bienes Vendidos, Servicios Prestados y de Producci&oacute;n al
-                    <?php echo date('d-m-Y', strtotime($fechaFinConsulta)); ?>  
+                <th colspan="2" style="text-align: center;width: 90px">
                 </th>
-            </tr>
-        </thead>
-        <tbody>
-        <tr class="trTitle">
-            <th colspan="2">
-                Existencia Inicial
-            </th>
-            <th colspan="2" style="text-align: center;width: 90px">
-            </th>
 
-        </tr>         
-            <?php
+            </tr>         
+                <?php
 
-            //aca vamos a buscar los valores de la cuenta 	110500011 Mercaderia Inicial que esten en un asiento de apertura
-            //capas que no sea necesario usar el asiento de apertura por que
-            $totalPeriodoExistenciaInicial=[];
-            if(!isset($totalPeriodoExistenciaInicial[$periodoActual])){
-                $totalPeriodoExistenciaInicial[$periodoActual] = 0;//existen estos valores
-            }
-            //existencia final del periodo anterior es la inicial de Actual
-            //110500013 Mercader&iacute;as XX E Final
-            //110502013 Prod. Terminado XX E Final
-            //110504013 Prod. en Proceso XX E Final
-            //110506013 MP y Materiales XX EFIN
-            //110507013 Otros Bienes de Cambio EFin*/
-            $existenciaInicialMercaderias = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110500011"],$periodoActual,$keysCuentas,'apertura',1);
-            $existenciaInicialProdTerminado = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110502011"],$periodoActual,$keysCuentas,'apertura',1);
-            $existenciaInicialProdEnProc = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110504011"],$periodoActual,$keysCuentas,'apertura',1);
-            $existenciaInicialMpMaterials = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110506011"],$periodoActual,$keysCuentas,'apertura',1);
-            $existenciaInicialOtros = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110507011"],$periodoActual,$keysCuentas,'apertura',1);
-            $totalPeriodoExistenciaInicial[$periodoActual] += $existenciaInicialMercaderias + $existenciaInicialProdTerminado + $existenciaInicialProdEnProc
-                    + $existenciaInicialMpMaterials + $existenciaInicialOtros;
-
-            ?>                    
-        <tr class="trTitle">
-            <th class="" colspan="2">
-                Total Existencia Inicial
-            </th>
-            <?php
-            echo '<th colspan="2" class="numericTD " style=";width: 90px">' .
-                    number_format($totalPeriodoExistenciaInicial[$periodoActual], 2, ",", ".")
-                    . "</th>";
-            ?>
-        </tr>
-        <tr class="trTitle">
-            <th colspan="2">
-                Compras
-            </th>
-            <th colspan="2" style="text-align: center;width: 90px">
-            </th>
-        </tr>
-            <?php
-            $totalPeriodoExistenciaFinal=[] ;
-            //COMPRAS PERIODO ACTUAL + Existencia FINAL ACTUAL - EXISTENCIA INICIAL ACTUAL
-
-        
-            //110500013 Mercader&iacute;as XX E Final
-            //110502013 Prod. Terminado XX E Final
-            //110504013 Prod. en Proceso XX E Final
-            //110506013 MP y Materiales XX EFIN
-            //110507013 Otros Bienes de Cambio EFin
-            $existenciaFinalMercaderias = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110500013"],$periodoActual,$keysCuentas,'todos',-1);
-            $existenciaFinalProdTerminado = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110502013"],$periodoActual,$keysCuentas,'todos',-1);
-            $existenciaFinalProdEnProc = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110504013"],$periodoActual,$keysCuentas,'todos',-1);
-            $existenciaFinalMpMaterials = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110506013"],$periodoActual,$keysCuentas,'todos',-1);
-            $existenciaFinalOtros = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110507013"],$periodoActual,$keysCuentas,'todos',-1);
-
-            $totalPeriodoExistenciaFinal[$periodoActual] = $existenciaFinalMercaderias + $existenciaFinalProdTerminado + $existenciaFinalProdEnProc 
-                    + $existenciaFinalMpMaterials + $existenciaFinalOtros;
-            //estoy sacando esta variable de dos lugares 
-            //o lo calculamos o lo traemos de contabilidad
-
-        
-        
-            //COMPRAS PERIODO ANTERIOR + Existencia FINAL ANTERIOR - EXISTENCIA INICIAL ANTERIOR
-
-            //110500012 Mercader&iacute;as XX Compras
-            //110502012 Prod. Terminado XX Compras
-            //110504012 Prod. en Proceso XX Compras
-            //110506012 MP y Materiales XX Compras
-            //110507012 Otros bienes de cambio XX Compras*/
-
-        showRowAnexoICostos("Mercader&iacute;as",$existenciaComprasMercaderias);              
-        //mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoCompras,"Productos Terminados","110502012",$fechaInicioConsulta,$fechaFinConsulta);
-        //mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoCompras,"Producci&oacute;n en Proceso","110504012",$fechaInicioConsulta,$fechaFinConsulta);
-        //mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoCompras,"Materias Primas e Insumos incorporados a la producci&oacute;n","110506012",$fechaInicioConsulta,$fechaFinConsulta);
-        showRowAnexoICostos("Productos Terminados",$existenciaComprasProdTerminado);
-        showRowAnexoICostos("Producci&oacute;n en Proceso",$existenciaComprasProdEnProc);
-        showRowAnexoICostos("Materias Primas e Insumos incorporados a la producci&oacute;n",$existenciaComprasMpMaterials);
-        showRowAnexoICostos("Insumos Incorporados a la Prestaci&oacute;n de Servicios",0);
-        showRowAnexoICostos("Otros: Gastos Activados",$existenciaComprasOtros);
-        showRowAnexoICostos("Participaci&oacute;n en negocios conjuntos",0);
-        ?>         
-        <tr class="trTitle">
-            <th class="" colspan="2">
-                Total de Compras
-            </th>
-            <?php
-            echo '<th colspan="2" class="numericTD " style="width: 90px">' .
-                    number_format($totalPeriodoCompras[$periodoActual], 2, ",", ".")
-                    . "</th>";
-            ?>
-        </tr>            
-        <tr class="trTitle">
-            <th colspan="2">
-                Devoluciones de Compras
-            </th>
-            <th colspan="2" style="text-align: center;width: 90px">
-            </th>
-
-        </tr>
-        <?php
-        $totalPeriodoDevoluciones = [];
-        mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Mercader&iacute;as","110500014",$fechaInicioConsulta,$fechaFinConsulta);
-        mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Productos Terminados","110502014",$fechaInicioConsulta,$fechaFinConsulta);
-        mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Producci&oacute;n en Proceso","110504014",$fechaInicioConsulta,$fechaFinConsulta);
-        mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Materias Primas e Insumos incorporados a la producci&oacute;n","110506014",$fechaInicioConsulta,$fechaFinConsulta);
-
-        showRowAnexoICostos("Insumos Incorporados a la Prestaci&oacute;n de Servicios",0);
-        showRowAnexoICostos("Otros",0);
-        showRowAnexoICostos("Participaci&oacute;n en negocios conjuntos",0);
-
-        ?>
-        <tr class="trTitle">
-            <th class="" colspan="2">
-                Total de Devoluciones de Compras
-            </th>
-            <?php
-            echo '<th colspan="2" class="numericTD " style="width: 90px">' .
-                    number_format($totalPeriodoDevoluciones[$periodoActual], 2, ",", ".")
-                    . "</th>";              
-            ?>
-        </tr>
-
-        <tr class="trTitle">
-            <th colspan="2">
-                Existencia Final
-            </th>
-            <th colspan="2" style="text-align: center">
-            </th>
-        </tr>
-        <tr>
-            <td colspan="2">
-                Mercader&iacute;as
-            </td>
-            <?php
-             echo '<td colspan="2" class="numericTD" style="width: 90px">' .
-                    number_format($totalPeriodoExistenciaFinal[$periodoActual], 2, ",", ".")
-                    . "</td>";
-            ?>
-        </tr>
-        <?php
-         mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoExistenciaFinal,"Productos Terminados","110502013",$fechaInicioConsulta,$fechaFinConsulta);
-         mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoExistenciaFinal,"Producci&oacute;n en Proceso","110504013",$fechaInicioConsulta,$fechaFinConsulta);
-         mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoExistenciaFinal,"Materias Primas y Materiales","110506013",$fechaInicioConsulta,$fechaFinConsulta);
-        ?>
-        <tr class="trTitle">
-            <th class=" " colspan="2">
-                Total Existencia Final
-            </th>
-            <?php
-           echo '<th colspan="2" class="numericTD  " style="width: 90px">' .
-                    number_format($totalPeriodoExistenciaFinal[$periodoActual], 2, ",", ".")
-                    . "</th>";
-            ?>
-        </tr>
-        <tr  class="trTitle">
-            <th colspan="2">
-                Costo de los Bienes, de los Servicios y de Producci&oacute;n
-            </th>
-            <?php
-            $totalPeriodoCostoBienesServiciosProduccion = [];
-            echo '<th colspan="2" class="numericTD" style="width: 90px">' ;
-                $totalPeriodo = $totalPeriodoExistenciaInicial[$periodoActual];
-                $totalPeriodo += $totalPeriodoCompras[$periodoActual];
-                $totalPeriodo -= $totalPeriodoDevoluciones[$periodoActual];
-                $totalPeriodo += $totalPeriodoExistenciaFinal[$periodoActual];
-
-                echo number_format($totalPeriodo, 2, ",", ".");
-                echo  "</th>";
-                if(!isset($totalPeriodoCostoBienesServiciosProduccion[$periodoActual])){
-                    $totalPeriodoCostoBienesServiciosProduccion[$periodoActual] = 0;//existen estos valores
+                //aca vamos a buscar los valores de la cuenta 	110500011 Mercaderia Inicial que esten en un asiento de apertura
+                //capas que no sea necesario usar el asiento de apertura por que
+                $totalPeriodoExistenciaInicial=[];
+                if(!isset($totalPeriodoExistenciaInicial[$periodoActual])){
+                    $totalPeriodoExistenciaInicial[$periodoActual] = 0;//existen estos valores
                 }
-                $totalPeriodoCostoBienesServiciosProduccion[$periodoActual] += $totalPeriodo;
+                //existencia final del periodo anterior es la inicial de Actual
+                //110500013 Mercader&iacute;as XX E Final
+                //110502013 Prod. Terminado XX E Final
+                //110504013 Prod. en Proceso XX E Final
+                //110506013 MP y Materiales XX EFIN
+                //110507013 Otros Bienes de Cambio EFin*/
+                $existenciaInicialMercaderias = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110500011"],$periodoActual,$keysCuentas,'apertura',1);
+                $existenciaInicialProdTerminado = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110502011"],$periodoActual,$keysCuentas,'apertura',1);
+                $existenciaInicialProdEnProc = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110504011"],$periodoActual,$keysCuentas,'apertura',1);
+                $existenciaInicialMpMaterials = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110506011"],$periodoActual,$keysCuentas,'apertura',1);
+                $existenciaInicialOtros = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110507011"],$periodoActual,$keysCuentas,'apertura',1);
+                $totalPeriodoExistenciaInicial[$periodoActual] += $existenciaInicialMercaderias + $existenciaInicialProdTerminado + $existenciaInicialProdEnProc
+                        + $existenciaInicialMpMaterials + $existenciaInicialOtros;
+
+                ?>                    
+            <tr class="trTitle">
+                <th class="" colspan="2">
+                    Total Existencia Inicial
+                </th>
+                <?php
+                echo '<th colspan="2" class="numericTD " style=";width: 90px">' .
+                        number_format($totalPeriodoExistenciaInicial[$periodoActual], 2, ",", ".")
+                        . "</th>";
+                ?>
+            </tr>
+            <tr class="trTitle">
+                <th colspan="2">
+                    Compras
+                </th>
+                <th colspan="2" style="text-align: center;width: 90px">
+                </th>
+            </tr>
+                <?php
+                $totalPeriodoExistenciaFinal=[] ;
+                //COMPRAS PERIODO ACTUAL + Existencia FINAL ACTUAL - EXISTENCIA INICIAL ACTUAL
+
+
+                //110500013 Mercader&iacute;as XX E Final
+                //110502013 Prod. Terminado XX E Final
+                //110504013 Prod. en Proceso XX E Final
+                //110506013 MP y Materiales XX EFIN
+                //110507013 Otros Bienes de Cambio EFin
+                $existenciaFinalMercaderias = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110500013"],$periodoActual,$keysCuentas,'todos',-1);
+                $existenciaFinalProdTerminado = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110502013"],$periodoActual,$keysCuentas,'todos',-1);
+                $existenciaFinalProdEnProc = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110504013"],$periodoActual,$keysCuentas,'todos',-1);
+                $existenciaFinalMpMaterials = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110506013"],$periodoActual,$keysCuentas,'todos',-1);
+                $existenciaFinalOtros = sumarCuentasEnPeriodo($arrayCuentasxPeriodos,["110507013"],$periodoActual,$keysCuentas,'todos',-1);
+
+                $totalPeriodoExistenciaFinal[$periodoActual] = $existenciaFinalMercaderias + $existenciaFinalProdTerminado + $existenciaFinalProdEnProc 
+                        + $existenciaFinalMpMaterials + $existenciaFinalOtros;
+                //estoy sacando esta variable de dos lugares 
+                //o lo calculamos o lo traemos de contabilidad
+
+
+
+                //COMPRAS PERIODO ANTERIOR + Existencia FINAL ANTERIOR - EXISTENCIA INICIAL ANTERIOR
+
+                //110500012 Mercader&iacute;as XX Compras
+                //110502012 Prod. Terminado XX Compras
+                //110504012 Prod. en Proceso XX Compras
+                //110506012 MP y Materiales XX Compras
+                //110507012 Otros bienes de cambio XX Compras*/
+
+            showRowAnexoICostos("Mercader&iacute;as",$existenciaComprasMercaderias);              
+            //mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoCompras,"Productos Terminados","110502012",$fechaInicioConsulta,$fechaFinConsulta);
+            //mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoCompras,"Producci&oacute;n en Proceso","110504012",$fechaInicioConsulta,$fechaFinConsulta);
+            //mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoCompras,"Materias Primas e Insumos incorporados a la producci&oacute;n","110506012",$fechaInicioConsulta,$fechaFinConsulta);
+            showRowAnexoICostos("Productos Terminados",$existenciaComprasProdTerminado);
+            showRowAnexoICostos("Producci&oacute;n en Proceso",$existenciaComprasProdEnProc);
+            showRowAnexoICostos("Materias Primas e Insumos incorporados a la producci&oacute;n",$existenciaComprasMpMaterials);
+            showRowAnexoICostos("Insumos Incorporados a la Prestaci&oacute;n de Servicios",0);
+            showRowAnexoICostos("Otros: Gastos Activados",$existenciaComprasOtros);
+            showRowAnexoICostos("Participaci&oacute;n en negocios conjuntos",0);
+            ?>         
+            <tr class="trTitle">
+                <th class="" colspan="2">
+                    Total de Compras
+                </th>
+                <?php
+                echo '<th colspan="2" class="numericTD " style="width: 90px">' .
+                        number_format($totalPeriodoCompras[$periodoActual], 2, ",", ".")
+                        . "</th>";
+                ?>
+            </tr>            
+            <tr class="trTitle">
+                <th colspan="2">
+                    Devoluciones de Compras
+                </th>
+                <th colspan="2" style="text-align: center;width: 90px">
+                </th>
+
+            </tr>
+            <?php
+            $totalPeriodoDevoluciones = [];
+            mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Mercader&iacute;as","110500014",$fechaInicioConsulta,$fechaFinConsulta);
+            mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Productos Terminados","110502014",$fechaInicioConsulta,$fechaFinConsulta);
+            mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Producci&oacute;n en Proceso","110504014",$fechaInicioConsulta,$fechaFinConsulta);
+            mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoDevoluciones,"Materias Primas e Insumos incorporados a la producci&oacute;n","110506014",$fechaInicioConsulta,$fechaFinConsulta);
+
+            showRowAnexoICostos("Insumos Incorporados a la Prestaci&oacute;n de Servicios",0);
+            showRowAnexoICostos("Otros",0);
+            showRowAnexoICostos("Participaci&oacute;n en negocios conjuntos",0);
+
             ?>
-        </tr>
-        </tbody>
-    </table>
+            <tr class="trTitle">
+                <th class="" colspan="2">
+                    Total de Devoluciones de Compras
+                </th>
+                <?php
+                echo '<th colspan="2" class="numericTD " style="width: 90px">' .
+                        number_format($totalPeriodoDevoluciones[$periodoActual], 2, ",", ".")
+                        . "</th>";              
+                ?>
+            </tr>
+
+            <tr class="trTitle">
+                <th colspan="2">
+                    Existencia Final
+                </th>
+                <th colspan="2" style="text-align: center">
+                </th>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    Mercader&iacute;as
+                </td>
+                <?php
+                 echo '<td colspan="2" class="numericTD" style="width: 90px">' .
+                        number_format($totalPeriodoExistenciaFinal[$periodoActual], 2, ",", ".")
+                        . "</td>";
+                ?>
+            </tr>
+            <?php
+             mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoExistenciaFinal,"Productos Terminados","110502013",$fechaInicioConsulta,$fechaFinConsulta);
+             mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoExistenciaFinal,"Producci&oacute;n en Proceso","110504013",$fechaInicioConsulta,$fechaFinConsulta);
+             mostrarCostoDeBienesVendidos($arrayCuentasxPeriodos,$totalPeriodoExistenciaFinal,"Materias Primas y Materiales","110506013",$fechaInicioConsulta,$fechaFinConsulta);
+            ?>
+            <tr class="trTitle">
+                <th class=" " colspan="2">
+                    Total Existencia Final
+                </th>
+                <?php
+               echo '<th colspan="2" class="numericTD  " style="width: 90px">' .
+                        number_format($totalPeriodoExistenciaFinal[$periodoActual], 2, ",", ".")
+                        . "</th>";
+                ?>
+            </tr>
+            <tr  class="trTitle">
+                <th colspan="2">
+                    Costo de los Bienes, de los Servicios y de Producci&oacute;n
+                </th>
+                <?php
+                $totalPeriodoCostoBienesServiciosProduccion = [];
+                echo '<th colspan="2" class="numericTD" style="width: 90px">' ;
+                    $totalPeriodo = $totalPeriodoExistenciaInicial[$periodoActual];
+                    $totalPeriodo += $totalPeriodoCompras[$periodoActual];
+                    $totalPeriodo -= $totalPeriodoDevoluciones[$periodoActual];
+                    $totalPeriodo += $totalPeriodoExistenciaFinal[$periodoActual];
+
+                    echo number_format($totalPeriodo, 2, ",", ".");
+                    echo  "</th>";
+                    if(!isset($totalPeriodoCostoBienesServiciosProduccion[$periodoActual])){
+                        $totalPeriodoCostoBienesServiciosProduccion[$periodoActual] = 0;//existen estos valores
+                    }
+                    $totalPeriodoCostoBienesServiciosProduccion[$periodoActual] += $totalPeriodo;
+                ?>
+            </tr>
+            </tbody>
+        </table>
     <?php
     //Fin Anexo II Costo de los Bienes Vendidos, Servicios Prestados y de Producci&oacute;n
     }
-    ?>
-</div>
-<div  style="width:100%;height: 1px; page-break-before:always"></div>
-<div class="index estadocontable" id="divPatrimonioTercera" >
+    ?>    
+    <h2>Tercer Categoria</h2>
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
@@ -1089,9 +1089,12 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             </tr>
         </tbody>
     </table>
+    <h2>Rentas de fuenta extranjera</h2>
+    Falta desarrollar TODO de fuente extranjera
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divPatrimonio" >
+    <h2>Bienes y Deudas</h2>
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
@@ -1418,6 +1421,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
             $montoActualOtrasCargas = $otrascargasNoImponible[$periodoActual];
 ?>
 <div class="index estadocontable" id="divQuebrantos" >
+    <h2>Quebrantos</h2>
     <a href="#"  onclick="loadFormImpuestoQuebrantos(<?php echo $cliente['Impcli'][0]['id']; ?>,'<?php echo $periodo; ?>')" class="button_view">
         <?php echo $this->Html->image('quebranto.png', array('alt' => 'quebranto','class'=>'img_edit','style'=>'width: 20px;'));?>
     </a>
@@ -1513,6 +1517,7 @@ $keysCuentas = array_keys($arrayCuentasxPeriodos);
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divDeduccionesGenerales" >
+    <h2>Deducciones Generales</h2>
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint noprint">
         <thead>
             <tr>
@@ -1906,6 +1911,7 @@ if(($resultadoFinal-$integracion4ta)<=0){
 $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($resultadoFinal>0?1:0);
 ?>
 <div class="index estadocontable" id="divDeduccionesPersonales" >
+    <h2>Deducciones Personales</h2>
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
@@ -2136,6 +2142,7 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divDeterminacionGPF" >
+    <h2>Determinacion del Impuesto</h2>
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
@@ -2752,12 +2759,10 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             ?>
         </tbody>
     </table>
-    <?php
-   
-    ?>
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divJustificacionVarPat" >
+    <h2>Variaciones Patrimoniales</h2>
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
@@ -3007,6 +3012,7 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <div class="index estadocontable" id="divDeterminacionBP" style="display:none">
+    <h2>Determinacion Impuesto Bienes Personales</h2>
     <table class="toExcelTable tbl_border tblEstadoContable splitForPrint">
         <thead>
             <tr>
@@ -3278,9 +3284,6 @@ $integracionResto = ($resultadoFinal-($integracion3raEmp+$integracion4ta))*($res
             </tr>
         </tbody>
     </table>
-    <?php
-   
-    ?>
 </div>
 <div  style="width:100%;height: 1px; page-break-before:always"></div>
 <?php

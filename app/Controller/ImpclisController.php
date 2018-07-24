@@ -1060,23 +1060,25 @@ class ImpclisController extends AppController {
                 )
         );
         $ventas = $this->Venta->find('all',array(
-                                                                'fields' => array('SUM(Venta.neto) AS neto','SUM(Venta.total) AS total','Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado','Comprobante.tipo','Venta.actividadcliente_id'),
-                                                                'contain'=>array(
-                                                                        'Comprobante',
-                                                                        'Actividadcliente',	
-                                                                        ),								
-                                                                'conditions'=>array(
-                                                                        'Venta.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
-                                                                        'AND'=>array(
-                                                                                                $esMayorQuePeriodoInicio,
-                                                                                                $esMenorQuePeriodoFIN,
-                                                                                                $esMenorQuePeriodoFINConsulta
-                                                                                        )
-                                                                                ),
-                                                                'group'=>array(
-                                                                        'Venta.periodo','Venta.comprobante_id','Venta.actividadcliente_id'
-                                                                        )
-                                                                ));
+            'fields' => array('SUM(Venta.neto) AS neto','SUM(Venta.total) AS total',
+                'Venta.periodo','Venta.comprobante_id','Comprobante.tipodebitoasociado',
+                'Comprobante.tipo','Venta.actividadcliente_id'),
+            'contain'=>array(
+                    'Comprobante',
+                    'Actividadcliente',	
+                    ),								
+            'conditions'=>array(
+                    'Venta.cliente_id'=> $myImpcli['Impcli']['cliente_id'] ,
+                    'AND'=>array(
+                                            $esMayorQuePeriodoInicio,
+                                            $esMenorQuePeriodoFIN,
+                                            $esMenorQuePeriodoFINConsulta
+                                    )
+                            ),
+            'group'=>array(
+                    'Venta.periodo','Venta.comprobante_id','Venta.actividadcliente_id'
+                    )
+            ));
         $optionActividad=array(
                 'contain' => array('Actividade'),
                 'conditions'=>array(
@@ -1569,7 +1571,10 @@ class ImpclisController extends AppController {
             $this->loadModel('Conceptosrestante');
             $this->loadModel('Cuenta');
             $this->loadModel('Cliente');
-            $contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
+            //$contribucionesSindicatos = $this->Cuenta->cuentasdeSUSSContribucionesSindicatos;
+            
+            $contribucionesSindicatos = $this->Cuenta->getIdCuentasFromFiltro('503030');
+
             $this->set(compact('contribucionesSindicatos'));
             $optionsCuentasContribucionesSindicatos = [
                 'contain' => [],
@@ -1577,6 +1582,7 @@ class ImpclisController extends AppController {
                     'Cuenta.' . $this->Cuenta->primaryKey => $contribucionesSindicatos
                 ]
             ];
+            
             $cuentasContribucionesSindicatos = $this->Cuenta->find('all', $optionsCuentasContribucionesSindicatos);
             $this->set('cuentasContribucionesSindicatos',$cuentasContribucionesSindicatos);
 
@@ -1632,77 +1638,83 @@ class ImpclisController extends AppController {
                 $impcliIdAUsar = $impcliSolicitado;
             }
             $this->set('impcliSolicitado',$impcliSolicitado);
-                    $options = [
-                            'contain'=>[
-                                'Cliente'=>[
-                                    'Cuentascliente'=>[
-                                        'Cuenta',
-                                        'conditions'=>[
-        //					'Cuentascliente.cuenta_id' => $contribucionesSindicatos,
-                                        ]
-                                    ],
-                                ],
-                                'Impuesto'=>[
-                                    'Conveniocolectivotrabajo'=>[
-                                        'Empleado'=>[
-                                            'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
-                                            'Valorrecibo'=>[
-                                                'Cctxconcepto'=>[
-                                                ],
-                                                'conditions'=>[
-                                                    'Valorrecibo.periodo'=>$periodo
-                                                ]
-                                            ],
-                                            'conditions'=>[
-                                                'Empleado.cliente_id' => $impcliIdAUsar['Impcli']['cliente_id'],
-                                                'OR'=>[
-                                                    'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
-                                                    'Empleado.fechaegreso is null' ,
-                                                ],
-                                                'Empleado.fechaingreso <= '=>date('Y-m-t',strtotime("01-".$periodo)),
-                                            ],
-                                        ]
-                                    ],
-                                ],
-
-                            ],
-                            'conditions' => [
-                                'Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']
+            $options = [
+                'contain'=>[
+                    'Cliente'=>[
+                        'Cuentascliente'=>[
+                            'Cuenta',
+                            'conditions'=>[
+    //					'Cuentascliente.cuenta_id' => $contribucionesSindicatos,
                             ]
-                    ];
-                    $impcli = $this->Impcli->find('first', $options);
-                    $this->set('impcli',$impcli);
+                        ],
+                    ],
+                    'Impuesto'=>[
+                        'Conveniocolectivotrabajo'=>[
+                            'Empleado'=>[
+                                'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
+                                'Valorrecibo'=>[
+                                    'Cctxconcepto'=>[
+                                    ],
+                                    'conditions'=>[
+                                        'Valorrecibo.periodo'=>$periodo
+                                    ]
+                                ],
+                                'conditions'=>[
+                                    'Empleado.cliente_id' => $impcliIdAUsar['Impcli']['cliente_id'],
+                                    'OR'=>[
+                                        'Empleado.fechaegreso >= ' => date('Y-m-d',strtotime("01-".$periodo)),
+                                        'Empleado.fechaegreso is null' ,
+                                    ],
+                                    'Empleado.fechaingreso <= '=>date('Y-m-t',strtotime("01-".$periodo)),
+                                ],
+                            ]
+                        ],
+                    ],
 
-                    $this->set(compact('impcliid','periodo'));
-                    $conditionsConceptosrestantes=array(
-                            'contain'=>array(
+                ],
+                'conditions' => [
+                    'Impcli.' . $this->Impcli->primaryKey => $impcliIdAUsar['Impcli']['id']
+                ]
+            ];
+            $impcli = $this->Impcli->find('first', $options);
+            $this->set('impcli',$impcli);
 
-                            ),
-                            'conditions'=>array(
-                                    'Conceptosrestante.periodo'=>$periodo,
-                                    'Conceptosrestante.impcli_id'=>$impcliIdAUsar['Impcli']['id'],
-                            )
-                    );
-                    $conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
-                    $this->set('conceptosrestantes',$conceptosrestantes);
+            $this->set(compact('impcliid','periodo'));
+            $conditionsConceptosrestantes=array(
+                'contain'=>array(
 
-                    $timePeriodo = strtotime("01-".$periodo ." -1 months");
-                    $periodoPrevio = date("m-Y",$timePeriodo);
+                ),
+                'conditions'=>array(
+                    'Conceptosrestante.periodo'=>$periodo,
+                    'Conceptosrestante.impcli_id'=>$impcliIdAUsar['Impcli']['id'],
+                )
+            );
+            $conceptosrestantes = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
+            $this->set('conceptosrestantes',$conceptosrestantes);
 
-                    $conditionsConceptosrestantes=array(
-                            'contain'=>array(
+            $timePeriodo = strtotime("01-".$periodo ." -1 months");
+            $periodoPrevio = date("m-Y",$timePeriodo);
 
-                            ),
-                            'conditions'=>array(
-                                    'Conceptosrestante.periodo'=>$periodoPrevio,
-                                    'Conceptosrestante.impcli_id'=>$impcliid,
-                                    'Conceptosrestante.conceptostipo_id'=>'1',
-                            )
-                    );
-                    $conceptosrestantesafavor = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
-                    $this->set('impcliSaldoAFavor',$conceptosrestantesafavor);
-                    $impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
-                    $this->set('impuestosactivos',$impuestosactivos);
+            $conditionsConceptosrestantes=array(
+                    'contain'=>array(
+
+                    ),
+                    'conditions'=>array(
+                            'Conceptosrestante.periodo'=>$periodoPrevio,
+                            'Conceptosrestante.impcli_id'=>$impcliid,
+                            'Conceptosrestante.conceptostipo_id'=>'1',
+                    )
+            );
+            $conceptosrestantesafavor = $this->Conceptosrestante->find('all',$conditionsConceptosrestantes);
+            $this->set('impcliSaldoAFavor',$conceptosrestantesafavor);
+            $impuestosactivos = $this->Cliente->impuestosActivados($impcli['Impcli']['cliente_id'],$periodo);
+            $this->set('impuestosactivos',$impuestosactivos);
+            //CuentasDeSindicatos
+            $cuentasSindicatoPasivo = $this->Cuenta->getIdCuentasFromFiltro('210303');
+            $this->set('cuentasSindicatoPasivo',$cuentasSindicatoPasivo );
+              
+            $cuentasSindicatoPerdidas = $this->Cuenta->getIdCuentasFromFiltro('503030');
+            $this->set('cuentasSindicatoPerdidas',$cuentasSindicatoPerdidas);
 
     }
     public function papeldetrabajocooperadoraasistencial($impcliid=null,$periodo=null){

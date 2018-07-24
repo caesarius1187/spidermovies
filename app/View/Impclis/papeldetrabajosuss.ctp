@@ -47,6 +47,12 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 'onClick' => "openWin()"
             )
         );?>
+        <?php echo $this->Form->button('Excel',
+            array('type' => 'button',
+                'id'=>"clickExcel",
+                'class' =>"btn_imprimir",
+            )
+        );?>
         <?php         
         if($impuestosactivos['ivaId']!=0){ 
             echo $this->Form->button('Generar Dcto 814',
@@ -58,12 +64,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 )
             );
         }?>
-        <?php echo $this->Form->button('Excel',
-            array('type' => 'button',
-                'id'=>"clickExcel",
-                'class' =>"btn_imprimir",
-            )
-        );?>
+        
         <!-- Solo para Excel Export -->
         <table id="tblExcelHeader" class="tbl_tareas" style="border-collapse: collapse; width:100%;">
         </table>
@@ -2461,7 +2462,41 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
     inicializarArrayProvincias($tablaDcto814['2022']);
     $tablaDcto814['2018']['60 Salta']=9.70;
     $tablaDcto814['2018']['61 Resto de Salta']=10.75;
-
+    $tablaDcto814['2018']['1 Ciudad Autonoma de Buenos Aires']=0;
+    $tablaDcto814['2018']['2 Gran Buenos Aires']=0;
+    $tablaDcto814['2018']['3 Tercer Cinturon del GBA']=0.85;
+    $tablaDcto814['2018']['4 Resto de Buenos Aires']=1.9;
+    $tablaDcto814['2018']['5 Buenos Aires Patagones']=2.95;
+    $tablaDcto814['2018']['6 Buenos Aitres - Carmen de Patagones']=4;
+    $tablaDcto814['2018']['7 Cordoba - Cruz del Eje']=5.05;
+    $tablaDcto814['2018']['8 Bs. As. - Villarino']=2.95;
+    $tablaDcto814['2018']['9 Gran Catamarca']=7.6;
+    $tablaDcto814['2018']['10 Resto de Catamarca']=8.65;
+    $tablaDcto814['2018']['11 Ciudad de Corrientes']=9.7;
+    $tablaDcto814['2018']['12 Formosa - Ciudad de Formosa']=10.75;
+    $tablaDcto814['2018']['13 Cordoba - Sobremonte']=7.6;
+    $tablaDcto814['2018']['14 Resto de Chaco']=11.80;
+    $tablaDcto814['2018']['15 Cordoba - Rio Seco']=7.6;
+    $tablaDcto814['2018']['16 Cordoba - Tulumba']=7.6;
+    $tablaDcto814['2018']['17 Cordoba - Minas']=5.05;
+    $tablaDcto814['2018']['18 Cordoba - Pocho']=5.05;
+    $tablaDcto814['2018']['19 Cordoba - San Alberto']=5.05;
+    $tablaDcto814['2018']['20 Cordoba - San Javier']=5.05;
+    $tablaDcto814['2018']['21 Cordoba']=1.9;
+    $tablaDcto814['2018']['22 Resto de Cordoba']=2.95;
+    $tablaDcto814['2018']['23 Corrientes - Esquina']=7.6;
+    $tablaDcto814['2018']['24 Corrientes - Sauce']=7.6;
+    $tablaDcto814['2018']['25 Corrientes - Curuzu Cuatia']=7.6;
+    $tablaDcto814['2018']['26 Corrientes - Monte Caseros']=7.6;
+    $tablaDcto814['2018']['27 Resto de Corrientes']=9.6;
+    $tablaDcto814['2018']['28 Gran Resistencia']=9.70;
+    $tablaDcto814['2018']['29 Chubut - Rauson Trelew']=7.6;
+    $tablaDcto814['2018']['30 Resto de Chubut']=8.65;
+    $tablaDcto814['2018']['31 Entre Rios - Federacion']=7.6;
+    $tablaDcto814['2018']['32 Entre Rios - Feliciano']=7.6;
+    $tablaDcto814['2018']['33 Entre Rios - Parana']=2.95;
+    
+    
     $tablaDcto814['2019']['60 Salta']=7.3;
     $tablaDcto814['2019']['61 Resto de Salta']=8.05;
     $tablaDcto814['2020']['60 Salta']=4.85;

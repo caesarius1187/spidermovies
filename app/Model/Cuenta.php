@@ -166,7 +166,7 @@ class Cuenta extends AppModel {
     public $cuentasdeSUSSContribucionesSindicatos = [
 		'2258',
 		'2259',
-        '2260',
+                '2260',
 		'2261',
 		'2262',
 		'2263',
@@ -176,7 +176,7 @@ class Cuenta extends AppModel {
 		'2267',
 		'2268',
 		'2269',
-        '2270',
+                '2270',
 		'2271',
 		'2272',
 		'2273',
@@ -185,7 +185,7 @@ class Cuenta extends AppModel {
 		'2276',
 		'2278',
 		'2279',
-        '2280',
+                '2280',
 		'2281',
 		'2282',
 		'2283',
@@ -317,5 +317,20 @@ class Cuenta extends AppModel {
 			'counterQuery' => ''
 		)		
 	);
-
+        public function getIdCuentasFromFiltro($filtro){
+            //esta funcion devuelve las cuentas que se corresponden al filtro 
+            //deben empezar con este filtro
+            $optionCuentas = [
+                'contain'=>[],
+                'conditions'=>[
+                    'Cuenta.numero like '=>$filtro."%",
+                ],
+            ];
+            $miscuentas = $this->find('all',$optionCuentas);
+            $cuentasID=[];
+            foreach ($miscuentas as $kc => $cuentasSPas){
+                $cuentasID[] = $cuentasSPas['Cuenta']['id'];
+            }
+            return $cuentasID;
+        }
 }

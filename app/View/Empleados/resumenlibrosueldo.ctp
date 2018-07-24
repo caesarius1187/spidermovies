@@ -9,6 +9,48 @@ echo $this->Form->button('Imprimir',
 );
 ?>
 <div id="divResumenLibroSueldo" class="parafiltrarempleados">
+    <div id="notaLibroSueldoContent<?php echo $cliid; ?>" name="" class="index" style="margin: 10px 0px; /*page-break-before:always*/">
+        <?php
+        $empleadoDatos = array();
+        $miempleado = array();
+        $valores = [];
+        $cantidadLiquidaciones = 0;
+        foreach ($empleados as $kemp => $empleado) {
+            foreach ($empleado['Valorrecibo'] as $valorrecibo) {
+                //Vamos a tomar un Valor Recibo por empleado
+                $cantidadLiquidaciones ++;
+                return;
+            }
+        }
+        ?>
+        <div style="text-align: right">Salta,             JULIO  de 2018</div>
+        MINISTERIO DE TRABAJO</br>
+        SECRETARIA DE TRABAJO</br>
+        BOLIVAR N° 141</br>
+        </br>
+        </br>
+        Me dirijo a Ud. a fin de solicitarle la rúbrica de hojas móviles correspondientes a: </br>
+        </br>
+        •	RAZON SOCIAL: NOMBRE DEL CONTRIBUYENTE	</br>
+        •	CUIT: 20-XXXXXXXX-0</br>
+        •	PADRON NUMERO: XXXXX</br>
+        •	DOMICILIO: XXXXXX   – SALTA CAPITAL CP4400</br>
+        •	CANTIDAD DE PERSONAL: X (EN LETRAS)</br>
+        •	PERIODO: JUNIO  2018 + SAC I SEMESTRE</br>
+        •	HOJAS:  </br>
+        </br>
+        </br>
+        Sin otro particular saludo a Ud.</br>
+        </br>
+        Atentamente,</br>
+        </br>
+        </br>
+        FIRMA DEL CONTRIBUYENTE</br>
+        CUIT 20XXXXXX0</br>
+    </div>
+</div>
+<div  style="width:100%;height: 1px; page-break-before:always"></div>
+<div id="divResumenLibroSueldo" class="parafiltrarempleados">
     <div id="resumenlibroSueldoContent<?php echo $cliid; ?>" name="" class="index" style="margin: 10px 0px; /*page-break-before:always*/">
         <?php
         $empleadoDatos = array();

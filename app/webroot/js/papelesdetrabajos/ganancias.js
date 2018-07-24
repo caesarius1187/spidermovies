@@ -164,8 +164,8 @@ function showAllDivs(){
 }
 function CambiarTab(sTab)	{
     $("#tabSumasYSaldos").attr("class", "cliente_view_tab");
-    $("#tabPrimeraCategoria").attr("class", "cliente_view_tab");
-    $("#tabPatrimoniotercera").attr("class", "cliente_view_tab");
+    $("#tabPrimeraCategoria").attr("class", "cliente_view_tab");//Ahora este es Rentas
+    //$("#tabPatrimoniotercera").attr("class", "cliente_view_tab");
     $("#tabTercerarRestoCategoria").attr("class", "cliente_view_tab");
     $("#tabTerceraCategoria").attr("class", "cliente_view_tab");
     $("#tabCuartaABCCategoria").attr("class", "cliente_view_tab");
@@ -193,7 +193,7 @@ function CambiarTab(sTab)	{
         $("#tabPrimeraCategoria").attr("class", "cliente_view_tab_active");
         $("#divContenedorBSyS").hide();
         $("#divPrimeraCategoria").show();
-        $("#divPatrimonioTercera").hide();
+        $("#divPatrimonioTercera").show();
         $("#divPatrimonio").hide();
         $("#divDeduccionesGenerales").hide();
         $("#divDeduccionesPersonales").hide();
@@ -202,7 +202,7 @@ function CambiarTab(sTab)	{
         $("#divQuebrantos").hide();      
         $("#divDeterminacionBP").hide();        
     }
-    if (sTab == "patrimoniotercera")
+    /*if (sTab == "patrimoniotercera")
     {
 
         $("#tabPatrimoniotercera").attr("class", "cliente_view_tab_active");
@@ -216,7 +216,7 @@ function CambiarTab(sTab)	{
         $("#divJustificacionVarPat").hide();
         $("#divQuebrantos").hide();       
         $("#divDeterminacionBP").hide();        
-    }
+    }*/
     if (sTab == "tercerarestocategoria")
     {
 
@@ -270,11 +270,11 @@ function CambiarTab(sTab)	{
         $("#divPrimeraCategoria").hide();
         $("#divPatrimonioTercera").hide();
         $("#divPatrimonio").hide();
-        $("#divDeduccionesGenerales").hide();
-        $("#divDeduccionesPersonales").hide();
+        $("#divDeduccionesGenerales").show();
+        $("#divDeduccionesPersonales").show();
         $("#divJustificacionVarPat").hide();
         $("#divDeterminacionGPF").show();
-        $("#divQuebrantos").hide();     
+        $("#divQuebrantos").show();     
         $("#divDeterminacionBP").hide();        
     }   
     if (sTab == "justificacionvarpat")
