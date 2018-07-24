@@ -520,7 +520,7 @@ function loadInformeAuditor(){
     $('#spanFechaFooter').html(fecha);
 }
 function rellenarAsientoGanancias(){
-    var fecha = '31-'+$("#periodo").val();
+    var fecha = $("#periodoUltimoDia").val();
     $("#Asiento0Fecha").val(fecha)
     $("#Asiento1Fecha").val(fecha)
     $("#Asiento2Fecha").val(fecha)
@@ -633,9 +633,16 @@ function rellenarAsientoGanancias(){
         }
         
     }else{
+        if($('#0cuenta266').length > 0){
+            //Ganancias - Activo Diferido
+            var orden = $('#0cuenta266').attr('orden');
+            if($('#Asiento0Movimiento'+orden+'Id').val()==0){
+                $('#Asiento0Movimiento'+orden+'Debe').val(impuestodeterminadofinal*-1);
+            }
+        }
         if($('#0cuenta3681').length > 0){
             var orden = $('#0cuenta3681').attr('orden');
-            $('#Asiento0Movimiento'+orden+'Haber').val(saldoAPagar);
+            $('#Asiento0Movimiento'+orden+'Haber').val(impuestodeterminadofinal*-1);
         }
     }    
      //Ahora vamos a rellenar el Ajuste de Impuesto a las ganancias y despues el submit

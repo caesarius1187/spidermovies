@@ -57,7 +57,8 @@ echo $this->Html->css('progressbarstyle');
     </div>
     <div style="width:25%; float: left;padding-top:11px">
         Periodo: <?php echo $periodo;
-        echo $this->Form->input('periodo',['type'=>'hidden','value'=>$periodo])?>
+        echo $this->Form->input('periodo',['type'=>'hidden','value'=>$periodo]);
+        echo $this->Form->input('periodoUltimoDia',['type'=>'hidden','value'=>date('t-m-Y', strtotime('01-'.$periodo))])?>
     </div>
     <div style="float:right; width:45%">
         <?php                       
