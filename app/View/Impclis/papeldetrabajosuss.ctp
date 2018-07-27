@@ -674,10 +674,35 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     $reduccion = (12000*$alicuotasContribuciones[$peanio]*$porcentajeReduccionPorJornada*$porcentajeSAC);
                     $titleRem10 .= " monto reduccion: (12000[monto total reduccion]*".$alicuotasContribuciones[$peanio]."[porcentaje anual habilitado]*".$porcentajeReduccionPorJornada."[jornada][".$jornada."]*".$porcentajeSAC."[incremental por SAC])=".$reduccion;
                 }
+                
                
                 $rem10 = ($rem2 - $reduccion);
                 $importeADetraer = $reduccion;
+                
+                //Nuevos Maximos y Minimos para Contribuciones
+                //Mínimo: $2816,14.-
+                //Máximo: $91523,41.- 
+                $minimoContribucion = 2816.14;
+                if($rem10<$minimoContribucion){
+                    if($rem2<$minimoContribucion){
+                        $rem10 = $minimoContribucion;
+                        $importeADetraer = 0;
+                        $reduccion = 0;
+                        $titleRem10.= " No se aplica reduccion y la remuneracion 10 sera igual al minimo de ".$minimoContribucion;
+                    }else{
+                        $importeADetraer = $rem2 - $minimoContribucion;
+                        $rem10 = $rem2 - $importeADetraer;
+                        $reduccion = $importeADetraer;
+                        $titleRem10.= ", se puede detraer ".$reduccion." por que sino se supera el minimo de contribucuin que es de ".$minimoContribucion;
+                    }
+                }
+                $maximoContribucion = 91523.41;
+                if($rem10>$maximoContribucion){
+                    $rem10 = $maximoContribucion;
+                    $titleRem10.= " Se toma como base de las contribuciones el maximo de ".$maximoContribucion;
+                }
                 if($rem10<0)$rem10=0;
+               
             }
             $valorMopre = 840.20;
             $minimoContribuciones = 3*840.20;
@@ -2461,16 +2486,39 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
     inicializarArrayProvincias($tablaDcto814['2022']);
     $tablaDcto814['2018']['60 Salta']=9.70;
     $tablaDcto814['2018']['61 Resto de Salta']=10.75;
-
-    $tablaDcto814['2019']['60 Salta']=7.3;
-    $tablaDcto814['2019']['61 Resto de Salta']=8.05;
-    $tablaDcto814['2020']['60 Salta']=4.85;
-    $tablaDcto814['2020']['61 Resto de Salta']=5.40;
-    $tablaDcto814['2021']['60 Salta']=2.45;
-    $tablaDcto814['2021']['61 Resto de Salta']=2.70;
-    $tablaDcto814['2022']['60 Salta']=0;
-    $tablaDcto814['2022']['61 Resto de Salta']=0;
-
+    $tablaDcto814['2018']['1 Ciudad Autonoma de Buenos Aires']=0;
+    $tablaDcto814['2018']['2 Gran Buenos Aires']=0;
+    $tablaDcto814['2018']['3 Tercer Cinturon del GBA']=0.85;
+    $tablaDcto814['2018']['4 Resto de Buenos Aires']=1.9;
+    $tablaDcto814['2018']['5 Buenos Aires Patagones']=2.95;
+    $tablaDcto814['2018']['6 Buenos Aitres - Carmen de Patagones']=4;
+    $tablaDcto814['2018']['7 Cordoba - Cruz del Eje']=5.05;
+    $tablaDcto814['2018']['8 Bs. As. - Villarino']=2.95;
+    $tablaDcto814['2018']['9 Gran Catamarca']=7.6;
+    $tablaDcto814['2018']['10 Resto de Catamarca']=8.65;
+    $tablaDcto814['2018']['11 Ciudad de Corrientes']=9.7;
+    $tablaDcto814['2018']['12 Formosa - Ciudad de Formosa']=10.75;
+    $tablaDcto814['2018']['13 Cordoba - Sobremonte']=7.6;
+    $tablaDcto814['2018']['14 Resto de Chaco']=11.80;
+    $tablaDcto814['2018']['15 Cordoba - Rio Seco']=7.6;
+    $tablaDcto814['2018']['16 Cordoba - Tulumba']=7.6;
+    $tablaDcto814['2018']['17 Cordoba - Minas']=5.05;
+    $tablaDcto814['2018']['18 Cordoba - Pocho']=5.05;
+    $tablaDcto814['2018']['19 Cordoba - San Alberto']=5.05;
+    $tablaDcto814['2018']['20 Cordoba - San Javier']=5.05;
+    $tablaDcto814['2018']['21 Cordoba']=1.9;
+    $tablaDcto814['2018']['22 Resto de Cordoba']=2.95;
+    $tablaDcto814['2018']['23 Corrientes - Esquina']=7.6;
+    $tablaDcto814['2018']['24 Corrientes - Sauce']=7.6;
+    $tablaDcto814['2018']['25 Corrientes - Curuzu Cuatia']=7.6;
+    $tablaDcto814['2018']['26 Corrientes - Monte Caseros']=7.6;
+    $tablaDcto814['2018']['27 Resto de Corrientes']=9.6;
+    $tablaDcto814['2018']['28 Gran Resistencia']=9.70;
+    $tablaDcto814['2018']['29 Chubut - Rauson Trelew']=7.6;
+    $tablaDcto814['2018']['30 Resto de Chubut']=8.65;
+    $tablaDcto814['2018']['31 Entre Rios - Federacion']=7.6;
+    $tablaDcto814['2018']['32 Entre Rios - Feliciano']=7.6;
+    $tablaDcto814['2018']['33 Entre Rios - Parana']=2.95;            
 ?>
 <!-- Popin Modal para edicion de ventas a utilizar por datatables-->
 <div class="modal fade" id="myModalAddConceptosrestante" tabindex="-1" role="dialog">
