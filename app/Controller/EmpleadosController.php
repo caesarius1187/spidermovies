@@ -940,6 +940,11 @@ class EmpleadosController extends AppController {
                     'Actividadcliente'=>[
                         'Actividade'
                     ],
+                    'Impcli'=>[
+                        'conditions'=>[
+                            'Impcli.impuesto_id'=>10/*vamos a llevar el suss para sacar los datos*/
+                        ]
+                    ],
                 ),
                 'conditions' => array(
                     'id' => $cliid,

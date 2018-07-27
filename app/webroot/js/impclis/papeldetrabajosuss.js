@@ -86,6 +86,13 @@ $(document).ready(function() {
 function openWin(){
 	window.print();
 }
+
+function mostrarEmpleado(index){
+    // col 0,1,2 Estaticas
+   
+    $('#tblDatosAIngresar td:not(.dontHide)').hide();
+    
+}
 /*
 function openWin()
 {

@@ -82,11 +82,17 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
         <div id="form_conceptosrestante" class="tabConceptosrestantes index" style="width:96%;float:left;">
                 <?php
                 $mostrarBotonRetenciones = false;
-                $iibbId=0;
+                $mostrarBotonRetencionesAC = false;
+                $iibbIdCM=0;
+                $iibbIdAC=0;
                 foreach ($cliente['Impcli'] as $impcli) {
                     if($impcli['impuesto_id']=='174'/*Convenio Multilateral*/){
                         $mostrarBotonRetenciones = true;
                         $iibbId = $impcli['id'];
+                    }
+                    if($impcli['impuesto_id']=='21'/*Actividades Economicas*/){
+                        $mostrarBotonRetencionesAC = true;
+                        $iibbIdAC = $impcli['id'];
                     }
                 }
                 if($mostrarBotonRetenciones){
@@ -124,6 +130,21 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                             $cliente["Cliente"]['id'],
                             $periodo,
                             $iibbId
+                        ),
+                        array('class' => 'buttonImpcli',
+                            'style'=> 'margin-right: 8px;width: initial;',
+                        )
+                    );
+                }
+                if($mostrarBotonRetencionesAC){                                     
+                    echo $this->Html->link(
+                        "Importar TXT RecaudacionesBancarias IIBB",
+                        array(
+                            'controller' => 'conceptosrestantes',
+                            'action' => 'importartxtrecaudacionesbancarias',
+                            $cliente["Cliente"]['id'],
+                            $periodo,
+                            $iibbIdAC
                         ),
                         array('class' => 'buttonImpcli',
                             'style'=> 'margin-right: 8px;width: initial;',

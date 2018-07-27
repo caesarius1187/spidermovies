@@ -240,7 +240,7 @@ function loadFormImpuesto(impcliid,cliid){
                                 if(version==1){
                                     mesesRecategorizacion = 4;
                                 }else{
-                                    mesesRecategorizacion = 1;
+                                    mesesRecategorizacion = 6;
                                 }
 				if(mesParaProximaRecategorizacion==mesesRecategorizacion){
 					//Aca se recategoriza sino no hay q cambiar nada en el impcli
