@@ -29,6 +29,7 @@ $(document).ready(function() {
 			name: "SUSS",
 			filename:"Exportacion_SUSS"			
 		});
+        mostrarEmpleado(0);
 	});
 	papelesDeTrabajo($('#periodoPDT').val(),$('#impcliidPDT').val());
     ordenTxt = 0;
@@ -89,8 +90,23 @@ function openWin(){
 
 function mostrarEmpleado(index){
     // col 0,1,2 Estaticas
+   $('#tblDatosAIngresar td:not(.dontHide)').hide();
    
-    $('#tblDatosAIngresar td:not(.dontHide)').hide();
+   var ind1 = index*5 + 2;
+   var tipoTD = $('#tblDatosAIngresar tr:eq(0) td:eq(' + ind1 + ')').attr('tipoTD');
+   $('#tblDatosAIngresar td[tipoTD="'+tipoTD+'"]').show();
+   var ind1 = index*5 + 3;
+   var tipoTD = $('#tblDatosAIngresar tr:eq(0) td:eq(' + ind1 + ')').attr('tipoTD');
+   $('#tblDatosAIngresar td[tipoTD="'+tipoTD+'"]').show();
+   var ind1 = index*5 + 4;
+   var tipoTD = $('#tblDatosAIngresar tr:eq(0) td:eq(' + ind1 + ')').attr('tipoTD');
+   $('#tblDatosAIngresar td[tipoTD="'+tipoTD+'"]').show();
+   var ind1 = index*5 + 5;
+   var tipoTD = $('#tblDatosAIngresar tr:eq(0) td:eq(' + ind1 + ')').attr('tipoTD');
+   $('#tblDatosAIngresar td[tipoTD="'+tipoTD+'"]').show();
+   var ind1 = index*5 + 6;
+   var tipoTD = $('#tblDatosAIngresar tr:eq(0) td:eq(' + ind1 + ')').attr('tipoTD');
+   $('#tblDatosAIngresar td[tipoTD="'+tipoTD+'"]').show();
     
 }
 /*

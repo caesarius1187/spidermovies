@@ -11,6 +11,13 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
 <!DOCTYPE html>
 <html>
 <head>
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-5940627790406647",
+        enable_page_level_ads: true
+      });
+    </script>
         <!-- Etiqueta global de sitio (gtag.js) de Google Analytics -->
          <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115639849-1"></script>
         <script>
@@ -267,15 +274,28 @@ $cakeDescription = __d('conta.com.ar', 'Conta');
                                     <?php if ($this->Session->read('Auth.User.username')) { 
 
                                             if($cantNotifications>0){
-                                                echo " Tienes ".$cantNotifications." notificaciones sin leer";
+                                                echo $cantNotifications;
                                             }                                                
                                             echo $this->Html->image('bell_icon.png',array(
-                                                    'alt' => 'open',
+                                                    'alt' => 'notificaciones',
                                                     'class' => 'btn_exit',
+                                                    'title' => "Tienes ".$cantNotifications." notificaciones sin leer",
                                                     'style' => 'width:20px;height:20px;margin-top: 5px;',
                                                     'onClick' => "window.location.href='".Router::url(array(
                                                                             'controller'=>'notifications',
                                                                             'action'=>'index')
+                                                            )."'"
+                                                )
+
+                                            );
+                                            echo $this->Html->image('faq_white.png',array(
+                                                    'alt' => 'faq',
+                                                    'class' => 'btn_exit',
+                                                    'title' => 'Preguntas frecuentes',
+                                                    'style' => 'width:20px;height:20px;margin-top: 5px;',
+                                                    'onClick' => "window.location.href='".Router::url(array(
+                                                                            'controller'=>'users',
+                                                                            'action'=>'preguntas')
                                                             )."'"
                                                 )
 

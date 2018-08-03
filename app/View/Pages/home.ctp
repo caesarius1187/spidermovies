@@ -13,7 +13,7 @@
         <!--
         <a class="navbar-brand js-scroll-trigger" href="#page-top">Start Bootstrap</a>
         -->
-        <img src="img/logosolo.png" width="68" height="50" class="" style="/*display: none*/">
+        <img src="../img/logosolo.png" width="68" height="50" class="" style="/*display: none*/">
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -33,6 +33,18 @@
               <a class="nav-link js-scroll-trigger" href="#pricing">Precios</a>
             </li>
             <li class="nav-item">
+              <?php 
+              echo $this->Html->link("Preguntas Frecuentes",
+                    array(
+                        'controller' => 'users',
+                        'action' => 'preguntas',                        
+                    ),
+                    [
+                        'class'=>'nav-link'
+                    ]
+                );?> 	
+            </li>
+            <li class="nav-item">
                <?php if ($this->Session->read('Auth.User.username')) { 
 
                     if($cantNotifications>0){
@@ -49,7 +61,7 @@
                         )
 
                     );
-                    echo ' Bienvenido '.$this->Session->read('Auth.User.username').'!'; 
+                    //echo ' Bienvenido '.$this->Session->read('Auth.User.username').'!'; 
                     echo $this->Html->image('exit.png',array(
                                     'alt' => 'open',
                                     'class' => 'btn_exit',

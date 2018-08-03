@@ -51,7 +51,7 @@ class PagesController extends AppController {
                             );
                 }
                 $this->layout="default_home";
-        }
+        }       
 	public function display() {
 		$path = func_get_args();
 

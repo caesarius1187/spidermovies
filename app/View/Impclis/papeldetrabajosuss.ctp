@@ -470,7 +470,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //Remuneracion Total
                 if (
                 in_array($valorrecibo['Cctxconcepto']['Concepto']['id'],
-                    array('27'/*Total Remunerativos C/D*/,'109'/*Total Remunerativos S/D*/,'108'/*Total Rem. S/D Indemnizatorios*/), true )
+                    array('27'/*Total Remunerativos C/D*/,'103'/*Total Remunerativos S/D*/,'108'/*Total Rem. S/D Indemnizatorios*/), true )
                 ){
                     $remtotal += $valorrecibo['valor'];
                 }
@@ -670,10 +670,10 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 //si tiene vacaciones NO se multiplica por la jornada
                 if($diasvacaciones>0){
                     $reduccion = (12000*$alicuotasContribuciones[$peanio]*$porcentajeSAC);
-                    $titleRem10 .= " monto reduccion: (12000*".$alicuotasContribuciones[$peanio]."*".$porcentajeSAC.")=".$reduccion;
+                    $titleRem10 .= " monto reduccion: (12000[monto total reduccion]*".$alicuotasContribuciones[$peanio]."[porcentaje anual habilitado]*".number_format($porcentajeSAC, 2, ",", ".")."[incremental por SAC])=".number_format($reduccion, 2, ",", ".");
                 }else{
                     $reduccion = (12000*$alicuotasContribuciones[$peanio]*$porcentajeReduccionPorJornada*$porcentajeSAC);
-                    $titleRem10 .= " monto reduccion: (12000[monto total reduccion]*".$alicuotasContribuciones[$peanio]."[porcentaje anual habilitado]*".$porcentajeReduccionPorJornada."[jornada][".$jornada."]*".$porcentajeSAC."[incremental por SAC])=".$reduccion;
+                    $titleRem10 .= " monto reduccion: (12000[monto total reduccion]*".$alicuotasContribuciones[$peanio]."[porcentaje anual habilitado]*".number_format($porcentajeReduccionPorJornada, 2, ",", ".")."[jornada][".$jornada."]*".number_format($porcentajeSAC, 2, ",", ".")."[incremental por SAC])=".number_format($reduccion, 2, ",", ".");
                 }
                
                 $rem10 = ($rem2 - $reduccion);
@@ -960,7 +960,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Legajo</td>
                     <?php
                         foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                            echo '<td class="dontHide">'.$empleado['legajo']."</td>";
+                            echo '<td tipoTD="empleado'.$empleado['id'].'">'.$empleado['legajo']."</td>";
                         }
                         ?>
                     <td  class="dontHide" style="width:111px;border: 0px;"></td>
@@ -970,7 +970,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Apellido y Nombre</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo '<td class="dontHide">'.$empleado['nombre']."</td>";
+                        echo '<td  tipoTD="empleado'.$empleado['id'].'">'.$empleado['nombre']."</td>";
                     }
                     ?>
                     <td  class="dontHide"></td>
@@ -986,7 +986,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">CUIL</td>
                     <?php
                         foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                                echo "<td>".$empleado['cuit']."</td>";
+                                echo '<td tipoTD="empleado'.$empleado['id'].'">'.$empleado['cuit']."</td>";
                         }
                     ?>
                     <td  class="dontHide"></td>
@@ -995,7 +995,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">OS del Pers de Dirección</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo $empleadoDatos[$empleadoid]['osdelpersdedireccion']?'SI':'NO';
                         echo "</td>";
@@ -1007,7 +1007,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Cobertura ART</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo $empleadoDatos[$empleadoid]['coberturaart']?'SI':'NO';
                         echo "</td>";
@@ -1019,7 +1019,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Seguro de Vida</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo $empleadoDatos[$empleadoid]['segurodevida']?'SI':'NO';
                         echo "</td>";
@@ -1049,25 +1049,25 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                                 $reduccion= 100;
                                 break;
                         }
-                        echo "<td> reduccion del ".$reduccion."%</td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'"> reduccion del '.$reduccion.'%</td>';
                     }
                     ?>
-                    <td  class="dontHide"></td>
+                    <td class="dontHide"></td>
                 </tr>
                 <tr>
-                    <td>Día de inicio</td>
+                    <td class="dontHide">Día de inicio</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>" . $empleado['fechaingreso'] . "</td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">'. $empleado['fechaingreso'] . "</td>";
                     }
                     ?>
-                    <td ></td>
+                    <td class="dontHide" ></td>
                 </tr>
                 <tr>
                     <td class="dontHide">Días Trabajados u Horas</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo $empleadoDatos[$empleadoid]['horasDias']."</td>";
                     }
@@ -1084,7 +1084,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         if($empleadoDatos[$empleadoid]['diadelgremiotrabajado']==0){
                             $sueldoAMostrar += $empleadoDatos[$empleadoid]['diadelgremio'];
                         }
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         echo number_format($sueldoAMostrar, 2, ",", ".")."</td>";
                     }
                     ?>
@@ -1094,7 +1094,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Adicionales</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         $adicionalesAMostrar = $empleadoDatos[$empleadoid]['adicionales'];
                         if($empleadoDatos[$empleadoid]['diadelgremiotrabajado']==1){
@@ -1106,21 +1106,21 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td  class="dontHide"></td>
                 </tr><!--10-->
                 <tr>
-                    <td>Cantidad de Horas Extra</td>
+                    <td class="dontHide">Cantidad de Horas Extra</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['horasextras'], 2, ",", ".")."</td>";
                     }
                     ?>
-                    <td  class="dontHide"></td>
+                    <td class="dontHide"></td>
                 </tr>
                 <tr>
                     <td class="dontHide">Importe Horas extras</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['importehorasextras'], 2, ",", ".")."</td>";
                     }
@@ -1131,7 +1131,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">SAC</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['SAC'], 2, ",", ".")."</td>";
                     }
@@ -1142,7 +1142,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Vacaciones</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['vacaciones'], 2, ",", ".")."</td>";
                     }
@@ -1153,7 +1153,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Premios</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['premios'], 2, ",", ".")."</td>";
                     }
@@ -1167,7 +1167,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     </td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo $empleadoDatos[$empleadoid]['maternidad']?'SI':'NO'."</td>";
                     }
@@ -1179,7 +1179,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <?php
                     $totalConceptosNoRemunerativos=0;
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['conceptosnorem'], 2, ",", ".")."</td>";
                         $totalConceptosNoRemunerativos+=$empleadoDatos[$empleadoid]['conceptosnorem'];
@@ -1282,7 +1282,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                         $AporteOStotal +=$empleadoDatos[$empleadoid]['AporteOStotal'];
                         $SeguroDeVidaObligatorio+=$empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio'];
                         $ARTart+=$empleadoDatos[$empleadoid]['ARTart'];
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         echo $empleadoDatos[$empleadoid]['remtotal']."</td>";
                     }
                     ?>
@@ -1310,7 +1310,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Rem. 1 (SIPA)</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem1'], 2, ",", ".")."</td>";
                     }
@@ -1321,7 +1321,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Rem. 2 (Cont. SIPA + INSSJP)</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo '<td >';
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem2'], 2, ",", ".")."</td>";
                     }
@@ -1332,7 +1332,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Rem. 3 (Cont. FNE + RENATRE)</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem3'], 2, ",", ".")."</td>";
                     }
@@ -1343,7 +1343,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Rem. 4 (Ap. OS + FSR o ANSSAL)</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo '<td title="'.$empleadoDatos[$empleadoid]['titlerem4'].'">';
+                        echo '<td tipoTD="empleado'.$empleado['id'].'" title="'.$empleadoDatos[$empleadoid]['titlerem4'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem4'], 2, ",", ".")."</td>";
                     }
@@ -1354,7 +1354,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Rem. 5 (Ap. INSSJP</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem5'], 2, ",", ".")."</td>";
                     }
@@ -1365,7 +1365,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Rem. 6</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem6'], 2, ",", ".")."</td>";
                     }
@@ -1376,7 +1376,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Rem. 7</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem7'], 2, ",", ".")."</td>";
                     }
@@ -1387,7 +1387,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Rem. 8 (Cont. OS)</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem8'], 2, ",", ".")."</td>";
                     }
@@ -1398,7 +1398,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Rem. 9 (ART)</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['rem9'], 2, ",", ".")."</td>";
                     }
@@ -1410,7 +1410,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
                         $empleadoid = $empleado['id'];
-                        echo '<td title="'.$empleadoDatos[$empleadoid]['titleRem10'].'">';
+                        echo '<td tipoTD="empleado'.$empleado['id'].'" title="'.$empleadoDatos[$empleadoid]['titleRem10'].'">';
                         echo number_format($empleadoDatos[$empleadoid]['rem10'], 2, ",", ".")."</td>";
                     }
                     ?>
@@ -1425,7 +1425,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Aporte Adicional</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['seguridadsocialaporteadicional'], 2, ",", ".")."</td>";
                     }
@@ -1436,7 +1436,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Contrib Tarea Dif</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['seguridadsocialcontribtareadif'], 2, ",", ".")."</td>";
                     }
@@ -1452,7 +1452,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Nombre de la OS</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         echo $empleado['obrasocial']."</td>";
                     }
                     ?>
@@ -1462,7 +1462,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Cantidad de adherentes</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo $empleadoDatos[$empleadoid]['cantidadadherente']."</td>";
                     }
@@ -1473,7 +1473,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Aporte Adicional</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['obrasocialaporteadicional'], 2, ",", ".")."</td>";
                     }
@@ -1484,7 +1484,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Contribución Adicional</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['obrasocialcontribucionadicional'], 2, ",", ".")."</td>";
                     }
@@ -1500,7 +1500,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td  class="dontHide">Jubilación (SIPA)</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ContribSSjubilacionsipa'], 2, ",", ".")."</td>";
                     }
@@ -1511,18 +1511,22 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">INSSJP</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['INSSJP'], 2, ",", ".")."</td>";
                     }
                     ?>
-                    <td class="dontHide"><?php echo $INSSJP; ?></td>
+                    <td class="dontHide"><?php 
+                        echo $INSSJP; 
+                        echo number_format($INSSJP, 2, ",", ".");
+                        ?>
+                    </td>
                 </tr>
                 <tr>
                     <td class="dontHide">Contrib Tarea Dif</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ContribSScontribtareadif'], 2, ",", ".")."</td>";
                     }
@@ -1533,7 +1537,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">FNE</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['FNE'], 2, ",", ".")."</td>";
                     }
@@ -1544,7 +1548,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">ANSSAL</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ContribSSANSSAL'], 2, ",", ".")."</td>";
                     }
@@ -1555,7 +1559,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Asig Fliares</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['asignacionfamiliar'], 2, ",", ".")."</td>";
                     }
@@ -1566,7 +1570,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Total Contribuciones SS</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['totalContribucionesSS'], 2, ",", ".")."</td>";
                         $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['totalContribucionesSS'];
@@ -1595,7 +1599,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <?php
                     $totalembargos=0;
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['contribucionrenatea'], 2, ",", ".")."</td>";
                         $totalembargos += $empleadoDatos[$empleadoid]['embargos'];
@@ -1626,7 +1630,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Aporte</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['aporterenatea'], 2, ",", ".")."</td>";
                         $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['aporterenatea'];
@@ -1651,7 +1655,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Jubilac (SIPA)</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteSSjubilacionsipa'], 2, ",", ".")."</td>";
                     }
@@ -1662,7 +1666,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Ley 19.032</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ley19032'], 2, ",", ".")."</td>";
                     }
@@ -1673,7 +1677,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Aporte Adicional</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteSSaporteadicional'], 2, ",", ".")."</td>";
                     }
@@ -1684,7 +1688,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">ANSSAL</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteSSANSSAL'], 2, ",", ".")."</td>";
                     }
@@ -1695,7 +1699,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Total Aportes SS</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteSStotal'], 2, ",", ".")."</td>";
                         $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['AporteSStotal'];
@@ -1720,7 +1724,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Contribucion OS</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ContribucionesOScontribucionos'], 2, ",", ".")."</td>";
                     }
@@ -1731,7 +1735,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Contribucion Adicional OS</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ContribucionesOScontribucionadicionalos'], 2, ",", ".")."</td>";
                     }
@@ -1747,7 +1751,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">ANSAAL</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ContribucionesOSANSSAL'], 2, ",", ".")."</td>";
                     }
@@ -1758,7 +1762,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Total Contribuciones OS</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ContribucionesOStotal'], 2, ",", ".")."</td>";
                         $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['ContribucionesOStotal'];
@@ -1783,7 +1787,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Aporte OS</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteOSaporteos'], 2, ",", ".")."</td>";
                     }
@@ -1794,7 +1798,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Aporte Adicional OS</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteOSaporteadicionalos'], 2, ",", ".")."</td>";
                     }
@@ -1805,7 +1809,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">ANSSAL</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteOSANSSAL'], 2, ",", ".")."</td>";
                     }
@@ -1816,7 +1820,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Adicional Adherente</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteOSadicionaladherente'], 2, ",", ".")."</td>";
                     }
@@ -1827,7 +1831,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Total Aporte OS</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['AporteOStotal'], 2, ",", ".")."</td>";
                         $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['AporteOStotal'];
@@ -1852,7 +1856,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">ART</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['ARTart'], 2, ",", ".")."</td>";
                         $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['ARTart'];
@@ -1877,7 +1881,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <td class="dontHide">Seguro de Vida Obligatorio</td>
                     <?php
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format($empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio'], 2, ",", ".")."</td>";
                         $empleadoDatos[$empleadoid]['totalAPagar']+=$empleadoDatos[$empleadoid]['SeguroDeVidaObligatorio'];
@@ -1904,7 +1908,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                     <?php
                     $totalSUSSAPAGAR=0;
                     foreach ($impcli['Cliente']['Empleado'] as $empleado) {
-                        echo "<td>";
+                        echo '<td tipoTD="empleado'.$empleado['id'].'">';
                         $empleadoid = $empleado['id'];
                         echo number_format( $empleadoDatos[$empleadoid]['totalAPagar'], 2, ",", ".")."</td>";
                         $totalSUSSAPAGAR+= $empleadoDatos[$empleadoid]['totalAPagar'];

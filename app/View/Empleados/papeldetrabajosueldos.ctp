@@ -283,7 +283,15 @@ if(count($empleado)==0){
                                             }
                                         }
                                     break;
-                                
+                                case 78:/*A cuenta de Aumento*/
+                                    if($empleado['Conveniocolectivotrabajo']['id']==27/*Es Pasteleros?*/){
+                                            $pemes = substr($periodo, 0, 2);
+                                            $mesesAdicionalTemporada = ['11','12','01','02'];
+                                            if(!in_array($pemes, $mesesAdicionalTemporada)){
+                                                $aplicafuncion=false;
+                                            }
+                                        }
+                                    break;
                                 case 117:/*Aporte Adicional OS O3*/
                                     /* si es construccion no aplica en el SAC*/
                                     if($empleado['Conveniocolectivotrabajo']['id']==5/*Es Construcción Quincenal?*/){

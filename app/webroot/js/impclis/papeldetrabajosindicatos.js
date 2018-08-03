@@ -1,5 +1,5 @@
 $(document).ready(function() { 
-	$( "#clickExcel" ).click(function() {
+    $( "#clickExcel" ).click(function() {
 		if (!document.getElementById("pdtSindicato_tr1"))
         {
             $("#tblSindicatos").prepend(
@@ -25,6 +25,14 @@ $(document).ready(function() {
             exclude: ".noExl",
             name: $('#impclinombre').val(),
             filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","")+"_"+$('#periodoPDT').val().replace(/-/g,"_")+"_Sindicatos"
+        });
+    });
+    $( "#clickExcelAplicativo" ).click(function() {                   
+        $("#tablaExportacion").table2excel({
+            // exclude CSS class
+            exclude: ".noExl",
+            name: $('#impclinombre').val(),
+            filename:($('#clinombre').val()).replace(/ /g,"_").replace(".","")+"_"+$('#periodoPDT').val().replace(/-/g,"_")+"_Aplicativo"
         });
     });
 	var beforePrint = function() {

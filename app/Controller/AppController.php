@@ -53,7 +53,7 @@ class AppController extends Controller {
 
 	public function beforeFilter() {
 //		set_time_limit(0);
-            $this->Auth->allow('home','login','terminosycondiciones');
+            $this->Auth->allow('home','login','terminosycondiciones','preguntas');
             $this->loadModel('Notification');
             $notificationsOptions = [
                 'contain'=>[],

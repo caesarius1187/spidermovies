@@ -1028,10 +1028,94 @@ class ConceptosrestantesController extends AppController {
         $cbus = $this->Cbu->find('list',$clienteCbuOptions);
         $this->set(compact('cbus'));
 	}
+        public function importartxtretencionessufridas($cliid=null,$periodo=null,$impcliid=null){
+            set_time_limit (360);
+            App::uses('Folder', 'Utility');
+            App::uses('File', 'Utility');
+            $this->loadModel('Partido');
+            $this->loadModel('Comprobante');
+            $this->loadModel('Cliente');
+            $this->loadModel('Cbu');
 
+            $folderConceptosrestantes = WWW_ROOT.'files'.DS.'pagosacuentas'.DS.$cliid.DS.$periodo.DS.'retencionessufridas';
+            if ($this->request->is('post')) {
+                $folderConceptosrestantes = WWW_ROOT.'files'.DS.'pagosacuentas'.DS.$this->request->data['Conceptosrestante']['cliid'].DS.$this->request->data['Conceptosrestante']['periodo'].DS.'retencionessufridas';
+                $fileNameConceptosrestante = null;
+                $tmpNameConceptosrestante= $this->request->data['Conceptosrestante']['archivoretencionesbancarias']['tmp_name'];
+                if (!empty($tmpNameConceptosrestante)&& is_uploaded_file($tmpNameConceptosrestante)) {
+                    // Strip path information
+                    $fileNameConceptosrestante = $this->request->data['Conceptosrestante']['archivoretencionesbancarias']['name'];
+                    move_uploaded_file($tmpNameConceptosrestante, $folderConceptosrestantes.DS.$fileNameConceptosrestante);
+                    //chmod($folderVentas.DS.$fileNameVenta, 0777);
+                }
+            }
+
+            //Partidos
+            $partidos = $this->Partido->find('list');
+            //Comprobantes
+            $comprobantes = $this->Comprobante->find('list',['fields'=>['id','codnamedos']]);
+            $this->set(compact('comprobantes', 'partidos'));
+
+            $this->set(compact('cliid','periodo','impcliid','folderConceptosrestantes'));
+
+            //Aca vamos a informar el estado de los impeustos que necesitamos (por ahora solo necesitamos Monotributo) para importar las ventas
+            $pemes = substr($periodo, 0, 2);
+            $peanio = substr($periodo, 3);            
+            $cliente=$this->Cliente->find('first', array(
+                    'contain'=>array(
+                     
+                    ),
+                    'conditions' => array(
+                        'id' => $cliid,
+                    ),
+                )
+            );
+            $impuestosActivos= $this->Cliente->impuestosActivados($cliente['Cliente']['id'],$pemes . '-' . $peanio);
+            $cliente['impuestosactivos']=$impuestosActivos;
+
+            $this->set('cliente',$cliente);
+
+            $optionsconceptosrestantesperiodo=array(
+                'contain'=>[
+                    'Partido'
+                ],
+                'fields'=>[],
+                'conditions'=>[
+                    'Conceptosrestante.conceptostipo_id'=>2,
+                    'Conceptosrestante.periodo'=>$periodo,
+                    'Conceptosrestante.cliente_id'=>$cliid,
+                    'Conceptosrestante.impcli_id'=>$impcliid
+                ]
+            );
+            $conceptosrestantesperiodo = $this->Conceptosrestante->find('all',$optionsconceptosrestantesperiodo);
+            $this->set('conceptosrestantesperiodo',$conceptosrestantesperiodo);
+
+            $clienteCbuOptions = array(
+                    'conditions'=>array(
+                ),
+                'joins'=>array(
+                    array('table'=>'impclis',
+                        'alias' => 'Impcli',
+                        'type'=>'inner',
+                        'conditions'=> array(
+                            'Impcli.id = Cbu.impcli_id',
+                            'Impcli.cliente_id'=> $cliid,
+                        )
+                    ),
+                )
+            );
+            $cbus = $this->Cbu->find('list',$clienteCbuOptions);
+            $this->set(compact('cbus'));
+	}
 	public function cargarconceptosrestantes (){
 		$data=array();
 		if ($this->request->is('post')) {
+                    foreach ($this->request->data['Conceptosrestante'] as $kcr => $conceptorestante) {
+                        if(isset($conceptorestante['fecha'])&&$conceptorestante['fecha']!=""){
+                            $fecha = date('Y-m-d', strtotime($conceptorestante['fecha']));
+                            $this->request->data['Conceptosrestante'][$kcr]['fecha'] = $fecha;
+                        }
+                    }
 			if ($this->Conceptosrestante->saveAll($this->request->data['Conceptosrestante'])) {
 				//$data['params'] = $params;
 				//if (1==1) {

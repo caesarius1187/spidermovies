@@ -341,7 +341,7 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
                 foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
                     foreach ($conveniocolectivo['Empleado'] as $empleado) {
                         echo "<td>";
-                        echo $empleado['categoria'];
+                        echo $empleado['Cargo']['nombre'];
                         echo "</td>";
                     }
                 }
@@ -1467,4 +1467,55 @@ echo $this->Form->input('cliid',array('value'=>$impcli['Cliente']['id'],'type'=>
             </div>
     </div>
     <?php } ?>
+     <?php echo $this->Form->button('Excel',
+            array('type' => 'button',
+                'id'=>"clickExcelAplicativo",
+                'class' =>"btn_imprimir",
+            )
+        );?>
+    <table id="tablaExportacion" class="tbl_border">
+        <tr
+    <?php
+    //aca vamos a mostrar la tabla para exportar a los aplicativos
+    switch ($impcliSolicitado['Impuesto']['id']) {
+        case '23':/*FAECYS*/
+            echo "<tr><td>Nro. Sucursal</td>";
+            echo "<td>CUIL</td>";        
+            echo "<td>Apellido</td>";
+            echo "<td>Nombre</td>";
+            echo "<td>FechaIngreso</td>";
+            echo "<td>Categoria</td>";
+            echo "<td>Remuneraci&oacute;n</td>";            
+            echo "<td>Media Jornada</td>";
+            echo "<td>Licencia</td>";
+            echo "<td>Afiliado</td></tr>";
+            foreach ($impcli['Impuesto']['Conveniocolectivotrabajo'] as $conveniocolectivo) {
+                foreach ($conveniocolectivo['Empleado'] as $empleado){
+                    $empleadoid = $empleado['id'];
+                    //en este primer loop vamos a calcular todos los siguientes totales
+                    echo "<tr><td>1</td>";
+                    echo "<td>" . $empleado['cuit'] . "</td>";
+                    //vamos a dividir el nombre y apellido suponiendo que se 
+                    //carga asi Apelludo" "Nombre
+                    $posEspBlanco = strpos($empleado['nombre'], " ");
+                    $apellido = substr($empleado['nombre'],0,$posEspBlanco);
+                    $nombre = substr($empleado['nombre'],$posEspBlanco);
+                    echo "<td>" . $apellido . "</td>";
+                    echo "<td>" . $nombre . "</td>";
+                    echo "<td>" . $empleado['fechaingreso'] . "</td>";
+                    echo "<td>" . $empleado['Cargo']['identificacion'] . "</td>";
+                    echo "<td>" . number_format($empleadoDatos[$empleadoid]['remuneracionCD'], 2, ",", "") . "</td>";
+                    $Jornada = 'S';
+                    if($empleado['jornada']*1==1){
+                         $Jornada = 'N';
+                    }
+                    echo "<td>" . $Jornada . "</td>";
+                    echo "<td>N</td>";
+                    echo "<td>".(($empleadoDatos[$empleadoid]['afiliadoSindicato']!=0)?'SI':'NO')."</td></tr>";
+                }
+            }
+            break;
+    }
+    ?>
+    </table>
 </div>

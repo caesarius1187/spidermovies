@@ -3,12 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/conta/app/View/Impclis/papeldetrabajomonotributo.ctp</file>
-            <file>file:/C:/wamp/www/conta/app/View/Impclis/papeldetrabajosindicatos.ctp</file>
-            <file>file:/C:/wamp/www/conta/app/Controller/CuentasController.php</file>
-            <file>file:/C:/wamp/www/conta/app/Model/Cuenta.php</file>
-            <file>file:/C:/wamp/www/conta/app/Model/Cliente.php</file>
+            <file>file:/C:/wamp/www/conta/app/View/Conceptosrestantes/importartxtretencionessufridas.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Users/preguntas.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Layouts/default_login.ctp</file>
             <file>file:/C:/wamp/www/conta/app/Controller/ImpclisController.php</file>
+            <file>file:/C:/wamp/www/conta/app/View/Conceptosrestantes/cargar.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Layouts/default_home.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Impclis/papeldetrabajosindicatos.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/Controller/CuentasclientesController.php</file>
+            <file>file:/C:/wamp/www/conta/app/Controller/ConceptosrestantesController.php</file>
+            <file>file:/C:/wamp/www/conta/app/webroot/js/impclis/papeldetrabajosindicatos.js</file>
+            <file>file:/C:/wamp/www/conta/app/View/Layouts/default.ctp</file>
+            <file>file:/C:/wamp/www/conta/app/View/Pages/home.ctp</file>
             <file>file:/C:/wamp/www/conta/app/View/Impclis/papeldetrabajosuss.ctp</file>
         </group>
     </open-files>

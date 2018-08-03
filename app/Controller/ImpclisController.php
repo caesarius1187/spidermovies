@@ -1652,6 +1652,7 @@ class ImpclisController extends AppController {
                         'Conveniocolectivotrabajo'=>[
                             'Empleado'=>[
                                 'Puntosdeventa'=>['Domicilio'=>['Localidade'=>['Partido']]],
+                                'Cargo'=>[],
                                 'Valorrecibo'=>[
                                     'Cctxconcepto'=>[
                                     ],

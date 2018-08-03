@@ -138,10 +138,10 @@ echo $this->Form->input('periodo',array('default'=>$periodo,'type'=>'hidden'));
                 }
                 if($mostrarBotonRetencionesAC){                                     
                     echo $this->Html->link(
-                        "Importar TXT RecaudacionesBancarias IIBB",
+                        "Importar TXT Retenciones Sufridas Act. Ec.",
                         array(
                             'controller' => 'conceptosrestantes',
-                            'action' => 'importartxtrecaudacionesbancarias',
+                            'action' => 'importartxtretencionessufridas',
                             $cliente["Cliente"]['id'],
                             $periodo,
                             $iibbIdAC

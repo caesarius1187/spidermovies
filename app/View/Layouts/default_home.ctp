@@ -13,6 +13,13 @@ $cakeDescription = __d('conta.com.ar', 'CONTA');
 <html lang="en" class="no-js">
 
     <head>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-5940627790406647",
+            enable_page_level_ads: true
+          });
+        </script>
         <!-- Etiqueta global de sitio (gtag.js) de Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115639849-1"></script>
         <script>
