@@ -1,0 +1,23 @@
+{
+	"name": "burzum/cakephp-cart-plugin",
+	"type": "cakephp-plugin",
+	"description": "Shopping Cart Plugin for CakePHP that will work with any table and make it's records buyable.",
+	"keywords": ["cart", "e-commerce", "shopping"],
+	"homepage": "http://github.com/burzum/Cart",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Florian Krämer",
+			"homepage": "http://florian-kraemer.net"
+		}
+	],
+	"minimum-stability": "dev",
+	"require": {
+		"php": ">=5.3.2",
+		"cakedc/migrations": "dev-master"
+	},
+	"suggest": {
+		"cakedc/search": "Required for the search filters, implements the PRG pattern",
+		"omnipay/omnipay": "Payment processing library with lots of adapters for most, if not all popular payment providers."
+	}
+}

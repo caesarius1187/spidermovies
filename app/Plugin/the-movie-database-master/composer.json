@@ -1,0 +1,43 @@
+{
+    "name": "cakephp-fr/the-movie-database",
+    "description": "TheMovieDatabase datasource plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "keywords":[
+        "cakephp",
+        "plugin",
+        "movie",
+        "tv",
+        "api",
+        "tmdb"
+    ],
+    "homepage": "https://github.com/cakephp-fr/the-movie-database",
+    "authors":[
+        {
+            "name": "Johan Sampedro",
+            "role": "author",
+            "homepage": "https://github.com/ch0c4"
+        },
+        {
+            "name": "Others",
+            "homepage": "https://github.com/cakephp-fr/TheMovieDatabase/graphs/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.16",
+        "cakephp/cakephp": "~3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "TheMovieDatabase\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TheMovieDatabase\\Test\\": "tests",
+            "Cake\\Test\\": "./vendor/cakephp/cakephp/tests"
+        }
+    }
+}

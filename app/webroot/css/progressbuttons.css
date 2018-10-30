@@ -1,0 +1,47 @@
+.progress-button[data-style="top-line"] .progress-inner {
+    height: 3px;
+}
+.progress-button .progress-inner {
+    position: absolute;
+    left: 0;
+    background: #0e7138;
+}
+.notransition {
+    -webkit-transition: none !important;
+    transition: none !important;
+}
+*, *:after, *::before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.progress-button {
+    position: relative;
+    display: inline-block;
+    outline: none;
+    border: none;
+    margin: 6px;
+    /* background: #1d9650;
+    padding: 0 60px;
+     color: #fff;
+     text-transform: uppercase;
+     letter-spacing: 1px;
+     font-size: 1em;*/
+    line-height: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+/* top-line */
+/* ====================== */
+
+.progress-button[data-style="top-line"] .progress-inner {
+    height: 3px;
+    margin: 0px 6px 0px 6px;
+}
+
+.progress-button[data-style="top-line"] .content::before,
+.progress-button[data-style="top-line"] .content::after {
+    right: auto;
+    left: 100%;
+    margin-left: 25px;
+}
